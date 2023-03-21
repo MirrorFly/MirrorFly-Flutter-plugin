@@ -1,0 +1,64 @@
+group 'com.mirrorfly.fly_chat'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.7.10'
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        //mavenLocal()
+        maven {
+            //url "https://mirrorfly-maven.s3.ap-south-1.amazonaws.com/snapshot/"
+            url "https://repo.mirrorfly.com/snapshot/"
+        }
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 33
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        minSdkVersion 16
+    }
+}
+dependencies{
+    //implementation 'com.mirrorfly.sdk:mirrorfly-sdk:0.0.5'
+    implementation 'com.mirrorfly.sdk:appbase:0.0.10'
+    /* implementation 'io.michaelrocks:libphonenumber-android:8.13.3'
+     implementation 'com.hypertrack:hyperlog:0.0.10'
+     //pdfViewer
+     implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+     //for webrtc
+     implementation 'org.webrtc:google-webrtc:1.0.32006'*/
+    //implementation 'com.fly.sdk:appbase:0.0.9'
+}
