@@ -4,7 +4,8 @@ import 'dart:math';
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:fly_chat_example/app/data/helper.dart';
+
+import '../data/helper.dart';
 class CropImage extends StatefulWidget {
   const CropImage({Key? key, required this.imageFile}) : super(key: key);
   final File imageFile;

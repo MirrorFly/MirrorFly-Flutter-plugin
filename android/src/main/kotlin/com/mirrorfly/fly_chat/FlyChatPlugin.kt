@@ -11,18 +11,21 @@ import android.media.RingtoneManager
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.*
+import android.provider.ContactsContract
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import com.contus.flycommons.*
+import com.contus.flycommons.models.MediaData
 import com.contus.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.contus.xmpp.chat.listener.TypingStatusListener
 import com.contus.xmpp.chat.models.CreateGroupModel
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
 import com.contusflysdk.api.*
+import com.contusflysdk.api.FlyCore.insertMyBusyStatus
 import com.contusflysdk.api.chat.*
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
@@ -48,7 +51,6 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -302,7 +304,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     EventChannel(flutterPluginBinding.binaryMessenger, onSuccess_channel).setStreamHandler(onSuccessStreamHandler)
   }
 
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
     when {
       call.method == "getPlatformVersion" -> {
         result.success("Android ${Build.VERSION.RELEASE}")
@@ -310,14 +312,25 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       call.method.equals("sendData")-> {
         //result.success(jid)
       }
+      call.method.equals("getNonChatUsers")-> {
+        val nonchatusers = FlyCore.getNonChatUsers()
+        result.success(nonchatusers.tojsonString())
+      }
+      call.method.equals("IS_TRIAL_LICENSE")-> {
+        result.success(true)//(BuildConfig.IS_TRIAL_LICENSE)
+      }
       call.method.equals("syncContacts") -> {
+        //setRegionCode(call)
         val isFirsttime = call.argument<Boolean>("is_first_time") ?: false
-        FlyCore.syncContacts(isFirsttime)
-        result.success(true)
+        FlyCore.syncContacts(isFirsttime){b,_,data->
+          LogMessage.d(TAG, "Contacts Sync contactSyncSuccess:$b and data: ${data}")
+          result.success(true)
+        }
       }
       call.method.equals("contactSyncStateValue") -> {
-        val contactSyncStateResult: com.contus.flycommons.Result<Boolean> = FlyCore.contactSyncState.value!!
-        result.success(contactSyncStateResult.toString())
+        val contactSyncStateResult: Result<Boolean>? = FlyCore.contactSyncState.value
+        val res = (contactSyncStateResult==Result.InProgress)
+        result.success(res)
       }
       call.method.equals("contactSyncState") -> {
         contactSyncState(result)
@@ -338,7 +351,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       }
       call.method.equals("insertBusyStatus") -> {
         val busyStatus = call.argument<String>("busy_status") ?: ""
-        FlyCore.insertMyBusyStatus(busyStatus)
+        insertMyBusyStatus(busyStatus)
         FlyCore.setMyBusyStatus(busyStatus)
         result.success(true)
       }
@@ -361,10 +374,10 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         result.success(myBusyStatusList.tojsonString())
       }
       call.method.equals("deleteProfileStatus") -> {
-        val id = call.argument<Long>("id") ?: 0
+        val id = call.argument<String>("id") ?: "0"
         val status = call.argument<String>("status") ?: ""
         val isCurrentStatus = call.argument<Boolean>("isCurrentStatus") ?: false
-        val profileStatus = ProfileStatus(id, status, isCurrentStatus)
+        val profileStatus = ProfileStatus(id.toLong(), status, isCurrentStatus)
         FlyCore.deleteProfileStatus(profileStatus)
         result.success(true)
       }
@@ -391,35 +404,35 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       call.method.equals("markAsRead") -> {
         val JID: String = call.argument("jid") ?: ""
         ChatManager.markAsRead(JID)
-        result.success(true);
+        result.success(true)
       }
       call.method.equals("deleteUnreadMessageSeparatorOfAConversation") -> {
         val JID: String = call.argument("jid") ?: ""
         FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(JID)
-        result.success(true);
+        result.success(true)
       }
       call.method.equals("getRecalledMessagesOfAConversation") -> {
         val JID: String = call.argument("jid") ?: ""
         val recalledMessages: List<ChatMessage> =
           FlyMessenger.getRecalledMessagesOfAConversation(JID)
-        result.success(recalledMessages.tojsonString());
+        result.success(recalledMessages.tojsonString())
       }
       call.method.equals("uploadMedia") -> {
         val messageid: String = call.argument("messageid") ?: ""
         FlyMessenger.uploadMedia(messageid)
-        result.success(true);
+        result.success(true)
       }
       call.method.equals("getMessagesUsingIds") -> {
         getMessagesUsingIds(call, result)
       }
       call.method.equals("updateMediaDownloadStatus") -> {
-        updateMediaDownloadStatus(call, result)
+        updateMediaDownloadStatus(call)
       }
       call.method.equals("updateMediaUploadStatus") -> {
-        updateMediaUploadStatus(call, result)
+        updateMediaUploadStatus(call)
       }
       call.method.equals("cancelMediaUploadOrDownload") -> {
-        cancelMediaUploadOrDownload(call, result)
+        cancelMediaUploadOrDownload(call)
       }
       call.method.equals("setMediaEncryption") -> {
         val encryption = call.argument<Boolean>("encryption") ?: true
@@ -543,9 +556,6 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         val messageIdlist = call.argument<List<String>>("messageidlist") ?: arrayListOf()
         ChatManager.copyTextMessages(messageIdlist).tojsonString()
       }
-      call.method.equals("saveUnsentMessage") -> {
-        saveUnsentMessage(call, result)
-      }
       call.method.equals("setCustomValue") -> {
         val mid = call.argument<String>("message_id") ?: ""
         val key = call.argument<String>("key") ?: ""
@@ -568,7 +578,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         ContactManager.inviteUserViaSMS(mobile_no,message)
       }
       call.method.equals("getUnsentMessageOfAJid") -> {
-        getUnsentMessageOfAJid(call,result);
+        getUnsentMessageOfAJid(call,result)
       }
       call.method.equals("cancelBackup") -> {
         BackupManager.cancelBackup()
@@ -685,6 +695,9 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       }
       call.method.equals("setMyProfileStatus") -> {
         setMyProfileStatus(call, result)
+      }
+      call.method.equals("insertNewProfileStatus") -> {
+        insertNewProfileStatus(call, result)
       }
       call.method.equals("getRecentChatList") -> {
         getRecentChatList(result)
@@ -933,6 +946,9 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       call.method.equals("getNotificationSound") -> {
         getNotificationSound(result)
       }
+      call.method.equals("setDefaultNotificationSound") -> {
+        //setDefaultNotificationSound()
+      }
       call.method.equals("setMuteNotification") -> {
         setMuteNotification(call)
       }
@@ -986,13 +1002,19 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         getMediaSetting(call,result)
       }
       call.method.equals("saveUnsentMessage") -> {
-        saveUnsentMessage(call,result)
+        saveUnsentMessage(call)
       }
       call.method.equals("getUnsentMessageOfAJid") -> {
         getUnsentMessageOfAJid(call,result)
       }
       call.method.equals("getJidFromPhoneNumber") -> {
         getJidFromPhoneNumber(call,result)
+      }
+      call.method.equals("addContact") -> {
+        openCreateContact(call)
+      }
+      call.method.equals("setRegionCode") -> {
+        setRegionCode(call)
       }
       else -> {
         result.notImplemented()
@@ -1005,6 +1027,17 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     channel.setMethodCallHandler(null)
   }
 
+  /// Get The Build Flavor config.
+  /*private fun getFlavor(result: Result) {
+    flutterActivity?.let {
+      val pack = it.localClassName.split(".").dropLast(1).joinToString(".")
+      val flavor =
+        Class.forName(pack.plus(".BuildConfig")).getField("FLAVOR").get(null) as String
+      result.success(flavor)
+    } ?: run {
+      result.success(null)
+    }
+  }*/
 
   private fun registerUser(call: MethodCall, result: MethodChannel.Result) {
     if (!call.hasArgument("userIdentifier")) {
@@ -1085,6 +1118,19 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     }
   }
 
+
+  private fun setRegionCode(call: MethodCall) {
+    val regionCode = call.argument<String?>("regionCode") ?: "IN"
+    ChatManager.setUserCountryISOCode(regionCode)
+    SharedPreferenceManager.instance.storeString(SharedPreferenceManager.COUNTRY_CODE,regionCode)
+    LogMessage.d("regionCode",ChatManager.getUserCountryISOCode())
+  }
+
+  private fun setDefaultNotificationSound() {
+    val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
+    setNotificationUri(default)
+  }
+
   private fun getJidFromPhoneNumber(call: MethodCall,result: MethodChannel.Result){
     val mobileNumber = call.argument<String>("mobileNumber") ?: ""
     val countryCode = call.argument<String>("countryCode") ?: ""
@@ -1095,10 +1141,10 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
   private fun getUnsentMessageOfAJid(call: MethodCall,result: MethodChannel.Result){
     val jid = call.argument<String>("jid") ?: ""
     val data = FlyMessenger.getUnsentMessageOfAJid(jid)
-    result.success(data);
+    result.success(data)
   }
 
-  private fun saveUnsentMessage(call: MethodCall,result: MethodChannel.Result){
+  private fun saveUnsentMessage(call: MethodCall){
     val jid = call.argument<String>("jid") ?: ""
     val texMessage = call.argument<String>("texMessage") ?: ""
     FlyMessenger.saveUnsentMessage(jid, texMessage)
@@ -1106,12 +1152,12 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
 
   private fun setMediaAutoDownload(call: MethodCall){
     val enable = call.argument<Boolean>("enable") ?: false
-    SharedPreferenceManager.instance.storeBoolean(SharedPreferenceManager.MEDIA_AUTO_DOWNLOAD,enable);
+    SharedPreferenceManager.instance.storeBoolean(SharedPreferenceManager.MEDIA_AUTO_DOWNLOAD,enable)
   }
 
   private fun getMediaAutoDownload(result: MethodChannel.Result){
     val enable = SharedPreferenceManager.instance.getBoolean(SharedPreferenceManager.MEDIA_AUTO_DOWNLOAD)
-    result.success(enable);
+    result.success(enable)
   }
 
   private fun saveMediaSettings(call: MethodCall){
@@ -1136,15 +1182,15 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     val settingsUtil = SettingsUtil()
     val net = if (NetworkType==0) SharedPreferenceManager.CONNECTION_TYPE_MOBILE else SharedPreferenceManager.CONNECTION_TYPE_WIFI
     when(type){
-      "Photos" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadPhotos);
-      "Videos" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadVideos);
-      "Audio" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadAudios);
-      "Documents" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadDocuments);
-      "" -> result.success(false);
+      "Photos" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadPhotos)
+      "Videos" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadVideos)
+      "Audio" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadAudios)
+      "Documents" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadDocuments)
+      "" -> result.success(false)
     }
   }
 
-  private fun updateMediaDownloadStatus(call: MethodCall, result: MethodChannel.Result) {
+  private fun updateMediaDownloadStatus(call: MethodCall) {
     val mediaMessageId = call.argument<String>("mediaMessageId") ?: ""
     val progress = call.argument<Int>("progress") ?: 0
     val downloadStatus = call.argument<Int>("downloadStatus") ?: 0
@@ -1157,7 +1203,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     )
   }
 
-  private fun updateMediaUploadStatus(call: MethodCall, result: MethodChannel.Result) {
+  private fun updateMediaUploadStatus(call: MethodCall) {
     val mediaMessageId = call.argument<String>("mediaMessageId") ?: ""
     val progress = call.argument<Int>("progress") ?: 0
     val uploadStatus = call.argument<Int>("uploadStatus") ?: 0
@@ -1170,7 +1216,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     )
   }
 
-  private fun cancelMediaUploadOrDownload(call: MethodCall, result: MethodChannel.Result) {
+  private fun cancelMediaUploadOrDownload(call: MethodCall) {
     val messageId = call.argument<String>("messageId") ?: ""
     FlyMessenger.cancelMediaUploadOrDownload(messageId)
   }
@@ -1424,8 +1470,19 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         messageIDList,
         getDeleteChatEnum(chatType),
         isMediaDelete,
-        object : ChatActionListener {
-          override fun onResponse(isSuccess: Boolean, message: String) {
+        /*object : ChatActionListener {
+            override fun onResponse(isSuccess: Boolean, message: String) {
+                result.success(isSuccess)
+            }
+
+        })*/
+        object : ChatDeleteActionListener {
+          override fun onResponse(
+            isSuccess: Boolean,
+            message: String,
+            deletedMessageList: List<String>,
+            seletedMessageList: List<String>
+          ) {
             result.success(isSuccess)
           }
 
@@ -1574,17 +1631,32 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     val messageIDList = call.argument<List<String>>("message_ids")
     if (userJID != null && messageIDList != null && chatType != null) {
       if (isDeleteForEveryOne!!) {
-
         //Log.e(TAG, "Delete For EveryOne")
         ChatManager.deleteMessagesForEveryone(
           userJID,
           messageIDList,
           getDeleteChatEnum(chatType),
           false,
-          object : ChatActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-              if (isSuccess) {
+          /*object : ChatActionListener {
+              override fun onResponse(isSuccess: Boolean, message: String) {
+                  if (isSuccess) {
+                      //Log.e("RESPONSE_CAPTURE", "===========================")
+                      //DebugUtilis.v("ChatManager.deleteMessagesForEveryone", message)
+                      result.success(message)
+                  } else {
+                      result.error("500", "Unable to Delete the Chat", message)
+                  }
+              }
 
+          })*/
+          object : ChatDeleteActionListener {
+            override fun onResponse(
+              isSuccess: Boolean,
+              message: String,
+              deletedMessageList: List<String>,
+              seletedMessageList: List<String>
+            ) {
+              if (isSuccess) {
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("ChatManager.deleteMessagesForEveryone", message)
                 result.success(message)
@@ -1708,10 +1780,11 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     if (audioFile.exists()) {
       if (userJID != null && duration != null && isRecorded != null) {
         if (audiofileUrl.isNotEmpty()) {
-          FlyMessenger.sendAudioMessage(
-            userJID, audioFile.length(), audiofileUrl, filePath, duration, isRecorded,
-            replyMessageID, listener
-          )
+          FlyMessenger.sendAudioMessage(userJID, MediaData(audioFile.name, audioFile.length(),audiofileUrl, filePath, duration = duration),isRecorded,replyMessageID,listener)
+          /*FlyMessenger.sendAudioMessage(
+              userJID, audioFile.length(), audiofileUrl, filePath, duration, isRecorded,
+              replyMessageID, listener
+          )*/
         } else {
           FlyMessenger.sendAudioMessage(
             userJID,
@@ -1780,18 +1853,20 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     }
     if (videoFile.exists()) {
       if (videoFileUrl.isNotEmpty() && thumbImageBase64.isNotEmpty() && videoDuration != 0L) {
-        FlyMessenger.sendVideoMessage(
-          toJid = userJid,
-          videoFile.name,
-          videoFileUrl,
-          videoFile.length(),
-          videoDuration,
-          thumbImageBase64,
-          localFilePath,
-          videoCaption,
-          replyMessageID,
-          listener
-        )
+        FlyMessenger.sendAudioMessage(toJid = userJid,
+          MediaData(fileName = videoFile.name, fileSize = videoFile.length(), fileUrl = videoFileUrl, base64Thumbnail = thumbImageBase64, fileLocalPath = localFilePath, caption = videoCaption, duration = videoDuration, ),isRecorded = false,replyMessageID,listener)
+        /*FlyMessenger.sendVideoMessage(
+            toJid = userJid,
+            videoFile.name,
+            videoFileUrl,
+            videoFile.length(),
+            videoDuration,
+            thumbImageBase64,
+            localFilePath,
+            videoCaption,
+            replyMessageID,
+            listener
+        )*/
       } else {
         FlyMessenger.sendVideoMessage(
           toJid = userJid,
@@ -1989,6 +2064,22 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         result.error("500", "Please Check Your Internet connection", null)
     }*/
   }
+  private fun insertNewProfileStatus(call: MethodCall, result: MethodChannel.Result) {
+
+    // Same Function as "setMyProfileStatus", writing as seperate new function inorder to match the iOS Functionality
+    val status = call.argument<String>("status") ?: ""
+    if (status.isNotEmpty()) {
+      FlyCore.setMyProfileStatus(status) { isSuccess, _, data ->
+        data["status"] = isSuccess
+
+        if (isSuccess) {
+          insertDefaultStatus(call, null)
+        }
+        result.success(data.tojsonString())
+      }
+    }
+
+  }
 
   private fun getUserProfile(call: MethodCall, result: MethodChannel.Result) {
     val jid = call.argument("jid") ?: ""
@@ -2110,7 +2201,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
           )
         }
       } else {
-        result.error("500", "File not Exists", "");
+        result.error("500", "File not Exists", "")
       }
     }
 
@@ -2174,17 +2265,20 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       }
     }
     if (imageFileUrl.isNotEmpty()) {
-      FlyMessenger.sendImageMessage(
-        userJid,
-        imageFile.name,
-        imageFile.length().toString(),
-        imageFileUrl,
-        filePath,
-        thumbnailBase64,
-        caption,
-        replyMessageID,
-        listener
+      FlyMessenger.sendImageMessage(toJid = userJid,
+        MediaData(fileName = imageFile.name, fileSize = imageFile.length(), fileUrl = imageFileUrl, fileLocalPath = filePath, base64Thumbnail = thumbnailBase64,caption),replyMessageID,listener
       )
+      /*FlyMessenger.sendImageMessage(
+          userJid,
+          imageFile.name,
+          imageFile.length().toString(),
+          imageFileUrl,
+          filePath,
+          thumbnailBase64,
+          caption,
+          replyMessageID,
+          listener
+      )*/
     } else {
       FlyMessenger.sendImageMessage(
         userJid,
@@ -2395,6 +2489,8 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     val server = call.argument<Boolean>("server") ?: false
     FlyCore.getRegisteredUsers(server) { isSuccess, _, data ->
       if (isSuccess) {
+        val profileDetails = data["data"] as MutableList<ProfileDetails>
+        Log.d("profileDetails",profileDetails.toString())
         //Log.e("RESPONSE_CAPTURE", "===========================")
         //DebugUtilis.v("FlyCore.getRegisteredUsers", data.tojsonString())
         result.success(data.tojsonString())
@@ -2604,18 +2700,14 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     val name = call.argument<String>("name") ?: ""
     GroupManager.updateGroupName(jid, name, object : ChatActionListener {
       override fun onResponse(isSuccess: Boolean, message: String) {
-        if (isSuccess) {
-          result.success(true)
-        } else {
-          result.success(false)
-        }
+        result.success(isSuccess)
       }
     })
   }
 
   private fun getUserLastSeenTime(call: MethodCall, result: MethodChannel.Result) {
     val jid = call.argument<String>("jid") ?: ""
-    ContactManager.getUserLastSeenTime(jid, object : ContactManager.LastSeenListener {
+    ContactManager.getRegisteredUserLastSeenTime(jid, object : ContactManager.LastSeenListener {
       override fun onFailure(message: String) {
         /* No Implementation Needed */
         result.success("")
@@ -2672,13 +2764,13 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
   private fun showCustomTones(call: MethodCall, result: MethodChannel.Result) {
     ringToneResult = result
 //        existingCustomTone = call.argument<String>("ringtone_uri") ?: "None"
-    val customToneUri = Uri.parse(SharedPreferenceManager.instance.getString("notification_uri"))
-//        val customToneUri = Uri.parse(existingCustomTone).toString()
+    val existingCustomTone = Uri.parse(SharedPreferenceManager.instance.getString("notification_uri"))
+    val customToneUri = existingCustomTone.toString()
     val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Notification")
-    if (customToneUri != null)
-      intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, customToneUri)
+    if (customToneUri != "None")
+      intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, existingCustomTone)
     (mContext as Activity).startActivityForResult(intent, Constants.ACTIVITY_REQ_CODE)
     /* setting isActivityStartedForResult to true to avoid xmpp disconnection */
     ChatManager.isActivityStartedForResult = true
@@ -2714,7 +2806,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
       } else if (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) == null) {
         Log.e("Android Notification", "ringtone is null")
-        setNotificationUri("")
+        setNotificationUri(null)
         ringToneResult.success("None")
 
         //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, "None")
@@ -2726,15 +2818,27 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
 
   }
 
+
   private fun getRingtoneName(): String? {
-    val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
+//        val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
     val storedNotification = SharedPreferenceManager.instance.getString("notification_uri")
     Log.e("stored notification", storedNotification)
-    if(storedNotification == ""){
-      return RingtoneManager.getRingtone(mContext, Uri.parse(default)).getTitle(mContext)
+
+    val ringtoneJSONObject = JSONObject()
+
+    if (storedNotification == "") {
+      ringtoneJSONObject.put("name", SharedPreferenceManager.instance.getString("notification_uri"))
+      ringtoneJSONObject.put("tone_uri", SharedPreferenceManager.instance.getString("notification_uri"))
+      return ringtoneJSONObject.toString()
     }
+//        if(storedNotification == ""){
+//            return RingtoneManager.getRingtone(mContext, Uri.parse(default)).getTitle(mContext)
+//        }
     val ringtone = RingtoneManager.getRingtone(mContext, Uri.parse(storedNotification))
-    return ringtone.getTitle(mContext)
+    ringtoneJSONObject.put("name", ringtone.getTitle(mContext))
+    ringtoneJSONObject.put("tone_uri", storedNotification)
+
+    return ringtoneJSONObject.toString()
 
   }
 
@@ -3110,6 +3214,19 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     ChatEventsManager.detachLoginEventsListener(this)
     ChatEventsManager.detachTypingEventListener(this)
     ChatConnectionManager.removeChatConnectionListener(this)
+  }
+
+  private fun openCreateContact(call: MethodCall) {
+    val phone = call.argument("number") ?: ""
+    // Create a new Intent to open the Contacts app with a pre-filled contact form
+    val intent = Intent(Intent.ACTION_INSERT)
+    intent.type = ContactsContract.Contacts.CONTENT_TYPE
+
+    // Set the contact fields using the data provided by the Flutter app
+    intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone)
+
+    // Launch the Contacts app with the pre-filled contact form
+    (mContext as Activity).startActivity(intent)
   }
 }
 

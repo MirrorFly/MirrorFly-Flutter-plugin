@@ -21,6 +21,7 @@ class DashboardView extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     return FocusDetector(
       onFocusGained: () {
+        debugPrint('onFocusGained');
         // controller.initListeners();
         controller.checkArchiveSetting();
         controller.getRecentChatList();
@@ -45,11 +46,7 @@ class DashboardView extends GetView<DashboardController> {
                     : FloatingActionButton(
                   tooltip: "New Chat",
                   onPressed: () {
-                    Get.toNamed(Routes.contacts, arguments: {
-                      "forward": false,
-                      "group": false,
-                      "groupJid": ""
-                    });
+                   controller.gotoContacts();
                   },
                   backgroundColor: buttonBgColor,
                   child: SvgPicture.asset(
@@ -465,9 +462,9 @@ class DashboardView extends GetView<DashboardController> {
                                   "Archived",
                                   style: TextStyle(fontWeight: FontWeight.w500),
                                 ),
-                                trailing: controller.archivedCount != "0"
+                                trailing: controller.archivedChats.isNotEmpty
                                     ? Text(
-                                  controller.archivedCount,
+                                  controller.archivedChats.length.toString(),
                                   style: const TextStyle(color: buttonBgColor),
                                 )
                                     : null,
@@ -562,12 +559,7 @@ class DashboardView extends GetView<DashboardController> {
           } else {
             var item = controller.userList[index];
             return memberItem(
-              name: item.name
-                  .checkNull()
-                  .isEmpty ? (item.nickName
-                  .checkNull()
-                  .isEmpty ? item.mobileNumber.checkNull() : item.nickName
-                  .checkNull()) : item.name.checkNull(),
+              name: getName(item),
               image: item.image.checkNull(),
               status: item.status.checkNull(),
               spantext: controller.search.text.toString(),
@@ -575,6 +567,9 @@ class DashboardView extends GetView<DashboardController> {
                 controller.toChatPage(item.jid.checkNull());
               },
               isCheckBoxVisible: false,
+              isGroup: item.isGroupProfile.checkNull(),
+              blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+              unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
             );
           }
         });
@@ -609,12 +604,15 @@ class DashboardView extends GetView<DashboardController> {
                                   height: 48,
                                   clipOval: true,
                                   errorWidget: ProfileTextImage(
-                                    text: profile.name
+                                    text: getName(profile)/*profile.name
                                         .checkNull()
                                         .isEmpty
                                         ? profile.nickName.checkNull()
-                                        : profile.name.checkNull(),
+                                        : profile.name.checkNull(),*/
                                   ),
+                                  isGroup: profile.isGroupProfile.checkNull(),
+                                  blocked: profile.isBlockedMe.checkNull() || profile.isAdminBlocked.checkNull(),
+                                  unknown: (!profile.isItSavedContact.checkNull() || profile.isDeletedContact()),
                                 ),
                                 unreadMessageCount.toString() != "0"
                                     ? Positioned(
@@ -643,7 +641,7 @@ class DashboardView extends GetView<DashboardController> {
                                   children: [
                                     Expanded(
                                       child: spannableText(
-                                        profile.name.toString(),
+                                        getName(profile),//profile.name.toString(),
                                         controller.search.text,
                                         const TextStyle(
                                             fontSize: 16.0,
@@ -687,17 +685,17 @@ class DashboardView extends GetView<DashboardController> {
                                     Expanded(
                                       child: Row(
                                         children: [
-                                          forMessageTypeIcon(item.messageType),
+                                          forMessageTypeIcon(item.messageType,item.mediaChatMessage),
                                           SizedBox(
                                             width: forMessageTypeString(
-                                                item.messageType,content: item.messageTextContent.checkNull()) !=
+                                                item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) !=
                                                 null
                                                 ? 3.0
                                                 : 0.0,
                                           ),
                                           Expanded(
                                             child: forMessageTypeString(
-                                                item.messageType,content: item.messageTextContent.checkNull()) ==
+                                                item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
                                                 null
                                                 ? spannableText(
                                               item.messageTextContent
@@ -710,7 +708,7 @@ class DashboardView extends GetView<DashboardController> {
                                             )
                                                 : Text(
                                               forMessageTypeString(
-                                                  item.messageType,content: item.messageTextContent.checkNull()) ??
+                                                  item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                                   item.messageTextContent
                                                       .toString(),
                                               style: Theme

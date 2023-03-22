@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:fly_chat_example/app/common/constants.dart';
+import '../common/constants.dart';
 
 class NetworkManager extends GetxController{
 

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 import 'package:fly_chat_example/app/common/constants.dart';
 import 'package:fly_chat_example/app/data/helper.dart';
@@ -11,11 +11,11 @@ import 'package:fly_chat_example/app/data/session_management.dart';
 
 import 'package:fly_chat/flysdk.dart';
 import 'package:intl/intl.dart';
-import 'package:fly_chat_example/app/modules/archived_chats/archived_chat_list_controller.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
-import '../../../common/widgets.dart';
 import '../../../data/apputils.dart';
+import '../../../data/permissions.dart';
 import '../../../routes/app_pages.dart';
 
 class DashboardController extends FullLifeCycleController
@@ -45,7 +45,7 @@ class DashboardController extends FullLifeCycleController
 
   var archiveSettingEnabled = false.obs;
 
-  @override
+/*@override
   void onInit() {
     super.onInit();
     recentChats.bindStream(recentChats.stream);
@@ -56,8 +56,20 @@ class DashboardController extends FullLifeCycleController
     getArchivedChatsList();
     checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
-  }
+  }*/
 
+  @override
+  void onReady(){
+    super.onReady();
+    recentChats.bindStream(recentChats.stream);
+    ever(recentChats, (callback) => unReadCount());
+    archivedChats.bindStream(archivedChats.stream);
+    ever(archivedChats, (callback) => archivedChatCount());
+    // getRecentChatList();
+    getArchivedChatsList();
+    // checkArchiveSetting();
+    userlistScrollController.addListener(_scrollListener);
+  }
 
   infoPage(Profile profile) {
     if (profile.isGroupProfile ?? false) {
@@ -244,8 +256,9 @@ class DashboardController extends FullLifeCycleController
 
   updateRecentChat(String jid) {
     //updateArchiveRecentChat(jid);
-    final index = recentChats.indexWhere((chat) => chat.jid == jid);
     getRecentChatOfJid(jid).then((recent) {
+      final index = recentChats.indexWhere((chat) => chat.jid == jid);
+      debugPrint("dashboard index--> $index");
       if (recent != null) {
         if (!recent.isChatArchived.checkNull()) {
           if (index.isNegative) {
@@ -280,8 +293,8 @@ class DashboardController extends FullLifeCycleController
 
   updateArchiveRecentChat(String jid) {
     mirrorFlyLog("archived chat update", jid);
-    final index = archivedChats.indexWhere((chat) => chat.jid == jid);
     getRecentChatOfJid(jid).then((recent) {
+      final index = archivedChats.indexWhere((chat) => chat.jid == jid);
       if (recent != null) {
         //if(recent.isChatArchived.checkNull()) {
         if (index.isNegative) {
@@ -692,10 +705,8 @@ class DashboardController extends FullLifeCycleController
   deleteChats() {
     if (selectedChats.length == 1) {
       _itemDelete(0);
-      clearAllChatSelection();
     } else {
       itemsDelete();
-      clearAllChatSelection();
     }
   }
 
@@ -750,12 +761,14 @@ class DashboardController extends FullLifeCycleController
     if (await AppUtils.isNetConnected()) {
       selected(false);
       FlyChat.markConversationAsRead(selectedChats);
+      var count = selectedChatsPosition.length;
       for (var element in selectedChatsPosition) {
         recentChats[element].isConversationUnRead = false;
         recentChats[element].unreadMessageCount = 0;
       }
       clearAllChatSelection();
       updateUnReadChatCount();
+      toToast("Chat${count>1 ? 's' : ''} marked as read");
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -789,18 +802,50 @@ class DashboardController extends FullLifeCycleController
   _itemDelete(int index) {
     var chatIndex = recentChats.indexWhere((element) =>
     selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    recentChats.removeAt(chatIndex);
-    FlyChat.deleteRecentChat(selectedChats[index]);
+    Helper.showAlert(message: "Delete chat with \"${recentChats[chatIndex].profileName}\"?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("No")),
+      TextButton(
+          onPressed: () async {
+            Get.back();
+            FlyChat.deleteRecentChat(selectedChats[index]).then((value){
+              clearAllChatSelection();
+              recentChats.removeAt(chatIndex);
+              updateUnReadChatCount();
+
+            });
+
+          },
+          child: const Text("Yes")),
+    ]);
   }
 
   itemsDelete() {
-    selected(false);
-    FlyChat.deleteRecentChats(selectedChats);
-    for (var element in selectedChatsPosition) {
-      recentChats.removeAt(element);
-    }
-    clearAllChatSelection();
-    updateUnReadChatCount();
+    Helper.showAlert(message: "Delete ${selectedChatsPosition.length} selected chats?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("No")),
+      TextButton(
+          onPressed: () async {
+            Get.back();
+            FlyChat.deleteRecentChats(selectedChats).then((value) {
+              for (var chatItem in selectedChats) {
+                var chatIndex = recentChats.indexWhere((element) => chatItem == element.jid);
+                recentChats.removeAt(chatIndex);
+              }
+              updateUnReadChatCount();
+              clearAllChatSelection();
+            });
+
+          },
+          child: const Text("Yes")),
+    ]);
+
   }
 
   updateUnReadChatCount() {
@@ -819,11 +864,12 @@ class DashboardController extends FullLifeCycleController
   }
 
 
-  void onMessageStatusUpdated(chatMessageModel) {
+  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
     final index = recentChats.indexWhere(
             (message) => message.lastMessageId == chatMessageModel.messageId);
     debugPrint("Message Status Update index of search $index");
     if (!index.isNegative) {
+      // updateRecentChat(chatMessageModel.chatUserJid);
       recentChats[index].lastMessageStatus = chatMessageModel.messageStatus;
       recentChats.refresh();
     }
@@ -873,10 +919,6 @@ class DashboardController extends FullLifeCycleController
         typingAndGoneStatus.removeAt(index);
       }
     }
-    if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>()
-          .setTypingStatus(singleOrgroupJid, userId, typingStatus);
-    }
   }
 
   /* //Moved to Base Controller
@@ -886,7 +928,7 @@ class DashboardController extends FullLifeCycleController
   }*/
 
 
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     updateRecentChatAdapter(jid);
     updateRecentChatAdapterSearch(jid);
     updateProfileSearch(jid);
@@ -917,7 +959,7 @@ class DashboardController extends FullLifeCycleController
   RxBool clearVisible = false.obs;
   final _mainuserList = <Profile>[];
   var userlistScrollController = ScrollController();
-  var scrollable = true.obs;
+  var scrollable = SessionManagement.isTrailLicence().obs;
   var isPageLoading = false.obs;
   final _userList = <Profile>[].obs;
 
@@ -972,12 +1014,21 @@ class DashboardController extends FullLifeCycleController
   Future<void> filterUserlist() async {
     if (await AppUtils.isNetConnected()) {
       searching = true;
-      FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
+      var future = (SessionManagement.isTrailLicence())
+          ? FlyChat.getUserList(pageNum, search.text.trim().toString())
+          : FlyChat.getRegisteredUsers(true);
+      future.then((value) {
+      // FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
         if (value != null) {
           var list = userListFromJson(value);
           if (list.data != null) {
-            scrollable(list.data!.length == 20);
-            _userList(list.data);
+            if(SessionManagement.isTrailLicence()) {
+              scrollable(list.data!.length == 20);
+              _userList(list.data);
+            }else{
+              _userList(list.data!.where((element) => element.nickName.checkNull().toLowerCase().contains(search.text.trim().toString().toLowerCase())).toList());
+              // scrollable(false);
+            }
           } else {
             scrollable(false);
           }
@@ -1041,15 +1092,15 @@ class DashboardController extends FullLifeCycleController
     });
   }
 
-  Future<Map<ProfileData?, ChatMessageModel?>?> getProfileAndMessage(String jid,
+  Future<Map<Profile?, ChatMessageModel?>?> getProfileAndMessage(String jid,
       String mid) async {
-    var value = await FlyChat.getProfileLocal(jid, false);
+    var value = await getProfileDetails(jid);//FlyChat.getProfileLocal(jid, false);
     var value2 = await FlyChat.getMessageOfId(mid);
     if (value != null && value2 != null) {
-      var data = profileDataFromJson(value);
+      var data = value; //profileDataFromJson(value);
       var data2 = sendMessageModelFromJson(value2);
-      var map = <ProfileData?, ChatMessageModel?>{}; //{0,searchMessageItem};
-      map.putIfAbsent(data.data, () => data2);
+      var map = <Profile?, ChatMessageModel?>{}; //{0,searchMessageItem};
+      map.putIfAbsent(data, () => data2);
       return map;
     }
     return null;
@@ -1153,6 +1204,7 @@ class DashboardController extends FullLifeCycleController
         });
       }
     }
+    checkContactSyncPermission();
   }
 
   void getProfileDetail(context, RecentChatData chatItem, int index) {
@@ -1160,7 +1212,7 @@ class DashboardController extends FullLifeCycleController
       profile_(value);
       debugPrint("dashboard controller profile update received");
       showQuickProfilePopup(context: context,
-          chatItem: chatItem,
+          // chatItem: chatItem,
           chatTap: () {
             Get.back();
             if (selected.value) {
@@ -1174,129 +1226,95 @@ class DashboardController extends FullLifeCycleController
           infoTap: () {
             Get.back();
             infoPage(value);
-          });
+          },profile: profile_);
     });
   }
 
+  Future<void> gotoContacts() async {
+    if(SessionManagement.isTrailLicence()) {
+      Get.toNamed(Routes.contacts, arguments: {
+        "forward": false,
+        "group": false,
+        "groupJid": ""
+      });
+    }else{
+      var contactPermissionHandle = await AppPermission.checkPermission(
+          Permission.contacts, contactPermission,
+          Constants.contactSyncPermission);
+      if (contactPermissionHandle) {
+        Get.toNamed(Routes.contacts, arguments: {
+          "forward": false,
+          "group": false,
+          "groupJid": ""
+        });
+      }
+    }
+  }
 
-  void showQuickProfilePopup(
-      {required context, required RecentChatData chatItem, required Function() chatTap,
-        required Function() callTap, required Function() videoTap, required Function() infoTap}) {
-    Get.dialog(
-      Dialog(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0))),
-        child: SizedBox(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width * 0.7,
-          height: 300,
-          child: Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20)),
-                      child: Obx(() {
-                        return ImageNetwork(
-                          url: profile.image.toString(),
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width * 0.7,
-                          height: 250,
-                          clipOval: false,
-                          errorWidget: chatItem.isGroup!
-                              ? Image.asset(
-                            groupImg,
-                            height: 250,
-                            width: MediaQuery
-                                .of(context)
-                                .size
-                                .width * 0.72,
-                            fit: BoxFit.cover,
-                          )
-                              : ProfileTextImage(
-                            text: chatItem.profileName
-                                .checkNull()
-                                .isEmpty
-                                ? chatItem.nickName.checkNull()
-                                : chatItem.profileName.checkNull(),
-                            fontSize: 75,
-                            radius: 0,
-                          ),
-                        );
-                      }),
-                    ),
-                    Padding(
-                      padding:
-                      const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 20),
-                      child: Text(
-                        profile.isGroupProfile!
-                            ? profile.name.checkNull()
-                            : profile.mobileNumber.checkNull(),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 50,
-                child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: chatTap,
-                        child: SvgPicture.asset(
-                          quickMessage,
-                          fit: BoxFit.contain,
-                          width: 30,
-                          height: 30,
-                        ),
-                      ),
-                    ),
-                    !profile.isGroupProfile.checkNull() ? Expanded(
-                      child: InkWell(
-                        onTap: callTap,
-                        child: SvgPicture.asset(
-                          quickCall,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ) : const SizedBox.shrink(),
-                    !profile.isGroupProfile.checkNull() ? Expanded(
-                      child: InkWell(
-                        onTap: videoTap,
-                        child: SvgPicture.asset(
-                          quickVideo,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ) : const SizedBox.shrink(),
+  void onContactSyncComplete(bool result) {
+    getRecentChatList();
+    getArchivedChatsList();
+    // filterUserlist();
+    mirrorFlyLog('isSearching.value', isSearching.value.toString());
+    if(isSearching.value){
+      lastInputValue='';
+      onChange(search.text.toString());
+    }
+  }
 
-                    Expanded(
-                      child: InkWell(onTap: infoTap,
-                        child: SvgPicture.asset(
-                          quickInfo,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  void checkContactSyncPermission() {
+    Permission.contacts.isGranted.then((value) {
+      if(!value){
+        _userList.clear();
+        _userList.refresh();
+      }
+    });
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  Future<String> getJidFromPhoneNumber(String mobileNumber, String countryCode) async {
+    FlutterLibphonenumber().init();
+    var formatNumberSync = FlutterLibphonenumber().formatNumberSync(mobileNumber);
+    var parse = await FlutterLibphonenumber().parse(formatNumberSync);
+    var format = await FlutterLibphonenumber().format(mobileNumber, countryCode);
+    /*bool? isValid =
+      await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: mobileNumber, isoCode: countryCode);
+  String? normalizedNumber = await PhoneNumberUtil.normalizePhoneNumber(
+      phoneNumber: mobileNumber, isoCode: countryCode);
+  RegionInfo regionInfo =
+      await PhoneNumberUtil.getRegionInfo(phoneNumber: mobileNumber, isoCode: countryCode);
+  String? carrierName =
+      await PhoneNumberUtil.getNameForNumber(phoneNumber: mobileNumber, isoCode: countryCode);*/
+    debugPrint('formatNumberSync : $formatNumberSync');
+    debugPrint('parse : $parse');//{country_code: 971, e164: +971503209773, national: 050 320 9773, type: mobile, international: +971 50 320 9773, national_number: 503209773, region_code: AE}
+    debugPrint('format : $format');//{formatted: +971 50 320 9773}
+    // parse.then((value) => debugPrint('parse : $value'));
+    // format.then((value) => debugPrint('format : $value'));
+
+    // debugPrint('normalizedNumber : $normalizedNumber');
+    // debugPrint('regionInfo.regionPrefix : ${regionInfo.regionPrefix}');
+    // debugPrint('regionInfo.isoCode : ${regionInfo.isoCode}');
+    // debugPrint('regionInfo.formattedPhoneNumber : ${regionInfo.formattedPhoneNumber}');
+    // debugPrint('carrierName : $carrierName');
+
+    /*phoneNumberUtil = PhoneNumberUtil.createInstance(context);
+  if (mobileNumber.startsWith("*")) {
+    LogMessage.d(TAG, "Invalid PhoneNumber:"+mobileNumber);
+    return null;
+  }
+  try {
+    Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(mobileNumber.replaceAll("^0+", ""), countryCode);
+    String unformattedPhoneNumber = phoneNumberUtil.format(phoneNumber,
+        PhoneNumberUtil.PhoneNumberFormat.E164).replace("+", "");
+    return unformattedPhoneNumber + "@" + Constants.getDomain();
+  } catch (NumberParseException e) {
+  LogMessage.e(TAG, e);
+  }*/
+    return '';
   }
 }
+
+

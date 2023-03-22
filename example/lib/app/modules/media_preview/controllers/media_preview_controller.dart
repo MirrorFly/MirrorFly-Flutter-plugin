@@ -4,25 +4,25 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:fly_chat/flysdk.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
 
   var userName = Get.arguments['userName'];
+  var profile = Get.arguments['profile'] as Profile;
 
   TextEditingController caption = TextEditingController();
 
   var filePath = [].obs;
 
   var captionMessage = <String>[].obs;
-
+  var textMessage = Get.arguments['caption'];
   var currentPageIndex = 0.obs;
-
   var isFocused = false.obs;
   var showEmoji = false.obs;
 
@@ -35,11 +35,19 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     SchedulerBinding.instance
         .addPostFrameCallback((_) {
           filePath(Get.arguments['filePath']);
+          var index = 0;
           for(var _ in filePath){
-            captionMessage.add("");
+            if(index == 0 && textMessage != null){
+              captionMessage.add(textMessage);
+              index = index + 1;
+            }else {
+              captionMessage.add("");
+            }
           }
     });
-
+    if(textMessage != null){
+      caption.text = textMessage;
+    }
   }
   onChanged() {
     // count(139 - addStatusController.text.length);
@@ -47,7 +55,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   sendMedia() async {
     debugPrint("send media");
-    if (await AppUtils.isNetConnected()) {
+    // if (await AppUtils.isNetConnected()) {
       try {
         int i = 0;
         Platform.isIOS ? Helper.showLoading(message: "Compressing files") : null;
@@ -79,9 +87,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
         Get.back();
       }
       // Get.back();
-    } else {
+    /*} else {
       toToast(Constants.noInternetConnection);
-    }
+    }*/
     // debugPrint("caption text-> $captionMessage");
   }
 

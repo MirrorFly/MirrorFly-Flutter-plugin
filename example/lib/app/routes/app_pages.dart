@@ -22,10 +22,12 @@ import '../modules/chat/views/image_preview_view.dart';
 import '../modules/chat/views/location_sent_view.dart';
 import '../modules/chatInfo/bindings/chat_info_binding.dart';
 import '../modules/chatInfo/views/chat_info_view.dart';
+import '../modules/contact_sync/bindings/contact_sync_binding.dart';
+import '../modules/contact_sync/views/contact_sync_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
-import '../modules/dashboard/bindings/recent_search_binding.dart';
+// import '../modules/dashboard/bindings/recent_search_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
-import '../modules/dashboard/views/recent_search_view.dart';
+// import '../modules/dashboard/views/recent_search_view.dart';
 import '../modules/delete_account/bindings/delete_account_binding.dart';
 import '../modules/delete_account/views/delete_account_view.dart';
 import '../modules/delete_account_reason/bindings/delete_account_reason_binding.dart';
@@ -89,6 +91,7 @@ class AppPages {
   static const initial = Routes.login;
   static const profile = Routes.profile;
   static const dashboard = Routes.dashboard;
+  static const contactSync = Routes.contactSync;
   static const chat = Routes.chat;
   static const adminBlocked = Routes.adminBlocked;
 
@@ -125,11 +128,11 @@ class AppPages {
       page: () => const ViewAllMediaView(),
       binding: ViewAllMediaBinding(),
     ),
-    GetPage(
+    /*GetPage(
       name: _Paths.recentSearch,
       page: () => const RecentSearchView(),
       binding: RecentSearchBinding(),
-    ),
+    ),*/
     GetPage(
       name: _Paths.login,
       page: () => const LoginView(),
@@ -301,6 +304,11 @@ class AppPages {
       name: _Paths.dataUsageSetting,
       page: () => const DataUsageListView(),
       binding: DataUsageListBinding(),
+    ),
+    GetPage(
+      name: _Paths.contactSync,
+      page: () => const ContactSyncPage(),
+      binding: ContactSyncBinding(),
     ),
   ];
 }

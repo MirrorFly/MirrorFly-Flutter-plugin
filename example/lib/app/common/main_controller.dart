@@ -1,22 +1,30 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:fly_chat_example/app/base_controller.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:fly_chat_example/app/common/constants.dart';
-import 'package:fly_chat_example/app/data/pushnotification.dart';
-import 'package:fly_chat_example/app/data/session_management.dart';
-import 'package:fly_chat_example/app/data/helper.dart';
-import 'package:fly_chat_example/app/modules/chat/controllers/chat_controller.dart';
-import 'package:fly_chat_example/app/routes/app_pages.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fly_chat/flysdk.dart';
+import 'package:get/get.dart';
+import '../base_controller.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import '../common/constants.dart';
+import '../common/received_notification.dart';
+import '../data/apputils.dart';
+import '../data/pushnotification.dart';
+import '../data/session_management.dart';
+import '../data/helper.dart';
+import '../modules/chat/controllers/chat_controller.dart';
+import '../modules/contact_sync/controllers/contact_sync_controller.dart';
+import '../routes/app_pages.dart';
+
+import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
+import 'notification_service.dart';
 
-class MainController extends GetxController with BaseController
+class MainController extends FullLifeCycleController with BaseController, FullLifeCycleMixin
     /*with FullLifeCycleMixin */{
   var authToken = "".obs;
   Rx<String> uploadEndpoint = "".obs;
@@ -26,13 +34,14 @@ class MainController extends GetxController with BaseController
   var audioPlayed = false.obs;
   AudioPlayer player = AudioPlayer();
   String currentPostLabel = "00:00";
-
+  bool _notificationsEnabled = false;
   //network listener
   static StreamSubscription<InternetConnectionStatus>? listener;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
+    //presentPinPage();
     PushNotifications.init();
     initListeners();
     getMediaEndpoint();
@@ -40,9 +49,118 @@ class MainController extends GetxController with BaseController
     authToken(SessionManagement.getAuthToken().checkNull());
     getAuthToken();
     startNetworkListen();
-    checkAndEnableNotificationSound();
+
+    NotificationService notificationService = NotificationService();
+    await notificationService.init();
+    _isAndroidPermissionGranted();
+    _requestPermissions();
+    _configureDidReceiveLocalNotificationSubject();
+    _configureSelectNotificationSubject();
   }
 
+
+  Future<void> _isAndroidPermissionGranted() async {
+    if (Platform.isAndroid) {
+      final bool granted = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+          ?.areNotificationsEnabled() ??
+          false;
+
+      // setState(() {
+        _notificationsEnabled = granted;
+        debugPrint("Notification Enabled--> $_notificationsEnabled");
+      // });
+    }
+  }
+
+  Future<void> _requestPermissions() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    } else if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
+      final bool? granted = await androidImplementation?.requestPermission();
+      // setState(() {
+        _notificationsEnabled = granted ?? false;
+      // });
+    }
+  }
+
+  void _configureDidReceiveLocalNotificationSubject() {
+    didReceiveLocalNotificationStream.stream
+        .listen((ReceivedNotification receivedNotification) async {
+      await showDialog(
+        context: Get.context!,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: receivedNotification.title != null
+              ? Text(receivedNotification.title!)
+              : null,
+          content: receivedNotification.body != null
+              ? Text(receivedNotification.body!)
+              : null,
+          actions: <Widget>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              onPressed: () async {
+
+              },
+              child: const Text('Ok'),
+            )
+          ],
+        ),
+      );
+    });
+  }
+
+  void _configureSelectNotificationSubject() {
+    selectNotificationStream.stream.listen((String? payload) async {
+      // await Navigator.of(context).push(MaterialPageRoute<void>(
+      //   builder: (BuildContext context) => SecondPage(payload),
+      // ));
+      debugPrint("opening chat page--> $payload");
+      if(payload != null && payload.isNotEmpty){
+
+        if (Get.isRegistered<ChatController>()) {
+          FlyChat.getProfileDetails(payload, false).then((value) {
+            if (value != null) {
+              debugPrint("notification group info controller");
+              var profile = profiledata(value.toString());
+              // Get.toNamed(Routes.chat, arguments: profile);
+              Get.back(result: profile);
+            }
+          });
+        }else {
+          Get.toNamed(Routes.chat,
+              parameters: {'isFromStarred': 'true', "userJid": payload});
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    didReceiveLocalNotificationStream.close();
+    selectNotificationStream.close();
+    super.dispose();
+  }
 
 
   getMediaEndpoint() async {
@@ -114,20 +232,28 @@ class MainController extends GetxController with BaseController
         switch (status) {
           case InternetConnectionStatus.connected:
             mirrorFlyLog("network",'Data connection is available.');
+            networkConnected();
             if (Get.isRegistered<ChatController>()) {
               Get.find<ChatController>().networkConnected();
             }
             if (Get.isRegistered<ChatInfoController>()) {
               Get.find<ChatInfoController>().networkConnected();
             }
+            if (Get.isRegistered<ContactSyncController>()) {
+              Get.find<ContactSyncController>().networkConnected();
+            }
             break;
           case InternetConnectionStatus.disconnected:
             mirrorFlyLog("network",'You are disconnected from the internet.');
+            networkDisconnected();
             if (Get.isRegistered<ChatController>()) {
               Get.find<ChatController>().networkDisconnected();
             }
             if (Get.isRegistered<ChatInfoController>()) {
               Get.find<ChatInfoController>().networkDisconnected();
+            }
+            if (Get.isRegistered<ContactSyncController>()) {
+              Get.find<ContactSyncController>().networkDisconnected();
             }
             break;
         }
@@ -141,15 +267,90 @@ class MainController extends GetxController with BaseController
     super.onClose();
   }
 
-  void checkAndEnableNotificationSound() {
-    FlyChat.getNotificationSound().then((value){
-      debugPrint("initial notification sound--> $value");
-      if(value == null){
-        FlyChat.setNotificationSound(true);
-        SessionManagement.setNotificationSound(true);
-      }else{
-        SessionManagement.setNotificationSound(value);
+  @override
+  void onDetached() {
+    mirrorFlyLog('mainController', 'onDetached');
+  }
+
+  @override
+  void onInactive() {
+    mirrorFlyLog('mainController', 'onInactive');
+  }
+
+  @override
+  void onPaused() {
+    mirrorFlyLog('mainController', 'onPaused');
+    SessionManagement.setAppSessionNow();
+  }
+
+  @override
+  void onResumed() {
+    mirrorFlyLog('mainController', 'onResumed');
+    checkShouldShowPin();
+    if(!SessionManagement.isTrailLicence()) {
+      syncContacts();
+    }
+  }
+
+  void syncContacts() async {
+    if(await Permission.contacts.isGranted) {
+      if (await AppUtils.isNetConnected() &&
+          !await FlyChat.contactSyncStateValue()) {
+        final permission = await Permission.contacts.status;
+        if (permission == PermissionStatus.granted) {
+          if(SessionManagement.getLogin()) {
+            FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+          }
+        }
       }
-    });
+    }else{
+      if(SessionManagement.isInitialContactSyncDone()) {
+        FlyChat.revokeContactSync().then((value) {
+          onContactSyncComplete(true);
+          mirrorFlyLog("checkContactPermission isSuccess", value.toString());
+        });
+      }
+    }
+  }
+
+  void networkDisconnected() {}
+
+  void networkConnected() {
+    if(!SessionManagement.isTrailLicence()) {
+      syncContacts();
+    }
+  }
+
+  /*
+  *This function used to check time out session for app lock
+  */
+  void checkShouldShowPin(){
+    var lastSession = SessionManagement.appLastSession();
+    var lastPinChangedAt = SessionManagement.lastPinChangedAt();
+    var sessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastSession));
+    var lockSessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastPinChangedAt));
+    debugPrint('sessionDifference seconds ${sessionDifference.inSeconds}');
+    debugPrint('lockSessionDifference days ${lockSessionDifference.inDays}');
+    if(Constants.pinAlert<=lockSessionDifference.inDays && Constants.pinExpiry>=lockSessionDifference.inDays){
+      //Alert Day
+      debugPrint('Alert Day');
+    } else if(Constants.pinExpiry<lockSessionDifference.inDays) {
+      //Already Expired day
+      debugPrint('Already Expired');
+      presentPinPage();
+    }else{
+      //if 30 days not completed
+      debugPrint('Not Expired');
+      if (Constants.sessionLockTime <= sessionDifference.inSeconds) {
+        //Show Pin if App Lock Enabled
+        debugPrint('Show Pin');
+        presentPinPage();
+      }
+    }
+  }
+  void presentPinPage(){
+    if((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute!=Routes.pin){
+      Get.toNamed(Routes.pin,);
+    }
   }
 }

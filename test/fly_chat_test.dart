@@ -89,7 +89,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String?> contactSyncStateValue() {
+  Future<bool> contactSyncStateValue() {
     // contactSyncStateValue
     throw UnimplementedError();
   }
@@ -161,7 +161,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<bool?> deleteProfileStatus(num id, String status, bool isCurrentStatus) {
+  Future<bool?> deleteProfileStatus(String id, String status, bool isCurrentStatus) {
     // deleteProfileStatus
     throw UnimplementedError();
   }
@@ -714,7 +714,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onContactSyncComplete
-  Stream get onContactSyncComplete => throw UnimplementedError();
+  Stream<bool> get onContactSyncComplete => throw UnimplementedError();
 
   @override
   // onDeleteGroup
@@ -767,6 +767,10 @@ class MockFlyChatFlutterPlatform
   @override
   // onMediaStatusUpdated
   Stream get onMediaStatusUpdated => throw UnimplementedError();
+
+  @override
+  // implement uploadDownloadProgressChanged
+  Stream get onUploadDownloadProgressChanged => throw UnimplementedError();
 
   @override
   // onMemberMadeAsAdmin
@@ -989,7 +993,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future setMyProfileStatus(String status) {
+  Future setMyProfileStatus(String status,[String? statusId]) {
     // setMyProfileStatus
     throw UnimplementedError();
   }
@@ -1144,7 +1148,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // userDeletedHisProfile
-  Stream get userDeletedHisProfile => throw UnimplementedError();
+  Stream<String> get userDeletedHisProfile => throw UnimplementedError();
 
   @override
   // userProfileFetched
@@ -1223,6 +1227,49 @@ class MockFlyChatFlutterPlatform
     // insertBusyStatus
     throw UnimplementedError();
   }
+
+  @override
+  Future addContact(String number) {
+    // implement addContact
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getNonChatUsers() {
+    // implement getNonChatUsers
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isTrailLicence() {
+    // implement isTrailLicence
+    throw UnimplementedError();
+  }
+
+  @override
+  Future setRegionCode(String regionCode) {
+    // implement setRegionCode
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> iOSFileExist(String filePath) {
+    // implement iOSFileExist
+    throw UnimplementedError();
+  }
+
+  @override
+  Future insertNewProfileStatus(String status) {
+    // implement insertNewProfileStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future setDefaultNotificationSound() {
+    // implement setDefaultNotificationSound
+    throw UnimplementedError();
+  }
+
 }
 
 void main() {

@@ -34,7 +34,8 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
           appBar: getAppBar(),
           body: Obx(() {
             return controller.starredChatList.isNotEmpty ?
-            SingleChildScrollView(child: favouriteChatListView(controller.starredChatList)) : const Center(child: Padding(
+            SingleChildScrollView(child: favouriteChatListView(controller.starredChatList)) :
+            controller.isListLoading.value ? const Center(child: CircularProgressIndicator(),) : const Center(child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
               child: Text("No Starred Messages Found"),
             ));
@@ -114,6 +115,8 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                                       : Border.all(color: chatBorderColor)),
                               child: MessageContent(chatList: starredChatList,index:index, onPlayAudio: (){
                                 controller.playAudio(starredChatList[index]);
+                              },onSeekbarChange:(value){
+
                               },),
                             ),
                           ),

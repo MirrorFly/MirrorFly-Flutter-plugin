@@ -29,6 +29,7 @@ class LoginController extends GetxController {
   Duration myDuration = const Duration(seconds: 31);
 
   String? get countryCode => selectedCountry.value.dialCode;
+  String? get regionCode => selectedCountry.value.code;
   var verificationId = "";
   int? resendingToken;
   Rx<bool> timeout = false.obs;
@@ -66,6 +67,11 @@ class LoginController extends GetxController {
       myDuration = Duration(seconds: seconds.value);
       debugPrint(seconds.value.toString());
     }
+  }
+  @override
+  void onReady() {
+    super.onReady();
+    FlyChat.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
   }
 
   @override
@@ -203,8 +209,12 @@ class LoginController extends GetxController {
     showLoading();
     try {
       await _auth.signInWithCredential(credential).then((value) {
-        sendTokenToServer();// for Mirrorfly user list purpose verify the user
-        //registerAccount();//for get registered user purpose
+        if(SessionManagement.isTrailLicence()) {
+          sendTokenToServer(); // for Mirrorfly user list purpose verify the user
+        }else{
+          validateDeviceToken('');
+          //registerAccount();//for get registered user purpose
+        }
         stopTimer();
         mirrorFlyLog("sign in ", value.toString());
       }).catchError((error) {
@@ -235,7 +245,7 @@ class LoginController extends GetxController {
 
   verifyTokenWithServer(String token) async {
     if(await AppUtils.isNetConnected()) {
-      var userName = (/*countryCode! + */mobileNumber.text.toString()).replaceAll("+", "");
+      var userName = (countryCode!.replaceAll('+', '') + mobileNumber.text.toString()).replaceAll("+", "");
       //make api call
       FlyChat.verifyToken(userName, token).then((value) {
         if (value != null) {
@@ -290,17 +300,18 @@ class LoginController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       showLoading();
       FlyChat.registerUser(
-        /*countryCode! + */mobileNumber.text, token:SessionManagement.getToken().checkNull())
+        countryCode!.replaceAll('+', '') + mobileNumber.text, token:SessionManagement.getToken().checkNull())
           .then((value) {
         if (value.contains("data")) {
           var userData = registerModelFromJson(value); //message
           SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
           SessionManagement.setUser(userData.data!);
-          FlyChat.setNotificationSound(true);
-          SessionManagement.setNotificationSound(true);
+          // FlyChat.setNotificationSound(true);
+          // SessionManagement.setNotificationSound(true);
           // userData.data.
           enableArchive();
-          SessionManagement.setCountryCode(countryCode ?? "");
+          FlyChat.setRegionCode(regionCode ?? 'IN');///if its not set then error comes in contact sync delete from phonebook.
+          SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
           setUserJID(userData.data!.username!);
         }
       }).catchError((error) {

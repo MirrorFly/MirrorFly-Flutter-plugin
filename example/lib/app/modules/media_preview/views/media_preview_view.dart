@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fly_chat_example/app/common/constants.dart';
 
 import 'package:get/get.dart';
 import 'package:fly_chat_example/app/common/constants.dart';
+import 'package:fly_chat_example/app/data/helper.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/widgets.dart';
@@ -20,7 +22,56 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
         backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.black,
-          iconTheme: const IconThemeData(color: Colors.white),
+          automaticallyImplyLeading: false,
+          leadingWidth: 80,
+          leading: InkWell(
+            onTap: () {
+              Get.back();
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  width: 10,
+                ),
+                const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                ImageNetwork(
+                  url: controller.profile.image.checkNull(),
+                  width: 35,
+                  height: 35,
+                  clipOval: true,
+                  errorWidget: controller.profile.isGroupProfile ?? false
+                      ? ClipOval(
+                          child: Image.asset(
+                            groupImg,
+                            height: 35,
+                            width: 35,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : ProfileTextImage(
+                          text: controller.profile.name.checkNull().isEmpty
+                              ? controller.profile.nickName.checkNull().isEmpty
+                                  ? controller.profile.mobileNumber.checkNull()
+                                  : controller.profile.nickName.checkNull()
+                              : controller.profile.name.checkNull(),
+                          radius: 18,
+                        ),
+                  isGroup: controller.profile.isGroupProfile.checkNull(),
+                  blocked: controller.profile.isBlockedMe.checkNull() ||
+                      controller.profile.isAdminBlocked.checkNull(),
+                  unknown: (!controller.profile.isItSavedContact.checkNull() ||
+                      controller.profile.isDeletedContact()),
+                ),
+              ],
+            ),
+          ),
           actions: [
             Obx(() {
               return controller.filePath.length > 1
@@ -153,7 +204,8 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                               Row(
                                 children: [
                                   Obx(() {
-                                    return controller.isFocused.value || controller.showEmoji.value
+                                    return controller.isFocused.value ||
+                                            controller.showEmoji.value
                                         ? InkWell(
                                             onTap: () {
                                               if (!controller.showEmoji.value) {
@@ -344,8 +396,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
       if (controller.showEmoji.value) {
         return EmojiLayout(
             textController: controller.caption,
-            onEmojiSelected : (cat, emoji)=>controller.onChanged()
-        );
+            onEmojiSelected: (cat, emoji) => controller.onChanged());
       } else {
         return const SizedBox.shrink();
       }

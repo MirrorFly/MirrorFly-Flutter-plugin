@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:fly_chat/flysdk.dart';
 import 'package:get/get.dart';
 
 import '../src/data/models/picked_asset_model.dart';
@@ -6,12 +8,15 @@ class GalleryPickerController extends GetxController {
 
   var pickedFile = <PickedAssetModel>[].obs;
   var userName = Get.arguments['userName'];
+  var textMessage = Get.arguments['caption'];
+  var profile = Get.arguments['profile'] as Profile;
   var maxPickImages = 10;
 
   @override
   void onInit() {
     super.onInit();
     pickedFile.clear();
+    debugPrint("gallery picker controller --> $textMessage");
   }
 
 

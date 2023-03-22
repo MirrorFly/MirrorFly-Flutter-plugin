@@ -44,7 +44,7 @@ class GroupInfoController extends GetxController {
     profile_((Get.arguments as Profile));
     _mute(profile.isMuted!);
     scrollController.addListener(_scrollListener);
-    // getGroupMembers(false);
+    getGroupMembers(false);
     getGroupMembers(null);
     groupAdmin();
     memberOfGroup();
@@ -78,12 +78,75 @@ class GroupInfoController extends GetxController {
         var index = groupMembers.indexWhere((element) => element.jid == jid);
         // debugPrint("profile : $index");
         if (!index.isNegative) {
+          value.isGroupAdmin = groupMembers[index].isGroupAdmin;
           groupMembers[index] = value;
+          groupMembers.refresh();
         }
       });
     }
   }
 
+  void onLeftFromGroup({required String groupJid, required String userJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      if (groupJid == profile.jid) {
+        var index = groupMembers.indexWhere((element) => element.jid == userJid);
+        if(!index.isNegative) {
+          debugPrint('user left ${groupMembers[index].name}');
+          groupMembers.removeAt(index);
+          groupMembers.refresh();
+        }
+      }
+    }
+  }
+
+  void onMemberMadeAsAdmin({required String groupJid,
+    required String newAdminMemberJid, required String madeByMemberJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      debugPrint('onMemberMadeAsAdmin $newAdminMemberJid');
+      if (groupJid == profile.jid) {
+        var index = groupMembers.indexWhere((element) => element.jid == newAdminMemberJid);
+        if(!index.isNegative) {
+          debugPrint('user admin ${groupMembers[index].name}');
+          groupMembers[index].isGroupAdmin=true;
+          groupMembers.refresh();
+        }
+      }
+    }
+  }
+
+  void onMemberRemovedFromGroup({required String groupJid,
+    required String removedMemberJid, required String removedByMemberJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      debugPrint('onMemberRemovedFromGroup $removedMemberJid');
+      if (groupJid == profile.jid) {
+        var index = groupMembers.indexWhere((element) => element.jid == removedMemberJid);
+        if(!index.isNegative) {
+          debugPrint('user removed ${groupMembers[index].name}');
+          groupMembers.removeAt(index);
+          groupMembers.refresh();
+        }
+        loadGroupExistence();
+      }
+    }
+  }
+
+  void onNewMemberAddedToGroup({required String groupJid,
+    required String newMemberJid, required String addedByMemberJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      debugPrint('onNewMemberAddedToGroup $newMemberJid');
+      if (groupJid == profile.jid) {
+        var index = groupMembers.indexWhere((element) => element.jid == newMemberJid);
+        if(index.isNegative) {
+          if(newMemberJid.checkNull().isNotEmpty) {
+            getProfileDetails(newMemberJid).then((value) {
+              groupMembers.add(value);
+              groupMembers.refresh();
+            });
+          }
+        }
+      }
+    }
+  }
 
   _scrollListener() {
     if (scrollController.hasClients) {
@@ -115,6 +178,7 @@ class GroupInfoController extends GetxController {
 
   getGroupMembers(bool? server){
     FlyChat.getGroupMembersList(profile.jid.checkNull(),server).then((value) {
+      mirrorFlyLog("getGroupMembersList", value);
       if(value!=null){
         var list = profileFromJson(value);
         groupMembers.value=(list);
@@ -289,8 +353,8 @@ class GroupInfoController extends GetxController {
       hideLoader();
       if(value!=null){
         if(value){
-          profile_.value.name=name;
-          profile_.value.nickName=name;
+          profile_.value.name = name;
+          profile_.value.nickName = name;
           profile_.refresh();
         }
       }
@@ -353,7 +417,7 @@ class GroupInfoController extends GetxController {
       FlyChat.addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
         hideLoader();
         if(value!=null && value){
-          getGroupMembers(false);
+          //getGroupMembers(false);
         }else{
           toToast("Error while adding Members in this group");
         }
@@ -374,7 +438,7 @@ class GroupInfoController extends GetxController {
         FlyChat.removeMemberFromGroup(profile.jid.checkNull(), userJid).then((value){
           hideLoader();
           if(value!=null && value){
-            getGroupMembers(false);
+            //getGroupMembers(false);
           }else{
             toToast("Error while Removing this member");
           }
@@ -392,7 +456,7 @@ class GroupInfoController extends GetxController {
         FlyChat.makeAdmin(profile.jid.checkNull(), userJid).then((value){
           hideLoader();
           if(value!=null && value){
-            getGroupMembers(false);
+            //getGroupMembers(false);
           }else{
             toToast("Error while make admin this member");
           }
@@ -422,5 +486,21 @@ class GroupInfoController extends GetxController {
 
   onChanged(){
     count.value = (25 - nameController.text.length);
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  void loadGroupExistence() {
+    memberOfGroup();
+  }
+
+  void unblockedThisUser(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  void userBlockedMe(String jid) {
+    userUpdatedHisProfile(jid);
   }
 }

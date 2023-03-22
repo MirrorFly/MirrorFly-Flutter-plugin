@@ -35,7 +35,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String?> contactSyncStateValue() {
+  Future<bool> contactSyncStateValue() {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -71,7 +71,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<bool?> setMyBusyStatus(String busystatus) {
+  Future<bool?> setMyBusyStatus(String busyStatus) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -88,7 +88,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<bool?> deleteProfileStatus(
-      num id, String status, bool isCurrentStatus) {
+      String id, String status,
+      bool isCurrentStatus) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -387,6 +388,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get onMediaStatusUpdated => throw UnimplementedError('has not been implemented.');
 
+  Stream<dynamic> get onUploadDownloadProgressChanged => throw UnimplementedError('has not been implemented.');
+
   Stream<dynamic> get onGroupProfileFetched => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get onNewGroupCreated => throw UnimplementedError('has not been implemented.');
@@ -424,7 +427,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get onAdminBlockedUser => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onContactSyncComplete => throw UnimplementedError('has not been implemented.');
+  Stream<bool> get onContactSyncComplete => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get onLoggedOut => throw UnimplementedError('has not been implemented.');
 
@@ -434,7 +437,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get userCameOnline => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get userDeletedHisProfile => throw UnimplementedError('has not been implemented.');
+  Stream<String> get userDeletedHisProfile => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get userProfileFetched => throw UnimplementedError('has not been implemented.');
 
@@ -515,7 +518,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> setMyProfileStatus(String status) {
+  Future<dynamic> setMyProfileStatus(String status, [String? statusId]) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<dynamic> insertNewProfileStatus(String status) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -678,6 +685,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  Future<bool?> iOSFileExist(String filePath) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Future<dynamic> getWebLoginDetails() {
     throw UnimplementedError('has not been implemented.');
   }
@@ -751,7 +762,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<bool?> isAdmin(String jid,String groupJid) {
+  Future<bool?> isAdmin(String userJid, String groupJID) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -792,6 +803,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<String?> getDefaultNotificationUri() {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future setDefaultNotificationSound() {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -841,6 +856,19 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<bool?> insertBusyStatus(String busyStatus) async {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<bool?> isTrailLicence() async {
+    throw UnimplementedError('has not been implemented.');
+  }
+  Future<dynamic> getNonChatUsers() async {
+    throw UnimplementedError('has not been implemented.');
+  }
+  Future addContact(String number) async {
+    throw UnimplementedError('has not been implemented.');
+  }
+  Future setRegionCode(String regionCode) async {
     throw UnimplementedError('has not been implemented.');
   }
 }

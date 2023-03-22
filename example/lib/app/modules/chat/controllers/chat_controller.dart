@@ -53,13 +53,13 @@ class ChatController extends FullLifeCycleController
   var isUserTyping = false.obs;
   var isAudioRecording = Constants.audioRecordInitial.obs;
   late Timer? _audioTimer;
-  var timerInit = "00.00".obs;
+  var timerInit = "00:00".obs;
   DateTime? startTime;
 
   double screenHeight = 0.0;
   double screenWidth = 0.0;
 
-  AudioPlayer player = AudioPlayer();
+  // AudioPlayer player = AudioPlayer();
 
   late String audioSavePath;
   late String recordedAudioPath;
@@ -103,9 +103,11 @@ class ChatController extends FullLifeCycleController
   String? nJid;
   String? starredChatMessageId;
 
+  bool get isTrail => SessionManagement.isTrailLicence();
+
   @override
-  void onReady() async {
-    super.onReady();
+  void onInit() async {
+    super.onInit();
     //await FlyChat.enableDisableBusyStatus(true);
     // var profileDetail = Get.arguments as Profile;
     // profile_.value = profileDetail;
@@ -140,8 +142,9 @@ class ChatController extends FullLifeCycleController
         // initListeners();
       });
     }
+    mirrorFlyLog('savedContact', profile.isItSavedContact.toString());
 
-    player.onPlayerCompletion.listen((event) {
+    /*player.onPlayerCompletion.listen((event) {
       playingChat!.mediaChatMessage!.isPlaying = false;
       playingChat!.mediaChatMessage!.currentPos = 0;
       player.stop();
@@ -150,9 +153,10 @@ class ChatController extends FullLifeCycleController
     });
 
     player.onAudioPositionChanged.listen((Duration p) {
+      mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
       playingChat?.mediaChatMessage!.currentPos = (p.inMilliseconds);
       chatList.refresh();
-    });
+    });*/
 
     setAudioPath();
 
@@ -229,6 +233,7 @@ class ChatController extends FullLifeCycleController
     });
 
     FlyChat.setOnGoingChatUser(profile.jid!);
+    SessionManagement.setCurrentChatJID(profile.jid.checkNull());
     getChatHistory();
     // compute(getChatHistory, profile.jid);
     debugPrint("==================");
@@ -273,28 +278,29 @@ class ChatController extends FullLifeCycleController
     debugPrint("onClose");
     saveUnsentMessage();
     FlyChat.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
     isLive = false;
-    player.stop();
-    player.dispose();
+    // player.stop();
+    // player.dispose();
     super.onClose();
   }
+
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     debugPrint("dispose");
   }
 
-  clearMessage(){
+  clearMessage() {
     if (profile.jid.checkNull().isNotEmpty) {
+      messageController.text = "";
       FlyChat.saveUnsentMessage(profile.jid.checkNull(), '');
-      ReplyHashMap.saveReplyId(
-          profile.jid.checkNull(), '');
+      ReplyHashMap.saveReplyId(profile.jid.checkNull(), '');
     }
   }
 
   saveUnsentMessage() {
-    if (messageController.text.trim().isNotEmpty &&
-        profile.jid.checkNull().isNotEmpty) {
+    if (profile.jid.checkNull().isNotEmpty) {
       FlyChat.saveUnsentMessage(
           profile.jid.checkNull(), messageController.text.toString());
     }
@@ -333,11 +339,12 @@ class ChatController extends FullLifeCycleController
         ? await FlyChat.isBusyStatusEnabled()
         : false;
     if (!busyStatus.checkNull()) {
-      if (await AppUtils.isNetConnected()) {
+      //if (await AppUtils.isNetConnected()) {
+        focusNode.unfocus();
         showBottomSheetAttachment();
-      } else {
+      /*} else {
         toToast(Constants.noInternetConnection);
-      }
+      }*/
     } else {
       //show busy status popup
       showBusyStatusAlert(showBottomSheetAttachment);
@@ -387,18 +394,15 @@ class ChatController extends FullLifeCycleController
         FlyChat.sendTextMessage(
                 messageController.text, profile.jid.toString(), replyMessageId)
             .then((value) {
+          mirrorFlyLog("text message", value);
           messageController.text = "";
           isUserTyping(false);
           clearMessage();
-          //need to work here
-          final jsonResponse = json.decode(value);
-          //Written for iOS Response
-          if (jsonResponse.containsKey('some')) {
-            debugPrint("Inside some condition");
-            value = json.encode(jsonResponse['some']);
-            debugPrint(value);
-          }
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+          mirrorFlyLog(
+              "inserting chat message",
+              chatMessageModel.replyParentChatMessage?.messageType ??
+                  "value is null");
           chatList.insert(0, chatMessageModel);
           scrollToBottom();
         });
@@ -460,6 +464,9 @@ class ChatController extends FullLifeCycleController
         case Constants.mDocument:
           sendDocumentMessage(
               messageObject!.file!, messageObject!.replyMessageId!);
+          break;
+        case Constants.mVideo:
+          sendVideoMessage(messageObject!.file!, messageObject!.caption!, messageObject!.replyMessageId!);
           break;
       }
     }
@@ -621,6 +628,7 @@ class ChatController extends FullLifeCycleController
         return FlyChat.sendImageMessage(
                 profile.jid!, path, caption, replyMessageID)
             .then((value) {
+          clearMessage();
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
           chatList.insert(0, chatMessageModel);
           scrollToBottom();
@@ -656,7 +664,8 @@ class ChatController extends FullLifeCycleController
         imagePath.value = (result.files.single.path!);
         Get.toNamed(Routes.imagePreview, arguments: {
           "filePath": imagePath.value,
-          "userName": profile.name!
+          "userName": getName(profile),
+          "profile": profile
         });
       } else if (result.files.first.extension == 'mp4' ||
           result.files.first.extension == 'MP4' ||
@@ -666,7 +675,8 @@ class ChatController extends FullLifeCycleController
         imagePath.value = (result.files.single.path!);
         Get.toNamed(Routes.videoPreview, arguments: {
           "filePath": imagePath.value,
-          "userName": profile.name!
+          "userName": getName(profile),
+          "profile": profile
         });
       }
     } else {
@@ -703,21 +713,35 @@ class ChatController extends FullLifeCycleController
     });
   }
 
-  sendVideoMessage(String videoPath, String caption, String replyMessageID) {
-    if (isReplying.value) {
-      replyMessageID = replyChatMessage.messageId;
+  sendVideoMessage(String videoPath, String caption, String replyMessageID) async {
+    var busyStatus = !profile.isGroupProfile.checkNull()
+        ? await FlyChat.isBusyStatusEnabled()
+        : false;
+    if (!busyStatus.checkNull()) {
+      if (isReplying.value) {
+        replyMessageID = replyChatMessage.messageId;
+      }
+      isReplying(false);
+      Platform.isIOS ? Helper.showLoading(message: "Compressing Video") : null;
+      return FlyChat.sendVideoMessage(
+          profile.jid!, videoPath, caption, replyMessageID)
+          .then((value) {
+        clearMessage();
+        Platform.isIOS ? Helper.hideLoading() : null;
+        ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+        chatList.insert(0, chatMessageModel);
+        scrollToBottom();
+        return chatMessageModel;
+      });
+    }else{
+      //show busy status popup
+      messageObject = MessageObject(
+          toJid: profile.jid.toString(),
+          replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "",
+          messageType: Constants.mVideo,
+          file: videoPath,caption: caption);
+      showBusyStatusAlert(disableBusyChatAndSend);
     }
-    isReplying(false);
-    Platform.isIOS ? Helper.showLoading(message: "Compressing Video") : null;
-    return FlyChat.sendVideoMessage(
-            profile.jid!, videoPath, caption, replyMessageID)
-        .then((value) {
-      Platform.isIOS ? Helper.hideLoading() : null;
-      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-      chatList.insert(0, chatMessageModel);
-      scrollToBottom();
-      return chatMessageModel;
-    });
   }
 
   checkFile(String mediaLocalStoragePath) {
@@ -728,15 +752,7 @@ class ChatController extends FullLifeCycleController
   ChatMessageModel? playingChat;
 
   playAudio(ChatMessageModel chatMessage) async {
-    if (playingChat != null) {
-      if (playingChat?.mediaChatMessage!.messageId != chatMessage.messageId) {
-        player.stop();
-        playingChat?.mediaChatMessage!.isPlaying = false;
-        playingChat = chatMessage;
-      }
-    } else {
-      playingChat = chatMessage;
-    }
+    /*setPlayingChat(chatMessage);
     if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.play(
           playingChat!.mediaChatMessage!.mediaLocalStoragePath,
@@ -764,11 +780,36 @@ class ChatController extends FullLifeCycleController
       } else {
         mirrorFlyLog("", "Error on pause audio.");
       }
+    }*/
+  }
+
+  void setPlayingChat(ChatMessageModel chatMessage) {
+    /*if (playingChat != null) {
+      if (playingChat?.mediaChatMessage!.messageId != chatMessage.messageId) {
+        player.stop();
+        playingChat?.mediaChatMessage!.isPlaying = false;
+        playingChat = chatMessage;
+      }
+    } else {
+      playingChat = chatMessage;
     }
+    if (isAudioRecording.value == Constants.audioRecording) {
+      stopRecording();
+    }*/
+  }
+
+  void onSeekbarChange(double value,ChatMessageModel chatMessage) {
+    /*debugPrint('onSeekbarChange $value');
+    if (playingChat != null) {
+      player.seek(Duration(milliseconds: value.toInt()));
+    }else{
+      chatMessage.mediaChatMessage?.currentPos=value.toInt();
+      //chatList.refresh();
+    }*/
   }
 
   Future<void> playerPause() async {
-    if (playingChat != null) {
+   /* if (playingChat != null) {
       if (playingChat!.mediaChatMessage!.isPlaying) {
         int result = await player.pause();
         if (result == 1) {
@@ -778,7 +819,7 @@ class ChatController extends FullLifeCycleController
           mirrorFlyLog("", "Error on pause audio.");
         }
       }
-    }
+    }*/
   }
 
   Future<bool> askContactsPermission() async {
@@ -882,42 +923,6 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  openDocument(String mediaLocalStoragePath, BuildContext context) async {
-    // if (await askStoragePermission()) {
-    if (mediaLocalStoragePath.isNotEmpty) {
-      // final _result = await OpenFile.open(mediaLocalStoragePath);
-      // debugPrint(_result.message);
-      // FileView(
-      //   controller: FileViewController.file(File(mediaLocalStoragePath)),
-      // );
-      // Get.toNamed(Routes.FILE_VIEWER, arguments: { "filePath": mediaLocalStoragePath});
-      // final String filePath = testFile.absolute.path;
-      // final Uri uri = Uri.file(mediaLocalStoragePath);
-      //
-      // if (!File(uri.toFilePath()).existsSync()) {
-      //   throw '$uri does not exist!';
-      // }
-      // if (!await launchUrl(uri)) {
-      //   throw 'Could not launch $uri';
-      // }
-
-      FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
-        final scaffold = ScaffoldMessenger.of(context);
-        scaffold.showSnackBar(
-          SnackBar(
-            content: const Text(
-                'No supported application available to open this file format'),
-            action: SnackBarAction(
-                label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
-          ),
-        );
-      });
-    } else {
-      debugPrint("media does not exist");
-    }
-    // }
-  }
-
   pickAudio() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -961,11 +966,13 @@ class ChatController extends FullLifeCycleController
       if (isReplying.value) {
         replyMessageId = replyChatMessage.messageId;
       }
+
       isUserTyping(false);
       isReplying(false);
       FlyChat.sendAudioMessage(
               profile.jid!, filePath, isRecorded, duration, replyMessageId)
           .then((value) {
+        mirrorFlyLog("Audio Message sent", value);
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.insert(0, chatMessageModel);
         scrollToBottom();
@@ -1038,6 +1045,7 @@ class ChatController extends FullLifeCycleController
       chatItem.isSelected = false;
     }
     selectedChatList.clear();
+    chatList.refresh();
   }
 
   void addChatSelection(ChatMessageModel item) {
@@ -1099,7 +1107,7 @@ class ChatController extends FullLifeCycleController
       var chatMessage =
           selectedChatList.isNotEmpty ? selectedChatList[0] : null;
       Helper.showAlert(
-          title: "Report ${profile.name}?",
+          title: "Report ${getName(profile)}?",
           message:
               "${selectedChatList.isNotEmpty ? "This message will be forwarded to admin." : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
           actions: [
@@ -1338,7 +1346,7 @@ class ChatController extends FullLifeCycleController
   blockUser() {
     Future.delayed(const Duration(milliseconds: 100), () {
       Helper.showAlert(
-          message: "Are you sure you want to Block ${profile.name}?",
+          message: "Are you sure you want to Block ${getName(profile)}?",
           actions: [
             TextButton(
                 onPressed: () {
@@ -1352,10 +1360,11 @@ class ChatController extends FullLifeCycleController
                     Helper.showLoading(message: "Blocking User");
                     FlyChat.blockUser(profile.jid!).then((value) {
                       debugPrint(value);
+                      profile.isBlocked = true;
                       isBlocked(true);
                       saveUnsentMessage();
                       Helper.hideLoading();
-                      toToast('${profile.name} has been blocked');
+                      toToast('${getName(profile)} has been blocked');
                     }).catchError((error) {
                       Helper.hideLoading();
                       debugPrint(error);
@@ -1372,26 +1381,43 @@ class ChatController extends FullLifeCycleController
   clearUserChatHistory() {
     if (chatList.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 100), () {
+        var starred =
+            chatList.indexWhere((element) => element.isMessageStarred);
         Helper.showAlert(
             message: "Are you sure you want to clear the chat?",
             actions: [
-              TextButton(
-                  onPressed: () {
-                    Get.back();
-                    clearChatHistory(false);
-                  },
-                  child: const Text("CLEAR ALL")),
+              Visibility(
+                visible: !starred.isNegative,
+                child: TextButton(
+                    onPressed: () {
+                      Get.back();
+                      clearChatHistory(false);
+                    },
+                    child: const Text("CLEAR ALL")),
+              ),
               TextButton(
                   onPressed: () {
                     Get.back();
                   },
                   child: const Text("CANCEL")),
-              TextButton(
-                  onPressed: () {
-                    Get.back();
-                    clearChatHistory(true);
-                  },
-                  child: const Text("CLEAR EXCEPT STARRED")),
+              Visibility(
+                visible: starred.isNegative,
+                child: TextButton(
+                    onPressed: () {
+                      Get.back();
+                      clearChatHistory(false);
+                    },
+                    child: const Text("CLEAR")),
+              ),
+              Visibility(
+                visible: !starred.isNegative,
+                child: TextButton(
+                    onPressed: () {
+                      Get.back();
+                      clearChatHistory(true);
+                    },
+                    child: const Text("CLEAR EXCEPT STARRED")),
+              ),
             ]);
       });
     } else {
@@ -1400,33 +1426,36 @@ class ChatController extends FullLifeCycleController
   }
 
   unBlockUser() {
-    Helper.showAlert(message: "Unblock ${profile.name}?", actions: [
-      TextButton(
-          onPressed: () {
-            Get.back();
-          },
-          child: const Text("NO")),
-      TextButton(
-          onPressed: () async {
-            if (await AppUtils.isNetConnected()) {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      Helper.showAlert(message: "Unblock ${getName(profile)}?", actions: [
+        TextButton(
+            onPressed: () {
               Get.back();
-              // Helper.showLoading(message: "Unblocking User");
-              FlyChat.unblockUser(profile.jid!).then((value) {
-                debugPrint(value.toString());
-                isBlocked(false);
-                getUnsentMessageOfAJid();
-                Helper.hideLoading();
-                toToast('${profile.name} has been unblocked');
-              }).catchError((error) {
-                // Helper.hideLoading();
-                debugPrint(error);
-              });
-            } else {
-              toToast(Constants.noInternetConnection);
-            }
-          },
-          child: const Text("YES")),
-    ]);
+            },
+            child: const Text("CANCEL")),
+        TextButton(
+            onPressed: () async {
+              if (await AppUtils.isNetConnected()) {
+                Get.back();
+                // Helper.showLoading(message: "Unblocking User");
+                FlyChat.unblockUser(profile.jid!).then((value) {
+                  debugPrint(value.toString());
+                  profile.isBlocked = false;
+                  isBlocked(false);
+                  getUnsentMessageOfAJid();
+                  Helper.hideLoading();
+                  toToast('${getName(profile)} has been unblocked');
+                }).catchError((error) {
+                  // Helper.hideLoading();
+                  debugPrint(error);
+                });
+              } else {
+                toToast(Constants.noInternetConnection);
+              }
+            },
+            child: const Text("UNBLOCK")),
+      ]);
+    });
   }
 
   var filteredPosition = <int>[].obs;
@@ -1668,9 +1697,11 @@ class ChatController extends FullLifeCycleController
               "result of forward ==> ${(value as Profile).toJson().toString()}");
           profile_.value = value;
           isBlocked(profile.isBlocked);
+          setChatStatus();
           checkAdminBlocked();
           memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);
+          SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           getChatHistory();
           sendReadReceipt();
         }
@@ -1713,7 +1744,7 @@ class ChatController extends FullLifeCycleController
     if (playingChat != null) {
       playingChat!.mediaChatMessage!.isPlaying = false;
       playingChat = null;
-      player.stop();
+      // player.stop();
       chatList.refresh();
     }
     var busyStatus = !profile.isGroupProfile.checkNull()
@@ -1723,7 +1754,7 @@ class ChatController extends FullLifeCycleController
       if (await askStoragePermission()) {
         if (await Record().hasPermission()) {
           record = Record();
-          timerInit("00.00");
+          timerInit("00:00");
           isAudioRecording(Constants.audioRecording);
           startTimer();
           await record.start(
@@ -1755,7 +1786,7 @@ class ChatController extends FullLifeCycleController
       if (File(filePath!).existsSync()) {
         recordedAudioPath = filePath;
       } else {
-        debugPrint("File Not Found For Image Upload");
+        debugPrint("File Not Found For Audio");
       }
       debugPrint(filePath);
     });
@@ -1766,7 +1797,7 @@ class ChatController extends FullLifeCycleController
     File(filePath!).delete();
     isUserTyping(false);
     isAudioRecording(Constants.audioRecordInitial);
-    timerInit("00.00");
+    timerInit("00:00");
     record.dispose();
   }
 
@@ -1783,7 +1814,7 @@ class ChatController extends FullLifeCycleController
   }
 
   sendRecordedAudioMessage() {
-    if (timerInit.value != "00.00") {
+    if (timerInit.value != "00:00") {
       final format = DateFormat('mm:ss');
       final dt = format.parse(timerInit.value, true);
       final recordDuration = dt.millisecondsSinceEpoch;
@@ -1793,11 +1824,13 @@ class ChatController extends FullLifeCycleController
     }
     isUserTyping(false);
     isAudioRecording(Constants.audioRecordInitial);
-    timerInit("00.00");
+    timerInit("00:00");
     record.dispose();
   }
 
   infoPage() {
+    // FlyChat.setOnGoingChatUser("");
+    // SessionManagement.setCurrentChatJID("");
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
@@ -1806,12 +1839,19 @@ class ChatController extends FullLifeCycleController
           checkAdminBlocked();
           memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);
+          SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           getChatHistory();
           sendReadReceipt();
+          setChatStatus();
+          debugPrint("value--> ${profile.isGroupProfile}");
         }
       });
     } else {
-      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {});
+      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {
+        debugPrint("chat info-->$value");
+        // FlyChat.setOnGoingChatUser(profile.jid!);
+        // SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+      });
     }
   }
 
@@ -1836,7 +1876,6 @@ class ChatController extends FullLifeCycleController
   var unreadCount = 0.obs;
 
   void onMessageReceived(chatMessageModel) {
-
     mirrorFlyLog("chatController", "onMessageReceived");
 
     if (chatMessageModel.chatUserJid == profile.jid) {
@@ -1849,26 +1888,26 @@ class ChatController extends FullLifeCycleController
         sendReadReceipt();
       }
     }
-
   }
-
 
   void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("ChatScreen Message Status Update index of search $index");
+      debugPrint("messageID--> $index");
       if (!index.isNegative) {
+        debugPrint("messageID--> replacing the value");
         // Helper.hideLoading();
         // chatMessageModel.isSelected=chatList[index].isSelected;
         chatList[index] = chatMessageModel;
         chatList.refresh();
       } else {
+        debugPrint("messageID--> Inserting the value");
         chatList.insert(0, chatMessageModel);
         unreadCount.value++;
         // scrollToBottom();
       }
-
     }
     if (isSelected.value) {
       var selectedIndex = selectedChatList.indexWhere(
@@ -1919,7 +1958,6 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-
   void onLeftFromGroup({required String groupJid, required String userJid}) {
     if (profile.isGroupProfile ?? false) {
       if (groupJid == profile.jid &&
@@ -1932,10 +1970,8 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-
   void setTypingStatus(
       String singleOrgroupJid, String userId, String typingStatus) {
-
     if (profile.jid.checkNull() == singleOrgroupJid) {
       var jid = profile.isGroupProfile ?? false ? userId : singleOrgroupJid;
       if (!typingList.contains(jid)) {
@@ -1958,7 +1994,6 @@ class ChatController extends FullLifeCycleController
         setChatStatus();
       }
     }
-
   }
 
   memberOfGroup() {
@@ -1977,19 +2012,30 @@ class ChatController extends FullLifeCycleController
 
   setChatStatus() async {
     if (await AppUtils.isNetConnected()) {
-      if (profile.isGroupProfile ?? false) {
+      if (profile.isGroupProfile.checkNull()) {
+        debugPrint("value--> show group list");
         if (typingList.isNotEmpty) {
           userPresenceStatus(
               "${Member(jid: typingList.last).getUsername()} typing...");
+          //"${Member(jid: typingList.last).getUsername()} typing...");
         } else {
           getParticipantsNameAsCsv(profile.jid.checkNull());
         }
       } else {
-        FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
-          userPresenceStatus(value.toString());
-        }).catchError((er) {
+        debugPrint("value--> show user presence");
+        if (!profile.isBlockedMe.checkNull() ||
+            !profile.isAdminBlocked.checkNull()) {
+          FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+            groupParticipantsName('');
+            userPresenceStatus(value.toString());
+          }).catchError((er) {
+            groupParticipantsName('');
+            userPresenceStatus("");
+          });
+        } else {
+          groupParticipantsName('');
           userPresenceStatus("");
-        });
+        }
       }
     } else {
       userPresenceStatus("");
@@ -2006,9 +2052,12 @@ class ChatController extends FullLifeCycleController
         for (var it in groupsMembersProfileList) {
           if (it.jid.checkNull() !=
               SessionManagement.getUserJID().checkNull()) {
-            str.add(it.name.checkNull());
+            str.add(getMemberName(it).checkNull());
           }
         }
+        str.sort((a, b) {
+          return a.toLowerCase().compareTo(b.toLowerCase());
+        });
         groupParticipantsName(str.join(","));
       }
     });
@@ -2046,12 +2095,21 @@ class ChatController extends FullLifeCycleController
         photo as XFile?;
         if (photo != null) {
           mirrorFlyLog("photo", photo.name.toString());
+          mirrorFlyLog("caption text sending-->", messageController.text);
           if (photo.name.endsWith(".mp4")) {
-            Get.toNamed(Routes.videoPreview,
-                arguments: {"filePath": photo.path, "userName": profile.name!});
+            Get.toNamed(Routes.videoPreview, arguments: {
+              "filePath": photo.path,
+              "userName": profile.name!,
+              "profile": profile,
+              "caption": messageController.text
+            });
           } else {
-            Get.toNamed(Routes.imagePreview,
-                arguments: {"filePath": photo.path, "userName": profile.name!});
+            Get.toNamed(Routes.imagePreview, arguments: {
+              "filePath": photo.path,
+              "userName": profile.name!,
+              "profile": profile,
+              "caption": messageController.text
+            });
           }
         }
       });
@@ -2092,7 +2150,7 @@ class ChatController extends FullLifeCycleController
       try {
         // imagePicker();
         Get.toNamed(Routes.galleryPicker,
-            arguments: {"userName": profile.name!});
+            arguments: {"userName": getName(profile), 'profile': profile, 'caption': messageController.text});
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -2136,16 +2194,20 @@ class ChatController extends FullLifeCycleController
   // }
 
   onLocationClick() async {
-    if (await AppPermission.checkPermission(Permission.location,
-        locationPinPermission, Constants.locationPermission)) {
-      Get.toNamed(Routes.locationSent)?.then((value) {
-        if (value != null) {
-          value as LatLng;
-          sendLocationMessage(profile, value.latitude, value.longitude);
-        }
-      });
+    if (await AppUtils.isNetConnected()) {
+      if (await AppPermission.checkPermission(Permission.location,
+          locationPinPermission, Constants.locationPermission)) {
+        Get.toNamed(Routes.locationSent)?.then((value) {
+          if (value != null) {
+            value as LatLng;
+            sendLocationMessage(profile, value.latitude, value.longitude);
+          }
+        });
+      } else {
+        // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable location permission from settings");
+      }
     } else {
-      // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable location permission from settings");
+      toToast(Constants.noInternetConnection);
     }
   }
 
@@ -2236,6 +2298,7 @@ class ChatController extends FullLifeCycleController
         checkAdminBlocked();
         memberOfGroup();
         FlyChat.setOnGoingChatUser(profile.jid!);
+        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
         getChatHistory();
         sendReadReceipt();
       }
@@ -2337,6 +2400,9 @@ class ChatController extends FullLifeCycleController
         canShowReport(false);
     }
 
+    canBeStarred(!canBeStarred.value && !canBeUnStarred.value ||
+        canBeStarred.value && !canBeUnStarred.value);
+
     if (containsRecalled.value) {
       canBeCopied(false);
       canBeForwarded(false);
@@ -2347,9 +2413,6 @@ class ChatController extends FullLifeCycleController
       canShowInfo(false);
       canShowReport(false);
     }
-
-    canBeStarred(!canBeStarred.value && !canBeUnStarred.value ||
-        canBeStarred.value && !canBeUnStarred.value);
     // return messageActions;
     mirrorFlyLog("action_menu canBeCopied", canBeCopied.toString());
     mirrorFlyLog("action_menu canBeForwarded", canBeForwarded.toString());
@@ -2387,7 +2450,8 @@ class ChatController extends FullLifeCycleController
     var chatIndex = index ??
         chatList.indexWhere((element) => element.messageId == messageID);
     if (!chatIndex.isNegative) {
-      newScrollController.scrollTo(index: chatIndex, duration: const Duration(milliseconds: 10));
+      newScrollController.scrollTo(
+          index: chatIndex, duration: const Duration(milliseconds: 10));
       Future.delayed(const Duration(milliseconds: 15), () {
         chatList[chatIndex].isSelected = true;
         chatList.refresh();
@@ -2431,6 +2495,7 @@ class ChatController extends FullLifeCycleController
   void onPaused() {
     mirrorFlyLog("LifeCycle", "onPaused");
     FlyChat.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
     playerPause();
     saveUnsentMessage();
     sendUserTypingGoneStatus();
@@ -2449,6 +2514,7 @@ class ChatController extends FullLifeCycleController
       }
     }
     FlyChat.setOnGoingChatUser(profile.jid.checkNull());
+    SessionManagement.setCurrentChatJID(profile.jid.checkNull());
   }
 
   @override
@@ -2461,18 +2527,17 @@ class ChatController extends FullLifeCycleController
     mirrorFlyLog("LifeCycle", "onInactive");
   }
 
-
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     updateProfile(jid);
   }
 
-  void unblockedThisUser(jid) {
+  void unblockedThisUser(String jid) {
     updateProfile(jid);
   }
 
   Future<void> updateProfile(String jid) async {
     if (jid.isNotEmpty && jid == profile.jid) {
-      if(!profile.isGroupProfile.checkNull()) {
+      if (!profile.isGroupProfile.checkNull()) {
         getProfileDetails(jid).then((value) {
           SessionManagement.setChatJid("");
           profile_(value);
@@ -2480,27 +2545,29 @@ class ChatController extends FullLifeCycleController
           isBlocked(profile.isBlocked);
           setChatStatus();
         });
-      }else{
+      } else {
         debugPrint("unable to update profile due to group chat");
       }
     }
   }
 
-
   void userCameOnline(jid) {
-
-    if(jid.isNotEmpty && profile.jid == jid && !profile.isGroupProfile.checkNull()) {
+    if (jid.isNotEmpty &&
+        profile.jid == jid &&
+        !profile.isGroupProfile.checkNull()) {
       debugPrint("userCameOnline : $jid");
-      Future.delayed(const Duration(milliseconds: 3000),(){
+      Future.delayed(const Duration(milliseconds: 3000), () {
         setChatStatus();
       });
     }
   }
 
   void userWentOffline(jid) {
-    if(jid.isNotEmpty && profile.jid==jid && !profile.isGroupProfile.checkNull()) {
+    if (jid.isNotEmpty &&
+        profile.jid == jid &&
+        !profile.isGroupProfile.checkNull()) {
       debugPrint("userWentOffline : $jid");
-      Future.delayed(const Duration(milliseconds: 3000),(){
+      Future.delayed(const Duration(milliseconds: 3000), () {
         setChatStatus();
       });
     }
@@ -2518,10 +2585,89 @@ class ChatController extends FullLifeCycleController
     setChatStatus();
   }
 
-  void removeUnreadSeparator() async{
-
-    chatList.removeWhere((chatItem) => chatItem.messageType == Constants.mNotification);
-
+  void removeUnreadSeparator() async {
+    if (!profile.isGroupProfile.checkNull()) {
+      chatList.removeWhere(
+          (chatItem) => chatItem.messageType == Constants.mNotification);
+    }
   }
 
+  void onContactSyncComplete(bool result) {
+    userUpdatedHisProfile(profile.jid.checkNull());
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  void onNewMemberAddedToGroup(
+      {required String groupJid,
+      required String newMemberJid,
+      required String addedByMemberJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      if (profile.jid == groupJid) {
+        debugPrint('onNewMemberAddedToGroup $newMemberJid');
+        getParticipantsNameAsCsv(groupJid);
+      }
+    }
+  }
+
+  void onMemberRemovedFromGroup(
+      {required String groupJid,
+      required String removedMemberJid,
+      required String removedByMemberJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      if (profile.jid == groupJid) {
+        debugPrint('onMemberRemovedFromGroup $removedMemberJid');
+        if (removedMemberJid != profile.jid) {
+          getParticipantsNameAsCsv(groupJid);
+        } else {
+          //removed me
+          onLeftFromGroup(groupJid: groupJid, userJid: removedMemberJid);
+        }
+      }
+    }
+  }
+
+  void saveContact() {
+    var phone = profile.mobileNumber.checkNull().isNotEmpty
+        ? profile.mobileNumber.checkNull()
+        : getMobileNumberFromJid(profile.jid.checkNull());
+    if (phone.isNotEmpty) {
+      FlyChat.addContact(phone.checkNull());
+    } else {
+      mirrorFlyLog('mobile number', phone.toString());
+    }
+  }
+
+  void userBlockedMe(String jid) {
+    updateProfile(jid);
+  }
+
+  void showHideEmoji(BuildContext context) {
+    if (!showEmoji.value) {
+      focusNode.unfocus();
+    } else {
+      focusNode.requestFocus();
+      return;
+    }
+    Future.delayed(const Duration(milliseconds: 100), () {
+      showEmoji(!showEmoji.value);
+    });
+  }
+
+  void onUploadDownloadProgressChanged(
+      String messageId, String progressPercentage) {
+    if (messageId.isNotEmpty) {
+      final index =
+          chatList.indexWhere((message) => message.messageId == messageId);
+      debugPrint("Media Status Onprogress changed---> onUploadDownloadProgressChanged $index $messageId $progressPercentage");
+      if (!index.isNegative) {
+        // chatMessageModel.isSelected=chatList[index].isSelected;
+        // debugPrint("Media Status Onprogress changed---> flutter conversion ${int.parse(progressPercentage)}");
+        chatList[index].mediaChatMessage?.mediaProgressStatus = (int.parse(progressPercentage));
+        chatList.refresh();
+      }
+    }
+  }
 }

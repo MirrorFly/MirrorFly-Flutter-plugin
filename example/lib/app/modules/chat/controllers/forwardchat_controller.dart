@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:fly_chat_example/app/common/constants.dart';
 import 'package:fly_chat_example/app/data/helper.dart';
 import 'package:fly_chat/flysdk.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
 import '../../../data/apputils.dart';
+import '../../../data/session_management.dart';
 
 class ForwardChatController extends GetxController {
   //main list
@@ -26,7 +28,7 @@ class ForwardChatController extends GetxController {
   List<Profile> get groupList => _groupList.value.take(6).toList();
 
   var userlistScrollController = ScrollController();
-  var scrollable = true.obs;
+  var scrollable = SessionManagement.isTrailLicence().obs;
   var isPageLoading = false.obs;
   final _userList = <Profile>[].obs;
 
@@ -155,7 +157,11 @@ class ForwardChatController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       if(!bottom)contactLoading(true);
       searching = true;
-      FlyChat.getUserList(pageNum, searchQuery.text.trim().toString())
+      var future = (SessionManagement.isTrailLicence())
+          ? FlyChat.getUserList(pageNum, searchQuery.text.trim().toString())
+          : FlyChat.getRegisteredUsers(false);
+      future
+      // FlyChat.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
         if (value != null) {
           var list = userListFromJson(value);
@@ -216,13 +222,21 @@ class ForwardChatController extends GetxController {
       _userList.clear();
       searching = true;
       searchLoading(true);
-      FlyChat.getUserList(pageNum, searchQuery.text.trim().toString())
+      var future = (SessionManagement.isTrailLicence())
+          ? FlyChat.getUserList(pageNum, searchQuery.text.trim().toString())
+          : FlyChat.getRegisteredUsers(false);
+      future
+      // FlyChat.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
         if (value != null) {
           var list = userListFromJson(value);
           if (list.data != null) {
-            scrollable(list.data!.length == 20);
-            _userList(list.data);
+            scrollable((list.data!.length == 20 && SessionManagement.isTrailLicence()));
+            if(SessionManagement.isTrailLicence()) {
+              _userList(list.data);
+            }else{
+              _userList(list.data!.where((element) => element.nickName.checkNull().toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase())).toList());
+            }
           } else {
             scrollable(false);
           }
@@ -326,7 +340,7 @@ class ForwardChatController extends GetxController {
     pageNum = 1;
     searchQuery.clear();
     _isSearchVisible(true);
-    scrollable(_mainuserList.length == 20);
+    scrollable((_mainuserList.length == 20 && SessionManagement.isTrailLicence()));
     _recentChats(_mainrecentChats);
     _groupList(_maingroupList);
     _userList(_mainuserList);
@@ -352,7 +366,7 @@ class ForwardChatController extends GetxController {
         }
       } else {
         //show busy status popup
-        //var messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,textMessage: messageController.text);
+        // var messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,textMessage: messageController.text);
         //showBusyStatusAlert(disableBusyChatAndSend());
       }
     } else {
@@ -377,7 +391,7 @@ class ForwardChatController extends GetxController {
     return groupParticipantsName;
   }
 
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     if (jid.toString().isNotEmpty) {
       updateRecentChatAdapter(jid);
       updateProfile(jid);
@@ -424,5 +438,29 @@ class ForwardChatController extends GetxController {
         _userList[userListIndex] = value;
       }
     });
+  }
+
+  void onContactSyncComplete(bool result) {
+    getRecentChatList();
+    getAllGroups();
+    getUsers();
+    if (searchQuery.text.toString().trim().isNotEmpty) {
+      lastInputValue='';
+      onSearch(searchQuery.text.toString());
+    }
+  }
+
+  void checkContactSyncPermission() {
+    Permission.contacts.isGranted.then((value) {
+      if(!value){
+        _mainuserList.clear();
+        _userList.clear();
+        _userList.refresh();
+      }
+    });
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
   }
 }

@@ -58,6 +58,9 @@ class MessageInfoView extends GetView<MessageInfoController> {
                               index: 0,
                               onPlayAudio: (){
                                 controller.playAudio(controller.chatMessage[0]);
+                              },
+                              onSeekbarChange:(value){
+                                controller.onSeekbarChange(value, controller.chatMessage[0]);
                               },)
                             //MessageHeader(chatList: controller.chatMessage, isTapEnabled: false,),
                             //MessageContent(chatList: controller.chatMessage, isTapEnabled: false,),
@@ -109,7 +112,9 @@ class MessageInfoView extends GetView<MessageInfoController> {
                         image: member.image.checkNull(),
                         status: controller.chatDate(context,
                             controller.messageDeliveredList[index]),
-                        onTap: () {});
+                        onTap: () {},
+                      blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
+                      unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);
                   }) : emptyDeliveredSeen(
                   context, 'Message sent, not delivered yet')),
           const AppDivider(),
@@ -141,7 +146,9 @@ class MessageInfoView extends GetView<MessageInfoController> {
                         image: member.image.checkNull(),
                         status: controller.chatDate(context,
                             controller.messageDeliveredList[index]),
-                        onTap: () {});
+                        onTap: () {},
+                      blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
+                      unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);
                   }) : emptyDeliveredSeen(context, "Your message is not read")),
           const AppDivider(),
         ],

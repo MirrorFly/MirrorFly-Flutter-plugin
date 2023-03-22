@@ -22,7 +22,7 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
   var count = 139.obs;
 
   onChanged() {
-    count(139 - addStatusController.text.length);
+    count(139 - addStatusController.text.characters.length);
   }
 
   @override
@@ -112,12 +112,13 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
 
   validateAndFinish() async {
     if (addStatusController.text.trim().isNotEmpty) {
-      if (await AppUtils.isNetConnected()) {
+      //FLUTTER-567
+      // if (await AppUtils.isNetConnected()) {
         Get.back(result: addStatusController.text.trim().toString());
-      } else {
-        toToast(Constants.noInternetConnection);
-        Get.back();
-      }
+      // } else {
+      //   toToast(Constants.noInternetConnection);
+      //   Get.back();
+      // }
     } else {
       toToast("Status cannot be empty");
     }
@@ -183,5 +184,17 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
         });
       }
     }
+  }
+
+  void showHideEmoji(BuildContext context) {
+    if (!showEmoji.value) {
+      focusNode.unfocus();
+    }else{
+      focusNode.requestFocus();
+      return;
+    }
+    Future.delayed(const Duration(milliseconds: 100), () {
+      showEmoji(!showEmoji.value);
+    });
   }
 }

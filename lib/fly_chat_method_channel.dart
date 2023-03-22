@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:fly_chat/fly_chat_platform_interface.dart';
 
-
 /// An implementation of [UikitFlutterPlatform] that uses method channels.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   /// The method channel used to interact with the native platform.
@@ -82,8 +81,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final onContactSyncCompleteChannel =
   const EventChannel('contus.mirrorfly/onContactSyncComplete');
   @visibleForTesting
-  final onLoggedOutChannel =
-  const EventChannel('contus.mirrorfly/onLoggedOut');
+  final onLoggedOutChannel = const EventChannel('contus.mirrorfly/onLoggedOut');
   @visibleForTesting
   final unblockedThisUserChannel =
   const EventChannel('contus.mirrorfly/unblockedThisUser');
@@ -118,8 +116,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final usersWhoBlockedMeListFetchedChannel =
   const EventChannel('contus.mirrorfly/usersWhoBlockedMeListFetched');
   @visibleForTesting
-  final onConnectedChannel =
-  const EventChannel('contus.mirrorfly/onConnected');
+  final onConnectedChannel = const EventChannel('contus.mirrorfly/onConnected');
   @visibleForTesting
   final onDisconnectedChannel =
   const EventChannel('contus.mirrorfly/onDisconnected');
@@ -145,14 +142,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final onGroupTypingStatusChannel =
   const EventChannel('contus.mirrorfly/onGroupTypingStatus');
   @visibleForTesting
-  final onFailureChannel =
-  const EventChannel('contus.mirrorfly/onFailure');
+  final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
   @visibleForTesting
   final onProgressChangedChannel =
   const EventChannel('contus.mirrorfly/onProgressChanged');
   @visibleForTesting
-  final onSuccessChannel =
-  const EventChannel('contus.mirrorfly/onSuccess');
+  final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
 
   @override
   Future<String?> getPlatformVersion() async {
@@ -161,12 +156,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     return version;
   }
 
+
   @override
   Future<bool?> syncContacts(bool isfirsttime) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<bool>('syncContacts', {"is_first_time": isfirsttime});
+      debugPrint('syncContacts $res');
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -176,6 +173,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<String?> getSendData() async {
@@ -193,13 +191,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  Future<String?> contactSyncStateValue() async {
-    String? response;
+  Future<bool> contactSyncStateValue() async {
+    bool response = false;
     try {
       response = await mirrorFlyMethodChannel
-          .invokeMethod<String>('contactSyncStateValue');
-      debugPrint("contactSyncState Result ==> $response");
+          .invokeMethod<bool>('contactSyncStateValue') ?? false;
+      debugPrint("contactSyncStateValue Result ==> $response");
       return response;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -209,6 +208,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> contactSyncState() async {
@@ -226,6 +226,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> revokeContactSync() async {
     dynamic response = "";
@@ -241,6 +242,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> getUsersWhoBlockedMe([bool server = false]) async {
@@ -259,6 +261,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getUnKnownUserProfiles() async {
     dynamic response = "";
@@ -275,6 +278,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> getMyProfileStatus() async {
@@ -293,6 +297,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getMyBusyStatus() async {
     dynamic response = "";
@@ -309,6 +314,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getBusyStatusList() async {
     dynamic response = "";
@@ -324,6 +330,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> getRecalledMessagesOfAConversation(String jid) async {
@@ -342,12 +349,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  Future<bool?> setMyBusyStatus(String busystatus) async {
+  Future<bool?> setMyBusyStatus(String busyStatus) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('setMyBusyStatus', {"status": busystatus});
+          .invokeMethod<bool>('setMyBusyStatus', {"status": busyStatus});
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -357,6 +365,24 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+
+  @override
+  Future<bool?> insertBusyStatus(String busyStatus) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('insertBusyStatus', {"busy_status": busyStatus});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
 
   @override
   Future<bool?> enableDisableBusyStatus(bool enable) async {
@@ -374,6 +400,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> enableDisableHideLastSeen(bool enable) async {
     bool? res;
@@ -390,12 +417,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> isBusyStatusEnabled() async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<bool>('isBusyStatusEnabled');
+      debugPrint("isBusyStatusEnabled--> $res");
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -406,9 +435,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  Future<bool?> deleteProfileStatus(
-      num id, String status, bool isCurrentStatus) async {
+  Future<bool?> deleteProfileStatus(String id, String status,
+      bool isCurrentStatus) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel
@@ -427,9 +457,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  Future<bool?> deleteBusyStatus(
-      String id, String status, bool isCurrentStatus) async {
+  Future<bool?> deleteBusyStatus(String id, String status,
+      bool isCurrentStatus) async {
     bool? res;
     try {
       res =
@@ -448,6 +479,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<String?> mediaEndPoint() async {
     String? response;
@@ -465,6 +497,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> unFavouriteAllFavouriteMessages() async {
     bool? res;
@@ -480,6 +513,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<bool?> markAsRead(String jid) async {
@@ -497,6 +531,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> uploadMedia(String messageid) async {
     bool? res;
@@ -512,6 +547,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<bool?> deleteUnreadMessageSeparatorOfAConversation(String jid) async {
@@ -529,6 +565,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<int?> getMembersCountOfGroup(String groupJid) async {
     int? res;
@@ -544,6 +581,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<bool?> doesFetchingMembersListFromServedRequired(
@@ -562,6 +600,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> isHideLastSeenEnabled() async {
     bool? res;
@@ -578,6 +617,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   deleteOfflineGroup(String groupJid) async {
     try {
@@ -591,6 +631,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   sendTypingStatus(String toJid, String chattype) async {
@@ -606,6 +647,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   sendTypingGoneStatus(String toJid, String chattype) async {
     try {
@@ -619,6 +661,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   updateChatMuteStatus(String jid, bool muteStatus) async {
@@ -634,6 +677,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   updateRecentChatPinStatus(String jid, bool pinStatus) async {
     try {
@@ -648,11 +692,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  deleteRecentChat(String jid) async {
+  Future<bool?> deleteRecentChat(String jid) async {
+    bool? res;
     try {
-      await mirrorFlyMethodChannel
+      res = await mirrorFlyMethodChannel
           .invokeMethod('deleteRecentChat', {"jid": jid});
+      return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -661,6 +708,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   setTypingStatusListener() async {
@@ -675,12 +723,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> isUserUnArchived(String jid) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<bool>('isUserUnArchived', {"jid": jid});
+      debugPrint("isUserUnArchived==>$res");
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -690,6 +740,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<bool?> getIsProfileBlockedByAdmin() async {
@@ -707,6 +758,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> deleteRecentChats(List<String> jidlist) async {
     bool? res;
@@ -723,6 +775,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   markConversationAsRead(List<String> jidlist) async {
     try {
@@ -736,6 +789,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   markConversationAsUnread(List<String> jidlist) async {
@@ -751,6 +805,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   getArchivedChatsFromServer() async {
     try {
@@ -763,6 +818,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   setCustomValue(String messageId, String key, String value) async {
@@ -778,6 +834,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   removeCustomValue(String messageId, String key) async {
     try {
@@ -791,6 +848,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   inviteUserViaSMS(String mobileNo, String message) async {
@@ -806,6 +864,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   cancelBackup() async {
     try {
@@ -818,6 +877,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   startBackup() async {
@@ -832,6 +892,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   cancelRestore() async {
     try {
@@ -844,6 +905,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   clearAllSDKData() async {
@@ -858,6 +920,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   getRoster() async {
     try {
@@ -870,6 +933,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<String?> getCustomValue(String messageId, String key) async {
@@ -887,6 +951,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> clearAllConversation() async {
     bool? res;
@@ -902,6 +967,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<bool?> updateFcmToken(String firebasetoken) async {
@@ -919,6 +985,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> isMuted(String jid) async {
     bool? res;
@@ -934,6 +1001,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> handleReceivedMessage(Map notificationdata) async {
@@ -951,6 +1019,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getLastNUnreadMessages(int messagesCount) async {
     dynamic res;
@@ -966,6 +1035,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> getNUnreadMessagesOfEachUsers(int messagesCount) async {
@@ -983,6 +1053,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> isArchivedSettingsEnabled() async {
     bool? res;
@@ -998,6 +1069,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<bool?> enableDisableArchivedSettings(bool enable) async {
@@ -1015,6 +1087,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> updateArchiveUnArchiveChat(String jid, bool isArchived) async {
     bool? res;
@@ -1030,6 +1103,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<int?> getGroupMessageStatusCount(String messageid) async {
@@ -1047,6 +1121,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<int?> getUnreadMessageCountExceptMutedChat() async {
     int? res;
@@ -1062,6 +1137,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<int?> recentChatPinnedCount() async {
@@ -1079,6 +1155,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<int?> getUnreadMessagesCount() async {
     int? res;
@@ -1094,6 +1171,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<String?> getUnsentMessageOfAJid(String jid) async {
@@ -1111,6 +1189,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getUsersListToAddMembersInOldGroup(String groupJid) async {
     dynamic res;
@@ -1126,6 +1205,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> prepareChatConversationToExport(String jid) async {
@@ -1143,6 +1223,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getArchivedChatList() async {
     dynamic res;
@@ -1157,6 +1238,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> getMessageActions(List<String> messageidlist) async {
@@ -1174,6 +1256,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getUsersListToAddMembersInNewGroup() async {
     dynamic res;
@@ -1189,6 +1272,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<bool?> createOfflineGroupInOnline(String groupId) async {
@@ -1206,6 +1290,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getGroupProfile(String groupJid, bool server) async {
     dynamic res;
@@ -1221,6 +1306,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   updateMediaDownloadStatus(String mediaMessageId, int progress,
@@ -1241,9 +1327,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  updateMediaUploadStatus(String mediaMessageId, int progress, int uploadStatus,
-      num dataTransferred) async {
+  updateMediaUploadStatus(String mediaMessageId, int progress,
+      int uploadStatus, num dataTransferred) async {
     try {
       await mirrorFlyMethodChannel.invokeMethod('updateMediaUploadStatus', {
         "mediaMessageId": mediaMessageId,
@@ -1260,9 +1347,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   cancelMediaUploadOrDownload(String messageId) async {
     try {
+      debugPrint("cancelMediaUploadOrDownload--> $messageId");
       await mirrorFlyMethodChannel.invokeMethod(
           'cancelMediaUploadOrDownload', {"messageId": messageId});
     } on PlatformException catch (e) {
@@ -1273,6 +1362,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   setMediaEncryption(String encryption) async {
@@ -1288,6 +1378,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   deleteAllMessages() async {
     try {
@@ -1300,6 +1391,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<String?> getGroupJid(String jid) async {
@@ -1318,6 +1410,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<String?> getUserLastSeenTime(String jid) async {
     String? response;
@@ -1334,6 +1427,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<String?> authToken() async {
@@ -1353,6 +1447,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> registerUser(String userIdentifier,
       {String token = ""}) async {
@@ -1371,6 +1466,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<String?> verifyToken(String userName, String token) async {
     String? response = "";
@@ -1388,15 +1484,16 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  Future<String?> getJid(String username) async {
+  Future<String> getJid(String username) async {
     //getuserjid
     String? userJID;
     try {
       userJID = await mirrorFlyMethodChannel
           .invokeMethod<String?>('get_jid', {"username": username});
       debugPrint("User JID Result ==> $userJID");
-      return userJID;
+      return userJID ?? '';
     } on PlatformException catch (e) {
       debugPrint("Flutter Exception ===> $e");
       rethrow;
@@ -1406,14 +1503,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  Future<dynamic> sendTextMessage(
-      String message, String jid, String replyMessageId) async {
+  Future<dynamic> sendTextMessage(String message, String jid,
+      String replyMessageId) async {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('send_text_msg',
           {"message": message, "JID": jid, "replyMessageId": replyMessageId});
-      debugPrint("Message Result ==> $messageResp");
+      debugPrint("Text Message Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
       debugPrint("Flutter Exception ===> $e");
@@ -1423,6 +1521,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> sendLocationMessage(String jid, double latitude,
@@ -1437,7 +1536,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "longitude": longitude,
         "replyMessageId": replyMessageId
       });
-      debugPrint("Message Result ==> $messageResp");
+      debugPrint("Location Message Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
       debugPrint("Flutter Exception ===> $e");
@@ -1448,9 +1547,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  Future<dynamic> sendImageMessage(
-      String jid, String filePath, String? caption, String? replyMessageID,
+  Future<dynamic> sendImageMessage(String jid, String filePath, String? caption,
+      String? replyMessageID,
       [String? imageFileUrl]) async {
     dynamic messageResp;
     try {
@@ -1458,7 +1558,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel.invokeMethod('send_image_message', {
         "jid": jid,
         "filePath": filePath,
-        "caption": caption,
+        "caption": caption?.trim(),
         "replyMessageId": replyMessageID,
         "imageFileUrl": imageFileUrl
       });
@@ -1473,9 +1573,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  Future<dynamic> sendVideoMessage(
-      String jid, String filePath, String? caption, String? replyMessageID,
+  Future<dynamic> sendVideoMessage(//sendMediaMessage
+      String jid,
+      String filePath,
+      String? caption,
+      String? replyMessageID,
       [String? videoFileUrl,
         num? videoDuration,
         String? thumbImageBase64]) async {
@@ -1485,7 +1589,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel.invokeMethod('send_video_message', {
         "jid": jid,
         "filePath": filePath,
-        "caption": caption,
+        "caption": caption?.trim(),
         "replyMessageId": replyMessageID,
         "videoFileUrl": videoFileUrl,
         "videoDuration": videoDuration,
@@ -1501,6 +1605,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> getRegisteredUserList({required bool server}) async {
@@ -1520,6 +1625,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getUserList(int page, String search,
       [int perPageResultSize = 20]) async {
@@ -1538,181 +1644,230 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Stream<dynamic> get onMessageReceived =>
       messageOnReceivedChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onMessageStatusUpdated =>
       messageStatusUpdatedChanel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onMediaStatusUpdated =>
       mediaStatusUpdatedChannel.receiveBroadcastStream().cast();
 
   @override
+  Stream<dynamic> get onUploadDownloadProgressChanged =>
+      uploadDownloadProgressChangedChannel.receiveBroadcastStream().cast();
+
+
+  @override
   Stream<dynamic> get onGroupProfileFetched =>
       onGroupProfileFetchedChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onNewGroupCreated =>
       onNewGroupCreatedChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onGroupProfileUpdated =>
       onGroupProfileUpdatedChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onNewMemberAddedToGroup =>
       onNewMemberAddedToGroupChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onMemberRemovedFromGroup =>
       onMemberRemovedFromGroupChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onFetchingGroupMembersCompleted =>
       onFetchingGroupMembersCompletedChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onDeleteGroup =>
       onDeleteGroupChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onFetchingGroupListCompleted =>
       onFetchingGroupListCompletedChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onMemberMadeAsAdmin =>
       onMemberMadeAsAdminChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onMemberRemovedAsAdmin =>
       onMemberRemovedAsAdminChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onLeftFromGroup =>
       onLeftFromGroupChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onGroupNotificationMessage =>
       onGroupNotificationMessageChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onGroupDeletedLocally =>
       onGroupDeletedLocallyChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get blockedThisUser =>
       blockedThisUserChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get myProfileUpdated =>
       myProfileUpdatedChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onAdminBlockedOtherUser =>
       onAdminBlockedOtherUserChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onAdminBlockedUser =>
       onAdminBlockedUserChannel.receiveBroadcastStream().cast();
 
+
   @override
-  Stream<dynamic> get onContactSyncComplete =>
+  Stream<bool> get onContactSyncComplete =>
       onContactSyncCompleteChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onLoggedOut =>
       onLoggedOutChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get unblockedThisUser =>
       unblockedThisUserChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get userBlockedMe =>
       userBlockedMeChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get userCameOnline =>
       userCameOnlineChannel.receiveBroadcastStream().cast();
 
+
   @override
-  Stream<dynamic> get userDeletedHisProfile =>
+  Stream<String> get userDeletedHisProfile =>
       userDeletedHisProfileChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get userProfileFetched =>
       userProfileFetchedChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get userUnBlockedMe =>
       userUnBlockedMeChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get userUpdatedHisProfile =>
       userUpdatedHisProfileChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get userWentOffline =>
       userWentOfflineChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get usersIBlockedListFetched =>
       usersIBlockedListFetchedChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get usersWhoBlockedMeListFetched =>
       usersWhoBlockedMeListFetchedChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onConnected =>
       onConnectedChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onDisconnected =>
       onDisconnectedChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onConnectionNotAuthorized =>
       onConnectionNotAuthorizedChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get connectionFailed =>
       connectionFailedChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get connectionSuccess =>
       connectionSuccessChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onWebChatPasswordChanged =>
       onWebChatPasswordChangedChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get setTypingStatus =>
       setTypingStatusChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onChatTypingStatus =>
       onChatTypingStatusChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onGroupTypingStatus =>
       onGroupTypingStatusChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onFailure =>
       onFailureChannel.receiveBroadcastStream().cast();
+
 
   @override
   Stream<dynamic> get onProgressChanged =>
       onProgressChangedChannel.receiveBroadcastStream().cast();
 
+
   @override
   Stream<dynamic> get onSuccess =>
       onSuccessChannel.receiveBroadcastStream().cast();
+
 
   @override
   Future<String?> imagePath(String imgurl) async {
@@ -1727,6 +1882,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return re;
     }
   }
+
 
   @override
   Future<dynamic> saveProfile(String name, String email) async {
@@ -1744,6 +1900,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> sentFileMessage(String? file, String jid) async {
     var re = "";
@@ -1757,6 +1914,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return re;
     }
   }
+
 
   @override
   Future<dynamic> getRecentChatList() async {
@@ -1776,6 +1934,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getProfileStatusList() async {
     //getStatusList
@@ -1794,9 +1953,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> insertDefaultStatus(String status) async {
-    //insertStatus
     try {
       await mirrorFlyMethodChannel
           .invokeMethod('insertDefaultStatus', {"status": status});
@@ -1809,8 +1968,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  /*@override
-  void insertDefaultStatusToUser() async{
+  /*
+@override
+ void insertDefaultStatusToUser() async{
     try {
       await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList').then((value) {
         mirrorFlyLog("status list", "$value");
@@ -1854,9 +2014,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       debugPrint("Exception ==> $er");
     }
   }*/
+
   @override
-  Future<dynamic> updateMyProfile(String name, String email, String mobile,
-      String status, String? image) async {
+  Future<dynamic> updateMyProfile(String name, String email,
+      String mobile, String status, String? image) async {
     //updateProfile
     dynamic profileResponse;
     try {
@@ -1879,6 +2040,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getUserProfile(String jid,
       [bool fromserver = false, bool saveasfriend = false]) async {
@@ -1900,6 +2062,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<dynamic> getProfileDetails(String jid, bool fromServer) async {
     dynamic profileResponse;
@@ -1916,6 +2079,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> getProfileLocal(String jid, bool server) async {
@@ -1934,13 +2098,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
-  Future<dynamic> setMyProfileStatus(String status) async {
+  Future<dynamic> setMyProfileStatus(String status, [String? statusId]) async {
     //updateProfileStatus
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel
-          .invokeMethod('setMyProfileStatus', {"status": status});
+          .invokeMethod(
+          'setMyProfileStatus', {"status": status, "statusId": statusId});
       debugPrint("setMyProfileStatus Result ==> $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
@@ -1951,6 +2117,25 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+
+  @override
+  Future<dynamic> insertNewProfileStatus(String status) async {
+    dynamic profileResponse;
+    try {
+      profileResponse = await mirrorFlyMethodChannel
+          .invokeMethod('insertNewProfileStatus', {"status": status});
+      debugPrint("insertNewProfileStatus Result ==> $profileResponse");
+      return profileResponse;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
 
   @override
   Future<dynamic> updateMyProfileImage(String image) async {
@@ -1970,6 +2155,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> removeProfileImage() async {
     bool? profileResponse;
@@ -1986,6 +2172,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return false;
     }
   }
+
 
   @override
   Future<bool?> removeGroupProfileImage(String jid) async {
@@ -2004,6 +2191,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
   @override
   Future<bool?> refreshAndGetAuthToken() async {
     bool? tokenResponse;
@@ -2020,6 +2208,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return false;
     }
   }
+
 
   @override
   Future<dynamic> getMessagesOfJid(String jid) async {
@@ -2043,8 +2232,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   //Removed and added in MainActivity.kt during configuration. User just need to listen the event after initialization
 
-  /*@override
-  Future<dynamic> listenMessageEvents() async {
+  /*
+@override
+ Future<dynamic> listenMessageEvents() async {
     dynamic chatListenerResponse;
     try {
       chatListenerResponse = await mirrorFlyMethodChannel.invokeMethod('chat_listener');
@@ -2058,8 +2248,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
-  @override
-  Future<dynamic> listenGroupChatEvents() async {
+  
+@override
+ Future<dynamic> listenGroupChatEvents() async {
     dynamic chatListenerResponse;
     try {
       chatListenerResponse = await mirrorFlyMethodChannel.invokeMethod('groupchat_listener');
@@ -2075,300 +2266,317 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }*/
 
   //Duplicate method call of getMessageOfId
-  @override
-  Future<dynamic> getMedia(String mid) async {
-    dynamic media;
-    try {//
-      media = await mirrorFlyMethodChannel.invokeMethod('get_media',{ "message_id" : mid });
-      // debugPrint("mediaResponse ==> $media");
-      return media;
-    }on PlatformException catch (e){
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch(error){
-      debugPrint("Exception ==> $error");
-      rethrow;
+  // 
+  //@override
+  //Future<dynamic> getMedia(String mid) async {
+    //   dynamic media;
+    //   try {//
+    //     media = await mirrorFlyMethodChannel.invokeMethod('get_media',{ "message_id" : mid });
+    //     // debugPrint("mediaResponse ==> $media");
+    //     return media;
+    //   }on PlatformException catch (e){
+    //     debugPrint("Platform Exception ===> $e");
+    //     rethrow;
+    //   } on Exception catch(error){
+    //     debugPrint("Exception ==> $error");
+    //     rethrow;
+    //   }
+    // }
+
+
+    @override
+    Future<dynamic> markAsReadDeleteUnreadSeparator(String jid) async {
+      //sendReadReceipts
+      //Handled Both Functions ChatManager.markAsRead and FlyMessenger.deleteUnreadMessageSeparatorOfAConversation in this same Function
+      dynamic readReceiptResponse;
+      try {
+        readReceiptResponse = await mirrorFlyMethodChannel
+            .invokeMethod('markAsReadDeleteUnreadSeparator', {"jid": jid});
+        // debugPrint("mediaResponse ==> $readReceiptResponse");
+        return readReceiptResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> markAsReadDeleteUnreadSeparator(String jid) async {
-    //sendReadReceipts
-    //Handled Both Functions ChatManager.markAsRead and FlyMessenger.deleteUnreadMessageSeparatorOfAConversation in this same Function
-    dynamic readReceiptResponse;
-    try {
-      readReceiptResponse = await mirrorFlyMethodChannel
-          .invokeMethod('markAsReadDeleteUnreadSeparator', {"jid": jid});
-      // debugPrint("mediaResponse ==> $readReceiptResponse");
-      return readReceiptResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    Future<dynamic> sendContactMessage(List<String> contactList,
+        String jid, String contactName, String replyMessageId) async {
+      dynamic contactResponse;
+      try {
+        contactResponse =
+        await mirrorFlyMethodChannel.invokeMethod('sendContactMessage', {
+          "contact_list": contactList,
+          "jid": jid,
+          "contact_name": contactName,
+          "replyMessageId": replyMessageId
+        });
+        // debugPrint("mediaResponse ==> $readReceiptResponse");
+        return contactResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> sendContactMessage(List<String> contactList, String jid,
-      String contactName, String replyMessageId) async {
-    dynamic contactResponse;
-    try {
-      contactResponse =
-      await mirrorFlyMethodChannel.invokeMethod('sendContactMessage', {
-        "contact_list": contactList,
-        "jid": jid,
-        "contact_name": contactName,
-        "replyMessageId": replyMessageId
-      });
-      // debugPrint("mediaResponse ==> $readReceiptResponse");
-      return contactResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    Future<dynamic> logoutOfChatSDK() async {
+      //logout
+      dynamic logoutResponse;
+      try {
+        logoutResponse =
+        await mirrorFlyMethodChannel.invokeMethod('logoutOfChatSDK');
+        debugPrint("logoutResponse ==> $logoutResponse");
+        return logoutResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> logoutOfChatSDK() async {
-    //logout
-    dynamic logoutResponse;
-    try {
-      logoutResponse =
-      await mirrorFlyMethodChannel.invokeMethod('logoutOfChatSDK');
-      debugPrint("logoutResponse ==> $logoutResponse");
-      return logoutResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    setOnGoingChatUser(String jid) async {
+      //ongoingChat
+      try {
+        await mirrorFlyMethodChannel
+            .invokeMethod('setOnGoingChatUser', {"jid": jid});
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  setOnGoingChatUser(String jid) async {
-    //ongoingChat
-    try {
-      await mirrorFlyMethodChannel
-          .invokeMethod('setOnGoingChatUser', {"jid": jid});
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    downloadMedia(String mid) async {
+      //mediaDownload
+      try {
+        await mirrorFlyMethodChannel
+            .invokeMethod('downloadMedia', {"mediaMessage_id": mid});
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  downloadMedia(String mid) async {
-    //mediaDownload
-    try {
-      await mirrorFlyMethodChannel
-          .invokeMethod('downloadMedia', {"mediaMessage_id": mid});
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    Future<dynamic> sendDocumentMessage(String jid, String documentPath,
+        String replyMessageId,
+        [String? fileUrl]) async {
+      dynamic documentResponse;
+      try {
+        documentResponse =
+        await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage', {
+          "file": documentPath,
+          "jid": jid,
+          "replyMessageId": replyMessageId,
+          "file_url": fileUrl
+        });
+        debugPrint("documentResponse ==> $documentResponse");
+        return documentResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> sendDocumentMessage(
-      String jid, String documentPath, String replyMessageId,
-      [String? fileUrl]) async {
-    dynamic documentResponse;
-    try {
-      documentResponse =
-      await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage', {
-        "file": documentPath,
-        "jid": jid,
-        "replyMessageId": replyMessageId,
-        "file_url": fileUrl
-      });
-      debugPrint("documentResponse ==> $documentResponse");
-      return documentResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    Future<dynamic> openFile(String filePath) async {
+      dynamic documentResponse;
+      try {
+        documentResponse = await mirrorFlyMethodChannel
+            .invokeMethod('open_file', {"filePath": filePath});
+        debugPrint("documentResponse ==> $documentResponse");
+        return documentResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> openFile(String filePath) async {
-    dynamic documentResponse;
-    try {
-      documentResponse = await mirrorFlyMethodChannel
-          .invokeMethod('open_file', {"filePath": filePath});
-      debugPrint("documentResponse ==> $documentResponse");
-      return documentResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    Future<dynamic> sendAudioMessage(String jid, String filePath,
+        bool isRecorded, String duration, String replyMessageId,
+        [String? audiofileUrl]) async {
+      //sendAudio
+      dynamic audioResponse;
+      try {
+        audioResponse =
+        await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage', {
+          "filePath": filePath,
+          "jid": jid,
+          "isRecorded": isRecorded,
+          "duration": duration,
+          "replyMessageId": replyMessageId,
+          "audiofileUrl": audiofileUrl
+        });
+        debugPrint("audioResponse ==> $audioResponse");
+        return audioResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> sendAudioMessage(String jid, String filePath, bool isRecorded,
-      String duration, String replyMessageId,
-      [String? audiofileUrl]) async {
-    //sendAudio
-    dynamic audioResponse;
-    try {
-      audioResponse =
-      await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage', {
-        "filePath": filePath,
-        "jid": jid,
-        "isRecorded": isRecorded,
-        "duration": duration,
-        "replyMessageId": replyMessageId,
-        "audiofileUrl": audiofileUrl
-      });
-      debugPrint("audioResponse ==> $audioResponse");
-      return audioResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    //Recent Chat Search
+
+
+    @override
+    Future<dynamic> getRecentChatListIncludingArchived() async {
+      //filteredRecentChatList
+      dynamic response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod('getRecentChatListIncludingArchived');
+        debugPrint("getRecentChatListIncludingArchived ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  //Recent Chat Search
 
-  @override
-  Future<dynamic> getRecentChatListIncludingArchived() async {
-    //filteredRecentChatList
-    dynamic response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod('getRecentChatListIncludingArchived');
-      debugPrint("getRecentChatListIncludingArchived ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> searchConversation(String searchKey,
+        [String? jidForSearch, bool globalSearch = true]) async {
+      //filteredMessageList
+      dynamic response;
+      try {
+        response =
+        await mirrorFlyMethodChannel.invokeMethod('searchConversation', {
+          "searchKey": searchKey,
+          "jidForSearch": jidForSearch,
+          "globalSearch": globalSearch
+        });
+        debugPrint("searchConversation ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> searchConversation(String searchKey,
-      [String? jidForSearch, bool globalSearch = true]) async {
-    //filteredMessageList
-    dynamic response;
-    try {
-      response =
-      await mirrorFlyMethodChannel.invokeMethod('searchConversation', {
-        "searchKey": searchKey,
-        "jidForSearch": jidForSearch,
-        "globalSearch": globalSearch
-      });
-      debugPrint("searchConversation ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    Future<dynamic> getRegisteredUsers(bool server) async {
+      //filteredContactList
+      dynamic response;
+      try {
+        response =
+        await mirrorFlyMethodChannel.invokeMethod(
+            'getRegisteredUsers', {"server": server});
+        debugPrint("getRegisteredUsers $server ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> getRegisteredUsers(bool server) async {
-    //filteredContactList
-    dynamic response;
-    try {
-      response =
-      await mirrorFlyMethodChannel.invokeMethod('getRegisteredUsers',{"server":server});
-      debugPrint("getRegisteredUsers ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    Future<dynamic> getMessageOfId(String mid) async {
+      dynamic response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod('getMessageOfId', {"mid": mid});
+        debugPrint("response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> getMessageOfId(String mid) async {
-    dynamic response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod('getMessageOfId', {"mid": mid});
-      debugPrint("response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    Future<dynamic> getRecentChatOf(String jid) async {
+      dynamic response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod('getRecentChatOf', {"jid": jid});
+        debugPrint("getRecentChatOf response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> getRecentChatOf(String jid) async {
-    dynamic response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod('getRecentChatOf', {"jid": jid});
-      debugPrint("getRecentChatOf response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    Future<dynamic> clearChat(String jid, String chatType,
+        bool clearExceptStarred) async {
+      dynamic clearChatResponse;
+      try {
+        clearChatResponse = await mirrorFlyMethodChannel.invokeMethod(
+            'clear_chat', {
+          "jid": jid,
+          "chat_type": chatType,
+          "clear_except_starred": clearExceptStarred
+        });
+        debugPrint("clear chat Response ==> $clearChatResponse");
+        return clearChatResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> clearChat(
-      String jid, String chatType, bool clearExceptStarred) async {
-    dynamic clearChatResponse;
-    try {
-      clearChatResponse = await mirrorFlyMethodChannel.invokeMethod(
-          'clear_chat', {
-        "jid": jid,
-        "chat_type": chatType,
-        "clear_except_starred": clearExceptStarred
-      });
-      debugPrint("clear chat Response ==> $clearChatResponse");
-      return clearChatResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
-
-  //Duplicate of reportUserOrMessages
-  /*@override
-  Future<dynamic> reportChatOrUser(String jid, String chatType, String? messageId) async {
+    //Duplicate of reportUserOrMessages
+    /*
+@override
+ Future<dynamic> reportChatOrUser(String jid, String chatType, String? messageId) async {
     dynamic reportResponse;
     try {
       reportResponse = await mirrorFlyMethodChannel.invokeMethod('report_chat',{ "jid" : jid, "chat_type" : chatType, "selectedMessageID" : messageId});
@@ -2383,943 +2591,1073 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }*/
 
-  @override
-  Future<dynamic> getMessagesUsingIds(List<String> messageIds) async {
-    dynamic messageListResponse;
-    try {
-      messageListResponse = await mirrorFlyMethodChannel
-          .invokeMethod('getMessagesUsingIds', {"MessageIds": messageIds});
-      debugPrint("getMessagesUsingIds Response ==> $messageListResponse");
-      return messageListResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  //Handled deleteMessagesForEveryone and deleteMessagesForMe in same function. so Named Commonly
-  @override
-  Future<dynamic> deleteMessagesForMe(String jid, String chatType,
-      List<String> messageIds, bool? isMediaDelete) async {
-    dynamic messageDeleteResponse;
-    try {
-      messageDeleteResponse =
-      await mirrorFlyMethodChannel.invokeMethod('deleteMessagesForMe', {
-        "jid": jid,
-        "chat_type": chatType,
-        "isMediaDelete": isMediaDelete,
-        "message_ids": messageIds
-      });
-      debugPrint("deleteMessagesForMe Response ==> $messageDeleteResponse");
-      return messageDeleteResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> getMessagesUsingIds(List<String> messageIds) async {
+      dynamic messageListResponse;
+      try {
+        messageListResponse = await mirrorFlyMethodChannel
+            .invokeMethod('getMessagesUsingIds', {"MessageIds": messageIds});
+        debugPrint("getMessagesUsingIds Response ==> $messageListResponse");
+        return messageListResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> deleteMessagesForEveryone(String jid, String chatType,
-      List<String> messageIds, bool? isMediaDelete) async {
-    dynamic messageDeleteResponse;
-    try {
-      messageDeleteResponse = await mirrorFlyMethodChannel
-          .invokeMethod('deleteMessagesForEveryone', {
-        "jid": jid,
-        "chat_type": chatType,
-        "isMediaDelete": isMediaDelete,
-        "message_ids": messageIds
-      });
-      debugPrint(
-          "deleteMessagesForEveryone Response ==> $messageDeleteResponse");
-      return messageDeleteResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
+    //Handled deleteMessagesForEveryone and deleteMessagesForMe in same function. so Named Commonly
 
-  @override
-  Future<dynamic> deleteMessages(
-      String jid, List<String> messageIds, bool isDeleteForEveryOne) async {
-    dynamic messageDeleteResponse;
-    try {
-      messageDeleteResponse =
-      await mirrorFlyMethodChannel.invokeMethod('delete_messages', {
-        "jid": jid,
-        "chat_type": "chat",
-        "message_ids": messageIds,
-        "is_delete_for_everyone": isDeleteForEveryOne
-      });
-      debugPrint("Message Delete Response ==> $messageDeleteResponse");
-      return messageDeleteResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> deleteMessagesForMe(String jid, String chatType,
+        List<String> messageIds, bool? isMediaDelete) async {
+      dynamic messageDeleteResponse;
+      try {
+        messageDeleteResponse =
+        await mirrorFlyMethodChannel.invokeMethod('deleteMessagesForMe', {
+          "jid": jid,
+          "chat_type": chatType,
+          "isMediaDelete": isMediaDelete,
+          "message_ids": messageIds
+        });
+        debugPrint("deleteMessagesForMe Response ==> $messageDeleteResponse");
+        return messageDeleteResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> getGroupMessageDeliveredToList(String messageId) async {
-    dynamic messageDeleteResponse;
-    try {
-      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod(
-          'getGroupMessageDeliveredToList', {"messageId": messageId});
-      debugPrint(
-          "getGroupMessageDeliveredToList Response ==> $messageDeleteResponse");
-      return messageDeleteResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<dynamic> getGroupMessageReadByList(String messageId) async {
-    dynamic messageDeleteResponse;
-    try {
-      messageDeleteResponse = await mirrorFlyMethodChannel
-          .invokeMethod('getGroupMessageReadByList', {"messageId": messageId});
-      debugPrint(
-          "getGroupMessageReadByList Response ==> $messageDeleteResponse");
-      return messageDeleteResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> deleteMessagesForEveryone(String jid, String chatType,
+        List<String> messageIds, bool? isMediaDelete) async {
+      dynamic messageDeleteResponse;
+      try {
+        messageDeleteResponse = await mirrorFlyMethodChannel
+            .invokeMethod('deleteMessagesForEveryone', {
+          "jid": jid,
+          "chat_type": chatType,
+          "isMediaDelete": isMediaDelete,
+          "message_ids": messageIds
+        });
+        debugPrint(
+            "deleteMessagesForEveryone Response ==> $messageDeleteResponse");
+        return messageDeleteResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> getMessageStatusOfASingleChatMessage(String messageID) async {
-    //getMessageInfo
-    dynamic messageInfoResponse;
-    try {
-      messageInfoResponse = await mirrorFlyMethodChannel.invokeMethod(
-          'getMessageStatusOfASingleChatMessage', {"messageID": messageID});
-      debugPrint("Message Info Response ==> $messageInfoResponse");
-      return messageInfoResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<dynamic> blockUser(String userJID) async {
-    dynamic userBlockResponse;
-    try {
-      userBlockResponse = await mirrorFlyMethodChannel
-          .invokeMethod('block_user', {"userJID": userJID});
-      debugPrint("Blocked Response ==> $userBlockResponse");
-      return userBlockResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> deleteMessages(String jid, List<String> messageIds,
+        bool isDeleteForEveryOne) async {
+      dynamic messageDeleteResponse;
+      try {
+        messageDeleteResponse =
+        await mirrorFlyMethodChannel.invokeMethod('delete_messages', {
+          "jid": jid,
+          "chat_type": "chat",
+          "message_ids": messageIds,
+          "is_delete_for_everyone": isDeleteForEveryOne
+        });
+        debugPrint("Message Delete Response ==> $messageDeleteResponse");
+        return messageDeleteResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<bool?> unblockUser(String userJID) async {
-    //unBlockUser
-    bool? userBlockResponse;
-    try {
-      userBlockResponse = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('un_block_user', {"userJID": userJID});
-      debugPrint("Un-Blocked Response ==> $userBlockResponse");
-      return userBlockResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<String?> showCustomTones() async {
-    String? response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<String>('showCustomTones');
-      debugPrint("showCustomTones Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> getGroupMessageDeliveredToList(String messageId) async {
+      dynamic messageDeleteResponse;
+      try {
+        messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod(
+            'getGroupMessageDeliveredToList', {"messageId": messageId});
+        debugPrint(
+            "getGroupMessageDeliveredToList Response ==> $messageDeleteResponse");
+        return messageDeleteResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<String?> getRingtoneName() async {
-    String? response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<String>('getRingtoneName');
-      debugPrint("getRingtoneName Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<bool?> loginWebChatViaQRCode(String barcode) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('loginWebChatViaQRCode', {"barcode": barcode});
-      debugPrint("loginWebChatViaQRCode Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> getGroupMessageReadByList(String messageId) async {
+      dynamic messageDeleteResponse;
+      try {
+        messageDeleteResponse = await mirrorFlyMethodChannel
+            .invokeMethod(
+            'getGroupMessageReadByList', {"messageId": messageId});
+        debugPrint(
+            "getGroupMessageReadByList Response ==> $messageDeleteResponse");
+        return messageDeleteResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<bool?> webLoginDetailsCleared() async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('webLoginDetailsCleared');
-      debugPrint("webLoginDetailsCleared Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<bool?> logoutWebUser(List<String> logins) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('logoutWebUser', {"listWebLogin": logins});
-      debugPrint("logoutWebUser Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> getMessageStatusOfASingleChatMessage(
+        String messageID) async {
+      //getMessageInfo
+      dynamic messageInfoResponse;
+      try {
+        messageInfoResponse = await mirrorFlyMethodChannel.invokeMethod(
+            'getMessageStatusOfASingleChatMessage', {"messageID": messageID});
+        debugPrint("Message Info Response ==> $messageInfoResponse");
+        return messageInfoResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> getWebLoginDetails() async {
-    dynamic response;
-    try {
-      response =
-      await mirrorFlyMethodChannel.invokeMethod('getWebLoginDetails');
-      debugPrint("getWebLoginDetails Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<dynamic> updateFavouriteStatus(
-      String messageID, String chatUserJID, bool isFavourite, String chatType) async {
-    //favouriteMessage
-    dynamic favResponse;
-    try {
-      favResponse = await mirrorFlyMethodChannel.invokeMethod(
-          'updateFavouriteStatus', {
-        "messageID": messageID,
-        "chatUserJID": chatUserJID,
-        "isFavourite": isFavourite,
-        "chatType": chatType,
-      });
-      debugPrint("Favourite Msg Response ==> $favResponse");
-      return favResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> blockUser(String userJID) async {
+      dynamic userBlockResponse;
+      try {
+        userBlockResponse = await mirrorFlyMethodChannel
+            .invokeMethod('block_user', {"userJID": userJID});
+        debugPrint("Blocked Response ==> $userBlockResponse");
+        return userBlockResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> forwardMessagesToMultipleUsers(
-      List<String> messageIds, List<String> userList) async {
-    //forwardMessage
-    dynamic forwardMessageResponse;
-    try {
-      forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod(
-          'forwardMessagesToMultipleUsers',
-          {"message_ids": messageIds, "userList": userList});
-      debugPrint("Forward Msg Response ==> $forwardMessageResponse");
-      return forwardMessageResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<dynamic> forwardMessages(
-      List<String> messageIds, String tojid, String chattype) async {
-    //forwardMessage
-    dynamic forwardMessageResponse;
-    try {
-      forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod(
-          'forwardMessages',
-          {"message_ids": messageIds, "to_jid": tojid, "chat_type": chattype});
-      debugPrint("forwardMessages Response ==> $forwardMessageResponse");
-      return forwardMessageResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<bool?> unblockUser(String userJID) async {
+      //unBlockUser
+      bool? userBlockResponse;
+      try {
+        userBlockResponse = await mirrorFlyMethodChannel
+            .invokeMethod<bool>('un_block_user', {"userJID": userJID});
+        debugPrint("Un-Blocked Response ==> $userBlockResponse");
+        return userBlockResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> createGroup(
-      String groupname, List<String> userList, String image) async {
-    dynamic response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod('createGroup', {
-        "group_name": groupname,
-        "members": userList,
-        "file": image,
-      });
-      debugPrint("create group Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<bool?> addUsersToGroup(String jid, List<String> userList) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>(
-          'addUsersToGroup', {"jid": jid, "members": userList});
-      debugPrint("addUsersToGroup Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<String?> showCustomTones() async {
+      String? response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod<String>('showCustomTones');
+        debugPrint("showCustomTones Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> getGroupMembersList(String jid, bool? server) async {
-    //getGroupMembers
-    dynamic response;
-    try {
-      response =
-      await mirrorFlyMethodChannel.invokeMethod('getGroupMembersList', {
-        "jid": jid,
-        "server": server,
-      });
-      debugPrint("getGroupMembersList Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<dynamic> getUsersIBlocked(bool? server) async {
-    dynamic response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod('getUsersIBlocked', {
-        "serverCall": server,
-      });
-      debugPrint("getUsersIBlocked Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<String?> getRingtoneName() async {
+      String? response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod<String>('getRingtoneName');
+        debugPrint("getRingtoneName Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> getMediaMessages(String jid) async {
-    dynamic response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod('getMediaMessages', {
-        "jid": jid,
-      });
-      debugPrint("getMediaMessages Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<dynamic> getDocsMessages(String jid) async {
-    dynamic response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod('getDocsMessages', {
-        "jid": jid,
-      });
-      debugPrint("getDocsMessages Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<bool?> loginWebChatViaQRCode(String barcode) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod<bool>('loginWebChatViaQRCode', {"barcode": barcode});
+        debugPrint("loginWebChatViaQRCode Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> getLinkMessages(String jid) async {
-    dynamic response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod('getLinkMessages', {
-        "jid": jid,
-      });
-      debugPrint("getLinkMessages Response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  exportChatConversationToEmail(String jid) async {
-    try {
-      await mirrorFlyMethodChannel
-          .invokeMethod('exportChatConversationToEmail', {"jid": jid});
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<bool?> webLoginDetailsCleared() async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod<bool>('webLoginDetailsCleared');
+        debugPrint("webLoginDetailsCleared Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<bool?> reportUserOrMessages(
-      String jid, String type, String? messageId) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>(
-          'reportUserOrMessages',
-          {"jid": jid, "chat_type": type, "selectedMessageID": messageId});
-      debugPrint("report Result ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      return false;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      return false;
-    }
-  }
 
-  @override
-  Future<bool?> makeAdmin(String groupjid, String userjid) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>(
-          'makeAdmin', {"jid": groupjid, "userjid": userjid});
-      debugPrint("report Result ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      return false;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      return false;
+    @override
+    Future<bool?> logoutWebUser(List<String> logins) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod<bool>('logoutWebUser', {"listWebLogin": logins});
+        debugPrint("logoutWebUser Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<bool?> removeMemberFromGroup(String groupjid, String userjid) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>(
-          'removeMemberFromGroup', {"jid": groupjid, "userjid": userjid});
-      debugPrint("report Result ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      return false;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      return false;
+    @override
+    Future<bool?> iOSFileExist(String filePath) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod<bool>('iOSFileExist', {"file_path": filePath});
+        debugPrint("iOSFileExist Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<bool?> leaveFromGroup(String? userJid, String groupJid) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('leaveFromGroup', {"userJid": userJid , "groupJid": groupJid});
-      debugPrint("leaveFromGroup Result ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      return false;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      return false;
-    }
-  }
 
-  @override
-  Future<bool?> deleteGroup(String jid) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('deleteGroup', {"jid": jid});
-      debugPrint("leaveFromGroup Result ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      return false;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      return false;
+    @override
+    Future<dynamic> getWebLoginDetails() async {
+      dynamic response;
+      try {
+        response =
+        await mirrorFlyMethodChannel.invokeMethod('getWebLoginDetails');
+        debugPrint("getWebLoginDetails Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<bool?> isAdmin(String userJid, String groupJID) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('isAdmin', {"jid": userJid, "group_jid" : groupJID});
-      debugPrint("isAdmin Result ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      return false;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      return false;
-    }
-  }
 
-  @override
-  Future<bool?> updateGroupProfileImage(String jid, String file) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>(
-          'updateGroupProfileImage', {"jid": jid, "file": file});
-      debugPrint("updateGroupProfileImage Result ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      return false;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      return false;
+    @override
+    Future<dynamic> updateFavouriteStatus(String messageID, String chatUserJID,
+        bool isFavourite, String chatType) async {
+      //favouriteMessage
+      dynamic favResponse;
+      try {
+        favResponse = await mirrorFlyMethodChannel.invokeMethod(
+            'updateFavouriteStatus', {
+          "messageID": messageID,
+          "chatUserJID": chatUserJID,
+          "isFavourite": isFavourite,
+          "chatType": chatType,
+        });
+        debugPrint("Favourite Msg Response ==> $favResponse");
+        return favResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<bool?> updateGroupName(String jid, String name) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('updateGroupName', {"jid": jid, "name": name});
-      debugPrint("updateGroupName Result ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      return false;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      return false;
-    }
-  }
 
-  @override
-  Future<bool?> isMemberOfGroup(String jid, String? userjid) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>(
-          'isMemberOfGroup', {"jid": jid, "userjid": userjid});
-      debugPrint("isMemberOfGroup Result ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      return false;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      return false;
+    @override
+    Future<dynamic> forwardMessagesToMultipleUsers(List<String> messageIds,
+        List<String> userList) async {
+      //forwardMessage
+      dynamic forwardMessageResponse;
+      try {
+        forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod(
+            'forwardMessagesToMultipleUsers',
+            {"message_ids": messageIds, "userList": userList});
+        debugPrint("Forward Msg Response ==> $forwardMessageResponse");
+        return forwardMessageResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<bool?> sendContactUsInfo(String title, String description) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>(
-          'sendContactUsInfo', {"title": title, "description": description});
-      debugPrint("sendContactUsInfo Result ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      return false;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      return false;
-    }
-  }
 
-  @override
-  copyTextMessages(List<String> messageIds) async {
-    try {
-      await mirrorFlyMethodChannel
-          .invokeMethod('copyTextMessages', {"messageidlist": messageIds});
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> forwardMessages(List<String> messageIds, String tojid,
+        String chattype) async {
+      //forwardMessage
+      dynamic forwardMessageResponse;
+      try {
+        forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod(
+            'forwardMessages',
+            {
+              "message_ids": messageIds,
+              "to_jid": tojid,
+              "chat_type": chattype
+            });
+        debugPrint("forwardMessages Response ==> $forwardMessageResponse");
+        return forwardMessageResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  saveUnsentMessage(String jid, String message) async {
-    try {
-      await mirrorFlyMethodChannel
-          .invokeMethod('saveUnsentMessage', {"jid": jid, "message": message});
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<dynamic> deleteAccount(String reason, String? feedback) async {
-    dynamic response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod('delete_account',
-          {"delete_reason": reason, "delete_feedback": feedback});
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> createGroup(String groupname, List<String> userList,
+        String image) async {
+      dynamic response;
+      try {
+        response = await mirrorFlyMethodChannel.invokeMethod('createGroup', {
+          "group_name": groupname,
+          "members": userList,
+          "file": image,
+        });
+        debugPrint("create group Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<dynamic> getFavouriteMessages() async {
-    dynamic favResponse;
-    try {
-      favResponse =
-      await mirrorFlyMethodChannel.invokeMethod('get_favourite_messages');
-      debugPrint("fav response ==> $favResponse");
-      return favResponse;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<dynamic> getAllGroups([bool? server]) async {
-    dynamic response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod('getAllGroups', {"server": server});
-      debugPrint("getAllGroups response ==> $response");
-      return response;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<bool?> addUsersToGroup(String jid, List<String> userList) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel.invokeMethod<bool>(
+            'addUsersToGroup', {"jid": jid, "members": userList});
+        debugPrint("addUsersToGroup Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<String?> getDefaultNotificationUri() async {
-    String? uri = "";
-    try {
-      uri = await mirrorFlyMethodChannel
-          .invokeMethod<String?>('getDefaultNotificationUri');
-      return uri;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  setNotificationUri(String uri) async {
-    try {
-      await mirrorFlyMethodChannel
-          .invokeMethod('setNotificationUri', {"uri": uri});
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> getGroupMembersList(String jid, bool? server) async {
+      //getGroupMembers
+      dynamic response;
+      try {
+        response =
+        await mirrorFlyMethodChannel.invokeMethod('getGroupMembersList', {
+          "jid": jid,
+          "server": server,
+        });
+        debugPrint("getGroupMembersList Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  setNotificationSound(bool enable) async {
-    try {
-      await mirrorFlyMethodChannel
-          .invokeMethod('setNotificationSound', {"enable": enable});
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  setMuteNotification(bool enable) async {
-    try {
-      await mirrorFlyMethodChannel
-          .invokeMethod('setMuteNotification', {"enable": enable});
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> getUsersIBlocked(bool? server) async {
+      dynamic response;
+      try {
+        response =
+        await mirrorFlyMethodChannel.invokeMethod('getUsersIBlocked', {
+          "serverCall": server,
+        });
+        debugPrint("getUsersIBlocked Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  setNotificationVibration(bool enable) async {
-    try {
-      await mirrorFlyMethodChannel
-          .invokeMethod('setNotificationVibration', {"enable": enable});
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  cancelNotifications() async {
-    try {
-      await mirrorFlyMethodChannel.invokeMethod('cancelNotifications');
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> getMediaMessages(String jid) async {
+      dynamic response;
+      try {
+        response =
+        await mirrorFlyMethodChannel.invokeMethod('getMediaMessages', {
+          "jid": jid,
+        });
+        debugPrint("getMediaMessages Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  saveMediaSettings(bool photos, bool videos, bool audio, bool documents,
-      int networkType) async {
-    try {
-      await mirrorFlyMethodChannel.invokeMethod('saveMediaSettings', {
-        'Photos': photos,
-        'Videos': videos,
-        'Audio': audio,
-        'Documents': documents,
-        'NetworkType': networkType
-      });
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<bool?> getMediaSetting(int networkType, String type) async {
-    bool? val = false;
-    try {
-      val = await mirrorFlyMethodChannel.invokeMethod<bool?>(
-          'getMediaSetting', {"NetworkType": networkType, "type": type});
-      debugPrint('getMediaSetting : $networkType :  $type : ${val.toString()}');
-      return val;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> getDocsMessages(String jid) async {
+      dynamic response;
+      try {
+        response =
+        await mirrorFlyMethodChannel.invokeMethod('getDocsMessages', {
+          "jid": jid,
+        });
+        debugPrint("getDocsMessages Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<bool?> getMediaAutoDownload() async {
-    bool? val = false;
-    try {
-      val = await mirrorFlyMethodChannel.invokeMethod<bool?>(
-          'getMediaAutoDownload');
-      debugPrint("MediaAutoDownloadEnabled--> $val");
-      return val;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  setMediaAutoDownload(bool enable) async {
-    try {
-      await mirrorFlyMethodChannel.invokeMethod('setMediaAutoDownload', {
-        'enable': enable
-      });
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    Future<dynamic> getLinkMessages(String jid) async {
+      dynamic response;
+      try {
+        response =
+        await mirrorFlyMethodChannel.invokeMethod('getLinkMessages', {
+          "jid": jid,
+        });
+        debugPrint("getLinkMessages Response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<String?> getJidFromPhoneNumber(String mobileNumber, String countryCode) async {
-    String? jid = "";
-    try {
-      jid = await mirrorFlyMethodChannel
-          .invokeMethod<String?>('getJidFromPhoneNumber', {"mobileNumber": mobileNumber , "countryCode": countryCode});
-      return jid;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
 
-  @override
-  Future<bool?> getNotificationSound() async {
-    bool? isEnabled = false;
-    try {
-      isEnabled = await mirrorFlyMethodChannel
-          .invokeMethod('getNotificationSound');
-      return isEnabled;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+    @override
+    exportChatConversationToEmail(String jid) async {
+      try {
+        await mirrorFlyMethodChannel
+            .invokeMethod('exportChatConversationToEmail', {"jid": jid});
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
-  }
 
-  @override
-  Future<bool?> insertBusyStatus(String busyStatus) async {
-    bool? res;
-    try {
-      res = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('insertBusyStatus', {"busy_status": busyStatus});
-      return res;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
+
+    @override
+    Future<bool?> reportUserOrMessages(String jid, String type,
+        String? messageId) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel.invokeMethod<bool>(
+            'reportUserOrMessages',
+            {"jid": jid, "chat_type": type, "selectedMessageID": messageId});
+        debugPrint("report Result ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        return false;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        return false;
+      }
+    }
+
+
+    @override
+    Future<bool?> makeAdmin(String groupjid, String userjid) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel.invokeMethod<bool>(
+            'makeAdmin', {"jid": groupjid, "userjid": userjid});
+        debugPrint("report Result ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        return false;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        return false;
+      }
+    }
+
+
+    @override
+    Future<bool?> removeMemberFromGroup(String groupjid, String userjid) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel.invokeMethod<bool>(
+            'removeMemberFromGroup', {"jid": groupjid, "userjid": userjid});
+        debugPrint("report Result ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        return false;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        return false;
+      }
+    }
+
+
+    @override
+    Future<bool?> leaveFromGroup(String? userJid, String groupJid) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod<bool>(
+            'leaveFromGroup', {"userJid": userJid, "groupJid": groupJid});
+        debugPrint("leaveFromGroup Result ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        return false;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        return false;
+      }
+    }
+
+
+    @override
+    Future<bool?> deleteGroup(String jid) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod<bool>('deleteGroup', {"jid": jid});
+        debugPrint("deleteGroup Result ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        return false;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        return false;
+      }
+    }
+
+
+    @override
+    Future<bool?> isAdmin(String userJid, String groupJID) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod<bool>(
+            'isAdmin', {"jid": userJid, "group_jid": groupJID});
+        debugPrint("isAdmin Result ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        return false;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        return false;
+      }
+    }
+
+
+    @override
+    Future<bool?> updateGroupProfileImage(String jid, String file) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel.invokeMethod<bool>(
+            'updateGroupProfileImage', {"jid": jid, "file": file});
+        debugPrint("updateGroupProfileImage Result ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        return false;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        return false;
+      }
+    }
+
+
+    @override
+    Future<bool?> updateGroupName(String jid, String name) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod<bool>('updateGroupName', {"jid": jid, "name": name});
+        debugPrint("updateGroupName Result ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        return false;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        return false;
+      }
+    }
+
+
+    @override
+    Future<bool?> isMemberOfGroup(String jid, String? userJid) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel.invokeMethod<bool>(
+            'isMemberOfGroup', {"jid": jid, "userjid": userJid});
+        debugPrint("isMemberOfGroup Result ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        return false;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        return false;
+      }
+    }
+
+
+    @override
+    Future<bool?> sendContactUsInfo(String title, String description) async {
+      bool? response;
+      try {
+        response = await mirrorFlyMethodChannel.invokeMethod<bool>(
+            'sendContactUsInfo', {"title": title, "description": description});
+        debugPrint("sendContactUsInfo Result ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        return false;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        return false;
+      }
+    }
+
+
+    @override
+    copyTextMessages(List<String> messageIds) async {
+      try {
+        await mirrorFlyMethodChannel
+            .invokeMethod('copyTextMessages', {"messageidlist": messageIds});
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    saveUnsentMessage(String jid, String message) async {
+      try {
+        await mirrorFlyMethodChannel
+            .invokeMethod(
+            'saveUnsentMessage', {"jid": jid, "texMessage": message});
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    Future<dynamic> deleteAccount(String reason, String? feedback) async {
+      dynamic response;
+      try {
+        response = await mirrorFlyMethodChannel.invokeMethod('delete_account',
+            {"delete_reason": reason, "delete_feedback": feedback});
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    Future<dynamic> getFavouriteMessages() async {
+      dynamic favResponse;
+      try {
+        favResponse =
+        await mirrorFlyMethodChannel.invokeMethod('get_favourite_messages');
+        debugPrint("fav response ==> $favResponse");
+        return favResponse;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    Future<dynamic> getAllGroups([bool? server]) async {
+      dynamic response;
+      try {
+        response = await mirrorFlyMethodChannel
+            .invokeMethod('getAllGroups', {"server": server});
+        debugPrint("getAllGroups response ==> $response");
+        return response;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    Future<String?> getDefaultNotificationUri() async {
+      String? uri = "";
+      try {
+        uri = await mirrorFlyMethodChannel
+            .invokeMethod<String?>('getDefaultNotificationUri');
+        return uri;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    setDefaultNotificationSound() async {
+      try {
+        await mirrorFlyMethodChannel
+            .invokeMethod('setDefaultNotificationSound');
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    setNotificationSound(bool enable) async {
+      try {
+        await mirrorFlyMethodChannel
+            .invokeMethod('setNotificationSound', {"enable": enable});
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    Future<bool?> getNotificationSound() async {
+      bool? isEnabled = false;
+      try {
+        isEnabled = await mirrorFlyMethodChannel
+            .invokeMethod('getNotificationSound');
+        return isEnabled;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    setMuteNotification(bool enable) async {
+      try {
+        await mirrorFlyMethodChannel
+            .invokeMethod('setMuteNotification', {"enable": enable});
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    setNotificationVibration(bool enable) async {
+      try {
+        await mirrorFlyMethodChannel
+            .invokeMethod('setNotificationVibration', {"enable": enable});
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    cancelNotifications() async {
+      try {
+        await mirrorFlyMethodChannel.invokeMethod('cancelNotifications');
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    saveMediaSettings(bool photos, bool videos, bool audio, bool documents,
+        int networkType) async {
+      try {
+        await mirrorFlyMethodChannel.invokeMethod('saveMediaSettings', {
+          'Photos': photos,
+          'Videos': videos,
+          'Audio': audio,
+          'Documents': documents,
+          'NetworkType': networkType
+        });
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    Future<bool?> getMediaSetting(int networkType, String type) async {
+      bool? val = false;
+      try {
+        val = await mirrorFlyMethodChannel.invokeMethod<bool?>(
+            'getMediaSetting', {"NetworkType": networkType, "type": type});
+        return val;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+    @override
+    Future<bool?> getMediaAutoDownload() async {
+      bool? val = false;
+      try {
+        val = await mirrorFlyMethodChannel.invokeMethod<bool?>(
+            'getMediaAutoDownload');
+        debugPrint("MediaAutoDownloadEnabled--> $val");
+        return val;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+    @override
+    setMediaAutoDownload(bool enable) async {
+      try {
+        await mirrorFlyMethodChannel.invokeMethod('setMediaAutoDownload', {
+          'enable': enable
+        });
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+
+    @override
+    Future<String?> getJidFromPhoneNumber(String mobileNumber,
+        String countryCode) async {
+      String? jid = "";
+      try {
+        jid = await mirrorFlyMethodChannel
+            .invokeMethod<String?>('getJidFromPhoneNumber',
+            {"mobileNumber": mobileNumber, "countryCode": countryCode});
+        return jid;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+    @override
+    Future<bool?> isTrailLicence() async {
+      bool? val = true;
+      try {
+        val = await mirrorFlyMethodChannel
+            .invokeMethod<bool?>('IS_TRIAL_LICENSE');
+        debugPrint('isTrailLicence : $val');
+        return val;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+    @override
+    Future<dynamic> getNonChatUsers() async {
+      dynamic val;
+      try {
+        val = await mirrorFlyMethodChannel
+            .invokeMethod('getNonChatUsers');
+        debugPrint('getNonChatUsers : $val');
+        return val;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+    @override
+    Future addContact(String number) async {
+      try {
+        await mirrorFlyMethodChannel
+            .invokeMethod('addContact', {'number': number});
+        debugPrint('addContact : $number');
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
+
+    @override
+    Future setRegionCode(String regionCode) async {
+      try {
+        debugPrint('setRegionCode : $regionCode');
+        await mirrorFlyMethodChannel
+            .invokeMethod('setRegionCode', {'regionCode': regionCode});
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
     }
   }
-}
