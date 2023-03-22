@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-public class SwiftFlyChatPlugin: NSObject, FlutterPlugin {
+public class FlyChatPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "fly_chat", binaryMessenger: registrar.messenger())
-    let instance = SwiftFlyChatPlugin()
+    let instance = FlyChatPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
