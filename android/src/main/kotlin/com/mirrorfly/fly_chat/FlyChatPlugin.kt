@@ -835,7 +835,8 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       }
       call.method.equals("exportChatConversationToEmail") -> {
         val jid = call.argument<String?>("jid") ?: ""
-        FlyCore.exportChatConversationToEmail(jid, emptyList())
+//        FlyCore.exportChatConversationToEmail(jid, emptyList())
+        prepareChatConversationToExport(call, result)
       }
       call.method.equals("get_message_using_ids") -> {
 //                getMessageUsingIds(call, result)

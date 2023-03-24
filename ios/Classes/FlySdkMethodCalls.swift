@@ -15,6 +15,48 @@ import FlyDatabase
 
 @objc class FlySdkMethodCalls : NSObject{
     
+    static func buildChatSDK(call: FlutterMethodCall) {
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        var domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
+        var licenseKey = args["licenseKey"] as? String ?? ""
+        let enableMobileNumberLogin = args["enableMobileNumberLogin"] as? Bool ?? true
+        let isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
+        let enableSDKLog = args["enableSDKLog"] as? Bool ?? false
+        let maximumRecentChatPin = args["maximumRecentChatPin"] as? Int ?? 3
+        
+    
+        var ivKey = args["ivKey"] as? String ?? ""
+        var containerID = args["iOSContainerID"] as? String ?? ""
+        
+        var groupConfig = args["groupConfig"] as? [String : Any]
+        
+        var groupCreationEnable = groupConfig?["enableGroup"] as? Bool ?? true
+        var adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
+        var maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
+        
+        let sdkGroupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: groupCreationEnable)
+            .onlyAdminCanAddOrRemoveMembers(adminOnly: adminOnlyAddRemoveAccess)
+            .setMaximumMembersInAGroup(membersCount: maxMembersCount)
+            .build()
+        assert(sdkGroupConfig != nil)
+
+        try? ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
+            .setLicenseKey(key: licenseKey)
+            .isTrialLicense(isTrial: isTrialLicenceKey)
+            .setDomainBaseUrl(baseUrl: domainBaseUrl)
+            .setGroupConfiguration(groupConfig: sdkGroupConfig!)
+            .buildAndInitialize()
+
+        do{
+            try ChatManager.shared.setIV(iv: ivKey)
+        }catch let error{
+            print("#Plugin Error ---> ChatManger Set Iv key Failed, \(error.localizedDescription)")
+        }
+        
+         ChatManager.disableLocalNotification()
+      }
+    
     static func registerUser(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
@@ -1900,3 +1942,4 @@ import FlyDatabase
 
     }
 }
+
