@@ -55,6 +55,8 @@ import FlyDatabase
         }
         
          ChatManager.disableLocalNotification()
+        
+//        FlyChatPlugin.initializeEventListeners()
       }
     
     static func registerUser(call: FlutterMethodCall, result: @escaping FlutterResult){

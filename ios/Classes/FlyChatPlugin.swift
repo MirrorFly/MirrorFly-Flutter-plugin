@@ -134,20 +134,6 @@ public class FlyChatPlugin: NSObject, FlutterPlugin {
     
     private func setupEventChannel(registrar: FlutterPluginRegistrar){
         
-        ChatManager.shared.logoutDelegate = self
-        FlyMessenger.shared.messageEventsDelegate = self
-        ChatManager.shared.messageEventsDelegate = self
-        GroupManager.shared.groupDelegate = self
-        ChatManager.shared.connectionDelegate = self
-        ChatManager.shared.adminBlockCurrentUserDelegate = self
-        ChatManager.shared.typingStatusDelegate = self
-        
-        ContactManager.shared.profileDelegate = self
-        ChatManager.shared.adminBlockDelegate = self
-        ChatManager.shared.availableFeaturesDelegate = self
-        BackupManager.shared.backupDelegate = self
-        BackupManager.shared.restoreDelegate = self
-        
         if (self.messageReceivedStreamHandler == nil) {
             self.messageReceivedStreamHandler = MessageReceivedStreamHandler()
         }
@@ -454,11 +440,28 @@ public class FlyChatPlugin: NSObject, FlutterPlugin {
         
     }
     
+    func initializeEventListeners(){
+        ChatManager.shared.logoutDelegate = self
+        FlyMessenger.shared.messageEventsDelegate = self
+        ChatManager.shared.messageEventsDelegate = self
+        GroupManager.shared.groupDelegate = self
+        ChatManager.shared.connectionDelegate = self
+        ChatManager.shared.adminBlockCurrentUserDelegate = self
+        ChatManager.shared.typingStatusDelegate = self
+        
+        ContactManager.shared.profileDelegate = self
+        ChatManager.shared.adminBlockDelegate = self
+        ChatManager.shared.availableFeaturesDelegate = self
+        BackupManager.shared.backupDelegate = self
+        BackupManager.shared.restoreDelegate = self
+    }
+    
     func prepareMethodHandler(methodCall: FlutterMethodCall, result: @escaping FlutterResult){
         
         switch methodCall.method {
         case "init":
             FlySdkMethodCalls.buildChatSDK(call: methodCall)
+            initializeEventListeners()
         case "syncContacts":
             FlySdkMethodCalls.syncContacts(call: methodCall,  result: result)
         case "contactSyncStateValue":
