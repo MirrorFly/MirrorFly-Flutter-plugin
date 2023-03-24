@@ -6,12 +6,14 @@
 /// @property isTrialLicenceKey to provide trial/live register and contact sync
 /// @property domainBaseUrl provides the base url for making api calls
 /// @property storageFolderName provides the Local Storage Folder Name
+/// @property iOSContainerID provides the App Group of the iOS Project
 /// * @property licenseKey provides the License Key
 /// @property groupConfig provides the data required for group implementation
 class ChatBuilder {
   ChatBuilder({
     required this.domainBaseUrl,
     this.storageFolderName,
+    required this.iOSContainerID,
     required this.licenseKey,
     this.enableMobileNumberLogin = false,
     this.isTrialLicenceKey = true,
@@ -22,9 +24,10 @@ class ChatBuilder {
     this.enableSDKLog = false
   });
 
-  String? domainBaseUrl;
+  String domainBaseUrl;
   String? storageFolderName;
-  String? licenseKey;
+  String iOSContainerID;
+  String licenseKey;
   bool enableMobileNumberLogin;
   bool isTrialLicenceKey;
   int? maximumRecentChatPin;
@@ -39,8 +42,8 @@ class GroupConfig {
     required this.maxMembersCount,
     this.adminOnlyAddRemoveAccess = true
   });
-  bool? enableGroup;
-  int? maxMembersCount;
+  bool enableGroup;
+  int maxMembersCount;
   bool adminOnlyAddRemoveAccess;
 }
 
@@ -49,6 +52,7 @@ extension BuilderParsing on ChatBuilder{
     return {
       "domainBaseUrl":domainBaseUrl,
       "storageFolderName":storageFolderName,
+      "iOSContainerID":iOSContainerID,
       "licenseKey":licenseKey,
       "enableMobileNumberLogin":enableMobileNumberLogin,
       "isTrialLicenceKey":isTrialLicenceKey,
