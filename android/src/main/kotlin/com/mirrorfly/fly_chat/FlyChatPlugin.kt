@@ -24,6 +24,8 @@ import com.contus.xmpp.chat.listener.TypingStatusListener
 import com.contus.xmpp.chat.models.CreateGroupModel
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
+import com.contusflysdk.ChatSDK
+import com.contusflysdk.GroupConfig
 import com.contusflysdk.api.*
 import com.contusflysdk.api.FlyCore.insertMyBusyStatus
 import com.contusflysdk.api.chat.*
@@ -61,13 +63,14 @@ import java.io.IOException
 class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
   ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
   TypingEventListener, TypingStatusListener,ActivityAware {
-  private val MIRRORFLY_METHOD_CHANNEL = "contus.mirrorfly/sdkCall"
-  private val MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
-  private val MESSAGE_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMessageStatusUpdated"
-  private val MEDIA_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMediaStatusUpdated"
-  private val UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL =
+  var isTrialLicenceKey = true;
+  private val mirrorflyMethodChannel = "contus.mirrorfly/flyChat"
+  private val onMessageReceivedChannel = "contus.mirrorfly/onMessageReceived"
+  private val onMessageStatusUpdatedChannel = "contus.mirrorfly/onMessageStatusUpdated"
+  private val onMediaStatusUpdatedChannel = "contus.mirrorfly/onMediaStatusUpdated"
+  private val onUploadDownloadProgressChangedChannel =
     "contus.mirrorfly/onUploadDownloadProgressChanged"
-  private val SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL =
+  private val showUpdateCancelNotificationChannel =
     "contus.mirrorfly/showOrUpdateOrCancelNotification"
 
   private val onGroupProfileFetched_channel = "contus.mirrorfly/onGroupProfileFetched"
@@ -123,28 +126,28 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
   private lateinit var channel: MethodChannel
   private lateinit var mContext: Context
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, MIRRORFLY_METHOD_CHANNEL)
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, mirrorflyMethodChannel)
     channel.setMethodCallHandler(this)
     mContext = flutterPluginBinding.applicationContext
     EventChannel(
       flutterPluginBinding.binaryMessenger,
-      MESSAGE_ONRECEIVED_CHANNEL
+      onMessageReceivedChannel
     ).setStreamHandler(MessageReceivedStreamHandler)
     EventChannel(
       flutterPluginBinding.binaryMessenger,
-      MESSAGE_STATUS_UPDATED_CHANNEL
+      onMessageStatusUpdatedChannel
     ).setStreamHandler(MessageStatusUpdatedStreamHandler)
     EventChannel(
       flutterPluginBinding.binaryMessenger,
-      MEDIA_STATUS_UPDATED_CHANNEL
+      onMediaStatusUpdatedChannel
     ).setStreamHandler(MediaStatusUpdatedStreamHandler)
     EventChannel(
       flutterPluginBinding.binaryMessenger,
-      UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL
+      onUploadDownloadProgressChangedChannel
     ).setStreamHandler(UploadDownloadProgressChangedStreamHandler)
     EventChannel(
       flutterPluginBinding.binaryMessenger,
-      SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL
+      showUpdateCancelNotificationChannel
     ).setStreamHandler(ShowOrUpdateOrCancelNotificationStreamHandler)
 
     EventChannel(
@@ -306,6 +309,9 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
     when {
+      call.method == "init" -> {
+        buildChatSDK(call);
+      }
       call.method == "getPlatformVersion" -> {
         result.success("Android ${Build.VERSION.RELEASE}")
       }
@@ -317,7 +323,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         result.success(nonchatusers.tojsonString())
       }
       call.method.equals("IS_TRIAL_LICENSE")-> {
-        result.success(true)//(BuildConfig.IS_TRIAL_LICENSE)
+        result.success(isTrialLicenceKey)//(BuildConfig.IS_TRIAL_LICENSE)
       }
       call.method.equals("syncContacts") -> {
         //setRegionCode(call)
@@ -1021,6 +1027,57 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       }
 
     }
+  }
+
+  private fun buildChatSDK(call: MethodCall) {
+    val domainBaseUrl : String? = call.argument("domainBaseUrl")
+    val storageFolderName : String? = call.argument("storageFolderName")
+    val licenseKey : String? = call.argument("licenseKey")
+    val enableMobileNumberLogin : Boolean? = call.argument("enableMobileNumberLogin")
+    isTrialLicenceKey = call.argument("isTrialLicenceKey") ?: true
+    val maximumRecentChatPin : Int? = call.argument("maximumRecentChatPin")
+    val groupConfig : HashMap<String,Any?>? = call.argument("groupConfig")
+//    val useProfileName : Boolean? = call.argument("useProfileName")
+    val ivKey : String? = call.argument("ivKey")
+    val enableSDKLog : Boolean = call.argument("enableSDKLog") ?: false
+    LogMessage.enableDebugLogging(enableSDKLog)
+    LogMessage.d("buildChatSDK",call.arguments.toString());
+    /*GroupManager.setNameHelper(object  : NameHelper {
+            override fun getDisplayName(jid: String): String {
+                return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(jid)!!.name else Constants.EMPTY_STRING
+            }
+        })*/
+    val buildSDK = ChatSDK.Builder()
+   if(groupConfig!=null) {
+     val groupConfiguration = GroupConfig.Builder()
+       .enableGroupCreation(groupConfig.get("enableGroup") as Boolean)
+       .setMaximumMembersInAGroup(groupConfig.get("maxMembersCount") as Int)
+       .onlyAdminCanAddOrRemoveMembers(groupConfig.get("adminOnlyAddRemoveAccess") as Boolean)
+       .build()
+     buildSDK.setGroupConfiguration(groupConfiguration)
+   }
+   if(storageFolderName!=null){
+     ChatManager.setMediaFolderName(storageFolderName);
+   }
+   if (enableMobileNumberLogin!=null){
+     ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
+   }
+   if(maximumRecentChatPin!=null){
+     buildSDK.setMaximumPinningForRecentChat(maximumRecentChatPin);
+   }
+   /*if(useProfileName!=null){
+      ChatSDK.Builder().useProfileName(useProfileName);
+    }*/
+    if(ivKey!=null){
+      ChatManager.setMessageIVKey(ivKey);
+    }
+
+    if(domainBaseUrl!=null && licenseKey!=null && isTrialLicenceKey!=null) {
+      buildSDK.setDomainBaseUrl(domainBaseUrl)
+        .setLicenseKey(licenseKey)
+        .setIsTrialLicenceKey(isTrialLicenceKey)
+    }
+    buildSDK.build()
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {

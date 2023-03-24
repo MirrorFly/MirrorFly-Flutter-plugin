@@ -1,3 +1,4 @@
+import 'package:fly_chat/builder.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:fly_chat/fly_chat_method_channel.dart';
 
@@ -23,9 +24,13 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+  init(ChatBuilder builder){
+    throw UnimplementedError('build() has not been implemented.');
   }
+
+  /*Future<String?> getPlatformVersion() {
+    throw UnimplementedError('platformVersion() has not been implemented.');
+  }*/
 
   Future<bool?> syncContacts(bool isfirsttime) {
     throw UnimplementedError('has not been implemented.');
