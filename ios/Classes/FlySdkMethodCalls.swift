@@ -15,7 +15,6 @@ import FlyDatabase
 
 @objc class FlySdkMethodCalls : NSObject{
     
-    
     static func registerUser(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
@@ -24,11 +23,6 @@ import FlyDatabase
         var deviceToken = args["token"] as? String ?? ""
         
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
-        
-//        let deviceToken = Utility.getStringFromPreference(key: googleToken)
-//        var voipToken = Utility.getStringFromPreference(key: voipToken)
-        
-//        voipToken = voipToken.isEmpty ? deviceToken : voipToken
         
         if(userIdentifier.isEmpty){
             result(FlutterError(code: "500",
@@ -50,12 +44,10 @@ import FlyDatabase
                 ] as [String : Any]
                 
                 FlyDefaults.isLoggedIn = true
-//                Utility.saveInPreference(key: isLoggedIn, value: true)
                 FlyDefaults.myXmppPassword = data["password"] as! String
                 FlyDefaults.myXmppUsername = data["username"] as! String
                 FlyDefaults.myMobileNumber = userIdentifier
                 FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
-                
                 
                 ChatManager.connect()
                 
@@ -83,8 +75,6 @@ import FlyDatabase
                       
                       let newToken = refreshToken["token"] as Any
                       
-                      print("ios refreshAndGetAuthToken-->\(newToken)")
-                      
                       result(newToken)
                    
                   } else {
@@ -108,9 +98,7 @@ import FlyDatabase
         }catch let jidError{
             result(FlutterError(code: "500", message: "Unable to get JID", details: jidError.localizedDescription))
         }
-        
     }
-    
     
     static func sendTextMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -125,7 +113,7 @@ import FlyDatabase
         
         FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
             if isSuccess {
-                print("sending text messages-->\(chatMessage?.messageTextContent)")
+                print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
                 var chatMsg = JSONSerializer.toJson(chatMessage as Any)
                 chatMsg = chatMsg.replacingOccurrences(of: "{\"some\":", with: "")
                 chatMsg = chatMsg.replacingOccurrences(of: "}}", with: "}")
@@ -176,17 +164,9 @@ import FlyDatabase
         let replyMessageId = args["replyMessageId"] as? String ?? ""
         
         let caption = args["caption"] as? String ?? ""
-        print("====File Path====")
-        
-        print(filePath)
-        print("====File Path====")
         
         let imagefileUrl = URL(fileURLWithPath: filePath)
         
-        print("====imagefileUrl Path====")
-        
-        print(imagefileUrl)
-        print("====imagefileUrl Path====")
         
         var selectedImage : UIImage?
         
@@ -220,18 +200,15 @@ import FlyDatabase
         }
         
         FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId){isSuccess,error,message in
-            if isSuccess {
-                print("Send Image--->")
-//                print(message as Any)
+//            if isSuccess {
                 
                 var response = JSONSerializer.toJson(message as Any)
                 response = response.replacingOccurrences(of: "{\"some\":", with: "")
                 response = response.replacingOccurrences(of: "}}", with: "}")
-//                print(response)
                 result(response)
-            }else{
-                print("<---Send Image Failed--->")
-            }
+//            }else{
+//                result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
+//            }
         }
     }
     
@@ -260,9 +237,6 @@ import FlyDatabase
                 
                 FlyMessenger.sendAudioMessage(toJid:  userJid, mediaData: mediaData, replyMessageId :  replyMessageId, isRecorded : isRecorded) { isSuccess,error,message in
                     if message != nil {
-                        print("CAPTURE_RESPONSE")
-                        print("sendAudioMessage")
-                        dump(message)
                         
                         var audioResponse = JSONSerializer.toJson(message as Any)
                         
@@ -272,6 +246,8 @@ import FlyDatabase
                         
                         result(audioResponse)
                         
+                    }else{
+                        result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
                     }
                 }
             }
@@ -298,6 +274,7 @@ import FlyDatabase
             result(isSuccess)
         }
     }
+    
     static func iOSFileExist(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -306,10 +283,10 @@ import FlyDatabase
         let fileManagerr = FileManager.default
         
         let existsOrNot = fileManagerr.fileExists(atPath: filePath)
-//        print("file check--> \(![fileManager fileExistsAtPath:[storeURL path]])")
-        print("file exists--> \(existsOrNot)")
+
         result(existsOrNot)
     }
+    
     static func updateFavouriteStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -328,7 +305,6 @@ import FlyDatabase
         
         ChatManager.updateFavouriteStatus(messageId: messageID, chatUserId: chatUserJID, isFavourite: isFavourite, chatType: favChatType) { (isSuccess, flyError, data) in
             
-            
             result(isSuccess)
             
         }
@@ -343,13 +319,8 @@ import FlyDatabase
         ContactManager.shared.getUsersList(pageNo: pageNumber, pageSize: 20, search: searchTerm){ isSuccess,flyError,flyData in
             if isSuccess {
                 var userlist = flyData
-                print(userlist)
-                print("-----")
-                dump(userlist)
+                
                 let userData = JSONSerializer.toJson(userlist.getData())
-                print("==========")
-                print("Json data--->\(userData)")
-                print("==========")
                 
                 let totalPages = userlist["totalPages"] as! Int
                 let message = userlist["message"] as! String
@@ -363,7 +334,6 @@ import FlyDatabase
                 userlistJson = userlistJson.replacingOccurrences(of: "{\"some\": {}}", with: "\"\"")
                 userlistJson = userlistJson.replacingOccurrences(of: "\"nickName\": {}", with: "\"nickName\": \"\"")
                 
-                print("userlist json after replacing---> \(userlistJson)")
                 result(userlistJson)
             }else{
                 result(FlutterError(code: "500", message: flyError?.description, details: nil))
@@ -380,12 +350,7 @@ import FlyDatabase
             var data  = flyData
             if isSuccess {
                 
-                print(data.getData())
                 let userData = (data.getData() as? [ProfileDetails])?.count == 0 ? "[]" : JSONSerializer.toJson(data.getData())
-                //                let  userData = data.getData()
-                print("user data---> \(userData)")
-                
-                
                 
                 let message = data["message"] as! String
                 var userlistJson = "{\"message\" : \"" + message + "\",\"status\" : true,\"data\":" + userData + "}"
@@ -393,10 +358,8 @@ import FlyDatabase
                 userlistJson = userlistJson.replacingOccurrences(of: "{\"some\": {}}", with: "\"\"")
                 userlistJson = userlistJson.replacingOccurrences(of: "\"nickName\": {}", with: "\"nickName\": \"\"")
                 
-                print("getRegisteredUsers---> \(userlistJson)")
                 result(userlistJson)
             } else{
-                //data.getMessage()
                 result(FlutterError(code: "500", message: flyError?.description, details: nil))
             }
         }
@@ -442,23 +405,25 @@ import FlyDatabase
                 media.caption = caption
                 
                 FlyMessenger.sendVideoMessage(toJid: userJid, mediaData: media, replyMessageId: replyMessageId){ isSuccess,error,message in
-                    if let chatMessage = message {
-                        
-                        var sendVideoResposne = JSONSerializer.toJson(chatMessage)
-                        
-                        sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "{\"some\":", with: "")
-                        sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "}}", with: "}")
-                        print(sendVideoResposne)
-                        result(sendVideoResposne)
-                        
-                    }
+//                    if isSuccess{
+                        if let chatMessage = message {
+                            
+                            var sendVideoResposne = JSONSerializer.toJson(chatMessage)
+                            
+                            sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "{\"some\":", with: "")
+                            sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "}}", with: "}")
+                            print(sendVideoResposne)
+                            result(sendVideoResposne)
+                            
+                        }
+//                    }else{
+//                        result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
+//                    }
                 }
             }else{
                 print("Video Compression Error")
             }
         }
-        
-        
     }
     
     func generateVideoThumnail(path: URL) -> UIImage? {
@@ -484,17 +449,17 @@ import FlyDatabase
         let contactList = args["contact_list"] as? [String] ?? []
         
         FlyMessenger.sendContactMessage(toJid: userJid, contactName: contactName, contactNumbers: contactList, replyMessageId: replyMessageId){ isSuccess,error,message  in
-            if isSuccess {
+            if message != nil {
                 
                 var contactMessageResponse = JSONSerializer.toJson(message as Any)
                 
                 contactMessageResponse = contactMessageResponse.replacingOccurrences(of: "{\"some\":", with: "")
                 contactMessageResponse = contactMessageResponse.replacingOccurrences(of: "}}", with: "}")
                 
-                print("sendContactMessage \(contactMessageResponse)")
-                
                 result(contactMessageResponse)
                 
+            }else{
+                result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
             }
         }
     }
@@ -514,7 +479,7 @@ import FlyDatabase
         MediaUtils.processDocument(url: documentFileUrl){ isSuccess,localPath,fileSize,fileName, errorMessage in
             if !isSuccess {
                 if !errorMessage.isEmpty {
-                    print("Document Processing Issue")
+                    result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: errorMessage as Any), details: nil))
                 }
                 return
             }
@@ -535,6 +500,8 @@ import FlyDatabase
                         
                         result(documentMessageResponse)
                         
+                    }else{
+                        result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
                     }
                     
                 }
@@ -547,12 +514,10 @@ import FlyDatabase
     
     static func getProfileStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let profileStatus = ChatManager.getAllStatus()
-        print("Status list -->\(profileStatus)")
         if(profileStatus.isEmpty){
             result(nil)
         }
         let profileStatusJson = JSONSerializer.toJson(profileStatus)
-        print(profileStatusJson)
         result(profileStatusJson)
         
     }
@@ -561,9 +526,8 @@ import FlyDatabase
         
         let status = args["status"] as? String ?? ""
         
-        print("Insert Status-->\(status)")
-        let insertStatus: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
-        print("Insert Status Result-->\(insertStatus)")
+        let _: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
+       
         result(true)
     
     }
@@ -574,16 +538,15 @@ import FlyDatabase
         
         var isAlreadyExists = false
         
-        print("Insert New Status ---> \(newStatus)")
         var getAllStatus: [ProfileStatus] = []
         getAllStatus = ChatManager.getAllStatus()
         
         for status in getAllStatus {
             if(status.status == newStatus){
                 isAlreadyExists = true
-                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: true)
+                let statusResponse = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: true)
             }else{
-                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+                let statusResponse = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
             }
         }
         if(!isAlreadyExists){
@@ -606,10 +569,10 @@ import FlyDatabase
         getAllStatus = ChatManager.getAllStatus()
         for status in getAllStatus {
             if(status.id == statusId) {
-                ChatManager.updateStatus(statusId: statusId ,statusText: statusText,currentStatus: true)
+                let statusUpdateResponse = ChatManager.updateStatus(statusId: statusId ,statusText: statusText,currentStatus: true)
             }
             else{
-                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+                let statusUpdateResponse = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
             }
         }
         
@@ -621,7 +584,6 @@ import FlyDatabase
     
     static func getStatus() -> [ProfileStatus] {
         let profileStatus = ChatManager.getAllStatus()
-        print("Get Status Started profileList Count \(profileStatus.count)")
         return profileStatus
     }
     
@@ -629,8 +591,7 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         
         let statusId = args["id"] as? String ?? ""
-        print("deleteing status ID-->\(statusId)")
-        ChatManager.deleteStatus(statusId: statusId)
+        let deleteStatusResponse = ChatManager.deleteStatus(statusId: statusId)
         
         result(true)
         
@@ -671,7 +632,6 @@ import FlyDatabase
         let isMember = GroupManager.shared.isParticiapntExistingIn(groupJid: groupJid,
                                                                    participantJid: participantJid)
         
-        print("isMemberOfGroup--> \(isMember.doesExist)")
         result(isMember.doesExist)
         
     }
@@ -681,7 +641,6 @@ import FlyDatabase
         var groupMembers = [GroupParticipantDetail]()
         
         groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != FlyDefaults.myJid})
-//        dump("groupMembers--> \(JSONSerializer.toJson(groupMembers))")
         let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == FlyDefaults.myJid})
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
         groupMembers.insert(contentsOf: myJid, at: 0)
@@ -698,8 +657,6 @@ import FlyDatabase
             
         }
         groupMemberProfile = groupMemberProfile.dropLast() + "]"
-        
-        print("groupMemberProfile \(groupMemberProfile)")
     
         result(groupMemberProfile)
     }
@@ -744,8 +701,6 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         let userjid = args["jid"] as? String ?? ""
         let texMessage = args["texMessage"] as? String ?? ""
-        print("saveUnsentMessage-->")
-        print("saveUnsentMessage-->\(texMessage)")
         FlyMessenger.saveUnsentMessage(id: userjid, message: texMessage)
     }
     
@@ -761,10 +716,7 @@ import FlyDatabase
     }
     
     static func verifyToken(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        let args = call.arguments as! Dictionary<String, Any>
-        
-//        let userName = args["userName"] as? String
-//        let token = args["googleToken"] as? String ?? ""
+
         
         result("")
         
@@ -776,7 +728,6 @@ import FlyDatabase
         let server = args["server"] as? Bool ?? false
         let userjid = args["jid"] as? String ?? ""
         let saveasfriend = args["saveasfriend"] as? Bool ?? false
-        //        let JID = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
         
         print("getting user profile from userjid-->\(userjid)")
         print("getting user profile from server-->\(server)")
@@ -786,10 +737,8 @@ import FlyDatabase
                 if isSuccess {
                     
                     let profileJSON = "{\"data\" : " + JSONSerializer.toJson(data.getData() as Any) + ",\"status\": true}"
-                    print(profileJSON)
                     result(profileJSON)
                 } else{
-                    print(flyError!.localizedDescription)
                     result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
                 }
             }
@@ -809,15 +758,7 @@ import FlyDatabase
         let status = args["status"] as? String ?? ""
         let image = args["image"] as? String ?? nil
         let userJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
-        print("=====Response Capture=====")
-        print("jid===>" + userJid)
-        print("email===>" + email)
-        print("mobile===>" + mobile)
-        print("nickName===>" + nickName)
-        print("status===>" + status)
-        print("image===>" + (image ?? "Image is Nil"))
         
-//        var isImagePicked = false
         
         var myProfile = FlyProfile(jid: userJid)
         
@@ -832,14 +773,13 @@ import FlyDatabase
         
         if(image != nil){
             print("Image is not null if condition")
-            myProfile.image = image!//xyaz.jpeg
+            myProfile.image = image!
 //            isImagePicked = false
         }else{
             print("Image is null else condition")
 //            isImagePicked = false
         }
         
-        print("Profile json ===>" + JSONSerializer.toJson(myProfile))
         
         ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
             if isSuccess {
@@ -847,20 +787,15 @@ import FlyDatabase
                 
                 let profileData = data.getData()
                 let message = data.getMessage()
-                print("profile update response-->\(profileData)")
 
                 let profileDataJson = JSONSerializer.toJson(profileData)
 
-
                 var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson) }"
-
-                print("Profile response-->\(profileResponseJson)")
 
                 saveMyProfileDataToUserDefaults(profile: myProfile)
                 
                 result(profileResponseJson)
             } else{
-                print("Update Profile Issue==> " + flyError!.localizedDescription)
                 result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
                 
             }
@@ -889,7 +824,6 @@ import FlyDatabase
     }
     
     static func saveMyJidAsContacts() {
-        print("saveMyJidAsContacts jid -->\(FlyDefaults.myJid)")
         let profileData = ProfileDetails(jid: FlyDefaults.myJid)
         profileData.name = FlyDefaults.myName
         profileData.nickName = FlyDefaults.myNickName
@@ -914,7 +848,7 @@ import FlyDatabase
         ContactSyncManager.shared.syncContacts(){ isSuccess, flyError, flyData in
             var data  = flyData
             if isSuccess {
-                // Contact synced successfully update the UI
+                
             } else{
                 print(data.getMessage() as! String)
             }
@@ -939,13 +873,9 @@ import FlyDatabase
 
                     var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson) }"
 
-                    print("Profile Image Update response-->\(profileResponseJson)")
-
                     result(profileResponseJson)
                     
-                    
                 } else{
-                    print("updateMyProfileImage Error-->\(flyError!.localizedDescription)")
                     result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
                 }
         }
@@ -990,7 +920,6 @@ import FlyDatabase
             
             if isSuccess {
                 let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
-                print("blockedprofileDetailsArray-->\(blockedprofileDetailsArray)")
             } else{
                 print(flyError!.localizedDescription)
             }
@@ -1055,7 +984,6 @@ import FlyDatabase
         
         print(busyStatus)
         
-//        ChatManager.shared.deleteBusyStatus(busyStatus)
         ChatManager.shared.deleteBusyStatus(statusId: busyId)
         
         result(true)
@@ -1069,10 +997,8 @@ import FlyDatabase
         
         let enableLastSeen = args["enable"] as? Bool ?? false
         
-        print("calling enableDisableHideLastSeen \(enableLastSeen)")
         ChatManager.enableDisableHideLastSeen(EnableLastSeen: enableLastSeen) { isSuccess, flyError, flyData in
             
-            print("enableDisableHideLastSeen response \(isSuccess)")
             result(isSuccess)
         }
     }
@@ -1132,7 +1058,6 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         
         let userJid = args["JID"] as? String ?? ""
-        print("Get Messages of JID --->")
         print(userJid)
         let messages : [ChatMessage] = FlyMessenger.getMessagesOf(jid: userJid)
               
@@ -1141,7 +1066,6 @@ import FlyDatabase
         userChatHistory = userChatHistory.replacingOccurrences(of: "{\"some\":", with: "")
         userChatHistory = userChatHistory.replacingOccurrences(of: "}}", with: "}")
         
-        print(userChatHistory)
         result(userChatHistory)
         
         
@@ -1196,12 +1120,10 @@ import FlyDatabase
         
     }
     static func updateMediaDownloadStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        let args = call.arguments as! Dictionary<String, Any>
         
         
     }
     static func updateMediaUploadStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        let args = call.arguments as! Dictionary<String, Any>
         
         
     }
@@ -1211,10 +1133,8 @@ import FlyDatabase
         
         FlyMessenger.cancelMediaUploadOrDownload(messageId: messageId){ isSuccess in
             if isSuccess{
-                print("cancel media upload true")
                 result(true)
             }else{
-                print("cancel media upload false")
                 result(false)
             }
         }
@@ -1241,7 +1161,7 @@ import FlyDatabase
             result(groupIDResponse)
             
         }catch let sdkError{
-            result(FlutterError(code: "500", message: "Unable to get JID", details: sdkError.localizedDescription))
+            result(FlutterError(code: "500", message: "Unable to get GroupJid", details: sdkError.localizedDescription))
         }
         
     }
@@ -1327,7 +1247,6 @@ import FlyDatabase
             
             try GroupManager.shared.makeAdmin(groupJid: groupJID, userJid: userJID, completionHandler: { isSuccess, flyError, flyData in
                 if isSuccess {
-                    // update UI
                     result(isSuccess)
                 } else{
                     result(FlutterError(code: "500", message: "Unable to Make User Admin", details: flyError))
@@ -1341,11 +1260,7 @@ import FlyDatabase
     }
     
     static func setNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        let args = call.arguments as! Dictionary<String, Any>
-//
-//        let notification_sound = args["enable"] as? Bool ?? false
-//
-//        Utility.saveInPreference(key: muteNotification, value: notification_sound)
+
     }
     
     static func updateGroupName(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1359,7 +1274,7 @@ import FlyDatabase
                 result(isSuccess)
             })
         }catch let error{
-            result(FlutterError(code: "500", message: "Unable to Make User Admin", details: error.localizedDescription))
+            result(FlutterError(code: "500", message: "Unable to Update Group Name", details: error.localizedDescription))
         }
         
     }
@@ -1433,9 +1348,6 @@ import FlyDatabase
         
         ChatManager.shared.exportChatConversationToEmail(jid: userJID) { chatDataModel in
             
-            print(chatDataModel)
-//            print(JSONSerializer.toJson(chatDataModel))
-            
             var dataToShare = [Any]()
             
             dataToShare.append(chatDataModel.subject)
@@ -1443,11 +1355,6 @@ import FlyDatabase
             chatDataModel.mediaAttachmentsUrl.forEach { url in
                 dataToShare.append(url)
             }
-//            executeOnMainThread { [weak self] in
-//                self?.stopLoading()
-//                let ac = UIActivityViewController(activityItems: dataToShare, applicationActivities: nil)
-//                vc.present(ac, animated: true)
-//            }
             
         }
         
@@ -1457,16 +1364,14 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         let fetchFromServer = args["server"] as? Bool ?? false
         
-        // Note: This Function is called internally from SDK in iOS side, so no need to call seperately
         print("calling getAllGroups")
         GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
             var data  = flyData
             
-//            print("GroupManager.shared.getGroups \(JSONSerializer.toJson(data.getData()))")
             if isSuccess {
                 result(JSONSerializer.toJson(data.getData()))
             } else{
-                result(FlutterError(code: "500", message: "Unable to Get Group List", details: flyError?.localizedDescription))
+                result(FlutterError(code: "500", message: "Unable to Fetch Group List", details: flyError?.localizedDescription))
             }
         }
     }
@@ -1479,7 +1384,6 @@ import FlyDatabase
         
         let searchedMessages : [SearchMessage] = ChatManager.shared.searchMessage(text: searchKey)
         
-//        var searchConversationResp = "{\"searchTerm\":\"done\",\"data\":["
         var searchConversationResp = "["
         var index = 0;
         for message in searchedMessages{
@@ -1488,16 +1392,14 @@ import FlyDatabase
             }
             index = index + 1;
             var message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: message.messageId)
-            var messageJson = JSONSerializer.toJson(message)
+            var messageJson = JSONSerializer.toJson(message as Any)
             messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
             messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
             searchConversationResp = searchConversationResp + messageJson
         }
         
-//        searchConversationResp = searchConversationResp + "],\"jidToSearch\":\"\"}"
         searchConversationResp = searchConversationResp + "]"
        
-        print("searchMessages\(searchConversationResp)")
         result(searchConversationResp)
     }
     
@@ -1523,8 +1425,8 @@ import FlyDatabase
                   let sec = lastseenSeconds?.replacingOccurrences(of: "-", with: "")
                   result(sec)
               } else{
-                  print(data.getMessage() as! String )
-                  result(FlutterError(code: "500", message: "Unable to Get User Last seen", details: data.getMessage()))
+                  
+                  result(FlutterError(code: "500", message: "Unable to Fetch User Last seen", details: data.getMessage()))
               }
           }
     }
@@ -1544,7 +1446,8 @@ import FlyDatabase
                       result(recentChatListJson)
                    
                   } else {
-                     //Fetching recent chat list failed
+                      
+                      result(FlutterError(code: "500", message: "Unable to Fetch Recent Chat List", details: flyError?.localizedDescription))
 
                   }
             }
@@ -1553,8 +1456,6 @@ import FlyDatabase
     static func getRecentChatListIncludingArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let recentChatList = ChatManager.getRecentChatListIncludingArchived()
-//        print("recent chat list including archived ---> \(recentChatList)")
-//        print("recent chat list including archived ---> \(JSONSerializer.toJson(recentChatList))")
         result(JSONSerializer.toJson(recentChatList))
     }
     static func getRecentChatOf(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1612,7 +1513,6 @@ import FlyDatabase
                         
                         result(blockUserResponseJson)
                     } else{
-                        print(flyError!.localizedDescription)
                         result(FlutterError(code: "500", message: "Unable to Block User", details: flyError?.localizedDescription))
                     }
             }
@@ -1633,7 +1533,6 @@ import FlyDatabase
                     if isSuccess {
                         result(true)
                     } else{
-                        print(flyError!.localizedDescription)
                         result(FlutterError(code: "500", message: "Unable to Un-Block User", details: flyError?.localizedDescription))
                     }
             }
@@ -1682,9 +1581,7 @@ import FlyDatabase
         
         let lastMessageId = ChatManager.getLastMessageId(jid: userJid)
         
-        ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred
-                              //, lastMessageId: lastMessageId
-        ) { (isSuccess, flyerror, resultDict) in
+        ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred) { (isSuccess, flyerror, resultDict) in
             
             if(isSuccess){
                 result(true)
@@ -1707,11 +1604,9 @@ import FlyDatabase
                 if isSuccess {
                     let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
                     let blockedProfileJson = JSONSerializer.toJson(blockedprofileDetailsArray as Any)
-                    print("Blocked Profile --> \(blockedProfileJson)")
                     result(blockedProfileJson)
                 } else{
-                    print(flyError!.localizedDescription)
-                    result(FlutterError(code: "500", message: "Unable to Get Blocked List", details: flyError?.localizedDescription))
+                    result(FlutterError(code: "500", message: "Unable to Fetch Blocked List", details: flyError?.localizedDescription))
                 }
         }
                
@@ -1722,23 +1617,25 @@ import FlyDatabase
         let userJid = args["jid"] as? String ?? ""
         
         ChatManager.getVedioImageAudioMessageGroupByMonth(jid: userJid) { isSuccess,error,data  in
-
-            var mediaData = data
-            let chatMessages = mediaData.getData() as? [[ChatMessage]]
-        
-            if(chatMessages!.isEmpty){
-                result(nil)
-            }else{
-                var mediaMsgJson = JSONSerializer.toJson(chatMessages as Any)
-                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
-                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "\"some\": [[", with: "[")
-                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
             
+            if isSuccess {
+                var mediaData = data
+                let chatMessages = mediaData.getData() as? [[ChatMessage]]
                 
-                result(mediaMsgJson)
+                if(chatMessages!.isEmpty){
+                    result(nil)
+                }else{
+                    var mediaMsgJson = JSONSerializer.toJson(chatMessages as Any)
+                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "\"some\": [[", with: "[")
+                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
+                    result(mediaMsgJson)
+                }
+                
+            }else{
+                result(FlutterError(code: "500", message: "Unable to Fetch Media Messages", details: error?.localizedDescription))
             }
-            
         }
                
     }
@@ -1748,18 +1645,22 @@ import FlyDatabase
         let userJid = args["jid"] as? String ?? ""
 
 
-        ChatManager.getDocumentMessageGroupByMonth(jid: userJid) { _,_,data in
-            var flydata = data
-            let mediaMessages : [[ChatMessage]] = flydata.getData() as? [[ChatMessage]] ?? []
-            if (mediaMessages.isEmpty){
-                result(nil)
+        ChatManager.getDocumentMessageGroupByMonth(jid: userJid) { isSuccess, error, data in
+            if isSuccess{
+                var flydata = data
+                let mediaMessages : [[ChatMessage]] = flydata.getData() as? [[ChatMessage]] ?? []
+                if (mediaMessages.isEmpty){
+                    result(nil)
+                }else{
+                    var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "[[", with: "[")
+                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
+                    result(mediaMsgJson)
+                }
             }else{
-                var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
-                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
-                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "[[", with: "[")
-                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
-                result(mediaMsgJson)
+                result(FlutterError(code: "500", message: "Unable to Fetch Document Messages", details: error?.localizedDescription))
             }
         }
                
@@ -1769,33 +1670,34 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         
-        ChatManager.getLinkMessageGroupByMonth(jid: userJid) { _,_,data  in
-            var flydata = data
-            let mediaLinkMessages = flydata.getData() as? [[LinkMessage]] ?? []
-            
-            if (mediaLinkMessages.isEmpty){
-                result(nil)
-            }else{
-                var viewAllMediaLinkMessages: String = "["
+        ChatManager.getLinkMessageGroupByMonth(jid: userJid) { isSuccess, error, data  in
+            if isSuccess{
+                var flydata = data
+                let mediaLinkMessages = flydata.getData() as? [[LinkMessage]] ?? []
                 
-                mediaLinkMessages.forEach { mediaLinkMessage in
-                    mediaLinkMessage.forEach{ linkChatMessage in
-                        var mediaMsgJson = JSONSerializer.toJson(linkChatMessage.chatMessage)
-                        
-                        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-                        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
-                        
-                        viewAllMediaLinkMessages = viewAllMediaLinkMessages + mediaMsgJson + ","
-                        print("getLinkMessage--> \(mediaMsgJson)")
+                if (mediaLinkMessages.isEmpty){
+                    result(nil)
+                }else{
+                    var viewAllMediaLinkMessages: String = "["
+                    
+                    mediaLinkMessages.forEach { mediaLinkMessage in
+                        mediaLinkMessage.forEach{ linkChatMessage in
+                            var mediaMsgJson = JSONSerializer.toJson(linkChatMessage.chatMessage)
+                            
+                            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+                            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+                            
+                            viewAllMediaLinkMessages = viewAllMediaLinkMessages + mediaMsgJson + ","
+                            
+                        }
                         
                     }
-                   
+                    viewAllMediaLinkMessages = viewAllMediaLinkMessages.dropLast() + "]"
+                    
+                    result(viewAllMediaLinkMessages)
                 }
-                viewAllMediaLinkMessages = viewAllMediaLinkMessages.dropLast() + "]"
-                
-                
-                print("getLinkMessages Array--> \(viewAllMediaLinkMessages)")
-                result(viewAllMediaLinkMessages)
+            }else{
+                result(FlutterError(code: "500", message: "Unable to Fetch Link Messages", details: error?.localizedDescription))
             }
         }
     }
@@ -1818,11 +1720,12 @@ import FlyDatabase
         try! GroupManager.shared.leaveFromGroup(groupJid: groupJid, userJid: userJid) { isSuccess,error,data in
             result(isSuccess)
         }
-        
     }
+    
     static func getMediaAutoDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(FlyDefaults.autoDownloadEnable)
     }
+    
     static func setMediaAutoDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let autoDownloadEnable = args["enable"] as? Bool ?? false
@@ -1830,6 +1733,7 @@ import FlyDatabase
         FlyDefaults.autoDownloadLastEnabledTime = autoDownloadEnable ? FlyUtils.getTimeInMillis() : 0
         result(true)
     }
+    
     static func getMediaSetting(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -1878,19 +1782,6 @@ import FlyDatabase
         var mobiledata = [String : Bool]()
         var wifi = [String : Bool]()
         
-//        if (networkType == 0){
-//            FlyDefaults.autoDownloadMobile["photo"] = photos
-//            FlyDefaults.autoDownloadMobile["videos"] = videos
-//            FlyDefaults.autoDownloadMobile["audio"] = audios
-//            FlyDefaults.autoDownloadMobile["documents"] = documents
-//
-//        }else{
-//            FlyDefaults.autoDownloadWifi["photo"] = photos
-//            FlyDefaults.autoDownloadWifi["videos"] = videos
-//            FlyDefaults.autoDownloadWifi["audio"] = audios
-//            FlyDefaults.autoDownloadWifi["documents"] = documents
-//        }
-        
         if (networkType == 0){//cellular
             mobiledata["photo"] = isPhotoEnabled
             FlyDefaults.autoDownloadTimeMobileDataImage = isPhotoEnabled ? FlyUtils.getTimeInMillis() : 0
@@ -1922,7 +1813,6 @@ import FlyDatabase
             FlyDefaults.autoDownloadWifi = wifi
             
         }
-        
     }
     
     static func updateArchiveUnArchiveChat(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1933,7 +1823,6 @@ import FlyDatabase
         
         var userJidList = [] as [String]
         userJidList.append(userJid)
-       
     
         if(archive){
             ChatManager.archiveChatConversation(jidsToArchive: userJidList)
@@ -1945,25 +1834,17 @@ import FlyDatabase
                
     }
     static func logoutOfChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
-//        Utility.saveInPreference(key: isProfileSaved, value: false)
-//        Utility.saveInPreference(key: isLoggedIn, value: false)
 
         ChatManager.logoutApi { isSuccess, flyError, flyData in
            if isSuccess {
-               print("requestLogout Logout api isSuccess")
-
+               //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
+                       ChatManager.disconnect()
+                       ChatManager.shared.resetFlyDefaults()
+               result(isSuccess)
            }else{
-               print("Logout api error : \(String(describing: flyError))")
-
+               result(FlutterError(code: "500", message: "Unable to Logout", details: flyError?.localizedDescription))
            }
        }
-//        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
-        ChatManager.disconnect()
-        ChatManager.shared.resetFlyDefaults()
-    
-       result(true)
-               
     }
     
     static func getMessageOfId(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1978,7 +1859,6 @@ import FlyDatabase
         messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
         messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
         
-        print("getMessageOfId--> \(messageJson)")
         result(messageJson)
                
     }
@@ -1997,116 +1877,26 @@ import FlyDatabase
                    
                    let archiveChatJson = JSONSerializer.toJson(flydata.getData())
                    
-                   print("Archive Chat---> \(archiveChatJson)")
-                   
-                   
                    let archiveChatListJson = "{\"data\":" + archiveChatJson + "}"
                    
-                   print("Archive Chat list json---> \(archiveChatListJson)")
                    result(archiveChatListJson)
                }
            }else{
-               print(flyError!.localizedDescription)
-               result(FlutterError(code: "500", message: "Unable to Get Archived List", details: flyError?.localizedDescription))
+               result(FlutterError(code: "500", message: "Unable to Fetch Archived List", details: flyError?.localizedDescription))
            }
         }
-    
        result(true)
-               
     }
-    
-    
     
     static func getProfileDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
-        
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
         let userProfile = ChatManager.profileDetaisFor(jid: userJid)
-        print("User Profile --->")
         var userProfileJson = JSONSerializer.toJson(userProfile as Any)
         userProfileJson = userProfileJson.replacingOccurrences(of: "{\"some\":", with: "")
         userProfileJson = userProfileJson.replacingOccurrences(of: "}}", with: "}")
         result(userProfileJson)
 
-    }
-    
-    
-    
-}
-extension Array {
-    public func toDictionary<Key: Hashable>(with selectKey: (Element) -> Key) -> [Key:Element] {
-        var dict = [Key:Element]()
-        for element in self {
-            dict[selectKey(element)] = element
-        }
-        return dict
-    }
-}
-extension ChatMessage: Serializable {
-    
-    var properties: Array<String> {
-        return ["mediaChatMessage"]
-    }
-    func valueForKey(key: String) -> Any? {
-        switch key {
-        case "mediaChatMessage":
-            return mediaChatMessage
-        default:
-            return nil
-        }
-    }
-    
-}
-extension MediaChatMessage: Serializable {
-    var properties: Array<String> {
-        return ["mediaThumbImage"]
-    }
-    func valueForKey(key: String) -> Any? {
-        switch key {
-        case "mediaThumbImage":
-            return mediaThumbImage
-        default:
-            return nil
-        }
-    }
-}
-
-protocol Serializable {
-    var properties:Array<String> { get }
-    func valueForKey(key: String) -> Any?
-    func toDictionary() -> [String:Any]
-}
-extension Serializable {
-    func toDictionary() -> [String:Any] {
-        var dict:[String:Any] = [:]
-
-        for prop in self.properties {
-            if let val = self.valueForKey(key: prop) as? String {
-                dict[prop] = val
-            } else if let val = self.valueForKey(key: prop) as? Int {
-                dict[prop] = val
-            } else if let val = self.valueForKey(key: prop) as? Double {
-                dict[prop] = val
-            } else if let val = self.valueForKey(key: prop) as? Array<String> {
-                dict[prop] = val
-            } else if let val = self.valueForKey(key: prop) as? Serializable {
-                dict[prop] = val.toDictionary()
-            } else if let val = self.valueForKey(key: prop) as? Array<Serializable> {
-                var arr = Array<[String:Any]>()
-
-                for item in (val as Array<Serializable>) {
-                    arr.append(item.toDictionary())
-                }
-
-                dict[prop] = arr
-            } else if prop == "mediaChatMessage" {
-                if let value = dict[prop] as? MediaChatMessage {
-                    value.toDictionary()
-                }
-            }
-        }
-
-        return dict
     }
 }
