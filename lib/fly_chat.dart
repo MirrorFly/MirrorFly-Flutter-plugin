@@ -19,3 +19,4 @@ export 'model/web_login_model.dart';
 export 'model/message_delivered_model.dart';
 export 'model/message_object.dart';
 export 'builder.dart';
+export 'flychat.dart';
