@@ -116,8 +116,12 @@ public class FlyChatPlugin: NSObject, FlutterPlugin {
     var onsetTypingStatusStreamHandler: OnsetTypingStatusStreamHandler?
     var onGroupTypingStatusStreamHandler: OnGroupTypingStatusStreamHandler?
     
+    public override init() {
+            super.init()
+        }
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "fly_chat", binaryMessenger: registrar.messenger())
+        let channel = FlutterMethodChannel(name: mirrorflyMethodChannel, binaryMessenger: registrar.messenger())
         let instance = FlyChatPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
         instance.setupEventChannel(registrar: registrar)
