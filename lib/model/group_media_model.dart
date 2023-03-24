@@ -1,7 +1,7 @@
-import 'chatMessageModel.dart';
+import 'chat_message_model.dart';
 
 abstract class GroupedMedia{
-  var id;
+  late double id;
 }
 class MessageItem implements GroupedMedia {
   final ChatMessageModel chatMessage;

@@ -1,11 +1,16 @@
 
+import 'package:fly_chat/builder.dart';
+
 import 'fly_chat_platform_interface.dart';
 
 class FlyChat {
   FlyChat._();
-  static Future<String?> getPlatformVersion() {
-    return FlyChatFlutterPlatform.instance.getPlatformVersion();
+  static init(ChatBuilder builder){
+    return FlyChatFlutterPlatform.instance.init(builder);
   }
+  /*static Future<String?> getPlatformVersion() {
+    return FlyChatFlutterPlatform.instance.getPlatformVersion();
+  }*/
 
   static Future<bool?> syncContacts(bool isFirstTime) async {
     return FlyChatFlutterPlatform.instance.syncContacts(isFirstTime);

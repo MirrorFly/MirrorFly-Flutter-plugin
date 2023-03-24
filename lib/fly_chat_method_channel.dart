@@ -2,12 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:fly_chat/fly_chat_platform_interface.dart';
 
+import 'builder.dart';
+
 /// An implementation of [UikitFlutterPlatform] that uses method channels.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
   final mirrorFlyMethodChannel =
-  const MethodChannel('contus.mirrorfly/sdkCall');
+  const MethodChannel('contus.mirrorfly/flyChat');
 
   //Event Channels
   @visibleForTesting
@@ -149,13 +151,17 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
 
-  @override
+  /*@override
   Future<String?> getPlatformVersion() async {
     final version =
     await mirrorFlyMethodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
-  }
+  }*/
 
+  @override
+  init(ChatBuilder builder) async {
+    await mirrorFlyMethodChannel.invokeMethod('init',builder.build());
+  }
 
   @override
   Future<bool?> syncContacts(bool isfirsttime) async {
