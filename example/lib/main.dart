@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fly_chat/fly_chat.dart';
-import 'package:get/get.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlyChat.init(ChatBuilder(
       domainBaseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',
+      licenseKey: 'your licensekey',
       groupConfig: GroupConfig(
           enableGroup: true,
           maxMembersCount: 250), iOSContainerID: 'group.com.mirrorfly.qa'));

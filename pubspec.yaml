@@ -1,7 +1,7 @@
 name: fly_chat
 description: A new Flutter plugin project.
 version: 0.0.1
-homepage: https://github.com/MirrorFly/MirrorFly-Flutter-plugin
+homepage: https://www.mirrorfly.com/docs/chat/flutter/quick-start/
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
