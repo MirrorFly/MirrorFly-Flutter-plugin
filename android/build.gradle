@@ -20,9 +20,7 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
-        //mavenLocal()
         maven {
-            //url "https://mirrorfly-maven.s3.ap-south-1.amazonaws.com/snapshot/"
             url "https://repo.mirrorfly.com/snapshot/"
         }
     }
@@ -52,15 +50,5 @@ android {
     }
 }
 dependencies{
-    //implementation 'com.mirrorfly.sdk:mirrorfly-sdk:0.0.5'
-    api ('com.mirrorfly.sdk:appbase:0.0.12'){
-        transitive = true
-    }
-    /* implementation 'io.michaelrocks:libphonenumber-android:8.13.3'
-     implementation 'com.hypertrack:hyperlog:0.0.10'
-     //pdfViewer
-     implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
-     //for webrtc
-     implementation 'org.webrtc:google-webrtc:1.0.32006'*/
-    //implementation 'com.fly.sdk:appbase:0.0.9'
+    api 'com.mirrorfly.sdk:appbase:0.0.12'
 }
