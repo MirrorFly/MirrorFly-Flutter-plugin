@@ -236,7 +236,7 @@ class MediaChatMessage {
     mediaThumbImage: json["mediaThumbImage"].toString().replaceAll("\\\\n", "\\n").replaceAll("\\n", "\n").replaceAll("\n", "").replaceAll(" ", ""),
     mediaUploadStatus: json["mediaUploadStatus"] == "not_uploaded" ? 0 : json["mediaUploadStatus"] == "uploading" ? 1 : json["mediaUploadStatus"] == "uploaded" ? 2 : json["mediaUploadStatus"] == "not_available" ? 7 : json["mediaUploadStatus"] == "failed" ? 401 : json["mediaUploadStatus"],
     messageId: json["messageId"],
-    messageType: json["messageType"],
+    messageType: Platform.isAndroid ? json["messageType"] : json["mediaFileType"],
     isPlaying: false,
     currentPos: 0,
   );
