@@ -83,7 +83,7 @@ class ChatMessageModel {
     messageCustomField: json["messageCustomField"] ?? {},
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"].toInt(),
-    messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"] == "acknowledge" ? "A" : json["messageStatus"] == "delivered" ? "D" : json["messageStatus"] == "seen" ? "S" : "N",
+    messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"] == "acknowledge" ? "A" : json["messageStatus"] == "delivered" ? "D" : json["messageStatus"] == "seen" ? "S" : json["messageStatus"] == "received" ? "R" : "N",//"N" for "sent" in iOS
     messageTextContent: json["messageTextContent"].toString(),
     messageType: json["messageType"].toString().toUpperCase() == "FILE" ? "DOCUMENT" : json["messageType"].toString().toUpperCase(),
     replyParentChatMessage: json["replyParentChatMessage"] == null ? null : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -221,14 +221,15 @@ class MediaChatMessage {
   int currentPos;
 
   factory MediaChatMessage.fromJson(Map<String, dynamic> json) => MediaChatMessage(
-    isAudioRecorded: json["isAudioRecorded"] ?? false,
+    isAudioRecorded: Platform.isAndroid ? json["isAudioRecorded"] ?? false : json["audioType"] == "recording" ? true : false,
     mediaCaptionText: json["mediaCaptionText"] ?? "",
     mediaDownloadStatus: json["mediaDownloadStatus"] == "not_downloaded" ? 5 : json["mediaDownloadStatus"] == "downloading" ? 3 : json["mediaDownloadStatus"] == "downloaded" ? 4 : json["mediaDownloadStatus"] == "not_available" ? 6 : json["mediaDownloadStatus"] == "failed" ? 401 : json["mediaDownloadStatus"],
     mediaDuration: json["mediaDuration"],
     mediaFileHeight: json["mediaFileHeight"] ?? 0,
     mediaFileName: json["mediaFileName"],
     mediaFileSize: json["mediaFileSize"],
-    mediaFileType: json["mediaFileType"],
+    // mediaFileType: json["mediaFileType"],
+    mediaFileType: Platform.isAndroid ? json["mediaFileType"] : json["mediaFileType"].toString().toUpperCase() == "FILE" ? "DOCUMENT" : json["mediaFileType"].toString().toUpperCase(),
     mediaFileWidth: json["mediaFileWidth"] ?? 0,
     mediaLocalStoragePath: json["mediaLocalStoragePath"],
     mediaProgressStatus: json["mediaProgressStatus"],
@@ -327,7 +328,11 @@ class ReplyParentChatMessage {
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"],
     messageTextContent: json["messageTextContent"],
-    messageType: json["messageType"],
+    messageType: Platform.isAndroid ? json["messageType"]
+        : json["messageTextContent"].toString().isNotEmpty ? "TEXT"
+        : json["mediaChatMessage"] != null && json["mediaChatMessage"]["mediaFileType"].toString().isNotEmpty ?  json["mediaChatMessage"]["mediaFileType"].toString().toUpperCase() == "FILE" ? "DOCUMENT" : json["mediaChatMessage"]["mediaFileType"].toString().toUpperCase()
+        : json["contactChatMessage"] != null ? "CONTACT"
+        : json["locationChatMessage"] != null ? "LOCATION" : null,
     senderNickName: json["senderNickName"],
     senderUserName: json["senderUserName"],
     locationChatMessage: json["locationChatMessage"] == null ? null : LocationChatMessage.fromJson(json["locationChatMessage"]),
