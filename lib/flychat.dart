@@ -626,12 +626,12 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.deleteMessages(jid, messageIds, isDeleteForEveryOne);
   }
 
-  static Future<dynamic> getGroupMessageDeliveredToList(String messageId) {
-    return FlyChatFlutterPlatform.instance.getGroupMessageDeliveredToList(messageId);
+  static Future<dynamic> getGroupMessageDeliveredToList(String messageId, String jid) {
+    return FlyChatFlutterPlatform.instance.getGroupMessageDeliveredToList(messageId, jid);
   }
 
-  static Future<dynamic> getGroupMessageReadByList(String messageId) {
-    return FlyChatFlutterPlatform.instance.getGroupMessageReadByList(messageId);
+  static Future<dynamic> getGroupMessageReadByList(String messageId, String jid) {
+    return FlyChatFlutterPlatform.instance.getGroupMessageReadByList(messageId, jid);
   }
 
   static Future<dynamic> getMessageStatusOfASingleChatMessage(String messageID) {

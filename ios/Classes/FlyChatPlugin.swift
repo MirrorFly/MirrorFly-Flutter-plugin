@@ -706,6 +706,13 @@ public class FlyChatPlugin: NSObject, FlutterPlugin {
             FlySdkMethodCalls.getAllGroups(call: methodCall,  result: result)
         case "searchConversation":
             FlySdkMethodCalls.searchConversation(call: methodCall,  result: result)
+        case "delete_account":
+            FlySdkMethodCalls.deleteAccount(call: methodCall, result: result)
+        case "getGroupMessageDeliveredToList":
+            FlySdkMethodCalls.getGroupMessageDeliveredToList(call: methodCall, result: result)
+        case "getGroupMessageReadByList":
+            FlySdkMethodCalls.getGroupMessageReadByList(call: methodCall, result: result)
+            
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -893,6 +900,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     }
     
     public func userDeletedTheirProfile(for jid: String, profileDetails: FlyCommon.ProfileDetails) {
+        print("userDeletedTheirProfile called jid --> \(jid)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
         let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)

@@ -1506,8 +1506,9 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? nil
+        print("getRecentChatOf jid --> \(jid)")
         let recentChat = ChatManager.getRecentChatOf(jid:jid!)
-        
+        print("recentChat-->\(recentChat)")
         if(recentChat == nil){
             result(nil)
         }
@@ -1937,10 +1938,57 @@ import FlyDatabase
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
         let userProfile = ChatManager.profileDetaisFor(jid: userJid)
+        print("getProfileDetails --> \(userProfile)")
         var userProfileJson = JSONSerializer.toJson(userProfile as Any)
         userProfileJson = userProfileJson.replacingOccurrences(of: "{\"some\":", with: "")
         userProfileJson = userProfileJson.replacingOccurrences(of: "}}", with: "}")
         result(userProfileJson)
+
+    }
+    static func deleteAccount(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let deleteReason = args["delete_reason"] as? String ?? ""
+        let deleteFeedback = args["delete_feedback"] as? String ?? ""
+        ContactManager.shared.deleteMyAccountRequest(reason: deleteReason, feedback: deleteFeedback) { isSuccess, flyError, flyData in
+           var data  = flyData
+           print(data.getMessage() as! String )
+           if isSuccess {
+               var deleteResponseJson = JSONSerializer.toJson(data)
+                deleteResponseJson = deleteResponseJson.replacingOccurrences(of: "{\"some\":", with: "")
+                deleteResponseJson = deleteResponseJson.replacingOccurrences(of: "}}", with: "}")
+                result(deleteResponseJson)
+           } else{
+               result(FlutterError(code: "500", message: "Unable to Delete Account", details: flyError?.localizedDescription))
+           }
+       }
+
+    }
+    static func getGroupMessageDeliveredToList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let messageId = args["messageId"] as? String ?? ""
+        let jid = args["jid"] as? String ?? ""
+        var groupMessageDeliveredList = GroupManager.shared.getMessageDeliveredListBy(messageId: messageId, groupId: jid)
+        var groupMessageDeliveredListJson = JSONSerializer.toJson(groupMessageDeliveredList)
+        groupMessageDeliveredListJson = groupMessageDeliveredListJson.replacingOccurrences(of: "{\"some\":", with: "")
+        groupMessageDeliveredListJson = groupMessageDeliveredListJson.replacingOccurrences(of: "}}", with: "}")
+        groupMessageDeliveredListJson = groupMessageDeliveredListJson.replacingOccurrences(of: "{}", with: "")
+        print("groupMessageDeliveredList\(groupMessageDeliveredListJson)")
+        result(groupMessageDeliveredListJson)
+
+    }
+    static func getGroupMessageReadByList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let messageId = args["messageId"] as? String ?? ""
+        let jid = args["jid"] as? String ?? ""
+        
+        var groupMessageReadList = GroupManager.shared.getMessageSeenListBy(messageId: messageId, groupId: jid)
+        
+        var groupMessageReadListJson = JSONSerializer.toJson(groupMessageReadList)
+        groupMessageReadListJson = groupMessageReadListJson.replacingOccurrences(of: "{\"some\":", with: "")
+        groupMessageReadListJson = groupMessageReadListJson.replacingOccurrences(of: "}}", with: "}")
+        groupMessageReadListJson = groupMessageReadListJson.replacingOccurrences(of: "{}", with: "")
+        print("groupMessageReadList\(groupMessageReadListJson)")
+        result(groupMessageReadListJson)
 
     }
 }

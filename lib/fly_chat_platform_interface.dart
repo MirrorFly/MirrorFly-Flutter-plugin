@@ -650,11 +650,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getGroupMessageDeliveredToList(String messageId) {
+  Future<dynamic> getGroupMessageDeliveredToList(String messageId, String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getGroupMessageReadByList(String messageId) {
+  Future<dynamic> getGroupMessageReadByList(String messageId, String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 

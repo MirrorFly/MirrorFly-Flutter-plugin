@@ -2691,11 +2691,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
     @override
-    Future<dynamic> getGroupMessageDeliveredToList(String messageId) async {
+    Future<dynamic> getGroupMessageDeliveredToList(String messageId, String jid) async {
       dynamic messageDeleteResponse;
       try {
         messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod(
-            'getGroupMessageDeliveredToList', {"messageId": messageId});
+            'getGroupMessageDeliveredToList', {"messageId": messageId, "jid": jid});
         debugPrint(
             "getGroupMessageDeliveredToList Response ==> $messageDeleteResponse");
         return messageDeleteResponse;
@@ -2710,12 +2710,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
     @override
-    Future<dynamic> getGroupMessageReadByList(String messageId) async {
+    Future<dynamic> getGroupMessageReadByList(String messageId, String jid) async {
       dynamic messageDeleteResponse;
       try {
         messageDeleteResponse = await mirrorFlyMethodChannel
             .invokeMethod(
-            'getGroupMessageReadByList', {"messageId": messageId});
+            'getGroupMessageReadByList', {"messageId": messageId, "jid": jid});
         debugPrint(
             "getGroupMessageReadByList Response ==> $messageDeleteResponse");
         return messageDeleteResponse;
