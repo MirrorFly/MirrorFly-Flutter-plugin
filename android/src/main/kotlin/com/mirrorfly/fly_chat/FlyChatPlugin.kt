@@ -53,6 +53,7 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -596,7 +597,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
           }
 
           override fun onProgressChanged(percentage: Int) {
-            onProgressChangedStreamHandler.onProgressChanged?.success(percentage)
+            onProgressChangedStreamHandler.onProgressChanged?.success(percentage.toString())
           }
 
           override fun onSuccess(backUpFilePath: String) {
@@ -1426,9 +1427,13 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     val messageId = call.argument<String>("messageId") ?: ""
     GroupManager.getGroupMessageDeliveredToList(messageId) { isSuccess, throwable, data ->
       if (isSuccess) {
-        val messageStatusList: List<MessageStatusDetail> =
-          data["data"] as List<MessageStatusDetail>
-        result.success(messageStatusList.tojsonString())
+        val messageStatusList : List<MessageStatusDetail> = data["data"] as List<MessageStatusDetail>
+        val groupMessageDeliveredJsonObject = JSONObject()
+        groupMessageDeliveredJsonObject.put("deliveredCount", messageStatusList.size.toString())
+        groupMessageDeliveredJsonObject.put("totalParticipatCount", FlyMessenger.getGroupMessageStatusCount(messageId))
+        val jsArray = JSONArray(messageStatusList.tojson())
+        groupMessageDeliveredJsonObject.put("deliveredParticipantList",jsArray)
+        result.success(groupMessageDeliveredJsonObject.toString())
       } else {
         result.error("500", throwable!!.message, throwable)
       }
@@ -1439,9 +1444,15 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     val messageId = call.argument<String>("messageId") ?: ""
     GroupManager.getGroupMessageReadByList(messageId) { isSuccess, throwable, data ->
       if (isSuccess) {
-        val messageStatusList: List<MessageStatusDetail> =
-          data["data"] as List<MessageStatusDetail>
-        result.success(messageStatusList.tojsonString())
+        val messageStatusList: List<MessageStatusDetail> = data["data"] as List<MessageStatusDetail>
+
+        val groupMessageReadJsonObject = JSONObject()
+        groupMessageReadJsonObject.put("deliveredCount", messageStatusList.size.toString())
+        groupMessageReadJsonObject.put("totalParticipatCount", FlyMessenger.getGroupMessageStatusCount(messageId))
+        val jsArray = JSONArray(messageStatusList.tojson())
+        groupMessageReadJsonObject.put("seenParticipantList",jsArray)
+        result.success(groupMessageReadJsonObject.toString())
+
       } else {
         result.error("500", throwable!!.message, throwable)
       }
@@ -2908,6 +2919,9 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
 
   fun Any.tojsonString(): String {
     return Gson().toJson(this).toString()
+  }
+  fun Any.tojson(): String {
+    return Gson().toJson(this)
   }
 
   override fun onMessageReceived(message: ChatMessage) {

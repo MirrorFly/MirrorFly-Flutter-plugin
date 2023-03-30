@@ -1968,22 +1968,25 @@ import FlyDatabase
         let messageId = args["messageId"] as? String ?? ""
         let jid = args["jid"] as? String ?? ""
         var groupMessageDeliveredList = GroupManager.shared.getMessageDeliveredListBy(messageId: messageId, groupId: jid)
+        print("groupMessageDeliveredList=>\(groupMessageDeliveredList)")
         var groupMessageDeliveredListJson = JSONSerializer.toJson(groupMessageDeliveredList)
+        print("groupMessageDeliveredListJson=>\(groupMessageDeliveredListJson)")
         groupMessageDeliveredListJson = groupMessageDeliveredListJson.replacingOccurrences(of: "{\"some\":", with: "")
         groupMessageDeliveredListJson = groupMessageDeliveredListJson.replacingOccurrences(of: "}}", with: "}")
         groupMessageDeliveredListJson = groupMessageDeliveredListJson.replacingOccurrences(of: "{}", with: "")
         print("groupMessageDeliveredList\(groupMessageDeliveredListJson)")
         result(groupMessageDeliveredListJson)
-
     }
+    
     static func getGroupMessageReadByList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let messageId = args["messageId"] as? String ?? ""
         let jid = args["jid"] as? String ?? ""
         
         var groupMessageReadList = GroupManager.shared.getMessageSeenListBy(messageId: messageId, groupId: jid)
-        
+        print("groupMessageReadList=> \(groupMessageReadList)")
         var groupMessageReadListJson = JSONSerializer.toJson(groupMessageReadList)
+        print("groupMessageReadListJson=>\(groupMessageReadListJson)")
         groupMessageReadListJson = groupMessageReadListJson.replacingOccurrences(of: "{\"some\":", with: "")
         groupMessageReadListJson = groupMessageReadListJson.replacingOccurrences(of: "}}", with: "}")
         groupMessageReadListJson = groupMessageReadListJson.replacingOccurrences(of: "{}", with: "")

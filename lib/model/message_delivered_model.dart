@@ -1,17 +1,40 @@
 // To parse this JSON data, do
 //
-//     final messageDelivered = messageDeliveredFromJson(jsonString);
+//     final messageDeliveredStatus = messageDeliveredStatusFromJson(jsonString);
 
 import 'dart:convert';
 
+MessageDeliveredStatus messageDeliveredStatusFromJson(String str, String type) => MessageDeliveredStatus.fromJson(json.decode(str), type);
 
-
-List<MessageDeliveredStatus> messageDeliveredStatusFromJson(String str) => List<MessageDeliveredStatus>.from(json.decode(str).map((x) => MessageDeliveredStatus.fromJson(x)));
-
-String messageDeliveredStatusToJson(List<MessageDeliveredStatus> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String messageDeliveredStatusToJson(MessageDeliveredStatus data) => json.encode(data.toJson());
 
 class MessageDeliveredStatus {
   MessageDeliveredStatus({
+    this.deliveredCount,
+    this.totalParticipatCount,
+    required this.participantList,
+  });
+
+  String? deliveredCount;
+  int? totalParticipatCount;
+  List<DeliveredParticipantList> participantList;
+
+  factory MessageDeliveredStatus.fromJson(Map<String, dynamic> json, String type) => MessageDeliveredStatus(
+    deliveredCount: json["deliveredCount"],
+    totalParticipatCount: json["totalParticipatCount"],
+    participantList: type == "delivered" ? List<DeliveredParticipantList>.from(json["deliveredParticipantList"].map((x) => DeliveredParticipantList.fromJson(x))) :
+    List<DeliveredParticipantList>.from(json["seenParticipantList"].map((x) => DeliveredParticipantList.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "deliveredCount": deliveredCount,
+    "totalParticipatCount": totalParticipatCount,
+    "participantList": List<dynamic>.from(participantList.map((x) => x.toJson())),
+  };
+}
+
+class DeliveredParticipantList {
+  DeliveredParticipantList({
     this.memberProfileDetails,
     this.messageId,
     this.status,
@@ -25,22 +48,23 @@ class MessageDeliveredStatus {
   String? time;
   String? userJid;
 
-  factory MessageDeliveredStatus.fromJson(Map<String, dynamic> json) => MessageDeliveredStatus(
-    memberProfileDetails: json["memberProfileDetails"] ?? MemberProfileDetails.fromJson(json["memberProfileDetails"]),
-    messageId: json["messageId"] ?? json["messageId"],
-    status: json["status"] ?? Status.fromJson(json["status"]),
-    time: json["time"] ?? json["time"],
-    userJid: json["userJid"] ?? json["userJid"],
+  factory DeliveredParticipantList.fromJson(Map<String, dynamic> json) => DeliveredParticipantList(
+    memberProfileDetails: MemberProfileDetails.fromJson(json["memberProfileDetails"]),
+    messageId: json["messageId"],
+    status: Status.fromJson(json["status"]),
+    time: json["time"],
+    userJid: json["userJid"],
   );
 
   Map<String, dynamic> toJson() => {
-    "memberProfileDetails": memberProfileDetails ?? memberProfileDetails?.toJson(),
-    "messageId": messageId ?? messageId,
-    "status": status ?? status?.toJson(),
-    "time": time ?? time,
-    "userJid": userJid ?? userJid,
+    "memberProfileDetails": memberProfileDetails?.toJson(),
+    "messageId": messageId,
+    "status": status?.toJson(),
+    "time": time,
+    "userJid": userJid,
   };
 }
+
 class MemberProfileDetails {
   MemberProfileDetails({
     this.contactType,
@@ -141,13 +165,12 @@ class MemberProfileDetails {
   };
 }
 
-
 class Status {
   Status({
-    required this.status,
+    this.status,
   });
 
-  String status;
+  String? status;
 
   factory Status.fromJson(Map<String, dynamic> json) => Status(
     status: json["status"],
