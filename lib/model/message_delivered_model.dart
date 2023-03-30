@@ -115,7 +115,7 @@ class MemberProfileDetails {
   String? thumbImage;
 
   factory MemberProfileDetails.fromJson(Map<String, dynamic> json) => MemberProfileDetails(
-    contactType: json["contactType"],
+    contactType: json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"] == "live" ? "live_contact" : json["contactType"] == "local" ? "local_contact" : json["contactType"] == "deleted" ? "deleted_contact" : json["contactType"],
     email: json["email"],
     groupCreatedTime: json["groupCreatedTime"],
     image: json["image"],

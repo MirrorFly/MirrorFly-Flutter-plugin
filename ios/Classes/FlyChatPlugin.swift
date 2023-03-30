@@ -463,11 +463,52 @@ public class FlyChatPlugin: NSObject, FlutterPlugin {
             FlySdkMethodCalls.buildChatSDK(call: methodCall)
             initializeEventListeners()
         case "syncContacts":
-            FlySdkMethodCalls.syncContacts(call: methodCall,  result: result)
+            let args = methodCall.arguments as! Dictionary<String, Any>
+            
+            let isFirstTime = args["is_first_time"] as? Bool ?? false
+            
+            NotificationCenter.default.addObserver(forName: NSNotification.Name(FlyConstants.contactSyncState), object: nil, queue: nil) { notification in
+                if let contactSyncState = notification.userInfo?[FlyConstants.contactSyncState] as? String {
+                    switch ContactSyncState(rawValue: contactSyncState) {
+                    case .inprogress:
+                        print("contact sync inprogress")
+                        FlySdkMethodCalls.isContactSyncInProgress = true
+                        break
+                    case .success:
+                        print("contact sync Success")
+                        FlySdkMethodCalls.isContactSyncInProgress = false
+                    case .failed:
+                        FlySdkMethodCalls.isContactSyncInProgress = false
+                        print("contact sync failed")
+                    case .none:
+                        FlySdkMethodCalls.isContactSyncInProgress = false
+                        print("contact sync failed")
+                    case .some(_):
+                        break
+                    }
+                }
+                
+            }
+            //addObserver(self, selector: #selector(contactSyncCompleted), name: NSNotification.Name(FlyConstants.contactSyncState), object: nil)
+            
+            ContactSyncManager.shared.syncContacts(){ isSuccess, flyError, flyData in
+                var data  = flyData
+                print("contact sync\(data)")
+                print("contact sync isSuccess\(isSuccess)")
+                if isSuccess {
+                    if(self.onContactSyncCompleteStreamHandler?.onContactSyncComplete != nil){
+                        self.onContactSyncCompleteStreamHandler?.onContactSyncComplete?(true)
+                    }else{
+                        print("OnContact Sync Stream Handler is Nil")
+                    }
+                } else{
+                    print(data.getMessage() as! String)
+                }
+            }
         case "contactSyncStateValue":
             FlySdkMethodCalls.contactSyncStateValue(call: methodCall,  result: result)
-        case "contactSyncState":
-            FlySdkMethodCalls.contactSyncState(call: methodCall,  result: result)
+//        case "contactSyncState":
+//            FlySdkMethodCalls.contactSyncState(call: methodCall,  result: result)
         case "revokeContactSync":
             FlySdkMethodCalls.revokeContactSync(call: methodCall,  result: result)
         case "getUsersWhoBlockedMe":

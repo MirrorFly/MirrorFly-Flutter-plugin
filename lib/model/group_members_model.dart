@@ -56,7 +56,7 @@ class Member {
   String? status;
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
-    contactType: json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"],
+    contactType: json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"] == "live" ? "live_contact" : json["contactType"] == "local" ? "local_contact" : json["contactType"] == "deleted" ? "deleted_contact" : json["contactType"],
     email: json["email"],
     groupCreatedTime: json["groupCreatedTime"].toString(),
     image: json["image"],

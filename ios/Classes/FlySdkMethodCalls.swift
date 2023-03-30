@@ -15,13 +15,16 @@ import FlyDatabase
 
 @objc class FlySdkMethodCalls : NSObject{
     
+    static var isTrialLicenceKey : Bool = true;
+    static var isContactSyncInProgress : Bool = false;
+    
     static func buildChatSDK(call: FlutterMethodCall) {
         let args = call.arguments as! Dictionary<String, Any>
         
         var domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
         var licenseKey = args["licenseKey"] as? String ?? ""
         let enableMobileNumberLogin = args["enableMobileNumberLogin"] as? Bool ?? true
-        let isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
+        isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
         let enableSDKLog = args["enableSDKLog"] as? Bool ?? false
         let maximumRecentChatPin = args["maximumRecentChatPin"] as? Int ?? 3
         
@@ -54,7 +57,10 @@ import FlyDatabase
             print("#Plugin Error ---> ChatManger Set Iv key Failed, \(error.localizedDescription)")
         }
         
-         ChatManager.disableLocalNotification()
+        ChatManager.disableLocalNotification()
+        
+        ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
+        
         
 //        FlyChatPlugin.initializeEventListeners()
       }
@@ -600,7 +606,7 @@ import FlyDatabase
         
     }
     static func isTrailLicence(call: FlutterMethodCall, result: @escaping FlutterResult){
-       result(true)
+       result(isTrialLicenceKey)
     }
     
     static func setMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -882,21 +888,13 @@ import FlyDatabase
     static func getMediaEndPoint(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let urlString = FlyDefaults.baseURL + "" + "media" + "/"
-        
         result(urlString)
         
     }
     
     static func syncContacts(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-        ContactSyncManager.shared.syncContacts(){ isSuccess, flyError, flyData in
-            var data  = flyData
-            if isSuccess {
-                
-            } else{
-                print(data.getMessage() as! String)
-            }
-        }
+        
         
     }
     static func updateMyProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -927,25 +925,27 @@ import FlyDatabase
     }
     
     static func contactSyncStateValue(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+     
+        print("contactSyncStateValue\(isContactSyncInProgress)")
+        result(isContactSyncInProgress)
     }
-    
-    static func contactSyncState(call: FlutterMethodCall, result: @escaping FlutterResult){
-        //        NotificationCenter.default.addObserver(self, selector: #selector(self.contactSyncCompleted(notification:)), name: NSNotification.Name(FlyConstants.contactSyncState), object: nil)
-        //        @objc func contactSyncCompleted(notification: Notification){
-        //             if let contactSyncState = notification.userInfo?[FlyConstants.contactSyncState] as? String {
-        //                switch ContactSyncState(rawValue: contactSyncState) {
-        //                    case .inprogress:
-        //                        //Update the UI
-        //                    case .success:
-        //                        //Update the UI
-        //                    case .failed:
-        //                        //Update the UI
-        //                }
-        //            }
-        //        }
-        
-    }
+//
+//    static func contactSyncState(call: FlutterMethodCall, result: @escaping FlutterResult){
+//        //        NotificationCenter.default.addObserver(self, selector: #selector(self.contactSyncCompleted(notification:)), name: NSNotification.Name(FlyConstants.contactSyncState), object: nil)
+//        //        @objc func contactSyncCompleted(notification: Notification){
+//        //             if let contactSyncState = notification.userInfo?[FlyConstants.contactSyncState] as? String {
+//        //                switch ContactSyncState(rawValue: contactSyncState) {
+//        //                    case .inprogress:
+//        //                        //Update the UI
+//        //                    case .success:
+//        //                        //Update the UI
+//        //                    case .failed:
+//        //                        //Update the UI
+//        //                }
+//        //            }
+//        //        }
+//
+//    }
     
     
     static func revokeContactSync(call: FlutterMethodCall, result: @escaping FlutterResult){

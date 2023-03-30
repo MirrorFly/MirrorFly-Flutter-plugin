@@ -339,9 +339,9 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         val res = (contactSyncStateResult==Result.InProgress)
         result.success(res)
       }
-      call.method.equals("contactSyncState") -> {
-        contactSyncState(result)
-      }
+//      call.method.equals("contactSyncState") -> {
+//        contactSyncState(result)
+//      }
       call.method.equals("revokeContactSync") -> {
         revokeContactSync(result)
       }

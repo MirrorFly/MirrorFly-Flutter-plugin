@@ -84,7 +84,7 @@ class Profile {
   dynamic profileChatType;
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
-    contactType: json["contactType"],
+    contactType: json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"] == "live" ? "live_contact" : json["contactType"] == "local" ? "local_contact" : json["contactType"] == "deleted" ? "deleted_contact" : json["contactType"],
     email: json["email"],
     groupCreatedTime: json["groupCreatedTime"],
     image: json["image"],

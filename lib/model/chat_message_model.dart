@@ -70,7 +70,7 @@ class ChatMessageModel {
 
   factory ChatMessageModel.fromJson(Map<String, dynamic> json) => ChatMessageModel(
     chatUserJid: json["chatUserJid"] ?? "",
-    contactType: json["contactType"] ?? "",
+    contactType: json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"] == "live" ? "live_contact" : json["contactType"] == "local" ? "local_contact" : json["contactType"] == "deleted" ? "deleted_contact" : json["contactType"] ?? "",
     isItCarbonMessage: Platform.isAndroid ? json["isItCarbonMessage"] ?? false : json["isCarbonMessage"] ?? false,
     isItSavedContact: Platform.isAndroid ? json["isItSavedContact"] ?? false : json["isSavedContact"] ?? false,
     isMessageDeleted: json["isMessageDeleted"],

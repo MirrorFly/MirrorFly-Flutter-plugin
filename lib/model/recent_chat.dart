@@ -82,7 +82,8 @@ class RecentChatData {
   dynamic unreadMessageCount;
 
   factory RecentChatData.fromJson(Map<String, dynamic> json) => RecentChatData(
-    contactType: json["contactType"],
+    contactType: Platform.isAndroid ? json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"] == "live" ? "live_contact" : json["contactType"] == "local" ? "local_contact" : json["contactType"] == "deleted" ? "deleted_contact" : json["contactType"] :
+    json["isItSavedContact"] == true ? "live_contact" : json["isDeletedUser"] == true ? "deleted_contact" : "unknown_contact",
     isAdminBlocked: json["isAdminBlocked"],
     isBlocked: json["isBlocked"],
     isBlockedMe: json["isBlockedMe"],
