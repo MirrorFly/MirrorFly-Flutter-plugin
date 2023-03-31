@@ -1,4 +1,6 @@
 import Flutter
+import ContactsUI
+import Contacts
 import UIKit
 import FlyCore
 import FlyCommon
@@ -62,7 +64,7 @@ let onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
 let onSuccess_channel = "contus.mirrorfly/onSuccess"
 let onMessageDeleteForEveryOne_channel = "contus.mirrorfly/onMessageDeleteForEveryOne"
 
-public class FlyChatPlugin: NSObject, FlutterPlugin {
+public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDelegate {
     
     var messageReceivedStreamHandler: MessageReceivedStreamHandler?
     var messageStatusUpdatedStreamHandler: MessageStatusUpdatedStreamHandler?
@@ -116,12 +118,13 @@ public class FlyChatPlugin: NSObject, FlutterPlugin {
     var onsetTypingStatusStreamHandler: OnsetTypingStatusStreamHandler?
     var onGroupTypingStatusStreamHandler: OnGroupTypingStatusStreamHandler?
     
-    public override init() {
-            super.init()
-        }
+//    public override init() {
+//            super.init()
+//        }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: mirrorflyMethodChannel, binaryMessenger: registrar.messenger())
+        
         let instance = FlyChatPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
         instance.setupEventChannel(registrar: registrar)
@@ -471,18 +474,18 @@ public class FlyChatPlugin: NSObject, FlutterPlugin {
                 if let contactSyncState = notification.userInfo?[FlyConstants.contactSyncState] as? String {
                     switch ContactSyncState(rawValue: contactSyncState) {
                     case .inprogress:
-                        print("contact sync inprogress")
+                        print("==>contact sync inprogress")
                         FlySdkMethodCalls.isContactSyncInProgress = true
                         break
                     case .success:
-                        print("contact sync Success")
+                        print("==>contact sync Success")
                         FlySdkMethodCalls.isContactSyncInProgress = false
                     case .failed:
                         FlySdkMethodCalls.isContactSyncInProgress = false
-                        print("contact sync failed")
+                        print("==>contact sync failed")
                     case .none:
                         FlySdkMethodCalls.isContactSyncInProgress = false
-                        print("contact sync failed")
+                        print("==>contact sync failed")
                     case .some(_):
                         break
                     }
@@ -496,10 +499,12 @@ public class FlyChatPlugin: NSObject, FlutterPlugin {
                 print("contact sync\(data)")
                 print("contact sync isSuccess\(isSuccess)")
                 if isSuccess {
-                    if(self.onContactSyncCompleteStreamHandler?.onContactSyncComplete != nil){
-                        self.onContactSyncCompleteStreamHandler?.onContactSyncComplete?(true)
-                    }else{
-                        print("OnContact Sync Stream Handler is Nil")
+                    ContactManager.shared.getRegisteredUsers(fromServer: true) {  isSuccess, flyError, flyData in
+                        if(self.onContactSyncCompleteStreamHandler?.onContactSyncComplete != nil){
+                            self.onContactSyncCompleteStreamHandler?.onContactSyncComplete?(true)
+                        }else{
+                            print("OnContact Sync Stream Handler is Nil")
+                        }
                     }
                 } else{
                     print(data.getMessage() as! String)
@@ -753,6 +758,32 @@ public class FlyChatPlugin: NSObject, FlutterPlugin {
             FlySdkMethodCalls.getGroupMessageDeliveredToList(call: methodCall, result: result)
         case "getGroupMessageReadByList":
             FlySdkMethodCalls.getGroupMessageReadByList(call: methodCall, result: result)
+        case "setDefaultNotificationSound":
+            FlySdkMethodCalls.setDefaultNotificationSound(call: methodCall, result: result)
+        case "addContact":
+            FlySdkMethodCalls.addContact(call: methodCall, result: result)
+//            let args = methodCall.arguments as! Dictionary<String, Any>
+//            let number = args["number"] as? String ?? ""
+//
+//            let newContact = CNMutableContact()
+//
+//            newContact.phoneNumbers.append(CNLabeledValue(label: "home", value: CNPhoneNumber(stringValue: number)))
+//
+//            newContact.givenName = ""
+//            let contactVC = CNContactViewController(forUnknownContact: newContact)
+//            contactVC.contactStore = CNContactStore()
+//            contactVC.delegate = self
+//            contactVC.allowsActions = false
+//            let viewController: UIViewController =
+//                        (UIApplication.shared.delegate?.window??.rootViewController)!;
+            
+//            if let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController {
+//            viewController.show(contactVC, sender: self)//(contactVC, animated: true)//.pushViewController(contactVC, animated: true)
+//            }else{
+//                print("unabel to open controller")
+//            }
+            
+            
             
         default:
             result(FlutterMethodNotImplemented)
@@ -826,7 +857,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     }
     
     public func userProfileFetched(for jid: String, profileDetails: FlyCommon.ProfileDetails?) {
-        
+        print("userProfileFetched for jid")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
         jsonObject.setValue(profileDetails, forKey: "profileDetails")
@@ -847,6 +878,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     }
     
     public func usersProfilesFetched() {
+        print("userProfileFetched")
         if(usersProfilesFetchedStreamHandler?.usersProfilesFetched != nil){
             usersProfilesFetchedStreamHandler?.usersProfilesFetched?(true)
         }else{
@@ -1177,7 +1209,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     }
     
     public func didFetchGroupProfile(groupJid: String) {
-        
+        print("didFetchGroupProfile")
         if(groupProfileFetchedStreamHandler?.onGroupProfileFetched != nil){
             groupProfileFetchedStreamHandler?.onGroupProfileFetched?(groupJid)
         }else{
@@ -1254,10 +1286,11 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     }
     
     public func didFetchGroups(groups: [FlyCommon.ProfileDetails]) {
-        
+        print("didFetchGroups")
     }
     
     public func didFetchGroupMembers(groupJid: String) {
+        print("didFetchGroupMembers")
         if(fetchingGroupMembersCompletedStreamHandler?.onFetchingGroupMembersCompleted != nil){
             fetchingGroupMembersCompletedStreamHandler?.onFetchingGroupMembersCompleted?(groupJid)
         }else{

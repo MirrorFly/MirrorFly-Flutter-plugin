@@ -1236,7 +1236,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future addContact(String number) {
+  Future<bool?> addContact(String number, String name) {
     // implement addContact
     throw UnimplementedError();
   }

@@ -11,6 +11,8 @@ import FlyCommon
 import Flutter
 import Photos
 import FlyDatabase
+import Contacts
+import ContactsUI
 
 
 @objc class FlySdkMethodCalls : NSObject{
@@ -787,6 +789,7 @@ import FlyDatabase
                 if isSuccess {
                     
                     let profileJSON = "{\"data\" : " + JSONSerializer.toJson(data.getData() as Any) + ",\"status\": true}"
+                    print("profileJSON-->\(profileJSON)")
                     result(profileJSON)
                 } else{
                     result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
@@ -1478,16 +1481,21 @@ import FlyDatabase
         
         ChatManager.getRecentChatList { (isSuccess, flyError, resultDict) in
                   if (isSuccess) {
-                      var recentChatList = resultDict
-                      
-                      let recentChatJson = JSONSerializer.toJson(recentChatList.getData())
-                      
-                      print(recentChatJson)
-                      
-                      let recentChatListJson = "{\"data\":" + recentChatJson + "}"
-                     
-                      print(recentChatListJson)
-                      result(recentChatListJson)
+                      var recentlist = resultDict
+                      let recentChatList = recentlist.getData() as? [RecentChat] ?? []
+                    
+                      if(recentChatList.isEmpty){
+                          result("{\"data\": [] }")
+                      }else{
+                          let recentChatJson = JSONSerializer.toJson(recentChatList)
+                          
+                          print(recentChatJson)
+                          
+                          let recentChatListJson = "{\"data\":" + recentChatJson + "}"
+                          
+                          print(recentChatListJson)
+                          result(recentChatListJson)
+                      }
                    
                   } else {
                       
@@ -1993,6 +2001,32 @@ import FlyDatabase
         print("groupMessageReadList\(groupMessageReadListJson)")
         result(groupMessageReadListJson)
 
+    }
+    static func addContact(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let number = args["number"] as? String ?? ""
+        let userName = args["name"] as? String ?? ""
+
+        print("#Add Mobile Number \(number)")
+        let contact = CNMutableContact()
+
+        let homePhone = CNLabeledValue(label: CNLabelHome, value: CNPhoneNumber(stringValue : number ))
+            
+        contact.phoneNumbers = [homePhone]
+        contact.givenName = userName
+        let saveRequest = CNSaveRequest()
+        saveRequest.add(contact, toContainerWithIdentifier: nil)
+        do{
+            try CNContactStore().execute(saveRequest)
+        }catch let error{
+            print("#Plugin Error ---> Unable to Add Contact, \(error.localizedDescription)")
+            result(false)
+        }
+        result(true)
+    }
+    static func setDefaultNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        result("")
     }
 }
 

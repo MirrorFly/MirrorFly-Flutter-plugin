@@ -1,3 +1,4 @@
+
 import 'package:fly_chat/builder.dart';
 
 import 'fly_chat_platform_interface.dart';
@@ -86,8 +87,7 @@ class FlyChat {
   }
 
   static Future<dynamic> getRecalledMessagesOfAConversation(String jid) {
-    return FlyChatFlutterPlatform.instance
-        .getRecalledMessagesOfAConversation(jid);
+    return FlyChatFlutterPlatform.instance.getRecalledMessagesOfAConversation(jid);
   }
 
   static Future<bool?> setMyBusyStatus(String busyStatus) {
@@ -107,15 +107,14 @@ class FlyChat {
   }
 
   static Future<bool?> deleteProfileStatus(
-      String id, String status, bool isCurrentStatus) {
-    return FlyChatFlutterPlatform.instance
-        .deleteProfileStatus(id, status, isCurrentStatus);
+      String id, String status,
+      bool isCurrentStatus) {
+    return FlyChatFlutterPlatform.instance.deleteProfileStatus(id,status,isCurrentStatus);
   }
 
   static Future<bool?> deleteBusyStatus(
       String id, String status, bool isCurrentStatus) {
-    return FlyChatFlutterPlatform.instance
-        .deleteBusyStatus(id, status, isCurrentStatus);
+    return FlyChatFlutterPlatform.instance.deleteBusyStatus(id,status,isCurrentStatus);
   }
 
   static Future<String?> mediaEndPoint() {
@@ -135,8 +134,7 @@ class FlyChat {
   }
 
   static Future<bool?> deleteUnreadMessageSeparatorOfAConversation(String jid) {
-    return FlyChatFlutterPlatform.instance
-        .deleteUnreadMessageSeparatorOfAConversation(jid);
+    return FlyChatFlutterPlatform.instance.deleteUnreadMessageSeparatorOfAConversation(jid);
   }
 
   static Future<int?> getMembersCountOfGroup(String groupJid) {
@@ -145,8 +143,7 @@ class FlyChat {
 
   static Future<bool?> doesFetchingMembersListFromServedRequired(
       String groupJid) {
-    return FlyChatFlutterPlatform.instance
-        .doesFetchingMembersListFromServedRequired(groupJid);
+    return FlyChatFlutterPlatform.instance.doesFetchingMembersListFromServedRequired(groupJid);
   }
 
   static Future<bool?> isHideLastSeenEnabled() {
@@ -158,22 +155,19 @@ class FlyChat {
   }
 
   static sendTypingStatus(String toJid, String chattype) {
-    return FlyChatFlutterPlatform.instance.sendTypingStatus(toJid, chattype);
+    return FlyChatFlutterPlatform.instance.sendTypingStatus(toJid,chattype);
   }
 
   static sendTypingGoneStatus(String toJid, String chattype) {
-    return FlyChatFlutterPlatform.instance
-        .sendTypingGoneStatus(toJid, chattype);
+    return FlyChatFlutterPlatform.instance.sendTypingGoneStatus(toJid,chattype);
   }
 
   static updateChatMuteStatus(String jid, bool muteStatus) {
-    return FlyChatFlutterPlatform.instance
-        .updateChatMuteStatus(jid, muteStatus);
+    return FlyChatFlutterPlatform.instance.updateChatMuteStatus(jid,muteStatus);
   }
 
   static updateRecentChatPinStatus(String jid, bool pinStatus) {
-    return FlyChatFlutterPlatform.instance
-        .updateRecentChatPinStatus(jid, pinStatus);
+    return FlyChatFlutterPlatform.instance.updateRecentChatPinStatus(jid,pinStatus);
   }
 
   static deleteRecentChat(String jid) {
@@ -209,16 +203,15 @@ class FlyChat {
   }
 
   static setCustomValue(String messageId, String key, String value) {
-    return FlyChatFlutterPlatform.instance
-        .setCustomValue(messageId, key, value);
+    return FlyChatFlutterPlatform.instance.setCustomValue(messageId,key,value);
   }
 
   static removeCustomValue(String messageId, String key) {
-    return FlyChatFlutterPlatform.instance.removeCustomValue(messageId, key);
+    return FlyChatFlutterPlatform.instance.removeCustomValue(messageId,key);
   }
 
   static inviteUserViaSMS(String mobileNo, String message) {
-    return FlyChatFlutterPlatform.instance.inviteUserViaSMS(mobileNo, message);
+    return FlyChatFlutterPlatform.instance.inviteUserViaSMS(mobileNo,message);
   }
 
   static cancelBackup() {
@@ -242,7 +235,7 @@ class FlyChat {
   }
 
   static Future<String?> getCustomValue(String messageId, String key) {
-    return FlyChatFlutterPlatform.instance.getCustomValue(messageId, key);
+    return FlyChatFlutterPlatform.instance.getCustomValue(messageId,key);
   }
 
   static Future<bool?> clearAllConversation() {
@@ -258,18 +251,15 @@ class FlyChat {
   }
 
   static Future<dynamic> handleReceivedMessage(Map notificationdata) {
-    return FlyChatFlutterPlatform.instance
-        .handleReceivedMessage(notificationdata);
+    return FlyChatFlutterPlatform.instance.handleReceivedMessage(notificationdata);
   }
 
   static Future<dynamic> getLastNUnreadMessages(int messagesCount) {
-    return FlyChatFlutterPlatform.instance
-        .getLastNUnreadMessages(messagesCount);
+    return FlyChatFlutterPlatform.instance.getLastNUnreadMessages(messagesCount);
   }
 
   static Future<dynamic> getNUnreadMessagesOfEachUsers(int messagesCount) {
-    return FlyChatFlutterPlatform.instance
-        .getNUnreadMessagesOfEachUsers(messagesCount);
+    return FlyChatFlutterPlatform.instance.getNUnreadMessagesOfEachUsers(messagesCount);
   }
 
   static Future<bool?> isArchivedSettingsEnabled() {
@@ -277,23 +267,19 @@ class FlyChat {
   }
 
   static Future<bool?> enableDisableArchivedSettings(bool enable) {
-    return FlyChatFlutterPlatform.instance
-        .enableDisableArchivedSettings(enable);
+    return FlyChatFlutterPlatform.instance.enableDisableArchivedSettings(enable);
   }
 
   static Future<bool?> updateArchiveUnArchiveChat(String jid, bool isArchived) {
-    return FlyChatFlutterPlatform.instance
-        .updateArchiveUnArchiveChat(jid, isArchived);
+    return FlyChatFlutterPlatform.instance.updateArchiveUnArchiveChat(jid,isArchived);
   }
 
   static Future<int?> getGroupMessageStatusCount(String messageid) {
-    return FlyChatFlutterPlatform.instance
-        .getGroupMessageStatusCount(messageid);
+    return FlyChatFlutterPlatform.instance.getGroupMessageStatusCount(messageid);
   }
 
   static Future<int?> getUnreadMessageCountExceptMutedChat() {
-    return FlyChatFlutterPlatform.instance
-        .getUnreadMessageCountExceptMutedChat();
+    return FlyChatFlutterPlatform.instance.getUnreadMessageCountExceptMutedChat();
   }
 
   static Future<int?> recentChatPinnedCount() {
@@ -309,8 +295,7 @@ class FlyChat {
   }
 
   static Future<dynamic> getUsersListToAddMembersInOldGroup(String groupJid) {
-    return FlyChatFlutterPlatform.instance
-        .getUsersListToAddMembersInOldGroup(groupJid);
+    return FlyChatFlutterPlatform.instance.getUsersListToAddMembersInOldGroup(groupJid);
   }
 
   static Future<dynamic> prepareChatConversationToExport(String jid) {
@@ -334,24 +319,21 @@ class FlyChat {
   }
 
   static Future<dynamic> getGroupProfile(String groupJid, bool server) {
-    return FlyChatFlutterPlatform.instance.getGroupProfile(groupJid, server);
+    return FlyChatFlutterPlatform.instance.getGroupProfile(groupJid,server);
   }
 
   static updateMediaDownloadStatus(String mediaMessageId, int progress,
       int downloadStatus, num dataTransferred) {
-    return FlyChatFlutterPlatform.instance.updateMediaDownloadStatus(
-        mediaMessageId, progress, downloadStatus, dataTransferred);
+    return FlyChatFlutterPlatform.instance.updateMediaDownloadStatus(mediaMessageId,progress,downloadStatus,dataTransferred);
   }
 
-  static updateMediaUploadStatus(String mediaMessageId, int progress,
-      int uploadStatus, num dataTransferred) {
-    return FlyChatFlutterPlatform.instance.updateMediaUploadStatus(
-        mediaMessageId, progress, uploadStatus, dataTransferred);
+  static updateMediaUploadStatus(String mediaMessageId, int progress, int uploadStatus,
+      num dataTransferred) {
+    return FlyChatFlutterPlatform.instance.updateMediaUploadStatus(mediaMessageId,progress,uploadStatus,dataTransferred);
   }
 
   static cancelMediaUploadOrDownload(String messageId) async {
-    return FlyChatFlutterPlatform.instance
-        .cancelMediaUploadOrDownload(messageId);
+    return FlyChatFlutterPlatform.instance.cancelMediaUploadOrDownload(messageId);
   }
 
   static setMediaEncryption(String encryption) {
@@ -374,14 +356,12 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.authToken();
   }
 
-  static Future<dynamic> registerUser(String userIdentifier,
-      {String token = ""}) {
-    return FlyChatFlutterPlatform.instance
-        .registerUser(userIdentifier, token: token);
+  static Future<dynamic> registerUser(String userIdentifier, {String token = ""}) {
+    return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,token: token);
   }
 
   static Future<String?> verifyToken(String userName, String token) {
-    return FlyChatFlutterPlatform.instance.verifyToken(userName, token);
+    return FlyChatFlutterPlatform.instance.verifyToken(userName,token);
   }
 
   static Future<String?> getJid(String username) {
@@ -389,176 +369,127 @@ class FlyChat {
   }
 
   static sendTextMessage(String message, String jid, String replyMessageId) {
-    return FlyChatFlutterPlatform.instance
-        .sendTextMessage(message, jid, replyMessageId);
+    return FlyChatFlutterPlatform.instance.sendTextMessage(message,jid,replyMessageId);
   }
 
-  static sendLocationMessage(
-      String jid, double latitude, double longitude, String replyMessageId) {
-    return FlyChatFlutterPlatform.instance
-        .sendLocationMessage(jid, latitude, longitude, replyMessageId);
+  static sendLocationMessage(String jid, double latitude, double longitude,
+      String replyMessageId) {
+    return FlyChatFlutterPlatform.instance.sendLocationMessage(jid,latitude,longitude,replyMessageId);
   }
 
   static sendImageMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
       [String? imageFileUrl]) {
-    return FlyChatFlutterPlatform.instance
-        .sendImageMessage(jid, filePath, caption, replyMessageID, imageFileUrl);
+    return FlyChatFlutterPlatform.instance.sendImageMessage(jid,filePath,caption,replyMessageID,imageFileUrl);
   }
 
   static sendVideoMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
-      [String? videoFileUrl, num? videoDuration, String? thumbImageBase64]) {
-    return FlyChatFlutterPlatform.instance.sendVideoMessage(jid, filePath,
-        caption, replyMessageID, videoFileUrl, videoDuration, thumbImageBase64);
+      [String? videoFileUrl,
+        num? videoDuration,
+        String? thumbImageBase64]) {
+    return FlyChatFlutterPlatform.instance.sendVideoMessage(jid,filePath,caption,replyMessageID,videoFileUrl,videoDuration,thumbImageBase64);
   }
 
   static Future<dynamic> getRegisteredUserList({required bool server}) {
-    return FlyChatFlutterPlatform.instance
-        .getRegisteredUserList(server: server);
+    return FlyChatFlutterPlatform.instance.getRegisteredUserList(server: server);
   }
 
   static getUserList(int page, String search, [int perPageResultSize = 20]) {
-    return FlyChatFlutterPlatform.instance
-        .getUserList(page, search, perPageResultSize);
+    return FlyChatFlutterPlatform.instance.getUserList(page,search,perPageResultSize);
   }
 
-  static Stream<dynamic> get onMessageReceived =>
-      FlyChatFlutterPlatform.instance.onMessageReceived;
+  static Stream<dynamic> get onMessageReceived => FlyChatFlutterPlatform.instance.onMessageReceived;
 
   //messageOnReceivedChannel.receiveBroadcastStream().cast();
 
-  static Stream<dynamic> get onMessageStatusUpdated =>
-      FlyChatFlutterPlatform.instance.onMessageStatusUpdated;
+  static Stream<dynamic> get onMessageStatusUpdated =>  FlyChatFlutterPlatform.instance.onMessageStatusUpdated;
 
-  static Stream<dynamic> get onMediaStatusUpdated =>
-      FlyChatFlutterPlatform.instance.onMediaStatusUpdated;
+  static Stream<dynamic> get onMediaStatusUpdated =>  FlyChatFlutterPlatform.instance.onMediaStatusUpdated;
 
-  static Stream<dynamic> get onUploadDownloadProgressChanged =>
-      FlyChatFlutterPlatform.instance.onUploadDownloadProgressChanged;
+  static Stream<dynamic> get onUploadDownloadProgressChanged =>  FlyChatFlutterPlatform.instance.onUploadDownloadProgressChanged;
 
-  static Stream<dynamic> get onGroupProfileFetched =>
-      FlyChatFlutterPlatform.instance.onGroupProfileFetched;
+  static Stream<dynamic> get onGroupProfileFetched =>  FlyChatFlutterPlatform.instance.onGroupProfileFetched;
 
-  static Stream<dynamic> get onNewGroupCreated =>
-      FlyChatFlutterPlatform.instance.onNewGroupCreated;
+  static Stream<dynamic> get onNewGroupCreated =>  FlyChatFlutterPlatform.instance.onNewGroupCreated;
 
-  static Stream<dynamic> get onGroupProfileUpdated =>
-      FlyChatFlutterPlatform.instance.onGroupProfileUpdated;
+  static Stream<dynamic> get onGroupProfileUpdated =>  FlyChatFlutterPlatform.instance.onGroupProfileUpdated;
 
-  static Stream<dynamic> get onNewMemberAddedToGroup =>
-      FlyChatFlutterPlatform.instance.onNewMemberAddedToGroup;
+  static Stream<dynamic> get onNewMemberAddedToGroup =>  FlyChatFlutterPlatform.instance.onNewMemberAddedToGroup;
 
-  static Stream<dynamic> get onMemberRemovedFromGroup =>
-      FlyChatFlutterPlatform.instance.onMemberRemovedFromGroup;
+  static Stream<dynamic> get onMemberRemovedFromGroup =>  FlyChatFlutterPlatform.instance.onMemberRemovedFromGroup;
 
-  static Stream<dynamic> get onFetchingGroupMembersCompleted =>
-      FlyChatFlutterPlatform.instance.onFetchingGroupMembersCompleted;
+  static Stream<dynamic> get onFetchingGroupMembersCompleted => FlyChatFlutterPlatform.instance.onFetchingGroupMembersCompleted;
 
-  static Stream<dynamic> get onDeleteGroup =>
-      FlyChatFlutterPlatform.instance.onDeleteGroup;
+  static Stream<dynamic> get onDeleteGroup => FlyChatFlutterPlatform.instance.onDeleteGroup;
 
-  static Stream<dynamic> get onFetchingGroupListCompleted =>
-      FlyChatFlutterPlatform.instance.onFetchingGroupListCompleted;
+  static Stream<dynamic> get onFetchingGroupListCompleted => FlyChatFlutterPlatform.instance.onFetchingGroupListCompleted;
 
-  static Stream<dynamic> get onMemberMadeAsAdmin =>
-      FlyChatFlutterPlatform.instance.onMemberMadeAsAdmin;
+  static Stream<dynamic> get onMemberMadeAsAdmin => FlyChatFlutterPlatform.instance.onMemberMadeAsAdmin;
 
-  static Stream<dynamic> get onMemberRemovedAsAdmin =>
-      FlyChatFlutterPlatform.instance.onMemberRemovedAsAdmin;
+  static Stream<dynamic> get onMemberRemovedAsAdmin => FlyChatFlutterPlatform.instance.onMemberRemovedAsAdmin;
 
-  static Stream<dynamic> get onLeftFromGroup =>
-      FlyChatFlutterPlatform.instance.onLeftFromGroup;
+  static Stream<dynamic> get onLeftFromGroup => FlyChatFlutterPlatform.instance.onLeftFromGroup;
 
-  static Stream<dynamic> get onGroupNotificationMessage =>
-      FlyChatFlutterPlatform.instance.onGroupNotificationMessage;
+  static Stream<dynamic> get onGroupNotificationMessage => FlyChatFlutterPlatform.instance.onGroupNotificationMessage;
 
-  static Stream<dynamic> get onGroupDeletedLocally =>
-      FlyChatFlutterPlatform.instance.onGroupDeletedLocally;
+  static Stream<dynamic> get onGroupDeletedLocally => FlyChatFlutterPlatform.instance.onGroupDeletedLocally;
 
-  static Stream<dynamic> get blockedThisUser =>
-      FlyChatFlutterPlatform.instance.blockedThisUser;
+  static Stream<dynamic> get blockedThisUser => FlyChatFlutterPlatform.instance.blockedThisUser;
 
-  static Stream<dynamic> get myProfileUpdated =>
-      FlyChatFlutterPlatform.instance.myProfileUpdated;
+  static Stream<dynamic> get myProfileUpdated => FlyChatFlutterPlatform.instance.myProfileUpdated;
 
-  static Stream<dynamic> get onAdminBlockedOtherUser =>
-      FlyChatFlutterPlatform.instance.onAdminBlockedOtherUser;
+  static Stream<dynamic> get onAdminBlockedOtherUser => FlyChatFlutterPlatform.instance.onAdminBlockedOtherUser;
 
-  static Stream<dynamic> get onAdminBlockedUser =>
-      FlyChatFlutterPlatform.instance.onAdminBlockedUser;
+  static Stream<dynamic> get onAdminBlockedUser => FlyChatFlutterPlatform.instance.onAdminBlockedUser;
 
-  static Stream<bool> get onContactSyncComplete =>
-      FlyChatFlutterPlatform.instance.onContactSyncComplete;
+  static Stream<bool> get onContactSyncComplete => FlyChatFlutterPlatform.instance.onContactSyncComplete;
 
-  static Stream<dynamic> get onLoggedOut =>
-      FlyChatFlutterPlatform.instance.onLoggedOut;
+  static Stream<dynamic> get onLoggedOut => FlyChatFlutterPlatform.instance.onLoggedOut;
 
-  static Stream<dynamic> get unblockedThisUser =>
-      FlyChatFlutterPlatform.instance.unblockedThisUser;
+  static Stream<dynamic> get unblockedThisUser => FlyChatFlutterPlatform.instance.unblockedThisUser;
 
-  static Stream<dynamic> get userBlockedMe =>
-      FlyChatFlutterPlatform.instance.userBlockedMe;
+  static Stream<dynamic> get userBlockedMe => FlyChatFlutterPlatform.instance.userBlockedMe;
 
-  static Stream<dynamic> get userCameOnline =>
-      FlyChatFlutterPlatform.instance.userCameOnline;
+  static Stream<dynamic> get userCameOnline => FlyChatFlutterPlatform.instance.userCameOnline;
 
-  static Stream<String> get userDeletedHisProfile =>
-      FlyChatFlutterPlatform.instance.userDeletedHisProfile;
+  static Stream<String> get userDeletedHisProfile => FlyChatFlutterPlatform.instance.userDeletedHisProfile;
 
-  static Stream<dynamic> get userProfileFetched =>
-      FlyChatFlutterPlatform.instance.userProfileFetched;
+  static Stream<dynamic> get userProfileFetched => FlyChatFlutterPlatform.instance.userProfileFetched;
 
-  static Stream<dynamic> get userUnBlockedMe =>
-      FlyChatFlutterPlatform.instance.userUnBlockedMe;
+  static Stream<dynamic> get userUnBlockedMe => FlyChatFlutterPlatform.instance.userUnBlockedMe;
 
-  static Stream<dynamic> get userUpdatedHisProfile =>
-      FlyChatFlutterPlatform.instance.userUpdatedHisProfile;
+  static Stream<dynamic> get userUpdatedHisProfile => FlyChatFlutterPlatform.instance.userUpdatedHisProfile;
 
-  static Stream<dynamic> get userWentOffline =>
-      FlyChatFlutterPlatform.instance.userWentOffline;
+  static Stream<dynamic> get userWentOffline => FlyChatFlutterPlatform.instance.userWentOffline;
 
-  static Stream<dynamic> get usersIBlockedListFetched =>
-      FlyChatFlutterPlatform.instance.usersIBlockedListFetched;
+  static Stream<dynamic> get usersIBlockedListFetched => FlyChatFlutterPlatform.instance.usersIBlockedListFetched;
 
-  static Stream<dynamic> get usersWhoBlockedMeListFetched =>
-      FlyChatFlutterPlatform.instance.usersWhoBlockedMeListFetched;
+  static Stream<dynamic> get usersWhoBlockedMeListFetched => FlyChatFlutterPlatform.instance.usersWhoBlockedMeListFetched;
 
-  static Stream<dynamic> get onConnected =>
-      FlyChatFlutterPlatform.instance.onConnected;
+  static Stream<dynamic> get onConnected => FlyChatFlutterPlatform.instance.onConnected;
 
-  static Stream<dynamic> get onDisconnected =>
-      FlyChatFlutterPlatform.instance.onDisconnected;
+  static Stream<dynamic> get onDisconnected => FlyChatFlutterPlatform.instance.onDisconnected;
 
-  static Stream<dynamic> get onConnectionNotAuthorized =>
-      FlyChatFlutterPlatform.instance.onConnectionNotAuthorized;
+  static Stream<dynamic> get onConnectionNotAuthorized => FlyChatFlutterPlatform.instance.onConnectionNotAuthorized;
 
-  static Stream<dynamic> get connectionFailed =>
-      FlyChatFlutterPlatform.instance.connectionFailed;
+  static Stream<dynamic> get connectionFailed => FlyChatFlutterPlatform.instance.connectionFailed;
 
-  static Stream<dynamic> get connectionSuccess =>
-      FlyChatFlutterPlatform.instance.connectionSuccess;
+  static Stream<dynamic> get connectionSuccess => FlyChatFlutterPlatform.instance.connectionSuccess;
 
-  static Stream<dynamic> get onWebChatPasswordChanged =>
-      FlyChatFlutterPlatform.instance.onWebChatPasswordChanged;
+  static Stream<dynamic> get onWebChatPasswordChanged => FlyChatFlutterPlatform.instance.onWebChatPasswordChanged;
 
-  static Stream<dynamic> get setTypingStatus =>
-      FlyChatFlutterPlatform.instance.setTypingStatus;
+  static Stream<dynamic> get setTypingStatus => FlyChatFlutterPlatform.instance.setTypingStatus;
 
-  static Stream<dynamic> get onChatTypingStatus =>
-      FlyChatFlutterPlatform.instance.onChatTypingStatus;
+  static Stream<dynamic> get onChatTypingStatus => FlyChatFlutterPlatform.instance.onChatTypingStatus;
 
-  static Stream<dynamic> get onGroupTypingStatus =>
-      FlyChatFlutterPlatform.instance.onGroupTypingStatus;
+  static Stream<dynamic> get onGroupTypingStatus => FlyChatFlutterPlatform.instance.onGroupTypingStatus;
 
-  static Stream<dynamic> get onFailure =>
-      FlyChatFlutterPlatform.instance.onFailure;
+  static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
-  static Stream<dynamic> get onProgressChanged =>
-      FlyChatFlutterPlatform.instance.onProgressChanged;
+  static Stream<dynamic> get onProgressChanged => FlyChatFlutterPlatform.instance.onProgressChanged;
 
-  static Stream<dynamic> get onSuccess =>
-      FlyChatFlutterPlatform.instance.onSuccess;
+  static Stream<dynamic> get onSuccess => FlyChatFlutterPlatform.instance.onSuccess;
 
   static Future<String?> imagePath(String imgurl) {
     return FlyChatFlutterPlatform.instance.imagePath(imgurl);
@@ -584,16 +515,14 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.insertDefaultStatus(status);
   }
 
-  static updateMyProfile(
-      String name, String email, String mobile, String status, String? image) {
-    return FlyChatFlutterPlatform.instance
-        .updateMyProfile(name, email, mobile, status, image);
+  static updateMyProfile(String name, String email, String mobile, String status,
+      String? image) {
+    return FlyChatFlutterPlatform.instance.updateMyProfile(name, email, mobile, status, image);
   }
 
   static getUserProfile(String jid,
       [bool fromserver = false, bool saveasfriend = false]) {
-    return FlyChatFlutterPlatform.instance
-        .getUserProfile(jid, fromserver, saveasfriend);
+    return FlyChatFlutterPlatform.instance.getUserProfile(jid,fromserver,saveasfriend);
   }
 
   static getProfileDetails(String jid, bool fromServer) {
@@ -648,10 +577,9 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.markAsReadDeleteUnreadSeparator(jid);
   }
 
-  static Future<dynamic> sendContactMessage(List<String> contactList,
-      String jid, String contactName, String replyMessageId) {
-    return FlyChatFlutterPlatform.instance
-        .sendContactMessage(contactList, jid, contactName, replyMessageId);
+  static Future<dynamic> sendContactMessage(List<String> contactList, String jid,
+      String contactName, String replyMessageId) {
+    return FlyChatFlutterPlatform.instance.sendContactMessage(contactList, jid, contactName, replyMessageId);
   }
 
   static Future<dynamic> logoutOfChatSDK() {
@@ -669,19 +597,17 @@ class FlyChat {
   static Future<dynamic> sendDocumentMessage(
       String jid, String documentPath, String replyMessageId,
       [String? fileUrl]) {
-    return FlyChatFlutterPlatform.instance
-        .sendDocumentMessage(jid, documentPath, replyMessageId, fileUrl);
+    return FlyChatFlutterPlatform.instance.sendDocumentMessage(jid, documentPath, replyMessageId,fileUrl);
   }
 
   static Future<dynamic> openFile(String filePath) {
     return FlyChatFlutterPlatform.instance.openFile(filePath);
   }
 
-  static Future<dynamic> sendAudioMessage(String jid, String filePath,
-      bool isRecorded, String duration, String replyMessageId,
+  static Future<dynamic> sendAudioMessage(String jid, String filePath, bool isRecorded,
+      String duration, String replyMessageId,
       [String? audiofileUrl]) {
-    return FlyChatFlutterPlatform.instance.sendAudioMessage(
-        jid, filePath, isRecorded, duration, replyMessageId, audiofileUrl);
+    return FlyChatFlutterPlatform.instance.sendAudioMessage(jid, filePath, isRecorded, duration, replyMessageId,audiofileUrl);
   }
 
   static Future<dynamic> getRecentChatListIncludingArchived() {
@@ -690,8 +616,7 @@ class FlyChat {
 
   static Future<dynamic> searchConversation(String searchKey,
       [String? jidForSearch, bool globalSearch = true]) {
-    return FlyChatFlutterPlatform.instance
-        .searchConversation(searchKey, jidForSearch, globalSearch);
+    return FlyChatFlutterPlatform.instance.searchConversation(searchKey,jidForSearch,globalSearch);
   }
 
   static Future<dynamic> getRegisteredUsers(bool server) {
@@ -708,14 +633,12 @@ class FlyChat {
 
   static Future<dynamic> clearChat(
       String jid, String chatType, bool clearExceptStarred) {
-    return FlyChatFlutterPlatform.instance
-        .clearChat(jid, chatType, clearExceptStarred);
+    return FlyChatFlutterPlatform.instance.clearChat(jid, chatType, clearExceptStarred);
   }
 
   static Future<dynamic> reportChatOrUser(
       String jid, String chatType, String? messageId) {
-    return FlyChatFlutterPlatform.instance
-        .reportChatOrUser(jid, chatType, messageId);
+    return FlyChatFlutterPlatform.instance.reportChatOrUser(jid, chatType, messageId);
   }
 
   static Future<dynamic> getMessagesUsingIds(List<String> messageIds) {
@@ -724,38 +647,29 @@ class FlyChat {
 
   static Future<dynamic> deleteMessagesForMe(String jid, String chatType,
       List<String> messageIds, bool? isMediaDelete) {
-    return FlyChatFlutterPlatform.instance
-        .deleteMessagesForMe(jid, chatType, messageIds, isMediaDelete);
+    return FlyChatFlutterPlatform.instance.deleteMessagesForMe(jid, chatType, messageIds, isMediaDelete);
   }
 
   static Future<dynamic> deleteMessagesForEveryone(String jid, String chatType,
       List<String> messageIds, bool? isMediaDelete) {
-    return FlyChatFlutterPlatform.instance
-        .deleteMessagesForEveryone(jid, chatType, messageIds, isMediaDelete);
+    return FlyChatFlutterPlatform.instance.deleteMessagesForEveryone(jid, chatType, messageIds, isMediaDelete);
   }
 
   static Future<dynamic> deleteMessages(
       String jid, List<String> messageIds, bool isDeleteForEveryOne) {
-    return FlyChatFlutterPlatform.instance
-        .deleteMessages(jid, messageIds, isDeleteForEveryOne);
+    return FlyChatFlutterPlatform.instance.deleteMessages(jid, messageIds, isDeleteForEveryOne);
   }
 
-  static Future<dynamic> getGroupMessageDeliveredToList(
-      String messageId, String jid) {
-    return FlyChatFlutterPlatform.instance
-        .getGroupMessageDeliveredToList(messageId, jid);
+  static Future<dynamic> getGroupMessageDeliveredToList(String messageId, String jid) {
+    return FlyChatFlutterPlatform.instance.getGroupMessageDeliveredToList(messageId, jid);
   }
 
-  static Future<dynamic> getGroupMessageReadByList(
-      String messageId, String jid) {
-    return FlyChatFlutterPlatform.instance
-        .getGroupMessageReadByList(messageId, jid);
+  static Future<dynamic> getGroupMessageReadByList(String messageId, String jid) {
+    return FlyChatFlutterPlatform.instance.getGroupMessageReadByList(messageId, jid);
   }
 
-  static Future<dynamic> getMessageStatusOfASingleChatMessage(
-      String messageID) {
-    return FlyChatFlutterPlatform.instance
-        .getMessageStatusOfASingleChatMessage(messageID);
+  static Future<dynamic> getMessageStatusOfASingleChatMessage(String messageID) {
+    return FlyChatFlutterPlatform.instance.getMessageStatusOfASingleChatMessage(messageID);
   }
 
   static Future<dynamic> blockUser(String userJID) {
@@ -796,26 +710,22 @@ class FlyChat {
 
   static Future<dynamic> updateFavouriteStatus(
       String messageID, String chatUserJID, bool isFavourite, String chatType) {
-    return FlyChatFlutterPlatform.instance
-        .updateFavouriteStatus(messageID, chatUserJID, isFavourite, chatType);
+    return FlyChatFlutterPlatform.instance.updateFavouriteStatus(messageID, chatUserJID, isFavourite, chatType);
   }
 
   static Future<dynamic> forwardMessagesToMultipleUsers(
       List<String> messageIds, List<String> userList) {
-    return FlyChatFlutterPlatform.instance
-        .forwardMessagesToMultipleUsers(messageIds, userList);
+    return FlyChatFlutterPlatform.instance.forwardMessagesToMultipleUsers(messageIds, userList);
   }
 
   static Future<dynamic> forwardMessages(
       List<String> messageIds, String tojid, String chattype) {
-    return FlyChatFlutterPlatform.instance
-        .forwardMessages(messageIds, tojid, chattype);
+    return FlyChatFlutterPlatform.instance.forwardMessages(messageIds, tojid, chattype);
   }
 
   static Future<dynamic> createGroup(
       String groupname, List<String> userList, String image) {
-    return FlyChatFlutterPlatform.instance
-        .createGroup(groupname, userList, image);
+    return FlyChatFlutterPlatform.instance.createGroup(groupname, userList, image);
   }
 
   static Future<bool?> addUsersToGroup(String jid, List<String> userList) {
@@ -848,8 +758,7 @@ class FlyChat {
 
   static Future<bool?> reportUserOrMessages(
       String jid, String type, String? messageId) {
-    return FlyChatFlutterPlatform.instance
-        .reportUserOrMessages(jid, type, messageId);
+    return FlyChatFlutterPlatform.instance.reportUserOrMessages(jid, type, messageId);
   }
 
   static Future<bool?> makeAdmin(String groupjid, String userjid) {
@@ -857,8 +766,7 @@ class FlyChat {
   }
 
   static Future<bool?> removeMemberFromGroup(String groupjid, String userjid) {
-    return FlyChatFlutterPlatform.instance
-        .removeMemberFromGroup(groupjid, userjid);
+    return FlyChatFlutterPlatform.instance.removeMemberFromGroup(groupjid, userjid);
   }
 
   static Future<bool?> leaveFromGroup(String? userJid, String groupJid) {
@@ -870,7 +778,7 @@ class FlyChat {
   }
 
   static Future<bool?> isAdmin(String userJid, String groupJID) {
-    return FlyChatFlutterPlatform.instance.isAdmin(userJid, groupJID);
+    return FlyChatFlutterPlatform.instance.isAdmin(userJid,groupJID);
   }
 
   static Future<bool?> updateGroupProfileImage(String jid, String file) {
@@ -886,8 +794,7 @@ class FlyChat {
   }
 
   static Future<bool?> sendContactUsInfo(String title, String description) {
-    return FlyChatFlutterPlatform.instance
-        .sendContactUsInfo(title, description);
+    return FlyChatFlutterPlatform.instance.sendContactUsInfo(title, description);
   }
 
   static copyTextMessages(List<String> messageIds) {
@@ -937,11 +844,9 @@ class FlyChat {
   static cancelNotifications() {
     return FlyChatFlutterPlatform.instance.cancelNotifications();
   }
-
   static saveMediaSettings(bool photos, bool videos, bool audio, bool documents,
       int networkType) async {
-    return FlyChatFlutterPlatform.instance
-        .saveMediaSettings(photos, videos, audio, documents, networkType);
+    return FlyChatFlutterPlatform.instance.saveMediaSettings(photos, videos, audio, documents, networkType);
   }
 
   static Future<bool?> getMediaSetting(int networkType, String type) async {
@@ -956,33 +861,27 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.setMediaAutoDownload(enable);
   }
 
-  static Future<String?> getJidFromPhoneNumber(
-      String mobileNumber, String countryCode) async {
-    return FlyChatFlutterPlatform.instance
-        .getJidFromPhoneNumber(mobileNumber, countryCode);
+  static Future<String?> getJidFromPhoneNumber(String mobileNumber, String countryCode) async {
+    return FlyChatFlutterPlatform.instance.getJidFromPhoneNumber(mobileNumber, countryCode);
   }
 
   static Future<bool?> getNotificationSound() async {
-    return FlyChatFlutterPlatform.instance.getNotificationSound();
+   return FlyChatFlutterPlatform.instance.getNotificationSound();
   }
 
   static Future<bool?> insertBusyStatus(String busyStatus) async {
-    return FlyChatFlutterPlatform.instance.insertBusyStatus(busyStatus);
+   return FlyChatFlutterPlatform.instance.insertBusyStatus(busyStatus);
   }
-
   static Future<bool?> isTrailLicence() async {
-    return FlyChatFlutterPlatform.instance.isTrailLicence();
+   return FlyChatFlutterPlatform.instance.isTrailLicence();
   }
-
   static Future<dynamic> getNonChatUsers() async {
-    return FlyChatFlutterPlatform.instance.getNonChatUsers();
+   return FlyChatFlutterPlatform.instance.getNonChatUsers();
   }
-
-  static Future addContact(String number) async {
-    return FlyChatFlutterPlatform.instance.addContact(number);
+  static Future<bool?> addContact(String number, String name) async {
+   return FlyChatFlutterPlatform.instance.addContact(number, name);
   }
-
   static Future<dynamic> setRegionCode(String regionCode) async {
-    return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
+   return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
   }
 }
