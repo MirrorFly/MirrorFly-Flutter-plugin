@@ -300,13 +300,13 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future getGroupMessageDeliveredToList(String messageId) {
+  Future getGroupMessageDeliveredToList(String messageId, String jid) {
     // getGroupMessageDeliveredToList
     throw UnimplementedError();
   }
 
   @override
-  Future getGroupMessageReadByList(String messageId) {
+  Future getGroupMessageReadByList(String messageId, String jid) {
     // getGroupMessageReadByList
     throw UnimplementedError();
   }

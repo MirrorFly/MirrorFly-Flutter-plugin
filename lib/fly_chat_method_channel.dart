@@ -2106,7 +2106,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
   @override
-  Future<dynamic> setMyProfileStatus(String status, [String? statusId]) async {
+  Future<dynamic> setMyProfileStatus(String status, String statusId) async {
     //updateProfileStatus
     dynamic profileResponse;
     try {

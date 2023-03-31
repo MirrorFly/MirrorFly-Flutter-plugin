@@ -523,7 +523,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> setMyProfileStatus(String status, [String? statusId]) {
+  Future<dynamic> setMyProfileStatus(String status, String statusId) {
     throw UnimplementedError('has not been implemented.');
   }
 
