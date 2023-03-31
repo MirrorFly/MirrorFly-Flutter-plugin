@@ -1086,7 +1086,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       ChatManager.setMessageIVKey(ivKey);
     }
 
-    if(domainBaseUrl!=null && licenseKey!=null && isTrialLicenceKey!=null) {
+    if(domainBaseUrl!=null && licenseKey!=null) {
       buildSDK.setDomainBaseUrl(domainBaseUrl)
         .setLicenseKey(licenseKey)
         .setIsTrialLicenceKey(isTrialLicenceKey)
@@ -3101,7 +3101,9 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
 
   override fun onContactSyncComplete(isSuccess: Boolean) {
     Log.d("onContactSyncComplete",isSuccess.toString())
-    onContactSyncCompleteStreamHandler.onContactSyncComplete?.success(isSuccess)
+    FlyCore.getRegisteredUsers(true){ success, _, data ->
+      onContactSyncCompleteStreamHandler.onContactSyncComplete?.success(isSuccess)
+    }
   }
 
   override fun onLoggedOut() {

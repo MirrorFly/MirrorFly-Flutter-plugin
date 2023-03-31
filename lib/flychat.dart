@@ -5,11 +5,45 @@ import 'fly_chat_platform_interface.dart';
 
 class FlyChat {
   FlyChat._();
-  static init(ChatBuilder builder){
-    return FlyChatFlutterPlatform.instance.init(builder);
+
+  ///Used as a initChat class for [FlyChat]
+  ///
+  /// * @property url provides the base url for making api calls
+  /// * @property licenseKey provides the License Key
+  /// @property iOSContainerID provides the App Group of the iOS Project
+  /// @property isTrialLicenceKey to provide trial/live register and contact sync
+  /// @property storageFolderName provides the Local Storage Folder Name
+  static init(
+      {required String baseUrl,
+      required String licenseKey,
+      required String iOSContainerID,
+      String? storageFolderName,
+      bool enableMobileNumberLogin = true,
+      bool isTrialLicenceKey = true,
+      int? maximumRecentChatPin,
+      GroupConfig? groupConfig,
+      String? ivKey,
+      bool enableSDKLog = false}) {
+    var builder = ChatBuilder(
+        domainBaseUrl: baseUrl,
+        iOSContainerID: iOSContainerID,
+        licenseKey: licenseKey,
+      storageFolderName: storageFolderName,
+      enableMobileNumberLogin: enableMobileNumberLogin,
+      isTrialLicenceKey: isTrialLicenceKey,
+      maximumRecentChatPin: maximumRecentChatPin,
+      groupConfig: groupConfig,
+      ivKey: ivKey,
+      enableSDKLog: enableSDKLog
+    );
+    FlyChatFlutterPlatform.instance.init(builder);
   }
+
   /*static Future<String?> getPlatformVersion() {
     return FlyChatFlutterPlatform.instance.getPlatformVersion();
+  }*/
+  /*static init(ChatBuilder builder){
+    return FlyChatFlutterPlatform.instance.init(builder);
   }*/
 
   static Future<bool?> syncContacts(bool isFirstTime) async {
@@ -500,7 +534,7 @@ class FlyChat {
   }
 
   static Future<dynamic> setMyProfileStatus(String status, String statusId) {
-    return FlyChatFlutterPlatform.instance.setMyProfileStatus(status,statusId);
+    return FlyChatFlutterPlatform.instance.setMyProfileStatus(status, statusId);
   }
 
   static Future<dynamic> insertNewProfileStatus(String status) {
