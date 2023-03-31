@@ -27,7 +27,6 @@ import com.contusflysdk.AppUtils
 import com.contusflysdk.ChatSDK
 import com.contusflysdk.GroupConfig
 import com.contusflysdk.api.*
-import com.contusflysdk.api.FlyCore.insertMyBusyStatus
 import com.contusflysdk.api.chat.*
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
@@ -358,19 +357,26 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       }
       call.method.equals("insertBusyStatus") -> {
         val busyStatus = call.argument<String>("busy_status") ?: ""
-        insertMyBusyStatus(busyStatus)
+        FlyCore.insertMyBusyStatus(busyStatus)
         FlyCore.setMyBusyStatus(busyStatus)
         result.success(true)
       }
       call.method.equals("getMyBusyStatus") -> {//{"id": null, "status": "", "isCurrentStatus": false}
-        val myBusyStatus: BusyStatus = FlyCore.getMyBusyStatus()!!
+        val myBusyStatus: BusyStatus? = FlyCore.getMyBusyStatus()
         if(myBusyStatus!=null) {
           Log.d("myBusyStatus", "${myBusyStatus.tojsonString()}")
           result.success(myBusyStatus.tojsonString())
         }else{
-          val defaultStatus = arrayListOf<String>("Driving car. Text you later","Please call me if anything important","Sleeping","In meeting")
-          for (statusValue in defaultStatus) {
-            insertMyBusyStatus(statusValue)
+          if(FlyCore.getBusyStatusList().isEmpty()) {
+            val defaultStatus = arrayListOf<String>(
+              "Driving car. Text you later",
+              "Please call me if anything important",
+              "Sleeping",
+              "In meeting"
+            )
+            for (statusValue in defaultStatus) {
+              FlyCore.insertMyBusyStatus(statusValue)
+            }
           }
           if (FlyCore.getMyBusyStatus() == null || FlyCore.getMyBusyStatus()!!.status.isEmpty()) {
             FlyCore.setMyBusyStatus("I am busy")
@@ -390,7 +396,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       }
       call.method.equals("getBusyStatusList") -> {
         val myBusyStatusList: List<BusyStatus> = FlyCore.getBusyStatusList()
-        result.success(myBusyStatusList.tojsonString())
+          result.success(myBusyStatusList.tojsonString())
       }
       call.method.equals("deleteProfileStatus") -> {
         val id = call.argument<String>("id") ?: "0"
