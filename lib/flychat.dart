@@ -499,7 +499,7 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.getProfileLocal(jid, server);
   }
 
-  static Future<dynamic> setMyProfileStatus(String status, [String? statusId]) {
+  static Future<dynamic> setMyProfileStatus(String status, String statusId) {
     return FlyChatFlutterPlatform.instance.setMyProfileStatus(status,statusId);
   }
 
@@ -844,8 +844,8 @@ class FlyChat {
   static Future<dynamic> getNonChatUsers() async {
    return FlyChatFlutterPlatform.instance.getNonChatUsers();
   }
-  static Future addContact(String number) async {
-   return FlyChatFlutterPlatform.instance.addContact(number);
+  static Future<bool?> addContact(String number, String name) async {
+   return FlyChatFlutterPlatform.instance.addContact(number, name);
   }
   static Future<dynamic> setRegionCode(String regionCode) async {
    return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);

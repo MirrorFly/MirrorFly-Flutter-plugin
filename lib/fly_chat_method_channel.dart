@@ -2035,7 +2035,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "status": status,
         "image": image
       });
-      debugPrint("recent Result ==> $profileResponse");
+      debugPrint("updateMyProfile Result ==> $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -2106,7 +2106,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
   @override
-  Future<dynamic> setMyProfileStatus(String status, [String? statusId]) async {
+  Future<dynamic> setMyProfileStatus(String status, String statusId) async {
     //updateProfileStatus
     dynamic profileResponse;
     try {
@@ -2527,7 +2527,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       try {
         response = await mirrorFlyMethodChannel
             .invokeMethod('getMessageOfId', {"mid": mid});
-        debugPrint("response ==> $response");
+        // debugPrint("response ==> $response");
         return response;
       } on PlatformException catch (e) {
         debugPrint("Platform Exception ===> $e");
@@ -3638,11 +3638,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
 
     @override
-    Future addContact(String number) async {
+    Future<bool?> addContact(String number, String name) async {
+      bool? val = true;
       try {
-        await mirrorFlyMethodChannel
-            .invokeMethod('addContact', {'number': number});
+        val = await mirrorFlyMethodChannel
+            .invokeMethod('addContact', {'number': number, 'name': name});
         debugPrint('addContact : $number');
+        return val;
       } on PlatformException catch (e) {
         debugPrint("Platform Exception ===> $e");
         rethrow;
