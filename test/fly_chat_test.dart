@@ -697,7 +697,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // myProfileUpdated
-  Stream get myProfileUpdated => throw UnimplementedError();
+  Stream<bool> get myProfileUpdated => throw UnimplementedError();
 
   @override
   // onAdminBlockedOtherUser
@@ -741,11 +741,11 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onFetchingGroupMembersCompleted
-  Stream get onFetchingGroupMembersCompleted => throw UnimplementedError();
+  Stream<String> get onFetchingGroupMembersCompleted => throw UnimplementedError();
 
   @override
   // onGroupDeletedLocally
-  Stream get onGroupDeletedLocally => throw UnimplementedError();
+  Stream<String> get onGroupDeletedLocally => throw UnimplementedError();
 
   @override
   // onGroupNotificationMessage
@@ -753,11 +753,11 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onGroupProfileFetched
-  Stream get onGroupProfileFetched => throw UnimplementedError();
+  Stream<String> get onGroupProfileFetched => throw UnimplementedError();
 
   @override
   // onGroupProfileUpdated
-  Stream get onGroupProfileUpdated => throw UnimplementedError();
+  Stream<String> get onGroupProfileUpdated => throw UnimplementedError();
 
   @override
   // onGroupTypingStatus
@@ -769,7 +769,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onLoggedOut
-  Stream get onLoggedOut => throw UnimplementedError();
+  Stream<bool> get onLoggedOut => throw UnimplementedError();
 
   @override
   // onMediaStatusUpdated
@@ -801,7 +801,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onNewGroupCreated
-  Stream get onNewGroupCreated => throw UnimplementedError();
+  Stream<String> get onNewGroupCreated => throw UnimplementedError();
 
   @override
   // onNewMemberAddedToGroup
@@ -1276,6 +1276,14 @@ class MockFlyChatFlutterPlatform
     // implement setDefaultNotificationSound
     throw UnimplementedError();
   }
+
+  @override
+  // TODO: implement usersProfilesFetched
+  Stream<bool> get usersProfilesFetched => throw UnimplementedError();
+
+  @override
+  // TODO: implement userProfilesFetched
+  Stream get userProfilesFetched => throw UnimplementedError();
 }
 
 void main() {

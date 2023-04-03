@@ -249,6 +249,10 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     ).setStreamHandler(userProfileFetchedStreamHandler)
     EventChannel(
       flutterPluginBinding.binaryMessenger,
+      usersProfilesFetched_channel
+    ).setStreamHandler(usersProfilesFetchedStreamHandler)
+    EventChannel(
+      flutterPluginBinding.binaryMessenger,
       userUnBlockedMe_channel
     ).setStreamHandler(userUnBlockedMeStreamHandler)
     EventChannel(
@@ -3224,8 +3228,8 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
   override fun setTypingStatus(singleOrGroupJid: String, userId: String, composing: String) {
     val map = JSONObject()
     map.put("singleOrgroupJid", singleOrGroupJid)
-    map.put("userId", userId)
-    map.put("composing", composing)
+    map.put("userJid", userId)
+    map.put("status", composing)
     setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
   }
   override fun onChatTypingStatus(fromUserJid: String, status: TypingStatus) {
@@ -3233,9 +3237,9 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
 //        map.put("fromUserJid", fromUserJid)
 //        map.put("status", status)
 //        onChatTypingStatusStreamHandler.onChatTypingStatus?.success(map.toString())
-    map.put("singleOrgroupJid", fromUserJid)
-    map.put("userId", fromUserJid)
-    map.put("composing", getTypingStatus(status))
+//    map.put("singleOrgroupJid", fromUserJid)
+    map.put("userJid", fromUserJid)
+    map.put("status", getTypingStatus(status))
     setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
   }
 
@@ -3253,9 +3257,9 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
 //        map.put("groupUserJid", groupUserJid)
 //        map.put("status", status)
 //        onGroupTypingStatusStreamHandler.onGroupTypingStatus?.success(map.toString())
-    map.put("singleOrgroupJid", groupJid)
-    map.put("userId", groupUserJid)
-    map.put("composing", status)
+    map.put("groupJid", groupJid)
+    map.put("groupUserJid", groupUserJid)
+    map.put("status", getTypingStatus(status))
     setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
   }
 
