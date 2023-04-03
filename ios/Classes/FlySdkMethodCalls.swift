@@ -400,15 +400,26 @@ import ContactsUI
         
         ContactManager.shared.getRegisteredUsers(fromServer: fromServer) {  isSuccess, flyError, flyData in
             var data  = flyData
+            var list = data.getData() as? [ProfileDetails]
+            list = list?.sorted { $0.nickName < $1.nickName }
+            print("user list \(String(describing: list))")
             if isSuccess {
-                
-                let userData = (data.getData() as? [ProfileDetails])?.count == 0 ? "[]" : JSONSerializer.toJson(data.getData())
-                
+                var userData = "[]"
+                if((data.getData() as? [ProfileDetails])?.count != 0){
+                    userData = JSONSerializer.toJson(list as Any)
+                    userData = userData.replacingOccurrences(of: "\"some\":", with: "")
+//                    userData = userData.replacingOccurrences(of: "]", with: "")
+                }else{
+                    userData = JSONSerializer.toJson(data.getData())
+                }
+                print("-------->>>> \(userData)")
                 let message = data["message"] as! String
                 var userlistJson = "{\"message\" : \"" + message + "\",\"status\" : true,\"data\":" + userData + "}"
                 
                 userlistJson = userlistJson.replacingOccurrences(of: "{\"some\": {}}", with: "\"\"")
                 userlistJson = userlistJson.replacingOccurrences(of: "\"nickName\": {}", with: "\"nickName\": \"\"")
+                
+                print("userListJson \(userlistJson)")
                 
                 result(userlistJson)
             } else{
@@ -694,8 +705,11 @@ import ContactsUI
         
         groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != FlyDefaults.myJid})
         let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == FlyDefaults.myJid})
+        myJid[0].profileDetail?.nickName = "You"
+        myJid[0].profileDetail?.name = "You"
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
-        groupMembers.insert(contentsOf: myJid, at: 0)
+//        groupMembers.insert(contentsOf: myJid)
+        groupMembers.append(contentsOf: myJid)
         
         var groupMemberProfile: String = "["
         
@@ -2027,6 +2041,21 @@ import ContactsUI
     static func setDefaultNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("")
+    }
+    static func deleteGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let groupJid = args["jid"] as? String ?? ""
+        
+        do{
+            try GroupManager.shared.deleteGroup(groupJid: groupJid, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            print("#Plugin Error ---> ChatManger Set Iv key Failed, \(error.localizedDescription)")
+            result(false)
+        }
+        
+        
     }
 }
 
