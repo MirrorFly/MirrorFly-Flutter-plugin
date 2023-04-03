@@ -760,6 +760,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getGroupMessageReadByList(call: methodCall, result: result)
         case "setDefaultNotificationSound":
             FlySdkMethodCalls.setDefaultNotificationSound(call: methodCall, result: result)
+        case "deleteGroup":
+            FlySdkMethodCalls.deleteGroup(call: methodCall, result: result)
         case "addContact":
             FlySdkMethodCalls.addContact(call: methodCall, result: result)
 //            let args = methodCall.arguments as! Dictionary<String, Any>
