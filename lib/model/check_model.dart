@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 CheckModel checkModelFromJson(String str) => CheckModel.fromJson(json.decode(str));
 

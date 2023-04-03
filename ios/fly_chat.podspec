@@ -3,12 +3,12 @@
 # Run 'pod lib lint fly_chat.podspec' to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'fly_chat'
+  s.name             = 'mirrorfly_plugin'
   s.version          = '0.0.1'
   s.summary          = 'A Mirrorfly Flutter Plugin'
-  s.description      = 'Mirrorfly Chat Plugin for flutter supoort only Android and iOS'
+  s.description      = 'Mirrorfly Chat Plugin for flutter support only Android and iOS'
 
-  s.homepage         = 'https://github.com/MirrorFly/MirrorFly-Flutter-plugin'
+  s.homepage         = 'https://www.mirrorfly.com/docs/chat/flutter/quick-start/'
   s.license          = { :type => 'Commercial', :file => '../LICENSE' }
   s.author           = { 'CONTUS TECH' => 'manivendhan.m@contus.in' }
   s.source           = { :path => '.' }

@@ -1,6 +1,6 @@
-import 'package:fly_chat/builder.dart';
+import 'package:mirrorfly_plugin/builder.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:fly_chat/fly_chat_method_channel.dart';
+import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 
 
 abstract class FlyChatFlutterPlatform extends PlatformInterface {
@@ -716,7 +716,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<dynamic> createGroup(
-      String groupname, List<String> userList, String image) {
+      String groupName, List<String> userJidList, String imageFilePath) {
     throw UnimplementedError('has not been implemented.');
   }
 

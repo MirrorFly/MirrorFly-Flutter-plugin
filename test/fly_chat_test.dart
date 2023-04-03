@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fly_chat/builder.dart';
+import 'package:mirrorfly_plugin/builder.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:fly_chat/fly_chat_method_channel.dart';
-import 'package:fly_chat/fly_chat_platform_interface.dart';
+import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
+import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 
 class MockFlyChatFlutterPlatform
     with MockPlatformInterfaceMixin
@@ -1278,12 +1278,9 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  // TODO: implement usersProfilesFetched
+  // implement usersProfilesFetched
   Stream<bool> get usersProfilesFetched => throw UnimplementedError();
 
-  @override
-  // TODO: implement userProfilesFetched
-  Stream get userProfilesFetched => throw UnimplementedError();
 }
 
 void main() {

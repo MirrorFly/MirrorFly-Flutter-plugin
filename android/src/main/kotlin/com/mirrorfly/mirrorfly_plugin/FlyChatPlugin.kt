@@ -1,4 +1,4 @@
-package com.mirrorfly.fly_chat
+package com.mirrorfly.mirrorfly_plugin
 
 import android.annotation.SuppressLint
 import android.app.Activity

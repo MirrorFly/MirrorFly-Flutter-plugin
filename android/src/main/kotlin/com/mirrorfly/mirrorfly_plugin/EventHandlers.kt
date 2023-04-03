@@ -1,4 +1,4 @@
-package com.mirrorfly.fly_chat
+package com.mirrorfly.mirrorfly_plugin
 
 import io.flutter.plugin.common.EventChannel
 

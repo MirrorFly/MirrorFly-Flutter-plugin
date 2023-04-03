@@ -1,12 +1,12 @@
 
-import 'package:fly_chat/builder.dart';
+import 'package:mirrorfly_plugin/builder.dart';
 
 import 'fly_chat_platform_interface.dart';
 
-class FlyChat {
-  FlyChat._();
+class Mirrorfly {
+  Mirrorfly._();
 
-  ///Used as a initChat class for [FlyChat]
+  ///Used as a initChat class for [Mirrorfly]
   ///
   /// * @property url provides the base url for making api calls
   /// * @property licenseKey provides the License Key

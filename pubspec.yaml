@@ -1,5 +1,5 @@
-name: fly_chat
-description: A new Flutter plugin project.
+name: mirrorfly_plugin
+description: A Mirrorfly Flutter plugin.
 version: 0.0.1
 homepage: https://www.mirrorfly.com/docs/chat/flutter/quick-start/
 
@@ -35,7 +35,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.mirrorfly.fly_chat
+        package: com.mirrorfly.mirrorfly_plugin
         pluginClass: FlyChatPlugin
       ios:
         pluginClass: FlyChatPlugin

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:fly_chat/fly_chat_platform_interface.dart';
+import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 
 import 'builder.dart';
 

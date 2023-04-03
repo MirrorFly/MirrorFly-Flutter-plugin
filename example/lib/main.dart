@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FlyChat.init(
+  Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'your license key',
       iOSContainerID: 'group.com.mirrorfly.qa');

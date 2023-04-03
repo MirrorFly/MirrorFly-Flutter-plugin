@@ -1,4 +1,4 @@
-group 'com.mirrorfly.fly_chat'
+group 'com.mirrorfly.mirrorfly_plugin'
 version '1.0-SNAPSHOT'
 
 buildscript {
