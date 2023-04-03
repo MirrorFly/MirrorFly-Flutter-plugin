@@ -996,8 +996,8 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
         
         jsonObject.setValue(userJid, forKey: "singleOrgroupJid")
-        jsonObject.setValue(userJid, forKey: "userId")
-        jsonObject.setValue(status == TypingStatus.composing ? "composing" : "Gone", forKey: "composing")
+        jsonObject.setValue(userJid, forKey: "userJid")
+        jsonObject.setValue(status == TypingStatus.composing ? "composing" : "Gone", forKey: "status")
         
         let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         
@@ -1014,8 +1014,8 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(groupJid, forKey: "singleOrgroupJid")
-        jsonObject.setValue(groupUserJid, forKey: "userId")
-        jsonObject.setValue(status == TypingStatus.composing ? "composing" : "Gone", forKey: "composing")
+        jsonObject.setValue(groupUserJid, forKey: "userJid")
+        jsonObject.setValue(status == TypingStatus.composing ? "composing" : "Gone", forKey: "status")
         let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         
         if(onsetTypingStatusStreamHandler?.onSetTyping != nil){
