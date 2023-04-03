@@ -56,8 +56,6 @@ class Profile {
     this.name,
     this.nickName,
     this.status,
-    //only for iOS
-    this.profileChatType
   });
 
   String? contactType;
@@ -81,7 +79,6 @@ class Profile {
   String? name;
   String? nickName;
   String? status;
-  dynamic profileChatType;
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
     contactType: json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"] == "live" ? "live_contact" : json["contactType"] == "local" ? "local_contact" : json["contactType"] == "deleted" ? "deleted_contact" : json["contactType"],
@@ -105,7 +102,6 @@ class Profile {
     name: json["name"],
     nickName: json["nickName"].toString(),
     status: json["status"],
-    profileChatType: json["profileChatType"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -130,6 +126,5 @@ class Profile {
     "name": name,
     "nickName": nickName,
     "status": status,
-    "profileChatType": profileChatType,
   };
 }

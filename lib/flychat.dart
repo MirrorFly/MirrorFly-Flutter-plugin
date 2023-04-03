@@ -155,12 +155,12 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.deleteOfflineGroup(groupJid);
   }
 
-  static sendTypingStatus(String toJid, String chattype) {
-    return FlyChatFlutterPlatform.instance.sendTypingStatus(toJid,chattype);
+  static sendTypingStatus(String toJid, String chatType) {
+    return FlyChatFlutterPlatform.instance.sendTypingStatus(toJid,chatType);
   }
 
-  static sendTypingGoneStatus(String toJid, String chattype) {
-    return FlyChatFlutterPlatform.instance.sendTypingGoneStatus(toJid,chattype);
+  static sendTypingGoneStatus(String toJid, String chatType) {
+    return FlyChatFlutterPlatform.instance.sendTypingGoneStatus(toJid,chatType);
   }
 
   static updateChatMuteStatus(String jid, bool muteStatus) {
@@ -410,17 +410,17 @@ class FlyChat {
 
   static Stream<dynamic> get onUploadDownloadProgressChanged =>  FlyChatFlutterPlatform.instance.onUploadDownloadProgressChanged;
 
-  static Stream<dynamic> get onGroupProfileFetched =>  FlyChatFlutterPlatform.instance.onGroupProfileFetched;
+  static Stream<String> get onGroupProfileFetched =>  FlyChatFlutterPlatform.instance.onGroupProfileFetched;
 
-  static Stream<dynamic> get onNewGroupCreated =>  FlyChatFlutterPlatform.instance.onNewGroupCreated;
+  static Stream<String> get onNewGroupCreated =>  FlyChatFlutterPlatform.instance.onNewGroupCreated;
 
-  static Stream<dynamic> get onGroupProfileUpdated =>  FlyChatFlutterPlatform.instance.onGroupProfileUpdated;
+  static Stream<String> get onGroupProfileUpdated =>  FlyChatFlutterPlatform.instance.onGroupProfileUpdated;
 
   static Stream<dynamic> get onNewMemberAddedToGroup =>  FlyChatFlutterPlatform.instance.onNewMemberAddedToGroup;
 
   static Stream<dynamic> get onMemberRemovedFromGroup =>  FlyChatFlutterPlatform.instance.onMemberRemovedFromGroup;
 
-  static Stream<dynamic> get onFetchingGroupMembersCompleted => FlyChatFlutterPlatform.instance.onFetchingGroupMembersCompleted;
+  static Stream<String> get onFetchingGroupMembersCompleted => FlyChatFlutterPlatform.instance.onFetchingGroupMembersCompleted;
 
   static Stream<dynamic> get onDeleteGroup => FlyChatFlutterPlatform.instance.onDeleteGroup;
 
@@ -434,11 +434,11 @@ class FlyChat {
 
   static Stream<dynamic> get onGroupNotificationMessage => FlyChatFlutterPlatform.instance.onGroupNotificationMessage;
 
-  static Stream<dynamic> get onGroupDeletedLocally => FlyChatFlutterPlatform.instance.onGroupDeletedLocally;
+  static Stream<String> get onGroupDeletedLocally => FlyChatFlutterPlatform.instance.onGroupDeletedLocally;
 
   static Stream<dynamic> get blockedThisUser => FlyChatFlutterPlatform.instance.blockedThisUser;
 
-  static Stream<dynamic> get myProfileUpdated => FlyChatFlutterPlatform.instance.myProfileUpdated;
+  static Stream<bool> get myProfileUpdated => FlyChatFlutterPlatform.instance.myProfileUpdated;
 
   static Stream<dynamic> get onAdminBlockedOtherUser => FlyChatFlutterPlatform.instance.onAdminBlockedOtherUser;
 
@@ -446,7 +446,7 @@ class FlyChat {
 
   static Stream<bool> get onContactSyncComplete => FlyChatFlutterPlatform.instance.onContactSyncComplete;
 
-  static Stream<dynamic> get onLoggedOut => FlyChatFlutterPlatform.instance.onLoggedOut;
+  static Stream<bool> get onLoggedOut => FlyChatFlutterPlatform.instance.onLoggedOut;
 
   static Stream<dynamic> get unblockedThisUser => FlyChatFlutterPlatform.instance.unblockedThisUser;
 
@@ -455,6 +455,8 @@ class FlyChat {
   static Stream<dynamic> get userCameOnline => FlyChatFlutterPlatform.instance.userCameOnline;
 
   static Stream<String> get userDeletedHisProfile => FlyChatFlutterPlatform.instance.userDeletedHisProfile;
+
+  static Stream<bool> get usersProfilesFetched => FlyChatFlutterPlatform.instance.usersProfilesFetched;
 
   static Stream<dynamic> get userProfileFetched => FlyChatFlutterPlatform.instance.userProfileFetched;
 
@@ -522,12 +524,12 @@ class FlyChat {
   }
 
   static getUserProfile(String jid,
-      [bool fromfetchFromServer = false, bool saveasfriend = false]) {
-    return FlyChatFlutterPlatform.instance.getUserProfile(jid,fromfetchFromServer,saveasfriend);
+      [bool fetchFromServer = false, bool saveasfriend = false]) {
+    return FlyChatFlutterPlatform.instance.getUserProfile(jid,fetchFromServer,saveasfriend);
   }
 
-  static getProfileDetails(String jid, bool fromfetchFromServer) {
-    return FlyChatFlutterPlatform.instance.getProfileDetails(jid, fromfetchFromServer);
+  static getProfileDetails(String jid, bool fetchFromServer) {
+    return FlyChatFlutterPlatform.instance.getProfileDetails(jid, fetchFromServer);
   }
 
   static Future<dynamic> getProfileLocal(String jid, bool fetchFromServer) {
@@ -758,7 +760,7 @@ class FlyChat {
   }
 
   static Future<bool?> reportUserOrMessages(
-      String jid, String type, String? messageId) {
+      String jid, String type, [String messageId =""]) {
     return FlyChatFlutterPlatform.instance.reportUserOrMessages(jid, type, messageId);
   }
 

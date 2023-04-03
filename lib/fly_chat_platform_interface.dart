@@ -395,17 +395,17 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get onUploadDownloadProgressChanged => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onGroupProfileFetched => throw UnimplementedError('has not been implemented.');
+  Stream<String> get onGroupProfileFetched => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onNewGroupCreated => throw UnimplementedError('has not been implemented.');
+  Stream<String> get onNewGroupCreated => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onGroupProfileUpdated => throw UnimplementedError('has not been implemented.');
+  Stream<String> get onGroupProfileUpdated => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get onNewMemberAddedToGroup => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get onMemberRemovedFromGroup => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onFetchingGroupMembersCompleted =>
+  Stream<String> get onFetchingGroupMembersCompleted =>
       throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get onDeleteGroup => throw UnimplementedError('has not been implemented.');
@@ -422,11 +422,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onGroupNotificationMessage =>
       throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onGroupDeletedLocally => throw UnimplementedError('has not been implemented.');
+  Stream<String> get onGroupDeletedLocally => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get blockedThisUser => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get myProfileUpdated => throw UnimplementedError('has not been implemented.');
+  Stream<bool> get myProfileUpdated => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get onAdminBlockedOtherUser => throw UnimplementedError('has not been implemented.');
 
@@ -434,7 +434,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<bool> get onContactSyncComplete => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onLoggedOut => throw UnimplementedError('has not been implemented.');
+  Stream<bool> get onLoggedOut => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get unblockedThisUser => throw UnimplementedError('has not been implemented.');
 
@@ -443,6 +443,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get userCameOnline => throw UnimplementedError('has not been implemented.');
 
   Stream<String> get userDeletedHisProfile => throw UnimplementedError('has not been implemented.');
+
+  Stream<bool> get usersProfilesFetched => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get userProfileFetched => throw UnimplementedError('has not been implemented.');
 

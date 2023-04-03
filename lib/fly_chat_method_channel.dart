@@ -1671,17 +1671,17 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
   @override
-  Stream<dynamic> get onGroupProfileFetched =>
+  Stream<String> get onGroupProfileFetched =>
       onGroupProfileFetchedChannel.receiveBroadcastStream().cast();
 
 
   @override
-  Stream<dynamic> get onNewGroupCreated =>
+  Stream<String> get onNewGroupCreated =>
       onNewGroupCreatedChannel.receiveBroadcastStream().cast();
 
 
   @override
-  Stream<dynamic> get onGroupProfileUpdated =>
+  Stream<String> get onGroupProfileUpdated =>
       onGroupProfileUpdatedChannel.receiveBroadcastStream().cast();
 
 
@@ -1696,7 +1696,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
   @override
-  Stream<dynamic> get onFetchingGroupMembersCompleted =>
+  Stream<String> get onFetchingGroupMembersCompleted =>
       onFetchingGroupMembersCompletedChannel.receiveBroadcastStream().cast();
 
 
@@ -1731,7 +1731,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
   @override
-  Stream<dynamic> get onGroupDeletedLocally =>
+  Stream<String> get onGroupDeletedLocally =>
       onGroupDeletedLocallyChannel.receiveBroadcastStream().cast();
 
 
@@ -1741,7 +1741,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
   @override
-  Stream<dynamic> get myProfileUpdated =>
+  Stream<bool> get myProfileUpdated =>
       myProfileUpdatedChannel.receiveBroadcastStream().cast();
 
 
@@ -1761,7 +1761,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
   @override
-  Stream<dynamic> get onLoggedOut =>
+  Stream<bool> get onLoggedOut =>
       onLoggedOutChannel.receiveBroadcastStream().cast();
 
 
@@ -1808,6 +1808,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get usersIBlockedListFetched =>
       usersIBlockedListFetchedChannel.receiveBroadcastStream().cast();
+
+
+  @override
+  Stream<bool> get usersProfilesFetched =>
+      usersProfilesFetchedChannel.receiveBroadcastStream().cast();
 
 
   @override
