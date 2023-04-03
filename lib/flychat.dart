@@ -13,6 +13,7 @@ class FlyChat {
   /// @property iOSContainerID provides the App Group of the iOS Project
   /// @property isTrialLicenceKey to provide trial/live register and contact sync
   /// @property storageFolderName provides the Local Storage Folder Name
+  /// @property enableDebugLog provides the Debug Log.
   static init(
       {required String baseUrl,
       required String licenseKey,
@@ -20,10 +21,10 @@ class FlyChat {
       String? storageFolderName,
       bool enableMobileNumberLogin = true,
       bool isTrialLicenceKey = true,
-      int? maximumRecentChatPin,
-      GroupConfig? groupConfig,
-      String? ivKey,
-      bool enableSDKLog = false}) {
+      // int? maximumRecentChatPin,
+      // GroupConfig? groupConfig,
+      // String? ivKey,
+      bool enableDebugLog = false}) {
     var builder = ChatBuilder(
         domainBaseUrl: baseUrl,
         iOSContainerID: iOSContainerID,
@@ -31,10 +32,10 @@ class FlyChat {
       storageFolderName: storageFolderName,
       enableMobileNumberLogin: enableMobileNumberLogin,
       isTrialLicenceKey: isTrialLicenceKey,
-      maximumRecentChatPin: maximumRecentChatPin,
-      groupConfig: groupConfig,
-      ivKey: ivKey,
-      enableSDKLog: enableSDKLog
+      // maximumRecentChatPin: maximumRecentChatPin,
+      // groupConfig: groupConfig,
+      // ivKey: ivKey,
+      enableDebugLog: enableDebugLog
     );
     FlyChatFlutterPlatform.instance.init(builder);
   }
@@ -66,7 +67,7 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.revokeContactSync();
   }
 
-  static Future<dynamic> getUsersWhoBlockedMe([bool server = false]) {
+  static Future<dynamic> getUsersWhoBlockedMe([bool fetchFromServer = false]) {
     return FlyChatFlutterPlatform.instance.getUsersWhoBlockedMe();
   }
 
@@ -318,8 +319,8 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.createOfflineGroupInOnline(groupId);
   }
 
-  static Future<dynamic> getGroupProfile(String groupJid, bool server) {
-    return FlyChatFlutterPlatform.instance.getGroupProfile(groupJid,server);
+  static Future<dynamic> getGroupProfile(String groupJid, [bool fetchFromServer = false]) {
+    return FlyChatFlutterPlatform.instance.getGroupProfile(groupJid,fetchFromServer);
   }
 
   static updateMediaDownloadStatus(String mediaMessageId, int progress,
@@ -391,8 +392,8 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.sendVideoMessage(jid,filePath,caption,replyMessageID,videoFileUrl,videoDuration,thumbImageBase64);
   }
 
-  static Future<dynamic> getRegisteredUserList({required bool server}) {
-    return FlyChatFlutterPlatform.instance.getRegisteredUserList(server: server);
+  static Future<dynamic> getRegisteredUserList({required bool fetchFromServer}) {
+    return FlyChatFlutterPlatform.instance.getRegisteredUserList(server: fetchFromServer);
   }
 
   static getUserList(int page, String search, [int perPageResultSize = 20]) {
@@ -521,16 +522,16 @@ class FlyChat {
   }
 
   static getUserProfile(String jid,
-      [bool fromserver = false, bool saveasfriend = false]) {
-    return FlyChatFlutterPlatform.instance.getUserProfile(jid,fromserver,saveasfriend);
+      [bool fromfetchFromServer = false, bool saveasfriend = false]) {
+    return FlyChatFlutterPlatform.instance.getUserProfile(jid,fromfetchFromServer,saveasfriend);
   }
 
-  static getProfileDetails(String jid, bool fromServer) {
-    return FlyChatFlutterPlatform.instance.getProfileDetails(jid, fromServer);
+  static getProfileDetails(String jid, bool fromfetchFromServer) {
+    return FlyChatFlutterPlatform.instance.getProfileDetails(jid, fromfetchFromServer);
   }
 
-  static Future<dynamic> getProfileLocal(String jid, bool server) {
-    return FlyChatFlutterPlatform.instance.getProfileLocal(jid, server);
+  static Future<dynamic> getProfileLocal(String jid, bool fetchFromServer) {
+    return FlyChatFlutterPlatform.instance.getProfileLocal(jid, fetchFromServer);
   }
 
   static Future<dynamic> setMyProfileStatus(String status, String statusId) {
@@ -619,8 +620,8 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.searchConversation(searchKey,jidForSearch,globalSearch);
   }
 
-  static Future<dynamic> getRegisteredUsers(bool server) {
-    return FlyChatFlutterPlatform.instance.getRegisteredUsers(server);
+  static Future<dynamic> getRegisteredUsers(bool fetchFromServer) {
+    return FlyChatFlutterPlatform.instance.getRegisteredUsers(fetchFromServer);
   }
 
   static Future<dynamic> getMessageOfId(String mid) {
@@ -732,12 +733,12 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.addUsersToGroup(jid, userList);
   }
 
-  static Future<dynamic> getGroupMembersList(String jid, bool? server) {
-    return FlyChatFlutterPlatform.instance.getGroupMembersList(jid, server);
+  static Future<dynamic> getGroupMembersList(String jid, bool? fetchFromServer) {
+    return FlyChatFlutterPlatform.instance.getGroupMembersList(jid, fetchFromServer);
   }
 
-  static Future<dynamic> getUsersIBlocked(bool? server) {
-    return FlyChatFlutterPlatform.instance.getUsersIBlocked(server);
+  static Future<dynamic> getUsersIBlocked([bool fetchFromServer = false]) {
+    return FlyChatFlutterPlatform.instance.getUsersIBlocked(fetchFromServer);
   }
 
   static Future<dynamic> getMediaMessages(String jid) {
@@ -789,8 +790,8 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.updateGroupName(jid, name);
   }
 
-  static Future<bool?> isMemberOfGroup(String jid, String? userJid) {
-    return FlyChatFlutterPlatform.instance.isMemberOfGroup(jid, userJid);
+  static Future<bool?> isMemberOfGroup(String groupJID, String? userJid) {
+    return FlyChatFlutterPlatform.instance.isMemberOfGroup(groupJID, userJid);
   }
 
   static Future<bool?> sendContactUsInfo(String title, String description) {
@@ -813,8 +814,8 @@ class FlyChat {
     return FlyChatFlutterPlatform.instance.getFavouriteMessages();
   }
 
-  static Future<dynamic> getAllGroups([bool? server]) {
-    return FlyChatFlutterPlatform.instance.getAllGroups(server);
+  static Future<dynamic> getAllGroups([bool fetchFromServer = false]) {
+    return FlyChatFlutterPlatform.instance.getAllGroups(fetchFromServer);
   }
 
   static Future<String?> getDefaultNotificationUri() {

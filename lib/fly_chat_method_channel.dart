@@ -2983,14 +2983,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
     @override
-    Future<dynamic> createGroup(String groupname, List<String> userList,
-        String image) async {
+    Future<dynamic> createGroup(String groupName, List<String> userJidList,
+        String imageFilePath) async {
       dynamic response;
       try {
         response = await mirrorFlyMethodChannel.invokeMethod('createGroup', {
-          "group_name": groupname,
-          "members": userList,
-          "file": image,
+          "group_name": groupName,
+          "members": userJidList,
+          "file": imageFilePath,
         });
         debugPrint("create group Response ==> $response");
         return response;

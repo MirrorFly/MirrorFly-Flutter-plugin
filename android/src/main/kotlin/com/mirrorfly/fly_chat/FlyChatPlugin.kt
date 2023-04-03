@@ -1056,10 +1056,11 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     val enableMobileNumberLogin : Boolean? = call.argument("enableMobileNumberLogin")
     isTrialLicenceKey = call.argument("isTrialLicenceKey") ?: true
     val maximumRecentChatPin : Int? = call.argument("maximumRecentChatPin")
+//    val enableGroup : Boolean = call.argument("enableGroup") ?: true
     val groupConfig : HashMap<String,Any?>? = call.argument("groupConfig")
 //    val useProfileName : Boolean? = call.argument("useProfileName")
     val ivKey : String? = call.argument("ivKey")
-    val enableSDKLog : Boolean = call.argument("enableSDKLog") ?: false
+    val enableSDKLog : Boolean = call.argument("enableDebugLog") ?: false
     LogMessage.enableDebugLogging(enableSDKLog)
     LogMessage.d("buildChatSDK",call.arguments.toString());
     /*GroupManager.setNameHelper(object  : NameHelper {
@@ -1068,6 +1069,14 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
             }
         })*/
     val buildSDK = ChatSDK.Builder()
+//    if(enableGroup){
+      val groupConfiguration = GroupConfig.Builder()
+        .enableGroupCreation(true)
+        .setMaximumMembersInAGroup(200)
+        .onlyAdminCanAddOrRemoveMembers(true)
+        .build()
+      buildSDK.setGroupConfiguration(groupConfiguration)
+//    }
    if(groupConfig!=null) {
      val groupConfiguration = GroupConfig.Builder()
        .enableGroupCreation(groupConfig.get("enableGroup") as Boolean)

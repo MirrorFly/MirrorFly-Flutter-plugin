@@ -17,11 +17,11 @@ class ChatBuilder {
     required this.licenseKey,
     this.enableMobileNumberLogin = false,
     this.isTrialLicenceKey = true,
-    this.maximumRecentChatPin,
-    this.groupConfig,
+    // this.maximumRecentChatPin,
+    // this.groupConfig,
     // bool useProfileName = false,
-    this.ivKey,
-    this.enableSDKLog = false
+    // this.ivKey,
+    this.enableDebugLog = false
   });
 
   String domainBaseUrl;
@@ -30,19 +30,19 @@ class ChatBuilder {
   String licenseKey;
   bool enableMobileNumberLogin;
   bool isTrialLicenceKey;
-  int? maximumRecentChatPin;
-  GroupConfig? groupConfig;
+  // int? maximumRecentChatPin;
+  // GroupConfig? groupConfig;
   // bool useProfileName = true;
-  String? ivKey;
-  bool enableSDKLog;
+  // String? ivKey;
+  bool enableDebugLog;
 }
 class GroupConfig {
   GroupConfig({
-    required this.enableGroup,
+    required this.enableGroupCreation,
     required this.maxMembersCount,
     this.adminOnlyAddRemoveAccess = true
   });
-  bool enableGroup;
+  bool enableGroupCreation;
   int maxMembersCount;
   bool adminOnlyAddRemoveAccess;
 }
@@ -56,11 +56,11 @@ extension BuilderParsing on ChatBuilder{
       "licenseKey":licenseKey,
       "enableMobileNumberLogin":enableMobileNumberLogin,
       "isTrialLicenceKey":isTrialLicenceKey,
-      "maximumRecentChatPin":maximumRecentChatPin,
-      "groupConfig":groupConfig.build(),
+      // "maximumRecentChatPin":maximumRecentChatPin,
+      // "groupConfig":groupConfig.build(),
       // "useProfileName":useProfileName,
-      "ivKey":ivKey,
-      "enableSDKLog":enableSDKLog,
+      // "ivKey":ivKey,
+      "enableDebugLog":enableDebugLog,
     };
   }
 }
@@ -69,7 +69,7 @@ extension GroupConfigParsing on GroupConfig?{
   Map? build(){
     if(this!=null){
       return {
-        "enableGroup":this!.enableGroup,
+        "enableGroup":this!.enableGroupCreation,
         "maxMembersCount":this!.maxMembersCount,
         "adminOnlyAddRemoveAccess":this!.adminOnlyAddRemoveAccess
       };

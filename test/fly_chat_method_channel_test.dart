@@ -20,6 +20,6 @@ void main() {
   });
 
   test('init', () async {
-    await platform.init(ChatBuilder(domainBaseUrl: 'domainBaseUrl', licenseKey: 'licenseKey', ivKey: 'ivKey', iOSContainerID: ''));
+    await platform.init(ChatBuilder(domainBaseUrl: 'domainBaseUrl', licenseKey: 'licenseKey', iOSContainerID: ''));
   });
 }
