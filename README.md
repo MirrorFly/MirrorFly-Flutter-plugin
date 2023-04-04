@@ -115,7 +115,7 @@ To initialize the plugin, place the below code in your `main.dart` file `main` f
 
 he below method to register a user in sandbox Live mode.
 
-> **info** Unless you log out the session, make a note that should never call the registration method more than once in an application
+> **Info** Unless you log out the session, make a note that should never call the registration method more than once in an application
 
 > **Note**: While registration, the below `registerUser` method will accept the `FCM_TOKEN` as an optional param and pass it across. `The connection will be established automatically upon completion of registration and not required for seperate login`.
 
@@ -145,7 +145,7 @@ Some of the most common terminologies used in Chat Plugin with description
 | userJid (or) JID | userID+@+domain of the chat server Ex. 12345678@xmpp.chatsystem.dev.contus.us |
 | groupID/groupBareID | Unique ID assigned for each group Ex: group123456 (any alphanumeric). GroupJID = groupID +@mix.+domain of the chat server Ex: group123456@mix.xmpp.mirrorfly.dev.contus.us` |
 
-> **info** Plugin will have built-in functions to prepare the JID, Group JID, and more.
+> **Info** Plugin will have built-in functions to prepare the JID, Group JID, and more.
 
 ## Send a One-to-One Message
 
@@ -172,7 +172,7 @@ Mirrorfly.sendTextMessage(message, jid, replyMessageId).then((value) {
 
 ## Receive a One-to-One Message
 
-Here the listeners would be called only when a new message is received from other user. To get more details please visit this [callback listeners](callback-listeners#observing-the-message-events)
+Here the listeners would be called only when a new message is received from other user. To get more details please visit this [callback listeners](https://www.mirrorfly.com/docs/chat/flutter_plugin/callback-listeners)
 
 ```dart
 Mirrorfly.onMessageReceived.listen(result){
@@ -182,6 +182,6 @@ vat chatMessage = sendMessageModelFromJson(result)
 
 ## Getting Help
 
-Check out the Official Mirrorfly [Flutter docs](https://Mirrorfly.com/docs/chat/v3/flutter/quickstart/send-first-message?&utm_source=github&utm_medium=referral&utm_campaign=repo&utm_content=Mirrorfly-chat-flutter-Plugin) and Mirrorfly's [Developer Portal](https://Mirrorfly.com/developer?&utm_source=github&utm_medium=referral&utm_campaign=repo&utm_content=Mirrorfly-chat-flutter-Plugin) for tutorials and videos. If you need any help in resolving any issues or have questions, visit our [community forums](https://community.Mirrorfly.com?&utm_source=github&utm_medium=referral&utm_campaign=repo&utm_content=Mirrorfly-chat-flutter-Plugin).
+Check out the Official Mirrorfly [Flutter docs](https://www.mirrorfly.com/docs/chat/flutter_plugin/quick-start)
 
 <br />
