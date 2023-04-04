@@ -115,8 +115,7 @@ To initialize the plugin, place the below code in your `main.dart` file `main` f
 
 he below method to register a user in sandbox Live mode.
 
-:::info Unless you log out the session, make a note that should never call the registration method more than once in an application
-:::
+> **info** Unless you log out the session, make a note that should never call the registration method more than once in an application
 
 > **Note**: While registration, the below `registerUser` method will accept the `FCM_TOKEN` as an optional param and pass it across. `The connection will be established automatically upon completion of registration and not required for seperate login`.
 
@@ -146,8 +145,7 @@ Some of the most common terminologies used in Chat Plugin with description
 | userJid (or) JID | userID+@+domain of the chat server Ex. 12345678@xmpp.chatsystem.dev.contus.us |
 | groupID/groupBareID | Unique ID assigned for each group Ex: group123456 (any alphanumeric). GroupJID = groupID +@mix.+domain of the chat server Ex: group123456@mix.xmpp.mirrorfly.dev.contus.us` |
 
-:::info Plugin will have built-in functions to prepare the JID, Group JID, and more.
-:::
+> **info** Plugin will have built-in functions to prepare the JID, Group JID, and more.
 
 ## Send a One-to-One Message
 
