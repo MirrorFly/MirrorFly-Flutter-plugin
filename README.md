@@ -5,19 +5,13 @@
 
 ## Table of contents
 
-1. [Let's integrate Plugin for Flutter](#Let's integrate Plugin for Flutter)
+1. [Introduction](#Introduction)
 1. [Requirements](#requirements)
 1. [Getting started](#getting-started)
 1. [Sending your first message](#sending-your-first-message)
 1. [Getting help](#getting-help)
 
 <br />
-
-## 🔒 Security tip
-
-When a new Mirrorfly application is created in the dashboard the default security settings are set permissive to simplify running samples and implementing your first code.
-
-Before launching make sure to review the security tab under ⚙️ Settings -> Security, and set Access token permission to Read Only or Disabled so that unauthenticated users can not login as someone else. And review the Access Control lists. Most apps will want to disable "Allow retrieving user list" as that could expose usage numbers and other information.
 
 ## Introduction
 
@@ -175,7 +169,7 @@ Mirrorfly.sendTextMessage(message, jid, replyMessageId).then((value) {
 | Argument         | Type   | Description                                      |
 | ---------------- | ------ | ------------------------------------------------ |
 | jid           | String | JID of the end user                              |
-| message             | String | Indicates the text message that needs to be sent |
+| message       | String | Indicates the text message that needs to be sent |
 | replyMessageId | String | Specifies the Message ID of replied message      |
 
 ## Receive a One-to-One Message
