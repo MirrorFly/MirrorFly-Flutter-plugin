@@ -7,11 +7,8 @@
 
 1. [Introduction](#Introduction)
 1. [Requirements](#requirements)
-1. [Getting started](#getting-started)
 1. [Sending your first message](#sending-your-first-message)
 1. [Getting help](#getting-help)
-
-<br />
 
 ## Introduction
 
@@ -21,7 +18,7 @@ Make an easy and efficient way with CONTUS TECH MirrorFly Chat Plugin for Flutte
 
 The minimum requirements for Mirrorfly Plugin for Flutter are:
 
-- Xcode or Android studio
+- Visual Studio Code or Android Studio
 - Dart 2.19.1 or above
 - Flutter 2.0.0 or higher
 
@@ -34,8 +31,14 @@ Follow the below steps to get your license key:
 
 1. Sign up into [MirrorFly Console page](https://console.mirrorfly.com/register) for free MirrorFly account, If you already have a MirrorFly account, sign into your account
 2. Once you’re in! You get access to your MirrorFly account ‘Overview page’ where you can find a license key for further integration process
-3. Copy the license key from the ‘Application info’ section 
-4. Add the following to your root `build.gradle` file in your Android folder.
+3. Copy the license key from the ‘Application info’ section
+
+
+### Step 2: Install packages
+
+Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned below.
+
+- Add the following to your root `build.gradle` file in your Android folder.
 
 ```gradle
    allprojects {
@@ -49,21 +52,16 @@ Follow the below steps to get your license key:
     }
   }
 ```
-
-### Step 2: Install packages
-
-Installing the Mirrorfly Plugin is a simple process if you’re familiar with using external packages or Plugin’s in your projects. Follow the steps below via `pub`.
-
 - Add following dependency in `pubspec.yaml`.
 
 ```yaml
 dependencies:
-  mirrorfly_Plugin: ^2.0.0
+  mirrorfly_plugin: ^0.0.1
 ```
 
 - Run `flutter pub get` command in your project directory.
 
-### Step 3: Use the Mirrorfly Plugin in Flutter
+### Step 3: Use the Mirrorfly Plugin in your App
 
 You can use all classes and methods just with the one import statement as shown below.
 
@@ -77,13 +75,13 @@ Follow the step-by-step instructions below to authenticate and send your first m
 
 ### Authentication
 
-In order to use the features of Mirrorfly Plugin for Flutter, you should initiate the `MirrorflyPlugin` instance through user authentication with Mirrorfly server. This instance communicates and interacts with the server based on an authenticated user account, allowing the client app to use the Chat Plugin's features.
+In order to use the features of Mirrorfly Plugin for Flutter, you should initiate the `MirrorflyPlugin` instance through user authentication with Mirrorfly server. This instance communicates and interacts with the server based on an authenticated user account, allowing the client app to use the Mirrorfly Plugin's features.
 
 Here are the steps to sending your first message using the Mirrorfly Plugin:
 
 ### Step 1: Initialize the Mirrorfly Plugin
 
-To initialize the plugin, place the below code in your `main.dart` file `main` function on before `runApp()`.
+To initialize the plugin, place the below code in your `main.dart` file inside `main` function before `runApp()`.
 
 ```dart
  void main() {
@@ -98,7 +96,7 @@ To initialize the plugin, place the below code in your `main.dart` file `main` f
 
 ### Step 2: Registration
 
-he below method to register a user in sandbox Live mode.
+Use the below method to register a user in sandbox Live mode.
 
 > **Info** Unless you log out the session, make a note that should never call the registration method more than once in an application
 
@@ -108,8 +106,8 @@ he below method to register a user in sandbox Live mode.
 Mirrorfly.registerUser(userIdentifier).then((value) {
   var userData = registerModelFromJson(value);
 }).catchError((error) {
-    // Register user failed print throwable to find the exception details.
-    debugPrint(error.message);
+  // Register user failed print throwable to find the exception details.
+  debugPrint(error.message);
 });
 ```
 ## Send a One-to-One Message
@@ -123,7 +121,7 @@ var userJid = await Mirrorfly.getJid(username);
 ```
 
 ```dart
-Mirrorfly.sendTextMessage(message, jid, replyMessageId).then((value) {
+Mirrorfly.sendTextMessage(message, jid).then((value) {
   // you will get the message sent success response
   var chatMessage = sendMessageModelFromJson(value);
 });
@@ -134,7 +132,8 @@ Here the listeners would be called only when a new message is received from othe
 
 ```dart
 Mirrorfly.onMessageReceived.listen(result){
-vat chatMessage = sendMessageModelFromJson(result)
+  // you will get the new messages
+  var chatMessage = sendMessageModelFromJson(result)
 }
 ```
 

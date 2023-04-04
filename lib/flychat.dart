@@ -369,7 +369,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getJid(username);
   }
 
-  static sendTextMessage(String message, String jid, String replyMessageId) {
+  static sendTextMessage(String message, String jid, [String replyMessageId = ""]) {
     return FlyChatFlutterPlatform.instance.sendTextMessage(message,jid,replyMessageId);
   }
 
