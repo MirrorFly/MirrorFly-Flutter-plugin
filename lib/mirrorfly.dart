@@ -1,4 +1,4 @@
-library mirrorfly;
+library mirrorfly_plugin;
 
 export 'fly_chat_method_channel.dart';
 export 'fly_chat_platform_interface.dart';

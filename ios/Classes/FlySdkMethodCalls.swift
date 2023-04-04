@@ -409,8 +409,6 @@ import ContactsUI
                     userData = JSONSerializer.toJson(list as Any)
                     userData = userData.replacingOccurrences(of: "\"some\":", with: "")
 //                    userData = userData.replacingOccurrences(of: "]", with: "")
-                }else{
-                    userData = JSONSerializer.toJson(data.getData())
                 }
                 print("-------->>>> \(userData)")
                 let message = data["message"] as! String
