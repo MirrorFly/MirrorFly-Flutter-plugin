@@ -46,11 +46,8 @@ Follow the below steps to get your license key:
 
 1. Sign up into [MirrorFly Console page](https://console.mirrorfly.com/register) for free MirrorFly account, If you already have a MirrorFly account, sign into your account
 2. Once you’re in! You get access to your MirrorFly account ‘Overview page’ where you can find a license key for further integration process
-3. Copy the license key from the ‘Application info’ section
-
-![license-key](license-key.png)
-
-5. Add the following to your root `build.gradle` file in your Android folder.
+3. Copy the license key from the ‘Application info’ section 
+4. Add the following to your root `build.gradle` file in your Android folder.
 
 ```gradle
    allprojects {
