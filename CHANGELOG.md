@@ -1,3 +1,3 @@
-## 0.0.1
+## [0.0.1] developer preview
 
-* TODO: Describe initial release.
+* Developer preview.
