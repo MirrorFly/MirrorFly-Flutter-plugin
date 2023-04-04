@@ -15,7 +15,7 @@
 
 ## Introduction
 
-Through Chat Plugin for flutter, you can efficiently integrate real-time chat into your client app. On the client-side implementation, you can initialize, configure and build the chat with minimal effort. On the server-side, Sendbird ensures reliable infra-management services for your chat within the app. This **readme** provides essential information on the Chat Plugin’s structure, supplementary features, and the installation steps.
+Through Chat Plugin for flutter, you can efficiently integrate real-time chat into your client app. On the client-side implementation, you can initialize, configure and build the chat with minimal effort. On the server-side, Mirrorfly ensures reliable infra-management services for your chat within the app. This **readme** provides essential information on the Chat Plugin’s structure, supplementary features, and the installation steps.
 
 ## Requirements
 
