@@ -15,7 +15,7 @@
 
 ## Introduction
 
-Through Mirrorfly Plugin for flutter, you can efficiently integrate real-time chat into your client app. On the client-side implementation, you can initialize, configure and build the chat with minimal effort. On the server-side, Mirrorfly ensures reliable infra-management services for your chat within the app. This **readme** provides essential information on the Mirrorfly Plugin’s structure, supplementary features, and the installation steps.
+Make an easy and efficient way with CONTUS TECH MirrorFly Chat Plugin for Flutter - simply integrate the real-time chat features and functionalities into a client's app.
 
 ## Requirements
 
@@ -25,21 +25,9 @@ The minimum requirements for Mirrorfly Plugin for Flutter are:
 - Dart 2.19.1 or above
 - Flutter 2.0.0 or higher
 
-## Getting started
-
-This section gives you information you need to get started with Mirrorfly Plugin for Flutter. Follow the simple steps below to build the Mirrorfly Plugin into your client app.
-
-### Try the sample app
-
-The fastest way to test Mirrorfly Plugin for Flutter is to build your chat app on top of our sample app. To create a project for the sample app, download the app from our GitHub repository. The link is down below.
-
-- https://github.com/MirrorFly/MirrorFly-Flutter-Sample
-
 ### Step 1: Let's integrate Plugin for Flutter
 
-Make an easy and efficient way with CONTUS TECH MirrorFly Plugin for Flutter - simply integrate the real-time chat features and functionalities into a client's app.
-
-With client-side implementation, our Mirrorfly Plugin lets you initialize and configure the chat easily. With the server-side, Our solution ensures the most reliable infra-management services for the chat within the app. Furthermore, we will let you know how to install the chat Plugin in your app for a better in-app chat experience.
+Our Mirrorfly Plugin lets you initialize and configure the chat easily. With the server-side, Our solution ensures the most reliable infra-management services for the chat within the app. Furthermore, we will let you know how to install the chat Plugin in your app for a better in-app chat experience.
 
 ### Plugin License Key
 Follow the below steps to get your license key:
@@ -149,6 +137,12 @@ Mirrorfly.onMessageReceived.listen(result){
 vat chatMessage = sendMessageModelFromJson(result)
 }
 ```
+
+### Try the sample app
+
+The fastest way to test Mirrorfly Plugin for Flutter is to build your chat app on top of our sample app. To create a project for the sample app, download the app from our GitHub repository. The link is down below.
+
+- https://github.com/MirrorFly/MirrorFly-Flutter-Sample
 
 ## Getting Help
 
