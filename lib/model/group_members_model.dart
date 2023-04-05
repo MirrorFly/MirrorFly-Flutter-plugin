@@ -4,9 +4,12 @@
 
 import 'dart:convert';
 import 'dart:io';
-List<Member> memberFromJson(String str) => List<Member>.from(json.decode(str).map((x) => Member.fromJson(x)));
 
-String memberToJson(List<Member> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+List<Member> memberFromJson(String str) =>
+    List<Member>.from(json.decode(str).map((x) => Member.fromJson(x)));
+
+String memberToJson(List<Member> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Member {
   Member({
@@ -56,50 +59,63 @@ class Member {
   String? status;
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
-    contactType: json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"] == "live" ? "live_contact" : json["contactType"] == "local" ? "local_contact" : json["contactType"] == "deleted" ? "deleted_contact" : json["contactType"],
-    email: json["email"],
-    groupCreatedTime: json["groupCreatedTime"].toString(),
-    image: json["image"],
-    imagePrivacyFlag: json["imagePrivacyFlag"].toString(),
-    isAdminBlocked: Platform.isIOS ? json["isBlockedByAdmin"] : json["isAdminBlocked"],
-    isBlocked: json["isBlocked"],
-    isBlockedMe: json["isBlockedMe"],
-    isGroupAdmin: json["isGroupAdmin"],
-    isGroupInOfflineMode: json["isGroupInOfflineMode"],
-    isGroupProfile: Platform.isIOS ? json["profileChatType"] == "singleChat" ? false : true : json["isGroupProfile"],
-    isItSavedContact: json["isItSavedContact"],
-    isMuted: json["isMuted"],
-    isSelected: json["isSelected"],
-    jid: json["jid"],
-    lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"].toString(),
-    mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"].toString(),
-    mobileNumber: json["mobileNumber"],
-    name: json["name"],
-    nickName: json["nickName"],
-    status: json["status"],
-  );
+        contactType: json["contactType"] == "unknown"
+            ? "unknown_contact"
+            : json["contactType"] == "live"
+                ? "live_contact"
+                : json["contactType"] == "local"
+                    ? "local_contact"
+                    : json["contactType"] == "deleted"
+                        ? "deleted_contact"
+                        : json["contactType"],
+        email: json["email"],
+        groupCreatedTime: json["groupCreatedTime"].toString(),
+        image: json["image"],
+        imagePrivacyFlag: json["imagePrivacyFlag"].toString(),
+        isAdminBlocked:
+            Platform.isIOS ? json["isBlockedByAdmin"] : json["isAdminBlocked"],
+        isBlocked: json["isBlocked"],
+        isBlockedMe: json["isBlockedMe"],
+        isGroupAdmin: json["isGroupAdmin"],
+        isGroupInOfflineMode: json["isGroupInOfflineMode"],
+        isGroupProfile: Platform.isIOS
+            ? json["profileChatType"] == "singleChat"
+                ? false
+                : true
+            : json["isGroupProfile"],
+        isItSavedContact: json["isItSavedContact"],
+        isMuted: json["isMuted"],
+        isSelected: json["isSelected"],
+        jid: json["jid"],
+        lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"].toString(),
+        mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"].toString(),
+        mobileNumber: json["mobileNumber"],
+        name: json["name"],
+        nickName: json["nickName"],
+        status: json["status"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "contactType": contactType,
-    "email": email,
-    "groupCreatedTime": groupCreatedTime,
-    "image": image,
-    "imagePrivacyFlag": imagePrivacyFlag,
-    "isAdminBlocked": isAdminBlocked,
-    "isBlocked": isBlocked,
-    "isBlockedMe": isBlockedMe,
-    "isGroupAdmin": isGroupAdmin,
-    "isGroupInOfflineMode": isGroupInOfflineMode,
-    "isGroupProfile": isGroupProfile,
-    "isItSavedContact": isItSavedContact,
-    "isMuted": isMuted,
-    "isSelected": isSelected,
-    "jid": jid,
-    "lastSeenPrivacyFlag": lastSeenPrivacyFlag,
-    "mobileNUmberPrivacyFlag": mobileNUmberPrivacyFlag,
-    "mobileNumber": mobileNumber,
-    "name": name,
-    "nickName": nickName,
-    "status": status,
-  };
+        "contactType": contactType,
+        "email": email,
+        "groupCreatedTime": groupCreatedTime,
+        "image": image,
+        "imagePrivacyFlag": imagePrivacyFlag,
+        "isAdminBlocked": isAdminBlocked,
+        "isBlocked": isBlocked,
+        "isBlockedMe": isBlockedMe,
+        "isGroupAdmin": isGroupAdmin,
+        "isGroupInOfflineMode": isGroupInOfflineMode,
+        "isGroupProfile": isGroupProfile,
+        "isItSavedContact": isItSavedContact,
+        "isMuted": isMuted,
+        "isSelected": isSelected,
+        "jid": jid,
+        "lastSeenPrivacyFlag": lastSeenPrivacyFlag,
+        "mobileNUmberPrivacyFlag": mobileNUmberPrivacyFlag,
+        "mobileNumber": mobileNumber,
+        "name": name,
+        "nickName": nickName,
+        "status": status,
+      };
 }

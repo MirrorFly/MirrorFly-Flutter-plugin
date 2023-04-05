@@ -5,8 +5,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-RecentChat recentChatFromJson(String str) => RecentChat.fromJson(json.decode(str));
-RecentChatData recentChatDataFromJson(String str) => RecentChatData.fromJson(json.decode(str));
+RecentChat recentChatFromJson(String str) =>
+    RecentChat.fromJson(json.decode(str));
+RecentChatData recentChatDataFromJson(String str) =>
+    RecentChatData.fromJson(json.decode(str));
 
 String recentChatToJson(RecentChat data) => json.encode(data.toJson());
 
@@ -18,12 +20,17 @@ class RecentChat {
   List<RecentChatData>? data;
 
   factory RecentChat.fromJson(Map<String, dynamic> json) => RecentChat(
-    data: json["data"] == null ? null : List<RecentChatData>.from(json["data"].map((x) => RecentChatData.fromJson(x))),
-  );
+        data: json["data"] == null
+            ? null
+            : List<RecentChatData>.from(
+                json["data"].map((x) => RecentChatData.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toJson())),
-  };
+        "data": data == null
+            ? null
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
+      };
 }
 
 class RecentChatData {
@@ -35,7 +42,7 @@ class RecentChatData {
     this.isBroadCast,
     this.isChatArchived,
     this.isChatPinned,
-    this.isConversationUnRead,//// need to check
+    this.isConversationUnRead, //// need to check
     this.isGroup,
     this.isGroupInOfflineMode,
     this.isItSavedContact,
@@ -82,60 +89,85 @@ class RecentChatData {
   dynamic unreadMessageCount;
 
   factory RecentChatData.fromJson(Map<String, dynamic> json) => RecentChatData(
-    contactType: Platform.isAndroid ? json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"] == "live" ? "live_contact" : json["contactType"] == "local" ? "local_contact" : json["contactType"] == "deleted" ? "deleted_contact" : json["contactType"] :
-    json["isItSavedContact"] == true ? "live_contact" : json["isDeletedUser"] == true ? "deleted_contact" : "unknown_contact",
-    isAdminBlocked: json["isAdminBlocked"],
-    isBlocked: json["isBlocked"],
-    isBlockedMe: json["isBlockedMe"],
-    isBroadCast: json["isBroadCast"],
-    isChatArchived: json["isChatArchived"],
-    isChatPinned: json["isChatPinned"],
-    isConversationUnRead: json["isConversationUnRead"],
-    isGroup: json["isGroup"],
-    isGroupInOfflineMode: json["isGroupInOfflineMode"],
-    isItSavedContact: json["isItSavedContact"],
-    isLastMessageRecalledByUser: json["isLastMessageRecalledByUser"],
-    isLastMessageSentByMe: json["isLastMessageSentByMe"],
-    isMuted: json["isMuted"],
-    isSelected: json["isSelected"],
-    jid: json["jid"],
-    lastMessageContent: json["lastMessageContent"],
-    lastMessageId: json["lastMessageId"],
-    lastMessageStatus: Platform.isAndroid ? json["lastMessageStatus"] : json["lastMessageStatus"] == "acknowledge" ? "A" : json["lastMessageStatus"] == "delivered" ? "D" : json["lastMessageStatus"] == "seen" ? "S" : json["lastMessageStatus"] == "received" ? "R" : "N",//"N" for "sent" in iOS,
-    // lastMessageTime: Platform.isAndroid ? json["lastMessageTime"] : json["isGroup"] ? json["lastMessageTime"] * 1000 : json["lastMessageTime"],
-    lastMessageTime: json["lastMessageTime"].toInt().toString().length == 13 ? json["lastMessageTime"] * 1000 : json["lastMessageTime"],
-    lastMessageType: json["lastMessageType"],
-    nickName: json["nickName"],
-    profileImage: json["profileImage"],
-    profileName: json["profileName"],
-    unreadMessageCount: json["unreadMessageCount"],
-  );
+        contactType: Platform.isAndroid
+            ? json["contactType"] == "unknown"
+                ? "unknown_contact"
+                : json["contactType"] == "live"
+                    ? "live_contact"
+                    : json["contactType"] == "local"
+                        ? "local_contact"
+                        : json["contactType"] == "deleted"
+                            ? "deleted_contact"
+                            : json["contactType"]
+            : json["isItSavedContact"] == true
+                ? "live_contact"
+                : json["isDeletedUser"] == true
+                    ? "deleted_contact"
+                    : "unknown_contact",
+        isAdminBlocked: json["isAdminBlocked"],
+        isBlocked: json["isBlocked"],
+        isBlockedMe: json["isBlockedMe"],
+        isBroadCast: json["isBroadCast"],
+        isChatArchived: json["isChatArchived"],
+        isChatPinned: json["isChatPinned"],
+        isConversationUnRead: json["isConversationUnRead"],
+        isGroup: json["isGroup"],
+        isGroupInOfflineMode: json["isGroupInOfflineMode"],
+        isItSavedContact: json["isItSavedContact"],
+        isLastMessageRecalledByUser: json["isLastMessageRecalledByUser"],
+        isLastMessageSentByMe: json["isLastMessageSentByMe"],
+        isMuted: json["isMuted"],
+        isSelected: json["isSelected"],
+        jid: json["jid"],
+        lastMessageContent: json["lastMessageContent"],
+        lastMessageId: json["lastMessageId"],
+        lastMessageStatus: Platform.isAndroid
+            ? json["lastMessageStatus"]
+            : json["lastMessageStatus"] == "acknowledge"
+                ? "A"
+                : json["lastMessageStatus"] == "delivered"
+                    ? "D"
+                    : json["lastMessageStatus"] == "seen"
+                        ? "S"
+                        : json["lastMessageStatus"] == "received"
+                            ? "R"
+                            : "N", //"N" for "sent" in iOS,
+        // lastMessageTime: Platform.isAndroid ? json["lastMessageTime"] : json["isGroup"] ? json["lastMessageTime"] * 1000 : json["lastMessageTime"],
+        lastMessageTime: json["lastMessageTime"].toInt().toString().length == 13
+            ? json["lastMessageTime"] * 1000
+            : json["lastMessageTime"],
+        lastMessageType: json["lastMessageType"],
+        nickName: json["nickName"],
+        profileImage: json["profileImage"],
+        profileName: json["profileName"],
+        unreadMessageCount: json["unreadMessageCount"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "contactType": contactType,
-    "isAdminBlocked": isAdminBlocked,
-    "isBlocked": isBlocked,
-    "isBlockedMe": isBlockedMe,
-    "isBroadCast": isBroadCast,
-    "isChatArchived": isChatArchived,
-    "isChatPinned": isChatPinned,
-    "isConversationUnRead": isConversationUnRead,
-    "isGroup": isGroup,
-    "isGroupInOfflineMode": isGroupInOfflineMode,
-    "isItSavedContact": isItSavedContact,
-    "isLastMessageRecalledByUser": isLastMessageRecalledByUser,
-    "isLastMessageSentByMe": isLastMessageSentByMe,
-    "isMuted": isMuted,
-    "isSelected": isSelected,
-    "jid": jid,
-    "lastMessageContent": lastMessageContent,
-    "lastMessageId": lastMessageId,
-    "lastMessageStatus": lastMessageStatus,
-    "lastMessageTime": lastMessageTime,
-    "lastMessageType": lastMessageType,
-    "nickName": nickName,
-    "profileImage": profileImage,
-    "profileName": profileName,
-    "unreadMessageCount": unreadMessageCount,
-  };
+        "contactType": contactType,
+        "isAdminBlocked": isAdminBlocked,
+        "isBlocked": isBlocked,
+        "isBlockedMe": isBlockedMe,
+        "isBroadCast": isBroadCast,
+        "isChatArchived": isChatArchived,
+        "isChatPinned": isChatPinned,
+        "isConversationUnRead": isConversationUnRead,
+        "isGroup": isGroup,
+        "isGroupInOfflineMode": isGroupInOfflineMode,
+        "isItSavedContact": isItSavedContact,
+        "isLastMessageRecalledByUser": isLastMessageRecalledByUser,
+        "isLastMessageSentByMe": isLastMessageSentByMe,
+        "isMuted": isMuted,
+        "isSelected": isSelected,
+        "jid": jid,
+        "lastMessageContent": lastMessageContent,
+        "lastMessageId": lastMessageId,
+        "lastMessageStatus": lastMessageStatus,
+        "lastMessageTime": lastMessageTime,
+        "lastMessageType": lastMessageType,
+        "nickName": nickName,
+        "profileImage": profileImage,
+        "profileName": profileName,
+        "unreadMessageCount": unreadMessageCount,
+      };
 }

@@ -2,7 +2,6 @@ import 'package:mirrorfly_plugin/builder.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 
-
 abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// Constructs a UikitFlutterPlatform.
   FlyChatFlutterPlatform() : super(token: _token);
@@ -24,7 +23,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  init(ChatBuilder builder){
+  init(ChatBuilder builder) {
     throw UnimplementedError('build() has not been implemented.');
   }
 
@@ -93,8 +92,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<bool?> deleteProfileStatus(
-      String id, String status,
-      bool isCurrentStatus) {
+      String id, String status, bool isCurrentStatus) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -127,8 +125,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<bool?> doesFetchingMembersListFromServedRequired(
-      String groupJid) {
+  Future<bool?> doesFetchingMembersListFromServedRequired(String groupJid) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -358,8 +355,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  sendLocationMessage(String jid, double latitude, double longitude,
-      String replyMessageId) {
+  sendLocationMessage(
+      String jid, double latitude, double longitude, String replyMessageId) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -371,9 +368,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   sendVideoMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
-      [String? videoFileUrl,
-        num? videoDuration,
-        String? thumbImageBase64]) {
+      [String? videoFileUrl, num? videoDuration, String? thumbImageBase64]) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -385,103 +380,145 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Stream<dynamic> get onMessageReceived => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onMessageReceived =>
+      throw UnimplementedError('has not been implemented.');
 
   //messageOnReceivedChannel.receiveBroadcastStream().cast();
 
-  Stream<dynamic> get onMessageStatusUpdated => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onMessageStatusUpdated =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onMediaStatusUpdated => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onMediaStatusUpdated =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onUploadDownloadProgressChanged => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onUploadDownloadProgressChanged =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<String> get onGroupProfileFetched => throw UnimplementedError('has not been implemented.');
+  Stream<String> get onGroupProfileFetched =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<String> get onNewGroupCreated => throw UnimplementedError('has not been implemented.');
+  Stream<String> get onNewGroupCreated =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<String> get onGroupProfileUpdated => throw UnimplementedError('has not been implemented.');
+  Stream<String> get onGroupProfileUpdated =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onNewMemberAddedToGroup => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onNewMemberAddedToGroup =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onMemberRemovedFromGroup => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onMemberRemovedFromGroup =>
+      throw UnimplementedError('has not been implemented.');
 
   Stream<String> get onFetchingGroupMembersCompleted =>
       throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onDeleteGroup => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onDeleteGroup =>
+      throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get onFetchingGroupListCompleted =>
       throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onMemberMadeAsAdmin => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onMemberMadeAsAdmin =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onMemberRemovedAsAdmin => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onMemberRemovedAsAdmin =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onLeftFromGroup => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onLeftFromGroup =>
+      throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get onGroupNotificationMessage =>
       throw UnimplementedError('has not been implemented.');
 
-  Stream<String> get onGroupDeletedLocally => throw UnimplementedError('has not been implemented.');
+  Stream<String> get onGroupDeletedLocally =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get blockedThisUser => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get blockedThisUser =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<bool> get myProfileUpdated => throw UnimplementedError('has not been implemented.');
+  Stream<bool> get myProfileUpdated =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onAdminBlockedOtherUser => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onAdminBlockedOtherUser =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onAdminBlockedUser => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onAdminBlockedUser =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<bool> get onContactSyncComplete => throw UnimplementedError('has not been implemented.');
+  Stream<bool> get onContactSyncComplete =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<bool> get onLoggedOut => throw UnimplementedError('has not been implemented.');
+  Stream<bool> get onLoggedOut =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get unblockedThisUser => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get unblockedThisUser =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get userBlockedMe => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get userBlockedMe =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get userCameOnline => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get userCameOnline =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<String> get userDeletedHisProfile => throw UnimplementedError('has not been implemented.');
+  Stream<String> get userDeletedHisProfile =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<bool> get usersProfilesFetched => throw UnimplementedError('has not been implemented.');
+  Stream<bool> get usersProfilesFetched =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get userProfileFetched => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get userProfileFetched =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get userUnBlockedMe => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get userUnBlockedMe =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get userUpdatedHisProfile => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get userUpdatedHisProfile =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get userWentOffline => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get userWentOffline =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get usersIBlockedListFetched => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get usersIBlockedListFetched =>
+      throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get usersWhoBlockedMeListFetched =>
       throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onConnected => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onConnected =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onDisconnected => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onDisconnected =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onConnectionNotAuthorized => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onConnectionNotAuthorized =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get connectionFailed => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get connectionFailed =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get connectionSuccess => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get connectionSuccess =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onWebChatPasswordChanged => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onWebChatPasswordChanged =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get setTypingStatus => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get setTypingStatus =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onChatTypingStatus => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onChatTypingStatus =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onGroupTypingStatus => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onGroupTypingStatus =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onFailure => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onFailure =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onProgressChanged => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onProgressChanged =>
+      throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onSuccess => throw UnimplementedError('has not been implemented.');
+  Stream<dynamic> get onSuccess =>
+      throw UnimplementedError('has not been implemented.');
 
   Future<String?> imagePath(String imgurl) {
     throw UnimplementedError('has not been implemented.');
@@ -507,8 +544,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  updateMyProfile(String name, String email, String mobile, String status,
-      String? image) {
+  updateMyProfile(
+      String name, String email, String mobile, String status, String? image) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -854,7 +891,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String?> getJidFromPhoneNumber(String mobileNumber, String countryCode) async {
+  Future<String?> getJidFromPhoneNumber(
+      String mobileNumber, String countryCode) async {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -869,12 +907,15 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<bool?> isTrailLicence() async {
     throw UnimplementedError('has not been implemented.');
   }
+
   Future<dynamic> getNonChatUsers() async {
     throw UnimplementedError('has not been implemented.');
   }
+
   Future<bool?> addContact(String number, String name) async {
     throw UnimplementedError('has not been implemented.');
   }
+
   Future setRegionCode(String regionCode) async {
     throw UnimplementedError('has not been implemented.');
   }

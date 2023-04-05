@@ -4,9 +4,12 @@
 
 import 'dart:convert';
 
-MessageDeliveredStatus messageDeliveredStatusFromJson(String str, String type) => MessageDeliveredStatus.fromJson(json.decode(str), type);
+MessageDeliveredStatus messageDeliveredStatusFromJson(
+        String str, String type) =>
+    MessageDeliveredStatus.fromJson(json.decode(str), type);
 
-String messageDeliveredStatusToJson(MessageDeliveredStatus data) => json.encode(data.toJson());
+String messageDeliveredStatusToJson(MessageDeliveredStatus data) =>
+    json.encode(data.toJson());
 
 class MessageDeliveredStatus {
   MessageDeliveredStatus({
@@ -19,18 +22,25 @@ class MessageDeliveredStatus {
   int? totalParticipatCount;
   List<DeliveredParticipantList> participantList;
 
-  factory MessageDeliveredStatus.fromJson(Map<String, dynamic> json, String type) => MessageDeliveredStatus(
-    deliveredCount: json["deliveredCount"],
-    totalParticipatCount: json["totalParticipatCount"],
-    participantList: type == "delivered" ? List<DeliveredParticipantList>.from(json["deliveredParticipantList"].map((x) => DeliveredParticipantList.fromJson(x))) :
-    List<DeliveredParticipantList>.from(json["seenParticipantList"].map((x) => DeliveredParticipantList.fromJson(x))),
-  );
+  factory MessageDeliveredStatus.fromJson(
+          Map<String, dynamic> json, String type) =>
+      MessageDeliveredStatus(
+        deliveredCount: json["deliveredCount"],
+        totalParticipatCount: json["totalParticipatCount"],
+        participantList: type == "delivered"
+            ? List<DeliveredParticipantList>.from(
+                json["deliveredParticipantList"]
+                    .map((x) => DeliveredParticipantList.fromJson(x)))
+            : List<DeliveredParticipantList>.from(json["seenParticipantList"]
+                .map((x) => DeliveredParticipantList.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "deliveredCount": deliveredCount,
-    "totalParticipatCount": totalParticipatCount,
-    "participantList": List<dynamic>.from(participantList.map((x) => x.toJson())),
-  };
+        "deliveredCount": deliveredCount,
+        "totalParticipatCount": totalParticipatCount,
+        "participantList":
+            List<dynamic>.from(participantList.map((x) => x.toJson())),
+      };
 }
 
 class DeliveredParticipantList {
@@ -48,21 +58,23 @@ class DeliveredParticipantList {
   String? time;
   String? userJid;
 
-  factory DeliveredParticipantList.fromJson(Map<String, dynamic> json) => DeliveredParticipantList(
-    memberProfileDetails: MemberProfileDetails.fromJson(json["memberProfileDetails"]),
-    messageId: json["messageId"],
-    status: Status.fromJson(json["status"]),
-    time: json["time"],
-    userJid: json["userJid"],
-  );
+  factory DeliveredParticipantList.fromJson(Map<String, dynamic> json) =>
+      DeliveredParticipantList(
+        memberProfileDetails:
+            MemberProfileDetails.fromJson(json["memberProfileDetails"]),
+        messageId: json["messageId"],
+        status: Status.fromJson(json["status"]),
+        time: json["time"],
+        userJid: json["userJid"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "memberProfileDetails": memberProfileDetails?.toJson(),
-    "messageId": messageId,
-    "status": status?.toJson(),
-    "time": time,
-    "userJid": userJid,
-  };
+        "memberProfileDetails": memberProfileDetails?.toJson(),
+        "messageId": messageId,
+        "status": status?.toJson(),
+        "time": time,
+        "userJid": userJid,
+      };
 }
 
 class MemberProfileDetails {
@@ -114,55 +126,64 @@ class MemberProfileDetails {
   String? status;
   String? thumbImage;
 
-  factory MemberProfileDetails.fromJson(Map<String, dynamic> json) => MemberProfileDetails(
-    contactType: json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"] == "live" ? "live_contact" : json["contactType"] == "local" ? "local_contact" : json["contactType"] == "deleted" ? "deleted_contact" : json["contactType"],
-    email: json["email"],
-    groupCreatedTime: json["groupCreatedTime"],
-    image: json["image"],
-    imagePrivacyFlag: json["imagePrivacyFlag"],
-    isAdminBlocked: json["isAdminBlocked"],
-    isBlocked: json["isBlocked"],
-    isBlockedMe: json["isBlockedMe"],
-    isGroupAdmin: json["isGroupAdmin"],
-    isGroupInOfflineMode: json["isGroupInOfflineMode"],
-    isGroupProfile: json["isGroupProfile"],
-    isItSavedContact: json["isItSavedContact"],
-    isMuted: json["isMuted"],
-    isSelected: json["isSelected"],
-    jid: json["jid"],
-    lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"],
-    mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"],
-    mobileNumber: json["mobileNumber"],
-    name: json["name"],
-    nickName: json["nickName"],
-    status: json["status"],
-    thumbImage: json["thumbImage"],
-  );
+  factory MemberProfileDetails.fromJson(Map<String, dynamic> json) =>
+      MemberProfileDetails(
+        contactType: json["contactType"] == "unknown"
+            ? "unknown_contact"
+            : json["contactType"] == "live"
+                ? "live_contact"
+                : json["contactType"] == "local"
+                    ? "local_contact"
+                    : json["contactType"] == "deleted"
+                        ? "deleted_contact"
+                        : json["contactType"],
+        email: json["email"],
+        groupCreatedTime: json["groupCreatedTime"],
+        image: json["image"],
+        imagePrivacyFlag: json["imagePrivacyFlag"],
+        isAdminBlocked: json["isAdminBlocked"],
+        isBlocked: json["isBlocked"],
+        isBlockedMe: json["isBlockedMe"],
+        isGroupAdmin: json["isGroupAdmin"],
+        isGroupInOfflineMode: json["isGroupInOfflineMode"],
+        isGroupProfile: json["isGroupProfile"],
+        isItSavedContact: json["isItSavedContact"],
+        isMuted: json["isMuted"],
+        isSelected: json["isSelected"],
+        jid: json["jid"],
+        lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"],
+        mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"],
+        mobileNumber: json["mobileNumber"],
+        name: json["name"],
+        nickName: json["nickName"],
+        status: json["status"],
+        thumbImage: json["thumbImage"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "contactType": contactType,
-    "email": email,
-    "groupCreatedTime": groupCreatedTime,
-    "image": image,
-    "imagePrivacyFlag": imagePrivacyFlag,
-    "isAdminBlocked": isAdminBlocked,
-    "isBlocked": isBlocked,
-    "isBlockedMe": isBlockedMe,
-    "isGroupAdmin": isGroupAdmin,
-    "isGroupInOfflineMode": isGroupInOfflineMode,
-    "isGroupProfile": isGroupProfile,
-    "isItSavedContact": isItSavedContact,
-    "isMuted": isMuted,
-    "isSelected": isSelected,
-    "jid": jid,
-    "lastSeenPrivacyFlag": lastSeenPrivacyFlag,
-    "mobileNUmberPrivacyFlag": mobileNUmberPrivacyFlag,
-    "mobileNumber": mobileNumber,
-    "name": name,
-    "nickName": nickName,
-    "status": status,
-    "thumbImage": thumbImage,
-  };
+        "contactType": contactType,
+        "email": email,
+        "groupCreatedTime": groupCreatedTime,
+        "image": image,
+        "imagePrivacyFlag": imagePrivacyFlag,
+        "isAdminBlocked": isAdminBlocked,
+        "isBlocked": isBlocked,
+        "isBlockedMe": isBlockedMe,
+        "isGroupAdmin": isGroupAdmin,
+        "isGroupInOfflineMode": isGroupInOfflineMode,
+        "isGroupProfile": isGroupProfile,
+        "isItSavedContact": isItSavedContact,
+        "isMuted": isMuted,
+        "isSelected": isSelected,
+        "jid": jid,
+        "lastSeenPrivacyFlag": lastSeenPrivacyFlag,
+        "mobileNUmberPrivacyFlag": mobileNUmberPrivacyFlag,
+        "mobileNumber": mobileNumber,
+        "name": name,
+        "nickName": nickName,
+        "status": status,
+        "thumbImage": thumbImage,
+      };
 }
 
 class Status {
@@ -173,10 +194,10 @@ class Status {
   String? status;
 
   factory Status.fromJson(Map<String, dynamic> json) => Status(
-    status: json["status"],
-  );
+        status: json["status"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-  };
+        "status": status,
+      };
 }

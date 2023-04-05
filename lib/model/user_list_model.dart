@@ -19,19 +19,24 @@ class UserList {
   bool? status;
 
   factory UserList.fromJson(Map<String, dynamic> json) => UserList(
-    data: json["data"] == null ? null : List<Profile>.from(json["data"].map((x) => Profile.fromJson(x))),
-    status: json["status"],
-  );
+        data: json["data"] == null
+            ? null
+            : List<Profile>.from(json["data"].map((x) => Profile.fromJson(x))),
+        status: json["status"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toJson())),
-    "status": status,
-  };
+        "data": data == null
+            ? null
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "status": status,
+      };
 }
 
-
-List<Profile> profileFromJson(String str) => List<Profile>.from(json.decode(str).map((x) => Profile.fromJson(x)));
-Profile profiledata(String str) => Profile.fromJson(json.decode(str.toString()));
+List<Profile> profileFromJson(String str) =>
+    List<Profile>.from(json.decode(str).map((x) => Profile.fromJson(x)));
+Profile profiledata(String str) =>
+    Profile.fromJson(json.decode(str.toString()));
 
 class Profile {
   Profile({
@@ -81,50 +86,64 @@ class Profile {
   String? status;
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
-    contactType: json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"] == "live" ? "live_contact" : json["contactType"] == "local" ? "local_contact" : json["contactType"] == "deleted" ? "deleted_contact" : json["contactType"],
-    email: json["email"],
-    groupCreatedTime: json["groupCreatedTime"],
-    image: json["image"],
-    imagePrivacyFlag: json["imagePrivacyFlag"],
-    isAdminBlocked: Platform.isAndroid ? json["isAdminBlocked"] : json["isBlockedByAdmin"],
-    isBlocked: json["isBlocked"],
-    isBlockedMe: json["isBlockedMe"],
-    isGroupAdmin: json["isGroupAdmin"],
-    isGroupInOfflineMode: json["isGroupInOfflineMode"],
-    isGroupProfile: Platform.isAndroid ? json["isGroupProfile"] : json["profileChatType"] == "singleChat" ? false : true,
-    isItSavedContact: json["isItSavedContact"],
-    isMuted: json["isMuted"],
-    isSelected: json["isSelected"],
-    jid: json["jid"],
-    lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"],
-    mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"],
-    mobileNumber: json["mobileNumber"],
-    name: json["name"],
-    nickName: json["nickName"].toString(),
-    status: json["status"],
-  );
+        contactType: json["contactType"] == "unknown"
+            ? "unknown_contact"
+            : json["contactType"] == "live"
+                ? "live_contact"
+                : json["contactType"] == "local"
+                    ? "local_contact"
+                    : json["contactType"] == "deleted"
+                        ? "deleted_contact"
+                        : json["contactType"],
+        email: json["email"],
+        groupCreatedTime: json["groupCreatedTime"],
+        image: json["image"],
+        imagePrivacyFlag: json["imagePrivacyFlag"],
+        isAdminBlocked: Platform.isAndroid
+            ? json["isAdminBlocked"]
+            : json["isBlockedByAdmin"],
+        isBlocked: json["isBlocked"],
+        isBlockedMe: json["isBlockedMe"],
+        isGroupAdmin: json["isGroupAdmin"],
+        isGroupInOfflineMode: json["isGroupInOfflineMode"],
+        isGroupProfile: Platform.isAndroid
+            ? json["isGroupProfile"]
+            : json["profileChatType"] == "singleChat"
+                ? false
+                : true,
+        isItSavedContact: json["isItSavedContact"],
+        isMuted: json["isMuted"],
+        isSelected: json["isSelected"],
+        jid: json["jid"],
+        lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"],
+        mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"],
+        mobileNumber: json["mobileNumber"],
+        name: json["name"],
+        nickName: json["nickName"].toString(),
+        status: json["status"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "contactType": contactType,
-    "email": email,
-    "groupCreatedTime": groupCreatedTime,
-    "image": image,
-    "imagePrivacyFlag": imagePrivacyFlag,
-    "isAdminBlocked": isAdminBlocked,
-    "isBlocked": isBlocked,
-    "isBlockedMe": isBlockedMe,
-    "isGroupAdmin": isGroupAdmin,
-    "isGroupInOfflineMode": isGroupInOfflineMode,
-    "isGroupProfile": isGroupProfile,
-    "isItSavedContact": isItSavedContact,
-    "isMuted": isMuted,
-    "isSelected": isSelected,
-    "jid": jid,
-    "lastSeenPrivacyFlag": lastSeenPrivacyFlag,
-    "mobileNUmberPrivacyFlag": mobileNUmberPrivacyFlag,
-    "mobileNumber": mobileNumber,
-    "name": name,
-    "nickName": nickName,
-    "status": status,
-  };
+        "contactType": contactType,
+        "email": email,
+        "groupCreatedTime": groupCreatedTime,
+        "image": image,
+        "imagePrivacyFlag": imagePrivacyFlag,
+        "isAdminBlocked": isAdminBlocked,
+        "isBlocked": isBlocked,
+        "isBlockedMe": isBlockedMe,
+        "isGroupAdmin": isGroupAdmin,
+        "isGroupInOfflineMode": isGroupInOfflineMode,
+        "isGroupProfile": isGroupProfile,
+        "isItSavedContact": isItSavedContact,
+        "isMuted": isMuted,
+        "isSelected": isSelected,
+        "jid": jid,
+        "lastSeenPrivacyFlag": lastSeenPrivacyFlag,
+        "mobileNUmberPrivacyFlag": mobileNUmberPrivacyFlag,
+        "mobileNumber": mobileNumber,
+        "name": name,
+        "nickName": nickName,
+        "status": status,
+      };
 }

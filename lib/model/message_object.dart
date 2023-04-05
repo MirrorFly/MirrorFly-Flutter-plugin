@@ -1,21 +1,19 @@
-
-class MessageObject{
-  MessageObject({
-    required this.toJid,
-    required this.messageType,
-    this.textMessage,
-    this.replyMessageId,
-    this.latitude,
-    this.longitude,
-    this.contactName,
-    this.contactNumbers,
-    this.file,
-    this.fileName,
-    this.caption,
-    this.base64Thumbnail,
-    this.audioDuration,
-    this.isAudioRecorded
-});
+class MessageObject {
+  MessageObject(
+      {required this.toJid,
+      required this.messageType,
+      this.textMessage,
+      this.replyMessageId,
+      this.latitude,
+      this.longitude,
+      this.contactName,
+      this.contactNumbers,
+      this.file,
+      this.fileName,
+      this.caption,
+      this.base64Thumbnail,
+      this.audioDuration,
+      this.isAudioRecorded});
 
   String toJid;
   String messageType;
