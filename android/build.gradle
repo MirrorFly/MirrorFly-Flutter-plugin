@@ -50,5 +50,5 @@ android {
     }
 }
 dependencies{
-    api 'com.mirrorfly.sdk:appbase:0.0.12'
+    api 'com.mirrorfly.sdk:appbase:0.0.13'
 }

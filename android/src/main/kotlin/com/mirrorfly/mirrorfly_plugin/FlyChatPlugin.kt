@@ -1570,22 +1570,10 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         messageIDList,
         getDeleteChatEnum(chatType),
         isMediaDelete,
-        /*object : ChatActionListener {
+        object : ChatActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
                 result.success(isSuccess)
             }
-
-        })*/
-        object : ChatDeleteActionListener {
-          override fun onResponse(
-            isSuccess: Boolean,
-            message: String,
-            deletedMessageList: List<String>,
-            seletedMessageList: List<String>
-          ) {
-            result.success(isSuccess)
-          }
-
         })
     }
   }
@@ -1737,7 +1725,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
           messageIDList,
           getDeleteChatEnum(chatType),
           false,
-          /*object : ChatActionListener {
+          object : ChatActionListener {
               override fun onResponse(isSuccess: Boolean, message: String) {
                   if (isSuccess) {
                       //Log.e("RESPONSE_CAPTURE", "===========================")
@@ -1747,23 +1735,6 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
                       result.error("500", "Unable to Delete the Chat", message)
                   }
               }
-
-          })*/
-          object : ChatDeleteActionListener {
-            override fun onResponse(
-              isSuccess: Boolean,
-              message: String,
-              deletedMessageList: List<String>,
-              seletedMessageList: List<String>
-            ) {
-              if (isSuccess) {
-                //Log.e("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("ChatManager.deleteMessagesForEveryone", message)
-                result.success(message)
-              } else {
-                result.error("500", "Unable to Delete the Chat", message)
-              }
-            }
 
           })
       } else {

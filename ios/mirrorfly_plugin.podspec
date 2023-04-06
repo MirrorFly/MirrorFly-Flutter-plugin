@@ -4,9 +4,9 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'mirrorfly_plugin'
-  s.version          = '0.0.2'
+  s.version          = '0.0.3'
   s.summary          = 'A Mirrorfly Flutter Plugin'
-  s.description      = 'Mirrorfly Chat Plugin for flutter support only Android and iOS'
+  s.description      = 'A Mirrorfly Flutter plugin to Experience an outstanding real time messaging solution. The powerful communication that adds an extra mileage to build your chat app.'
 
   s.homepage         = 'https://www.mirrorfly.com/docs/chat/flutter/quick-start/'
   s.license          = { :type => 'Commercial', :file => '../LICENSE' }

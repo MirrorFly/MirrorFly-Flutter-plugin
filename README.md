@@ -12,7 +12,7 @@
 
 ## Introduction
 
-Make an easy and efficient way with CONTUS TECH MirrorFly Chat Plugin for Flutter - simply integrate the real-time chat features and functionalities into a client's app.
+Make an easy and efficient way with CONTUS TECH Mirrorfly Plugin for Flutter - simply integrate the real-time chat features and functionalities into a client's app.
 
 ## Requirements
 
@@ -56,7 +56,7 @@ Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.1
+  mirrorfly_plugin: ^0.0.3
 ```
 
 - Run `flutter pub get` command in your project directory.
