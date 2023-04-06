@@ -56,7 +56,7 @@ Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.1
+  mirrorfly_plugin: ^0.0.3
 ```
 
 - Run `flutter pub get` command in your project directory.
