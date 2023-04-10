@@ -52,6 +52,25 @@ Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned 
     }
   }
 ```
+- Add the following dependencies in the `app/build.gradle` file.
+
+```gradle
+android {
+   packagingOptions {
+    exclude 'META-INF/AL2.0'
+    exclude 'META-INF/DEPENDENCIES'
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/LICENSE.txt'
+    exclude 'META-INF/license.txt'
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/NOTICE.txt'
+    exclude 'META-INF/notice.txt'
+    exclude 'META-INF/ASL2.0'
+    exclude 'META-INF/LGPL2.1'
+    exclude("META-INF/*.kotlin_module")
+  }
+}
+```
 - Add following dependency in `pubspec.yaml`.
 
 ```yaml
