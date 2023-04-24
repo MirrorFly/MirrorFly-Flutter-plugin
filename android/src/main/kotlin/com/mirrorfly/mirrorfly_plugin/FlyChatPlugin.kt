@@ -1164,7 +1164,14 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
                     }
                   })
               }
+//              result.success(response)
               //ChatManager.disconnect()
+              ChatEventsManager.setupMessageEventListener(this)
+              ChatEventsManager.attachProfileEventsListener(this)
+              ChatEventsManager.attachGroupEventsListener(this)
+              ChatEventsManager.attachLoginEventsListener(this)
+              ChatEventsManager.attachTypingEventListener(this)
+              SharedPreferenceManager.instance.storeBoolean("isRegistered",true);
               ChatManager.connect(object : ChatConnectionListener {
                 override fun onConnected() {
                   Handler(Looper.getMainLooper()).postDelayed({
@@ -3268,11 +3275,14 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     Log.d("FlyChat","onAttachedToActivity")
-    ChatEventsManager.setupMessageEventListener(this)
-    ChatEventsManager.attachProfileEventsListener(this)
-    ChatEventsManager.attachGroupEventsListener(this)
-    ChatEventsManager.attachLoginEventsListener(this)
-    ChatEventsManager.attachTypingEventListener(this)
+    val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
+    if(isRegistered) {
+      ChatEventsManager.setupMessageEventListener(this)
+      ChatEventsManager.attachProfileEventsListener(this)
+      ChatEventsManager.attachGroupEventsListener(this)
+      ChatEventsManager.attachLoginEventsListener(this)
+      ChatEventsManager.attachTypingEventListener(this)
+    }
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
