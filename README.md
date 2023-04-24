@@ -75,7 +75,7 @@ android {
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.3
+  mirrorfly_plugin: ^0.0.4
 ```
 
 - Run `flutter pub get` command in your project directory.
