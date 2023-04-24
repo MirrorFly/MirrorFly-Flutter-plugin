@@ -5,7 +5,7 @@ import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 
 void main() {
   MethodChannelFlyChatFlutter platform = MethodChannelFlyChatFlutter();
-  const MethodChannel channel = MethodChannel('contus.mirrorfly/sdkCall');
+  const MethodChannel channel = MethodChannel('contus.mirrorfly/flyChat');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
