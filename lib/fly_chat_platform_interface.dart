@@ -781,7 +781,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  exportChatConversationToEmail(String jid) {
+  Future<dynamic> exportChatConversationToEmail(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 

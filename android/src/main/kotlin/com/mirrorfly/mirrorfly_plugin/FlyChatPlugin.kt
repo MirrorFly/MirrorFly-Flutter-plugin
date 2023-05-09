@@ -34,6 +34,7 @@ import com.contusflysdk.api.models.*
 import com.contusflysdk.api.network.FlyNetwork
 import com.contusflysdk.api.notification.NotificationEventListener
 import com.contusflysdk.api.notification.PushNotificationManager
+import com.contusflysdk.api.utils.NameHelper
 import com.contusflysdk.backup.BackupListener
 import com.contusflysdk.backup.BackupManager
 import com.contusflysdk.backup.RestoreListener
@@ -1111,6 +1112,14 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         .setIsTrialLicenceKey(isTrialLicenceKey)
     }
     buildSDK.build()
+
+    //Set Name based on the Profile data
+    //if not set you will get error on email chat(export)
+    GroupManager.setNameHelper(object  : NameHelper {
+      override fun getDisplayName(jid: String): String {
+        return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(jid)!!.name else Constants.EMPTY_STRING
+      }
+    })
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
