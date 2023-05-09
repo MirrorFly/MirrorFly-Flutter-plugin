@@ -21,6 +21,7 @@ import ContactsUI
     static var isContactSyncInProgress : Bool = false;
     
     static func buildChatSDK(call: FlutterMethodCall) {
+       
         let args = call.arguments as! Dictionary<String, Any>
         
         var domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
@@ -34,12 +35,15 @@ import ContactsUI
         var ivKey = args["ivKey"] as? String ?? ""
         var containerID = args["iOSContainerID"] as? String ?? ""
         
+        print("buildChatSDK \(containerID)")
+        
         var groupConfig = args["groupConfig"] as? [String : Any]
         
         var groupCreationEnable = groupConfig?["enableGroup"] as? Bool ?? true
         var adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
         var maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
         
+        print("groupCreationEnable \(groupCreationEnable)")
         let sdkGroupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: groupCreationEnable)
             .onlyAdminCanAddOrRemoveMembers(adminOnly: adminOnlyAddRemoveAccess)
             .setMaximumMembersInAGroup(membersCount: maxMembersCount)
@@ -701,26 +705,39 @@ import ContactsUI
         let groupJid = args["jid"] as? String ?? ""
         var groupMembers = [GroupParticipantDetail]()
         
+        print("FlyDefaults.myJid\(FlyDefaults.myJid)")
+        
         groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != FlyDefaults.myJid})
         let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == FlyDefaults.myJid})
-        myJid[0].profileDetail?.nickName = "You"
-        myJid[0].profileDetail?.name = "You"
+        if(myJid.count > 0){
+            myJid[0].profileDetail?.nickName = "You"
+            myJid[0].profileDetail?.name = "You"
+        }
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
 //        groupMembers.insert(contentsOf: myJid)
-        groupMembers.append(contentsOf: myJid)
+        if(myJid.count > 0){
+            groupMembers.append(contentsOf: myJid)
+        }
+        
+        print("---group members--- \(groupMembers)")
         
         var groupMemberProfile: String = "["
         
         groupMembers.forEach{ groupMember in
-            var profileDetailJson = JSONSerializer.toJson(groupMember.profileDetail as Any)
-            profileDetailJson = profileDetailJson.replacingOccurrences(of: "{\"some\":", with: "")
-            profileDetailJson = profileDetailJson.replacingOccurrences(of: "}}", with: "}")
-            profileDetailJson = profileDetailJson.replacingOccurrences(of: "{}", with: "\"\"")
-             
-            groupMemberProfile = groupMemberProfile + profileDetailJson + ","
+            if(groupMember.profileDetail != nil){
+                var profileDetailJson = JSONSerializer.toJson(groupMember.profileDetail as Any)
+                print("---group members json--- \(profileDetailJson)")
+                profileDetailJson = profileDetailJson.replacingOccurrences(of: "{\"some\":", with: "")
+                profileDetailJson = profileDetailJson.replacingOccurrences(of: "}}", with: "}")
+                profileDetailJson = profileDetailJson.replacingOccurrences(of: "{}", with: "\"\"")
+                
+                groupMemberProfile = groupMemberProfile + profileDetailJson + ","
+            }
             
         }
         groupMemberProfile = groupMemberProfile.dropLast() + "]"
+        
+        print("groupMemberProfile \(groupMemberProfile)")
     
         result(groupMemberProfile)
     }
