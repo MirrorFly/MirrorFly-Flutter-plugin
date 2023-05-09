@@ -2938,10 +2938,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  exportChatConversationToEmail(String jid) async {
+  Future<dynamic> exportChatConversationToEmail(String jid) async {
+    dynamic res;
     try {
-      await mirrorFlyMethodChannel
+      res = await mirrorFlyMethodChannel
           .invokeMethod('exportChatConversationToEmail', {"jid": jid});
+      return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;

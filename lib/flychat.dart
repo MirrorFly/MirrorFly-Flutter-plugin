@@ -853,7 +853,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getLinkMessages(jid);
   }
 
-  static exportChatConversationToEmail(String jid) {
+  static Future<dynamic> exportChatConversationToEmail(String jid) {
     return FlyChatFlutterPlatform.instance.exportChatConversationToEmail(jid);
   }
 
