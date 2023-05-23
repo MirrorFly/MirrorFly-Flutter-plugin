@@ -3,6 +3,7 @@
 //     final messageDeliveredStatus = messageDeliveredStatusFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:io';
 
 MessageDeliveredStatus messageDeliveredStatusFromJson(
         String str, String type) =>
@@ -61,10 +62,10 @@ class DeliveredParticipantList {
   factory DeliveredParticipantList.fromJson(Map<String, dynamic> json) =>
       DeliveredParticipantList(
         memberProfileDetails:
-            MemberProfileDetails.fromJson(json["memberProfileDetails"]),
+            MemberProfileDetails.fromJson(Platform.isAndroid ? json["memberProfileDetails"] : json["profileDetails"]),
         messageId: json["messageId"],
-        status: Status.fromJson(json["status"]),
-        time: json["time"],
+        status: Platform.isAndroid ? Status.fromJson(json["status"]) : json["status"],
+        time: json["time"].toString(),
         userJid: json["userJid"],
       );
 
@@ -138,9 +139,9 @@ class MemberProfileDetails {
                         ? "deleted_contact"
                         : json["contactType"],
         email: json["email"],
-        groupCreatedTime: json["groupCreatedTime"],
+        groupCreatedTime: json["groupCreatedTime"].toString(),
         image: json["image"],
-        imagePrivacyFlag: json["imagePrivacyFlag"],
+        imagePrivacyFlag: json["imagePrivacyFlag"].toString(),
         isAdminBlocked: json["isAdminBlocked"],
         isBlocked: json["isBlocked"],
         isBlockedMe: json["isBlockedMe"],
@@ -151,8 +152,8 @@ class MemberProfileDetails {
         isMuted: json["isMuted"],
         isSelected: json["isSelected"],
         jid: json["jid"],
-        lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"],
-        mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"],
+        lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"].toString(),
+        mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"].toString(),
         mobileNumber: json["mobileNumber"],
         name: json["name"],
         nickName: json["nickName"],

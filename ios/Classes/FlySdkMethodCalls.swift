@@ -6,13 +6,14 @@
 //
 
 import Foundation
-import FlyCore
-import FlyCommon
+//import FlyCore
+//import FlyCommon
 import Flutter
 import Photos
-import FlyDatabase
+//import FlyDatabase
 import Contacts
 import ContactsUI
+import MirrorFlySDK
 
 
 @objc class FlySdkMethodCalls : NSObject{
@@ -20,28 +21,30 @@ import ContactsUI
     static var isTrialLicenceKey : Bool = true;
     static var isContactSyncInProgress : Bool = false;
     
+    static var userlist = [ProfileDetails]()
+    
     static func buildChatSDK(call: FlutterMethodCall) {
        
         let args = call.arguments as! Dictionary<String, Any>
         
-        var domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
-        var licenseKey = args["licenseKey"] as? String ?? ""
-        let enableMobileNumberLogin = args["enableMobileNumberLogin"] as? Bool ?? true
+        let domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
+        let licenseKey = args["licenseKey"] as? String ?? ""
+        _ = args["enableMobileNumberLogin"] as? Bool ?? true
         isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
-        let enableSDKLog = args["enableSDKLog"] as? Bool ?? false
-        let maximumRecentChatPin = args["maximumRecentChatPin"] as? Int ?? 3
+        _ = args["enableSDKLog"] as? Bool ?? false
+        _ = args["maximumRecentChatPin"] as? Int ?? 3
         
     
-        var ivKey = args["ivKey"] as? String ?? ""
-        var containerID = args["iOSContainerID"] as? String ?? ""
+        _ = args["ivKey"] as? String ?? ""
+        let containerID = args["iOSContainerID"] as? String ?? ""
         
         print("buildChatSDK \(containerID)")
         
-        var groupConfig = args["groupConfig"] as? [String : Any]
+        let groupConfig = args["groupConfig"] as? [String : Any]
         
-        var groupCreationEnable = groupConfig?["enableGroup"] as? Bool ?? true
-        var adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
-        var maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
+        let groupCreationEnable = groupConfig?["enableGroup"] as? Bool ?? true
+        let adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
+        let maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
         
         print("groupCreationEnable \(groupCreationEnable)")
         let sdkGroupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: groupCreationEnable)
@@ -57,11 +60,11 @@ import ContactsUI
             .setGroupConfiguration(groupConfig: sdkGroupConfig!)
             .buildAndInitialize()
 
-        do{
-            try ChatManager.shared.setIV(iv: ivKey)
-        }catch let error{
-            print("#Plugin Error ---> ChatManger Set Iv key Failed, \(error.localizedDescription)")
-        }
+//        do{
+//            try ChatManager.shared.setIV(iv: ivKey)
+//        }catch let error{
+//            print("#Plugin Error ---> ChatManger Set Iv key Failed, \(error.localizedDescription)")
+//        }
         
         ChatManager.disableLocalNotification()
         
@@ -76,7 +79,7 @@ import ContactsUI
         let args = call.arguments as! Dictionary<String, Any>
         
         var userIdentifier = args["userIdentifier"] as? String ?? ""
-        var deviceToken = args["token"] as? String ?? ""
+        let deviceToken = args["token"] as? String ?? ""
         
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
         
@@ -108,10 +111,16 @@ import ContactsUI
                 ChatManager.connect()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-                    result(JSONSerializer.toSimpleJson(from: registerResponse))
+                    
+                    let resp = registerResponse.dictToJson()
+                    if(resp != nil){
+                        print("ChatManager.registerApiService==**==\(String(describing: resp))")
+                        result(resp)
+                    }else{
+                        result(FlutterError(code: "500", message: "Failed to Register User", details: nil))
+                    }
+                   
                 }
-                
-                
             }else{
                 let error = data.getMessage()
                 result(FlutterError(code: "500",
@@ -167,16 +176,24 @@ import ContactsUI
             return
         }
         
-        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
+        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: []) { isSuccess,error,chatMessage in
             if isSuccess {
                 print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
-                var chatMsg = JSONSerializer.toJson(chatMessage as Any)
-                chatMsg = chatMsg.replacingOccurrences(of: "{\"some\":", with: "")
-                chatMsg = chatMsg.replacingOccurrences(of: "}}", with: "}")
-                print(chatMsg)
-                result(chatMsg)
+//                var chatMsg = JSONSerializer.toJson(chatMessage as Any)
+//                chatMsg = chatMsg.replacingOccurrences(of: "{\"some\":", with: "")
+//                chatMsg = chatMsg.replacingOccurrences(of: "}}", with: "}")
+                let textMsgResponse = chatMessage.toJson()
+                if(textMsgResponse != nil){
+//                if let textMsgResponse = JSONConverter.convertObjectToJSON(chatMessage) {
+                    print("FlyMessenger.sendTextMessage==**==\(String(describing: textMsgResponse))")
+                    result(textMsgResponse)
+                } else {
+                    result(FlutterError(code: "500", message: "Failed to Send Text Message", details: nil))
+                }
+                
+                
             }else{
-                result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
+                result(FlutterError(code: "500", message: error?.description, details: nil))
             }
         }
         
@@ -200,15 +217,15 @@ import ContactsUI
         
         FlyMessenger.sendLocationMessage(toJid: userJid!, latitude: latitude, longitude: longitude, replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
             if isSuccess {
-                var locationResponse = JSONSerializer.toJson(chatMessage as Any)
-                
-                locationResponse = locationResponse.replacingOccurrences(of: "{\"some\":", with: "")
-                locationResponse = locationResponse.replacingOccurrences(of: "}}", with: "}")
-                print(locationResponse)
-                
+//                var locationResponse = JSONSerializer.toJson(chatMessage as Any)
+                let locationResponse = chatMessage?.toJson()
+//                locationResponse = locationResponse.replacingOccurrences(of: "{\"some\":", with: "")
+//                locationResponse = locationResponse.replacingOccurrences(of: "}}", with: "}")
+//                print(locationResponse)
+                print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
                 result(locationResponse)
             }else{
-                result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
+                result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
             }
         }
     }
@@ -255,12 +272,14 @@ import ContactsUI
             
         }
         
-        FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId){isSuccess,error,message in
+        FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId, mentionedUsersIds: []){isSuccess,error,message in
 //            if isSuccess {
                 
-                var response = JSONSerializer.toJson(message as Any)
-                response = response.replacingOccurrences(of: "{\"some\":", with: "")
-                response = response.replacingOccurrences(of: "}}", with: "}")
+//                var response = JSONSerializer.toJson(message as Any)
+            let response = message?.toJson()
+//                response = response.replacingOccurrences(of: "{\"some\":", with: "")
+//                response = response.replacingOccurrences(of: "}}", with: "}")
+            print("FlyMessenger.sendImageMessage==**==\(String(describing: response))")
                 result(response)
 //            }else{
 //                result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
@@ -294,16 +313,16 @@ import ContactsUI
                 FlyMessenger.sendAudioMessage(toJid:  userJid, mediaData: mediaData, replyMessageId :  replyMessageId, isRecorded : isRecorded) { isSuccess,error,message in
                     if message != nil {
                         
-                        var audioResponse = JSONSerializer.toJson(message as Any)
-                        
-                        audioResponse = audioResponse.replacingOccurrences(of: "{\"some\":", with: "")
-                        audioResponse = audioResponse.replacingOccurrences(of: "}}", with: "}")
-                        print(audioResponse)
-                        
+//                        var audioResponse = JSONSerializer.toJson(message as Any)
+                        let audioResponse = message?.toJson()
+//                        audioResponse = audioResponse.replacingOccurrences(of: "{\"some\":", with: "")
+//                        audioResponse = audioResponse.replacingOccurrences(of: "}}", with: "}")
+//                        print(audioResponse)
+                        print("FlyMessenger.sendAudioMessage==**==\(String(describing: audioResponse))")
                         result(audioResponse)
                         
                     }else{
-                        result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
+                        result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
                     }
                 }
             }
@@ -374,23 +393,25 @@ import ContactsUI
         
         ContactManager.shared.getUsersList(pageNo: pageNumber, pageSize: 20, search: searchTerm){ isSuccess,flyError,flyData in
             if isSuccess {
-                var userlist = flyData
+                var userList = flyData
                 
-                let userData = JSONSerializer.toJson(userlist.getData())
-                
-                let totalPages = userlist["totalPages"] as! Int
-                let message = userlist["message"] as! String
-                var userlistJson = ""
-                if(userData.isEmpty){
-                    userlistJson = "{\"total_pages\": " + String(totalPages) + ",\"message\" : \"" + message + "\",\"status\" : true,\"data\":[]}"
-                }else{
-                    userlistJson = "{\"total_pages\": " + String(totalPages) + ",\"message\" : \"" + message + "\",\"status\" : true,\"data\":" + userData + "}"
+                print("getUsersList\(userList)")
+                if let userData = userList.getData() as? [ProfileDetails] {
+                    userlist = userData
+                    let userDataJson = userData.toJson()
+                    print("userDataJson\(String(describing: userDataJson))")
+                    let totalPages = userList["totalPages"] as! Int
+                    let message = userList["message"] as! String
+                    var userlistJson = ""
+                    if((userDataJson?.isEmpty) == nil){
+                        userlistJson = "{\"total_pages\": " + String(totalPages) + ",\"message\" : \"" + message + "\",\"status\" : true,\"data\":[]}"
+                    }else{
+                        userlistJson = "{\"total_pages\": \(totalPages), \"message\": \"\(message)\", \"status\": true, \"data\": \(userDataJson ?? "[]")}"
+                        
+                    }
+                    print("ContactManager.shared.getUsersList==**==\(String(describing: userlistJson))")
+                    result(userlistJson)
                 }
-                 
-                userlistJson = userlistJson.replacingOccurrences(of: "{\"some\": {}}", with: "\"\"")
-                userlistJson = userlistJson.replacingOccurrences(of: "\"nickName\": {}", with: "\"nickName\": \"\"")
-                
-                result(userlistJson)
             }else{
                 result(FlutterError(code: "500", message: flyError?.description, details: nil))
             }
@@ -410,20 +431,12 @@ import ContactsUI
             if isSuccess {
                 var userData = "[]"
                 if((data.getData() as? [ProfileDetails])?.count != 0){
-                    userData = JSONSerializer.toJson(list as Any)
-                    userData = userData.replacingOccurrences(of: "\"some\":", with: "")
-//                    userData = userData.replacingOccurrences(of: "]", with: "")
+                    userData = (list?.toJson())!
                 }
-                print("-------->>>> \(userData)")
-                let message = data["message"] as! String
-                var userlistJson = "{\"message\" : \"" + message + "\",\"status\" : true,\"data\":" + userData + "}"
                 
-                userlistJson = userlistJson.replacingOccurrences(of: "{\"some\": {}}", with: "\"\"")
-                userlistJson = userlistJson.replacingOccurrences(of: "\"nickName\": {}", with: "\"nickName\": \"\"")
+                print("ContactManager.shared.getRegisteredUsers==**== \(userData)")
                 
-                print("userListJson \(userlistJson)")
-                
-                result(userlistJson)
+                result(userData)
             } else{
                 result(FlutterError(code: "500", message: flyError?.description, details: nil))
             }
@@ -469,16 +482,12 @@ import ContactsUI
                 media.base64Thumbnail = base64Img
                 media.caption = caption
                 
-                FlyMessenger.sendVideoMessage(toJid: userJid, mediaData: media, replyMessageId: replyMessageId){ isSuccess,error,message in
+                FlyMessenger.sendVideoMessage(toJid: userJid, mediaData: media, replyMessageId: replyMessageId, mentionedUsersIds: []){ isSuccess,error,message in
 //                    if isSuccess{
                         if let chatMessage = message {
-                            
-                            var sendVideoResposne = JSONSerializer.toJson(chatMessage)
-                            
-                            sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "{\"some\":", with: "")
-                            sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "}}", with: "}")
-                            print(sendVideoResposne)
-                            result(sendVideoResposne)
+                            let sendVideoResponse = chatMessage.toJson()
+                            print("FlyMessenger.sendVideoMessage==**==\(String(describing: sendVideoResponse))")
+                            result(sendVideoResponse)
                             
                         }
 //                    }else{
@@ -516,15 +525,12 @@ import ContactsUI
         FlyMessenger.sendContactMessage(toJid: userJid, contactName: contactName, contactNumbers: contactList, replyMessageId: replyMessageId){ isSuccess,error,message  in
             if message != nil {
                 
-                var contactMessageResponse = JSONSerializer.toJson(message as Any)
-                
-                contactMessageResponse = contactMessageResponse.replacingOccurrences(of: "{\"some\":", with: "")
-                contactMessageResponse = contactMessageResponse.replacingOccurrences(of: "}}", with: "}")
-                
+                let contactMessageResponse = message?.toJson()
+                print("FlyMessenger.sendContactMessage==**==\(String(describing: contactMessageResponse))")
                 result(contactMessageResponse)
                 
             }else{
-                result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
+                result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
             }
         }
     }
@@ -544,7 +550,7 @@ import ContactsUI
         MediaUtils.processDocument(url: documentFileUrl){ isSuccess,localPath,fileSize,fileName, errorMessage in
             if !isSuccess {
                 if !errorMessage.isEmpty {
-                    result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: errorMessage as Any), details: nil))
+                    result(FlutterError(code: "500", message: errorMessage.description, details: nil))
                 }
                 return
             }
@@ -558,15 +564,15 @@ import ContactsUI
                 FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId) { isSuccess, error, message in
                     if message != nil {
                         print("sendDocumentMessage")
-                        var documentMessageResponse = JSONSerializer.toJson(message as Any)
-                        
-                        documentMessageResponse = documentMessageResponse.replacingOccurrences(of: "{\"some\":", with: "")
-                        documentMessageResponse = documentMessageResponse.replacingOccurrences(of: "}}", with: "}")
-                        
+//                        var documentMessageResponse = JSONSerializer.toJson(message as Any)
+                        let documentMessageResponse = message?.toJson()
+//                        documentMessageResponse = documentMessageResponse.replacingOccurrences(of: "{\"some\":", with: "")
+//                        documentMessageResponse = documentMessageResponse.replacingOccurrences(of: "}}", with: "}")
+                        print("FlyMessenger.sendDocumentMessage==**==\(String(describing: documentMessageResponse))")
                         result(documentMessageResponse)
                         
                     }else{
-                        result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
+                        result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
                     }
                     
                 }
@@ -576,13 +582,19 @@ import ContactsUI
             }
         }
     }
-    
+   
     static func getProfileStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let profileStatus = ChatManager.getAllStatus()
         if(profileStatus.isEmpty){
             result(nil)
         }
-        let profileStatusJson = JSONSerializer.toJson(profileStatus)
+        
+//        let profileStatusJson = profileStatus.toJson()
+//        let profileStatusJson = JSONSerializer.toJson(profileStatus)
+        //need to check response.
+        
+        let profileStatusJson = profileStatus.toJson()
+        print("getProfileStatusList==**==\(String(describing: profileStatusJson))")
         result(profileStatusJson)
         
     }
@@ -609,9 +621,9 @@ import ContactsUI
         for status in getAllStatus {
             if(status.status == newStatus){
                 isAlreadyExists = true
-                let statusResponse = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: true)
+                _ = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: true)
             }else{
-                let statusResponse = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+                _ = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
             }
         }
         if(!isAlreadyExists){
@@ -634,10 +646,10 @@ import ContactsUI
         getAllStatus = ChatManager.getAllStatus()
         for status in getAllStatus {
             if(status.id == statusId) {
-                let statusUpdateResponse = ChatManager.updateStatus(statusId: statusId ,statusText: statusText,currentStatus: true)
+                _ = ChatManager.updateStatus(statusId: statusId ,statusText: statusText,currentStatus: true)
             }
             else{
-                let statusUpdateResponse = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+                _ = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
             }
         }
         
@@ -679,9 +691,13 @@ import ContactsUI
         let messageIDList = args["message_ids"] as? [String] ?? []
         let userList = args["userList"] as? [String] ?? []
         
-        FlyMessenger.composeForwardMessage(messageIds: messageIDList, toJidList: userList)
+        FlyMessenger.composeForwardMessage(messageIds: messageIDList, toJidList: userList, completionHandler: { isSuccess, flyError, flyData in
+            if isSuccess{
+                result("Message Forward Success")
+            }
+        })
         
-        result("Message Forward Success")
+        
         
     }
     
@@ -720,24 +736,24 @@ import ContactsUI
         }
         
         print("---group members--- \(groupMembers)")
-        
+        //need to check response
+//        var groupMembersJson = groupMembers.toJson()
+    
         var groupMemberProfile: String = "["
         
         groupMembers.forEach{ groupMember in
             if(groupMember.profileDetail != nil){
-                var profileDetailJson = JSONSerializer.toJson(groupMember.profileDetail as Any)
-                print("---group members json--- \(profileDetailJson)")
-                profileDetailJson = profileDetailJson.replacingOccurrences(of: "{\"some\":", with: "")
-                profileDetailJson = profileDetailJson.replacingOccurrences(of: "}}", with: "}")
-                profileDetailJson = profileDetailJson.replacingOccurrences(of: "{}", with: "\"\"")
+//                var profileDetailJson = JSONSerializer.toJson(groupMember.profileDetail as Any)
+                let profileDetailJson = groupMember.profileDetail?.toJson()
+                print("---group members json--- \(String(describing: profileDetailJson))")
                 
-                groupMemberProfile = groupMemberProfile + profileDetailJson + ","
+                groupMemberProfile = groupMemberProfile + (profileDetailJson ?? "") + ","
             }
             
         }
         groupMemberProfile = groupMemberProfile.dropLast() + "]"
         
-        print("groupMemberProfile \(groupMemberProfile)")
+        print("getGroupMembersList==**== \(String(describing: groupMemberProfile))")
     
         result(groupMemberProfile)
     }
@@ -753,12 +769,13 @@ import ContactsUI
     
     static func getFavouriteMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-        var starredMessages =  ChatManager.getFavouriteMessages()
+        let starredMessages =  ChatManager.getFavouriteMessages()
         
-        var starredMessagesJson = JSONSerializer.toJson(starredMessages)
-        
-        starredMessagesJson = starredMessagesJson.replacingOccurrences(of: "{\"some\":", with: "")
-        starredMessagesJson = starredMessagesJson.replacingOccurrences(of: "}}", with: "}")
+//        var starredMessagesJson = JSONSerializer.toJson(starredMessages)
+        let starredMessagesJson = starredMessages.toJson()
+//        starredMessagesJson = starredMessagesJson.replacingOccurrences(of: "{\"some\":", with: "")
+//        starredMessagesJson = starredMessagesJson.replacingOccurrences(of: "}}", with: "}")
+        print("starredMessagesJson==**==\(String(describing: starredMessagesJson))")
         result(starredMessagesJson)
     }
     
@@ -774,7 +791,8 @@ import ContactsUI
         let userjid = args["jid"] as? String ?? ""
         
         let savedMessage = FlyMessenger.getUnsentMessageOf(id: userjid)
-        result(savedMessage)
+        print("savedMessage\(savedMessage)")
+        result(savedMessage.textContent)
         
     }
     
@@ -815,10 +833,15 @@ import ContactsUI
         do {
             try ContactManager.shared.getUserProfile(for: userjid, fetchFromServer: server, saveAsFriend: saveasfriend){ isSuccess, flyError, flyData in
                 var data  = flyData
+                let profileData = data.getData() as? ProfileDetails
+                print("***getUserProfile\(String(describing: profileData))")
+                
+                print("***getUserProfile dict\(String(describing: profileData.toJson()))")
                 if isSuccess {
-                    
-                    let profileJSON = "{\"data\" : " + JSONSerializer.toJson(data.getData() as Any) + ",\"status\": true}"
-                    print("profileJSON-->\(profileJSON)")
+                    //need to check response.
+//                    let profileJSON = "{\"data\" : " + JSONSerializer.toJson(data.getData() as Any) + ",\"status\": true}"
+                    let profileJSON = "{\"data\" : " + (profileData.toJson() ?? "[]") + ",\"status\": true}"
+                    print("ContactManager.shared.getUserProfile==**==\(profileJSON)")
                     result(profileJSON)
                 } else{
                     result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
@@ -867,15 +890,27 @@ import ContactsUI
             if isSuccess {
                 var data = flyData
                 
-                let profileData = data.getData()
+                
+//                let profileData = data.getData() as? FlyProfile
                 let message = data.getMessage()
+                print("***profile Data\(data.getData() as? FlyProfile)")
+//                let profileDataJson = data.dictToJson()
+                let profileUpdateResponse = data.getData() as? FlyProfile
+                let profileDataJson = profileUpdateResponse?.toJson()
+                print("***profile Data json \(profileDataJson)")
+//                let profileDataDecoded = extractData(from: profileDataJson ?? "")
+                
+//                print("***profileDataDecoded\(String(describing: profileDataDecoded))")
+                
+                
+//                let profileDataJson =  pluginDictToJson(dictionary: profileData)
+                //need to check response.
+//                let profileDataJson = profileData.toJson()//JSONSerializer.toJson(profileData)
 
-                let profileDataJson = JSONSerializer.toJson(profileData)
-
-                var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson) }"
+                var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
 
                 saveMyProfileDataToUserDefaults(profile: myProfile)
-                
+                print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
                 result(profileResponseJson)
             } else{
                 result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
@@ -914,7 +949,9 @@ import ContactsUI
         profileData.status = FlyDefaults.myStatus
         profileData.image = FlyDefaults.myImageUrl
         
-        FlyDatabaseController.shared.rosterManager.saveContact(profileDetailsArray: [profileData], chatType: .singleChat, contactType: .live, saveAsTemp: false, calledBy: "")
+        //need to check the fn
+//        FlyDatabaseController.shared.rosterManager.saveContact(profileDetailsArray: [profileData], chatType: .singleChat, contactType: .live, saveAsTemp: false, calledBy: "")
+        ContactManager.shared.saveUser(profileDetails: profileData, saveAs: .live)
     }
     
     static func getMediaEndPoint(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -932,27 +969,141 @@ import ContactsUI
     static func updateMyProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let profileImage = args["image"] as? String ?? ""
-       
-        ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
-                if isSuccess {
+        print("*****profileImage\(profileImage)")
+        var localFileUrl = ""
+//        let imageData = try Data(contentsOf: profileImage as URL)
+//        guard let fileURL = URL(string: "file:///" + profileImage) else {
+//            // Invalid file URL
+//            print("*******Invalid file url")
+//            return
+//        }
+//        print("****file url\(fileURL)")
+        let sourceURL = URL(fileURLWithPath: profileImage)
+        print("****sourceURL \(sourceURL)")
+        let fileName = (profileImage as NSString).lastPathComponent
+        print("file name" + fileName)
+        do {
+//            let imageData = try Data(contentsOf: fileURL)
+            
+            
+            if (profileImage != ""){
+//                if let fileUrl = saveInDirectory(with: imageData, fileName: fileName) {
+                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
+                    print("File saved at: \(fileUrl)")
+                    localFileUrl = fileUrl
+//                    if fileExists(atPath: fileUrl) {
+//                        print("File exists.")
+//                    } else {
+//                        print("File does not exist.")
+//                    }
+                    FlyDefaults.myImageToken = fileUrl
+//                    ContactManager.shared.updateMyProfileImage(image: localFileUrl){ isSuccess, flyError, flyData in
+//                            if isSuccess {
+//
+//                                var data = flyData
+//
+//                                //need to check response
+//
+//                                let profileData = data.getData() as? FlyProfile
+//
+//                                let message = data.getMessage()
+//                                print("profile Image update response-->\(String(describing: profileData))")
+//
+//
+//            //                    let profileDataJson = JSONSerializer.toJson(profileData)
+//
+//                                let profileDataJson = profileData?.toJson()
+//
+//                                let profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(String(describing: profileDataJson)) }"
+//
+//                                print("profileResponseJson==**==\(profileResponseJson)")
+//                                result(profileResponseJson)
+//
+//                            } else{
+//                                result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+//                            }
+//                    }
                     
-                    var data = flyData
                     
-                    let profileData = data.getData()
-                    let message = data.getMessage()
-                    print("profile Image update response-->\(profileData)")
-
-                    let profileDataJson = JSONSerializer.toJson(profileData)
-
-
-                    var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson) }"
-
-                    result(profileResponseJson)
+                    let userJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
                     
-                } else{
-                    result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                    
+                    var myProfile = FlyProfile(jid: userJid)
+                    myProfile.image = localFileUrl
+                    
+//                    myProfile.email = email
+                    
+//                    myProfile.mobileNumber = mobile
+                    
+//                    myProfile.nickName = nickName
+//                    myProfile.name = nickName
+                    
+//                    myProfile.status = status
+                    
+//                    if(image != nil){
+//                        print("Image is not null if condition")
+//                        myProfile.image = image!
+//            //            isImagePicked = false
+//                    }else{
+//                        print("Image is null else condition")
+//            //            isImagePicked = false
+//                    }
+                    
+                    
+                    ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
+                        if isSuccess {
+                            var data = flyData
+                            
+                            
+            //                let profileData = data.getData() as? FlyProfile
+                            let message = data.getMessage()
+                            print("***profile Data\(data.getData() as? FlyProfile)")
+            //                let profileDataJson = data.dictToJson()
+                            var profileUpdateResponse = data.getData() as? FlyProfile
+                            let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
+//                                    var imageFilename = imageURL
+                            if let fileName = fileArray?.last {
+                                profileUpdateResponse?.image = fileName
+                                    }
+                            
+                            let profileDataJson = profileUpdateResponse?.toJson()
+                            print("***profile Data json \(profileDataJson)")
+                            
+            //                let profileDataDecoded = extractData(from: profileDataJson ?? "")
+                            
+            //                print("***profileDataDecoded\(String(describing: profileDataDecoded))")
+                            
+                            
+            //                let profileDataJson =  pluginDictToJson(dictionary: profileData)
+                            //need to check response.
+            //                let profileDataJson = profileData.toJson()//JSONSerializer.toJson(profileData)
+
+                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+
+                            saveMyProfileDataToUserDefaults(profile: myProfile)
+                            print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
+                            result(profileResponseJson)
+                        } else{
+                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                            
+                        }
+                    }
+                } else {
+                    print("Failed to save the file.")
+                    
                 }
+            }
+            
+        } catch {
+            // Error handling
+            print("Error reading file: \(error.localizedDescription)")
         }
+        
+        
+        
+        
+       
+        
         
     }
     
@@ -1011,8 +1162,12 @@ import ContactsUI
     }
     
     static func getMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let profileStatus = ChatManager.shared.getMyBusyStatus()
-        result(JSONSerializer.toJson(profileStatus))
+        let busyStatus = ChatManager.shared.getMyBusyStatus()
+        print("getMyBusyStatus==**==\(busyStatus)")
+       //need to check response.
+        let busyStatusJson = busyStatus.toJson()
+//        result(JSONSerializer.toJson(profileStatus))
+        result(busyStatusJson)
     }
     
     static func setMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1037,15 +1192,21 @@ import ContactsUI
     static func insertBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let busyStatus = args["busy_status"] as? String ?? ""
-        
-
-        result(FlyDatabaseController.shared.userBusyStatusManager.saveStatus(busyStatus: BusyStatus(statusText: busyStatus)))
+        print("setting busy status\(busyStatus)")
+        ChatManager.shared.setMyBusyStatus(busyStatus)
+//        print("busy status set resp\(resp)")
+        //need to check the fn
+//        result(FlyDatabaseController.shared.userBusyStatusManager.saveStatus(busyStatus: BusyStatus(statusText: busyStatus)))
+        result(true)
     }
     
     static func getBusyStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let busyStatusList = ChatManager.shared.getBusyStatusList()
         print("Get Status Started profileList Count \(busyStatusList.count)")
-        var busyStatusJsonList = JSONSerializer.toJson(busyStatusList)
+        //need to check response.
+//        var busyStatusJsonList = JSONSerializer.toJson(busyStatusList)
+        let busyStatusJsonList = busyStatusList.toJson()
+        print("getBusyStatusList==**==\(String(describing: busyStatusJsonList))")
         result(busyStatusJsonList)
     }
     
@@ -1058,7 +1219,7 @@ import ContactsUI
                         
         let busyStatus = BusyStatus(statusText: status, isCurrentStatus: isCurrentStatus)
         
-        print(busyStatus)
+        print("deleteBusyStatus==**==\(busyStatus)")
         
         ChatManager.shared.deleteBusyStatus(statusId: busyId)
         
@@ -1116,8 +1277,14 @@ import ContactsUI
             deleteChatType = .groupChat
         }
         
+        print("jid\(jid)")
+        print("chatType\(chatType)")
+        print("isMediaDelete\(isMediaDelete)")
+        print("messageIDList\(messageIDList)")
+        
         ChatManager.deleteMessagesForEveryone(toJid: jid, messageIdList: messageIDList, deleteChatType: deleteChatType,isRevokeMediaAccess: isMediaDelete) { (isSuccess, error, data) in
             
+            print("deleteMessagesForEveryone result\(isSuccess)")
             result(isSuccess)
             
         }
@@ -1137,13 +1304,14 @@ import ContactsUI
         print(userJid)
         let messages : [ChatMessage] = FlyMessenger.getMessagesOf(jid: userJid)
               
-        var userChatHistory = JSONSerializer.toJson(messages)
+//        var userChatHistory = JSONSerializer.toSimpleJson(from: messages)//(messages)
         
-        userChatHistory = userChatHistory.replacingOccurrences(of: "{\"some\":", with: "")
-        userChatHistory = userChatHistory.replacingOccurrences(of: "}}", with: "}")
-        
-        result(userChatHistory)
-        
+        if let chatJson = messages.toJson() {
+            print("getMessagesOfJid==**==\(chatJson)")
+            result(chatJson)
+        } else {
+            result(FlutterError(code: "500", message: "Failed to Encode Chat Messages", details: nil))
+        }
         
     }
     
@@ -1151,6 +1319,8 @@ import ContactsUI
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? ""
+        
+        print("markAsReadDeleteUnreadSeparator==**==")
 
         ChatManager.markConversationAsRead(for: [jid])
         FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
@@ -1295,7 +1465,7 @@ import ContactsUI
     static func deleteRecentChat(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        var userJID = args["jid"] as? String ?? ""
+        let userJID = args["jid"] as? String ?? ""
         
         var userJIDs: [String] = []
         userJIDs.append(userJID)
@@ -1316,8 +1486,8 @@ import ContactsUI
     }
     static func makeAdmin(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
-        var groupJID = args["jid"] as? String ?? ""
-        var userJID = args["userjid"] as? String ?? ""
+        let groupJID = args["jid"] as? String ?? ""
+        let userJID = args["userjid"] as? String ?? ""
         
         do{
             
@@ -1416,7 +1586,24 @@ import ContactsUI
         
     }
     
-    
+    static func getMessageStatusOfASingleChatMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let messageID = args["messageID"] as? String ?? ""
+        let seenReceipt = ChatManager.getSingleChatMessageSeenReceipt(messageId: messageID)
+        print("getSingleChatMessageSeenReceipt\(String(describing: seenReceipt))")
+        let deliverReceipt = ChatManager.getSingleChatMessageDeliveredReceipt(messageId: messageID)
+        print("deliverReceipt\(String(describing: deliverReceipt))")
+        let acknowledgeReceipt = ChatManager.getSingleChatMessageAcknowledgeReceipt(messageId: messageID)
+        print("acknowledgeReceipt\(String(describing: acknowledgeReceipt))")
+        
+        var seenResponse = String(format: "%.0f",seenReceipt?.time ?? "")
+        var deliveredResponse = String(format: "%.0f",deliverReceipt?.time ?? "")
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(seenResponse == "0" ? "" : seenResponse, forKey: "seenTime")
+        jsonObject.setValue(deliveredResponse == "0" ? "" : deliveredResponse, forKey: "deliveredTime")
+        let jsonString = pluginDictToJson(dictionary: jsonObject)
+        result(jsonString)
+    }
     static func exportChatConversationToEmail(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJID = args["jid"] as? String ?? ""
@@ -1442,10 +1629,28 @@ import ContactsUI
         
         print("calling getAllGroups")
         GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
-            var data  = flyData
             
+        //need to check response
             if isSuccess {
-                result(JSONSerializer.toJson(data.getData()))
+                var data  = flyData
+                
+//                let getAllGroupJson = data.dictToJson()
+                
+                let groupData = data.getData() as? [ProfileDetails]
+                
+                let groupDataJson = groupData?.toJson()
+                
+              
+//                if let groupJsonData = extractData(from: getAllGroupJson!) { //  getAllGroupJson?.extractJSONObject() {
+//
+//                    if let groupData = groupJsonData["data"] {
+//                        print("GroupManager.shared.getGroups==**==\(groupData)")
+//                        result(groupData)
+//                    }
+//
+//                }
+                result(groupDataJson)
+                
             } else{
                 result(FlutterError(code: "500", message: "Unable to Fetch Group List", details: flyError?.localizedDescription))
             }
@@ -1455,7 +1660,7 @@ import ContactsUI
     static func searchConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let searchKey = args["searchKey"] as? String ?? ""
-        let jidForSearch = args["jidForSearch"] as? String ?? ""
+        _ = args["jidForSearch"] as? String ?? ""
         let globalSearch = args["globalSearch"] as? Bool ?? true
         
         let searchedMessages : [SearchMessage] = ChatManager.shared.searchMessage(text: searchKey)
@@ -1467,14 +1672,17 @@ import ContactsUI
                 searchConversationResp = searchConversationResp + ","
             }
             index = index + 1;
-            var message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: message.messageId)
-            var messageJson = JSONSerializer.toJson(message as Any)
-            messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
-            messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
-            searchConversationResp = searchConversationResp + messageJson
+            let message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: message.messageId)
+            
+            let messageJson = message?.toJson()// JSONSerializer.toJson(message as Any)
+//            messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
+//            messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
+            searchConversationResp = searchConversationResp + (messageJson ?? "")
         }
         
         searchConversationResp = searchConversationResp + "]"
+        
+        print("searchConversation==**==\(searchConversationResp)")
        
         result(searchConversationResp)
     }
@@ -1482,7 +1690,10 @@ import ContactsUI
     static func isMuted(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJID = args["jid"] as? String ?? ""
-        result(FlyCoreController.shared.isContactMuted(jid: userJID))
+        //need to check the fn
+//        result(FlyCoreController.shared.isContactMuted(jid: userJID))
+        let isMuted = ContactManager.shared.getUserProfileDetails(for: userJID)?.isMuted ?? false
+        result(isMuted)
     }
     
     static func isBusyStatusEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1516,14 +1727,19 @@ import ContactsUI
                       if(recentChatList.isEmpty){
                           result("{\"data\": [] }")
                       }else{
-                          let recentChatJson = JSONSerializer.toJson(recentChatList)
+//                          let recentChatJson = JSONSerializer.toJson(recentChatList)
                           
-                          print(recentChatJson)
+//                          if let recentChatJson = JSONConverter.convertObjectToJSON(recentChatList) {
+                          if let recentChatJson = recentChatList.toJson() { // JSONConverter.convertObjectToJSON(recentChatList) {
+                              let recentChatListJson = "{\"data\":" + recentChatJson + "}"
+                              
+                              print("ChatManager.getRecentChatList==**==\(recentChatListJson)")
+                              result(recentChatListJson)
+                          } else {
+                              print("Failed to convert object to JSON")
+                              result(FlutterError(code: "500", message: "Error Parsing the Recent Chat List", details: nil))
+                          }
                           
-                          let recentChatListJson = "{\"data\":" + recentChatJson + "}"
-                          
-                          print(recentChatListJson)
-                          result(recentChatListJson)
                       }
                    
                   } else {
@@ -1537,22 +1753,28 @@ import ContactsUI
     static func getRecentChatListIncludingArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let recentChatList = ChatManager.getRecentChatListIncludingArchived()
-        result(JSONSerializer.toJson(recentChatList))
+        let recentChatListJson = recentChatList.toJson()
+        print("getRecentChatListIncludingArchived==**==\(String(describing: recentChatListJson))")
+        result(recentChatListJson)
     }
+    
     static func getRecentChatOf(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? nil
-        print("getRecentChatOf jid --> \(jid)")
+        print("getRecentChatOf jid --> \(String(describing: jid))")
         let recentChat = ChatManager.getRecentChatOf(jid:jid!)
-        print("recentChat-->\(recentChat)")
+        print("recentChat-->\(String(describing: recentChat))")
         if(recentChat == nil){
             result(nil)
         }
         
-        var recentChatJson = JSONSerializer.toJson(recentChat as Any)
-        recentChatJson = recentChatJson.replacingOccurrences(of: "{\"some\":", with: "")
-        recentChatJson = recentChatJson.replacingOccurrences(of: "}}", with: "}")
+        
+//        var recentChatJson = JSONSerializer.toJson(recentChat as Any)
+        let recentChatJson = recentChat?.toJson() //JSONSerializer.toJson(recentChat as Any)
+//        recentChatJson = recentChatJson.replacingOccurrences(of: "{\"some\":", with: "")
+//        recentChatJson = recentChatJson.replacingOccurrences(of: "}}", with: "}")
+        print("getRecentChatOf==**==\(String(describing: recentChatJson))")
         result(recentChatJson)
     }
     static func recentChatPinnedCount(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1572,11 +1794,13 @@ import ContactsUI
         
         let reportMessage : ReportMessage? = ChatManager.getMessagesForReporting(chatUserJid: userJid, messagesCount: 5)
         
-        var reportMessageJson = JSONSerializer.toJson(reportMessage as Any)
-        reportMessageJson = reportMessageJson.replacingOccurrences(of: "{\"some\":", with: "")
-        reportMessageJson = reportMessageJson.replacingOccurrences(of: "}}", with: "}")
-        
-        result(reportMessageJson)
+        let reportMessageJson = reportMessage?.toJson()
+        print("reportUserOrMessages==**==\(String(describing: reportMessageJson))")
+        if(reportMessageJson != nil){
+            result(true)
+        }else{
+            result(false)
+        }
         
     }
     static func blockUser(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1588,11 +1812,12 @@ import ContactsUI
             try ContactManager.shared.blockUser(for: userJid){ isSuccess, flyError, flyData in
 
                     if isSuccess {
-                        var blockUserResponseJson = JSONSerializer.toJson(flyData as Any)
+//                        var blockUserResponseJson = JSONSerializer.toJson(flyData as Any)
+                        let blockUserResponseJson = flyData.dictToJson() //JSONSerializer.toJson(flyData as Any)
                         
-                        blockUserResponseJson = blockUserResponseJson.replacingOccurrences(of: "{\"some\":", with: "")
-                        blockUserResponseJson = blockUserResponseJson.replacingOccurrences(of: "}}", with: "}")
-                        
+//                        blockUserResponseJson = blockUserResponseJson.replacingOccurrences(of: "{\"some\":", with: "")
+//                        blockUserResponseJson = blockUserResponseJson.replacingOccurrences(of: "}}", with: "}")
+                        print("ContactManager.shared.blockUser==**==\(String(describing: blockUserResponseJson))")
                         result(blockUserResponseJson)
                     } else{
                         result(FlutterError(code: "500", message: "Unable to Block User", details: flyError?.localizedDescription))
@@ -1629,19 +1854,35 @@ import ContactsUI
         let file = args["file"] as? String ?? ""
         let members = args["members"] as? [String] ?? []
         do{
+            var localFileUrl = ""
+            if (file != ""){
+                let sourceURL = URL(fileURLWithPath: file)
+                print("****sourceURL \(sourceURL)")
+                let fileName = (file as NSString).lastPathComponent
+                print("file name" + fileName)
+                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
+                    print("File saved at: \(fileUrl)")
+                    localFileUrl = fileUrl
+                    
+                }
+            }
             
-            try GroupManager.shared.createGroup(groupName: groupName, participantJidList: members, groupImageFileUrl: file, completionHandler: { isSuccess, flyError, flyData in
+            try GroupManager.shared.createGroup(groupName: groupName, participantJidList: members, groupImageFileUrl: localFileUrl, completionHandler: { isSuccess, flyError, flyData in
                 if isSuccess {
-                    var createGroupResponseJson = JSONSerializer.toJson(flyData as Any)
+                    var data = flyData
+                    print("create group\(flyData)")
                     
-                    createGroupResponseJson = createGroupResponseJson.replacingOccurrences(of: "{\"some\":", with: "")
-                    createGroupResponseJson = createGroupResponseJson.replacingOccurrences(of: "}}", with: "}")
+                    let groupProfileData = data.getData() as? ProfileDetails
                     
-                    result(createGroupResponseJson)
+                    let groupProfileDataJson = groupProfileData?.toJson()
+                    print("GroupManager.shared.createGroup==**==\(String(describing: groupProfileDataJson))")
+                    result(groupProfileDataJson)
                 } else{
                     result(FlutterError(code: "500", message: "Unable to Create Group", details: flyError?.localizedDescription))
                 }
             })
+            
+            
         }catch let error{
             result(FlutterError(code: "500", message: "Unable to Create Group", details: error.localizedDescription))
         }
@@ -1685,7 +1926,9 @@ import ContactsUI
           
                 if isSuccess {
                     let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
-                    let blockedProfileJson = JSONSerializer.toJson(blockedprofileDetailsArray as Any)
+                    let blockedProfileJson = blockedprofileDetailsArray.toJson()
+//                    let blockedProfileJson = JSONSerializer.toJson(blockedprofileDetailsArray as Any)
+                    print("ContactManager.shared.getUsersIBlocked==**==\(String(describing: blockedProfileJson))")
                     result(blockedProfileJson)
                 } else{
                     result(FlutterError(code: "500", message: "Unable to Fetch Blocked List", details: flyError?.localizedDescription))
@@ -1697,8 +1940,7 @@ import ContactsUI
         let args = call.arguments as! Dictionary<String, Any>
         
         let userJid = args["jid"] as? String ?? ""
-        
-        ChatManager.getVedioImageAudioMessageGroupByMonth(jid: userJid) { isSuccess,error,data  in
+        ChatManager.getVideoImageAudioMessageGroupByMonth(jid: userJid) { isSuccess,error,data  in
             
             if isSuccess {
                 var mediaData = data
@@ -1707,11 +1949,13 @@ import ContactsUI
                 if(chatMessages!.isEmpty){
                     result(nil)
                 }else{
-                    var mediaMsgJson = JSONSerializer.toJson(chatMessages as Any)
-                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
-                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "\"some\": [[", with: "[")
-                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
+//                    var mediaMsgJson = JSONSerializer.toJson(chatMessages as Any)
+                    var mediaMsgJson = chatMessages?.toJson() //JSONSerializer.toJson(chatMessages as Any)
+//                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+//                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+                    mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "[[", with: "[")
+                    mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "]]", with: "]")
+                    print("ChatManager.getVedioImageAudioMessageGroupByMonth==**==\(String(describing: mediaMsgJson))")
                     result(mediaMsgJson)
                 }
                 
@@ -1734,11 +1978,13 @@ import ContactsUI
                 if (mediaMessages.isEmpty){
                     result(nil)
                 }else{
-                    var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
-                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
-                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "[[", with: "[")
-                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
+//                    var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+                    var mediaMsgJson = mediaMessages.toJson()
+//                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+//                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+                    mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "[[", with: "[")
+                    mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "]]", with: "]")
+                    print("ChatManager.getDocumentMessageGroupByMonth==**==\(String(describing: mediaMsgJson))")
                     result(mediaMsgJson)
                 }
             }else{
@@ -1764,17 +2010,18 @@ import ContactsUI
                     
                     mediaLinkMessages.forEach { mediaLinkMessage in
                         mediaLinkMessage.forEach{ linkChatMessage in
-                            var mediaMsgJson = JSONSerializer.toJson(linkChatMessage.chatMessage)
+//                            var mediaMsgJson = JSONSerializer.toJson(linkChatMessage.chatMessage)
+                            let mediaMsgJson = linkChatMessage.chatMessage.toJson()
+//                            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+//                            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
                             
-                            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-                            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
-                            
-                            viewAllMediaLinkMessages = viewAllMediaLinkMessages + mediaMsgJson + ","
+                            viewAllMediaLinkMessages = viewAllMediaLinkMessages + (mediaMsgJson ?? "") + ","
                             
                         }
                         
                     }
                     viewAllMediaLinkMessages = viewAllMediaLinkMessages.dropLast() + "]"
+                    print("ChatManager.getLinkMessageGroupByMonth\(viewAllMediaLinkMessages)")
                     
                     result(viewAllMediaLinkMessages)
                 }
@@ -1937,10 +2184,11 @@ import ContactsUI
         
         var message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: messageId)
         
-        var messageJson = JSONSerializer.toJson(message as Any)
-        messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
-        messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
-        
+//        var messageJson = JSONSerializer.toJson(message as Any)
+        var messageJson = message?.toJson()
+//        messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
+//        messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
+        print("getMessageOfId==**==\(String(describing: messageJson))")
         result(messageJson)
                
     }
@@ -1957,12 +2205,16 @@ import ContactsUI
                    result("{\"data\": [] }")
                }else{
                    
-                   let archiveChatJson = JSONSerializer.toJson(flydata.getData())
+                   let archiveChatJson = archiveData.toJson()
                    
-                   let archiveChatListJson = "{\"data\":" + archiveChatJson + "}"
-                   
+                   let archiveChatListJson = "{\"data\":" + (archiveChatJson ?? "[]") + "}"
+                   print("ChatManager.getArchivedChatList==**==\(archiveChatJson)")
                    result(archiveChatListJson)
                }
+//               let archiveChatJson = flydata.dictToJson()
+//               print("ChatManager.getArchivedChatList==**==\(String(describing: archiveChatJson))")
+//               result(rchiveChatJson)
+               
            }else{
                result(FlutterError(code: "500", message: "Unable to Fetch Archived List", details: flyError?.localizedDescription))
            }
@@ -1974,12 +2226,27 @@ import ContactsUI
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
-        let userProfile = ChatManager.profileDetaisFor(jid: userJid)
-        print("getProfileDetails --> \(userProfile)")
-        var userProfileJson = JSONSerializer.toJson(userProfile as Any)
-        userProfileJson = userProfileJson.replacingOccurrences(of: "{\"some\":", with: "")
-        userProfileJson = userProfileJson.replacingOccurrences(of: "}}", with: "}")
-        result(userProfileJson)
+        
+        if let userProfile = userlist.filter({$0.jid == userJid}).first {
+            
+            ContactManager.shared.saveUser(profileDetails: userProfile)
+            
+            //        let userProfile = ChatManager.profileDetaisFor(jid: userJid)
+            //        let userProfile = ChatManager.profileDetaisFor(jid: "918526697581@xmpp-uikit-qa.contus.us")
+            //        let userProfile = ContactManager.shared.getUserProfileDetails(for: userJid)
+            print("getProfileDetails --> \(String(describing: userProfile))")
+            //        var userProfileJson = JSONSerializer.toJson(userProfile as Any)
+            let userProfileJson = userProfile.toJson() //JSONSerializer.toJson(userProfile as Any)
+            //        userProfileJson = userProfileJson.replacingOccurrences(of: "{\"some\":", with: "")
+            //        userProfileJson = userProfileJson.replacingOccurrences(of: "}}", with: "}")
+            print("getProfileDetails==**==\(String(describing: userProfileJson))")
+            result(userProfileJson)
+        }else{
+            let userProfile = ChatManager.profileDetaisFor(jid: userJid)
+            let userProfileJson = userProfile.toJson()
+            print("getProfileDetails==**==\(String(describing: userProfileJson))")
+            result(userProfileJson)
+        }
 
     }
     static func deleteAccount(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1990,9 +2257,11 @@ import ContactsUI
            var data  = flyData
            print(data.getMessage() as! String )
            if isSuccess {
-               var deleteResponseJson = JSONSerializer.toJson(data)
-                deleteResponseJson = deleteResponseJson.replacingOccurrences(of: "{\"some\":", with: "")
-                deleteResponseJson = deleteResponseJson.replacingOccurrences(of: "}}", with: "}")
+//               var deleteResponseJson = JSONSerializer.toJson(data)
+               let deleteResponseJson = data.dictToJson()//JSONSerializer.toJson(data)
+//                deleteResponseJson = deleteResponseJson.replacingOccurrences(of: "{\"some\":", with: "")
+//                deleteResponseJson = deleteResponseJson.replacingOccurrences(of: "}}", with: "}")
+               print("ContactManager.shared.deleteMyAccountRequest==**==\(String(describing: deleteResponseJson))")
                 result(deleteResponseJson)
            } else{
                result(FlutterError(code: "500", message: "Unable to Delete Account", details: flyError?.localizedDescription))
@@ -2004,31 +2273,43 @@ import ContactsUI
         let args = call.arguments as! Dictionary<String, Any>
         let messageId = args["messageId"] as? String ?? ""
         let jid = args["jid"] as? String ?? ""
-        var groupMessageDeliveredList = GroupManager.shared.getMessageDeliveredListBy(messageId: messageId, groupId: jid)
+        let groupMessageDeliveredList = GroupManager.shared.getMessageDeliveredListBy(messageId: messageId, groupId: jid)
         print("groupMessageDeliveredList=>\(groupMessageDeliveredList)")
-        var groupMessageDeliveredListJson = JSONSerializer.toJson(groupMessageDeliveredList)
-        print("groupMessageDeliveredListJson=>\(groupMessageDeliveredListJson)")
-        groupMessageDeliveredListJson = groupMessageDeliveredListJson.replacingOccurrences(of: "{\"some\":", with: "")
-        groupMessageDeliveredListJson = groupMessageDeliveredListJson.replacingOccurrences(of: "}}", with: "}")
-        groupMessageDeliveredListJson = groupMessageDeliveredListJson.replacingOccurrences(of: "{}", with: "")
-        print("groupMessageDeliveredList\(groupMessageDeliveredListJson)")
-        result(groupMessageDeliveredListJson)
+        var deliveredCount = groupMessageDeliveredList.deliveredCount
+        var totalParticipatCount = groupMessageDeliveredList.totalParticipatCount
+        
+        let groupMessageDeliveredListJson = groupMessageDeliveredList.deliveredParticipantList.toJson() ?? "[]"
+        
+//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//        jsonObject.setValue(String(deliveredCount), forKey: "deliveredCount")
+//        jsonObject.setValue(totalParticipatCount, forKey: "totalParticipatCount")
+//        jsonObject.setValue(groupMessageDeliveredListJson, forKey: "deliveredParticipantList")
+        
+        let deliveredListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"deliveredParticipantList\" : " + groupMessageDeliveredListJson + "}"
+        
+    
+        print("getGroupMessageDeliveredToList==**==\(String(describing: deliveredListJson))")
+        result(deliveredListJson)
     }
     
     static func getGroupMessageReadByList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let messageId = args["messageId"] as? String ?? ""
         let jid = args["jid"] as? String ?? ""
-        
-        var groupMessageReadList = GroupManager.shared.getMessageSeenListBy(messageId: messageId, groupId: jid)
+        //need to check response.
+        let groupMessageReadList = GroupManager.shared.getMessageSeenListBy(messageId: messageId, groupId: jid)
         print("groupMessageReadList=> \(groupMessageReadList)")
-        var groupMessageReadListJson = JSONSerializer.toJson(groupMessageReadList)
-        print("groupMessageReadListJson=>\(groupMessageReadListJson)")
-        groupMessageReadListJson = groupMessageReadListJson.replacingOccurrences(of: "{\"some\":", with: "")
-        groupMessageReadListJson = groupMessageReadListJson.replacingOccurrences(of: "}}", with: "}")
-        groupMessageReadListJson = groupMessageReadListJson.replacingOccurrences(of: "{}", with: "")
-        print("groupMessageReadList\(groupMessageReadListJson)")
-        result(groupMessageReadListJson)
+        
+        var deliveredCount = groupMessageReadList.seenCount
+        var totalParticipatCount = groupMessageReadList.totalParticipatCount
+        let groupMessageReadListJson = groupMessageReadList.seenParticipantList.toJson() ?? "[]"
+        
+        let readListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"seenParticipantList\" : " + groupMessageReadListJson + "}"
+//        groupMessageReadList
+        
+        
+        print("getGroupMessageReadByList==**==\(String(describing: readListJson))")
+        result(readListJson)
 
     }
     static func addContact(call: FlutterMethodCall, result: @escaping FlutterResult){
