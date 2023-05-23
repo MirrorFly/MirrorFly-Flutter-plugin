@@ -1796,7 +1796,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         if (isSuccess) {
           //Log.e("RESPONSE_CAPTURE", "===========================")
           //DebugUtilis.v("FlyCore.reportUserOrMessages", data.tojsonString())
-          result.success(data)
+          result.success(isSuccess)
         } else {
           result.error("500", "Unable to report the User/Chat", throwable?.message)
         }
