@@ -38,6 +38,8 @@ Follow the below steps to get your license key:
 
 Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned below.
 
+### Android
+
 - Add the following to your root `build.gradle` file in your Android folder.
 
 ```gradle
@@ -53,11 +55,41 @@ Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned 
   }
 ```
 
+### iOS
+- Check and Add the following code at end of your `ios/Podfile`
+
+```dart
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.1'
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+      config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
+      config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"      
+     end
+  end
+end
+```
+- Now, enable the below mentioned capabilities into your project by opening `ios` folder using `Xcode`.
+
+```dart
+Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the top left corner -> Search for `App groups` and add the `App group capability`
+```
+
+> **Note**: The App Group Must be same as `iOSContainerId` given during the SDK Initialization. [See Initialization Step 1](#Sending-your-first-message).
+
+
+![My Image](AppGroups-c9933d95df192665e1389f19ece4fd94.png)
+
+### Flutter
+
 - Add following dependency in `pubspec.yaml`.
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.5
+  mirrorfly_plugin: ^0.0.6
 ```
 
 - Run `flutter pub get` command in your project directory.
