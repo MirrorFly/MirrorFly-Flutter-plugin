@@ -490,7 +490,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onDisconnected =>
       throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onConnectionNotAuthorized =>
+  /*Stream<dynamic> get onConnectionNotAuthorized =>
+      throw UnimplementedError('has not been implemented.');*/
+
+  Stream<dynamic> get onConnectionFailed =>
       throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get connectionFailed =>

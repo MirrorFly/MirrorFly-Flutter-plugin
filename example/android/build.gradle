@@ -5,12 +5,13 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/snapshot/"
+            url "https://repo.mirrorfly.com/snapshot"
         }
+//        mavenLocal()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath 'com.android.tools.build:gradle:7.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.3.15'
     }
@@ -22,8 +23,9 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/snapshot/"
+            url "https://repo.mirrorfly.com/snapshot"
         }
+//        mavenLocal()
     }
 }
 

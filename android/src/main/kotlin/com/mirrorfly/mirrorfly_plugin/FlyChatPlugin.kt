@@ -17,35 +17,36 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
-import com.contus.flycommons.*
-import com.contus.flycommons.models.MediaData
-import com.contus.flynetwork.model.verifyfcm.VerifyFcmResponse
-import com.contus.xmpp.chat.listener.TypingStatusListener
-import com.contus.xmpp.chat.models.CreateGroupModel
-import com.contus.xmpp.chat.models.Profile
-import com.contusflysdk.AppUtils
-import com.contusflysdk.ChatSDK
-import com.contusflysdk.GroupConfig
-import com.contusflysdk.api.*
-import com.contusflysdk.api.chat.*
-import com.contusflysdk.api.contacts.ContactManager
-import com.contusflysdk.api.contacts.ProfileDetails
-import com.contusflysdk.api.models.*
-import com.contusflysdk.api.network.FlyNetwork
-import com.contusflysdk.api.notification.NotificationEventListener
-import com.contusflysdk.api.notification.PushNotificationManager
-import com.contusflysdk.api.utils.NameHelper
-import com.contusflysdk.backup.BackupListener
-import com.contusflysdk.backup.BackupManager
-import com.contusflysdk.backup.RestoreListener
-import com.contusflysdk.backup.RestoreManager
-import com.contusflysdk.media.MediaUploadHelper
-import com.contusflysdk.models.MediaDownloadSettingsModel
-import com.contusflysdk.utils.*
 import com.google.gson.Gson
+import com.mirrorflysdk.AppUtils
+import com.mirrorflysdk.ChatSDK
+import com.mirrorflysdk.GroupConfig
+import com.mirrorflysdk.api.*
+import com.mirrorflysdk.api.chat.*
+import com.mirrorflysdk.api.contacts.ContactManager
+import com.mirrorflysdk.api.contacts.ProfileDetails
+import com.mirrorflysdk.api.models.*
+import com.mirrorflysdk.api.network.FlyNetwork
+import com.mirrorflysdk.api.notification.NotificationEventListener
+import com.mirrorflysdk.api.notification.PushNotificationManager
+import com.mirrorflysdk.api.utils.NameHelper
+import com.mirrorflysdk.backup.BackupListener
+import com.mirrorflysdk.backup.BackupManager
+import com.mirrorflysdk.backup.RestoreListener
+import com.mirrorflysdk.backup.RestoreManager
+import com.mirrorflysdk.flycall.webrtc.api.CallManager
+import com.mirrorflysdk.flycommons.*
+import com.mirrorflysdk.flycommons.exception.FlyException
+import com.mirrorflysdk.flycommons.models.MediaData
+import com.mirrorflysdk.flynetwork.model.verifyfcm.VerifyFcmResponse
+import com.mirrorflysdk.media.MediaUploadHelper
+import com.mirrorflysdk.models.MediaDownloadSettingsModel
+import com.mirrorflysdk.utils.*
+import com.mirrorflysdk.xmpp.chat.listener.TypingStatusListener
+import com.mirrorflysdk.xmpp.chat.models.CreateGroupModel
+import com.mirrorflysdk.xmpp.chat.models.Profile
 import io.flutter.Log
 import io.flutter.embedding.android.FlutterActivity
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -60,11 +61,20 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 
+
 /** FlyChatPlugin */
 class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
   ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
   TypingEventListener, TypingStatusListener,ActivityAware {
-  var isTrialLicenceKey = true;
+  val COUNTRY_CODE = "countryCode"
+  val FIRE_BASE_TOKEN = "firebase_token"
+  val MEDIA_AUTO_DOWNLOAD: String = "media_auto_download"
+  val NOTIFICATION_URI: String = "notification_uri"
+  val NOTIFICATION_SOUND: String = "notification_sound"
+  val NOTIFICATION_POPUP: String = "notification_popup"
+  val VIBRATION: String = "vibration"
+  val MUTE_NOTIFICATION: String = "mute_notification"
+  var isTrialLicenceKey = true
   private val mirrorflyMethodChannel = "contus.mirrorfly/flyChat"
   private val onMessageReceivedChannel = "contus.mirrorfly/onMessageReceived"
   private val onMessageStatusUpdatedChannel = "contus.mirrorfly/onMessageStatusUpdated"
@@ -109,7 +119,8 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
   private val usersWhoBlockedMeListFetched_channel = "contus.mirrorfly/usersWhoBlockedMeListFetched"
   private val onConnected_channel = "contus.mirrorfly/onConnected"
   private val onDisconnected_channel = "contus.mirrorfly/onDisconnected"
-  private val onConnectionNotAuthorized_channel = "contus.mirrorfly/onConnectionNotAuthorized"
+//  private val onConnectionNotAuthorized_channel = "contus.mirrorfly/onConnectionNotAuthorized"
+  private val onConnectionFailed_channel = "contus.mirrorfly/onConnectionFailed"
   private val connectionFailed_channel = "contus.mirrorfly/connectionFailed"
   private val connectionSuccess_channel = "contus.mirrorfly/connectionSuccess"
   private val onWebChatPasswordChanged_channel = "contus.mirrorfly/onWebChatPasswordChanged"
@@ -130,6 +141,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, mirrorflyMethodChannel)
     channel.setMethodCallHandler(this)
     mContext = flutterPluginBinding.applicationContext
+    SharedPreferenceManager().init(mContext)
     EventChannel(
       flutterPluginBinding.binaryMessenger,
       onMessageReceivedChannel
@@ -284,10 +296,14 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       flutterPluginBinding.binaryMessenger,
       onDisconnected_channel
     ).setStreamHandler(onDisconnectedStreamHandler)
-    EventChannel(
+    /*EventChannel(
       flutterPluginBinding.binaryMessenger,
       onConnectionNotAuthorized_channel
-    ).setStreamHandler(onConnectionNotAuthorizedStreamHandler)
+    ).setStreamHandler(onConnectionNotAuthorizedStreamHandler)*/
+    EventChannel(
+      flutterPluginBinding.binaryMessenger,
+      onConnectionFailed_channel
+    ).setStreamHandler(onConnectionFailedStreamHandler)
     EventChannel(
       flutterPluginBinding.binaryMessenger,
       connectionFailed_channel
@@ -315,7 +331,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
     when {
       call.method == "init" -> {
-        buildChatSDK(call);
+        buildChatSDK(call)
       }
       call.method == "getPlatformVersion" -> {
         result.success("Android ${Build.VERSION.RELEASE}")
@@ -369,7 +385,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       call.method.equals("getMyBusyStatus") -> {//{"id": null, "status": "", "isCurrentStatus": false}
         val myBusyStatus: BusyStatus? = FlyCore.getMyBusyStatus()
         if(myBusyStatus!=null) {
-          Log.d("myBusyStatus", "${myBusyStatus.tojsonString()}")
+          Log.d("myBusyStatus", myBusyStatus.tojsonString())
           result.success(myBusyStatus.tojsonString())
         }else{
           if(FlyCore.getBusyStatusList().isEmpty()) {
@@ -614,7 +630,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         BackupManager.cancelBackup()
       }
       call.method.equals("startBackup") -> {
-        BackupManager.startBackup(object : BackupListener{
+        BackupManager.startBackup(object : BackupListener {
           override fun onFailure(reason: String) {
             onFailureStreamHandler.onFailure?.success(reason)
           }
@@ -635,7 +651,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         val filepath = call.argument<String>("file") ?: ""
         val file = File(filepath)
         if (file.exists()) {
-          RestoreManager.restoreData(file,object : RestoreListener{
+          RestoreManager.restoreData(file,object : RestoreListener {
             override fun onFailure(reason: String) {
               onFailureStreamHandler.onFailure?.success(reason)
             }
@@ -1067,7 +1083,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     val ivKey : String? = call.argument("ivKey")
     val enableSDKLog : Boolean = call.argument("enableDebugLog") ?: false
     LogMessage.enableDebugLogging(enableSDKLog)
-    LogMessage.d("buildChatSDK",call.arguments.toString());
+    LogMessage.d("buildChatSDK",call.arguments.toString())
     /*GroupManager.setNameHelper(object  : NameHelper {
             override fun getDisplayName(jid: String): String {
                 return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(jid)!!.name else Constants.EMPTY_STRING
@@ -1091,19 +1107,19 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
      buildSDK.setGroupConfiguration(groupConfiguration)
    }
    if(storageFolderName!=null){
-     ChatManager.setMediaFolderName(storageFolderName);
+     ChatManager.setMediaFolderName(storageFolderName)
    }
    if (enableMobileNumberLogin!=null){
      ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
    }
    if(maximumRecentChatPin!=null){
-     buildSDK.setMaximumPinningForRecentChat(maximumRecentChatPin);
+     buildSDK.setMaximumPinningForRecentChat(maximumRecentChatPin)
    }
    /*if(useProfileName!=null){
       ChatSDK.Builder().useProfileName(useProfileName);
     }*/
     if(ivKey!=null){
-      ChatManager.setMessageIVKey(ivKey);
+      ChatManager.setMessageIVKey(ivKey)
     }
 
     if(domainBaseUrl!=null && licenseKey!=null) {
@@ -1114,12 +1130,22 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     buildSDK.build()
 
     //Set Name based on the Profile data
-    //if not set you will get error on email chat(export)
+    //if not set you will get error on email chat(export) and any group related actions
     GroupManager.setNameHelper(object  : NameHelper {
       override fun getDisplayName(jid: String): String {
         return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(jid)!!.name else Constants.EMPTY_STRING
       }
     })
+
+    //need to config call manager
+    // if not set error will be throw
+    /*kotlin.UninitializedPropertyAccessException: lateinit property applicationContext has not been initialized
+E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.webrtc.api.CallManager.getApplicationContext(CallManager.kt:70)
+E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManager.<init>(CallMediaManager.kt:62)*/
+
+    CallManager.init(mContext)
+//    CallManager.getCallActivityClass()
+//    CallManager.setCallActivityClass(null)
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -1156,7 +1182,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
 
               val response = JSONObject(data).toString()
               //Log.e("RESPONSE_CAPTURE", "===========================")
-              //DebugUtilis.v("FlyCore.registerUser", data.tojsonString())
+              LogMessage.d("FlyCore.registerUser", data.tojsonString())
               if (token.isNotEmpty()) {
                 PushNotificationManager.updateFcmToken(
                   token,
@@ -1180,7 +1206,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
               ChatEventsManager.attachGroupEventsListener(this)
               ChatEventsManager.attachLoginEventsListener(this)
               ChatEventsManager.attachTypingEventListener(this)
-              SharedPreferenceManager.instance.storeBoolean("isRegistered",true);
+              SharedPreferenceManager.instance.storeBoolean("isRegistered",true)
               ChatManager.connect(object : ChatConnectionListener {
                 override fun onConnected() {
                   Handler(Looper.getMainLooper()).postDelayed({
@@ -1189,17 +1215,30 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
 
                 }
 
+                override fun onConnectionFailed(e: FlyException) {
+                  Log.i(TAG, "Chat Manager onConnectionFailed")
+                  result.error(
+                    "500",
+                    e.message,
+                    null
+                  )
+                }
+
                 override fun onDisconnected() {
                   Log.i(TAG, "Chat Manager Disconnected")
                 }
 
-                override fun onConnectionNotAuthorized() {
+                override fun onReconnecting() {
+                  Log.i(TAG, "Chat Manager onReconnecting")
+                }
+
+                /*override fun onConnectionNotAuthorized() {
                   result.error(
                     "500",
                     "Chat Manager Connection Not Authorized",
                     null
                   )
-                }
+                }*/
               })
 
             } else {
@@ -1394,14 +1433,36 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     val jid = call.argument<String>("jid") ?: ""
     FlyCore.prepareChatConversationToExport(jid)  { isSuccess, throwable, data ->
       if (isSuccess) {
+        val json = JSONObject()
         val res : ChatDataModel = data["data"] as ChatDataModel
-        result.success(res.tojsonString())
+        val mediaAttachmentUri = JSONArray()
+        if(res.mediaAttachmentsUri.isNotEmpty()){
+          res.mediaAttachmentsUri.forEach { item->
+//            mediaAttachmentUri.put("/storage/emulated/0/"+item.path!!.replace("external/","/storage/emulated/0/"))
+            val file = File(item.path)
+            mediaAttachmentUri.put(convertToAbsolutePath(file.path))//(file.path.toString().replace("external_files/","/storage/emulated/0/"))
+          }
+          json.put("subject",res.subject)
+          json.put("messageContent",res.messageContent)
+          json.put("mediaAttachmentsUrl",mediaAttachmentUri)
+          result.success(json.toString())
+        }else{
+          result.success(json.toString());
+        }
         // ChatDataModel has the every data to export the chat
       } else {
         //Exporting chat data failed print throwable to find the exception details.
         result.error("500",throwable!!.message,throwable)
       }
     }
+  }
+
+  private fun convertToAbsolutePath(relativeFilePath: String): String {
+    val externalStorageDirectoryPath = Environment.getExternalStorageDirectory().absolutePath
+    return externalStorageDirectoryPath + relativeFilePath.replaceFirst(
+      "/external_files".toRegex(),
+      ""
+    )
   }
 
   private fun getArchivedChatList(result: MethodChannel.Result) {
@@ -1941,7 +2002,15 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     if (videoFile.exists()) {
       if (videoFileUrl.isNotEmpty() && thumbImageBase64.isNotEmpty() && videoDuration != 0L) {
         FlyMessenger.sendAudioMessage(toJid = userJid,
-          MediaData(fileName = videoFile.name, fileSize = videoFile.length(), fileUrl = videoFileUrl, base64Thumbnail = thumbImageBase64, fileLocalPath = localFilePath, caption = videoCaption, duration = videoDuration, ),isRecorded = false,replyMessageID,listener)
+          MediaData(
+            fileName = videoFile.name,
+            fileSize = videoFile.length(),
+            fileUrl = videoFileUrl,
+            base64Thumbnail = thumbImageBase64,
+            fileLocalPath = localFilePath,
+            caption = videoCaption,
+            duration = videoDuration
+          ),isRecorded = false,replyMessageID,listener)
         /*FlyMessenger.sendVideoMessage(
             toJid = userJid,
             videoFile.name,
@@ -2638,7 +2707,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         if (isSuccess) {
           //Log.e("RESPONSE_CAPTURE", "===========================")
           //DebugUtilis.v("GroupManager.createGroup", hashmap.tojsonString())
-          val groupData = hashmap.getData() as CreateGroupModel
+          val groupData = hashmap["data"] as CreateGroupModel
           result.success(groupData.tojsonString())
         } else {
           result.error("500", "Unable to Create Group", throwable.toString())
@@ -2718,7 +2787,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         //Log.e("RESPONSE_CAPTURE", "===========================")
         //DebugUtilis.v("GroupManager.getGroupMembersList", data.tojsonString())
         val groupMembers: MutableList<ProfileDetails> =
-          data.getData() as ArrayList<ProfileDetails>
+          data["data"] as ArrayList<ProfileDetails>
         val myProfileIndex =
           groupMembers.indexOfFirst { pd -> pd.jid == SharedPreferenceManager.instance.currentUserJid }
         if (myProfileIndex >= 0) {
@@ -2822,7 +2891,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
       if (isSuccess) {
         //Log.e("RESPONSE_CAPTURE", "===========================")
         //DebugUtilis.v("FlyCore.getUsersIBlocked", data.tojsonString())
-        val profilesList = data.getData() as ArrayList<ProfileDetails>
+        val profilesList = data["data"] as ArrayList<ProfileDetails>
         result.success(profilesList.tojsonString())
       }
     }
@@ -2877,8 +2946,8 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
           (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
             .toString())
         Log.e("Android Notification", selectedToneUri)
-        //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, data.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString())
-        //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
+        //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, data.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString())
+        //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
         setNotificationUri(selectedToneUri)
         ringToneResult.success(selectedToneUri)
 
@@ -2889,15 +2958,15 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
         setNotificationUri(existingCustomTone)
         ringToneResult.success(existingCustomTone)
 
-        //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI))
-        //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
+        //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI))
+        //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
       } else if (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) == null) {
         Log.e("Android Notification", "ringtone is null")
         setNotificationUri(null)
         ringToneResult.success("None")
 
-        //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, "None")
-        //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
+        //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, "None")
+        //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
       }
     } catch (exception: Exception) {
       LogMessage.e(exception)
@@ -2906,7 +2975,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
   }
 
 
-  private fun getRingtoneName(): String? {
+  private fun getRingtoneName(): String {
 //        val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
     val storedNotification = SharedPreferenceManager.instance.getString("notification_uri")
     Log.e("stored notification", storedNotification)
@@ -3187,15 +3256,23 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
     onConnectedStreamHandler.onConnected?.success(true)
   }
 
+  override fun onConnectionFailed(e: FlyException) {
+    onConnectionFailedStreamHandler.onConnectionFailed?.success(e.message)
+  }
+
   override fun onDisconnected() {
     Log.i(TAG, "Chat Manager Disconnected")
     onDisconnectedStreamHandler.onDisconnected?.success(true)
   }
 
-  override fun onConnectionNotAuthorized() {
+  override fun onReconnecting() {
+    TODO("Not yet implemented")
+  }
+
+  /*override fun onConnectionNotAuthorized() {
     Log.i(TAG, "Chat Manager Not Authorized")
     onConnectionNotAuthorizedStreamHandler.onConnectionNotAuthorized?.success(true)
-  }
+  }*/
 
   override fun connectionFailed(message: String) {
     Log.d(TAG, "connectionFailed : $message")
@@ -3257,7 +3334,7 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
   }
   private fun setNotificationUri(uri: String?){
     Log.e("Android Notification set", uri.toString())
-    SharedPreferenceManager.instance.storeString("notification_uri",uri)
+    SharedPreferenceManager.instance.storeString(SharedPreferenceManager.NOTIFICATION_URI,uri)
   }
   /*private fun setNotificationUri(call: MethodCall){
       val uri = call.argument<String>("uri") ?: ""
@@ -3265,18 +3342,18 @@ class FlyChatPlugin: FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsLi
   }*/
   private fun setNotificationSound(call: MethodCall){
     val enable = call.argument("enable") ?: false
-    SharedPreferenceManager.instance.storeBoolean("notification_sound",enable)
+    SharedPreferenceManager.instance.storeBoolean(SharedPreferenceManager.NOTIFICATION_SOUND,enable)
   }
   private fun getNotificationSound(result: MethodChannel.Result) {
-    result.success(SharedPreferenceManager.instance.getBoolean("notification_sound"))
+    result.success(SharedPreferenceManager.instance.getBoolean(SharedPreferenceManager.NOTIFICATION_SOUND))
   }
   private fun setMuteNotification(call: MethodCall){
     val enable = call.argument("enable") ?: false
-    SharedPreferenceManager.instance.storeBoolean("mute_notification",enable)
+    SharedPreferenceManager.instance.storeBoolean(SharedPreferenceManager.MUTE_NOTIFICATION,enable)
   }
   private fun setNotificationVibration(call: MethodCall){
     val enable = call.argument("enable") ?: false
-    SharedPreferenceManager.instance.storeBoolean("vibration",enable)
+    SharedPreferenceManager.instance.storeBoolean(SharedPreferenceManager.VIBRATION,enable)
   }
   private fun cancelNotifications(){
     //AppNotificationManager.cancelNotifications(mContext)

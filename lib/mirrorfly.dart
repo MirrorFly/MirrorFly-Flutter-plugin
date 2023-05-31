@@ -16,5 +16,6 @@ export 'model/user_list_model.dart';
 export 'model/web_login_model.dart';
 export 'model/message_delivered_model.dart';
 export 'model/message_object.dart';
+export 'model/export_model.dart';
 export 'builder.dart';
 export 'flychat.dart';
