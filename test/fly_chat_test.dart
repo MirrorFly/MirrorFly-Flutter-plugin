@@ -715,9 +715,13 @@ class MockFlyChatFlutterPlatform
   // onConnected
   Stream get onConnected => throw UnimplementedError();
 
-  @override
+  /*@override
   // onConnectionNotAuthorized
-  Stream get onConnectionNotAuthorized => throw UnimplementedError();
+  Stream get onConnectionNotAuthorized => throw UnimplementedError();*/
+
+  @override
+  // onConnectionFailed
+  Stream get onConnectionFailed => throw UnimplementedError();
 
   @override
   // onContactSyncComplete
