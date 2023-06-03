@@ -1946,11 +1946,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getProfileDetails(String jid, bool fromServer) async {
+  Future<dynamic> getProfileDetails(String jid) async {
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod(
-          'getProfileDetails', {"jid": jid, "server": fromServer});
+          'getProfileDetails', {"jid": jid});
       debugPrint("getProfileDetails Result ==> $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {

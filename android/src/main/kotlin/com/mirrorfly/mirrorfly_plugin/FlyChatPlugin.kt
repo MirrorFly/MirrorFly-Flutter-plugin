@@ -979,6 +979,19 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     //Log.e("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("ContactManager.getProfileDetails", profileDetails.tojsonString())
                     result.success(profileDetails.tojsonString())
+                }else{
+                    ContactManager.getUserProfile(jid, true, true, object : FlyCallback {
+                        override fun flyResponse(
+                            isSuccess: Boolean,
+                            throwable: Throwable?,
+                            data: HashMap<String, Any>
+                        ) {
+                            val profile = ContactManager.getProfileDetails(jid)
+                            if (profile != null) {
+                                result.success(profile.tojsonString())
+                            }
+                        }
+                    })
                 }
             }
             call.method.equals("getUserLastSeenTime") -> {
