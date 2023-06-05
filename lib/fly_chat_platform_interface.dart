@@ -557,7 +557,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  getProfileDetails(String jid, bool fromServer) {
+  getProfileDetails(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 

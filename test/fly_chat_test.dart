@@ -414,7 +414,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  getProfileDetails(String jid, bool fromServer) {
+  getProfileDetails(String jid) {
     // getProfileDetails
     throw UnimplementedError();
   }

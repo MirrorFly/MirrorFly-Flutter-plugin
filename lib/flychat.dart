@@ -607,9 +607,9 @@ class Mirrorfly {
         .getUserProfile(jid, fetchFromServer, saveasfriend);
   }
 
-  static getProfileDetails(String jid, bool fetchFromServer) {
+  static getProfileDetails(String jid) {
     return FlyChatFlutterPlatform.instance
-        .getProfileDetails(jid, fetchFromServer);
+        .getProfileDetails(jid);
   }
 
   static Future<dynamic> getProfileLocal(String jid, bool fetchFromServer) {
