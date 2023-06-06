@@ -81,7 +81,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 > **Note**: The App Group Must be same as `iOSContainerId` given during the SDK Initialization. [See Initialization Step 1](#Sending-your-first-message).
 
 
-![My Image](AppGroups-c9933d95df192665e1389f19ece4fd94.png)
+![Screenshot](AppGroups-c9933d95df192665e1389f19ece4fd94.png)
 
 ### Flutter
 
@@ -89,7 +89,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.6
+  mirrorfly_plugin: ^0.0.7
 ```
 
 - Run `flutter pub get` command in your project directory.

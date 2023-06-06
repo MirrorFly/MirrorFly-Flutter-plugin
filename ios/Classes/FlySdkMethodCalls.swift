@@ -1701,21 +1701,31 @@ import MirrorFlySDK
     }
     
     static func getUserLastSeenTime(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
-        
-        let jid = args["jid"] as? String ?? ""
-        
-        ChatManager.getUserLastSeen( for: jid) { isSuccess, flyError, flyData in
-              var data  = flyData
-              if isSuccess {
-                  let lastseenSeconds = data.getData() as? String
-                  let sec = lastseenSeconds?.replacingOccurrences(of: "-", with: "")
-                  result(sec)
-              } else{
-                  
-                  result(FlutterError(code: "500", message: "Unable to Fetch User Last seen", details: data.getMessage()))
+            let args = call.arguments as! Dictionary<String, Any>
+
+            let jid = args["jid"] as? String ?? ""
+
+            ChatManager.getUserLastSeen( for: jid) { isSuccess, flyError, flyData in
+                  var data  = flyData
+                  if isSuccess {
+                      let lastseenSeconds = data.getData() as? String
+                      if let seconds = Int(lastseenSeconds ?? "0") {
+                          let timestamp = subtractSecondsAndGetTimestamp(seconds: TimeInterval(seconds))
+
+                          result(String(Int(timestamp)))
+                          }
+
+                  } else{
+
+                      result(FlutterError(code: "500", message: "Unable to Fetch User Last seen", details: data.getMessage()))
+                  }
               }
-          }
+    }
+    static func subtractSecondsAndGetTimestamp(seconds: TimeInterval) -> TimeInterval {
+        let currentDate = Date()
+        let earlierDate = currentDate.addingTimeInterval(-seconds)
+        let timestamp = earlierDate.timeIntervalSince1970 * 1000
+        return timestamp
     }
     static func getRecentChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
         

@@ -1,8 +1,12 @@
+## [0.0.7] developer preview
+
+* Developer preview.
+
 ## [0.0.6] developer preview
 
 * Developer preview.
 
-* ## [0.0.5] developer preview
+## [0.0.5] developer preview
 
 * Developer preview.
 

@@ -122,9 +122,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final onDisconnectedChannel =
       const EventChannel('contus.mirrorfly/onDisconnected');
-  @visibleForTesting
+  /*@visibleForTesting
   final onConnectionNotAuthorizedChannel =
-      const EventChannel('contus.mirrorfly/onConnectionNotAuthorized');
+      const EventChannel('contus.mirrorfly/onConnectionNotAuthorized');*/
+  @visibleForTesting
+  final onConnectionFailedChannel =
+      const EventChannel('contus.mirrorfly/onConnectionFailed');
   @visibleForTesting
   final connectionFailedChannel =
       const EventChannel('contus.mirrorfly/connectionFailed');
@@ -1711,9 +1714,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Stream<dynamic> get onDisconnected =>
       onDisconnectedChannel.receiveBroadcastStream().cast();
 
-  @override
+  /*@override
   Stream<dynamic> get onConnectionNotAuthorized =>
-      onConnectionNotAuthorizedChannel.receiveBroadcastStream().cast();
+      onConnectionNotAuthorizedChannel.receiveBroadcastStream().cast();*/
+
+  @override
+  Stream<dynamic> get onConnectionFailed =>
+      onConnectionFailedChannel.receiveBroadcastStream().cast();
 
   @override
   Stream<dynamic> get connectionFailed =>
@@ -1939,11 +1946,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getProfileDetails(String jid, bool fromServer) async {
+  Future<dynamic> getProfileDetails(String jid) async {
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod(
-          'getProfileDetails', {"jid": jid, "server": fromServer});
+          'getProfileDetails', {"jid": jid});
       debugPrint("getProfileDetails Result ==> $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
@@ -2943,6 +2950,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod('exportChatConversationToEmail', {"jid": jid});
+      debugPrint("exportChatConversationToEmail Response ==> $res");
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");

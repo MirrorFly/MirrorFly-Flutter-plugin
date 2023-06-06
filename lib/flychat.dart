@@ -4,7 +4,7 @@ import 'fly_chat_platform_interface.dart';
 
 class Mirrorfly {
   Mirrorfly._();
-
+  static var isTrialLicence = true;
   ///Used as a initChat class for [Mirrorfly]
   ///
   /// * @property url provides the base url for making api calls
@@ -35,6 +35,7 @@ class Mirrorfly {
         // groupConfig: groupConfig,
         // ivKey: ivKey,
         enableDebugLog: enableDebugLog);
+    isTrialLicence=isTrialLicenceKey;
     FlyChatFlutterPlatform.instance.init(builder);
   }
 
@@ -537,8 +538,11 @@ class Mirrorfly {
   static Stream<dynamic> get onDisconnected =>
       FlyChatFlutterPlatform.instance.onDisconnected;
 
-  static Stream<dynamic> get onConnectionNotAuthorized =>
-      FlyChatFlutterPlatform.instance.onConnectionNotAuthorized;
+  /*static Stream<dynamic> get onConnectionNotAuthorized =>
+      FlyChatFlutterPlatform.instance.onConnectionNotAuthorized;*/
+
+  static Stream<dynamic> get onConnectionFailed =>
+      FlyChatFlutterPlatform.instance.onConnectionFailed;
 
   static Stream<dynamic> get connectionFailed =>
       FlyChatFlutterPlatform.instance.connectionFailed;
@@ -603,9 +607,9 @@ class Mirrorfly {
         .getUserProfile(jid, fetchFromServer, saveasfriend);
   }
 
-  static getProfileDetails(String jid, bool fetchFromServer) {
+  static getProfileDetails(String jid) {
     return FlyChatFlutterPlatform.instance
-        .getProfileDetails(jid, fetchFromServer);
+        .getProfileDetails(jid);
   }
 
   static Future<dynamic> getProfileLocal(String jid, bool fetchFromServer) {
