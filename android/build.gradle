@@ -8,8 +8,9 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/snapshot/"
+            url "https://repo.mirrorfly.com/release"
         }
+//        mavenLocal()
     }
 
     dependencies {
@@ -24,8 +25,9 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/snapshot/"
+            url "https://repo.mirrorfly.com/snapshot"
         }
+//        mavenLocal()
     }
 }
 
@@ -50,6 +52,7 @@ android {
 
     defaultConfig {
         minSdkVersion 16
+        consumerProguardFiles "consumer-rules.pro"
     }
     packagingOptions {
         exclude 'META-INF/AL2.0'
@@ -66,5 +69,9 @@ android {
     }
 }
 dependencies{
-    api 'com.mirrorfly.sdk:appbase:0.0.13'
+//    api 'com.mirrorfly.sdk:appbase:0.0.13'
+    api 'com.mirrorfly.sdk:mirrorflysdk:7.4.1'
+//    api 'com.mirrorfly.sdk:webrtc:0.0.11'
+//    api 'com.mirrorfly.sdk:mirrorflysdk:7.4.0'
+//    implementation 'androidx.security:security-crypto:1.1.0-alpha01'
 }

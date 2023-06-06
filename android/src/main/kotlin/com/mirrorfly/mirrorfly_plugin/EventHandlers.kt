@@ -534,6 +534,20 @@ object onConnectionNotAuthorizedStreamHandler : EventChannel.StreamHandler {
     }
 }
 
+object onConnectionFailedStreamHandler : EventChannel.StreamHandler {
+
+    var onConnectionFailed: EventChannel.EventSink? = null
+
+
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        onConnectionFailed = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        onConnectionFailed = null
+    }
+}
+
 object connectionFailedStreamHandler : EventChannel.StreamHandler {
 
     var connectionFailed: EventChannel.EventSink? = null
