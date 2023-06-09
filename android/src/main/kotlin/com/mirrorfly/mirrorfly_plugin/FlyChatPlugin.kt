@@ -18,6 +18,9 @@ import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import com.google.gson.Gson
+import com.mirrorfly.mirrorfly_plugin.call.FlyCall
+import com.mirrorfly.mirrorfly_plugin.call.MirrorflyViewFactory
+import com.mirrorfly.mirrorfly_plugin.call.SdkCallFunctions
 import com.mirrorflysdk.AppUtils
 import com.mirrorflysdk.ChatSDK
 import com.mirrorflysdk.GroupConfig
@@ -84,54 +87,54 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     private val showUpdateCancelNotificationChannel =
         "contus.mirrorfly/showOrUpdateOrCancelNotification"
 
-    private val onGroupProfileFetched_channel = "contus.mirrorfly/onGroupProfileFetched"
-    private val onNewGroupCreated_channel = "contus.mirrorfly/onNewGroupCreated"
-    private val onGroupProfileUpdated_channel = "contus.mirrorfly/onGroupProfileUpdated"
-    private val onNewMemberAddedToGroup_channel = "contus.mirrorfly/onNewMemberAddedToGroup"
-    private val onMemberRemovedFromGroup_channel = "contus.mirrorfly/onMemberRemovedFromGroup"
-    private val onFetchingGroupMembersCompleted_channel =
+    private val onGroupProfileFetchedChannel = "contus.mirrorfly/onGroupProfileFetched"
+    private val onNewGroupCreatedChannel = "contus.mirrorfly/onNewGroupCreated"
+    private val onGroupProfileUpdatedChannel = "contus.mirrorfly/onGroupProfileUpdated"
+    private val onNewMemberAddedToGroupChannel = "contus.mirrorfly/onNewMemberAddedToGroup"
+    private val onMemberRemovedFromGroupChannel = "contus.mirrorfly/onMemberRemovedFromGroup"
+    private val onFetchingGroupMembersCompletedChannel =
         "contus.mirrorfly/onFetchingGroupMembersCompleted"
-    private val onDeleteGroup_channel = "contus.mirrorfly/onDeleteGroup"
-    private val onFetchingGroupListCompleted_channel =
+    private val onDeleteGroupChannel = "contus.mirrorfly/onDeleteGroup"
+    private val onFetchingGroupListCompletedChannel =
         "contus.mirrorfly/onFetchingGroupListCompleted"
-    private val onMemberMadeAsAdmin_channel = "contus.mirrorfly/onMemberMadeAsAdmin"
-    private val onMemberRemovedAsAdmin_channel = "contus.mirrorfly/onMemberRemovedAsAdmin"
-    private val onLeftFromGroup_channel = "contus.mirrorfly/onLeftFromGroup"
-    private val onGroupNotificationMessage_channel = "contus.mirrorfly/onGroupNotificationMessage"
-    private val onGroupDeletedLocally_channel = "contus.mirrorfly/onGroupDeletedLocally"
+    private val onMemberMadeAsAdminChannel = "contus.mirrorfly/onMemberMadeAsAdmin"
+    private val onMemberRemovedAsAdminChannel = "contus.mirrorfly/onMemberRemovedAsAdmin"
+    private val onLeftFromGroupChannel = "contus.mirrorfly/onLeftFromGroup"
+    private val onGroupNotificationMessageChannel = "contus.mirrorfly/onGroupNotificationMessage"
+    private val onGroupDeletedLocallyChannel = "contus.mirrorfly/onGroupDeletedLocally"
 
-    private val blockedThisUser_channel = "contus.mirrorfly/blockedThisUser"
-    private val myProfileUpdated_channel = "contus.mirrorfly/myProfileUpdated"
-    private val onAdminBlockedOtherUser_channel = "contus.mirrorfly/onAdminBlockedOtherUser"
-    private val onAdminBlockedUser_channel = "contus.mirrorfly/onAdminBlockedUser"
-    private val onContactSyncComplete_channel = "contus.mirrorfly/onContactSyncComplete"
-    private val onLoggedOut_channel = "contus.mirrorfly/onLoggedOut"
-    private val unblockedThisUser_channel = "contus.mirrorfly/unblockedThisUser"
-    private val userBlockedMe_channel = "contus.mirrorfly/userBlockedMe"
-    private val userCameOnline_channel = "contus.mirrorfly/userCameOnline"
-    private val userDeletedHisProfile_channel = "contus.mirrorfly/userDeletedHisProfile"
-    private val userProfileFetched_channel = "contus.mirrorfly/userProfileFetched"
-    private val userUnBlockedMe_channel = "contus.mirrorfly/userUnBlockedMe"
-    private val userUpdatedHisProfile_channel = "contus.mirrorfly/userUpdatedHisProfile"
-    private val userWentOffline_channel = "contus.mirrorfly/userWentOffline"
-    private val usersIBlockedListFetched_channel = "contus.mirrorfly/usersIBlockedListFetched"
-    private val usersProfilesFetched_channel = "contus.mirrorfly/usersProfilesFetched"
-    private val usersWhoBlockedMeListFetched_channel =
+    private val blockedThisUserChannel = "contus.mirrorfly/blockedThisUser"
+    private val myProfileUpdatedChannel = "contus.mirrorfly/myProfileUpdated"
+    private val onAdminBlockedOtherUserChannel = "contus.mirrorfly/onAdminBlockedOtherUser"
+    private val onAdminBlockedUserChannel = "contus.mirrorfly/onAdminBlockedUser"
+    private val onContactSyncCompleteChannel = "contus.mirrorfly/onContactSyncComplete"
+    private val onLoggedOutChannel = "contus.mirrorfly/onLoggedOut"
+    private val unblockedThisUserChannel = "contus.mirrorfly/unblockedThisUser"
+    private val userBlockedMeChannel = "contus.mirrorfly/userBlockedMe"
+    private val userCameOnlineChannel = "contus.mirrorfly/userCameOnline"
+    private val userDeletedHisProfileChannel = "contus.mirrorfly/userDeletedHisProfile"
+    private val userProfileFetchedChannel = "contus.mirrorfly/userProfileFetched"
+    private val userUnBlockedMeChannel = "contus.mirrorfly/userUnBlockedMe"
+    private val userUpdatedHisProfileChannel = "contus.mirrorfly/userUpdatedHisProfile"
+    private val userWentOfflineChannel = "contus.mirrorfly/userWentOffline"
+    private val usersIBlockedListFetchedChannel = "contus.mirrorfly/usersIBlockedListFetched"
+    private val usersProfilesFetchedChannel = "contus.mirrorfly/usersProfilesFetched"
+    private val usersWhoBlockedMeListFetchedChannel =
         "contus.mirrorfly/usersWhoBlockedMeListFetched"
-    private val onConnected_channel = "contus.mirrorfly/onConnected"
-    private val onDisconnected_channel = "contus.mirrorfly/onDisconnected"
+    private val onConnectedChannel = "contus.mirrorfly/onConnected"
+    private val onDisconnectedChannel = "contus.mirrorfly/onDisconnected"
 
     //  private val onConnectionNotAuthorized_channel = "contus.mirrorfly/onConnectionNotAuthorized"
-    private val onConnectionFailed_channel = "contus.mirrorfly/onConnectionFailed"
-    private val connectionFailed_channel = "contus.mirrorfly/connectionFailed"
-    private val connectionSuccess_channel = "contus.mirrorfly/connectionSuccess"
-    private val onWebChatPasswordChanged_channel = "contus.mirrorfly/onWebChatPasswordChanged"
-    private val setTypingStatus_channel = "contus.mirrorfly/setTypingStatus"
-    private val onChatTypingStatus_channel = "contus.mirrorfly/onChatTypingStatus"
-    private val onGroupTypingStatus_channel = "contus.mirrorfly/onGroupTypingStatus"
-    private val onFailure_channel = "contus.mirrorfly/onFailure"
-    private val onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
-    private val onSuccess_channel = "contus.mirrorfly/onSuccess"
+    private val onConnectionFailedChannel = "contus.mirrorfly/onConnectionFailed"
+    private val connectionFailedChannel = "contus.mirrorfly/connectionFailed"
+    private val connectionSuccessChannel = "contus.mirrorfly/connectionSuccess"
+    private val onWebChatPasswordChangedChannel = "contus.mirrorfly/onWebChatPasswordChanged"
+    private val setTypingStatusChannel = "contus.mirrorfly/setTypingStatus"
+    private val onChatTypingStatusChannel = "contus.mirrorfly/onChatTypingStatus"
+    private val onGroupTypingStatusChannel = "contus.mirrorfly/onGroupTypingStatus"
+    private val onFailureChannel = "contus.mirrorfly/onFailure"
+    private val onProgressChangedChannel = "contus.mirrorfly/onProgressChanged"
+    private val onSuccessChannel = "contus.mirrorfly/onSuccess"
     private val TAG = "MirrorFly"
 
     /// The MethodChannel that will the communication between Flutter and native Android
@@ -141,9 +144,14 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     private lateinit var channel: MethodChannel
     private lateinit var mContext: Context
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        mContext = flutterPluginBinding.applicationContext
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, mirrorflyMethodChannel)
         channel.setMethodCallHandler(this)
-        mContext = flutterPluginBinding.applicationContext
+        flutterPluginBinding.platformViewRegistry.registerViewFactory(
+            "mirrorfly_view",
+            MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
+        )
+        FlyCall(mContext,flutterPluginBinding.binaryMessenger)
         SharedPreferenceManager().init(mContext)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
@@ -168,136 +176,136 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onGroupProfileFetched_channel
+            onGroupProfileFetchedChannel
         ).setStreamHandler(onGroupProfileFetchedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onNewGroupCreated_channel
+            onNewGroupCreatedChannel
         ).setStreamHandler(onNewGroupCreatedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onGroupProfileUpdated_channel
+            onGroupProfileUpdatedChannel
         ).setStreamHandler(onGroupProfileUpdatedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onNewMemberAddedToGroup_channel
+            onNewMemberAddedToGroupChannel
         ).setStreamHandler(onNewMemberAddedToGroupStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onMemberRemovedFromGroup_channel
+            onMemberRemovedFromGroupChannel
         ).setStreamHandler(onMemberRemovedFromGroupStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onFetchingGroupMembersCompleted_channel
+            onFetchingGroupMembersCompletedChannel
         ).setStreamHandler(onFetchingGroupMembersCompletedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onDeleteGroup_channel
+            onDeleteGroupChannel
         ).setStreamHandler(onDeleteGroupStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onFetchingGroupListCompleted_channel
+            onFetchingGroupListCompletedChannel
         ).setStreamHandler(onFetchingGroupListCompletedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onMemberMadeAsAdmin_channel
+            onMemberMadeAsAdminChannel
         ).setStreamHandler(onMemberMadeAsAdminStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onMemberRemovedAsAdmin_channel
+            onMemberRemovedAsAdminChannel
         ).setStreamHandler(onMemberRemovedAsAdminStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onLeftFromGroup_channel
+            onLeftFromGroupChannel
         ).setStreamHandler(onLeftFromGroupStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onGroupNotificationMessage_channel
+            onGroupNotificationMessageChannel
         ).setStreamHandler(onGroupNotificationMessageStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onGroupDeletedLocally_channel
+            onGroupDeletedLocallyChannel
         ).setStreamHandler(onGroupDeletedLocallyStreamHandler)
 
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            blockedThisUser_channel
+            blockedThisUserChannel
         ).setStreamHandler(blockedThisUserStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            myProfileUpdated_channel
+            myProfileUpdatedChannel
         ).setStreamHandler(myProfileUpdatedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onAdminBlockedOtherUser_channel
+            onAdminBlockedOtherUserChannel
         ).setStreamHandler(onAdminBlockedOtherUserStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onAdminBlockedUser_channel
+            onAdminBlockedUserChannel
         ).setStreamHandler(onAdminBlockedUserStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onContactSyncComplete_channel
+            onContactSyncCompleteChannel
         ).setStreamHandler(onContactSyncCompleteStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onLoggedOut_channel
+            onLoggedOutChannel
         ).setStreamHandler(onLoggedOutStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            unblockedThisUser_channel
+            unblockedThisUserChannel
         ).setStreamHandler(unblockedThisUserStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            userBlockedMe_channel
+            userBlockedMeChannel
         ).setStreamHandler(userBlockedMeStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            userCameOnline_channel
+            userCameOnlineChannel
         ).setStreamHandler(userCameOnlineStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            userDeletedHisProfile_channel
+            userDeletedHisProfileChannel
         ).setStreamHandler(userDeletedHisProfileStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            userProfileFetched_channel
+            userProfileFetchedChannel
         ).setStreamHandler(userProfileFetchedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            usersProfilesFetched_channel
+            usersProfilesFetchedChannel
         ).setStreamHandler(usersProfilesFetchedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            userUnBlockedMe_channel
+            userUnBlockedMeChannel
         ).setStreamHandler(userUnBlockedMeStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            userUpdatedHisProfile_channel
+            userUpdatedHisProfileChannel
         ).setStreamHandler(userUpdatedHisProfileStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            userWentOffline_channel
+            userWentOfflineChannel
         ).setStreamHandler(userWentOfflineStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            usersIBlockedListFetched_channel
+            usersIBlockedListFetchedChannel
         ).setStreamHandler(usersIBlockedListFetchedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            usersProfilesFetched_channel
+            usersProfilesFetchedChannel
         ).setStreamHandler(usersProfilesFetchedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            usersWhoBlockedMeListFetched_channel
+            usersWhoBlockedMeListFetchedChannel
         ).setStreamHandler(usersWhoBlockedMeListFetchedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onConnected_channel
+            onConnectedChannel
         ).setStreamHandler(onConnectedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onDisconnected_channel
+            onDisconnectedChannel
         ).setStreamHandler(onDisconnectedStreamHandler)
         /*EventChannel(
       flutterPluginBinding.binaryMessenger,
@@ -305,41 +313,41 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     ).setStreamHandler(onConnectionNotAuthorizedStreamHandler)*/
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onConnectionFailed_channel
+            onConnectionFailedChannel
         ).setStreamHandler(onConnectionFailedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            connectionFailed_channel
+            connectionFailedChannel
         ).setStreamHandler(connectionFailedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            connectionSuccess_channel
+            connectionSuccessChannel
         ).setStreamHandler(connectionSuccessStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onWebChatPasswordChanged_channel
+            onWebChatPasswordChangedChannel
         ).setStreamHandler(onWebChatPasswordChangedStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            setTypingStatus_channel
+            setTypingStatusChannel
         ).setStreamHandler(setTypingStatusStreamHandler)
 
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onChatTypingStatus_channel
+            onChatTypingStatusChannel
         ).setStreamHandler(onChatTypingStatusStreamHandler)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onGroupTypingStatus_channel
+            onGroupTypingStatusChannel
         ).setStreamHandler(onGroupTypingStatusStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger, onFailure_channel).setStreamHandler(
+        EventChannel(flutterPluginBinding.binaryMessenger, onFailureChannel).setStreamHandler(
             onFailureStreamHandler
         )
         EventChannel(
             flutterPluginBinding.binaryMessenger,
-            onProgressChanged_channel
+            onProgressChangedChannel
         ).setStreamHandler(onProgressChangedStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger, onSuccess_channel).setStreamHandler(
+        EventChannel(flutterPluginBinding.binaryMessenger, onSuccessChannel).setStreamHandler(
             onSuccessStreamHandler
         )
     }
@@ -357,7 +365,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
             call.method.equals("getNonChatUsers") -> {
                 val nonchatusers = FlyCore.getNonChatUsers()
-                result.success(nonchatusers.tojsonString())
+                result.success(nonchatusers.toJsonString())
             }
             call.method.equals("IS_TRIAL_LICENSE") -> {
                 result.success(isTrialLicenceKey)//(BuildConfig.IS_TRIAL_LICENSE)
@@ -386,11 +394,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
             call.method.equals("getUnKnownUserProfiles") -> {
                 val unknownProfilesList: List<ProfileDetails> = FlyCore.getUnKnownUserProfiles()
-                result.success(unknownProfilesList.tojsonString())
+                result.success(unknownProfilesList.toJsonString())
             }
             call.method.equals("getMyProfileStatus") -> {
                 val myUserStatus: ProfileStatus = FlyCore.getMyProfileStatus()!!
-                result.success(myUserStatus.tojsonString())
+                result.success(myUserStatus.toJsonString())
             }
             call.method.equals("insertBusyStatus") -> {
                 val busyStatus = call.argument<String>("busy_status") ?: ""
@@ -401,8 +409,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("getMyBusyStatus") -> {//{"id": null, "status": "", "isCurrentStatus": false}
                 val myBusyStatus: BusyStatus? = FlyCore.getMyBusyStatus()
                 if (myBusyStatus != null) {
-                    Log.d("myBusyStatus", myBusyStatus.tojsonString())
-                    result.success(myBusyStatus.tojsonString())
+                    Log.d("myBusyStatus", myBusyStatus.toJsonString())
+                    result.success(myBusyStatus.toJsonString())
                 } else {
                     if (FlyCore.getBusyStatusList().isEmpty()) {
                         val defaultStatus = arrayListOf<String>(
@@ -418,7 +426,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     if (FlyCore.getMyBusyStatus() == null || FlyCore.getMyBusyStatus()!!.status.isEmpty()) {
                         FlyCore.setMyBusyStatus("I am busy")
                     }
-                    result.success(FlyCore.getMyBusyStatus()!!.tojsonString())
+                    result.success(FlyCore.getMyBusyStatus()!!.toJsonString())
                 }
             }
             call.method.equals("setMyBusyStatus") -> {
@@ -433,7 +441,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
             call.method.equals("getBusyStatusList") -> {
                 val myBusyStatusList: List<BusyStatus> = FlyCore.getBusyStatusList()
-                result.success(myBusyStatusList.tojsonString())
+                result.success(myBusyStatusList.toJsonString())
             }
             call.method.equals("deleteProfileStatus") -> {
                 val id = call.argument<String>("id") ?: "0"
@@ -477,7 +485,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 val JID: String = call.argument("jid") ?: ""
                 val recalledMessages: List<ChatMessage> =
                     FlyMessenger.getRecalledMessagesOfAConversation(JID)
-                result.success(recalledMessages.tojsonString())
+                result.success(recalledMessages.toJsonString())
             }
             call.method.equals("uploadMedia") -> {
                 val messageid: String = call.argument("messageid") ?: ""
@@ -526,7 +534,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 result.success(GroupManager.getUsersListToAddMembersInOldGroup(groupJid))
             }
             call.method.equals("getUsersListToAddMembersInNewGroup") -> {
-                result.success((GroupManager.getUsersListToAddMembersInNewGroup()).tojsonString())
+                result.success((GroupManager.getUsersListToAddMembersInNewGroup()).toJsonString())
             }
             call.method.equals("getGroupMessageStatusCount") -> {
                 val messageid: String = call.argument("messageid") ?: ""
@@ -613,11 +621,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
             call.method.equals("getMessageActions") -> {
                 val messageIdlist = call.argument<List<String>>("messageidlist") ?: arrayListOf()
-                result.success(ChatManager.getMessageActions(messageIdlist).tojsonString())
+                result.success(ChatManager.getMessageActions(messageIdlist).toJsonString())
             }
             call.method.equals("copyTextMessages") -> {
                 val messageIdlist = call.argument<List<String>>("messageidlist") ?: arrayListOf()
-                ChatManager.copyTextMessages(messageIdlist).tojsonString()
+                ChatManager.copyTextMessages(messageIdlist).toJsonString()
             }
             call.method.equals("setCustomValue") -> {
                 val mid = call.argument<String>("message_id") ?: ""
@@ -694,13 +702,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
             call.method.equals("getLastNUnreadMessages") -> {
                 val messagescount = call.argument<Int>("messagesCount") ?: 0
-                result.success(FlyMessenger.getLastNUnreadMessages(messagescount).tojsonString())
+                result.success(FlyMessenger.getLastNUnreadMessages(messagescount).toJsonString())
             }
             call.method.equals("getNUnreadMessagesOfEachUsers") -> {
                 val messagescount = call.argument<Int>("messagesCount") ?: 0
                 val usersWithMessage: Map<String, List<ChatMessage>> =
                     FlyMessenger.getNUnreadMessagesOfEachUsers(messagescount)
-                result.success(usersWithMessage.tojsonString())
+                result.success(usersWithMessage.toJsonString())
             }
             call.method.equals("getRoster") -> {
                 ContactManager.getRoster()
@@ -849,7 +857,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 if (recent != null) {
                     //Log.e("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
-                    result.success(recent.tojsonString())
+                    result.success(recent.toJsonString())
                 }
             }
             call.method.equals("getMessageOfId") -> {
@@ -858,7 +866,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 if (data != null) {
                     //Log.e("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("FlyMessenger.getMessageOfId", data.tojsonString())
-                    result.success(data.tojsonString())
+                    result.success(data.toJsonString())
                 }
             }
             call.method.equals("refreshAuthToken") -> {
@@ -956,21 +964,21 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 val mediaMessage = ChatManager.getMediaMessages(jid)
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("ChatManager.getMediaMessages", mediaMessage.tojsonString())
-                result.success(mediaMessage.tojsonString())
+                result.success(mediaMessage.toJsonString())
             }
             call.method.equals("getDocsMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
                 val docMessages = ChatManager.getDocsMessages(jid)
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("ChatManager.getDocsMessages", docMessages.tojsonString())
-                result.success(docMessages.tojsonString())
+                result.success(docMessages.toJsonString())
             }
             call.method.equals("getLinkMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
                 val linkMessage = ChatManager.getLinkMessages(jid)
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("ChatManager.getLinkMessages", linkMessage.tojsonString())
-                result.success(linkMessage.tojsonString())
+                result.success(linkMessage.toJsonString())
             }
             call.method.equals("getProfileDetails") -> {
                 val jid = call.argument("jid") ?: ""
@@ -978,7 +986,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 if (profileDetails != null) {
                     //Log.e("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("ContactManager.getProfileDetails", profileDetails.tojsonString())
-                    result.success(profileDetails.tojsonString())
+                    result.success(profileDetails.toJsonString())
                 }else{
                     ContactManager.getUserProfile(jid, true, true, object : FlyCallback {
                         override fun flyResponse(
@@ -988,7 +996,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         ) {
                             val profile = ContactManager.getProfileDetails(jid)
                             if (profile != null) {
-                                result.success(profile.tojsonString())
+                                result.success(profile.toJsonString())
                             }
                         }
                     })
@@ -1035,7 +1043,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
             call.method.equals("getWebLoginDetails") -> {
                 val details = WebLoginDataManager.getWebLoginDetails()
-                result.success(details.tojsonString())
+                result.success(details.toJsonString())
             }
             call.method.equals("webLoginDetailsCleared") -> {
                 WebLoginDataManager.webLoginDetailsCleared()
@@ -1170,15 +1178,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
         })
 
-        //need to config call manager
-        // if not set error will be throw
-        /*kotlin.UninitializedPropertyAccessException: lateinit property applicationContext has not been initialized
-E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.webrtc.api.CallManager.getApplicationContext(CallManager.kt:70)
-E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManager.<init>(CallMediaManager.kt:62)*/
-
-        CallManager.init(mContext)
-//    CallManager.getCallActivityClass()
-//    CallManager.setCallActivityClass(null)
+        SdkCallFunctions(mContext).initCall()
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -1215,7 +1215,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
 
                             val response = JSONObject(data).toString()
                             //Log.e("RESPONSE_CAPTURE", "===========================")
-                            LogMessage.d("FlyCore.registerUser", data.tojsonString())
+                            LogMessage.d("FlyCore.registerUser", data.toJsonString())
                             if (token.isNotEmpty()) {
                                 PushNotificationManager.updateFcmToken(
                                     token,
@@ -1487,7 +1487,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 val jsonObject = JSONObject()
                 jsonObject.put("groupJid", "")
                 jsonObject.put("titleContent", "")
-                jsonObject.put("chatMessage", chatMessage.tojsonString())
+                jsonObject.put("chatMessage", chatMessage.toJsonString())
                 jsonObject.put("cancel", false)
                 result.success(jsonObject.toString())
             }
@@ -1502,7 +1502,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 val jsonObject = JSONObject()
                 jsonObject.put("groupJid", groupJid)
                 jsonObject.put("titleContent", titleContent)
-                jsonObject.put("chatMessage", chatMessage.tojsonString())
+                jsonObject.put("chatMessage", chatMessage.toJsonString())
                 jsonObject.put("cancel", false)
                 result.success(jsonObject.toString())
             }
@@ -1561,7 +1561,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
         FlyCore.getArchivedChatList { isSuccess, throwable, data ->
             if (isSuccess) {
                 val res: ArrayList<RecentChat> = data["data"] as ArrayList<RecentChat>
-                result.success(data.tojsonString())
+                result.success(data.toJsonString())
             } else {
                 //Getting users blocked me list failed print throwable to find the exception details.
                 result.error("500", throwable!!.message, throwable)
@@ -1620,7 +1620,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
         GroupManager.getGroupProfile(groupJid, server) { isSuccess, throwable, data ->
             if (isSuccess) {
                 val groupProfileDetails: ProfileDetails = data["data"] as ProfileDetails
-                result.success(groupProfileDetails.tojsonString())
+                result.success(groupProfileDetails.toJsonString())
             } else {
                 // Group creation failed print throwable to find the exception details.
                 result.error("500", throwable!!.message, throwable)
@@ -1643,7 +1643,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                     "totalParticipatCount",
                     FlyMessenger.getGroupMessageStatusCount(messageId)
                 )
-                val jsArray = JSONArray(messageStatusList.tojson())
+                val jsArray = JSONArray(messageStatusList.toJson())
                 groupMessageDeliveredJsonObject.put("deliveredParticipantList", jsArray)
                 result.success(groupMessageDeliveredJsonObject.toString())
             } else {
@@ -1665,7 +1665,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                     "totalParticipatCount",
                     FlyMessenger.getGroupMessageStatusCount(messageId)
                 )
-                val jsArray = JSONArray(messageStatusList.tojson())
+                val jsArray = JSONArray(messageStatusList.toJson())
                 groupMessageReadJsonObject.put("seenParticipantList", jsArray)
                 result.success(groupMessageReadJsonObject.toString())
 
@@ -1695,7 +1695,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
     private fun revokeContactSync(result: MethodChannel.Result) {
         FlyCore.revokeContactSync { isSuccess, throwable, data ->
             if (isSuccess) {
-                result.success(data.tojsonString())
+                result.success(data.toJsonString())
             } else {
                 result.error("500", throwable!!.message, throwable)
             }
@@ -1706,7 +1706,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
         val server = call.argument<Boolean>("server") ?: false
         FlyCore.getUsersWhoBlockedMe(server) { isSuccess, throwable, data ->
             if (isSuccess) {
-                result.success(data.tojsonString())
+                result.success(data.toJsonString())
             } else {
                 result.error("500", throwable!!.message, throwable)
             }
@@ -1772,7 +1772,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                     it.sortedBy { profileDetails -> profileDetails.name?.toLowerCase() }
                 }
                 //DebugUtilis.v("GroupManager.getAllGroups", data.tojsonString())
-                result.success(profilesList.tojsonString())
+                result.success(profilesList.toJsonString())
             } else {
                 result.error("500", "Unable to get all groups", throwable)
             }
@@ -1783,7 +1783,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
         val favouriteMessages: List<ChatMessage> = FlyMessenger.getFavouriteMessages()
         //Log.e("RESPONSE_CAPTURE", "===========================")
         //DebugUtilis.v("FlyMessenger.getFavouriteMessages", favouriteMessages.tojsonString())
-        result.success(favouriteMessages.tojsonString())
+        result.success(favouriteMessages.toJsonString())
     }
 
 
@@ -1804,7 +1804,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
             if (isSuccess) {
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyCore.deleteAccount", data.tojsonString())
-                result.success(data.tojsonString())
+                result.success(data.toJsonString())
             } else {
                 result.error("500", "Unable to Delete the Account", throwable)
             }
@@ -1890,7 +1890,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
         if (messageStatus != null) {
             //Log.e("RESPONSE_CAPTURE", "===========================")
             //DebugUtilis.v( "FlyMessenger.getMessageStatusOfASingleChatMessage", messageStatus.tojsonString() )
-            result.success(messageStatus.tojsonString())
+            result.success(messageStatus.toJsonString())
         } else {
             //Log.e(TAG, "Message Info Error")
         }
@@ -2027,7 +2027,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 if (chatMessage != null) {
                     //Log.e("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("FlyMessenger.sendAudioMessage", chatMessage.tojsonString())
-                    result.success(chatMessage.tojsonString())
+                    result.success(chatMessage.toJsonString())
                 } else {
                     result.error("500", "Unable to Send Audio Message", null)
                 }
@@ -2086,7 +2086,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                         if (chatMessage != null) {
                             //Log.e("RESPONSE_CAPTURE", "===========================")
                             //DebugUtilis.v("FlyMessenger.sendContactMessage",chatMessage.tojsonString())
-                            result.success(chatMessage.tojsonString())
+                            result.success(chatMessage.toJsonString())
                         } else {
                             result.error("500", "Unable to Send Contact Message", null)
                         }
@@ -2113,7 +2113,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 if (chatMessage != null) {
                     //Log.e("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("FlyMessenger.sendVideoMessage", chatMessage.tojsonString())
-                    result.success(chatMessage.tojsonString())
+                    result.success(chatMessage.toJsonString())
                 } else {
                     result.error("500", "Unable to Send Video Message", null)
                 }
@@ -2201,7 +2201,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyMessenger.getMessagesOfJid", messages.tojsonString())
 
-                result.success(messages.tojsonString())
+                result.success(messages.toJsonString())
             } else {
                 result.error("500", "User JID is Empty", null)
             }
@@ -2221,7 +2221,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 if (isSuccess) {
                     //Log.e("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("getUserList", data.tojsonString())
-                    result.success(data.tojsonString())
+                    result.success(data.toJsonString())
                 } else {
                     println("friends error : " + throwable.toString())
                     result.error("400", throwable!!.message.toString(), "")
@@ -2278,7 +2278,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("ContactManager.updateMyProfile", data.tojsonString())
                 data["status"] = isSuccess
-                result.success(data.tojsonString())
+                result.success(data.toJsonString())
             }
         } else {
             result.error(
@@ -2299,7 +2299,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                         //Log.e("RESPONSE_CAPTURE", "===========================")
                         //DebugUtilis.v("ContactManager.updateMyProfileImage", data.tojsonString())
                         data["status"] = isSuccess
-                        result.success(data.tojsonString())
+                        result.success(data.toJsonString())
                     }
                 } else {
                     result.error("400", "Image File Not Exist", null)
@@ -2335,7 +2335,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 if (isSuccess) {
                     insertDefaultStatus(call, null)
                 }
-                result.success(data.tojsonString())
+                result.success(data.toJsonString())
             }
         }
         /*} else {
@@ -2354,7 +2354,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 if (isSuccess) {
                     insertDefaultStatus(call, null)
                 }
-                result.success(data.tojsonString())
+                result.success(data.toJsonString())
             }
         }
 
@@ -2375,8 +2375,8 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("getUserProfile", data.tojsonString())
                 data["status"] = isSuccess
-                Log.i(TAG, "getProfile => " + data.tojsonString())
-                result.success(data.tojsonString())
+                Log.i(TAG, "getProfile => " + data.toJsonString())
+                result.success(data.toJsonString())
             }
         })
     }
@@ -2402,7 +2402,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                                 if (chatMessage != null) {
                                     //Log.e("RESPONSE_CAPTURE", "===========================")
                                     //DebugUtilis.v("sendTextMessage", chatMessage.tojsonString())
-                                    result.success(chatMessage.tojsonString())
+                                    result.success(chatMessage.toJsonString())
                                 }
                             } else {
                                 //Log.e(TAG, "Message sent Failed")
@@ -2451,8 +2451,8 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                         if (chatMessage != null) {
 
                             //DebugUtilis.v( "FlyMessenger.sendDocumentMessage",chatMessage.tojsonString())
-                            Log.i(TAG, chatMessage.tojsonString())
-                            result.success(chatMessage.tojsonString())
+                            Log.i(TAG, chatMessage.toJsonString())
+                            result.success(chatMessage.toJsonString())
                         }
                     } else {
                         //Log.e(TAG, "File Message sent Failed")
@@ -2504,7 +2504,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                         if (chatMessage != null) {
                             //Log.e("RESPONSE_CAPTURE", "===========================")
                             //DebugUtilis.v("sendLocationMessage", chatMessage.tojsonString())
-                            result.success(chatMessage.tojsonString())
+                            result.success(chatMessage.toJsonString())
                         } else {
                             result.error("400", "Message Not Sent", null)
                         }
@@ -2658,7 +2658,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
     private fun getProfileStatusList(result: MethodChannel.Result) {
         val status =
             FlyCore.getProfileStatusList()//[{"id":1,"isCurrentStatus":true,"status":"I am in Mirror Fly"}]
-        result.success(status.tojsonString())
+        result.success(status.toJsonString())
     }
 
     private fun insertDefaultStatus(call: MethodCall, result: MethodChannel.Result?) {
@@ -2751,7 +2751,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
         val recentChatListWithArchived = FlyCore.getRecentChatListIncludingArchived()
         //Log.e("RESPONSE_CAPTURE", "===========================")
         //DebugUtilis.v( "FlyCore.getRecentChatListIncludingArchived",recentChatListWithArchived.tojsonString())
-        result.success(recentChatListWithArchived.tojsonString())
+        result.success(recentChatListWithArchived.toJsonString())
 
     }
 
@@ -2768,8 +2768,8 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyCore.searchConversation", data.tojsonString())
                 val filterMessageList = data["data"] as MutableList<*>
-                Log.d("searchConversation", filterMessageList.tojsonString())
-                result.success(filterMessageList.tojsonString())
+                Log.d("searchConversation", filterMessageList.toJsonString())
+                result.success(filterMessageList.toJsonString())
             }
         }
     }
@@ -2782,7 +2782,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 Log.d("profileDetails", profileDetails.toString())
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyCore.getRegisteredUsers", data.tojsonString())
-                result.success(data.tojsonString())
+                result.success(data.toJsonString())
             }
         }
     }
@@ -2807,9 +2807,9 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
             if (isSuccess) {
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyCore.blockUser", data.tojsonString())
-                result.success(data.tojsonString())
+                result.success(data.toJsonString())
             } else {
-                result.error("500", "Unable to Block User", throwable?.tojsonString())
+                result.error("500", "Unable to Block User", throwable?.toJsonString())
             }
 
         }
@@ -2823,7 +2823,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 //DebugUtilis.v("FlyCore.unblockUser", data.tojsonString())
                 result.success(true)
             } else {
-                result.error("500", "Unable to Unblock User", throwable?.tojsonString())
+                result.error("500", "Unable to Unblock User", throwable?.toJsonString())
 
             }
 
@@ -2841,7 +2841,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                     //Log.e("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("GroupManager.createGroup", hashmap.tojsonString())
                     val groupData = hashmap["data"] as CreateGroupModel
-                    result.success(groupData.tojsonString())
+                    result.success(groupData.toJsonString())
                 } else {
                     result.error("500", "Unable to Create Group", throwable.toString())
                 }
@@ -2930,7 +2930,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                     myProfile.name = Constants.YOU
                     groupMembers.add(myProfile)
                 }
-                result.success(groupMembers.tojsonString())
+                result.success(groupMembers.toJsonString())
             } else {
                 result.error("404", "fetching group members", throwable.toString())
             }
@@ -3025,7 +3025,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyCore.getUsersIBlocked", data.tojsonString())
                 val profilesList = data["data"] as ArrayList<ProfileDetails>
-                result.success(profilesList.tojsonString())
+                result.success(profilesList.toJsonString())
             }
         }
     }
@@ -3144,18 +3144,10 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
     }
 
 
-    fun Any.tojsonString(): String {
-        return Gson().toJson(this).toString()
-    }
-
-    fun Any.tojson(): String {
-        return Gson().toJson(this)
-    }
-
     override fun onMessageReceived(message: ChatMessage) {
         //called when the new message is received
         //Log.e(TAG, "Message Received ${message.tojsonString()}")
-        MessageReceivedStreamHandler.onMessageReceived?.success(message.tojsonString())
+        MessageReceivedStreamHandler.onMessageReceived?.success(message.toJsonString())
 
     }
 
@@ -3166,13 +3158,13 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
         //Log.e(TAG, "Message Status Updated ==> $messageId")
         val message = FlyMessenger.getMessageOfId(messageId)
         if (message != null) {
-            MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.tojsonString())
+            MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.toJsonString())
         }
     }
 
     override fun onMediaStatusUpdated(message: ChatMessage) {
         Log.e(TAG, "media Status Updated ==> ${message.messageId}")
-        MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.tojsonString())
+        MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.toJsonString())
     }
 
     override fun onUploadDownloadProgressChanged(
@@ -3219,7 +3211,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
 
 
     override fun onGroupNotificationMessage(message: ChatMessage) {
-        onGroupNotificationMessageStreamHandler.onGroupNotificationMessage?.success(message.tojsonString())
+        onGroupNotificationMessageStreamHandler.onGroupNotificationMessage?.success(message.toJsonString())
     }
 
     override fun onGroupProfileFetched(groupJid: String) {
@@ -3354,7 +3346,7 @@ E/AndroidRuntime(15847): 	at com.mirrorflysdk.flycall.call.utils.CallMediaManage
     override fun userProfileFetched(jid: String, profileDetails: ProfileDetails) {
         val map = JSONObject()
         map.put("jid", jid)
-        map.put("profileDetails", profileDetails.tojsonString())
+        map.put("profileDetails", profileDetails.toJsonString())
         userProfileFetchedStreamHandler.userProfileFetched?.success(map.toString())
     }
 

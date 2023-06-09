@@ -5,7 +5,7 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/snapshot"
+            url "https://repo.mirrorfly.com/internal"
         }
 //        mavenLocal()
     }
@@ -23,7 +23,7 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/snapshot"
+            url "https://repo.mirrorfly.com/internal"
         }
 //        mavenLocal()
     }
