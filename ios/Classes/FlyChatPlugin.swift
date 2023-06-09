@@ -64,6 +64,7 @@ let onFailure_channel = "contus.mirrorfly/onFailure"
 let onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
 let onSuccess_channel = "contus.mirrorfly/onSuccess"
 let onMessageDeleteForEveryOne_channel = "contus.mirrorfly/onMessageDeleteForEveryOne"
+let onConnectionFailed_channel = "contus.mirrorfly/onConnectionFailed"
 
 public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDelegate {
     
@@ -119,6 +120,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
     var onsetTypingStatusStreamHandler: OnsetTypingStatusStreamHandler?
     var onGroupTypingStatusStreamHandler: OnGroupTypingStatusStreamHandler?
     
+    var onConnectionFailedStreamHandler: OnConnectionFailedStreamHandler?
+    
 //    public override init() {
 //            super.init()
 //        }
@@ -147,13 +150,13 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         if (self.messageStatusUpdatedStreamHandler == nil) {
             self.messageStatusUpdatedStreamHandler = MessageStatusUpdatedStreamHandler()
         }
-        FlutterEventChannel(name: onMessageStatusUpdatedChannel, binaryMessenger: registrar.messenger()).setStreamHandler((self.messageStatusUpdatedStreamHandler as! FlutterStreamHandler & NSObjectProtocol))
+        FlutterEventChannel(name: onMessageStatusUpdatedChannel, binaryMessenger: registrar.messenger()).setStreamHandler((self.messageStatusUpdatedStreamHandler!))
         
         if (self.mediaStatusUpdatedStreamHandler == nil) {
             self.mediaStatusUpdatedStreamHandler = MediaStatusUpdatedStreamHandler()
         }
         
-        FlutterEventChannel(name: onMediaStatusUpdatedChannel, binaryMessenger: registrar.messenger()).setStreamHandler((self.mediaStatusUpdatedStreamHandler as! FlutterStreamHandler & NSObjectProtocol))
+        FlutterEventChannel(name: onMediaStatusUpdatedChannel, binaryMessenger: registrar.messenger()).setStreamHandler((self.mediaStatusUpdatedStreamHandler!))
         
         if (self.onAdminBlockedOtherUserStreamHandler == nil) {
             self.onAdminBlockedOtherUserStreamHandler = OnAdminBlockedOtherUserStreamHandler()
@@ -441,6 +444,12 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         }
         
         FlutterEventChannel(name: onGroupTypingStatus_channel, binaryMessenger: registrar.messenger()).setStreamHandler((self.onGroupTypingStatusStreamHandler!))
+        
+        if (self.onConnectionFailedStreamHandler == nil) {
+            self.onConnectionFailedStreamHandler = OnConnectionFailedStreamHandler()
+        }
+        
+        FlutterEventChannel(name: onConnectionFailed_channel, binaryMessenger: registrar.messenger()).setStreamHandler((self.onConnectionFailedStreamHandler!))
         
     }
     
@@ -812,6 +821,12 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     }
     
     public func onConnectionFailed(error: MirrorFlySDK.FlyError) {
+        if(onConnectionFailedStreamHandler?.OnConnectionFailed != nil){
+            print("onConnectionFailed event\(String(describing: error.localizedDescription))")
+            onConnectionFailedStreamHandler?.OnConnectionFailed?(error.localizedDescription)
+        }else{
+            print("onConnectionFailed Stream Handler is Nil")
+        }
         
     }
     
