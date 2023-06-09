@@ -89,7 +89,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.7
+  mirrorfly_chat: ^0.0.1
 ```
 
 - Run `flutter pub get` command in your project directory.
