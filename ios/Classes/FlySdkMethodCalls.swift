@@ -60,7 +60,7 @@ import MirrorFlySDK
             .setGroupConfiguration(groupConfig: sdkGroupConfig!)
             .buildAndInitialize()
         
-        if Utility.getBoolFromPreference(key: isLoggedIn) {
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
             do {
                 try CallManager.initCallSDK()
             }
@@ -110,7 +110,7 @@ import MirrorFlySDK
                 FlyDefaults.myMobileNumber = userIdentifier
                 FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
                 
-                Utility.saveInPreference(key: isLoggedIn, value: true)
+                Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
                 
                 
                 ChatManager.connect()
@@ -975,7 +975,7 @@ import MirrorFlySDK
                             let profileDataJson = profileUpdateResponse?.toJson()
                             print("***profile Data json \(profileDataJson)")
                             
-                            Utility.saveInPreference(key: isProfileSaved, value: true)
+                            Utility.saveInPreference(key: Constants.isProfileSaved, value: true)
                             
 
                             var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
@@ -2043,8 +2043,8 @@ import MirrorFlySDK
                //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
                ChatManager.disconnect()
                ChatManager.shared.resetFlyDefaults()
-               Utility.saveInPreference(key: isProfileSaved, value: false)
-               Utility.saveInPreference(key: isLoggedIn, value: false)
+               Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
+               Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
                result(isSuccess)
            }else{
                result(FlutterError(code: "500", message: "Unable to Logout", details: flyError?.localizedDescription))
@@ -2100,7 +2100,7 @@ import MirrorFlySDK
         if let userProfile = userlist.filter({$0.jid == userJid}).first {
             
             ContactManager.shared.saveUser(profileDetails: userProfile)
-            
+            let userProfileJson = userProfile.toJson()
             result(userProfileJson)
         }else{
             let userProfile = ChatManager.profileDetaisFor(jid: userJid)
@@ -2133,8 +2133,8 @@ import MirrorFlySDK
         let jid = args["jid"] as? String ?? ""
         let groupMessageDeliveredList = GroupManager.shared.getMessageDeliveredListBy(messageId: messageId, groupId: jid)
         print("groupMessageDeliveredList=>\(groupMessageDeliveredList)")
-        var deliveredCount = groupMessageDeliveredList.deliveredCount
-        var totalParticipatCount = groupMessageDeliveredList.totalParticipatCount
+        let deliveredCount = groupMessageDeliveredList.deliveredCount
+        let totalParticipatCount = groupMessageDeliveredList.totalParticipatCount
         
         let groupMessageDeliveredListJson = groupMessageDeliveredList.deliveredParticipantList.toJson() ?? "[]"
         

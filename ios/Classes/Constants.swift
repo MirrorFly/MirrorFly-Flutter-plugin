@@ -18,4 +18,8 @@ struct Constants {
     static let onMuteStatusUpdated = "\(domain)/onMuteStatusUpdated"
     static let onUserSpeaking = "\(domain)/onUserSpeaking"
     static let onUserStoppedSpeaking = "\(domain)/onUserStoppedSpeaking"
+    
+    
+    static let isLoggedIn = "isLoggedIn"
+    static let isProfileSaved = "isProfileSaved"
 }

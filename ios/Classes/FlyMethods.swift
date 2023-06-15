@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import Flutter
 
 class FlyMethods {
     
     static let flyCallMethods = FlyCallMethods()
-    static let callMethodHandlers: [String: (FlutterResult) -> Void] = {
+    static let callMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult) -> Void] = {
         return [
             "getCallUsersList": flyCallMethods.getCallUsersList,
             "getAudioDevices": flyCallMethods.getAudioDevices,

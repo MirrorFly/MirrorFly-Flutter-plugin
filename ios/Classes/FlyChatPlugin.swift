@@ -130,7 +130,11 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         registrar.addMethodCallDelegate(instance, channel: channel)
         instance.setupEventChannel(registrar: registrar)
         
-        let flyCallMethods = FlyCallMethods(registrar: registrar)
+//        let flyCalls = FlyCall(registrar: registrar)
+        
+//        FlyCall.register(with: registrar)
+        
+        
 //        flyCallMethods.setupMethodChannel(registrar: registrar)
 //        flyCallMethods.setupEventChannel(registrar: registrar)
     }

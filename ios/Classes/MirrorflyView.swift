@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import Flutter
+import MirrorFlySDK
 
 class MirrorflyView: NSObject, FlutterPlatformView {
     
