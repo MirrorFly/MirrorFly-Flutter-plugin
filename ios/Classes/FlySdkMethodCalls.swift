@@ -59,6 +59,15 @@ import MirrorFlySDK
             .setDomainBaseUrl(baseUrl: domainBaseUrl)
             .setGroupConfiguration(groupConfig: sdkGroupConfig!)
             .buildAndInitialize()
+        
+        if Utility.getBoolFromPreference(key: isLoggedIn) {
+            do {
+                try CallManager.initCallSDK()
+            }
+            catch(let error ) {
+                print("#FlyCall Exception : \(error.localizedDescription)")
+            }
+        }
 
         
         ChatManager.disableLocalNotification()
@@ -105,6 +114,13 @@ import MirrorFlySDK
                 
                 
                 ChatManager.connect()
+                
+                do {
+                    try CallManager.initCallSDK()
+                }
+                catch(let error ) {
+                    print("#FlyCall Exception : \(error.localizedDescription)")
+                }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
                     

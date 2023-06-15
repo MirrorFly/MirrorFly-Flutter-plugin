@@ -1,0 +1,21 @@
+//
+//  Constants.swift
+//  mirrorfly_chat
+//
+//  Created by Mani Vendhan on 15/06/23.
+//
+
+import Foundation
+
+struct Constants {
+    private static let domain = "contus.mirrorfly"
+    static let callMethodChannel = "\(domain)/flyCall"
+    static let onCallReceiving = "\(domain)/onCallReceiving"
+    static let onLocalVideoTrackAdded = "\(domain)/onLocalVideoTrackAdded"
+    static let onVideoTrackAdded = "\(domain)/onVideoTrackAdded"
+    static let onCallStatusUpdated = "\(domain)/onCallStatusUpdated"
+    static let onCallAction = "\(domain)/onCallAction"
+    static let onMuteStatusUpdated = "\(domain)/onMuteStatusUpdated"
+    static let onUserSpeaking = "\(domain)/onUserSpeaking"
+    static let onUserStoppedSpeaking = "\(domain)/onUserStoppedSpeaking"
+}
