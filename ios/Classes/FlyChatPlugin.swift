@@ -131,8 +131,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         instance.setupEventChannel(registrar: registrar)
         
 //        let flyCalls = FlyCall(registrar: registrar)
-        
-//        FlyCall.register(with: registrar)
+//
+        FlyCall.register(with: registrar)
         
         
 //        flyCallMethods.setupMethodChannel(registrar: registrar)
@@ -475,7 +475,7 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
     }
     
     func prepareMethodHandler(methodCall: FlutterMethodCall, result: @escaping FlutterResult){
-        
+//        FlyCall.handleMethodCall(call: call, result: result)
         switch methodCall.method {
         case "init":
             FlySdkMethodCalls.buildChatSDK(call: methodCall)
@@ -1377,6 +1377,9 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         }else{
             print("onConnected Stream Handler is Nil")
         }
+//        DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+//            try! CallManager.initCallSDK()
+//        }
     }
     
     public func onDisconnected() {

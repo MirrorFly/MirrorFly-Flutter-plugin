@@ -922,4 +922,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future setRegionCode(String regionCode) async {
     throw UnimplementedError('has not been implemented.');
   }
+  Future makeVideoCall() async {
+    throw UnimplementedError('has not been implemented.');
+  }
 }

@@ -37,19 +37,10 @@ import Flutter
     
     // FlutterPlugin methods
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let instance = FlyCall(registrar: registrar)
+        _ = FlyCall(registrar: registrar)
     }
         
-//    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-//        if let methodHandler = FlyMethods.callMethodHandlers[methodCall.method] {
-//            methodHandler(call, result)
-//        } else {
-//            result(FlutterMethodNotImplemented)
-//        }
-//    }
-    
-    func handleMethodCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if let methodHandler = FlyMethods.callMethodHandlers[call.method] {
             methodHandler(call, result)
         } else {
@@ -64,8 +55,6 @@ import Flutter
         }
         FlutterEventChannel(name: Constants.onCallReceiving, binaryMessenger: registrar.messenger()).setStreamHandler(self.onCallReceivingStreamHandler as? NSObjectProtocol & FlutterStreamHandler)
                 
-//        let onCallReceivingStreamHandler = OnCallReceivingStreamHandler()
-//        self.eventChannel?.setStreamHandler(onCallReceivingStreamHandler as? NSObjectProtocol & FlutterStreamHandler)
     }
     
     

@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.dependency 'libPhoneNumber-iOS'
   s.dependency 'Alamofire'
   s.dependency 'SocketRocket'
-  s.dependency 'Socket.IO-Client-Swift'
+  s.dependency 'Socket.IO-Client-Swift', '~> 15.2.0'
   s.dependency 'XMPPFramework/Swift'
   s.dependency 'RealmSwift' , '10.20.1'
   s.dependency 'GoogleWebRTC'

@@ -1000,4 +1000,8 @@ class Mirrorfly {
   static Future<dynamic> setRegionCode(String regionCode) async {
     return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
   }
+
+  static Future<dynamic> makeVideoCall() async {
+    return FlyChatFlutterPlatform.instance.makeVideoCall();
+  }
 }

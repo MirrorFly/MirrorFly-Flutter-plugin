@@ -10,6 +10,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final mirrorFlyMethodChannel =
       const MethodChannel('contus.mirrorfly/flyChat');
+  @visibleForTesting
+  final mirrorFlyCallMethodChannel =
+      const MethodChannel('contus.mirrorfly/flyCall');
 
   //Event Channels
   @visibleForTesting
@@ -3452,6 +3455,20 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       debugPrint('setRegionCode : $regionCode');
       await mirrorFlyMethodChannel
           .invokeMethod('setRegionCode', {'regionCode': regionCode});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  @override
+  makeVideoCall() async {
+    try {
+      debugPrint('makeVideoCall :');
+      await mirrorFlyCallMethodChannel
+          .invokeMethod('makeVideoCall');
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;

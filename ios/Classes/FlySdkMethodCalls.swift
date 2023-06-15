@@ -20,6 +20,7 @@ import MirrorFlySDK
     
     static var isTrialLicenceKey : Bool = true;
     static var isContactSyncInProgress : Bool = false;
+//    static let SOCKETIO_SERVER_HOST = "https://signal-uikit-qa.contus.us/"
     
     static var userlist = [ProfileDetails]()
     
@@ -60,12 +61,19 @@ import MirrorFlySDK
             .setGroupConfiguration(groupConfig: sdkGroupConfig!)
             .buildAndInitialize()
         
+//        ChatManager.setSignalServer(signalServerUrl: SOCKETIO_SERVER_HOST)
+        
+
+        
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
-            do {
-                try CallManager.initCallSDK()
-            }
-            catch(let error ) {
-                print("#FlyCall Exception : \(error.localizedDescription)")
+
+            DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+                
+                do {
+                    try CallManager.initCallSDK()
+                } catch (let error ){
+                    print("#FlyCall Exception : \(error.localizedDescription)")
+                }
             }
         }
 

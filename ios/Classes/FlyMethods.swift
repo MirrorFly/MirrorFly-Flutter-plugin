@@ -27,6 +27,7 @@ class FlyMethods {
             "isRemoteVideoMuted": flyCallMethods.isRemoteVideoMuted,
             "isRemoteVideoPaused": flyCallMethods.isRemoteVideoPaused,
             "makeGroupVideoCall": flyCallMethods.makeGroupVideoCall,
+            "makeGroupVoiceCall": flyCallMethods.makeGroupVoiceCall,
             "switchCamera": flyCallMethods.switchCamera,
             "isCallOnHold": flyCallMethods.isCallOnHold,
             "isOneToOneCall": flyCallMethods.isOneToOneCall,
@@ -37,6 +38,7 @@ class FlyMethods {
             "isCallNotConnected": flyCallMethods.isCallNotConnected,
             "isUserAudioMuted": flyCallMethods.isUserAudioMuted,
             "isUserVideoMuted": flyCallMethods.isUserVideoMuted,
+            "inviteUsersToOngoingCall": flyCallMethods.inviteUsersToOngoingCall,
             
         ]
     }()
