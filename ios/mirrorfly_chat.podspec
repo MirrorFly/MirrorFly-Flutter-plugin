@@ -14,8 +14,6 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  #s.dependency          = { :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'qa' }
-  #s.dependency 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'qa'
   s.platform = :ios, '12.1'
   s.requires_arc = true
 
@@ -28,8 +26,6 @@ Pod::Spec.new do |s|
   s.dependency 'GoogleWebRTC'
 #  s.dependency 'MirrorFlySDK', '5.8.0'
   
-
-#  s.ios.vendored_frameworks = 'SDK/FlyCommon.xcframework' , 'SDK/FlyCall.xcframework' ,'SDK/FlyCore.xcframework', 'SDK/FlyXmpp.xcframework', 'SDK/FlyDatabase.xcframework', 'SDK/FlyNetwork.xcframework', 'SDK/FlyTranslate.xcframework'
   s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
 
