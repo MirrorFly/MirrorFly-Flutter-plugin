@@ -6,6 +6,7 @@ object Constants {
     const val callMethodChannel = "$domain/flyCall"
     const val onCallReceiving = "$domain/onCallReceiving"
     const val onLocalVideoTrackAdded = "$domain/onLocalVideoTrackAdded"
+    const val onRemoteVideoTrackAdded = "$domain/onRemoteVideoTrackAdded"
     const val onVideoTrackAdded = "$domain/onVideoTrackAdded"
     const val onCallStatusUpdated = "$domain/onCallStatusUpdated"
     const val onCallAction = "$domain/onCallAction"

@@ -1285,6 +1285,11 @@ class MockFlyChatFlutterPlatform
   // implement usersProfilesFetched
   Stream<bool> get usersProfilesFetched => throw UnimplementedError();
 
+  @override
+  Future makeVideoCall() {
+    throw UnimplementedError();
+  }
+
 }
 
 void main() {

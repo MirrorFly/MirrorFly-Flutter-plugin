@@ -13,7 +13,13 @@ enum ScalingType {
 }
 
 class MirrorFlyView extends StatefulWidget {
-  const MirrorFlyView({Key? key, this.mirror = true, this.scalingType = ScalingType.scaleAspectFILL, required this.isLocalUser, this.remoteUserJid = ""}) : super(key: key);
+  const MirrorFlyView(
+      {Key? key,
+      this.mirror = true,
+      this.scalingType = ScalingType.scaleAspectFILL,
+      required this.isLocalUser,
+      this.remoteUserJid = ""})
+      : super(key: key);
   // final Map<dynamic, dynamic> creationParams;
 
   final bool mirror;
@@ -30,75 +36,92 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   final nativeViewType = "mirrorfly_view";
   @override
   Widget build(BuildContext context) {
-    if(!widget.isLocalUser && widget.remoteUserJid.isEmpty){
+    if (!widget.isLocalUser && widget.remoteUserJid.isEmpty) {
       throw Exception("remoteUserJid must not be empty");
     }
     return buildHybridCompositionView();
   }
 
-  String getScalingType(ScalingType type){
-    if(type == ScalingType.scaleAspectFILL){
+  String getScalingType(ScalingType type) {
+    if (type == ScalingType.scaleAspectFILL) {
       return "SCALE_ASPECT_FILL";
-    }else if(type == ScalingType.scaleAspectFIT){
+    } else if (type == ScalingType.scaleAspectFIT) {
       return "SCALE_ASPECT_FIT";
-    }else{
+    } else {
       return "SCALE_ASPECT_BALANCED";
     }
   }
 
-  Map<dynamic, dynamic> buildParams(){
+  Map<dynamic, dynamic> buildParams() {
     return {
       "scalingType": getScalingType(widget.scalingType),
-      "setMirror":widget.mirror,
-      if(widget.isLocalUser)"isLocal":widget.isLocalUser,
-      if(!widget.isLocalUser) "isRemote":true,
-      if(!widget.isLocalUser) "userJid":widget.remoteUserJid.trim().toString()
+      "setMirror": widget.mirror,
+      if (widget.isLocalUser) "isLocal": widget.isLocalUser,
+      if (!widget.isLocalUser) "isRemote": true,
+      if (!widget.isLocalUser) "userJid": widget.remoteUserJid.trim().toString()
     };
   }
 
   Widget buildHybridCompositionView() {
-    return PlatformViewLink(
-      viewType: nativeViewType,
-      surfaceFactory: (BuildContext context, PlatformViewController controller) {
-        return AndroidViewSurface(
-          controller: (controller as AndroidViewController),
-          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-        );
-      },
-      onCreatePlatformView: (PlatformViewCreationParams params) {
-        return PlatformViewsService.initSurfaceAndroidView(
-          id: _viewId,
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        return PlatformViewLink(
           viewType: nativeViewType,
-          layoutDirection: TextDirection.rtl,
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: (controller as AndroidViewController),
+              gestureRecognizers: const <Factory<
+                  OneSequenceGestureRecognizer>>{},
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+            );
+          },
+          onCreatePlatformView: (PlatformViewCreationParams params) {
+            return PlatformViewsService.initSurfaceAndroidView(
+              id: _viewId,
+              viewType: nativeViewType,
+              layoutDirection: TextDirection.rtl,
+              creationParams: buildParams(),
+              creationParamsCodec: const StandardMessageCodec(),
+            )
+              ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+              ..create();
+          },
+        );
+      case TargetPlatform.iOS:
+        debugPrint("build params ${buildParams()}");
+        return UiKitView(
+          viewType: nativeViewType,
+          layoutDirection: TextDirection.ltr,
           creationParams: buildParams(),
           creationParamsCodec: const StandardMessageCodec(),
-        )
-          ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
-          ..create();
-      },
-    );
+        );
+
+      default:
+        throw UnsupportedError('Unsupported platform view');
+    }
   }
 
-  Widget buildVirtualDisplayView(Map<String, dynamic> creationParams) {
-    return AndroidView(
-      viewType: nativeViewType,
-      hitTestBehavior: PlatformViewHitTestBehavior.transparent,
-      creationParamsCodec: const StandardMessageCodec(),
-      creationParams: creationParams,
-      onPlatformViewCreated: (value) {
-        debugPrint("onPlatformViewCreated $value");
-      },
-    );
-  }
-
+  // Widget buildVirtualDisplayView(Map<String, dynamic> creationParams) {
+  //   return AndroidView(
+  //     viewType: nativeViewType,
+  //     hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+  //     creationParamsCodec: const StandardMessageCodec(),
+  //     creationParams: creationParams,
+  //     onPlatformViewCreated: (value) {
+  //       debugPrint("onPlatformViewCreated $value");
+  //     },
+  //   );
+  // }
 }
 
-extension ExtensionMirrorflyView on MirrorFlyView{
-  setBorderRadius(BorderRadiusGeometry radius){
+extension ExtensionMirrorflyView on MirrorFlyView {
+  setBorderRadius(BorderRadiusGeometry radius) {
     return ClipRRect(
         borderRadius: radius,
-    child: Align(
-    alignment: Alignment.bottomRight,child: this,));
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child: this,
+        ));
   }
 }

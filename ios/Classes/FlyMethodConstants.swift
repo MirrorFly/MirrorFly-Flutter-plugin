@@ -8,7 +8,7 @@
 import Foundation
 import Flutter
 
-class FlyMethods {
+class FlyMethodConstants {
     
     static let flyCallMethods = FlyCallMethods()
     static let callMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult) -> Void] = {

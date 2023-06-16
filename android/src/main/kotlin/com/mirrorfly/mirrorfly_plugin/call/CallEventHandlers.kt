@@ -30,17 +30,17 @@ object onLocalVideoTrackAddedStreamHandler : EventChannel.StreamHandler {
     }
 }
 
-object onVideoTrackAddedStreamHandler : EventChannel.StreamHandler {
+object onRemoteVideoTrackAddedStreamHandler : EventChannel.StreamHandler {
 
-    var onVideoTrackAdded: EventChannel.EventSink? = null
+    var onRemoteVideoTrackAdded: EventChannel.EventSink? = null
 
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-        onVideoTrackAdded = events
+        onRemoteVideoTrackAdded = events
     }
 
     override fun onCancel(arguments: Any?) {
-        onVideoTrackAdded = null
+        onRemoteVideoTrackAdded = null
     }
 }
 

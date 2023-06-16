@@ -27,7 +27,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
         Logger.d("$tag init")
         EventChannel(binaryMessenger,Constants.onCallReceiving).setStreamHandler(OnCallReceivingStreamHandler)
         EventChannel(binaryMessenger,Constants.onLocalVideoTrackAdded).setStreamHandler(onLocalVideoTrackAddedStreamHandler)
-        EventChannel(binaryMessenger,Constants.onVideoTrackAdded).setStreamHandler(onVideoTrackAddedStreamHandler)
+        EventChannel(binaryMessenger,Constants.onRemoteVideoTrackAdded).setStreamHandler(onRemoteVideoTrackAddedStreamHandler)
         EventChannel(binaryMessenger,Constants.onCallStatusUpdated).setStreamHandler(onCallStatusUpdatedStreamHandler)
         EventChannel(binaryMessenger,Constants.onCallAction).setStreamHandler(onCallActionStreamHandler)
         EventChannel(binaryMessenger,Constants.onMuteStatusUpdated).setStreamHandler(onMuteStatusUpdatedStreamHandler)
@@ -142,8 +142,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
 
     override fun onVideoTrackAdded(userJid: String) {
         Log.d(tag,"#onVideoTrackAdded userJid $userJid")
-        onVideoTrackAddedStreamHandler.onVideoTrackAdded?.success(userJid)
-
+        onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(userJid)
     }
 
     override fun onLocalVideoTrackAdded() {
