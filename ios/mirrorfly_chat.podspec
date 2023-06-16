@@ -3,8 +3,8 @@
 # Run 'pod lib lint fly_chat.podspec' to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'mirrorfly_plugin'
-  s.version          = '0.0.3'
+  s.name             = 'mirrorfly_chat'
+  s.version          = '0.0.1'
   s.summary          = 'A Mirrorfly Flutter Plugin'
   s.description      = 'A Mirrorfly Flutter plugin to Experience an outstanding real time messaging solution. The powerful communication that adds an extra mileage to build your chat app.'
 
@@ -14,22 +14,18 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  #s.dependency          = { :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'qa' }
-  #s.dependency 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'qa'
   s.platform = :ios, '12.1'
   s.requires_arc = true
 
   s.dependency 'libPhoneNumber-iOS'
   s.dependency 'Alamofire'
   s.dependency 'SocketRocket'
-  s.dependency 'Socket.IO-Client-Swift'
+  s.dependency 'Socket.IO-Client-Swift', '~> 15.2.0'
   s.dependency 'XMPPFramework/Swift'
   s.dependency 'RealmSwift' , '10.20.1'
   s.dependency 'GoogleWebRTC'
 #  s.dependency 'MirrorFlySDK', '5.8.0'
   
-
-#  s.ios.vendored_frameworks = 'SDK/FlyCommon.xcframework' , 'SDK/FlyCall.xcframework' ,'SDK/FlyCore.xcframework', 'SDK/FlyXmpp.xcframework', 'SDK/FlyDatabase.xcframework', 'SDK/FlyNetwork.xcframework', 'SDK/FlyTranslate.xcframework'
   s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
 

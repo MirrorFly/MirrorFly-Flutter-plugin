@@ -20,6 +20,7 @@ import MirrorFlySDK
     
     static var isTrialLicenceKey : Bool = true;
     static var isContactSyncInProgress : Bool = false;
+//    static let SOCKETIO_SERVER_HOST = "https://signal-uikit-qa.contus.us/"
     
     static var userlist = [ProfileDetails]()
     
@@ -59,19 +60,28 @@ import MirrorFlySDK
             .setDomainBaseUrl(baseUrl: domainBaseUrl)
             .setGroupConfiguration(groupConfig: sdkGroupConfig!)
             .buildAndInitialize()
+        
+//        ChatManager.setSignalServer(signalServerUrl: SOCKETIO_SERVER_HOST)
+        
 
-//        do{
-//            try ChatManager.shared.setIV(iv: ivKey)
-//        }catch let error{
-//            print("#Plugin Error ---> ChatManger Set Iv key Failed, \(error.localizedDescription)")
-//        }
+        
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+
+            DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+                
+                do {
+                    try CallManager.initCallSDK()
+                } catch (let error ){
+                    print("#FlyCall Exception : \(error.localizedDescription)")
+                }
+            }
+        }
+
         
         ChatManager.disableLocalNotification()
         
         ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
         
-        
-//        FlyChatPlugin.initializeEventListeners()
       }
     
     static func registerUser(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -108,7 +118,17 @@ import MirrorFlySDK
                 FlyDefaults.myMobileNumber = userIdentifier
                 FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
                 
+                Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
+                
+                
                 ChatManager.connect()
+                
+                do {
+                    try CallManager.initCallSDK()
+                }
+                catch(let error ) {
+                    print("#FlyCall Exception : \(error.localizedDescription)")
+                }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
                     
@@ -179,12 +199,8 @@ import MirrorFlySDK
         FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: []) { isSuccess,error,chatMessage in
             if isSuccess {
                 print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
-//                var chatMsg = JSONSerializer.toJson(chatMessage as Any)
-//                chatMsg = chatMsg.replacingOccurrences(of: "{\"some\":", with: "")
-//                chatMsg = chatMsg.replacingOccurrences(of: "}}", with: "}")
                 let textMsgResponse = chatMessage.toJson()
                 if(textMsgResponse != nil){
-//                if let textMsgResponse = JSONConverter.convertObjectToJSON(chatMessage) {
                     print("FlyMessenger.sendTextMessage==**==\(String(describing: textMsgResponse))")
                     result(textMsgResponse)
                 } else {
@@ -217,11 +233,7 @@ import MirrorFlySDK
         
         FlyMessenger.sendLocationMessage(toJid: userJid!, latitude: latitude, longitude: longitude, replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
             if isSuccess {
-//                var locationResponse = JSONSerializer.toJson(chatMessage as Any)
                 let locationResponse = chatMessage?.toJson()
-//                locationResponse = locationResponse.replacingOccurrences(of: "{\"some\":", with: "")
-//                locationResponse = locationResponse.replacingOccurrences(of: "}}", with: "}")
-//                print(locationResponse)
                 print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
                 result(locationResponse)
             }else{
@@ -273,17 +285,8 @@ import MirrorFlySDK
         }
         
         FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId, mentionedUsersIds: []){isSuccess,error,message in
-//            if isSuccess {
-                
-//                var response = JSONSerializer.toJson(message as Any)
             let response = message?.toJson()
-//                response = response.replacingOccurrences(of: "{\"some\":", with: "")
-//                response = response.replacingOccurrences(of: "}}", with: "}")
-            print("FlyMessenger.sendImageMessage==**==\(String(describing: response))")
                 result(response)
-//            }else{
-//                result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
-//            }
         }
     }
     
@@ -313,11 +316,7 @@ import MirrorFlySDK
                 FlyMessenger.sendAudioMessage(toJid:  userJid, mediaData: mediaData, replyMessageId :  replyMessageId, isRecorded : isRecorded) { isSuccess,error,message in
                     if message != nil {
                         
-//                        var audioResponse = JSONSerializer.toJson(message as Any)
                         let audioResponse = message?.toJson()
-//                        audioResponse = audioResponse.replacingOccurrences(of: "{\"some\":", with: "")
-//                        audioResponse = audioResponse.replacingOccurrences(of: "}}", with: "}")
-//                        print(audioResponse)
                         print("FlyMessenger.sendAudioMessage==**==\(String(describing: audioResponse))")
                         result(audioResponse)
                         
@@ -434,8 +433,6 @@ import MirrorFlySDK
                     userData = (list?.toJson())!
                 }
                 
-                print("ContactManager.shared.getRegisteredUsers==**== \(userData)")
-                
                 result(userData)
             } else{
                 result(FlutterError(code: "500", message: flyError?.description, details: nil))
@@ -483,16 +480,12 @@ import MirrorFlySDK
                 media.caption = caption
                 
                 FlyMessenger.sendVideoMessage(toJid: userJid, mediaData: media, replyMessageId: replyMessageId, mentionedUsersIds: []){ isSuccess,error,message in
-//                    if isSuccess{
                         if let chatMessage = message {
                             let sendVideoResponse = chatMessage.toJson()
                             print("FlyMessenger.sendVideoMessage==**==\(String(describing: sendVideoResponse))")
                             result(sendVideoResponse)
                             
                         }
-//                    }else{
-//                        result(FlutterError(code: "500", message: JSONSerializer.toSimpleJson(from: error as Any), details: nil))
-//                    }
                 }
             }else{
                 print("Video Compression Error")
@@ -563,12 +556,7 @@ import MirrorFlySDK
                 
                 FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId) { isSuccess, error, message in
                     if message != nil {
-                        print("sendDocumentMessage")
-//                        var documentMessageResponse = JSONSerializer.toJson(message as Any)
                         let documentMessageResponse = message?.toJson()
-//                        documentMessageResponse = documentMessageResponse.replacingOccurrences(of: "{\"some\":", with: "")
-//                        documentMessageResponse = documentMessageResponse.replacingOccurrences(of: "}}", with: "}")
-                        print("FlyMessenger.sendDocumentMessage==**==\(String(describing: documentMessageResponse))")
                         result(documentMessageResponse)
                         
                     }else{
@@ -588,10 +576,6 @@ import MirrorFlySDK
         if(profileStatus.isEmpty){
             result(nil)
         }
-        
-//        let profileStatusJson = profileStatus.toJson()
-//        let profileStatusJson = JSONSerializer.toJson(profileStatus)
-        //need to check response.
         
         let profileStatusJson = profileStatus.toJson()
         print("getProfileStatusList==**==\(String(describing: profileStatusJson))")
@@ -721,7 +705,6 @@ import MirrorFlySDK
         let groupJid = args["jid"] as? String ?? ""
         var groupMembers = [GroupParticipantDetail]()
         
-        print("FlyDefaults.myJid\(FlyDefaults.myJid)")
         
         groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != FlyDefaults.myJid})
         let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == FlyDefaults.myJid})
@@ -730,20 +713,15 @@ import MirrorFlySDK
             myJid[0].profileDetail?.name = "You"
         }
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
-//        groupMembers.insert(contentsOf: myJid)
         if(myJid.count > 0){
             groupMembers.append(contentsOf: myJid)
         }
         
-        print("---group members--- \(groupMembers)")
-        //need to check response
-//        var groupMembersJson = groupMembers.toJson()
     
         var groupMemberProfile: String = "["
         
         groupMembers.forEach{ groupMember in
             if(groupMember.profileDetail != nil){
-//                var profileDetailJson = JSONSerializer.toJson(groupMember.profileDetail as Any)
                 let profileDetailJson = groupMember.profileDetail?.toJson()
                 print("---group members json--- \(String(describing: profileDetailJson))")
                 
@@ -771,10 +749,7 @@ import MirrorFlySDK
         
         let starredMessages =  ChatManager.getFavouriteMessages()
         
-//        var starredMessagesJson = JSONSerializer.toJson(starredMessages)
         let starredMessagesJson = starredMessages.toJson()
-//        starredMessagesJson = starredMessagesJson.replacingOccurrences(of: "{\"some\":", with: "")
-//        starredMessagesJson = starredMessagesJson.replacingOccurrences(of: "}}", with: "}")
         print("starredMessagesJson==**==\(String(describing: starredMessagesJson))")
         result(starredMessagesJson)
     }
@@ -838,8 +813,6 @@ import MirrorFlySDK
                 
                 print("***getUserProfile dict\(String(describing: profileData.toJson()))")
                 if isSuccess {
-                    //need to check response.
-//                    let profileJSON = "{\"data\" : " + JSONSerializer.toJson(data.getData() as Any) + ",\"status\": true}"
                     let profileJSON = "{\"data\" : " + (profileData.toJson() ?? "[]") + ",\"status\": true}"
                     print("ContactManager.shared.getUserProfile==**==\(profileJSON)")
                     result(profileJSON)
@@ -856,7 +829,6 @@ import MirrorFlySDK
     static func updateMyProfile(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        //        let jid = args["jid"] as? String ?? ""
         let email = args["email"] as? String ?? ""
         let mobile = args["mobile"] as? String ?? ""
         let nickName = args["name"] as? String ?? ""
@@ -890,22 +862,11 @@ import MirrorFlySDK
             if isSuccess {
                 var data = flyData
                 
-                
-//                let profileData = data.getData() as? FlyProfile
                 let message = data.getMessage()
                 print("***profile Data\(data.getData() as? FlyProfile)")
-//                let profileDataJson = data.dictToJson()
                 let profileUpdateResponse = data.getData() as? FlyProfile
                 let profileDataJson = profileUpdateResponse?.toJson()
                 print("***profile Data json \(profileDataJson)")
-//                let profileDataDecoded = extractData(from: profileDataJson ?? "")
-                
-//                print("***profileDataDecoded\(String(describing: profileDataDecoded))")
-                
-                
-//                let profileDataJson =  pluginDictToJson(dictionary: profileData)
-                //need to check response.
-//                let profileDataJson = profileData.toJson()//JSONSerializer.toJson(profileData)
 
                 var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
 
@@ -949,8 +910,6 @@ import MirrorFlySDK
         profileData.status = FlyDefaults.myStatus
         profileData.image = FlyDefaults.myImageUrl
         
-        //need to check the fn
-//        FlyDatabaseController.shared.rosterManager.saveContact(profileDetailsArray: [profileData], chatType: .singleChat, contactType: .live, saveAsTemp: false, calledBy: "")
         ContactManager.shared.saveUser(profileDetails: profileData, saveAs: .live)
     }
     
@@ -971,59 +930,17 @@ import MirrorFlySDK
         let profileImage = args["image"] as? String ?? ""
         print("*****profileImage\(profileImage)")
         var localFileUrl = ""
-//        let imageData = try Data(contentsOf: profileImage as URL)
-//        guard let fileURL = URL(string: "file:///" + profileImage) else {
-//            // Invalid file URL
-//            print("*******Invalid file url")
-//            return
-//        }
-//        print("****file url\(fileURL)")
         let sourceURL = URL(fileURLWithPath: profileImage)
         print("****sourceURL \(sourceURL)")
         let fileName = (profileImage as NSString).lastPathComponent
         print("file name" + fileName)
         do {
-//            let imageData = try Data(contentsOf: fileURL)
-            
             
             if (profileImage != ""){
-//                if let fileUrl = saveInDirectory(with: imageData, fileName: fileName) {
                 if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
                     print("File saved at: \(fileUrl)")
                     localFileUrl = fileUrl
-//                    if fileExists(atPath: fileUrl) {
-//                        print("File exists.")
-//                    } else {
-//                        print("File does not exist.")
-//                    }
                     FlyDefaults.myImageToken = fileUrl
-//                    ContactManager.shared.updateMyProfileImage(image: localFileUrl){ isSuccess, flyError, flyData in
-//                            if isSuccess {
-//
-//                                var data = flyData
-//
-//                                //need to check response
-//
-//                                let profileData = data.getData() as? FlyProfile
-//
-//                                let message = data.getMessage()
-//                                print("profile Image update response-->\(String(describing: profileData))")
-//
-//
-//            //                    let profileDataJson = JSONSerializer.toJson(profileData)
-//
-//                                let profileDataJson = profileData?.toJson()
-//
-//                                let profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(String(describing: profileDataJson)) }"
-//
-//                                print("profileResponseJson==**==\(profileResponseJson)")
-//                                result(profileResponseJson)
-//
-//                            } else{
-//                                result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
-//                            }
-//                    }
-                    
                     
                     let userJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
                     
@@ -1054,14 +971,11 @@ import MirrorFlySDK
                         if isSuccess {
                             var data = flyData
                             
-                            
-            //                let profileData = data.getData() as? FlyProfile
                             let message = data.getMessage()
                             print("***profile Data\(data.getData() as? FlyProfile)")
-            //                let profileDataJson = data.dictToJson()
                             var profileUpdateResponse = data.getData() as? FlyProfile
                             let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
-//                                    var imageFilename = imageURL
+
                             if let fileName = fileArray?.last {
                                 profileUpdateResponse?.image = fileName
                                     }
@@ -1069,14 +983,8 @@ import MirrorFlySDK
                             let profileDataJson = profileUpdateResponse?.toJson()
                             print("***profile Data json \(profileDataJson)")
                             
-            //                let profileDataDecoded = extractData(from: profileDataJson ?? "")
+                            Utility.saveInPreference(key: Constants.isProfileSaved, value: true)
                             
-            //                print("***profileDataDecoded\(String(describing: profileDataDecoded))")
-                            
-                            
-            //                let profileDataJson =  pluginDictToJson(dictionary: profileData)
-                            //need to check response.
-            //                let profileDataJson = profileData.toJson()//JSONSerializer.toJson(profileData)
 
                             var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
 
@@ -1163,10 +1071,7 @@ import MirrorFlySDK
     
     static func getMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let busyStatus = ChatManager.shared.getMyBusyStatus()
-        print("getMyBusyStatus==**==\(busyStatus)")
-       //need to check response.
         let busyStatusJson = busyStatus.toJson()
-//        result(JSONSerializer.toJson(profileStatus))
         result(busyStatusJson)
     }
     
@@ -1194,17 +1099,12 @@ import MirrorFlySDK
         let busyStatus = args["busy_status"] as? String ?? ""
         print("setting busy status\(busyStatus)")
         ChatManager.shared.setMyBusyStatus(busyStatus)
-//        print("busy status set resp\(resp)")
-        //need to check the fn
-//        result(FlyDatabaseController.shared.userBusyStatusManager.saveStatus(busyStatus: BusyStatus(statusText: busyStatus)))
         result(true)
     }
     
     static func getBusyStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let busyStatusList = ChatManager.shared.getBusyStatusList()
         print("Get Status Started profileList Count \(busyStatusList.count)")
-        //need to check response.
-//        var busyStatusJsonList = JSONSerializer.toJson(busyStatusList)
         let busyStatusJsonList = busyStatusList.toJson()
         print("getBusyStatusList==**==\(String(describing: busyStatusJsonList))")
         result(busyStatusJsonList)
@@ -1303,8 +1203,6 @@ import MirrorFlySDK
         let userJid = args["JID"] as? String ?? ""
         print(userJid)
         let messages : [ChatMessage] = FlyMessenger.getMessagesOf(jid: userJid)
-              
-//        var userChatHistory = JSONSerializer.toSimpleJson(from: messages)//(messages)
         
         if let chatJson = messages.toJson() {
             print("getMessagesOfJid==**==\(chatJson)")
@@ -1319,8 +1217,6 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? ""
-        
-        print("markAsReadDeleteUnreadSeparator==**==")
 
         ChatManager.markConversationAsRead(for: [jid])
         FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
@@ -1607,7 +1503,6 @@ import MirrorFlySDK
     static func exportChatConversationToEmail(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJID = args["jid"] as? String ?? ""
-//        let mailRecipients = args["mailRecipients"] as? [String] ?? []
         
         ChatManager.shared.exportChatConversationToEmail(jid: userJID) { chatDataModel in
             
@@ -1674,9 +1569,7 @@ import MirrorFlySDK
             index = index + 1;
             let message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: message.messageId)
             
-            let messageJson = message?.toJson()// JSONSerializer.toJson(message as Any)
-//            messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
-//            messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
+            let messageJson = message?.toJson()
             searchConversationResp = searchConversationResp + (messageJson ?? "")
         }
         
@@ -1737,10 +1630,7 @@ import MirrorFlySDK
                       if(recentChatList.isEmpty){
                           result("{\"data\": [] }")
                       }else{
-//                          let recentChatJson = JSONSerializer.toJson(recentChatList)
-                          
-//                          if let recentChatJson = JSONConverter.convertObjectToJSON(recentChatList) {
-                          if let recentChatJson = recentChatList.toJson() { // JSONConverter.convertObjectToJSON(recentChatList) {
+                          if let recentChatJson = recentChatList.toJson() {
                               let recentChatListJson = "{\"data\":" + recentChatJson + "}"
                               
                               print("ChatManager.getRecentChatList==**==\(recentChatListJson)")
@@ -1779,11 +1669,7 @@ import MirrorFlySDK
             result(nil)
         }
         
-        
-//        var recentChatJson = JSONSerializer.toJson(recentChat as Any)
-        let recentChatJson = recentChat?.toJson() //JSONSerializer.toJson(recentChat as Any)
-//        recentChatJson = recentChatJson.replacingOccurrences(of: "{\"some\":", with: "")
-//        recentChatJson = recentChatJson.replacingOccurrences(of: "}}", with: "}")
+        let recentChatJson = recentChat?.toJson()
         print("getRecentChatOf==**==\(String(describing: recentChatJson))")
         result(recentChatJson)
     }
@@ -1822,11 +1708,7 @@ import MirrorFlySDK
             try ContactManager.shared.blockUser(for: userJid){ isSuccess, flyError, flyData in
 
                     if isSuccess {
-//                        var blockUserResponseJson = JSONSerializer.toJson(flyData as Any)
-                        let blockUserResponseJson = flyData.dictToJson() //JSONSerializer.toJson(flyData as Any)
-                        
-//                        blockUserResponseJson = blockUserResponseJson.replacingOccurrences(of: "{\"some\":", with: "")
-//                        blockUserResponseJson = blockUserResponseJson.replacingOccurrences(of: "}}", with: "}")
+                        let blockUserResponseJson = flyData.dictToJson()
                         print("ContactManager.shared.blockUser==**==\(String(describing: blockUserResponseJson))")
                         result(blockUserResponseJson)
                     } else{
@@ -1937,7 +1819,6 @@ import MirrorFlySDK
                 if isSuccess {
                     let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
                     let blockedProfileJson = blockedprofileDetailsArray.toJson()
-//                    let blockedProfileJson = JSONSerializer.toJson(blockedprofileDetailsArray as Any)
                     print("ContactManager.shared.getUsersIBlocked==**==\(String(describing: blockedProfileJson))")
                     result(blockedProfileJson)
                 } else{
@@ -1959,10 +1840,7 @@ import MirrorFlySDK
                 if(chatMessages!.isEmpty){
                     result(nil)
                 }else{
-//                    var mediaMsgJson = JSONSerializer.toJson(chatMessages as Any)
-                    var mediaMsgJson = chatMessages?.toJson() //JSONSerializer.toJson(chatMessages as Any)
-//                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-//                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+                    var mediaMsgJson = chatMessages?.toJson()
                     mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "[[", with: "[")
                     mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "]]", with: "]")
                     print("ChatManager.getVedioImageAudioMessageGroupByMonth==**==\(String(describing: mediaMsgJson))")
@@ -1988,10 +1866,7 @@ import MirrorFlySDK
                 if (mediaMessages.isEmpty){
                     result(nil)
                 }else{
-//                    var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
                     var mediaMsgJson = mediaMessages.toJson()
-//                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-//                    mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
                     mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "[[", with: "[")
                     mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "]]", with: "]")
                     print("ChatManager.getDocumentMessageGroupByMonth==**==\(String(describing: mediaMsgJson))")
@@ -2020,10 +1895,7 @@ import MirrorFlySDK
                     
                     mediaLinkMessages.forEach { mediaLinkMessage in
                         mediaLinkMessage.forEach{ linkChatMessage in
-//                            var mediaMsgJson = JSONSerializer.toJson(linkChatMessage.chatMessage)
                             let mediaMsgJson = linkChatMessage.chatMessage.toJson()
-//                            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-//                            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
                             
                             viewAllMediaLinkMessages = viewAllMediaLinkMessages + (mediaMsgJson ?? "") + ","
                             
@@ -2177,8 +2049,10 @@ import MirrorFlySDK
         ChatManager.logoutApi { isSuccess, flyError, flyData in
            if isSuccess {
                //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
-                       ChatManager.disconnect()
-                       ChatManager.shared.resetFlyDefaults()
+               ChatManager.disconnect()
+               ChatManager.shared.resetFlyDefaults()
+               Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
+               Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
                result(isSuccess)
            }else{
                result(FlutterError(code: "500", message: "Unable to Logout", details: flyError?.localizedDescription))
@@ -2194,10 +2068,7 @@ import MirrorFlySDK
         
         var message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: messageId)
         
-//        var messageJson = JSONSerializer.toJson(message as Any)
         var messageJson = message?.toJson()
-//        messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
-//        messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
         print("getMessageOfId==**==\(String(describing: messageJson))")
         result(messageJson)
                
@@ -2221,9 +2092,6 @@ import MirrorFlySDK
                    print("ChatManager.getArchivedChatList==**==\(archiveChatJson)")
                    result(archiveChatListJson)
                }
-//               let archiveChatJson = flydata.dictToJson()
-//               print("ChatManager.getArchivedChatList==**==\(String(describing: archiveChatJson))")
-//               result(rchiveChatJson)
                
            }else{
                result(FlutterError(code: "500", message: "Unable to Fetch Archived List", details: flyError?.localizedDescription))
@@ -2240,16 +2108,7 @@ import MirrorFlySDK
         if let userProfile = userlist.filter({$0.jid == userJid}).first {
             
             ContactManager.shared.saveUser(profileDetails: userProfile)
-            
-            //        let userProfile = ChatManager.profileDetaisFor(jid: userJid)
-            //        let userProfile = ChatManager.profileDetaisFor(jid: "918526697581@xmpp-uikit-qa.contus.us")
-            //        let userProfile = ContactManager.shared.getUserProfileDetails(for: userJid)
-            print("getProfileDetails --> \(String(describing: userProfile))")
-            //        var userProfileJson = JSONSerializer.toJson(userProfile as Any)
-            let userProfileJson = userProfile.toJson() //JSONSerializer.toJson(userProfile as Any)
-            //        userProfileJson = userProfileJson.replacingOccurrences(of: "{\"some\":", with: "")
-            //        userProfileJson = userProfileJson.replacingOccurrences(of: "}}", with: "}")
-            print("getProfileDetails==**==\(String(describing: userProfileJson))")
+            let userProfileJson = userProfile.toJson()
             result(userProfileJson)
         }else{
             let userProfile = ChatManager.profileDetaisFor(jid: userJid)
@@ -2267,10 +2126,7 @@ import MirrorFlySDK
            var data  = flyData
            print(data.getMessage() as! String )
            if isSuccess {
-//               var deleteResponseJson = JSONSerializer.toJson(data)
-               let deleteResponseJson = data.dictToJson()//JSONSerializer.toJson(data)
-//                deleteResponseJson = deleteResponseJson.replacingOccurrences(of: "{\"some\":", with: "")
-//                deleteResponseJson = deleteResponseJson.replacingOccurrences(of: "}}", with: "}")
+               let deleteResponseJson = data.dictToJson()
                print("ContactManager.shared.deleteMyAccountRequest==**==\(String(describing: deleteResponseJson))")
                 result(deleteResponseJson)
            } else{
@@ -2285,15 +2141,10 @@ import MirrorFlySDK
         let jid = args["jid"] as? String ?? ""
         let groupMessageDeliveredList = GroupManager.shared.getMessageDeliveredListBy(messageId: messageId, groupId: jid)
         print("groupMessageDeliveredList=>\(groupMessageDeliveredList)")
-        var deliveredCount = groupMessageDeliveredList.deliveredCount
-        var totalParticipatCount = groupMessageDeliveredList.totalParticipatCount
+        let deliveredCount = groupMessageDeliveredList.deliveredCount
+        let totalParticipatCount = groupMessageDeliveredList.totalParticipatCount
         
         let groupMessageDeliveredListJson = groupMessageDeliveredList.deliveredParticipantList.toJson() ?? "[]"
-        
-//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-//        jsonObject.setValue(String(deliveredCount), forKey: "deliveredCount")
-//        jsonObject.setValue(totalParticipatCount, forKey: "totalParticipatCount")
-//        jsonObject.setValue(groupMessageDeliveredListJson, forKey: "deliveredParticipantList")
         
         let deliveredListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"deliveredParticipantList\" : " + groupMessageDeliveredListJson + "}"
         
@@ -2315,7 +2166,6 @@ import MirrorFlySDK
         let groupMessageReadListJson = groupMessageReadList.seenParticipantList.toJson() ?? "[]"
         
         let readListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"seenParticipantList\" : " + groupMessageReadListJson + "}"
-//        groupMessageReadList
         
         
         print("getGroupMessageReadByList==**==\(String(describing: readListJson))")

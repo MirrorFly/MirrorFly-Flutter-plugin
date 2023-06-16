@@ -523,6 +523,33 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onSuccess =>
       throw UnimplementedError('has not been implemented.');
 
+  Stream<dynamic> get onCallReceiving =>
+      throw UnimplementedError('onCallReceiving has not been implemented.');
+
+  Stream<dynamic> get onLocalVideoTrackAdded =>
+      throw UnimplementedError('onLocalVideoTrackAdded has not been implemented.');
+
+  Stream<dynamic> get onRemoteVideoTrackAdded =>
+      throw UnimplementedError('onRemoteVideoTrackAdded has not been implemented.');
+
+  Stream<dynamic> get onTrackAdded =>
+      throw UnimplementedError('onTrackAdded has not been implemented.');
+
+  Stream<dynamic> get onCallStatusUpdated =>
+      throw UnimplementedError('onCallStatusUpdated has not been implemented.');
+
+  Stream<dynamic> get onCallAction =>
+      throw UnimplementedError('onCallAction has not been implemented.');
+
+  Stream<dynamic> get onMuteStatusUpdated =>
+      throw UnimplementedError('onMuteStatusUpdated has not been implemented.');
+
+  Stream<dynamic> get onUserSpeaking =>
+      throw UnimplementedError('onUserSpeaking has not been implemented.');
+
+  Stream<dynamic> get onUserStoppedSpeaking =>
+      throw UnimplementedError('onUserStoppedSpeaking has not been implemented.');
+
   Future<String?> imagePath(String imgurl) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -920,6 +947,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future setRegionCode(String regionCode) async {
+    throw UnimplementedError('has not been implemented.');
+  }
+  Future makeVideoCall() async {
     throw UnimplementedError('has not been implemented.');
   }
 }
