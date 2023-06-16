@@ -571,6 +571,33 @@ class Mirrorfly {
   static Stream<dynamic> get onSuccess =>
       FlyChatFlutterPlatform.instance.onSuccess;
 
+  static Stream<dynamic> get onCallReceiving =>
+      FlyChatFlutterPlatform.instance.onCallReceiving;
+
+  static Stream<dynamic> get onLocalVideoTrackAdded =>
+      FlyChatFlutterPlatform.instance.onLocalVideoTrackAdded;
+
+  static Stream<dynamic> get onRemoteVideoTrackAdded =>
+      FlyChatFlutterPlatform.instance.onRemoteVideoTrackAdded;
+
+  static Stream<dynamic> get onTrackAdded =>
+      FlyChatFlutterPlatform.instance.onTrackAdded;
+
+  static Stream<dynamic> get onCallStatusUpdated =>
+      FlyChatFlutterPlatform.instance.onCallStatusUpdated;
+
+  static Stream<dynamic> get onCallAction =>
+      FlyChatFlutterPlatform.instance.onCallAction;
+
+  static Stream<dynamic> get onMuteStatusUpdated =>
+      FlyChatFlutterPlatform.instance.onMuteStatusUpdated;
+
+  static Stream<dynamic> get onUserSpeaking =>
+      FlyChatFlutterPlatform.instance.onUserSpeaking;
+
+  static Stream<dynamic> get onUserStoppedSpeaking =>
+      FlyChatFlutterPlatform.instance.onUserStoppedSpeaking;
+
   static Future<String?> imagePath(String imgurl) {
     return FlyChatFlutterPlatform.instance.imagePath(imgurl);
   }

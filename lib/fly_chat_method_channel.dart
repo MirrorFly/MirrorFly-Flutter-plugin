@@ -157,6 +157,33 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
 
+  @visibleForTesting
+  final onCallReceivingChannel = const EventChannel('contus.mirrorfly/onCallReceiving');
+
+  @visibleForTesting
+  final onLocalVideoTrackAddedChannel = const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
+
+  @visibleForTesting
+  final onRemoteVideoTrackAddedChannel = const EventChannel('contus.mirrorfly/onRemoteVideoTrackAdded');
+
+  @visibleForTesting
+  final onTrackAddedChannel = const EventChannel('contus.mirrorfly/onTrackAdded');
+
+  @visibleForTesting
+  final onCallStatusUpdatedChannel = const EventChannel('contus.mirrorfly/onCallStatusUpdated');
+
+  @visibleForTesting
+  final onCallActionChannel = const EventChannel('contus.mirrorfly/onCallAction');
+
+  @visibleForTesting
+  final onMuteStatusUpdatedChannel = const EventChannel('contus.mirrorfly/onMuteStatusUpdated');
+
+  @visibleForTesting
+  final onUserSpeakingChannel = const EventChannel('contus.mirrorfly/onUserSpeaking');
+
+  @visibleForTesting
+  final onUserStoppedSpeakingChannel = const EventChannel('contus.mirrorfly/onUserStoppedSpeaking');
+
   /*@override
   Future<String?> getPlatformVersion() async {
     final version =
@@ -1760,6 +1787,42 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onSuccess =>
       onSuccessChannel.receiveBroadcastStream().cast();
+
+  @override
+  Stream<dynamic> get onCallReceiving =>
+      onCallReceivingChannel.receiveBroadcastStream().cast();
+
+  @override
+  Stream<dynamic> get onLocalVideoTrackAdded =>
+      onLocalVideoTrackAddedChannel.receiveBroadcastStream().cast();
+
+  @override
+  Stream<dynamic> get onRemoteVideoTrackAdded =>
+      onRemoteVideoTrackAddedChannel.receiveBroadcastStream().cast();
+
+  @override
+  Stream<dynamic> get onTrackAdded =>
+      onTrackAddedChannel.receiveBroadcastStream().cast();
+
+  @override
+  Stream<dynamic> get onCallStatusUpdated =>
+      onCallStatusUpdatedChannel.receiveBroadcastStream().cast();
+
+  @override
+  Stream<dynamic> get onCallAction =>
+      onCallActionChannel.receiveBroadcastStream().cast();
+
+  @override
+  Stream<dynamic> get onMuteStatusUpdated =>
+      onMuteStatusUpdatedChannel.receiveBroadcastStream().cast();
+
+  @override
+  Stream<dynamic> get onUserSpeaking =>
+      onUserSpeakingChannel.receiveBroadcastStream().cast();
+
+  @override
+  Stream<dynamic> get onUserStoppedSpeaking =>
+      onUserStoppedSpeakingChannel.receiveBroadcastStream().cast();
 
   @override
   Future<String?> imagePath(String imgurl) async {

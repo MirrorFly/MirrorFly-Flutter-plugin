@@ -15,10 +15,10 @@ struct Constants {
     static let onRemoteVideoTrackAddedChannel = "\(domain)/onRemoteVideoTrackAdded"
     static let onTrackAddedChannel = "\(domain)/onTrackAdded"
     static let onCallStatusUpdateChannel = "\(domain)/onCallStatusUpdated"
-    static let onCallAction = "\(domain)/onCallAction"
-    static let onMuteStatusUpdated = "\(domain)/onMuteStatusUpdated"
-    static let onUserSpeaking = "\(domain)/onUserSpeaking"
-    static let onUserStoppedSpeaking = "\(domain)/onUserStoppedSpeaking"
+    static let onCallActionChannel = "\(domain)/onCallAction"
+    static let onMuteStatusUpdatedChannel = "\(domain)/onMuteStatusUpdated"
+    static let onUserSpeakingChannel = "\(domain)/onUserSpeaking"
+    static let onUserStoppedSpeakingChannel = "\(domain)/onUserStoppedSpeaking"
     
     
     static let isLoggedIn = "isLoggedIn"

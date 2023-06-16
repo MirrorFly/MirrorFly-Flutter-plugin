@@ -95,8 +95,8 @@ import Flutter
             }
         }
         
-        var callUpdate = pluginDictToJson(dictionary: jsonObject)
-        eventChannelInitializer.sinkValues[Constants.onCallReceiving] = callUpdate
+        let callUpdate = pluginDictToJson(dictionary: jsonObject)
+        eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallStatusUpdateChannel, value: callUpdate)
     }
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {

@@ -1290,6 +1290,42 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  // implement onCallReceiving
+  Stream get onCallReceiving => throw UnimplementedError();
+
+  @override
+  // implement onLocalVideoTrackAdded
+  Stream get onLocalVideoTrackAdded => throw UnimplementedError();
+
+  @override
+  // implement onCallAction
+  Stream get onCallAction => throw UnimplementedError();
+
+  @override
+  // implement onCallStatusUpdated
+  Stream get onCallStatusUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onMuteStatusUpdated
+  Stream get onMuteStatusUpdated => throw UnimplementedError();
+
+  @override
+  // implement onRemoteVideoTrackAdded
+  Stream get onRemoteVideoTrackAdded => throw UnimplementedError();
+
+  @override
+  // implement onTrackAdded
+  Stream get onTrackAdded => throw UnimplementedError();
+
+  @override
+  // implement onUserSpeaking
+  Stream get onUserSpeaking => throw UnimplementedError();
+
+  @override
+  // implement onUserStoppedSpeaking
+  Stream get onUserStoppedSpeaking => throw UnimplementedError();
+
 }
 
 void main() {
