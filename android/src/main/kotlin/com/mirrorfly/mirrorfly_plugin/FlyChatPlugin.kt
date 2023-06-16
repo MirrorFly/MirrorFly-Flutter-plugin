@@ -1174,7 +1174,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             override fun getDisplayName(jid: String): String {
                 return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(
                     jid
-                )!!.name else Constants.EMPTY_STRING
+                )!!.name else com.mirrorflysdk.flycommons.Constants.EMPTY_STRING
             }
         })
 
@@ -2715,7 +2715,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     private fun createDotNoMediaFile() {
 //        FilePathUtils.getExternalStorage()
 
-        val mediaPath = VideoRecUtils.getSentParentPath(Constants.MSG_TYPE_IMAGE)
+        val mediaPath = VideoRecUtils.getSentParentPath(com.mirrorflysdk.flycommons.Constants.MSG_TYPE_IMAGE)
 
         //Log.e("FIle Upload root path", mediaPath)
 
@@ -2926,8 +2926,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 if (myProfileIndex >= 0) {
                     val myProfile = groupMembers[myProfileIndex]
                     groupMembers.removeAt(myProfileIndex)
-                    myProfile.nickName = Constants.YOU
-                    myProfile.name = Constants.YOU
+                    myProfile.nickName = com.mirrorflysdk.flycommons.Constants.YOU
+                    myProfile.name = com.mirrorflysdk.flycommons.Constants.YOU
                     groupMembers.add(myProfile)
                 }
                 result.success(groupMembers.toJsonString())
@@ -3061,7 +3061,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Notification")
         if (customToneUri != "None")
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, existingCustomTone)
-        (mContext as Activity).startActivityForResult(intent, Constants.ACTIVITY_REQ_CODE)
+        (mContext as Activity).startActivityForResult(intent, com.mirrorflysdk.flycommons.Constants.ACTIVITY_REQ_CODE)
         /* setting isActivityStartedForResult to true to avoid xmpp disconnection */
         ChatManager.isActivityStartedForResult = true
     }
@@ -3071,7 +3071,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         Log.e("Android Notification", "onActivty Result")
         ChatManager.isActivityStartedForResult = false
         try {
-            if (resultCode == Activity.RESULT_OK && requestCode == Constants.ACTIVITY_REQ_CODE &&
+            if (resultCode == Activity.RESULT_OK && requestCode == com.mirrorflysdk.flycommons.Constants.ACTIVITY_REQ_CODE &&
                 data?.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) != null
             ) {
 
@@ -3507,6 +3507,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         Log.d("FlyChat", "onAttachedToActivity")
+        Log.d("FlyChat", "onAttachedToActivity ${binding.activity}")
+        Log.d("FlyChat", "onAttachedToActivity ${binding.activity.localClassName}")
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
         if (isRegistered) {
             ChatEventsManager.setupMessageEventListener(this)

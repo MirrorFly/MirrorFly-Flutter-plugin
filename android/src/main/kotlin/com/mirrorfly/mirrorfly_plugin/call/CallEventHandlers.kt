@@ -1,5 +1,6 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
+import com.mirrorflysdk.flycall.webrtc.api.CallUiListener
 import io.flutter.plugin.common.EventChannel
 
 object OnCallReceivingStreamHandler : EventChannel.StreamHandler {
@@ -93,4 +94,17 @@ object onUserStoppedSpeakingStreamHandler : EventChannel.StreamHandler{
     override fun onCancel(arguments: Any?) {
         onUserStoppedSpeaking = null
     }
+}
+
+object FlutterCall{
+    /**
+     * Listener for show call Ui
+     */
+    var callUiListener: CallUiFlutterListener? = null
+    fun setListener(listener: CallUiFlutterListener){
+        callUiListener = listener
+    }
+}
+interface CallUiFlutterListener {
+    fun onShowCallUiFlutter(callAction: String?)
 }

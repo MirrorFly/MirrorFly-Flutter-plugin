@@ -1,6 +1,8 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.CallAction
@@ -169,13 +171,18 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
 
     override fun onUserStoppedSpeaking(userJid: String) {
         Log.d(tag,"#onUserStoppedSpeaking $userJid")
-        onUserStoppedSpeakingStreamHandler.onUserStoppedSpeaking?.success(Collections.singletonMap("userJid",userJid))
+        onUserStoppedSpeakingStreamHandler.onUserStoppedSpeaking?.success(userJid)
     }
 
     override fun onShowCallUi(callAction: String?) {
         LogMessage.d(tag, "#onShowCallUi $callAction")
+        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
         when(callAction){
-            CallConstants.ACTION_SHOW_CALL_UI->{}
+            CallConstants.ACTION_SHOW_CALL_UI->{
+                val t= Intent(context,CallKitUiActivity::class.java)
+                t.addFlags(FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(t)
+            }
             CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}

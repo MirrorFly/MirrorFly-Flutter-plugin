@@ -21,9 +21,11 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 class SdkCallFunctions(var context: Context) {
+    val tag = "#FlutterCall"
 
     fun initCall(){
         CallManager.init(context)
+        CallManager.setCallActivityClass(CallKitUiActivity::class.java)
 //        CallManager.configureCallActivity(context)
         CallManager.setMissedCallListener(object : MissedCallListener {
             override fun onMissedCall(
@@ -32,9 +34,7 @@ class SdkCallFunctions(var context: Context) {
                 groupId: String?,
                 callType: String,
                 userList: ArrayList<String>
-            ) {
-
-            }
+            ){}
         })
 
         CallManager.setCallHelper(object : CallHelper {
@@ -93,8 +93,6 @@ class SdkCallFunctions(var context: Context) {
                 Manifest.permission.READ_PHONE_STATE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
@@ -128,19 +126,19 @@ class SdkCallFunctions(var context: Context) {
     }
 
     fun muteAudio(call: MethodCall, result: MethodChannel.Result) {
-        Logger.d("#FlutterCall","muteAudio")
+        Logger.d(tag,"muteAudio")
         val muteAudio = call.argument<Boolean>("muteAudio") ?: false
         CallManager.muteAudio(muteAudio)
         result.success(true)
     }
     fun muteVideo(call: MethodCall, result: MethodChannel.Result) {
-        Logger.d("#FlutterCall","muteVideo")
+        Logger.d(tag,"muteVideo")
         val muteVideo = call.argument<Boolean>("muteVideo") ?: false
         CallManager.muteVideo(muteVideo)
         result.success(true)
     }
     fun makeGroupVideoCall(call: MethodCall,result: MethodChannel.Result){
-        Logger.d("#FlutterCall","muteVideo")
+        Logger.d(tag,"muteVideo")
         val groupJid = call.argument<String>("groupJid") ?: ""
         val jidList = call.argument<String>("jidList") ?: ""
         CallManager.makeGroupVideoCall(jidList.split(",") as ArrayList<String>,groupJid,object: CallActionListener{

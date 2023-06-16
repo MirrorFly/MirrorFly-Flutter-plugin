@@ -22,7 +22,7 @@
         android:orientation="vertical">
 
 
-        <com.mirrorfly.mirrorfly_plugin.call.widgets.RippleRelativeLayout
+        <RelativeLayout
             android:id="@+id/llBackgroundAnimation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,9 +36,7 @@
                 android:layout_width="@dimen/size_avatar"
                 android:layout_height="@dimen/size_avatar"
                 android:layout_centerInParent="true"
-                android:src="@drawable/profile_img"
-                app:civ_border_color="#80ffffff"
-                app:civ_border_width="1dp" />
+                android:src="@drawable/profile_img" />
 
 
             <LinearLayout
@@ -83,7 +81,7 @@
 
             </LinearLayout>
 
-        </com.mirrorfly.mirrorfly_plugin.call.widgets.RippleRelativeLayout>
+        </RelativeLayout>
 
 
         <Space
@@ -106,12 +104,12 @@
                 android:orientation="vertical"
                 tools:ignore="UseCompoundDrawables">
 
-                <com.mirrorfly.mirrorfly_plugin.call.widgets.RippleRelativeLayout
+                <RelativeLayout
                     android:layout_width="@dimen/size_button_x2_5"
-                    android:layout_height="@dimen/size_button_x2_5"
-                    app:ripple_amount="4"
+                    android:layout_height="@dimen/size_button_x2_5">
+                    <!--app:ripple_amount="4"
                     app:ripple_radius="@dimen/base_margin_x1_5"
-                    app:ripple_scale="4.5">
+                    app:ripple_scale="4.5">-->
 
                     <ImageView
                         android:id="@+id/ivDeclineCall"
@@ -134,7 +132,7 @@
                         android:textColor="@color/action_text"
                         android:textSize="@dimen/size_text_action" />
 
-                </com.mirrorfly.mirrorfly_plugin.call.widgets.RippleRelativeLayout>
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -151,12 +149,12 @@
                 tools:ignore="UseCompoundDrawables">
 
 
-                <com.mirrorfly.mirrorfly_plugin.call.widgets.RippleRelativeLayout
+                <RelativeLayout
                     android:layout_width="@dimen/size_button_x2_5"
-                    android:layout_height="@dimen/size_button_x2_5"
-                    app:ripple_amount="4"
+                    android:layout_height="@dimen/size_button_x2_5">
+                    <!--app:ripple_amount="4"
                     app:ripple_radius="@dimen/base_margin_x1_5"
-                    app:ripple_scale="4.5">
+                    app:ripple_scale="4.5">-->
 
 
                     <ImageView
@@ -181,7 +179,7 @@
                         android:textSize="@dimen/size_text_action" />
 
 
-                </com.mirrorfly.mirrorfly_plugin.call.widgets.RippleRelativeLayout>
+                </RelativeLayout>
 
             </LinearLayout>
 
