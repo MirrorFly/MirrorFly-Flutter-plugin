@@ -3527,11 +3527,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
   @override
-  makeVideoCall() async {
+  Future<bool> makeVideoCall(String userJid) async {
+    bool val;
     try {
       debugPrint('makeVideoCall :');
-      await mirrorFlyCallMethodChannel
-          .invokeMethod('makeVideoCall');
+      val = await mirrorFlyCallMethodChannel
+          .invokeMethod('makeVideoCall', {"user_jid": userJid});
+      return val;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -3540,4 +3542,93 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+  @override
+  Future<bool> makeVoiceCall(String userJid) async {
+    bool val;
+    try {
+      debugPrint('makeVoiceCall :');
+      val = await mirrorFlyCallMethodChannel
+          .invokeMethod('makeVoiceCall', {"user_jid": userJid});
+      return val;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  @override
+  Future<dynamic> getCallUsersList() async {
+    dynamic callList;
+    try {
+      debugPrint('getCallUsers :');
+      callList = await mirrorFlyCallMethodChannel.invokeMethod('getCallUsersList');
+      return callList;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  @override
+  Future<dynamic> getCallType() async {
+    dynamic callType;
+    try {
+      debugPrint('getCallType :');
+      callType = await mirrorFlyCallMethodChannel.invokeMethod('getCallType');
+      return callType;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  @override
+  switchCamera() async {
+    try {
+      debugPrint('switchCamera :');
+      await mirrorFlyCallMethodChannel.invokeMethod('switchCamera');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  @override
+  declineCall() async {
+    try {
+      debugPrint('declineCall :');
+      await mirrorFlyCallMethodChannel.invokeMethod('declineCall');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> muteAudio(bool status) async {
+      bool? res;
+      try {
+        res = await mirrorFlyCallMethodChannel
+            .invokeMethod('muteAudio', {"muteAudio": status});
+        debugPrint('muteAudio $res');
+        return res;
+      } on PlatformException catch (e) {
+        debugPrint("Platform Exception ===> $e");
+        rethrow;
+      } on Exception catch (error) {
+        debugPrint("Exception ==> $error");
+        rethrow;
+      }
+    }
 }

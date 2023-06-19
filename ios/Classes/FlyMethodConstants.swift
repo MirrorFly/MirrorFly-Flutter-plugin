@@ -17,7 +17,7 @@ class FlyMethodConstants {
             "getAudioDevices": flyCallMethods.getAudioDevices,
             "selectedAudioDevice": flyCallMethods.selectedAudioDevice,
             "selectAudioDevice": flyCallMethods.selectAudioDevice,
-            "makeCall": flyCallMethods.makeCall,
+            "makeVoiceCall": flyCallMethods.makeCall,
             "makeVideoCall": flyCallMethods.makeVideoCall,
             "answerCall": flyCallMethods.answerCall,
             "declineCall": flyCallMethods.declineCall,
@@ -39,6 +39,7 @@ class FlyMethodConstants {
             "isUserAudioMuted": flyCallMethods.isUserAudioMuted,
             "isUserVideoMuted": flyCallMethods.isUserVideoMuted,
             "inviteUsersToOngoingCall": flyCallMethods.inviteUsersToOngoingCall,
+//            "updateTrack": flyCallMethods.updateTrack,
             
         ]
     }()

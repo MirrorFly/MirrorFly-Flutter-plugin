@@ -1024,11 +1024,30 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.addContact(number, name);
   }
 
+
   static Future<dynamic> setRegionCode(String regionCode) async {
     return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
   }
 
-  static Future<dynamic> makeVideoCall() async {
-    return FlyChatFlutterPlatform.instance.makeVideoCall();
+  static Future<bool> makeVideoCall(String userJid) async {
+    return FlyChatFlutterPlatform.instance.makeVideoCall(userJid);
+  }
+  static Future<bool> makeVoiceCall(String userJid) async {
+    return FlyChatFlutterPlatform.instance.makeVoiceCall(userJid);
+  }
+  static Future<dynamic> getCallUsersList() async {
+    return FlyChatFlutterPlatform.instance.getCallUsersList();
+  }
+  static Future<dynamic> getCallType() async {
+    return FlyChatFlutterPlatform.instance.getCallType();
+  }
+  static switchCamera() async {
+    return FlyChatFlutterPlatform.instance.switchCamera();
+  }
+  static declineCall() async {
+    return FlyChatFlutterPlatform.instance.declineCall();
+  }
+  static Future<bool?> muteAudio(bool status) async {
+    return FlyChatFlutterPlatform.instance.muteAudio(status);
   }
 }

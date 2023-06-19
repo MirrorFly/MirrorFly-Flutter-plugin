@@ -23,4 +23,18 @@ struct Constants {
     
     static let isLoggedIn = "isLoggedIn"
     static let isProfileSaved = "isProfileSaved"
+    
+    static let tag = "#MirrorFlyCall"
+}
+enum CallStatus : String {
+    case calling = "Calling";
+    case ringing = "Ringing";
+    case attended = "Attended";
+    case connecting = "Connecting";
+    case connected = "Connected";
+    case disconnected = "Disconnected"
+    case reconnecting = "Reconnecting";
+    case reconnected = "Reconnected";
+    case tryagain = "Unavailable, Try again later"
+    case onHold = "Call on Hold"
 }

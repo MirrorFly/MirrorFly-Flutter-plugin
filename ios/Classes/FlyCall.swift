@@ -17,6 +17,7 @@ import Flutter
     private var registrar: FlutterPluginRegistrar?
     private var eventChannel : FlutterEventChannel?
     private var eventChannelInitializer: FlyEventChannelInitializer = FlyEventChannelInitializer()
+    private var factory : MirrorflyViewFactory?
     
     init(registrar: FlutterPluginRegistrar) {
         super.init()
@@ -25,8 +26,8 @@ import Flutter
         methodChannel = FlutterMethodChannel(name: Constants.callMethodChannel, binaryMessenger: registrar.messenger())
         registrar.addMethodCallDelegate(self, channel: methodChannel!)
         
-        let factory = MirrorflyViewFactory(messenger: registrar.messenger())
-        registrar.register(factory, withId: "mirrorfly_view")
+        factory = MirrorflyViewFactory(messenger: registrar.messenger())
+        registrar.register(factory!, withId: "mirrorfly_view")
         
         eventChannelInitializer.initializeEventChannels(registrar: registrar)
         
@@ -40,6 +41,7 @@ import Flutter
         
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
+            print("\(Constants.tag) Method call \(call.method)")
             methodHandler(call, result)
         } else {
             result(FlutterMethodNotImplemented)
@@ -96,7 +98,10 @@ import Flutter
         }
         
         let callUpdate = pluginDictToJson(dictionary: jsonObject)
-        eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallStatusUpdateChannel, value: callUpdate)
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallStatusUpdateChannel, value: callUpdate)
+//        }
+        
     }
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
@@ -116,22 +121,42 @@ import Flutter
     }
     
     func onLocalVideoTrackAdded(userId: String, videoTrack: RTCVideoTrack) {
-        print("#MirroflyCall onlocal video Track --> \(userId)")
+        print("\(Constants.tag) onlocal video Track --> \(userId)")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(FlyDefaults.myJid, forKey: "userJid")
         var jidJson = pluginDictToJson(dictionary: jsonObject)
+        
+//        if let mirrorflyView = MirrorflyViewFactory.mirrorflyViews[viewId] {
+//                            mirrorflyView.updateVideoTrack(userJid: userJid)
+//                            result(nil)
+//                        } else {
+//                            result(FlutterError(code: "INVALID_VIEW_ID", message: "Invalid view identifier", details: nil))
+//                        }
         
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
     
     func onRemoteVideoTrackAdded(userId: String, track: RTCVideoTrack) {
+        print("\(Constants.tag) onRemote video Track --> \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(FlyDefaults.myJid, forKey: "userJid")
+        jsonObject.setValue(userId, forKey: "userJid")
         var jidJson = pluginDictToJson(dictionary: jsonObject)
+        
+        if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
+            if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                mirrorflyView.updateVideoTrack(userJid: userId)
+            } else {
+                // Handle case when view is not found
+            }
+        } else {
+            // Handle case when unique ID is not found
+        }
+
         
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
+    
     
     
 }
