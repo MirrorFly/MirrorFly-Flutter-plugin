@@ -12,9 +12,41 @@ import MirrorFlySDK
 
 @objc class FlyCallMethods : NSObject{
     
+    let tag = "#MirrorFlyCall"
+    
     func getCallUsersList(call: FlutterMethodCall, result: @escaping FlutterResult) {
-           
-        result("Result for 'init' method")
+        
+        let userListStatus = CallManager.getCallUsersWithStatus()
+        let userList = CallManager.getCallUsersList()
+        
+        print("userListStatus \(userListStatus)")
+        print("userlist \(String(describing: userList))")
+        
+//        let userListStatusJson = userListStatus.dictToJson()
+        
+//        ["917010279986@xmpp-uikit-qa.contus.us": MirrorFlySDK.CALLSTATUS.CONNECTED]
+        
+        var jsonArray: [[String: String]] = []
+        
+        let localJIDJson: [String: String] = [
+            "userJid": FlyDefaults.myJid,
+            "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling")
+        ]
+        
+        jsonArray.append(localJIDJson)
+            
+        for (memberJid,status) in CallManager.getCallUsersWithStatus() {
+            print("\(tag) \(memberJid) \(status)")
+            let jsonObject: [String: String] = [
+                "userJid": memberJid,
+                "callStatus": status.rawValue
+            ]
+            jsonArray.append(jsonObject)
+        }
+        
+        let userListJson = jsonArray.convertToJson()
+        
+       result(userListJson)
     }
     
     func getAudioDevices(call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -42,6 +74,7 @@ import MirrorFlySDK
                    print("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
                }else{
                    print("MirrorflyCall Success -->")
+                   result(isSuccess)
                }
             }
          }
@@ -69,7 +102,7 @@ import MirrorFlySDK
                 result(isSuccess)
             }
         }
-        result(true)
+//        result(true)
     }
     func answerCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
         
@@ -148,11 +181,12 @@ import MirrorFlySDK
                
             } else {
                 let errorMessage = self.getErrorMessage(description: message)
+                print("inviteUsersToOngoingCall Error\(errorMessage.description) ")
             }
         };
     }
     func switchCamera(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
+        CallManager.switchCamera()
     }
     func isCallOnHold(call: FlutterMethodCall, result: @escaping FlutterResult) {
         
@@ -161,7 +195,10 @@ import MirrorFlySDK
         
     }
     func getCallType(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
+        result(CallManager.getCallType().rawValue)
+    }
+    func getCallDirection(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        result(CallManager.getCallDirection() == .Incoming ? "Incoming" : "Outgoing")
     }
     func isCallConnected(call: FlutterMethodCall, result: @escaping FlutterResult) {
         

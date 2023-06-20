@@ -17,15 +17,19 @@ class MirrorFlyView extends StatefulWidget {
       {Key? key,
       this.mirror = true,
       this.scalingType = ScalingType.scaleAspectFILL,
-      required this.isLocalUser,
-      this.remoteUserJid = ""})
+        this.viewBgColor,
+      // required this.isLocalUser,
+      // this.remoteUserJid = ""})
+      required this.userJid})
       : super(key: key);
   // final Map<dynamic, dynamic> creationParams;
 
   final bool mirror;
   final ScalingType scalingType;
-  final bool isLocalUser;
-  final String remoteUserJid;
+  final Color? viewBgColor;
+  // final bool isLocalUser;
+  // final String remoteUserJid;
+  final String userJid;
 
   @override
   State<MirrorFlyView> createState() => _MirrorFlyViewState();
@@ -36,7 +40,8 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   final nativeViewType = "mirrorfly_view";
   @override
   Widget build(BuildContext context) {
-    if (!widget.isLocalUser && widget.remoteUserJid.isEmpty) {
+    // if (!widget.isLocalUser && widget.remoteUserJid.isEmpty) {
+    if (widget.userJid.isEmpty) {
       throw Exception("remoteUserJid must not be empty");
     }
     return buildHybridCompositionView();
@@ -56,15 +61,27 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
     return {
       "scalingType": getScalingType(widget.scalingType),
       "setMirror": widget.mirror,
-      if (widget.isLocalUser) "isLocal": widget.isLocalUser,
-      if (!widget.isLocalUser) "isRemote": true,
-      if (!widget.isLocalUser) "userJid": widget.remoteUserJid.trim().toString()
+      'viewId': widget.userJid.trim().toString(),
+      'backgroundColor' : colorToHex(widget.viewBgColor),
+      // if (widget.isLocalUser) "isLocal": widget.isLocalUser,
+      // if (!widget.isLocalUser) "isRemote": true,
+      // if (!widget.isLocalUser) "userJid": widget.remoteUserJid.trim().toString()
+      "userJid": widget.userJid.trim().toString()
     };
   }
 
+  String colorToHex(Color? color) {
+    if (color == null){
+      return "";
+    }
+    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+  }
+
   Widget buildHybridCompositionView() {
+    debugPrint("#Mirrorfly Call buildHybridCompositionView");
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
+        debugPrint("#Mirrorfly Call Android Platform");
         return PlatformViewLink(
           viewType: nativeViewType,
           surfaceFactory:
@@ -78,7 +95,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
           },
           onCreatePlatformView: (PlatformViewCreationParams params) {
             return PlatformViewsService.initSurfaceAndroidView(
-              id: _viewId,
+              id:_viewId,
               viewType: nativeViewType,
               layoutDirection: TextDirection.rtl,
               creationParams: buildParams(),
@@ -90,6 +107,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
         );
       case TargetPlatform.iOS:
         debugPrint("build params ${buildParams()}");
+        debugPrint("#Mirrorfly Call iOS Platform");
         return UiKitView(
           viewType: nativeViewType,
           layoutDirection: TextDirection.ltr,

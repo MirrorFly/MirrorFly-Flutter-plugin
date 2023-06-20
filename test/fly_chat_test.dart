@@ -1285,10 +1285,6 @@ class MockFlyChatFlutterPlatform
   // implement usersProfilesFetched
   Stream<bool> get usersProfilesFetched => throw UnimplementedError();
 
-  @override
-  Future makeVideoCall() {
-    throw UnimplementedError();
-  }
 
   @override
   // implement onCallReceiving
@@ -1325,6 +1321,54 @@ class MockFlyChatFlutterPlatform
   @override
   // implement onUserStoppedSpeaking
   Stream get onUserStoppedSpeaking => throw UnimplementedError();
+
+  @override
+  Future getCallUsersList() {
+    // implement getCallUsers
+    throw UnimplementedError();
+  }
+
+  @override
+  Future switchCamera() {
+    // implement switchCamera
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getCallType() {
+    // implement getCallType
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> muteAudio(bool status) {
+    // implement muteAudio
+    throw UnimplementedError();
+  }
+
+  @override
+  Future declineCall() {
+    // implement declineCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> makeVideoCall(String userJid) {
+    //  implement makeVideoCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> makeVoiceCall(String userJid) {
+    // implement makeVoiceCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getCallDirection() {
+    // implement getCallDirection
+    throw UnimplementedError();
+  }
 
 }
 

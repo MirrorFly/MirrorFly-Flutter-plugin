@@ -949,7 +949,28 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future setRegionCode(String regionCode) async {
     throw UnimplementedError('has not been implemented.');
   }
-  Future makeVideoCall() async {
-    throw UnimplementedError('has not been implemented.');
+  Future<bool> makeVideoCall(String userJid) async {
+    throw UnimplementedError('makeVideoCall has not been implemented.');
+  }
+  Future<bool>  makeVoiceCall(String userJid) async {
+    throw UnimplementedError('makeVoiceCall has not been implemented.');
+  }
+  Future<dynamic> getCallUsersList() async {
+    throw UnimplementedError('getCallUsers has not been implemented.');
+  }
+  Future<dynamic> getCallType() async {
+    throw UnimplementedError('getCallType has not been implemented.');
+  }
+  Future<dynamic> getCallDirection() async {
+    throw UnimplementedError('getCallDirection has not been implemented.');
+  }
+  Future switchCamera() async {
+    throw UnimplementedError('switchCamera has not been implemented.');
+  }
+  Future declineCall() async {
+    throw UnimplementedError('declineCall has not been implemented.');
+  }
+  Future<bool?> muteAudio(bool status) async {
+    throw UnimplementedError('muteAudio has not been implemented.');
   }
 }

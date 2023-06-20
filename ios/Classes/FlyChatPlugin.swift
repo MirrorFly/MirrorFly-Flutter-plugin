@@ -1083,6 +1083,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
             print("onMessageReceived event==**==\(String(describing: messageReceivedJson))")
             messageReceivedStreamHandler?.onMessageReceived?(messageReceivedJson)
             
+            
         }else{
             print("Message Stream Handler is Nil")
         }
