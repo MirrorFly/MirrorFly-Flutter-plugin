@@ -961,6 +961,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<dynamic> getCallType() async {
     throw UnimplementedError('getCallType has not been implemented.');
   }
+  Future<dynamic> getCallDirection() async {
+    throw UnimplementedError('getCallDirection has not been implemented.');
+  }
   Future switchCamera() async {
     throw UnimplementedError('switchCamera has not been implemented.');
   }

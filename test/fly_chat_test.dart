@@ -1364,6 +1364,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future getCallDirection() {
+    // implement getCallDirection
+    throw UnimplementedError();
+  }
+
 }
 
 void main() {

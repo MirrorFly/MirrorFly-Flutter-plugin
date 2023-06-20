@@ -3589,6 +3589,21 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
   @override
+  Future<dynamic> getCallDirection() async {
+    dynamic callType;
+    try {
+      debugPrint('getCallDirection :');
+      callType = await mirrorFlyCallMethodChannel.invokeMethod('getCallDirection');
+      return callType;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  @override
   switchCamera() async {
     try {
       debugPrint('switchCamera :');

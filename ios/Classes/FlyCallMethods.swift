@@ -197,6 +197,9 @@ import MirrorFlySDK
     func getCallType(call: FlutterMethodCall, result: @escaping FlutterResult) {
         result(CallManager.getCallType().rawValue)
     }
+    func getCallDirection(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        result(CallManager.getCallDirection() == .Incoming ? "Incoming" : "Outgoing")
+    }
     func isCallConnected(call: FlutterMethodCall, result: @escaping FlutterResult) {
         
     }

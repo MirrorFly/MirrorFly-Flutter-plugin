@@ -1041,6 +1041,9 @@ class Mirrorfly {
   static Future<dynamic> getCallType() async {
     return FlyChatFlutterPlatform.instance.getCallType();
   }
+  static Future<dynamic> getCallDirection() async {
+    return FlyChatFlutterPlatform.instance.getCallDirection();
+  }
   static switchCamera() async {
     return FlyChatFlutterPlatform.instance.switchCamera();
   }

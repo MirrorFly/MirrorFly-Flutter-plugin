@@ -39,7 +39,7 @@ class FlyMethodConstants {
             "isUserAudioMuted": flyCallMethods.isUserAudioMuted,
             "isUserVideoMuted": flyCallMethods.isUserVideoMuted,
             "inviteUsersToOngoingCall": flyCallMethods.inviteUsersToOngoingCall,
-//            "updateTrack": flyCallMethods.updateTrack,
+            "getCallDirection": flyCallMethods.getCallDirection,
             
         ]
     }()
