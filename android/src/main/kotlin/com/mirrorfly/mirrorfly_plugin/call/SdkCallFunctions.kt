@@ -25,7 +25,7 @@ class SdkCallFunctions(var context: Context) {
 
     fun initCall(){
         CallManager.init(context)
-        CallManager.setCallActivityClass(CallKitUiActivity::class.java)
+//        CallManager.setCallActivityClass(CallKitUiActivity::class.java)
 //        CallManager.configureCallActivity(context)
         CallManager.setMissedCallListener(object : MissedCallListener {
             override fun onMissedCall(

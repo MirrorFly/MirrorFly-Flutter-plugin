@@ -51,7 +51,20 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
 
     override fun onStart() {
         super.onStart()
+        // Bind to the service. If the service is in foreground mode, this signals to the service
+        // that since this activity is in the foreground, the service can exit foreground mode.
+        // for showing call notification
+        CallManager.bindCallService()
         checkPermission()
+    }
+
+    override fun onStop() {
+        // Unbind from the service. This signals to the service that this activity is no longer
+        // in the foreground, and the service can respond by promoting itself to a foreground
+        // service.
+        // for showing call notification
+        CallManager.unbindCallService()
+        super.onStop()
     }
 
     private fun checkPermission() {

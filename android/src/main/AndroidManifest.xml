@@ -23,6 +23,7 @@
             android:windowSoftInputMode="stateHidden"
             android:lockTaskMode="if_whitelisted"
             tools:targetApi="R"
+            android:theme="@style/CallkitIncomingTheme"
             android:exported="false" />
     </application>
 
