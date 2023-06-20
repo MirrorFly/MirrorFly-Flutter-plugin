@@ -1,8 +1,11 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.os.Build
+import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.CallAction
@@ -172,6 +175,25 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
         Log.d(tag,"#onUserStoppedSpeaking $userJid")
         onUserStoppedSpeakingStreamHandler.onUserStoppedSpeaking?.success(userJid)
     }
+
+    override fun getCallAttendedPendingIntent(): PendingIntent {
+        val intent: Intent? = AppUtils.getAppIntent(context)
+        return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
+    }
+
+    override fun getCallNotAttendedPendingIntent(): PendingIntent {
+
+        val intent = Intent(context,CallKitUiActivity::class.java)
+        return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
+    }
+    private fun getFlagPendingIntent(): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+    }
+
 
     override fun onShowCallUi(callAction: String?) {
         LogMessage.d(tag, "#onShowCallUi $callAction")
