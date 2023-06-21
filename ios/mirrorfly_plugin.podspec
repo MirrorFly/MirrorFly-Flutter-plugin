@@ -3,7 +3,7 @@
 # Run 'pod lib lint fly_chat.podspec' to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'mirrorfly_chat'
+  s.name             = 'mirrorfly_plugin'
   s.version          = '0.0.1'
   s.summary          = 'A Mirrorfly Flutter Plugin'
   s.description      = 'A Mirrorfly Flutter plugin to Experience an outstanding real time messaging solution. The powerful communication that adds an extra mileage to build your chat app.'
