@@ -100,7 +100,7 @@ import MirrorFlySDK
             return
         }
         
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, isExport: false) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, isExport: false, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
