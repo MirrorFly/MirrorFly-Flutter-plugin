@@ -1487,7 +1487,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 val jsonObject = JSONObject()
                 jsonObject.put("groupJid", "")
                 jsonObject.put("titleContent", "")
-                jsonObject.put("chatMessage", chatMessage.toJsonString())
+                jsonObject.put("chatMessage", JSONObject(chatMessage.toJson()))
                 jsonObject.put("cancel", false)
                 result.success(jsonObject.toString())
             }
