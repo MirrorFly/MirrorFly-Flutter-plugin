@@ -151,7 +151,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             "mirrorfly_view",
             MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
         )
-        FlyCall(mContext,flutterPluginBinding.binaryMessenger)
+//        FlyCall(mContext,flutterPluginBinding.binaryMessenger)
         SharedPreferenceManager().init(mContext)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
@@ -1178,7 +1178,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
         })
 
-        SdkCallFunctions(mContext).initCall()
+//      SdkCallFunctions(mContext).initCall()
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
