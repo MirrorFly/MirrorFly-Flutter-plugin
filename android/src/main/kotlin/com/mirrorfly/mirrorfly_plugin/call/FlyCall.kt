@@ -7,6 +7,7 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.Constants
+import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.CallAction
 import com.mirrorflysdk.flycall.webrtc.CallAudioManager
@@ -22,7 +23,6 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
-import java.util.Collections
 
 class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) :  MethodChannel.MethodCallHandler ,
     CallEventsListener,CallUiListener {
@@ -33,6 +33,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
         EventChannel(binaryMessenger,Constants.onCallReceiving).setStreamHandler(OnCallReceivingStreamHandler)
         EventChannel(binaryMessenger,Constants.onLocalVideoTrackAdded).setStreamHandler(onLocalVideoTrackAddedStreamHandler)
         EventChannel(binaryMessenger,Constants.onRemoteVideoTrackAdded).setStreamHandler(onRemoteVideoTrackAddedStreamHandler)
+        EventChannel(binaryMessenger,Constants.onTrackAdded).setStreamHandler(onTrackAddedStreamHandler)
         EventChannel(binaryMessenger,Constants.onCallStatusUpdated).setStreamHandler(onCallStatusUpdatedStreamHandler)
         EventChannel(binaryMessenger,Constants.onCallAction).setStreamHandler(onCallActionStreamHandler)
         EventChannel(binaryMessenger,Constants.onMuteStatusUpdated).setStreamHandler(onMuteStatusUpdatedStreamHandler)
@@ -64,7 +65,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
             }
             "makeCall" -> {
                 val userJid: String = call.argument("user_jid") ?: ""
-                sdk.makeCall(userJid)
+                sdk.makeVoiceCall(userJid)
             }
             "makeVideoCall" -> {
                 val userJid: String = call.argument("user_jid") ?: ""
@@ -92,6 +93,9 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
             "isRemoteVideoPaused" -> {
                 val userJid: String = call.argument("user_jid") ?: ""
                 result.success(CallManager.isRemoteVideoPaused(userJid))
+            }
+            "makeGroupVoiceCall"->{
+                sdk.makeGroupVoiceCall(call,result)
             }
             "makeGroupVideoCall"->{
                 sdk.makeGroupVideoCall(call,result)
@@ -134,7 +138,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
         val json = JSONObject()
         json.put("callStatus",callStatus)
         json.put("userJid",userJid)
-        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json)
+        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
     }
 
     override fun onCallAction(callAction: String, userJid: String) {
@@ -142,17 +146,23 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
         val json = JSONObject()
         json.put("callAction",callAction)
         json.put("userJid",userJid)
-        onCallActionStreamHandler.onCallAction?.success(json)
+        onCallActionStreamHandler.onCallAction?.success(json.toString())
     }
 
     override fun onVideoTrackAdded(userJid: String) {
         Log.d(tag,"#onVideoTrackAdded userJid $userJid")
-        onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(userJid)
+        val json = JSONObject()
+        json.put("userJid",userJid)
+        onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(json.toString())
+        onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
     }
 
     override fun onLocalVideoTrackAdded() {
         Log.d(tag,"#onLocalVideoTrackAdded")
-        onLocalVideoTrackAddedStreamHandler.onLocalVideoTrackAdded?.success(true)
+        val json = JSONObject()
+        json.put("userJid",ChatManager.getCurrentUserJid())
+        onLocalVideoTrackAddedStreamHandler.onLocalVideoTrackAdded?.success(json.toString())
+        onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
     }
 
     override fun onMuteStatusUpdated(muteEvent: String, userJid: String) {
@@ -160,7 +170,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
         val json = JSONObject()
         json.put("muteEvent",muteEvent)
         json.put("userJid",userJid)
-        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json)
+        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
     }
 
     override fun onUserSpeaking(userJid: String, audioLevel: Int) {
@@ -168,7 +178,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
         val json = JSONObject()
         json.put("audioLevel",audioLevel)
         json.put("userJid",userJid)
-        onUserSpeakingStreamHandler.onUserSpeaking?.success(json)
+        onUserSpeakingStreamHandler.onUserSpeaking?.success(json.toString())
     }
 
     override fun onUserStoppedSpeaking(userJid: String) {

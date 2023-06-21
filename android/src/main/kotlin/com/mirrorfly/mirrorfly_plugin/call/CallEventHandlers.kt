@@ -45,6 +45,20 @@ object onRemoteVideoTrackAddedStreamHandler : EventChannel.StreamHandler {
     }
 }
 
+object onTrackAddedStreamHandler : EventChannel.StreamHandler {
+
+    var onTrackAdded: EventChannel.EventSink? = null
+
+
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        onTrackAdded = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        onTrackAdded = null
+    }
+}
+
 object onCallStatusUpdatedStreamHandler : EventChannel.StreamHandler{
     var onCallStatusUpdated: EventChannel.EventSink?=null
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {

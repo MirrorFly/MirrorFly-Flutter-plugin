@@ -7,7 +7,7 @@ object Constants {
     const val onCallReceiving = "$domain/onCallReceiving"
     const val onLocalVideoTrackAdded = "$domain/onLocalVideoTrackAdded"
     const val onRemoteVideoTrackAdded = "$domain/onRemoteVideoTrackAdded"
-    const val onVideoTrackAdded = "$domain/onVideoTrackAdded"
+    const val onTrackAdded = "$domain/onTrackAdded"
     const val onCallStatusUpdated = "$domain/onCallStatusUpdated"
     const val onCallAction = "$domain/onCallAction"
     const val onMuteStatusUpdated = "$domain/onMuteStatusUpdated"

@@ -5,10 +5,13 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import com.mirrorflysdk.api.CallMessenger
+import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.api.GroupManager
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.utils.NameHelper
 import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
+import com.mirrorflysdk.flycall.webrtc.CallDirection
+import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.GroupCallDetails
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
@@ -16,6 +19,7 @@ import com.mirrorflysdk.flycall.webrtc.api.CallHelper
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycall.webrtc.api.CallNameHelper
 import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
+import com.mirrorflysdk.flycommons.LogMessage
 import io.flutter.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -25,8 +29,6 @@ class SdkCallFunctions(var context: Context) {
 
     fun initCall(){
         CallManager.init(context)
-//        CallManager.setCallActivityClass(CallKitUiActivity::class.java)
-//        CallManager.configureCallActivity(context)
         CallManager.setMissedCallListener(object : MissedCallListener {
             override fun onMissedCall(
                 isOneToOneCall: Boolean,
@@ -63,57 +65,41 @@ class SdkCallFunctions(var context: Context) {
         })
     }
 
-    fun makeCall(userJid:String){
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.READ_PHONE_STATE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
+    fun makeVoiceCall(userJid:String){
+        LogMessage.d("makeVoiceCall", "permission granted ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}")
+        if (CallManager.isAudioCallPermissionsGranted(false)) {
+            CallManager.makeVoiceCall(userJid, object : CallActionListener {
+                override fun onResponse(isSuccess: Boolean, message: String) {
+                    LogMessage.d("makeCall", "success $isSuccess message $message")
+                }
+            })
         }
-        CallManager.makeVoiceCall(userJid,object : CallActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                Log.d("makeCall","success $isSuccess message $message")
-            }
-        })
     }
 
     fun makeVideoCall(userJid: String,result: MethodChannel.Result){
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.READ_PHONE_STATE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            Log.d("makeVideoCall","permission denied")
-            return
-        }
-        CallManager.makeVideoCall(userJid,object : CallActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                Log.d("makeVideoCall","success $isSuccess message $message")
-                result.success(isSuccess)
-            }
+        LogMessage.d("makeVideoCall", "permission granted ${CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)}")
+        if(CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)) {
+            CallManager.makeVideoCall(userJid, object : CallActionListener {
+                override fun onResponse(isSuccess: Boolean, message: String) {
+                    LogMessage.d("makeVideoCall", "success $isSuccess message $message")
+                    result.success(isSuccess)
+                }
 
-        })
+            })
+        }
     }
 
     fun answerCall(result: MethodChannel.Result){
+        if(CallManager.getCallType()==CallType.AUDIO_CALL && !CallManager.isAudioCallPermissionsGranted(false)){
+            LogMessage.d("answerCall", "call type ${CallManager.getCallType()} permission granted ${CallManager.isAudioCallPermissionsGranted(false)}")
+            return
+        }else if(CallManager.getCallType()==CallType.VIDEO_CALL && !CallManager.isVideoCallPermissionsGranted(false)){
+            LogMessage.d("answerCall", "call type ${CallManager.getCallType()} permission granted ${CallManager.isVideoCallPermissionsGranted(false)}")
+            return
+        }
         CallManager.answerCall(object : CallActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
-                Log.d("answerCall","success $isSuccess message $message")
+                LogMessage.d("answerCall","success $isSuccess message $message")
                 result.success(isSuccess)
             }
 
@@ -122,27 +108,41 @@ class SdkCallFunctions(var context: Context) {
 
     fun declineCall(){
         CallManager.declineCall()
-        Log.d("declineCall","success true")
+        LogMessage.d("declineCall","called")
     }
 
     fun muteAudio(call: MethodCall, result: MethodChannel.Result) {
-        Logger.d(tag,"muteAudio")
+        LogMessage.d(tag,"muteAudio")
         val muteAudio = call.argument<Boolean>("muteAudio") ?: false
         CallManager.muteAudio(muteAudio)
         result.success(true)
     }
     fun muteVideo(call: MethodCall, result: MethodChannel.Result) {
-        Logger.d(tag,"muteVideo")
+        LogMessage.d(tag,"muteVideo")
         val muteVideo = call.argument<Boolean>("muteVideo") ?: false
         CallManager.muteVideo(muteVideo)
         result.success(true)
     }
+
+    fun makeGroupVoiceCall(call: MethodCall,result: MethodChannel.Result){
+        if (CallManager.isAudioCallPermissionsGranted(false)) {
+            val groupJid = call.argument<String>("groupJid") ?: ""
+            val jidList = call.argument<String>("jidList") ?: ""
+            CallManager.makeGroupVoiceCall(jidList.split(",") as ArrayList<String>, groupJid, object : CallActionListener {
+                override fun onResponse(isSuccess: Boolean, message: String) {
+                    LogMessage.d("makeGroupVoiceCall", "success $isSuccess message $message")
+                    result.success(isSuccess)
+                }
+            })
+        }
+    }
     fun makeGroupVideoCall(call: MethodCall,result: MethodChannel.Result){
-        Logger.d(tag,"muteVideo")
+        LogMessage.d(tag,"muteVideo")
         val groupJid = call.argument<String>("groupJid") ?: ""
         val jidList = call.argument<String>("jidList") ?: ""
         CallManager.makeGroupVideoCall(jidList.split(",") as ArrayList<String>,groupJid,object: CallActionListener{
             override fun onResponse(isSuccess: Boolean, message: String) {
+                LogMessage.d("makeGroupVideoCall", "success $isSuccess message $message")
                 result.success(isSuccess)
             }
 
