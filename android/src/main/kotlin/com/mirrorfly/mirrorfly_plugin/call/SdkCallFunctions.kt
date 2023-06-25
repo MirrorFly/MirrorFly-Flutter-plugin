@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import com.mirrorfly.mirrorfly_plugin.toJson
 import com.mirrorflysdk.api.CallMessenger
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.api.GroupManager
@@ -23,6 +24,8 @@ import com.mirrorflysdk.flycommons.LogMessage
 import io.flutter.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.json.JSONArray
+import org.json.JSONObject
 
 class SdkCallFunctions(var context: Context) {
     val tag = "#FlutterCall"
@@ -162,6 +165,24 @@ class SdkCallFunctions(var context: Context) {
             CallManager.isVideoMuted()
         else CallManager.isRemoteVideoMuted(userJid)
         result.success(response)
+    }
+
+    fun getCallUsersList(call: MethodCall,result: MethodChannel.Result) {
+        val json = JSONArray()
+        val users = CallManager.getCallUsersList()
+        if (!users.contains(CallManager.getCurrentUserId()) && CallManager.getCurrentUserId().isNotEmpty()){
+            val obj = JSONObject()
+            obj.put("userJid",CallManager.getCurrentUserId())
+            obj.put("callStatus",CallManager.getCallStatus(CallManager.getCurrentUserId()))
+            json.put(obj)
+        }
+        users.forEach {jid->
+            val obj = JSONObject()
+            obj.put("userJid",jid)
+            obj.put("callStatus",CallManager.getCallStatus(jid))
+            json.put(obj)
+        }
+        result.success(json.toString())
     }
 
 }

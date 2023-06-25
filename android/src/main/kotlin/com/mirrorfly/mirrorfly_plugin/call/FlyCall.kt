@@ -11,6 +11,7 @@ import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.CallAction
 import com.mirrorflysdk.flycall.webrtc.CallAudioManager
+import com.mirrorflysdk.flycall.webrtc.CallDirection
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.api.CallEventsListener
@@ -24,7 +25,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
 
-class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) :  MethodChannel.MethodCallHandler ,
+class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val factory: MirrorflyViewFactory) :  MethodChannel.MethodCallHandler ,
     CallEventsListener,CallUiListener {
     private var tag = "#FlutterAndroidCall"
     private var sdk = SdkCallFunctions(context)
@@ -47,9 +48,12 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
+            "getCallDirection"-> {
+                val direction = if(CallDirection.INCOMING_CALL == CallManager.getCallDirection()) "Incoming" else "Outgoing"
+                result.success(direction)
+            }
             "getCallUsersList"-> {
-                val users = CallManager.getCallUsersList()
-                result.success(users.joinToString(","))
+                sdk.getCallUsersList(call,result)
             }
             "getAudioDevices"-> {
                 val audioDevices = CallManager.getAudioDevices()
@@ -138,6 +142,8 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
         val json = JSONObject()
         json.put("callStatus",callStatus)
         json.put("userJid",userJid)
+        json.put("callType",CallManager.getCallType())
+        json.put("callMode",CallManager.getCallMode())
         onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
     }
 
@@ -154,6 +160,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
         val json = JSONObject()
         json.put("userJid",userJid)
         onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(json.toString())
+        factory.mirrorflyViews[userJid]?.setRemoteTarget(userJid)
         onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
     }
 
@@ -170,6 +177,11 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
         val json = JSONObject()
         json.put("muteEvent",muteEvent)
         json.put("userJid",userJid)
+        if(muteEvent=="REMOTE_VIDEO_MUTE"){
+            factory.mirrorflyViews[userJid]?.setProfileView(userJid)
+        }else if(muteEvent=="REMOTE_VIDEO_UN_MUTE"){
+            factory.mirrorflyViews[userJid]?.setRemoteTarget(userJid)
+        }
         onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
     }
 
@@ -218,14 +230,25 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger) : 
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}
             CallAction.ACTION_INVITE_USERS->{}
-            CallAction.ACTION_ANSWER_CALL->{}
+            CallAction.ACTION_ANSWER_CALL->{
+
+            }
             CallAction.ACTION_DENY_CALL->{}
-            CallAction.ACTION_LOCAL_HANGUP->{}
+            CallAction.ACTION_LOCAL_HANGUP->{
+            /*    val json = JSONObject()
+                json.put("callStatus","Disconnected")
+                json.put("userJid",CallManager.getCurrentUserId())
+                json.put("callType",CallManager.getCallType())
+                json.put("callMode",CallManager.getCallMode())
+                onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())*/
+            }
             CallAction.ACTION_REMOTE_HANGUP->{}
             CallAction.ACTION_REMOTE_OTHER_BUSY->{}
             CallAction.ACTION_REMOTE_BUSY->{}
             CallAction.ACTION_REMOTE_ENGAGED->{}
-            CallAction.ACTION_CALL_AGAIN->{}
+            CallAction.ACTION_CALL_AGAIN->{
+
+            }
             CallAction.ACTION_CANCEL_CALL_AGAIN->{}
             CallAction.ACTION_SWITCH_CAMERA->{}
             CallAction.ACTION_REMOTE_VIDEO_STATUS->{}

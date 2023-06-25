@@ -23,6 +23,7 @@ import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.LogMessage
+import org.json.JSONObject
 
 
 class CallKitUiActivity : Activity(), CallUiFlutterListener {
@@ -133,6 +134,12 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
             json.put("callAction", CallAction.ACTION_ANSWER_CALL)
             json.put("userJid", CallManager.getCallUsersList().joinToString(","))
             onCallActionStreamHandler.onCallAction?.success(json)*/
+                    val json = JSONObject()
+                    json.put("callStatus","Attended")
+                    json.put("userJid",CallManager.getCurrentUserId())
+                    json.put("callType",CallManager.getCallType())
+                    json.put("callMode",CallManager.getCallMode())
+                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
                     finishTask()
                 }
             }

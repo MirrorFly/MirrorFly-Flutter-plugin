@@ -57,6 +57,7 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import io.flutter.plugin.platform.PlatformViewFactory
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
@@ -143,15 +144,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private lateinit var mContext: Context
+    private lateinit var factory : MirrorflyViewFactory
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         mContext = flutterPluginBinding.applicationContext
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, mirrorflyMethodChannel)
         channel.setMethodCallHandler(this)
+        factory = MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
         flutterPluginBinding.platformViewRegistry.registerViewFactory(
             "mirrorfly_view",
-            MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
+            factory
         )
-//        FlyCall(mContext,flutterPluginBinding.binaryMessenger)
+        FlyCall(mContext,flutterPluginBinding.binaryMessenger,factory)
         SharedPreferenceManager().init(mContext)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
@@ -1178,7 +1181,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
         })
 
-//      SdkCallFunctions(mContext).initCall()
+      SdkCallFunctions(mContext).initCall()
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
