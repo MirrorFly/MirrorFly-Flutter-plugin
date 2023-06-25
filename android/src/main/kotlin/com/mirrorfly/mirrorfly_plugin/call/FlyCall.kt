@@ -222,9 +222,11 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
         FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
         when(callAction){
             CallConstants.ACTION_SHOW_CALL_UI->{
-                val t= Intent(context,CallKitUiActivity::class.java)
-                t.addFlags(FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(t)
+                if(CallManager.getCallDirection()==CallDirection.INCOMING_CALL) {
+                    val t = Intent(context, CallKitUiActivity::class.java)
+                    t.addFlags(FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(t)
+                }
             }
             CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
