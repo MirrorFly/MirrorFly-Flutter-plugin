@@ -1370,6 +1370,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future getRecentChatListHistory() {
+    // implement getRecentChatListHistory
+    throw UnimplementedError();
+  }
+
 }
 
 void main() {

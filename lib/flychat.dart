@@ -614,6 +614,10 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getRecentChatList();
   }
 
+  static Future<dynamic> getRecentChatListHistory() {
+    return FlyChatFlutterPlatform.instance.getRecentChatListHistory();
+  }
+
   static Future<dynamic> getProfileStatusList() {
     return FlyChatFlutterPlatform.instance.getProfileStatusList();
   }

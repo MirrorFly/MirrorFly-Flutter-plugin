@@ -1887,6 +1887,24 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<dynamic> getRecentChatListHistory() async {
+    //getRecentChats
+    dynamic recentResponse;
+    try {
+      recentResponse =
+          await mirrorFlyMethodChannel.invokeMethod('getRecentChatListHistory');
+      debugPrint("recent History Result ==> $recentResponse");
+      return recentResponse;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  @override
   Future<dynamic> getProfileStatusList() async {
     //getStatusList
     dynamic statusResponse;

@@ -774,6 +774,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("getRecentChatList") -> {
                 getRecentChatList(result)
             }
+            call.method.equals("getRecentChatListHistory") -> {
+                getRecentChatListHistory(call, result)
+            }
             call.method.equals("getMessagesOfJid") -> {
                 getMessagesOfJid(call, result)
             }
@@ -2598,6 +2601,21 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //Toast.makeText(this, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
         result.error("500", "Please Check Your Internet connection", null)
     }*/
+    }
+
+    private fun getRecentChatListHistory(call: MethodCall, result: MethodChannel.Result){
+
+        val page = call.argument("page") ?: 1
+
+        val perPageResultSize = call.argument("perPageResultSize") ?: 20
+        FlyCore.getRecentChatHistory(page, perPageResultSize) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                LogMessage.i("getRecentChatHistory", data.toJsonString())
+                result.success(Gson().toJson(data).toString())
+            } else {
+                result.error("500", throwable!!.message, null)
+            }
+        }
     }
 
     private fun getImageThumbImage(imagePath: String?): String {
