@@ -45,7 +45,7 @@ import MirrorFlySDK
         }
         
         let userListJson = jsonArray.convertToJson()
-        
+        print("\(tag) getCallUsersWithStatus \(userListJson)")
        result(userListJson)
     }
     
