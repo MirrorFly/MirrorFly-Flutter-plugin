@@ -74,10 +74,11 @@ import MirrorFlySDK
                    print("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
                }else{
                    print("MirrorflyCall Success -->")
-                   result(isSuccess)
+//                   result(isSuccess)
                }
             }
          }
+        result(true)
     }
     func makeVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as! Dictionary<String, Any>
@@ -99,7 +100,7 @@ import MirrorFlySDK
             print("call result --> \(isSuccess) messsage --> \(message)")
             if (isSuccess){
                 print("MirrorflyCall Success")
-                result(isSuccess)
+//                result(isSuccess)
             }
         }
         result(true)
