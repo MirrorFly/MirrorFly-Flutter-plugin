@@ -54,12 +54,16 @@ import MirrorFlySDK
             .build()
         assert(sdkGroupConfig != nil)
 
-        try? ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
-            .setLicenseKey(key: licenseKey)
-            .isTrialLicense(isTrial: isTrialLicenceKey)
-            .setDomainBaseUrl(baseUrl: domainBaseUrl)
-            .setGroupConfiguration(groupConfig: sdkGroupConfig!)
-            .buildAndInitialize()
+        do{
+            try ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
+                .setLicenseKey(key: licenseKey)
+                .isTrialLicense(isTrial: isTrialLicenceKey)
+                .setDomainBaseUrl(baseUrl: domainBaseUrl)
+                .setGroupConfiguration(groupConfig: sdkGroupConfig!)
+                .buildAndInitialize()
+        }catch (let error ){
+            print("#FlyChat Exception : \(error.localizedDescription)")
+        }
         
 //        ChatManager.setSignalServer(signalServerUrl: SOCKETIO_SERVER_HOST)
         

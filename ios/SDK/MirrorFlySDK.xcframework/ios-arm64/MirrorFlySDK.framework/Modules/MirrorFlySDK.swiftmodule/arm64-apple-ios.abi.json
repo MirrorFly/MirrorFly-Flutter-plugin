@@ -6413,9 +6413,17 @@
               },
               {
                 "kind": "TypeNominal",
-                "name": "String",
-                "printedName": "Swift.String",
-                "usr": "s:SS"
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
               },
               {
                 "kind": "TypeNominal",
@@ -6447,8 +6455,8 @@
               }
             ],
             "declKind": "Constructor",
-            "usr": "s:12MirrorFlySDK11ContactBodyV4name12phone_number13active_statusACSS_SaySSGAGtcfc",
-            "mangledName": "$s12MirrorFlySDK11ContactBodyV4name12phone_number13active_statusACSS_SaySSGAGtcfc",
+            "usr": "s:12MirrorFlySDK11ContactBodyV4name12phone_number13active_statusACSSSg_SaySSGAHtcfc",
+            "mangledName": "$s12MirrorFlySDK11ContactBodyV4name12phone_number13active_statusACSSSg_SaySSGAHtcfc",
             "moduleName": "MirrorFlySDK",
             "declAttributes": [
               "AccessControl"
@@ -9504,6 +9512,92 @@
           },
           {
             "kind": "Function",
+            "name": "initializeSDK",
+            "printedName": "initializeSDK(licenseKey:completionHandler:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Bool, MirrorFlySDK.FlyError?, [Swift.String : Any]) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Tuple",
+                    "printedName": "(Swift.Bool, MirrorFlySDK.FlyError?, [Swift.String : Any])",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Bool",
+                        "printedName": "Swift.Bool",
+                        "usr": "s:Sb"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Optional",
+                        "printedName": "MirrorFlySDK.FlyError?",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "FlyError",
+                            "printedName": "MirrorFlySDK.FlyError",
+                            "usr": "s:12MirrorFlySDK0B5ErrorO"
+                          }
+                        ],
+                        "usr": "s:Sq"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Dictionary",
+                        "printedName": "[Swift.String : Any]",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "String",
+                            "printedName": "Swift.String",
+                            "usr": "s:SS"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "ProtocolComposition",
+                            "printedName": "Any"
+                          }
+                        ],
+                        "usr": "s:SD"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:12MirrorFlySDK11ChatManagerC010initializeC010licenseKey17completionHandlerySS_ySb_AA0B5ErrorOSgSDySSypGtctFZ",
+            "mangledName": "$s12MirrorFlySDK11ChatManagerC010initializeC010licenseKey17completionHandlerySS_ySb_AA0B5ErrorOSgSDySSypGtctFZ",
+            "moduleName": "MirrorFlySDK",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "initDelegates",
             "printedName": "initDelegates()",
             "children": [
@@ -9623,6 +9717,62 @@
                 "accessorKind": "get"
               }
             ]
+          },
+          {
+            "kind": "Function",
+            "name": "setAppGroupContainerId",
+            "printedName": "setAppGroupContainerId(id:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:12MirrorFlySDK11ChatManagerC22setAppGroupContainerId2idySS_tFZ",
+            "mangledName": "$s12MirrorFlySDK11ChatManagerC22setAppGroupContainerId2idySS_tFZ",
+            "moduleName": "MirrorFlySDK",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setBaseURL",
+            "printedName": "setBaseURL(baseURL:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:12MirrorFlySDK11ChatManagerC10setBaseURL04baseH0ySS_tFZ",
+            "mangledName": "$s12MirrorFlySDK11ChatManagerC10setBaseURL04baseH0ySS_tFZ",
+            "moduleName": "MirrorFlySDK",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
           },
           {
             "kind": "Function",
@@ -16330,6 +16480,35 @@
           },
           {
             "kind": "Function",
+            "name": "enableChatHistory",
+            "printedName": "enableChatHistory(isEnable:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:12MirrorFlySDK11ChatManagerC06enableD7History8isEnableySb_tFZ",
+            "mangledName": "$s12MirrorFlySDK11ChatManagerC06enableD7History8isEnableySb_tFZ",
+            "moduleName": "MirrorFlySDK",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "startAutoDownload",
             "printedName": "startAutoDownload()",
             "children": [
@@ -17845,6 +18024,43 @@
             "declKind": "EnumElement",
             "usr": "s:12MirrorFlySDK8FeaturesO14viewall_mediasyA2CmF",
             "mangledName": "$s12MirrorFlySDK8FeaturesO14viewall_mediasyA2CmF",
+            "moduleName": "MirrorFlySDK"
+          },
+          {
+            "kind": "Var",
+            "name": "chat_history",
+            "printedName": "chat_history",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(MirrorFlySDK.Features.Type) -> MirrorFlySDK.Features",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Features",
+                    "printedName": "MirrorFlySDK.Features",
+                    "usr": "s:12MirrorFlySDK8FeaturesO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "MirrorFlySDK.Features.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Features",
+                        "printedName": "MirrorFlySDK.Features",
+                        "usr": "s:12MirrorFlySDK8FeaturesO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:12MirrorFlySDK8FeaturesO12chat_historyyA2CmF",
+            "mangledName": "$s12MirrorFlySDK8FeaturesO12chat_historyyA2CmF",
             "moduleName": "MirrorFlySDK"
           },
           {
@@ -20692,6 +20908,23 @@
             "mangledName": "$ss28CustomDebugStringConvertibleP"
           }
         ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "MirrorFlySDK",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "MirrorFlySDK"
       },
       {
         "kind": "Import",
@@ -26089,6 +26322,26 @@
             "funcSelfKind": "NonMutating"
           },
           {
+            "kind": "Function",
+            "name": "autoReRoute",
+            "printedName": "autoReRoute()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:12MirrorFlySDK12AudioManagerC11autoReRouteyyF",
+            "mangledName": "$s12MirrorFlySDK12AudioManagerC11autoReRouteyyF",
+            "moduleName": "MirrorFlySDK",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
             "kind": "Var",
             "name": "audioManagerDelegate",
             "printedName": "audioManagerDelegate",
@@ -29654,6 +29907,92 @@
                 "declKind": "Accessor",
                 "usr": "s:12MirrorFlySDK20RecentChatListParamsV5limitSivM",
                 "mangledName": "$s12MirrorFlySDK20RecentChatListParamsV5limitSivM",
+                "moduleName": "MirrorFlySDK",
+                "implicit": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "pageNumber",
+            "printedName": "pageNumber",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:12MirrorFlySDK20RecentChatListParamsV10pageNumberSivp",
+            "mangledName": "$s12MirrorFlySDK20RecentChatListParamsV10pageNumberSivp",
+            "moduleName": "MirrorFlySDK",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK20RecentChatListParamsV10pageNumberSivg",
+                "mangledName": "$s12MirrorFlySDK20RecentChatListParamsV10pageNumberSivg",
+                "moduleName": "MirrorFlySDK",
+                "implicit": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK20RecentChatListParamsV10pageNumberSivs",
+                "mangledName": "$s12MirrorFlySDK20RecentChatListParamsV10pageNumberSivs",
+                "moduleName": "MirrorFlySDK",
+                "implicit": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK20RecentChatListParamsV10pageNumberSivM",
+                "mangledName": "$s12MirrorFlySDK20RecentChatListParamsV10pageNumberSivM",
                 "moduleName": "MirrorFlySDK",
                 "implicit": true,
                 "accessorKind": "_modify"
@@ -33534,35 +33873,6 @@
           },
           {
             "kind": "Function",
-            "name": "setAppGroupContainerId",
-            "printedName": "setAppGroupContainerId(id:)",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "Void",
-                "printedName": "()"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "String",
-                "printedName": "Swift.String",
-                "usr": "s:SS"
-              }
-            ],
-            "declKind": "Func",
-            "usr": "c:@M@MirrorFlySDK@objc(cs)CallManager(cm)setAppGroupContainerIdWithId:",
-            "mangledName": "$s12MirrorFlySDK11CallManagerC22setAppGroupContainerId2idySS_tFZ",
-            "moduleName": "MirrorFlySDK",
-            "static": true,
-            "objc_name": "setAppGroupContainerIdWithId:",
-            "declAttributes": [
-              "AccessControl",
-              "ObjC"
-            ],
-            "funcSelfKind": "NonMutating"
-          },
-          {
-            "kind": "Function",
             "name": "switchCamera",
             "printedName": "switchCamera()",
             "children": [
@@ -33679,6 +33989,27 @@
             "declKind": "Func",
             "usr": "s:12MirrorFlySDK11CallManagerC02isD26ConversionRequestAvailableSbyFZ",
             "mangledName": "$s12MirrorFlySDK11CallManagerC02isD26ConversionRequestAvailableSbyFZ",
+            "moduleName": "MirrorFlySDK",
+            "static": true,
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "disableVideo",
+            "printedName": "disableVideo()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:12MirrorFlySDK11CallManagerC12disableVideoyyFZ",
+            "mangledName": "$s12MirrorFlySDK11CallManagerC12disableVideoyyFZ",
             "moduleName": "MirrorFlySDK",
             "static": true,
             "declAttributes": [
@@ -48643,19 +48974,12 @@
           {
             "kind": "Function",
             "name": "loadRecentChatList",
-            "printedName": "loadRecentChatList(_:completionHandler:)",
+            "printedName": "loadRecentChatList(completionHandler:)",
             "children": [
               {
                 "kind": "TypeNominal",
                 "name": "Void",
                 "printedName": "()"
-              },
-              {
-                "kind": "TypeNominal",
-                "name": "Bool",
-                "printedName": "Swift.Bool",
-                "hasDefaultArg": true,
-                "usr": "s:Sb"
               },
               {
                 "kind": "TypeFunc",
@@ -48717,8 +49041,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:12MirrorFlySDK21RecentChatListBuilderC04loaddeF0_17completionHandlerySb_ySb_AA0B5ErrorOSgSDySSypGtctF",
-            "mangledName": "$s12MirrorFlySDK21RecentChatListBuilderC04loaddeF0_17completionHandlerySb_ySb_AA0B5ErrorOSgSDySSypGtctF",
+            "usr": "s:12MirrorFlySDK21RecentChatListBuilderC04loaddeF017completionHandleryySb_AA0B5ErrorOSgSDySSypGtc_tF",
+            "mangledName": "$s12MirrorFlySDK21RecentChatListBuilderC04loaddeF017completionHandleryySb_AA0B5ErrorOSgSDySSypGtc_tF",
             "moduleName": "MirrorFlySDK",
             "declAttributes": [
               "AccessControl"
@@ -85873,6 +86197,104 @@
           },
           {
             "kind": "Var",
+            "name": "SDKVersion",
+            "printedName": "SDKVersion",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:12MirrorFlySDK0B8DefaultsC10SDKVersionSSvpZ",
+            "mangledName": "$s12MirrorFlySDK0B8DefaultsC10SDKVersionSSvpZ",
+            "moduleName": "MirrorFlySDK",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "Custom"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK0B8DefaultsC10SDKVersionSSvgZ",
+                "mangledName": "$s12MirrorFlySDK0B8DefaultsC10SDKVersionSSvgZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK0B8DefaultsC10SDKVersionSSvsZ",
+                "mangledName": "$s12MirrorFlySDK0B8DefaultsC10SDKVersionSSvsZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK0B8DefaultsC10SDKVersionSSvMZ",
+                "mangledName": "$s12MirrorFlySDK0B8DefaultsC10SDKVersionSSvMZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "myPassword",
             "printedName": "myPassword",
             "children": [
@@ -89828,6 +90250,105 @@
                 "declKind": "Accessor",
                 "usr": "s:12MirrorFlySDK0B8DefaultsC18autoDownloadEnableSbvMZ",
                 "mangledName": "$s12MirrorFlySDK0B8DefaultsC18autoDownloadEnableSbvMZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "chatHistoryEnabled",
+            "printedName": "chatHistoryEnabled",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:12MirrorFlySDK0B8DefaultsC18chatHistoryEnabledSbvpZ",
+            "mangledName": "$s12MirrorFlySDK0B8DefaultsC18chatHistoryEnabledSbvpZ",
+            "moduleName": "MirrorFlySDK",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "Custom",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK0B8DefaultsC18chatHistoryEnabledSbvgZ",
+                "mangledName": "$s12MirrorFlySDK0B8DefaultsC18chatHistoryEnabledSbvgZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK0B8DefaultsC18chatHistoryEnabledSbvsZ",
+                "mangledName": "$s12MirrorFlySDK0B8DefaultsC18chatHistoryEnabledSbvsZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK0B8DefaultsC18chatHistoryEnabledSbvMZ",
+                "mangledName": "$s12MirrorFlySDK0B8DefaultsC18chatHistoryEnabledSbvMZ",
                 "moduleName": "MirrorFlySDK",
                 "static": true,
                 "implicit": true,
@@ -94562,6 +95083,104 @@
                 "declKind": "Accessor",
                 "usr": "s:12MirrorFlySDK0B8DefaultsC14pushServerTypeSSvMZ",
                 "mangledName": "$s12MirrorFlySDK0B8DefaultsC14pushServerTypeSSvMZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "isNewLoggedIn",
+            "printedName": "isNewLoggedIn",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:12MirrorFlySDK0B8DefaultsC13isNewLoggedInSbvpZ",
+            "mangledName": "$s12MirrorFlySDK0B8DefaultsC13isNewLoggedInSbvpZ",
+            "moduleName": "MirrorFlySDK",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl",
+              "Custom"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK0B8DefaultsC13isNewLoggedInSbvgZ",
+                "mangledName": "$s12MirrorFlySDK0B8DefaultsC13isNewLoggedInSbvgZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK0B8DefaultsC13isNewLoggedInSbvsZ",
+                "mangledName": "$s12MirrorFlySDK0B8DefaultsC13isNewLoggedInSbvsZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK0B8DefaultsC13isNewLoggedInSbvMZ",
+                "mangledName": "$s12MirrorFlySDK0B8DefaultsC13isNewLoggedInSbvMZ",
                 "moduleName": "MirrorFlySDK",
                 "static": true,
                 "implicit": true,
@@ -101940,6 +102559,53 @@
           },
           {
             "kind": "Var",
+            "name": "chatHistoryEnable",
+            "printedName": "chatHistoryEnable",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:12MirrorFlySDK0B9ConstantsV17chatHistoryEnableSSvpZ",
+            "mangledName": "$s12MirrorFlySDK0B9ConstantsV17chatHistoryEnableSSvpZ",
+            "moduleName": "MirrorFlySDK",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK0B9ConstantsV17chatHistoryEnableSSvgZ",
+                "mangledName": "$s12MirrorFlySDK0B9ConstantsV17chatHistoryEnableSSvgZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "autoDownloadMobile",
             "printedName": "autoDownloadMobile",
             "children": [
@@ -105390,6 +106056,67 @@
           },
           {
             "kind": "TypeDecl",
+            "name": "versions",
+            "printedName": "versions",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "chatHistoryReleaseVersion",
+                "printedName": "chatHistoryReleaseVersion",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:12MirrorFlySDK0B9ConstantsV8versionsV25chatHistoryReleaseVersionSSvpZ",
+                "mangledName": "$s12MirrorFlySDK0B9ConstantsV8versionsV25chatHistoryReleaseVersionSSvpZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:12MirrorFlySDK0B9ConstantsV8versionsV25chatHistoryReleaseVersionSSvgZ",
+                    "mangledName": "$s12MirrorFlySDK0B9ConstantsV8versionsV25chatHistoryReleaseVersionSSvgZ",
+                    "moduleName": "MirrorFlySDK",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Struct",
+            "usr": "s:12MirrorFlySDK0B9ConstantsV8versionsV",
+            "mangledName": "$s12MirrorFlySDK0B9ConstantsV8versionsV",
+            "moduleName": "MirrorFlySDK",
+            "declAttributes": [
+              "AccessControl"
+            ]
+          },
+          {
+            "kind": "TypeDecl",
             "name": "ErrorMessage",
             "printedName": "ErrorMessage",
             "children": [
@@ -108065,147 +108792,6 @@
                     "declKind": "Accessor",
                     "usr": "s:12MirrorFlySDK0B9ConstantsV12ErrorMessageV19authorization_errorSSvgZ",
                     "mangledName": "$s12MirrorFlySDK0B9ConstantsV12ErrorMessageV19authorization_errorSSvgZ",
-                    "moduleName": "MirrorFlySDK",
-                    "static": true,
-                    "implicit": true,
-                    "accessorKind": "get"
-                  }
-                ]
-              },
-              {
-                "kind": "Var",
-                "name": "userIdEmpty",
-                "printedName": "userIdEmpty",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "String",
-                    "printedName": "Swift.String",
-                    "usr": "s:SS"
-                  }
-                ],
-                "declKind": "Var",
-                "usr": "s:12MirrorFlySDK0B9ConstantsV12ErrorMessageV11userIdEmptySSvpZ",
-                "mangledName": "$s12MirrorFlySDK0B9ConstantsV12ErrorMessageV11userIdEmptySSvpZ",
-                "moduleName": "MirrorFlySDK",
-                "static": true,
-                "declAttributes": [
-                  "HasInitialValue",
-                  "HasStorage",
-                  "AccessControl"
-                ],
-                "isLet": true,
-                "hasStorage": true,
-                "accessors": [
-                  {
-                    "kind": "Accessor",
-                    "name": "Get",
-                    "printedName": "Get()",
-                    "children": [
-                      {
-                        "kind": "TypeNominal",
-                        "name": "String",
-                        "printedName": "Swift.String",
-                        "usr": "s:SS"
-                      }
-                    ],
-                    "declKind": "Accessor",
-                    "usr": "s:12MirrorFlySDK0B9ConstantsV12ErrorMessageV11userIdEmptySSvgZ",
-                    "mangledName": "$s12MirrorFlySDK0B9ConstantsV12ErrorMessageV11userIdEmptySSvgZ",
-                    "moduleName": "MirrorFlySDK",
-                    "static": true,
-                    "implicit": true,
-                    "accessorKind": "get"
-                  }
-                ]
-              },
-              {
-                "kind": "Var",
-                "name": "sameUserId",
-                "printedName": "sameUserId",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "String",
-                    "printedName": "Swift.String",
-                    "usr": "s:SS"
-                  }
-                ],
-                "declKind": "Var",
-                "usr": "s:12MirrorFlySDK0B9ConstantsV12ErrorMessageV10sameUserIdSSvpZ",
-                "mangledName": "$s12MirrorFlySDK0B9ConstantsV12ErrorMessageV10sameUserIdSSvpZ",
-                "moduleName": "MirrorFlySDK",
-                "static": true,
-                "declAttributes": [
-                  "HasInitialValue",
-                  "HasStorage",
-                  "AccessControl"
-                ],
-                "isLet": true,
-                "hasStorage": true,
-                "accessors": [
-                  {
-                    "kind": "Accessor",
-                    "name": "Get",
-                    "printedName": "Get()",
-                    "children": [
-                      {
-                        "kind": "TypeNominal",
-                        "name": "String",
-                        "printedName": "Swift.String",
-                        "usr": "s:SS"
-                      }
-                    ],
-                    "declKind": "Accessor",
-                    "usr": "s:12MirrorFlySDK0B9ConstantsV12ErrorMessageV10sameUserIdSSvgZ",
-                    "mangledName": "$s12MirrorFlySDK0B9ConstantsV12ErrorMessageV10sameUserIdSSvgZ",
-                    "moduleName": "MirrorFlySDK",
-                    "static": true,
-                    "implicit": true,
-                    "accessorKind": "get"
-                  }
-                ]
-              },
-              {
-                "kind": "Var",
-                "name": "serverDetailError",
-                "printedName": "serverDetailError",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "String",
-                    "printedName": "Swift.String",
-                    "usr": "s:SS"
-                  }
-                ],
-                "declKind": "Var",
-                "usr": "s:12MirrorFlySDK0B9ConstantsV12ErrorMessageV012serverDetailE0SSvpZ",
-                "mangledName": "$s12MirrorFlySDK0B9ConstantsV12ErrorMessageV012serverDetailE0SSvpZ",
-                "moduleName": "MirrorFlySDK",
-                "static": true,
-                "declAttributes": [
-                  "HasInitialValue",
-                  "HasStorage",
-                  "AccessControl"
-                ],
-                "isLet": true,
-                "hasStorage": true,
-                "accessors": [
-                  {
-                    "kind": "Accessor",
-                    "name": "Get",
-                    "printedName": "Get()",
-                    "children": [
-                      {
-                        "kind": "TypeNominal",
-                        "name": "String",
-                        "printedName": "Swift.String",
-                        "usr": "s:SS"
-                      }
-                    ],
-                    "declKind": "Accessor",
-                    "usr": "s:12MirrorFlySDK0B9ConstantsV12ErrorMessageV012serverDetailE0SSvgZ",
-                    "mangledName": "$s12MirrorFlySDK0B9ConstantsV12ErrorMessageV012serverDetailE0SSvgZ",
                     "moduleName": "MirrorFlySDK",
                     "static": true,
                     "implicit": true,
@@ -126325,9 +126911,11 @@
         "usr": "s:12MirrorFlySDK04ChatC0C",
         "mangledName": "$s12MirrorFlySDK04ChatC0C",
         "moduleName": "MirrorFlySDK",
+        "deprecated": true,
         "declAttributes": [
           "AccessControl",
           "ObjCMembers",
+          "Available",
           "RawDocComment"
         ],
         "hasMissingDesignatedInitializers": true
@@ -130901,16 +131489,25 @@
             "children": [
               {
                 "kind": "TypeNominal",
-                "name": "String",
-                "printedName": "Swift.String",
-                "usr": "s:SS"
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
               }
             ],
             "declKind": "Var",
-            "usr": "s:12MirrorFlySDK12ContactModelV4nameSSvp",
-            "mangledName": "$s12MirrorFlySDK12ContactModelV4nameSSvp",
+            "usr": "s:12MirrorFlySDK12ContactModelV4nameSSSgvp",
+            "mangledName": "$s12MirrorFlySDK12ContactModelV4nameSSSgvp",
             "moduleName": "MirrorFlySDK",
             "declAttributes": [
+              "HasInitialValue",
               "HasStorage",
               "AccessControl"
             ],
@@ -130923,14 +131520,22 @@
                 "children": [
                   {
                     "kind": "TypeNominal",
-                    "name": "String",
-                    "printedName": "Swift.String",
-                    "usr": "s:SS"
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
                   }
                 ],
                 "declKind": "Accessor",
-                "usr": "s:12MirrorFlySDK12ContactModelV4nameSSvg",
-                "mangledName": "$s12MirrorFlySDK12ContactModelV4nameSSvg",
+                "usr": "s:12MirrorFlySDK12ContactModelV4nameSSSgvg",
+                "mangledName": "$s12MirrorFlySDK12ContactModelV4nameSSSgvg",
                 "moduleName": "MirrorFlySDK",
                 "implicit": true,
                 "accessorKind": "get"
@@ -130947,14 +131552,22 @@
                   },
                   {
                     "kind": "TypeNominal",
-                    "name": "String",
-                    "printedName": "Swift.String",
-                    "usr": "s:SS"
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
                   }
                 ],
                 "declKind": "Accessor",
-                "usr": "s:12MirrorFlySDK12ContactModelV4nameSSvs",
-                "mangledName": "$s12MirrorFlySDK12ContactModelV4nameSSvs",
+                "usr": "s:12MirrorFlySDK12ContactModelV4nameSSSgvs",
+                "mangledName": "$s12MirrorFlySDK12ContactModelV4nameSSSgvs",
                 "moduleName": "MirrorFlySDK",
                 "implicit": true,
                 "accessorKind": "set"
@@ -130971,8 +131584,8 @@
                   }
                 ],
                 "declKind": "Accessor",
-                "usr": "s:12MirrorFlySDK12ContactModelV4nameSSvM",
-                "mangledName": "$s12MirrorFlySDK12ContactModelV4nameSSvM",
+                "usr": "s:12MirrorFlySDK12ContactModelV4nameSSSgvM",
+                "mangledName": "$s12MirrorFlySDK12ContactModelV4nameSSSgvM",
                 "moduleName": "MirrorFlySDK",
                 "implicit": true,
                 "accessorKind": "_modify"
@@ -131216,9 +131829,17 @@
               },
               {
                 "kind": "TypeNominal",
-                "name": "String",
-                "printedName": "Swift.String",
-                "usr": "s:SS"
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
               },
               {
                 "kind": "TypeNominal",
@@ -131250,8 +131871,8 @@
               }
             ],
             "declKind": "Constructor",
-            "usr": "s:12MirrorFlySDK12ContactModelV3mid4name12phone_number13active_statusACSS_SSSaySSGAHtcfc",
-            "mangledName": "$s12MirrorFlySDK12ContactModelV3mid4name12phone_number13active_statusACSS_SSSaySSGAHtcfc",
+            "usr": "s:12MirrorFlySDK12ContactModelV3mid4name12phone_number13active_statusACSS_SSSgSaySSGAItcfc",
+            "mangledName": "$s12MirrorFlySDK12ContactModelV3mid4name12phone_number13active_statusACSS_SSSgSaySSGAItcfc",
             "moduleName": "MirrorFlySDK",
             "declAttributes": [
               "AccessControl"
@@ -140347,119 +140968,119 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 1446,
+      "offset": 1504,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 3782,
+      "offset": 6322,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 12074,
+      "offset": 16346,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 13222,
+      "offset": 17494,
       "length": 1,
       "value": "4"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 13353,
+      "offset": 17625,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 13479,
+      "offset": 17751,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 41860,
+      "offset": 46330,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 45915,
+      "offset": 50385,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 64228,
+      "offset": 69137,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 64250,
+      "offset": 69159,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 71219,
+      "offset": 76128,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 90317,
+      "offset": 95231,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 90348,
+      "offset": 95262,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 108419,
+      "offset": 113444,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 113673,
+      "offset": 118698,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 120689,
+      "offset": 125714,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "Array",
-      "offset": 123838,
+      "offset": 128863,
       "length": 2,
       "value": "[]"
     },
@@ -140576,6 +141197,13 @@
       "value": "false"
     },
     {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/CallKIT\/CallKitManager.swift",
+      "kind": "BooleanLiteral",
+      "offset": 981,
+      "length": 5,
+      "value": "false"
+    },
+    {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Database\/Models\/Receipt\/OfflineReceipt.swift",
       "kind": "StringLiteral",
       "offset": 292,
@@ -140588,6 +141216,20 @@
       "offset": 13994,
       "length": 5,
       "value": "false"
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Network\/Models\/ResponseModels.swift",
+      "kind": "StringLiteral",
+      "offset": 441,
+      "length": 12,
+      "value": "\"apiBaseUrl\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Network\/Models\/ResponseModels.swift",
+      "kind": "StringLiteral",
+      "offset": 441,
+      "length": 12,
+      "value": "\"apiBaseUrl\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/SignalServerManager.swift",
@@ -140788,35 +141430,42 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 682,
+      "offset": 683,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 721,
+      "offset": 732,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
-      "kind": "BooleanLiteral",
-      "offset": 758,
-      "length": 5,
-      "value": "false"
+      "kind": "StringLiteral",
+      "offset": 824,
+      "length": 63,
+      "value": "\"#audiomanager uiSelection :: \""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
+      "kind": "StringLiteral",
+      "offset": 865,
+      "length": 2,
+      "value": "\" to => \""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
+      "kind": "StringLiteral",
+      "offset": 886,
+      "length": 2,
+      "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 807,
-      "length": 5,
-      "value": "false"
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
-      "kind": "BooleanLiteral",
-      "offset": 11760,
+      "offset": 13636,
       "length": 5,
       "value": "false"
     },
@@ -140984,7 +141633,14 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/RecentChatListParams.swift",
       "kind": "IntegerLiteral",
-      "offset": 318,
+      "offset": 316,
+      "length": 1,
+      "value": "2"
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/RecentChatListParams.swift",
+      "kind": "IntegerLiteral",
+      "offset": 348,
       "length": 2,
       "value": "40"
     },
@@ -141061,21 +141717,21 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Database\/Models\/Message\/MessageManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 6410,
+      "offset": 6870,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Database\/Models\/Message\/MessageManager.swift",
       "kind": "StringLiteral",
-      "offset": 11369,
+      "offset": 11829,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Database\/Models\/Message\/MessageManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 32326,
+      "offset": 32786,
       "length": 2,
       "value": "50"
     },
@@ -142377,42 +143033,42 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "Dictionary",
-      "offset": 651,
+      "offset": 811,
       "length": 3,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "BooleanLiteral",
-      "offset": 689,
+      "offset": 849,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "BooleanLiteral",
-      "offset": 732,
+      "offset": 892,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "BooleanLiteral",
-      "offset": 776,
+      "offset": 936,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "BooleanLiteral",
-      "offset": 824,
+      "offset": 984,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "BooleanLiteral",
-      "offset": 961,
+      "offset": 1121,
       "length": 4,
       "value": "true"
     },
@@ -142720,42 +143376,42 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "IntegerLiteral",
-      "offset": 415,
+      "offset": 494,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "BooleanLiteral",
-      "offset": 451,
+      "offset": 530,
+      "length": 4,
+      "value": "true"
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
+      "kind": "BooleanLiteral",
+      "offset": 575,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "Dictionary",
-      "offset": 500,
+      "offset": 624,
       "length": 3,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "BooleanLiteral",
-      "offset": 541,
-      "length": 5,
-      "value": "false"
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
-      "kind": "BooleanLiteral",
-      "offset": 794,
+      "offset": 665,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 16761,
+      "offset": 20832,
       "length": 2,
       "value": "\"\""
     },
@@ -144792,28 +145448,28 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/FlyMessenger.swift",
       "kind": "Array",
-      "offset": 77592,
+      "offset": 77651,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/FlyMessenger.swift",
       "kind": "Array",
-      "offset": 77623,
+      "offset": 77682,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/FlyMessenger.swift",
       "kind": "Array",
-      "offset": 77653,
+      "offset": 77712,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/FlyMessenger.swift",
       "kind": "Array",
-      "offset": 77681,
+      "offset": 77740,
       "length": 2,
       "value": "[]"
     },
@@ -145128,42 +145784,42 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebRTCTrackManager.swift",
       "kind": "StringLiteral",
-      "offset": 727,
+      "offset": 734,
       "length": 75,
       "value": "\"#join_ WebRTCTrackManager videoTrack => \""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebRTCTrackManager.swift",
       "kind": "StringLiteral",
-      "offset": 779,
+      "offset": 786,
       "length": 2,
       "value": "\" to \""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebRTCTrackManager.swift",
       "kind": "StringLiteral",
-      "offset": 801,
+      "offset": 808,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebRTCTrackManager.swift",
       "kind": "StringLiteral",
-      "offset": 902,
+      "offset": 909,
       "length": 8,
       "value": "\"ARDAMS\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebRTCTrackManager.swift",
       "kind": "StringLiteral",
-      "offset": 946,
+      "offset": 953,
       "length": 10,
       "value": "\"ARDAMSa0\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebRTCTrackManager.swift",
       "kind": "StringLiteral",
-      "offset": 992,
+      "offset": 999,
       "length": 10,
       "value": "\"ARDAMSv0\""
     },
@@ -145954,478 +146610,492 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 3427,
+      "offset": 3550,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 3539,
+      "offset": 3662,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 3700,
+      "offset": 3823,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 3829,
+      "offset": 3952,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 3957,
+      "offset": 4080,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 4076,
+      "offset": 4199,
       "length": 3,
       "value": "300"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 4351,
+      "offset": 4474,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 4479,
+      "offset": 4602,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 4610,
+      "offset": 4733,
       "length": 1,
       "value": "4"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 4733,
+      "offset": 4856,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 4988,
+      "offset": 5111,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 5121,
+      "offset": 5244,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 5255,
+      "offset": 5378,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 5389,
+      "offset": 5512,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 5515,
+      "offset": 5638,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 5647,
+      "offset": 5770,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 5790,
+      "offset": 5913,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 5935,
+      "offset": 6058,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 6078,
+      "offset": 6201,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 6206,
+      "offset": 6329,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 6325,
+      "offset": 6448,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 6445,
+      "offset": 6568,
       "length": 3,
       "value": "\"0\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 6570,
+      "offset": 6693,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 6702,
+      "offset": 6825,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 6829,
+      "offset": 6952,
       "length": 40,
       "value": "\"\/System\/Library\/Audio\/UISounds\/Default\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 7045,
+      "offset": 7168,
       "length": 9,
       "value": "\"Default\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 7093,
+      "offset": 7216,
       "length": 9,
       "value": "\"Default\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 7146,
+      "offset": 7269,
       "length": 5,
       "value": "\"mp3\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 7295,
+      "offset": 7418,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 7425,
+      "offset": 7548,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 7563,
+      "offset": 7686,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 7701,
+      "offset": 7824,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 7887,
+      "offset": 8010,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 8041,
+      "offset": 8164,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
+      "kind": "BooleanLiteral",
+      "offset": 8319,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 8474,
+      "offset": 8752,
       "length": 4,
       "value": "\"en\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 8602,
+      "offset": 8880,
       "length": 9,
       "value": "\"English\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 8743,
+      "offset": 9021,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 8892,
+      "offset": 9170,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 9045,
+      "offset": 9323,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 9198,
+      "offset": 9476,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 9354,
+      "offset": 9632,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 9504,
+      "offset": 9782,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 9645,
+      "offset": 9923,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 9786,
+      "offset": 10064,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 9930,
+      "offset": 10208,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 10091,
+      "offset": 10369,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 10502,
+      "offset": 10780,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 10651,
+      "offset": 10929,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 10905,
+      "offset": 11183,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 11018,
+      "offset": 11296,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 11142,
+      "offset": 11420,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 11265,
+      "offset": 11543,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 11377,
+      "offset": 11655,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 11483,
+      "offset": 11761,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 11603,
+      "offset": 11881,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 11726,
+      "offset": 12004,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 11841,
+      "offset": 12119,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "Dictionary",
-      "offset": 11956,
+      "offset": 12234,
       "length": 3,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 12463,
+      "offset": 12741,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 12582,
+      "offset": 12860,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 12718,
+      "offset": 12996,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 12993,
+      "offset": 13271,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 13117,
+      "offset": 13395,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 13497,
+      "offset": 13775,
       "length": 27,
       "value": "\"wss:\/\/janus.mirrorfly.com\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "IntegerLiteral",
-      "offset": 13781,
+      "offset": 14059,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 13907,
+      "offset": 14185,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "BooleanLiteral",
-      "offset": 14034,
+      "offset": 14312,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
       "kind": "StringLiteral",
-      "offset": 14155,
+      "offset": 14433,
       "length": 5,
       "value": "\"ios\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyDefaults.swift",
+      "kind": "BooleanLiteral",
+      "offset": 14709,
+      "length": 5,
+      "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Database\/Models\/Backup\/BackupMessageManager.swift",
@@ -147117,274 +147787,288 @@
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "BooleanLiteral",
       "offset": 1299,
-      "length": 5,
-      "value": "false"
+      "length": 4,
+      "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1420,
+      "offset": 1419,
       "length": 11,
       "value": "\"groupChat\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1466,
+      "offset": 1465,
       "length": 11,
       "value": "\"groupCall\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1515,
+      "offset": 1514,
       "length": 13,
       "value": "\"one2oneCall\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1570,
+      "offset": 1569,
       "length": 18,
       "value": "\"recentchatSearch\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1629,
+      "offset": 1628,
       "length": 17,
       "value": "\"imageAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1687,
+      "offset": 1686,
       "length": 17,
       "value": "\"videoAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1745,
+      "offset": 1744,
       "length": 17,
       "value": "\"audioAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1806,
+      "offset": 1805,
       "length": 20,
       "value": "\"documentAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1869,
+      "offset": 1868,
       "length": 19,
       "value": "\"contactAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1932,
+      "offset": 1931,
       "length": 20,
       "value": "\"locationAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1988,
+      "offset": 1987,
       "length": 12,
       "value": "\"attachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2037,
+      "offset": 2036,
       "length": 13,
       "value": "\"starMessage\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2085,
+      "offset": 2084,
       "length": 11,
       "value": "\"clearChat\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2132,
+      "offset": 2131,
       "length": 12,
       "value": "\"deleteChat\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2181,
+      "offset": 2180,
       "length": 13,
       "value": "\"translation\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2225,
+      "offset": 2224,
       "length": 7,
       "value": "\"block\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2264,
+      "offset": 2263,
       "length": 8,
       "value": "\"report\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2311,
+      "offset": 2310,
       "length": 15,
       "value": "\"deleteMessage\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2365,
+      "offset": 2364,
       "length": 15,
       "value": "\"viewAllMedias\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1420,
+      "offset": 2416,
+      "length": 13,
+      "value": "\"chatHistory\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
+      "kind": "StringLiteral",
+      "offset": 1419,
       "length": 11,
       "value": "\"groupChat\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1466,
+      "offset": 1465,
       "length": 11,
       "value": "\"groupCall\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1515,
+      "offset": 1514,
       "length": 13,
       "value": "\"one2oneCall\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1570,
+      "offset": 1569,
       "length": 18,
       "value": "\"recentchatSearch\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1629,
+      "offset": 1628,
       "length": 17,
       "value": "\"imageAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1687,
+      "offset": 1686,
       "length": 17,
       "value": "\"videoAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1745,
+      "offset": 1744,
       "length": 17,
       "value": "\"audioAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1806,
+      "offset": 1805,
       "length": 20,
       "value": "\"documentAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1869,
+      "offset": 1868,
       "length": 19,
       "value": "\"contactAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1932,
+      "offset": 1931,
       "length": 20,
       "value": "\"locationAttachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 1988,
+      "offset": 1987,
       "length": 12,
       "value": "\"attachment\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2037,
+      "offset": 2036,
       "length": 13,
       "value": "\"starMessage\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2085,
+      "offset": 2084,
       "length": 11,
       "value": "\"clearChat\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2132,
+      "offset": 2131,
       "length": 12,
       "value": "\"deleteChat\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2181,
+      "offset": 2180,
       "length": 13,
       "value": "\"translation\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2225,
+      "offset": 2224,
       "length": 7,
       "value": "\"block\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2264,
+      "offset": 2263,
       "length": 8,
       "value": "\"report\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2311,
+      "offset": 2310,
       "length": 15,
       "value": "\"deleteMessage\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
       "kind": "StringLiteral",
-      "offset": 2365,
+      "offset": 2364,
       "length": 15,
       "value": "\"viewAllMedias\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/AvailableFeaturesModel.swift",
+      "kind": "StringLiteral",
+      "offset": 2416,
+      "length": 13,
+      "value": "\"chatHistory\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Database\/Models\/Contact\/Contact.swift",
@@ -147881,1776 +148565,1783 @@
       "kind": "StringLiteral",
       "offset": 3489,
       "length": 12,
+      "value": "\"SDKVersion\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 3535,
+      "length": 12,
       "value": "\"licenseKey\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3545,
+      "offset": 3591,
       "length": 15,
       "value": "\"clear_message\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3597,
+      "offset": 3643,
       "length": 12,
       "value": "\"singlechat\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3644,
+      "offset": 3690,
       "length": 6,
       "value": "\"live\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3698,
+      "offset": 3744,
       "length": 24,
       "value": "\"You created this group\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3772,
+      "offset": 3818,
       "length": 24,
       "value": "\"Group created with you\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3839,
+      "offset": 3885,
       "length": 15,
       "value": "\"Group created\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3894,
+      "offset": 3940,
       "length": 11,
       "value": "\"You added\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3944,
+      "offset": 3990,
       "length": 11,
       "value": "\"added you\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3991,
+      "offset": 4037,
       "length": 7,
       "value": "\"added\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4045,
+      "offset": 4091,
       "length": 25,
       "value": "\"You left from the group\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4111,
+      "offset": 4157,
       "length": 13,
       "value": "\"removed you\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4165,
+      "offset": 4211,
       "length": 13,
       "value": "\"You removed\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4212,
+      "offset": 4258,
       "length": 5,
       "value": "\"You\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4261,
+      "offset": 4307,
       "length": 21,
       "value": "\"left from the group\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4331,
+      "offset": 4377,
       "length": 27,
       "value": "\"removed from the group by\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4409,
+      "offset": 4455,
       "length": 25,
       "value": "\"Group name changed from\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4467,
+      "offset": 4513,
       "length": 4,
       "value": "\"to\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4504,
+      "offset": 4550,
       "length": 4,
       "value": "\"by\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4544,
+      "offset": 4590,
       "length": 8,
       "value": "\"by You\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4601,
+      "offset": 4647,
       "length": 20,
       "value": "\"Group name changed\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4669,
+      "offset": 4715,
       "length": 29,
       "value": "\"Group profile image updated\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4746,
+      "offset": 4792,
       "length": 29,
       "value": "\"Group profile image removed\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4813,
+      "offset": 4859,
       "length": 10,
       "value": "\"as admin\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4858,
+      "offset": 4904,
       "length": 6,
       "value": "\"made\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4911,
+      "offset": 4957,
       "length": 18,
       "value": "\"admin_exit_group\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4975,
+      "offset": 5021,
       "length": 17,
       "value": "\"user_exit_group\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5045,
+      "offset": 5091,
       "length": 28,
       "value": "\"deleteMultipleConversation\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5125,
+      "offset": 5171,
       "length": 23,
       "value": "\"deleteAllConversation\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5221,
+      "offset": 5267,
       "length": 18,
       "value": "\"application\/json\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5274,
+      "offset": 5320,
       "length": 6,
       "value": "\"chat\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5320,
+      "offset": 5366,
       "length": 11,
       "value": "\"groupchat\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5373,
+      "offset": 5419,
       "length": 24,
       "value": "\"isLoginContactSyncDone\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5440,
+      "offset": 5486,
       "length": 21,
       "value": "\"isContactSyncNeeded\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5508,
+      "offset": 5554,
       "length": 18,
       "value": "\"contactSyncState\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5577,
+      "offset": 5623,
       "length": 22,
       "value": "\"isContactSyncSuccess\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5640,
+      "offset": 5686,
       "length": 14,
       "value": "\"now an admin\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5693,
+      "offset": 5739,
       "length": 8,
       "value": "\"You're\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5785,
+      "offset": 5831,
       "length": 5,
       "value": "\"jpg\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5835,
+      "offset": 5881,
       "length": 5,
       "value": "\"gif\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5887,
+      "offset": 5933,
       "length": 5,
       "value": "\"mp4\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5939,
+      "offset": 5985,
       "length": 5,
       "value": "\"aac\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6034,
+      "offset": 6080,
       "length": 10,
       "value": "\"FlyMedia\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6081,
+      "offset": 6127,
       "length": 7,
       "value": "\"Image\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6125,
+      "offset": 6171,
       "length": 7,
       "value": "\"Video\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6169,
+      "offset": 6215,
       "length": 7,
       "value": "\"Audio\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6216,
+      "offset": 6262,
       "length": 10,
       "value": "\"Document\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6270,
+      "offset": 6316,
       "length": 14,
       "value": "\"ProfileImage\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6351,
+      "offset": 6397,
       "length": 12,
       "value": "\"xmppDomain\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6395,
+      "offset": 6441,
       "length": 10,
       "value": "\"xmppPort\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6434,
+      "offset": 6480,
       "length": 7,
       "value": "\"myJid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6479,
+      "offset": 6525,
       "length": 16,
       "value": "\"myXmppResource\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6533,
+      "offset": 6579,
       "length": 16,
       "value": "\"myXmppUsername\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6587,
+      "offset": 6633,
       "length": 16,
       "value": "\"myXmppPassword\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6636,
+      "offset": 6682,
       "length": 11,
       "value": "\"xmppMyJID\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6678,
+      "offset": 6724,
       "length": 9,
       "value": "\"baseURL\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6728,
+      "offset": 6774,
       "length": 19,
       "value": "\"enableContactSync\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6788,
+      "offset": 6834,
       "length": 19,
       "value": "\"enableChatHistory\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6851,
+      "offset": 6897,
       "length": 22,
       "value": "\"maximumRecentChatPin\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6911,
+      "offset": 6957,
       "length": 16,
       "value": "\"useProfileName\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6962,
+      "offset": 7008,
       "length": 13,
       "value": "\"countryCode\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7010,
+      "offset": 7056,
       "length": 13,
       "value": "\"profileName\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7068,
+      "offset": 7114,
       "length": 23,
       "value": "\"deleteMediaFromDevice\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7134,
+      "offset": 7180,
       "length": 21,
       "value": "\"appGroupContainerID\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7185,
+      "offset": 7231,
       "length": 8,
       "value": "\"roomId\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7225,
+      "offset": 7271,
       "length": 10,
       "value": "\"pingTime\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7273,
+      "offset": 7319,
       "length": 16,
       "value": "\"timeDifference\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "IntegerLiteral",
-      "offset": 7332,
+      "offset": 7378,
       "length": 7,
       "value": "1048576"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7382,
+      "offset": 7428,
       "length": 15,
       "value": "\"signalsServer\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7440,
+      "offset": 7486,
       "length": 14,
       "value": "\"offlineParam\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7500,
+      "offset": 7546,
       "length": 17,
       "value": "\"lastMessageTime\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7567,
+      "offset": 7613,
       "length": 21,
       "value": "\"isTranlationEnabled\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7637,
+      "offset": 7683,
       "length": 20,
       "value": "\"autoDownloadEnable\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7705,
+      "offset": 7751,
+      "length": 19,
+      "value": "\"chatHistoryEnable\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 7818,
       "length": 20,
       "value": "\"autoDownloadMobile\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7772,
+      "offset": 7885,
       "length": 18,
       "value": "\"autoDownloadWifi\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7848,
+      "offset": 7961,
       "length": 29,
       "value": "\"autoDownloadLastEnabledTime\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7939,
+      "offset": 8052,
       "length": 33,
       "value": "\"autoDownloadTimeMobileDataImage\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8034,
+      "offset": 8147,
       "length": 33,
       "value": "\"autoDownloadTimeMobileDataVideo\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8129,
+      "offset": 8242,
       "length": 33,
       "value": "\"autoDownloadTimeMobileDataAudio\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8227,
+      "offset": 8340,
       "length": 36,
       "value": "\"autoDownloadTimeMobileDataDocument\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8319,
+      "offset": 8432,
       "length": 27,
       "value": "\"autoDownloadTimeWifiImage\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8402,
+      "offset": 8515,
       "length": 27,
       "value": "\"autoDownloadTimeWifiVideo\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8485,
+      "offset": 8598,
       "length": 27,
       "value": "\"autoDownloadTimeWifiAudio\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8571,
+      "offset": 8684,
       "length": 30,
       "value": "\"autoDownloadTimeWifiDocument\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8655,
+      "offset": 8768,
       "length": 20,
       "value": "\"targetLanguageCode\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8722,
+      "offset": 8835,
       "length": 18,
       "value": "\"selectedLanguage\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8784,
+      "offset": 8897,
       "length": 15,
       "value": "\"appLockenable\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8837,
+      "offset": 8950,
       "length": 13,
       "value": "\"showAppLock\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8897,
+      "offset": 9010,
       "length": 22,
       "value": "\"appFingerprintenable\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8959,
+      "offset": 9072,
       "length": 11,
       "value": "\"localPush\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9011,
+      "offset": 9124,
       "length": 12,
       "value": "\"remotePush\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9069,
+      "offset": 9182,
       "length": 17,
       "value": "\"appLockPassword\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9132,
+      "offset": 9245,
       "length": 21,
       "value": "\"appLockPasswordDate\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9203,
+      "offset": 9316,
       "length": 25,
       "value": "\"pinChangeAlertShownDate\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9286,
+      "offset": 9399,
       "length": 33,
       "value": "\"faceOrFingerAuthenticationFails\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9375,
+      "offset": 9488,
       "length": 31,
       "value": "\"passwordAuthenticationAttemps\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9450,
+      "offset": 9563,
       "length": 19,
       "value": "\"appBackgroundTime\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9512,
+      "offset": 9625,
       "length": 18,
       "value": "\"isBlockedByAdmin\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9587,
+      "offset": 9700,
       "length": 28,
       "value": "\"isContactPermissionSkipped\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9663,
+      "offset": 9776,
       "length": 23,
       "value": "\"isArchivedChatEnabled\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9732,
+      "offset": 9845,
       "length": 21,
       "value": "\"notificationSoundID\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9805,
+      "offset": 9918,
       "length": 23,
       "value": "\"notificationSoundName\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9879,
+      "offset": 9992,
       "length": 22,
       "value": "\"notificationSoundUrl\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9961,
+      "offset": 10074,
       "length": 31,
       "value": "\"selectedNotificationSoundName\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10038,
+      "offset": 10151,
       "length": 17,
       "value": "\"vibrationEnable\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10108,
+      "offset": 10221,
       "length": 24,
       "value": "\"muteNotificationEnable\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10187,
+      "offset": 10300,
       "length": 25,
       "value": "\"notificationSoundEnable\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10266,
+      "offset": 10379,
       "length": 25,
       "value": "\"notificationPopUPEnable\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10346,
+      "offset": 10459,
       "length": 28,
       "value": "\"Default notification sound\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10409,
+      "offset": 10522,
       "length": 6,
       "value": "\"None\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10455,
+      "offset": 10568,
       "length": 11,
       "value": "\"profileIV\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10516,
+      "offset": 10629,
       "length": 21,
       "value": "\"isMobileNumberLogin\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10574,
+      "offset": 10687,
       "length": 8,
       "value": "\"isLive\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10633,
+      "offset": 10746,
       "length": 22,
       "value": "\"enableFileEncryption\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10710,
+      "offset": 10823,
       "length": 25,
       "value": "\"hideNotificationContent\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10785,
+      "offset": 10898,
       "length": 20,
       "value": "\"lastNotificationId\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10845,
+      "offset": 10958,
       "length": 13,
       "value": "\"webLoginUrl\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "IntegerLiteral",
-      "offset": 10913,
+      "offset": 11026,
       "length": 2,
       "value": "13"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "IntegerLiteral",
-      "offset": 10968,
+      "offset": 11081,
       "length": 2,
       "value": "12"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11016,
+      "offset": 11129,
       "length": 18,
       "value": "\"ddc0f15cc2c90fca\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11073,
+      "offset": 11186,
       "length": 9,
       "value": "\"appName\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11129,
+      "offset": 11242,
       "length": 17,
       "value": "\"callMediaServer\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11192,
+      "offset": 11305,
       "length": 16,
       "value": "\"callIceServers\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11251,
+      "offset": 11364,
       "length": 14,
       "value": "\"lastLoginJid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11307,
+      "offset": 11420,
       "length": 17,
       "value": "\"setLastSeenJids\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11376,
+      "offset": 11489,
       "length": 23,
       "value": "\"unreadMissedCallCount\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11440,
+      "offset": 11553,
       "length": 12,
       "value": "\"deviceType\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11491,
+      "offset": 11604,
       "length": 14,
       "value": "\"MirrorFlySDK\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11542,
+      "offset": 11655,
       "length": 8,
       "value": "\"recent\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11593,
+      "offset": 11706,
       "length": 10,
       "value": "\"message-\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11644,
+      "offset": 11757,
       "length": 10,
       "value": "\"message!\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11696,
+      "offset": 11809,
       "length": 9,
       "value": "\"recent-\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11745,
+      "offset": 11858,
       "length": 9,
       "value": "\"recent!\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11798,
+      "offset": 11911,
       "length": 20,
       "value": "\"backup_version-1.0\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "BooleanLiteral",
-      "offset": 11871,
+      "offset": 11984,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11923,
+      "offset": 12036,
       "length": 19,
       "value": "\"isBackupCompleted\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11991,
+      "offset": 12104,
       "length": 20,
       "value": "\"isBackupInProgress\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12054,
+      "offset": 12167,
       "length": 14,
       "value": "\"mentionRange\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12106,
+      "offset": 12219,
       "length": 13,
       "value": "\"mentionWord\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12164,
+      "offset": 12277,
       "length": 16,
       "value": "\"pushServerType\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12349,
+      "offset": 12326,
+      "length": 15,
+      "value": "\"isNewLoggedIn\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 12470,
+      "length": 7,
+      "value": "\"5.9.8\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 12652,
       "length": 24,
       "value": "\"Internet Not Available\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12422,
+      "offset": 12725,
       "length": 13,
       "value": "\"Invalid Jid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12489,
+      "offset": 12792,
       "length": 18,
       "value": "\"Invalid GroupJid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12572,
+      "offset": 12875,
       "length": 30,
       "value": "\"Not connected to xmpp server\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12658,
+      "offset": 12961,
       "length": 21,
       "value": "\"IQ Failure response\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12734,
+      "offset": 13037,
       "length": 20,
       "value": "\"Data not available\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12809,
+      "offset": 13112,
       "length": 20,
       "value": "\"File not available\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12879,
+      "offset": 13182,
       "length": 28,
       "value": "\"Please provide all details\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 12953,
+      "offset": 13256,
       "length": 19,
       "value": "\"Invalid file type\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13032,
+      "offset": 13335,
       "length": 23,
       "value": "\"InvalidXmppDomainName\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13108,
+      "offset": 13411,
       "length": 18,
       "value": "\"Invalid Base url\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13181,
+      "offset": 13484,
       "length": 19,
       "value": "\"Invalid Authtoken\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13258,
+      "offset": 13561,
       "length": 19,
       "value": "\"Invalid file Path\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13321,
+      "offset": 13624,
       "length": 22,
       "value": "\"Invalid MobileNumber\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13392,
+      "offset": 13695,
       "length": 21,
       "value": "\"Invalid CountryCode\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13463,
+      "offset": 13766,
       "length": 28,
       "value": "\"Your MobileNumber too long\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13540,
+      "offset": 13843,
       "length": 31,
       "value": "\"Your CountryCode is too long.\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13623,
+      "offset": 13926,
       "length": 33,
       "value": "\"Your MobileNumber is too shory.\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13706,
+      "offset": 14009,
       "length": 32,
       "value": "\"Your CountryCode is too short.\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13789,
+      "offset": 14092,
       "length": 19,
       "value": "\"Permission Denied\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13858,
+      "offset": 14161,
       "length": 28,
       "value": "\"Contact Fetch Successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 13947,
+      "offset": 14250,
       "length": 95,
       "value": "\"You can upload only .pdf, .xls, .xlsx, .doc, .docx, .txt, .ppt, .zip, .rar, .pptx, .csv files\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14095,
+      "offset": 14398,
       "length": 18,
       "value": "\"Invalid file URL\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14175,
+      "offset": 14478,
       "length": 28,
       "value": "\"Select atleast two members\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14271,
+      "offset": 14574,
       "length": 40,
       "value": "\"Group members jid list cannot be empty\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14369,
+      "offset": 14672,
       "length": 27,
       "value": "\"Not a member of the group\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14457,
+      "offset": 14760,
       "length": 36,
       "value": "\"Only admin can perform this action\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14551,
+      "offset": 14854,
       "length": 25,
       "value": "\"This user Already admin\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14630,
+      "offset": 14933,
       "length": 40,
       "value": "\"Cannot delete the group before leaving\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14713,
+      "offset": 15016,
       "length": 28,
       "value": "\"Cannot send empty file URL\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14796,
+      "offset": 15099,
       "length": 21,
       "value": "\"Invalid Messaged Id\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14878,
+      "offset": 15181,
       "length": 35,
       "value": "\"This group is no longer available\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 14970,
+      "offset": 15273,
       "length": 34,
       "value": "\"This user is no longer available\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 15050,
+      "offset": 15353,
       "length": 24,
       "value": "\"File size is too large\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 15112,
+      "offset": 15415,
       "length": 50,
       "value": "\"Chat Id in FetchMessageListParams can't be empty\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 15213,
+      "offset": 15516,
       "length": 41,
       "value": "\"Invalid limit in FetchMessageListParams\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 15304,
+      "offset": 15607,
       "length": 30,
       "value": "\"Invalid time argument passed\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 15388,
+      "offset": 15691,
       "length": 52,
       "value": "\"User identifier should not contain the whitespaces\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 15497,
+      "offset": 15800,
       "length": 59,
       "value": "\"User identifier should not contain the special characters\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 15613,
+      "offset": 15916,
       "length": 61,
       "value": "\"User identifier is empty, Please pass valid user identifier\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 15726,
-      "length": 80,
-      "value": "\"License key is not configured, Please configure license key in ChatSDK builder\""
+      "offset": 16029,
+      "length": 92,
+      "value": "\"License key is not configured, Please configure license key in ChatManager.initializeSDK()\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 15857,
-      "length": 78,
-      "value": "\"Domain url is not configured, Please configure domain url in ChatSDK builder\""
+      "offset": 16172,
+      "length": 91,
+      "value": "\"Domain url is not configured, Please configure domain url via ChatManager.initializeSDK()\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 15979,
+      "offset": 16307,
       "length": 38,
       "value": "\"toJid should not be current user jid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 16067,
+      "offset": 16395,
       "length": 83,
       "value": "\"Invalid toJid, Please get toJid from FlyUtils.getJid() by passing user identifier\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 16197,
+      "offset": 16525,
       "length": 23,
       "value": "\"Text message is empty\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 16281,
+      "offset": 16609,
       "length": 91,
       "value": "\"Not registered with MirrorFly SDK, Please call FlyCore.registerUser() before send message\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 16425,
+      "offset": 16753,
       "length": 37,
       "value": "\"Error read\/write operation in Realm\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 16515,
+      "offset": 16843,
       "length": 30,
       "value": "\"Unable to write data to file\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 16602,
+      "offset": 16930,
       "length": 23,
       "value": "\"No messages available\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 16675,
+      "offset": 17003,
       "length": 39,
       "value": "\"Please check your internet connection\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 16778,
+      "offset": 17106,
       "length": 58,
       "value": "\"Please check your internet connection to initiate backup\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 16887,
+      "offset": 17215,
       "length": 21,
       "value": "\"iCloud Storage full\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 16971,
+      "offset": 17299,
       "length": 21,
       "value": "\"Invalid backup file\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 17044,
+      "offset": 17372,
       "length": 39,
       "value": "\"Restore failed invaild or broken file\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 17132,
+      "offset": 17460,
       "length": 35,
       "value": "\"Feature unavailable for your plan\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 17220,
+      "offset": 17548,
       "length": 129,
       "value": "\"You have reached the maximum device limit, If you want to continue one of your device will logged out. Do you want to continue?\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 17407,
+      "offset": 17735,
       "length": 21,
       "value": "\"Authorization Error\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 17478,
-      "length": 53,
-      "value": "\"currentUserJid or callee jid can't be empty or null\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 17580,
-      "length": 45,
-      "value": "\"currentUserJid and callee jid can't be same\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 17681,
-      "length": 36,
-      "value": "\"Call server details can't be empty\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 17763,
+      "offset": 17810,
       "length": 24,
       "value": "\"Call link is not valid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 17835,
+      "offset": 17882,
       "length": 36,
       "value": "\"Api returned ended status for call\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 17924,
+      "offset": 17971,
       "length": 38,
       "value": "\"Maximum participants already in call\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 18020,
+      "offset": 18067,
       "length": 42,
       "value": "\"Server didn't give success response code\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 18123,
+      "offset": 18170,
       "length": 28,
       "value": "\"Location data is not valid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 18211,
+      "offset": 18258,
       "length": 27,
       "value": "\"Contact data is not valid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 18295,
+      "offset": 18342,
       "length": 21,
       "value": "\"File data not valid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 18383,
+      "offset": 18430,
       "length": 36,
       "value": "\"File not available or invalid file\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 18474,
+      "offset": 18521,
       "length": 21,
       "value": "\"File does not exist\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 18678,
+      "offset": 18725,
       "length": 30,
       "value": "\"Profile fetched successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 18764,
+      "offset": 18811,
       "length": 36,
       "value": "\"Group Profile fetched successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 18852,
+      "offset": 18899,
       "length": 30,
       "value": "\"Profile updated successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 18940,
+      "offset": 18987,
       "length": 46,
       "value": "\"Profile data not available for the given jid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19049,
+      "offset": 19096,
       "length": 52,
       "value": "\"Group Profile data not available for the given jid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19158,
+      "offset": 19205,
       "length": 35,
       "value": "\"Friends list fetched Successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19242,
+      "offset": 19289,
       "length": 29,
       "value": "\"Contact synced Successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19313,
+      "offset": 19360,
       "length": 27,
       "value": "\"User blocked successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19392,
+      "offset": 19439,
       "length": 29,
       "value": "\"User unblocked successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19472,
+      "offset": 19519,
       "length": 35,
       "value": "\"Blocked list fetched successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19560,
+      "offset": 19607,
       "length": 39,
       "value": "\"Recent chat list fetched successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19654,
+      "offset": 19701,
       "length": 41,
       "value": "\"Archived chat list fetched successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19746,
+      "offset": 19793,
       "length": 31,
       "value": "\"Cleared messaage successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19828,
+      "offset": 19875,
       "length": 34,
       "value": "\"Clear All Call Logs successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 19911,
+      "offset": 19958,
       "length": 47,
       "value": "\"User list that I blocked fetched successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20017,
+      "offset": 20064,
       "length": 47,
       "value": "\"User who blocked me list fetched successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20115,
+      "offset": 20162,
       "length": 29,
       "value": "\"Last seen hide successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20186,
+      "offset": 20233,
       "length": 28,
       "value": "\"User Lastseen successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20263,
+      "offset": 20310,
       "length": 28,
       "value": "\"Group Created successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20329,
+      "offset": 20376,
       "length": 9,
       "value": "\"Success\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20390,
+      "offset": 20437,
       "length": 30,
       "value": "\"Deleted message successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20480,
+      "offset": 20527,
       "length": 30,
       "value": "\"Add Participant successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20579,
+      "offset": 20626,
       "length": 34,
       "value": "\"Participant removed successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20675,
+      "offset": 20722,
       "length": 36,
       "value": "\"Favourite the message successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20775,
+      "offset": 20822,
       "length": 38,
       "value": "\"Unfavourite the message successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20877,
+      "offset": 20924,
       "length": 47,
       "value": "\"Remove all the favourite message successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 20980,
+      "offset": 21027,
       "length": 43,
       "value": "\"Deleted message successfully for everyone\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21078,
+      "offset": 21125,
       "length": 33,
       "value": "\"Group info updated successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21168,
+      "offset": 21215,
       "length": 28,
       "value": "\"Admin updated successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21249,
+      "offset": 21296,
       "length": 36,
       "value": "\"Exited from the group successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21341,
+      "offset": 21388,
       "length": 28,
       "value": "\"Group deleted successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21424,
+      "offset": 21471,
       "length": 25,
       "value": "\"Got groups successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21509,
+      "offset": 21556,
       "length": 31,
       "value": "\"CallLogs deleted successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21599,
+      "offset": 21646,
       "length": 30,
       "value": "\"CallLog deleted successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21681,
+      "offset": 21728,
       "length": 31,
       "value": "\"CallLogs fetched successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21765,
+      "offset": 21812,
       "length": 30,
       "value": "\"CallLogs synced successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21845,
+      "offset": 21892,
       "length": 23,
       "value": "\"Typing Status Success\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 21930,
+      "offset": 21977,
       "length": 21,
       "value": "\"Typing Gone Success\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 22013,
+      "offset": 22060,
       "length": 25,
       "value": "\"register_update_success\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 22083,
+      "offset": 22130,
       "length": 8,
       "value": "\"Result\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 22144,
+      "offset": 22191,
       "length": 34,
       "value": "\"Backup file created successfully\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 22229,
+      "offset": 22276,
       "length": 28,
       "value": "\"Backup Fetch Count Success\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 22310,
+      "offset": 22357,
       "length": 22,
       "value": "\"Found Message Backup\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 22392,
+      "offset": 22439,
       "length": 21,
       "value": "\"Found Recent Backup\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/FlyConstants.swift",
       "kind": "StringLiteral",
-      "offset": 22482,
+      "offset": 22529,
       "length": 32,
       "value": "\"Latest Profile Updates fetched\""
     },
@@ -150160,43 +150851,36 @@
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
-      "kind": "IntegerLiteral",
-      "offset": 1318,
-      "length": 1,
-      "value": "0"
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "StringLiteral",
-      "offset": 1409,
+      "offset": 1242,
       "length": 8,
       "value": "\"ARDAMS\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "StringLiteral",
-      "offset": 1453,
+      "offset": 1286,
       "length": 10,
       "value": "\"ARDAMSa0\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "StringLiteral",
-      "offset": 1499,
+      "offset": 1332,
       "length": 10,
       "value": "\"ARDAMSv0\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "BooleanLiteral",
-      "offset": 1553,
+      "offset": 1386,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "BooleanLiteral",
-      "offset": 1605,
+      "offset": 1438,
       "length": 5,
       "value": "false"
     },
@@ -150469,21 +151153,21 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ContactManager.swift",
       "kind": "StringLiteral",
-      "offset": 31099,
+      "offset": 31317,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ContactManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 33226,
+      "offset": 33444,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ContactManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 33245,
+      "offset": 33463,
       "length": 2,
       "value": "50"
     },
@@ -150742,49 +151426,49 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebSocketChannel.swift",
       "kind": "BooleanLiteral",
-      "offset": 1895,
+      "offset": 1912,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebSocketChannel.swift",
       "kind": "IntegerLiteral",
-      "offset": 1932,
+      "offset": 1949,
       "length": 2,
       "value": "15"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebSocketChannel.swift",
       "kind": "BooleanLiteral",
-      "offset": 1976,
+      "offset": 1993,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebSocketChannel.swift",
       "kind": "BooleanLiteral",
-      "offset": 2078,
+      "offset": 2095,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebSocketChannel.swift",
       "kind": "BooleanLiteral",
-      "offset": 2113,
+      "offset": 2130,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebSocketChannel.swift",
       "kind": "BooleanLiteral",
-      "offset": 2147,
+      "offset": 2164,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/WebSocketChannel.swift",
       "kind": "IntegerLiteral",
-      "offset": 2179,
+      "offset": 2196,
       "length": 1,
       "value": "0"
     },
@@ -150889,70 +151573,70 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatSDK.swift",
       "kind": "BooleanLiteral",
-      "offset": 317,
+      "offset": 417,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatSDK.swift",
       "kind": "IntegerLiteral",
-      "offset": 372,
+      "offset": 472,
       "length": 1,
       "value": "4"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatSDK.swift",
       "kind": "BooleanLiteral",
-      "offset": 425,
+      "offset": 525,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatSDK.swift",
       "kind": "StringLiteral",
-      "offset": 536,
+      "offset": 636,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatSDK.swift",
       "kind": "BooleanLiteral",
-      "offset": 625,
+      "offset": 725,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatSDK.swift",
       "kind": "StringLiteral",
-      "offset": 678,
+      "offset": 778,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatSDK.swift",
       "kind": "StringLiteral",
-      "offset": 733,
+      "offset": 833,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatSDK.swift",
       "kind": "StringLiteral",
-      "offset": 788,
+      "offset": 888,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatSDK.swift",
       "kind": "IntegerLiteral",
-      "offset": 2961,
+      "offset": 3061,
       "length": 1,
       "value": "4"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Core\/ChatSDK.swift",
       "kind": "BooleanLiteral",
-      "offset": 3198,
+      "offset": 3298,
       "length": 4,
       "value": "true"
     },
@@ -151064,70 +151748,70 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/MessageDetail.swift",
       "kind": "IntegerLiteral",
-      "offset": 5347,
+      "offset": 5349,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/MessageDetail.swift",
       "kind": "IntegerLiteral",
-      "offset": 5384,
+      "offset": 5386,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/MessageDetail.swift",
       "kind": "IntegerLiteral",
-      "offset": 5783,
+      "offset": 5785,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/MessageDetail.swift",
       "kind": "IntegerLiteral",
-      "offset": 5827,
+      "offset": 5829,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/MessageDetail.swift",
       "kind": "IntegerLiteral",
-      "offset": 5868,
+      "offset": 5870,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/MessageDetail.swift",
       "kind": "IntegerLiteral",
-      "offset": 5908,
+      "offset": 5910,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/MessageDetail.swift",
       "kind": "IntegerLiteral",
-      "offset": 5943,
+      "offset": 5945,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/MessageDetail.swift",
       "kind": "IntegerLiteral",
-      "offset": 5979,
+      "offset": 5981,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/MessageDetail.swift",
       "kind": "IntegerLiteral",
-      "offset": 6018,
+      "offset": 6020,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleSDK\/MirrorFlySDK\/Common\/MessageDetail.swift",
       "kind": "IntegerLiteral",
-      "offset": 6058,
+      "offset": 6060,
       "length": 1,
       "value": "0"
     },

@@ -4,6 +4,7 @@ export 'fly_chat_method_channel.dart';
 export 'fly_chat_platform_interface.dart';
 export 'model/register_model.dart';
 export 'model/chat_message_model.dart';
+export 'model/audioDevices.dart';
 export 'model/country_model.dart';
 export 'model/group_media_model.dart';
 export 'model/group_members_model.dart';

@@ -1044,6 +1044,9 @@ class Mirrorfly {
   static Future<dynamic> getCallDirection() async {
     return FlyChatFlutterPlatform.instance.getCallDirection();
   }
+  static Future<dynamic> getAllAvailableAudioInput() async {
+    return FlyChatFlutterPlatform.instance.getAllAvailableAudioInput();
+  }
   static switchCamera() async {
     return FlyChatFlutterPlatform.instance.switchCamera();
   }
@@ -1052,5 +1055,8 @@ class Mirrorfly {
   }
   static Future<bool?> muteAudio(bool status) async {
     return FlyChatFlutterPlatform.instance.muteAudio(status);
+  }
+  static Future<bool?> routeAudioTo({required String routeType}) async {
+    return FlyChatFlutterPlatform.instance.routeAudioTo(routeType: routeType);
   }
 }

@@ -158,31 +158,40 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
 
   @visibleForTesting
-  final onCallReceivingChannel = const EventChannel('contus.mirrorfly/onCallReceiving');
+  final onCallReceivingChannel =
+      const EventChannel('contus.mirrorfly/onCallReceiving');
 
   @visibleForTesting
-  final onLocalVideoTrackAddedChannel = const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
+  final onLocalVideoTrackAddedChannel =
+      const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
 
   @visibleForTesting
-  final onRemoteVideoTrackAddedChannel = const EventChannel('contus.mirrorfly/onRemoteVideoTrackAdded');
+  final onRemoteVideoTrackAddedChannel =
+      const EventChannel('contus.mirrorfly/onRemoteVideoTrackAdded');
 
   @visibleForTesting
-  final onTrackAddedChannel = const EventChannel('contus.mirrorfly/onTrackAdded');
+  final onTrackAddedChannel =
+      const EventChannel('contus.mirrorfly/onTrackAdded');
 
   @visibleForTesting
-  final onCallStatusUpdatedChannel = const EventChannel('contus.mirrorfly/onCallStatusUpdated');
+  final onCallStatusUpdatedChannel =
+      const EventChannel('contus.mirrorfly/onCallStatusUpdated');
 
   @visibleForTesting
-  final onCallActionChannel = const EventChannel('contus.mirrorfly/onCallAction');
+  final onCallActionChannel =
+      const EventChannel('contus.mirrorfly/onCallAction');
 
   @visibleForTesting
-  final onMuteStatusUpdatedChannel = const EventChannel('contus.mirrorfly/onMuteStatusUpdated');
+  final onMuteStatusUpdatedChannel =
+      const EventChannel('contus.mirrorfly/onMuteStatusUpdated');
 
   @visibleForTesting
-  final onUserSpeakingChannel = const EventChannel('contus.mirrorfly/onUserSpeaking');
+  final onUserSpeakingChannel =
+      const EventChannel('contus.mirrorfly/onUserSpeaking');
 
   @visibleForTesting
-  final onUserStoppedSpeakingChannel = const EventChannel('contus.mirrorfly/onUserStoppedSpeaking');
+  final onUserStoppedSpeakingChannel =
+      const EventChannel('contus.mirrorfly/onUserStoppedSpeaking');
 
   /*@override
   Future<String?> getPlatformVersion() async {
@@ -2015,8 +2024,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<dynamic> getProfileDetails(String jid) async {
     dynamic profileResponse;
     try {
-      profileResponse = await mirrorFlyMethodChannel.invokeMethod(
-          'getProfileDetails', {"jid": jid});
+      profileResponse = await mirrorFlyMethodChannel
+          .invokeMethod('getProfileDetails', {"jid": jid});
       debugPrint("getProfileDetails Result ==> $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
@@ -3526,6 +3535,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<bool> makeVideoCall(String userJid) async {
     bool val;
@@ -3542,6 +3552,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<bool> makeVoiceCall(String userJid) async {
     bool val;
@@ -3558,12 +3569,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<dynamic> getCallUsersList() async {
     dynamic callList;
     try {
       debugPrint('#Mirrorfly Call getCallUsers :');
-      callList = await mirrorFlyCallMethodChannel.invokeMethod('getCallUsersList');
+      callList =
+          await mirrorFlyCallMethodChannel.invokeMethod('getCallUsersList');
       return callList;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -3573,6 +3586,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<dynamic> getCallType() async {
     dynamic callType;
@@ -3588,12 +3602,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<dynamic> getCallDirection() async {
     dynamic callType;
     try {
       debugPrint('getCallDirection :');
-      callType = await mirrorFlyCallMethodChannel.invokeMethod('getCallDirection');
+      callType =
+          await mirrorFlyCallMethodChannel.invokeMethod('getCallDirection');
       return callType;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -3603,6 +3619,24 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+  @override
+  Future<dynamic> getAllAvailableAudioInput() async {
+    dynamic audioInput;
+    try {
+      debugPrint('getAllAvailableAudioInput :');
+      audioInput = await mirrorFlyCallMethodChannel
+          .invokeMethod('getAllAvailableAudioInput');
+      return audioInput;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   @override
   switchCamera() async {
     try {
@@ -3616,6 +3650,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   declineCall() async {
     try {
@@ -3632,18 +3667,35 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<bool?> muteAudio(bool status) async {
-      bool? res;
-      try {
-        res = await mirrorFlyCallMethodChannel
-            .invokeMethod('muteAudio', {"muteAudio": status});
-        debugPrint('muteAudio $res');
-        return res;
-      } on PlatformException catch (e) {
-        debugPrint("Platform Exception ===> $e");
-        rethrow;
-      } on Exception catch (error) {
-        debugPrint("Exception ==> $error");
-        rethrow;
-      }
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('muteAudio', {"muteAudio": status});
+      debugPrint('muteAudio $res');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
     }
+  }
+
+  @override
+  Future<bool?> routeAudioTo({required String routeType}) async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('routeAudioTo', {"routeType": routeType});
+      debugPrint('muteAudio $res');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
 }

@@ -964,6 +964,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<dynamic> getCallDirection() async {
     throw UnimplementedError('getCallDirection has not been implemented.');
   }
+  Future<dynamic> getAllAvailableAudioInput() async {
+    throw UnimplementedError('getAllAvailableAudioInput has not been implemented.');
+  }
   Future switchCamera() async {
     throw UnimplementedError('switchCamera has not been implemented.');
   }
@@ -972,5 +975,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
   Future<bool?> muteAudio(bool status) async {
     throw UnimplementedError('muteAudio has not been implemented.');
+  }
+  Future<bool?> routeAudioTo({required String routeType}) async {
+    throw UnimplementedError('routeAudioTo has not been implemented.');
   }
 }

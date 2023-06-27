@@ -1370,6 +1370,18 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future getAllAvailableAudioInput() {
+    // implement getAllAvailableAudioInput
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> routeAudioTo({required String routeType}) {
+    // implement routeAudioTo
+    throw UnimplementedError();
+  }
+
 }
 
 void main() {

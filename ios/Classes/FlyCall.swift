@@ -9,7 +9,8 @@ import Foundation
 import MirrorFlySDK
 import Flutter
 
-@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin{
+@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, AudioManagerDelegate{
+   
     
     
     
@@ -18,6 +19,8 @@ import Flutter
     private var eventChannel : FlutterEventChannel?
     private var eventChannelInitializer: FlyEventChannelInitializer = FlyEventChannelInitializer()
     private var factory : MirrorflyViewFactory?
+    
+    var currentOutputDevice : OutputType = .receiver
     
     init(registrar: FlutterPluginRegistrar) {
         super.init()
@@ -121,7 +124,7 @@ import Flutter
     }
     
     func onLocalVideoTrackAdded(userId: String, videoTrack: RTCVideoTrack) {
-        print("\(Constants.tag) onlocal video Track --> \(userId)")
+        print("\(Constants.tag) onlocal video Track --> \(userId) ---> \(videoTrack)")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(FlyDefaults.myJid, forKey: "userJid")
@@ -133,6 +136,21 @@ import Flutter
 //                        } else {
 //                            result(FlutterError(code: "INVALID_VIEW_ID", message: "Invalid view identifier", details: nil))
 //                        }
+        
+        let videoTrack = CallManager.getRemoteVideoTrack(jid: userId)
+        print("\(Constants.tag) delegate videoTrack--> \(String(describing: videoTrack))")
+        
+        if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
+            if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                mirrorflyView.updateVideoTrack(userJid: userId)
+            } else {
+                // Handle case when view is not found
+                print("\(Constants.tag) onLocalVideoTrackAdded --> View is not Found")
+            }
+        } else {
+            // Handle case when unique ID is not found
+            print("\(Constants.tag) onLocalVideoTrackAdded --> Unique ID is not Found")
+        }
         
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
@@ -156,6 +174,28 @@ import Flutter
         
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
+    
+    func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
+        print("#audiomanager audioRoutedTo  CallViewController \(deviceName) \(audioDeviceType)")
+        switch audioDeviceType {
+        case .receiver:
+            currentOutputDevice = .receiver
+//            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOff" ), for: .normal)
+        case .speaker:
+            currentOutputDevice = .speaker
+//            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOn" ), for: .normal)
+        case .headset:
+            currentOutputDevice = .headset
+//            outgoingCallView?.speakerButton.setImage(UIImage(named: "headset" ), for: .normal)
+        case .bluetooth:
+            currentOutputDevice = .bluetooth
+//            outgoingCallView?.speakerButton.setImage(UIImage(named: "bluetooth_headset" ), for: .normal)
+        @unknown default:
+            currentOutputDevice = .receiver
+//            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOff" ), for: .normal)
+        }
+    }
+    
     
     
     
