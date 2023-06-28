@@ -16,6 +16,7 @@ class ChatBuilder {
       required this.licenseKey,
       this.enableMobileNumberLogin = false,
       this.isTrialLicenceKey = true,
+      this.chatHistoryEnable = true,
       // this.maximumRecentChatPin,
       // this.groupConfig,
       // bool useProfileName = false,
@@ -28,6 +29,7 @@ class ChatBuilder {
   String licenseKey;
   bool enableMobileNumberLogin;
   bool isTrialLicenceKey;
+  bool chatHistoryEnable;
   // int? maximumRecentChatPin;
   // GroupConfig? groupConfig;
   // bool useProfileName = true;
@@ -54,6 +56,7 @@ extension BuilderParsing on ChatBuilder {
       "licenseKey": licenseKey,
       "enableMobileNumberLogin": enableMobileNumberLogin,
       "isTrialLicenceKey": isTrialLicenceKey,
+      "chatHistoryEnable": chatHistoryEnable,
       // "maximumRecentChatPin":maximumRecentChatPin,
       // "groupConfig":groupConfig.build(),
       // "useProfileName":useProfileName,

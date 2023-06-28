@@ -18,9 +18,7 @@ import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import com.google.gson.Gson
-import com.mirrorfly.mirrorfly_plugin.call.FlyCall
 import com.mirrorfly.mirrorfly_plugin.call.MirrorflyViewFactory
-import com.mirrorfly.mirrorfly_plugin.call.SdkCallFunctions
 import com.mirrorflysdk.AppUtils
 import com.mirrorflysdk.ChatSDK
 import com.mirrorflysdk.GroupConfig
@@ -37,13 +35,13 @@ import com.mirrorflysdk.backup.BackupListener
 import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
-import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MediaData
 import com.mirrorflysdk.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.mirrorflysdk.media.MediaUploadHelper
 import com.mirrorflysdk.models.MediaAutoDownloadOption
+import com.mirrorflysdk.models.RecentChatListParams
 import com.mirrorflysdk.utils.*
 import com.mirrorflysdk.xmpp.chat.listener.TypingStatusListener
 import com.mirrorflysdk.xmpp.chat.models.CreateGroupModel
@@ -57,6 +55,12 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
@@ -775,7 +779,22 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 getRecentChatList(result)
             }
             call.method.equals("getRecentChatListHistory") -> {
-                getRecentChatListHistory(call, result)
+                /*runBlocking {
+                    // Launch a coroutine
+                    launch {
+                        // Call the suspend function within the coroutine
+                        getRecentChatListHistory(call, result)
+                    }
+                }*/
+                /*val coroutineScope = CoroutineScope(Dispatchers.Main)
+                coroutineScope.launch {
+                    withContext(Dispatchers.IO) {
+                        getRecentChatListHistory(call, result)
+                    }
+
+                }*/
+                GlobalScope.launch (Dispatchers.Main) { getRecentChatListHistory(call, result)}
+
             }
             call.method.equals("getMessagesOfJid") -> {
                 getMessagesOfJid(call, result)
@@ -1124,6 +1143,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //    val useProfileName : Boolean? = call.argument("useProfileName")
         val ivKey: String? = call.argument("ivKey")
         val enableSDKLog: Boolean = call.argument("enableDebugLog") ?: false
+        val chatHistoryEnable: Boolean = call.argument("chatHistoryEnable") ?: false
         LogMessage.enableDebugLogging(enableSDKLog)
         LogMessage.d("buildChatSDK", call.arguments.toString())
         /*GroupManager.setNameHelper(object  : NameHelper {
@@ -1148,6 +1168,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 .build()
             buildSDK.setGroupConfiguration(groupConfiguration)
         }
+        Log.e("enable chat history", chatHistoryEnable.toString())
+        ChatManager.enableChatHistory(chatHistoryEnable)
         if (storageFolderName != null) {
             ChatManager.setMediaFolderName(storageFolderName)
         }
@@ -2603,19 +2625,44 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }*/
     }
 
-    private fun getRecentChatListHistory(call: MethodCall, result: MethodChannel.Result){
+    private suspend fun getRecentChatListHistory(call: MethodCall, result: MethodChannel.Result){
 
-        val page = call.argument("page") ?: 1
+        val pageNo = call.argument("pageNo") ?: 1
+        Log.e("chat history page no", pageNo.toString());
 
-        val perPageResultSize = call.argument("perPageResultSize") ?: 20
-        FlyCore.getRecentChatHistory(page, perPageResultSize) { isSuccess, throwable, data ->
+        val recentChatListParams = RecentChatListParams().apply { limit = 20 }
+        val recentChatListBuilder = RecentChatListBuilder(recentChatListParams)
+        if(pageNo == 0) {
+            Log.e("chat history ", "first page")
+            recentChatListBuilder.loadRecentChatList { isSuccess, throwable, data ->
+                if (isSuccess) {
+//                val recentChatList = data["data"] as ArrayList<RecentChat>
+                    result.success(Gson().toJson(data).toString())
+                } else {
+                    result.error("500", throwable!!.message, null)
+                }
+
+            }
+        }else{
+            Log.e("chat history next set data", pageNo.toString())
+            recentChatListBuilder.nextSetOfData { isSuccess, throwable, data ->
+                if (isSuccess) {
+//                    val recentChatList = data["data"] as ArrayList<RecentChat>
+                    result.success(Gson().toJson(data).toString())
+                } else {
+                    // Fetch recent chat list failed print throwable to find the exception details.
+                    result.error("500", throwable!!.message, null)
+                }
+            }
+        }
+        /*FlyCore.getRecentChatHistory(pageNo, 15) { isSuccess, throwable, data ->
             if (isSuccess) {
                 LogMessage.i("getRecentChatHistory", data.toJsonString())
                 result.success(Gson().toJson(data).toString())
             } else {
                 result.error("500", throwable!!.message, null)
             }
-        }
+        }*/
     }
 
     private fun getImageThumbImage(imagePath: String?): String {

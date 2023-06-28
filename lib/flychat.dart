@@ -20,6 +20,7 @@ class Mirrorfly {
       String? storageFolderName,
       bool enableMobileNumberLogin = true,
       bool isTrialLicenceKey = true,
+      bool chatHistoryEnable = true,
       // int? maximumRecentChatPin,
       // GroupConfig? groupConfig,
       // String? ivKey,
@@ -614,8 +615,8 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getRecentChatList();
   }
 
-  static Future<dynamic> getRecentChatListHistory() {
-    return FlyChatFlutterPlatform.instance.getRecentChatListHistory();
+  static Future<dynamic> getRecentChatListHistory({required int pageNo}) {
+    return FlyChatFlutterPlatform.instance.getRecentChatListHistory(pageNo: pageNo);
   }
 
   static Future<dynamic> getProfileStatusList() {

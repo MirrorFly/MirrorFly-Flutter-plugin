@@ -19,6 +19,7 @@ import MirrorFlySDK
 @objc class FlySdkMethodCalls : NSObject{
     
     static var isTrialLicenceKey : Bool = true;
+    static var chatHistoryEnable : Bool = false;
     static var isContactSyncInProgress : Bool = false;
 //    static let SOCKETIO_SERVER_HOST = "https://signal-uikit-qa.contus.us/"
     
@@ -32,6 +33,7 @@ import MirrorFlySDK
         let licenseKey = args["licenseKey"] as? String ?? ""
         _ = args["enableMobileNumberLogin"] as? Bool ?? true
         isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
+        chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         _ = args["enableSDKLog"] as? Bool ?? false
         _ = args["maximumRecentChatPin"] as? Int ?? 3
         
@@ -61,6 +63,8 @@ import MirrorFlySDK
             .setGroupConfiguration(groupConfig: sdkGroupConfig!)
             .buildAndInitialize()
         
+        print("ChatManager.enableChatHistory \(chatHistoryEnable)")
+        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
 //        ChatManager.setSignalServer(signalServerUrl: SOCKETIO_SERVER_HOST)
         
 
@@ -1648,6 +1652,73 @@ import MirrorFlySDK
 
                   }
             }
+    }
+    
+    static func getRecentChatListHistory(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+
+        let pageNo = args["pageNo"] as? Int ?? 0
+        
+        var recentChatListParams = RecentChatListParams()
+        recentChatListParams.limit = 15
+        
+        let recentChatListBuilder =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
+        
+        if(pageNo == 0){
+            print("loading first set")
+            recentChatListBuilder.loadRecentChatList { isSuccess, flyError, flyData in
+                var data  = flyData
+                if (isSuccess) {
+                    let recentChatArray  = data.getData() as? [RecentChat] ?? []
+                    if(recentChatArray.isEmpty){
+                        result("{\"data\": [] }")
+                    }else{
+                        if let recentChatJson = recentChatArray.toJson() {
+                            let recentChatListJson = "{\"data\":" + recentChatJson + "}"
+                            print("ChatManager.getRecentChatList==**==\(recentChatListJson)")
+                            result(recentChatListJson)
+                        } else {
+                            print("Failed to convert object to JSON")
+                            result(FlutterError(code: "500", message: "Error Parsing the Recent Chat List", details: nil))
+                        }
+                        
+                    }
+                } else {
+                    // Fetch recentchat failed print error to know more about the exception
+                    result(FlutterError(code: "500", message: "Unabke to fetch the Recent Chat List", details: nil))
+                }
+            }
+        }else{
+            print("loading next set")
+            recentChatListBuilder.nextSetOfData { isSuccess, flyError, flyData in
+                var data  = flyData
+                if (isSuccess) {
+                    let recentChatArray  = data.getData() as? [RecentChat] ?? []
+                    
+                    if(recentChatArray.isEmpty){
+                        result("{\"data\": [] }")
+                    }else{
+                        if let recentChatJson = recentChatArray.toJson() {
+                            let recentChatListJson = "{\"data\":" + recentChatJson + "}"
+                            print("ChatManager.getRecentChatList==**==\(recentChatListJson)")
+                            result(recentChatListJson)
+                        } else {
+                            print("Failed to convert object to JSON")
+                            result(FlutterError(code: "500", message: "Error Parsing the Recent Chat List", details: nil))
+                        }
+                        
+                    }
+                } else {
+                    // Fetch recentchat failed print error to know more about the exception
+                    result(FlutterError(code: "500", message: "Unabke to fetch the Recent Chat List", details: nil))
+                }
+            }
+
+
+        }
+
+        
     }
    
     static func getRecentChatListIncludingArchived(call: FlutterMethodCall, result: @escaping FlutterResult){

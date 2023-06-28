@@ -111,7 +111,7 @@ public struct ContactBody : Swift.Codable {
   public var name: Swift.String
   public var phone_number: [Swift.String]
   public var active_status: [Swift.String]
-  public init(name: Swift.String, phone_number: [Swift.String], active_status: [Swift.String])
+  public init(name: Swift.String?, phone_number: [Swift.String], active_status: [Swift.String])
   public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
 }
@@ -175,9 +175,12 @@ public enum CallState : Swift.String {
   public var archiveEventsDelegate: MirrorFlySDK.ArchiveEventsDelegate?
   public var localNotificationDelegate: MirrorFlySDK.LocalNotificationDelegate?
   public static var onGoingChatUserJid: Swift.String
+  public static func initializeSDK(licenseKey: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public func initDelegates()
   public static let shared: MirrorFlySDK.ChatManager
   public static let sharedWithNoConnection: MirrorFlySDK.ChatManager
+  public static func setAppGroupContainerId(id: Swift.String)
+  public static func setBaseURL(baseURL: Swift.String)
   public func setUserCountryISOCode(isoCode: Swift.String) throws
   public func setIV(iv: Swift.String) throws
   public func setAuthToken(token: Swift.String)
@@ -377,6 +380,7 @@ public enum Features {
   case report
   case delete_message
   case viewall_medias
+  case chat_history
   public static func == (a: MirrorFlySDK.Features, b: MirrorFlySDK.Features) -> Swift.Bool
   public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
@@ -399,6 +403,7 @@ extension MirrorFlySDK.ChatManager : MirrorFlySDK.XMPPArchiveDelegate {
 extension MirrorFlySDK.ChatManager {
   public func validateAutoDownload(message: MirrorFlySDK.ChatMessage)
   public func enableAutoDownload(isEnable: Swift.Bool)
+  public static func enableChatHistory(isEnable: Swift.Bool)
   public func startAutoDownload()
   public func isUserUnArchived(jid: Swift.String) -> Swift.Bool
 }
@@ -606,6 +611,7 @@ public struct FileMessage : Swift.Codable {
 }
 @_hasMissingDesignatedInitializers public class AudioManager {
   public class func shared() -> MirrorFlySDK.AudioManager
+  public func autoReRoute()
   public var audioManagerDelegate: MirrorFlySDK.AudioManagerDelegate?
   public func routeToAvailableDevice(preferredDevice: MirrorFlySDK.OutputType? = nil)
   public func getCurrentAudioInput()
@@ -702,6 +708,7 @@ public protocol JoinCallDelegate {
 public struct RecentChatListParams {
   public init()
   public var limit: Swift.Int
+  public var pageNumber: Swift.Int
   public init(limit: Swift.Int = 40)
 }
 @objc @_inheritsConvenienceInitializers public class CallParticipantsStatus : ObjectiveC.NSObject {
@@ -818,12 +825,12 @@ public protocol MissedCallNotificationDelegate {
   public class func getViewControllerThatPresented() -> UIKit.UIViewController?
   public class func isRemoteAudioMuted(_ userId: Swift.String) -> Swift.Bool
   public class func isRemoteVideoMuted(_ userId: Swift.String) -> Swift.Bool
-  @objc public class func setAppGroupContainerId(id: Swift.String)
   public class func switchCamera()
   public class func requestVideoCallSwitch(onCompletion: @escaping (Swift.Bool) -> Swift.Void)
   public class func checkIsUserCanceled() -> Swift.Bool
   public class func cancelVideoCallSwitch()
   public class func isCallConversionRequestAvailable() -> Swift.Bool
+  public class func disableVideo()
   public class func acceptVideoCallSwitchRequest()
   public class func declineVideoCallSwitchRequest()
   public class func enableVideo()
@@ -2289,6 +2296,11 @@ extension Swift.Dictionary where Key == Swift.String, Value == Any {
     set
     _modify
   }
+  @MirrorFlySDK.SDKDefaults public static var chatHistoryEnabled: Swift.Bool {
+    get
+    set
+    _modify
+  }
   @MirrorFlySDK.SDKDefaults public static var autoDownloadMobile: [Swift.String : Swift.Bool] {
     get
     set
@@ -2524,6 +2536,11 @@ extension Swift.Dictionary where Key == Swift.String, Value == Any {
     set
     _modify
   }
+  @MirrorFlySDK.SDKDefaults public static var isNewLoggedIn: Swift.Bool {
+    get
+    set
+    _modify
+  }
   public static func clearAllFlyDefaults()
   @objc deinit
 }
@@ -2677,6 +2694,7 @@ public struct FlyConstants {
   public static let lastMessageTime: Swift.String
   public static let isTranlationEnabled: Swift.String
   public static let autoDownloadEnable: Swift.String
+  public static let chatHistoryEnable: Swift.String
   public static let autoDownloadMobile: Swift.String
   public static let autoDownloadWifi: Swift.String
   public static let autoDownloadLastEnabledTime: Swift.String
@@ -2802,9 +2820,6 @@ public struct FlyConstants {
     public static let forbidden: Swift.String
     public static let invalidSession: Swift.String
     public static let authorization_error: Swift.String
-    public static let userIdEmpty: Swift.String
-    public static let sameUserId: Swift.String
-    public static let serverDetailError: Swift.String
     public static let invalidCallLink: Swift.String
     public static let callEnded: Swift.String
     public static let maxUsersInCall: Swift.String
@@ -3259,7 +3274,8 @@ public protocol XMPPConnectionDelegate : ObjectiveC.NSObjectProtocol {
   @objc public init(jid: Swift.String)
   @objc deinit
 }
-@_hasMissingDesignatedInitializers @objcMembers public class ChatSDK {
+@_hasMissingDesignatedInitializers @available(*, deprecated, message: "Use the ChatManager.initializeSDK() instead to initialize SDK")
+@objcMembers public class ChatSDK {
   public static let Builder: MirrorFlySDK.ChatSDK
   public func setDomainBaseUrl(baseUrl: Swift.String) -> MirrorFlySDK.ChatSDK
   public func setAppGroupContainerID(containerID: Swift.String) -> MirrorFlySDK.ChatSDK
@@ -3389,10 +3405,10 @@ public struct MessageDetail : Swift.Codable {
 }
 public struct ContactModel : Swift.Codable {
   public var mid: Swift.String?
-  public var name: Swift.String
+  public var name: Swift.String?
   public var phone_number: [Swift.String]
   public var active_status: [Swift.String]
-  public init(mid: Swift.String, name: Swift.String, phone_number: [Swift.String], active_status: [Swift.String])
+  public init(mid: Swift.String, name: Swift.String?, phone_number: [Swift.String], active_status: [Swift.String])
   public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
 }

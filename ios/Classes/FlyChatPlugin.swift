@@ -606,6 +606,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.recentChatPinnedCount(call: methodCall,  result: result)
         case "getRecentChatList":
             FlySdkMethodCalls.getRecentChatList(call: methodCall,  result: result)
+        case "getRecentChatListHistory":
+            FlySdkMethodCalls.getRecentChatListHistory(call: methodCall,  result: result)
         case "getRecentChatListIncludingArchived":
             FlySdkMethodCalls.getRecentChatListIncludingArchived(call: methodCall,  result: result)
         case "getRecentChatOf":
