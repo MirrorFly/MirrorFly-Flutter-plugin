@@ -777,6 +777,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getMessageStatusOfASingleChatMessage(call: methodCall, result: result)
         case "addContact":
             FlySdkMethodCalls.addContact(call: methodCall, result: result)
+        case "handleReceivedMessage":
+            FlySdkMethodCalls.handleReceivedMessage(call:methodCall, result: result)
 //            let args = methodCall.arguments as! Dictionary<String, Any>
 //            let number = args["number"] as? String ?? ""
 //
