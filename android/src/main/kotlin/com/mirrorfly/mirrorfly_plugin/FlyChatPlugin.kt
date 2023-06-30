@@ -2630,9 +2630,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val pageNo = call.argument("pageNo") ?: 1
         Log.e("chat history page no", pageNo.toString());
 
-        val recentChatListParams = RecentChatListParams().apply { limit = 20 }
+        val recentChatListParams = RecentChatListParams().apply { limit = 30 }
         val recentChatListBuilder = RecentChatListBuilder(recentChatListParams)
-        if(pageNo == 0) {
+        if(pageNo == 1) {
             Log.e("chat history ", "first page")
             recentChatListBuilder.loadRecentChatList { isSuccess, throwable, data ->
                 if (isSuccess) {

@@ -64,7 +64,7 @@ import MirrorFlySDK
             .buildAndInitialize()
         
         print("ChatManager.enableChatHistory \(chatHistoryEnable)")
-        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
+        ChatManager.enableChatHistory(isEnable: true)
 //        ChatManager.setSignalServer(signalServerUrl: SOCKETIO_SERVER_HOST)
         
 
@@ -1665,7 +1665,7 @@ import MirrorFlySDK
         
         let recentChatListBuilder =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
         
-        if(pageNo == 0){
+        if(pageNo == 1){
             print("loading first set")
             recentChatListBuilder.loadRecentChatList { isSuccess, flyError, flyData in
                 var data  = flyData
@@ -1691,28 +1691,33 @@ import MirrorFlySDK
             }
         }else{
             print("loading next set")
-            recentChatListBuilder.nextSetOfData { isSuccess, flyError, flyData in
-                var data  = flyData
-                if (isSuccess) {
-                    let recentChatArray  = data.getData() as? [RecentChat] ?? []
-                    
-                    if(recentChatArray.isEmpty){
-                        result("{\"data\": [] }")
-                    }else{
-                        if let recentChatJson = recentChatArray.toJson() {
-                            let recentChatListJson = "{\"data\":" + recentChatJson + "}"
-                            print("ChatManager.getRecentChatList==**==\(recentChatListJson)")
-                            result(recentChatListJson)
-                        } else {
-                            print("Failed to convert object to JSON")
-                            result(FlutterError(code: "500", message: "Error Parsing the Recent Chat List", details: nil))
-                        }
+            if(recentChatListBuilder.hasNextRecentChatData()){
+                print("Next set has data")
+                recentChatListBuilder.nextSetOfData { isSuccess, flyError, flyData in
+                    var data  = flyData
+                    if (isSuccess) {
+                        let recentChatArray  = data.getData() as? [RecentChat] ?? []
                         
+                        if(recentChatArray.isEmpty){
+                            result("{\"data\": [] }")
+                        }else{
+                            if let recentChatJson = recentChatArray.toJson() {
+                                let recentChatListJson = "{\"data\":" + recentChatJson + "}"
+                                print("ChatManager.getRecentChatList==**==\(recentChatListJson)")
+                                result(recentChatListJson)
+                            } else {
+                                print("Failed to convert object to JSON")
+                                result(FlutterError(code: "500", message: "Error Parsing the Recent Chat List", details: nil))
+                            }
+                            
+                        }
+                    } else {
+                        // Fetch recentchat failed print error to know more about the exception
+                        result(FlutterError(code: "500", message: "Unabke to fetch the Recent Chat List", details: nil))
                     }
-                } else {
-                    // Fetch recentchat failed print error to know more about the exception
-                    result(FlutterError(code: "500", message: "Unabke to fetch the Recent Chat List", details: nil))
                 }
+            }else{
+                print("Next set data is not available")
             }
 
 

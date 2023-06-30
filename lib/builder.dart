@@ -16,7 +16,7 @@ class ChatBuilder {
       required this.licenseKey,
       this.enableMobileNumberLogin = false,
       this.isTrialLicenceKey = true,
-      this.chatHistoryEnable = true,
+      this.chatHistoryEnable,
       // this.maximumRecentChatPin,
       // this.groupConfig,
       // bool useProfileName = false,
@@ -29,7 +29,7 @@ class ChatBuilder {
   String licenseKey;
   bool enableMobileNumberLogin;
   bool isTrialLicenceKey;
-  bool chatHistoryEnable;
+  bool? chatHistoryEnable;
   // int? maximumRecentChatPin;
   // GroupConfig? groupConfig;
   // bool useProfileName = true;
