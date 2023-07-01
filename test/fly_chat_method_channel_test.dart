@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mirrorfly_chat/builder.dart';
-import 'package:mirrorfly_chat/fly_chat_method_channel.dart';
+import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 
 void main() {
   MethodChannelFlyChatFlutter platform = MethodChannelFlyChatFlutter();
