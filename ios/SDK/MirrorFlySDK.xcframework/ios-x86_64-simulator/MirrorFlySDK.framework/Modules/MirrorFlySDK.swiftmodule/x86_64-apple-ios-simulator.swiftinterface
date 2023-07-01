@@ -2767,9 +2767,6 @@ public struct FlyConstants {
   public static let mentionRange: Swift.String
   public static let mentionWord: Swift.String
   public static let pushServerType: Swift.String
-  public struct versions {
-    public static let chatHistoryReleaseVersion: Swift.String
-  }
   public struct ErrorMessage {
     public static let internetNotAvailable: Swift.String
     public static let invalidJid: Swift.String
@@ -2828,6 +2825,9 @@ public struct FlyConstants {
     public static let forbidden: Swift.String
     public static let invalidSession: Swift.String
     public static let authorization_error: Swift.String
+    public static let userIdEmpty: Swift.String
+    public static let sameUserId: Swift.String
+    public static let serverDetailError: Swift.String
     public static let invalidCallLink: Swift.String
     public static let callEnded: Swift.String
     public static let maxUsersInCall: Swift.String

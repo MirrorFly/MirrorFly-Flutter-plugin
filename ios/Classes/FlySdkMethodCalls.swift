@@ -25,6 +25,11 @@ import MirrorFlySDK
     
     static var userlist = [ProfileDetails]()
     
+    static var recentChatListParams = RecentChatListParams(limit: 15)
+//    recentChatListParams.limit = 15
+    
+    static var recentChatListBuilder: RecentChatListBuilder?// =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
+    
     static func buildChatSDK(call: FlutterMethodCall) {
        
         let args = call.arguments as! Dictionary<String, Any>
@@ -36,6 +41,7 @@ import MirrorFlySDK
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         _ = args["enableSDKLog"] as? Bool ?? false
         _ = args["maximumRecentChatPin"] as? Int ?? 3
+        
         
     
         _ = args["ivKey"] as? String ?? ""
@@ -63,11 +69,17 @@ import MirrorFlySDK
             .setGroupConfiguration(groupConfig: sdkGroupConfig!)
             .buildAndInitialize()
         
+//        ChatManager.setAppGroupContainerId(id: containerID)
+//                ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
+        
+        
         print("ChatManager.enableChatHistory \(chatHistoryEnable)")
-        ChatManager.enableChatHistory(isEnable: true)
+       
+        print("sdk version---> \(FlyDefaults.SDKVersion)")
 //        ChatManager.setSignalServer(signalServerUrl: SOCKETIO_SERVER_HOST)
         
 
+       
         
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
 
@@ -75,6 +87,7 @@ import MirrorFlySDK
                 
                 do {
                     try CallManager.initCallSDK()
+//                    FlyDefaults.chatHistoryEnabled = true
                 } catch (let error ){
                     print("#FlyCall Exception : \(error.localizedDescription)")
                 }
@@ -85,6 +98,10 @@ import MirrorFlySDK
         ChatManager.disableLocalNotification()
         
         ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
+        
+//        FlyDefaults.chatHistoryEnabled = true
+//        FlyDefaults.isBusyStatusEnabled = true
+        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
         
       }
     
@@ -1660,14 +1677,25 @@ import MirrorFlySDK
 
         let pageNo = args["pageNo"] as? Int ?? 0
         
-        var recentChatListParams = RecentChatListParams()
-        recentChatListParams.limit = 15
+//        FlyDefaults.chatHistoryEnabled = true
         
-        let recentChatListBuilder =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
+//        var recentChatListParams = RecentChatListParams()
+//        recentChatListParams.limit = 15
+
         
+//        let recentChatListBuilder =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
+//        var recentChatListBuilder : RecentChatListBuilder?
+        
+        if(recentChatListBuilder == nil){
+            print("recentChatListBuilder is nil")
+            recentChatListBuilder =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
+        }else{
+            print("recentChatListBuilder already set")
+        }
         if(pageNo == 1){
+            
             print("loading first set")
-            recentChatListBuilder.loadRecentChatList { isSuccess, flyError, flyData in
+            recentChatListBuilder!.loadRecentChatList { isSuccess, flyError, flyData in
                 var data  = flyData
                 if (isSuccess) {
                     let recentChatArray  = data.getData() as? [RecentChat] ?? []
@@ -1691,9 +1719,9 @@ import MirrorFlySDK
             }
         }else{
             print("loading next set")
-            if(recentChatListBuilder.hasNextRecentChatData()){
+            if(recentChatListBuilder!.hasNextRecentChatData()){
                 print("Next set has data")
-                recentChatListBuilder.nextSetOfData { isSuccess, flyError, flyData in
+                recentChatListBuilder!.nextSetOfData { isSuccess, flyError, flyData in
                     var data  = flyData
                     if (isSuccess) {
                         let recentChatArray  = data.getData() as? [RecentChat] ?? []
