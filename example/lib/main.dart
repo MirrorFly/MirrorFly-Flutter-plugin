@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mirrorfly_chat/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

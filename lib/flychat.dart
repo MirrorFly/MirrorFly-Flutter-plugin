@@ -1,4 +1,4 @@
-import 'package:mirrorfly_chat/builder.dart';
+import 'package:mirrorfly_plugin/builder.dart';
 
 import 'fly_chat_platform_interface.dart';
 
