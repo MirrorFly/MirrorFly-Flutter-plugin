@@ -147,6 +147,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private lateinit var mContext: Context
+    private val recentChatListParams = RecentChatListParams().apply { limit = 15 }
+    private var recentChatListBuilder: RecentChatListBuilder? = null
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         mContext = flutterPluginBinding.applicationContext
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, mirrorflyMethodChannel)
@@ -2630,13 +2632,15 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val pageNo = call.argument("pageNo") ?: 1
         Log.e("chat history page no", pageNo.toString());
 
-        val recentChatListParams = RecentChatListParams().apply { limit = 30 }
-        val recentChatListBuilder = RecentChatListBuilder(recentChatListParams)
+        if(recentChatListBuilder == null){
+            recentChatListBuilder = RecentChatListBuilder(recentChatListParams)
+        }
         if(pageNo == 1) {
             Log.e("chat history ", "first page")
-            recentChatListBuilder.loadRecentChatList { isSuccess, throwable, data ->
+            recentChatListBuilder!!.loadRecentChatList { isSuccess, throwable, data ->
                 if (isSuccess) {
-//                val recentChatList = data["data"] as ArrayList<RecentChat>
+                val recentChatList = data["data"] as ArrayList<RecentChat>
+                    Log.e("chat history item count", recentChatList.size.toString())
                     result.success(Gson().toJson(data).toString())
                 } else {
                     result.error("500", throwable!!.message, null)
@@ -2645,7 +2649,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
         }else{
             Log.e("chat history next set data", pageNo.toString())
-            recentChatListBuilder.nextSetOfData { isSuccess, throwable, data ->
+            recentChatListBuilder!!.nextSetOfData { isSuccess, throwable, data ->
                 if (isSuccess) {
 //                    val recentChatList = data["data"] as ArrayList<RecentChat>
                     result.success(Gson().toJson(data).toString())

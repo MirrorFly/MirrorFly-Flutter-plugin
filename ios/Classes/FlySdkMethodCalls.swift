@@ -21,14 +21,12 @@ import MirrorFlySDK
     static var isTrialLicenceKey : Bool = true;
     static var chatHistoryEnable : Bool = false;
     static var isContactSyncInProgress : Bool = false;
-//    static let SOCKETIO_SERVER_HOST = "https://signal-uikit-qa.contus.us/"
     
     static var userlist = [ProfileDetails]()
     
     static var recentChatListParams = RecentChatListParams(limit: 15)
-//    recentChatListParams.limit = 15
     
-    static var recentChatListBuilder: RecentChatListBuilder?// =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
+    static var recentChatListBuilder: RecentChatListBuilder?
     
     static func buildChatSDK(call: FlutterMethodCall) {
        
@@ -1677,14 +1675,9 @@ import MirrorFlySDK
 
         let pageNo = args["pageNo"] as? Int ?? 0
         
-//        FlyDefaults.chatHistoryEnabled = true
+        let limit = args["limit"] as? Int ?? 15
         
-//        var recentChatListParams = RecentChatListParams()
-//        recentChatListParams.limit = 15
-
-        
-//        let recentChatListBuilder =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
-//        var recentChatListBuilder : RecentChatListBuilder?
+        recentChatListParams.limit = 15
         
         if(recentChatListBuilder == nil){
             print("recentChatListBuilder is nil")
@@ -1727,6 +1720,7 @@ import MirrorFlySDK
                         let recentChatArray  = data.getData() as? [RecentChat] ?? []
                         
                         if(recentChatArray.isEmpty){
+                            print("returning empty data")
                             result("{\"data\": [] }")
                         }else{
                             if let recentChatJson = recentChatArray.toJson() {
@@ -1746,6 +1740,7 @@ import MirrorFlySDK
                 }
             }else{
                 print("Next set data is not available")
+                result("{\"data\": [] }")
             }
 
 
