@@ -779,6 +779,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.addContact(call: methodCall, result: result)
         case "handleReceivedMessage":
             FlySdkMethodCalls.handleReceivedMessage(call:methodCall, result: result)
+//            var messageJson = "{\"chatMessage\":{\"messageTextContent\":\"Plugin Notification\",\"isSavedContact\":false,\"senderUserJid\":\"919894940560@xmpp-uikit-qa.contus.us\",\"senderNickName\":\"Saravanakumar\",\"translatedMessageTextContent\":\"\",\"senderUserName\":\"Saravanakumar\",\"audioStatus\":\"stoped\",\"messageStatus\":3,\"isDeletedUser\":false,\"isCarbonMessage\":false,\"messageId\":\"54ee8039f8004cbbaeb27df38dc1237c1688122853\",\"messageChatType\":\"singlechat\",\"isMessageSentByMe\":false,\"mentionedUsersIds\":[],\"chatUserJid\":\"919894940560@xmpp-uikit-qa.contus.us\",\"messageSentTime\":1688122854129614,\"isMessageStarred\":false,\"isMessageDeleted\":false,\"messageType\":\"text\",\"isMessageTranslated\":false,\"isMessageRecalled\":false,\"isReplyMessage\":false,\"audioTrackTime\":0,\"isRetryButtonDisabled\":false}}"
+//            result(messageJson)
 //            let args = methodCall.arguments as! Dictionary<String, Any>
 //            let number = args["number"] as? String ?? ""
 //

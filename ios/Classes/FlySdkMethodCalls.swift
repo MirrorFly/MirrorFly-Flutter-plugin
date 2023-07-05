@@ -14,6 +14,7 @@ import Photos
 import Contacts
 import ContactsUI
 import MirrorFlySDK
+import os
 
 
 @objc class FlySdkMethodCalls : NSObject{
@@ -21,7 +22,8 @@ import MirrorFlySDK
     static var isTrialLicenceKey : Bool = true;
     static var isContactSyncInProgress : Bool = false;
 //    static let SOCKETIO_SERVER_HOST = "https://signal-uikit-qa.contus.us/"
-    
+    static private let backgroudLog = OSLog(subsystem: "com.mirrorfly.qa", category: "pushNotify")
+
     static var userlist = [ProfileDetails]()
     
     static func buildChatSDK(call: FlutterMethodCall) {
@@ -2247,109 +2249,26 @@ import MirrorFlySDK
                     contentHandler?(bestAttemptContent!)
                 })
             } else {
-                //        result(messageJson)
+                os_log("Push in plugin" , log: backgroudLog, type: .error)
+//                var messageJson = "{\"chatMessage\":{\"messageTextContent\":\"fygg\",\"isSavedContact\":false,\"senderUserJid\":\"919894940560@xmpp-uikit-qa.contus.us\",\"senderNickName\":\"Saravanakumar\",\"translatedMessageTextContent\":\"\",\"senderUserName\":\"Saravanakumar\",\"audioStatus\":\"stoped\",\"messageStatus\":3,\"isDeletedUser\":false,\"isCarbonMessage\":false,\"messageId\":\"54ee8039f8004cbbaeb27df38dc1237c1688122853\",\"messageChatType\":\"singlechat\",\"isMessageSentByMe\":false,\"mentionedUsersIds\":[],\"chatUserJid\":\"919894940560@xmpp-uikit-qa.contus.us\",\"messageSentTime\":1688122854129614,\"isMessageStarred\":false,\"isMessageDeleted\":false,\"messageType\":\"text\",\"isMessageTranslated\":false,\"isMessageRecalled\":false,\"isReplyMessage\":false,\"audioTrackTime\":0,\"isRetryButtonDisabled\":false}}"
+
+//                        result(messageJson)
                 NotificationMessageSupport.shared.didReceiveNotificationRequest(data, onCompletion: { [self] bestAttemptContents in
-                    
+
                     var message : ChatMessage? = ChatManager.getMessageOfId(messageId: messageId)
-                    
+
                     var messageJson = message?.toJson()
-                    print("getMessageOfId==**==\(String(describing: messageJson))")
-//                    var dict = ["chatMessage": messageJson]
-//                    var jsonArray: [[String: Any]] = []
-//                    jsonArray.append(["chatMessage" : message.toJsonObj()])
-//                    var response = [String: Any]()
-////                    response.
-//                       // .addData(data: ["chatMessage" : messageJson])
-//                    if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: []) {
-//                        let decoded = try? JSONSerialization.jsonObject(with: jsonData, options: [])
-//                        debugPrint("jsonArray>>>> ",jsonArray)
-                  //  }
+                    print("#Mirrorfly Notification getMessageOfId==**==\(String(describing: messageJson))")
 
                     if let chatMessage = messageJson {
                         let response = "{\"groupJid\": \"\(String(""))\",\"titleContent\": \"\(String(""))\",\"chatMessage\" : " + (messageJson ?? "null")+"}"
                         result(response)
                     }
-                    
-                    //            FlyLog.DLog(param1: "#notification request ID", param2: "\(request.identifier)")
-    //                let center = UNUserNotificationCenter.current()
-    //                let (messageCount, chatCount) = ChatManager.getUnreadMessageAndChatCountForUnmutedUsers()
-    //                if FlyDefaults.hideNotificationContent{
-    //                    var titleContent = emptyString()
-    //                    if chatCount == 1{
-    //                        titleContent = "\(messageCount) \(messageCount == 1 ? "message" : "messages")"
-    //                    } else {
-    //                        titleContent = "\(messageCount) messages from \(chatCount) chats"
-    //                    }
-    //                    bestAttemptContents?.title = FlyDefaults.appName + " (\(titleContent))"
-    //                    bestAttemptContents?.body = "New Message"
-    //                } else {
-    //                    if let userInfo = bestAttemptContents?.userInfo["message_id"] {
-    //                        print("Push Show title: \(bestAttemptContents?.title ?? "") body: \(bestAttemptContents?.body ?? ""), ID - \(userInfo)")
-    //                        FlyLog.DLog(param1: "NotificationMessageSupport id ", param2: "\(bestAttemptContents?.title ?? "") body: \(bestAttemptContents?.body ?? "")")
-    //                    }
-    //                }
-    //                var canVibrate = true
-    //                let isMuted = ContactManager.shared.getUserProfileDetails(for: bestAttemptContents?.userInfo["from_user"] as? String ?? "")?.isMuted ?? false
-    //                if !isMuted || !(FlyDefaults.isArchivedChatEnabled && ChatManager.getRechtChat(jid: bestAttemptContents?.userInfo["from_user"] as? String ?? "")?.isChatArchived ?? false){
-    //                    bestAttemptContents?.badge = messageCount as? NSNumber
-    //                }
-    //                //
-    //                let chatType = (bestAttemptContents?.userInfo["chat_type"] as? String ?? "")
-    //                let messageId = (bestAttemptContents?.userInfo["message_id"] as? String ?? "").components(separatedBy: ",").last ?? ""
-    //                //
-    //                bestAttemptContent = bestAttemptContents
-    //                //
-    //                if ChatManager.getMessageOfId(messageId: messageId)?.senderUserJid == FlyDefaults.myJid && (chatType == "chat" || chatType == "normal") {
-    //                    if !FlyUtils.isValidGroupJid(groupJid: ChatManager.getMessageOfId(messageId: messageId)?.chatUserJid) {
-    //                        bestAttemptContent?.title = "You"
-    //                    }
-    //                    canVibrate = false
-    //                    bestAttemptContent?.sound = .none
-    //                } else if ChatManager.getMessageOfId(messageId: messageId)?.senderUserJid != FlyDefaults.myJid {
-    //                    if isMuted || (FlyDefaults.isArchivedChatEnabled && ChatManager.getRechtChat(jid: bestAttemptContents?.userInfo["from_user"] as? String ?? "")?.isChatArchived ?? false) {
-    //                        bestAttemptContent?.sound = .none
-    //                        canVibrate = false
-    //                    } else if !(FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("Default") ?? false) && !(FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("None") ?? false) && FlyDefaults.notificationSoundEnable  {
-    //                        bestAttemptContent?.sound = UNNotificationSound(named: UNNotificationSoundName((FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.file.rawValue] ?? "") + "." + (FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.extensions.rawValue] ?? "")))
-    //                    } else if FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("Default") ?? false && FlyDefaults.notificationSoundEnable {
-    //                        bestAttemptContent?.sound = .default
-    //                    } else if FlyDefaults.notificationSoundEnable == false || FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("None") ?? false {
-    //                        bestAttemptContent?.sound = FlyDefaults.vibrationEnable ? UNNotificationSound(named: UNNotificationSoundName(rawValue: "1-second-of-silence.mp3"))  : nil
-    //                    }
-    //                } else if bestAttemptContent?.userInfo["sent_from"] as? String ?? "" == FlyDefaults.myJid && bestAttemptContent?.userInfo["group_id"] != nil {
-    //                    bestAttemptContent?.sound = nil
-    //                    canVibrate = false
-    //                } else if bestAttemptContent?.userInfo["sent_from"] as? String ?? "" != FlyDefaults.myJid && bestAttemptContent?.userInfo["group_id"] != nil {
-    //                    if !(FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("Default") ?? false) && !(FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("None") ?? false) && FlyDefaults.notificationSoundEnable  {
-    //                        bestAttemptContent?.sound = UNNotificationSound(named: UNNotificationSoundName((FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.file.rawValue] ?? "") + "." + (FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.extensions.rawValue] ?? "")))
-    //                    } else if FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("Default") ?? false && FlyDefaults.notificationSoundEnable {
-    //                        bestAttemptContent?.sound = .default
-    //                    } else if FlyDefaults.notificationSoundEnable == false || FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("None") ?? false {
-    //                        bestAttemptContent?.sound = FlyDefaults.vibrationEnable ? UNNotificationSound(named: UNNotificationSoundName(rawValue: "1-second-of-silence.mp3"))  : nil
-    //                    }
-    //                }
-    //                if let message = ChatManager.getMessageOfId(messageId: messageId), !message.mentionedUsersIds.isEmpty {
-    //                    bestAttemptContent?.body = message.messageTextContent
-    //                    //                convertMentionUser(message: message.messageTextContent, mentionedUsersIds: message.mentionedUsersIds)
-    //                }
-    //
-    //                contentHandler?(bestAttemptContent!)
-    //                //            FlyDefaults.lastNotificationId = request.identifier
-    //                var message : ChatMessage? = ChatManager.getMessageOfId(messageId: messageId)
-    //
-    //                //            var messageJson = message?.toJson()
-    //                print("getMessageOfId==**==\(message?.messageId)")
-    //                //            if FlyDefaults.hideNotificationContent{
-    //                //                bestAttemptContent?.title = FlyDefaults.appName
-    //                //            } else {
-    //                //                if let userInfo = bestAttemptContent?.userInfo["message_id"] {
-    //                //                    bestAttemptContent?.title = encryptDecryptData(key: userInfo as? String ?? "", data: bestAttemptContent?.title ?? "", encrypt: false)
-    //                //                    print("Push Show title: \(bestAttemptContent?.title ?? "") body: \(bestAttemptContent?.body ?? ""), ID - \(userInfo)")
-    //                //                }
-    //                //            }
+
+
                     bestAttemptContent = bestAttemptContents
                     contentHandler?(bestAttemptContent!)
-                    
+
                 })
             }
         }

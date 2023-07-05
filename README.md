@@ -81,7 +81,8 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 > **Note**: The App Group Must be same as `iOSContainerId` given during the SDK Initialization. [See Initialization Step 1](#Sending-your-first-message).
 
 
-![Screenshot](AppGroups-c9933d95df192665e1389f19ece4fd94.png)
+![Screenshot](https://www.mirrorfly.com/docs/assets/images/AppGroups-c9933d95df192665e1389f19ece4fd94.png)
+
 
 ### Flutter
 
