@@ -559,6 +559,10 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.deleteMessagesForEveryone(call: methodCall,  result: result)
         case "markAsRead":
             FlySdkMethodCalls.markAsRead(call: methodCall,  result: result)
+        case "markConversationAsUnread":
+            FlySdkMethodCalls.markConversationAsUnread(call: methodCall,  result: result)
+        case "markConversationAsRead":
+            FlySdkMethodCalls.markConversationAsRead(call: methodCall,  result: result)
         case "deleteUnreadMessageSeparatorOfAConversation":
             FlySdkMethodCalls.deleteUnreadMessageSeparatorOfAConversation(call: methodCall,  result: result)
         case "getRecalledMessagesOfAConversation":

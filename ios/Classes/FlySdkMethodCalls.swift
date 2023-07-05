@@ -1213,7 +1213,29 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? ""
+        
+        
         ChatManager.markConversationAsRead(for: [jid])
+        result(true)
+    }
+    static func markConversationAsUnread(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let jidList = args["jidlist"] as? [String] ?? []
+        
+        print("markConversationAsUnread jid list --> \(jidList)")
+        
+        ChatManager.markConversationAsUnread(for: jidList)
+        result(true)
+    }
+    static func markConversationAsRead(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let jidList = args["jidlist"] as? [String] ?? []
+        
+        print("markConversationAsRead jid list --> \(jidList)")
+        
+        ChatManager.markConversationAsRead(for: jidList)
         result(true)
     }
     static func getMessagesOfJid(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -2134,13 +2156,31 @@ import MirrorFlySDK
         var userJidList = [] as [String]
         userJidList.append(userJid)
     
-        if(archive){
+        /* //This method is used only to notify the local DB
+         if(archive){
+            print("Archiving chat")
+            print("Archiving chat jid \(userJidList)")
             ChatManager.archiveChatConversation(jidsToArchive: userJidList)
         }else{
+            print("UnArchiving chat")
+            print("UnArchiving chat jid \(userJidList)")
             ChatManager.unarchiveChatConversation(jidsToUnarchive: userJidList)
+        }*/
+        
+        ChatManager.updateArchiveUnArchiveChat(userJidList, archive) { (isSuccess, flyError, resultDict) in
+            
+           if isSuccess {
+               var flydata = resultDict
+               print(flydata.getData())
+               
+           }else{
+               //archive/unarchive chat failed
+           }
+            
+            result(isSuccess)
         }
     
-       result(true)
+       
                
     }
     static func logoutOfChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -2165,14 +2205,16 @@ import MirrorFlySDK
         
         let messageId = args["mid"] as? String ?? ""
         
-        var message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: messageId)
+        let message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: messageId)
         
-        var messageJson = message?.toJson()
+        let messageJson = message?.toJson()
         print("getMessageOfId==**==\(String(describing: messageJson))")
         result(messageJson)
                
     }
     static func getArchivedChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        /*  Note that when chat history is disabled, need to call ChatManager.getArchivedChatsFromServer to fetch the archive chat list from server to local DB */
         
         ChatManager.getArchivedChatList { (isSuccess, flyError, resultDict) in
            if isSuccess {
