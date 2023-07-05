@@ -3557,7 +3557,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<bool> makeVoiceCall(String userJid) async {
     bool val;
     try {
-      debugPrint('makeVoiceCall :');
       val = await mirrorFlyCallMethodChannel
           .invokeMethod('makeVoiceCall', {"user_jid": userJid});
       return val;

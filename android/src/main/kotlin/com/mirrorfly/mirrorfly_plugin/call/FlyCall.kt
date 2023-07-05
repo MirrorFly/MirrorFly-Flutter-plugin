@@ -9,6 +9,7 @@ import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
+import com.mirrorflysdk.flycall.webrtc.AudioDevice
 import com.mirrorflysdk.flycall.webrtc.CallAction
 import com.mirrorflysdk.flycall.webrtc.CallAudioManager
 import com.mirrorflysdk.flycall.webrtc.CallDirection
@@ -55,25 +56,21 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
             "getCallUsersList"-> {
                 sdk.getCallUsersList(call,result)
             }
-            "getAudioDevices"-> {
-                val audioDevices = CallManager.getAudioDevices()
-                result.success(audioDevices.joinToString(","))
+            "getAllAvailableAudioInput"-> {
+                sdk.getAllAvailableAudioInput(result)
             }
             "selectedAudioDevice" -> {
                 val selectedAudioDevice = CallAudioManager.getInstance(context).selectedAudioDevice
                 result.success(selectedAudioDevice)
             }
-            "selectAudioDevice" ->{
-                val selectedDevice = call.argument<String>("selectedDevice")
-                CallAudioManager.getInstance(context).selectAudioDevice(selectedDevice)
+            "routeAudioTo" ->{
+                sdk.routeTo(call)
             }
-            "makeCall" -> {
-                val userJid: String = call.argument("user_jid") ?: ""
-                sdk.makeVoiceCall(userJid)
+            "makeVoiceCall" -> {
+                sdk.makeVoiceCall(call,result)
             }
             "makeVideoCall" -> {
-                val userJid: String = call.argument("user_jid") ?: ""
-                sdk.makeVideoCall(userJid,result)
+                sdk.makeVideoCall(call,result)
             }
             "answerCall" -> {
                 sdk.answerCall(result)

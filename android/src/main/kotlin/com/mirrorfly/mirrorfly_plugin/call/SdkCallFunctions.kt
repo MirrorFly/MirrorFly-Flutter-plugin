@@ -11,6 +11,7 @@ import com.mirrorflysdk.api.GroupManager
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.utils.NameHelper
 import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
+import com.mirrorflysdk.flycall.webrtc.AudioDevice
 import com.mirrorflysdk.flycall.webrtc.CallDirection
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.GroupCallDetails
@@ -68,27 +69,67 @@ class SdkCallFunctions(var context: Context) {
         })
     }
 
-    fun makeVoiceCall(userJid:String){
+    fun routeTo(call: MethodCall){
+        val routeType = call.argument<String>("routeType") ?: ""
+        LogMessage.d(tag,"routeType : $routeType")
+        val selectedDevice = if(routeType=="receiver") AudioDevice.EARPIECE  else if(routeType=="speaker") AudioDevice.SPEAKER_PHONE else if(routeType=="bluetooth") AudioDevice.BLUETOOTH else if(routeType=="headset") AudioDevice.WIRED_HEADSET else AudioDevice.NONE
+        //CallAudioManager.getInstance(context).selectAudioDevice(selectedDevice)
+        CallManager.setAudioDevice(selectedDevice);
+        LogMessage.d(tag,"selectedDevice : $selectedDevice")
+    }
+    fun getAllAvailableAudioInput(result: MethodChannel.Result){
+        val availableAudioDevices = JSONArray()
+        var y =1
+        for (audioDevice in CallManager.getAudioDevices()) {
+            val type = if(audioDevice==AudioDevice.EARPIECE) "receiver" else if(audioDevice==AudioDevice.SPEAKER_PHONE) "speaker" else if(audioDevice==AudioDevice.BLUETOOTH) "bluetooth" else if(audioDevice==AudioDevice.WIRED_HEADSET) "headset" else "none"
+            val obj = JSONObject()
+            obj.put("id",y.toString())
+            obj.put("type",type)
+            obj.put("name",audioDevice)
+            y++
+            availableAudioDevices.put(obj)
+        }
+        LogMessage.d(tag,"availableAudioDevices : $availableAudioDevices")
+        result.success(availableAudioDevices.toString())
+    }
+
+    fun makeVoiceCall(call: MethodCall,result: MethodChannel.Result){
+        val userJid: String = call.argument("user_jid") ?: ""
+        println("permission ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}")
         LogMessage.d("makeVoiceCall", "permission granted ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}")
         if (CallManager.isAudioCallPermissionsGranted(false)) {
             CallManager.makeVoiceCall(userJid, object : CallActionListener {
                 override fun onResponse(isSuccess: Boolean, message: String) {
                     LogMessage.d("makeCall", "success $isSuccess message $message")
+                    if(isSuccess) {
+                        result.success(true)
+                    }else{
+                        result.error("500", message,"")
+                    }
                 }
             })
+        }else{
+            result.error("500","Audio call permissions not granted","")
         }
     }
 
-    fun makeVideoCall(userJid: String,result: MethodChannel.Result){
+    fun makeVideoCall(call: MethodCall,result: MethodChannel.Result){
+        val userJid: String = call.argument("user_jid") ?: ""
         LogMessage.d("makeVideoCall", "permission granted ${CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)}")
         if(CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)) {
             CallManager.makeVideoCall(userJid, object : CallActionListener {
                 override fun onResponse(isSuccess: Boolean, message: String) {
                     LogMessage.d("makeVideoCall", "success $isSuccess message $message")
-                    result.success(isSuccess)
+                    if(isSuccess) {
+                        result.success(true)
+                    }else{
+                        result.error("500", message,"")
+                    }
                 }
 
             })
+        }else{
+            result.error("500","Video call permissions not granted","")
         }
     }
 
