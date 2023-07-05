@@ -208,7 +208,7 @@ import MirrorFlySDK
             let jsonObject: [String: String] = [
                 "id": item.id,
                 "name": item.name,
-                "type": item.type == .bluetooth ? "bluetooth" : item.type == .speaker ? "speaker" : item.type == .headset ? "headset" : "receiver"
+                "type": item.type == .bluetooth ? "bluetooth" : item.type == .speaker ? "speaker" : item.type == .headset ? "headset" : item.type == .receiver ? "receiver" : "none"
             ]
             jsonArray.append(jsonObject)
         }
@@ -231,9 +231,15 @@ import MirrorFlySDK
           case "receiver":
             AudioManager.shared().routeAudioTo(device: .receiver, force: true);
             break;
-          default:
+          case "speaker":
             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
+          default:
+            AudioManager.shared().routeAudioTo(device: .none, force: true);
+            break;
+//           default:
+//             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
+//             break;
         }
 
         result(true)
