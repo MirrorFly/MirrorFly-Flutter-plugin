@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -1126,10 +1128,38 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("setRegionCode") -> {
                 setRegionCode(call)
             }
+            call.method.equals("getManifestKey") -> {
+                getManifestKey(call,result)
+            }
             else -> {
                 result.notImplemented()
             }
 
+        }
+    }
+
+    private fun getManifestKey(call: MethodCall,result: MethodChannel.Result) {
+        val find = call.argument<String>("key")
+        if(find.isNullOrEmpty()){
+            result.error("500","key must not be null","")
+        }else {
+            val ai: ApplicationInfo =
+                mContext.packageManager //ChatManager.applicationContext.packageManager
+                    .getApplicationInfo(
+                        mContext.packageName,
+                        PackageManager.GET_META_DATA
+                    )//ChatManager.applicationContext.packageName
+            val value = ai.metaData[find]//ai.metaData["com.google.android.geo.API_THUMP_KEY"]
+            val key = value
+            /*return ("https://maps.googleapis.com/maps/api/staticmap?center=" + latitude + "," + longitude
+                + "&zoom=13&size=300x200&markers=color:red|" + latitude + "," + longitude + "&key="
+                + key)*/
+            if(key!=null) {
+                result.success(key.toString())
+            }else{
+                result.success("")
+//                result.error("500","couldn't find value for the key","")
+            }
         }
     }
 
@@ -2659,14 +2689,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 }
             }
         }
-        /*FlyCore.getRecentChatHistory(pageNo, 15) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                LogMessage.i("getRecentChatHistory", data.toJsonString())
-                result.success(Gson().toJson(data).toString())
-            } else {
-                result.error("500", throwable!!.message, null)
-            }
-        }*/
     }
 
     private fun getImageThumbImage(imagePath: String?): String {

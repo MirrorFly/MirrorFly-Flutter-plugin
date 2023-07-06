@@ -1035,6 +1035,10 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
   }
 
+  static Future<String> getManifestKey(String key) async {
+    return FlyChatFlutterPlatform.instance.getManifestKey(key);
+  }
+
   static Future<bool> makeVideoCall(String userJid) async {
     return FlyChatFlutterPlatform.instance.makeVideoCall(userJid);
   }

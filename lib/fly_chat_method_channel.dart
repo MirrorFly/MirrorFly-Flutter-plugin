@@ -3545,6 +3545,24 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+  @override
+  Future<String> getManifestKey(String key) async {
+    String? val = "";
+    try {
+      val = await mirrorFlyMethodChannel
+          .invokeMethod('getManifestKey', {'key': key});
+      debugPrint('getManifestKey : $val');
+      return val ?? "";
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> makeVideoCall(String userJid) async {
     bool val;

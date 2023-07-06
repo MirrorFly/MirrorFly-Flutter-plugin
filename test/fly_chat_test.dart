@@ -1264,6 +1264,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<String> getManifestKey(String key) {
+    // implement getManifestKey
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool?> iOSFileExist(String filePath) {
     // implement iOSFileExist
     throw UnimplementedError();
