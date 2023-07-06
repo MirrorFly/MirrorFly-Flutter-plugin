@@ -1,5 +1,5 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.8 (swiftlang-5.8.0.124.2 clang-1403.0.22.11.100)
+// swift-compiler-version: Apple Swift version 5.7.1 (swiftlang-5.7.1.135.3 clang-1400.0.29.51)
 // swift-module-flags: -target x86_64-apple-ios12.1-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name MirrorFlySDK
 // swift-module-flags-ignorable: -enable-bare-slash-regex
 import AVFAudio
@@ -30,9 +30,9 @@ import _Concurrency
 import _StringProcessing
 @propertyWrapper public struct NilOnFail<T> : Swift.Codable where T : Swift.Decodable, T : Swift.Encodable {
   public let wrappedValue: T?
-  public init(from decoder: any Swift.Decoder) throws
+  public init(from decoder: Swift.Decoder) throws
   public init(_ wrappedValue: T?)
-  public func encode(to encoder: any Swift.Encoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 @objc @_inheritsConvenienceInitializers @objcMembers public class RecentChat : ObjectiveC.NSObject, Swift.Codable {
   @objc public var jid: Swift.String
@@ -66,8 +66,8 @@ import _StringProcessing
   @objc public var mentionedUsersIds: [Swift.String]
   @objc override dynamic public init()
   @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
 }
 public struct MessageBody : Swift.Codable {
   public var message: Swift.String?
@@ -79,8 +79,8 @@ public struct MessageBody : Swift.Codable {
   public var contact: MirrorFlySDK.ContactBody?
   public var media: MirrorFlySDK.MediaBody?
   public init()
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public struct MediaBody : Swift.Codable {
   public var duration: Swift.Int32?
@@ -97,30 +97,30 @@ public struct MediaBody : Swift.Codable {
   public var androidHeight: Swift.Int?
   public var audioType: Swift.String?
   public init()
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public struct LocationBody : Swift.Codable {
   public var latitude: Swift.Double
   public var longitude: Swift.Double
   public init(latitude: Swift.Double, longitude: Swift.Double)
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public struct ContactBody : Swift.Codable {
   public var name: Swift.String
   public var phone_number: [Swift.String]
   public var active_status: [Swift.String]
   public init(name: Swift.String?, phone_number: [Swift.String], active_status: [Swift.String])
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public struct CountryInfo : Swift.Codable {
   public var name: Swift.String?
   public var dial_code: Swift.String?
   public var code: Swift.String?
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public enum CallAction : Swift.String {
   case ACTION_INVITE_USERS
@@ -165,15 +165,15 @@ public enum CallState : Swift.String {
   }
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class ChatManager : ObjectiveC.NSObject {
-  public var connectionDelegate: (any MirrorFlySDK.ConnectionEventDelegate)?
-  public var logoutDelegate: (any MirrorFlySDK.LogoutDelegate)?
-  public var messageEventsDelegate: (any MirrorFlySDK.MessageEventsDelegate)?
-  public var typingStatusDelegate: (any MirrorFlySDK.TypingStatusDelegate)?
-  public var adminBlockDelegate: (any MirrorFlySDK.AdminBlockDelegate)?
-  public var adminBlockCurrentUserDelegate: (any MirrorFlySDK.AdminBlockCurrentUserDelegate)?
-  public var availableFeaturesDelegate: (any MirrorFlySDK.AvailableFeaturesDelegate)?
-  public var archiveEventsDelegate: (any MirrorFlySDK.ArchiveEventsDelegate)?
-  public var localNotificationDelegate: (any MirrorFlySDK.LocalNotificationDelegate)?
+  public var connectionDelegate: MirrorFlySDK.ConnectionEventDelegate?
+  public var logoutDelegate: MirrorFlySDK.LogoutDelegate?
+  public var messageEventsDelegate: MirrorFlySDK.MessageEventsDelegate?
+  public var typingStatusDelegate: MirrorFlySDK.TypingStatusDelegate?
+  public var adminBlockDelegate: MirrorFlySDK.AdminBlockDelegate?
+  public var adminBlockCurrentUserDelegate: MirrorFlySDK.AdminBlockCurrentUserDelegate?
+  public var availableFeaturesDelegate: MirrorFlySDK.AvailableFeaturesDelegate?
+  public var archiveEventsDelegate: MirrorFlySDK.ArchiveEventsDelegate?
+  public var localNotificationDelegate: MirrorFlySDK.LocalNotificationDelegate?
   public static var onGoingChatUserJid: Swift.String
   public static func initializeSDK(licenseKey: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public func initDelegates()
@@ -451,8 +451,8 @@ public struct OfflineActionModel : Swift.Codable {
     set
   }
   public init(actionId: Swift.String, jid: Swift.String?, actionType: MirrorFlySDK.ChatType, isClearAll: Swift.Bool, isFavourite: Swift.Bool, offlineType: MirrorFlySDK.OfflineActionType, offlineContent: Swift.String)
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public enum ContactType : Swift.String, Swift.CustomStringConvertible, Swift.Codable {
   case live
@@ -540,8 +540,8 @@ public protocol XMPPGroupDelegate : ObjectiveC.NSObjectProtocol {
   @objc public var mapLocationUrl: Swift.String
   @objc public init()
   @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
 }
 @objc public enum DeliveryStatus : Swift.Int, Swift.Codable {
   case acknowledged = 0
@@ -562,16 +562,16 @@ public struct LocationMessageParams : Swift.Codable {
   public var longitude: Swift.Double!
   public init()
   public init(latitude: Swift.Double, longitude: Swift.Double)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct ContactMessageParams : Swift.Codable {
   public var name: Swift.String!
   public var numbers: [Swift.String]!
   public init()
   public init(name: Swift.String, numbers: [Swift.String])
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct FileMessageParams : Swift.Codable {
   public var fileName: Swift.String!
@@ -583,8 +583,8 @@ public struct FileMessageParams : Swift.Codable {
   public var fileKey: Swift.String
   public init()
   public init(fileUrl: Foundation.URL, fileName: Swift.String, caption: Swift.String = emptyString(), fileSize: Swift.Double = 0.0, duration: Swift.Double = 0.0, thumbImage: Swift.String = emptyString(), fileKey: Swift.String = emptyString())
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct TextMessage : Swift.Codable {
   public var toId: Swift.String!
@@ -593,8 +593,8 @@ public struct TextMessage : Swift.Codable {
   public var mentionedUsersIds: [Swift.String]?
   public init()
   public init(toId: Swift.String, messageText: Swift.String, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String]? = nil)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct FileMessage : Swift.Codable {
   public var toId: Swift.String!
@@ -606,13 +606,13 @@ public struct FileMessage : Swift.Codable {
   public var fileMessage: MirrorFlySDK.FileMessageParams?
   public init()
   public init(toId: Swift.String, messageType: MirrorFlySDK.MessageType, locationMessage: MirrorFlySDK.LocationMessageParams? = nil, contactMessage: MirrorFlySDK.ContactMessageParams? = nil, fileMessage: MirrorFlySDK.FileMessageParams? = nil, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String]? = nil)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 @_hasMissingDesignatedInitializers public class AudioManager {
   public class func shared() -> MirrorFlySDK.AudioManager
   public func autoReRoute()
-  public var audioManagerDelegate: (any MirrorFlySDK.AudioManagerDelegate)?
+  public var audioManagerDelegate: MirrorFlySDK.AudioManagerDelegate?
   public func routeToAvailableDevice(preferredDevice: MirrorFlySDK.OutputType? = nil)
   public func getCurrentAudioInput()
   public func getAllAvailableAudioInput() -> [MirrorFlySDK.AudioDevice]
@@ -633,8 +633,8 @@ public struct DeliveryReceipt : Swift.Codable {
   public var acknowledgeTime: Swift.Double
   public var receivedTime: Swift.Double
   public var seenTime: Swift.Double
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public enum MediaType {
   case image
@@ -731,8 +731,8 @@ public struct ContactInfo : Swift.Codable {
   public var name: Swift.String
   public var mobileNumber: Swift.String
   public init()
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
   public init(_ name: Swift.String, _ mobileNumber: Swift.String)
 }
 public enum MuteEvent {
@@ -801,16 +801,16 @@ public protocol MissedCallNotificationDelegate {
   func onMissedCall(isOneToOneCall: Swift.Bool, userJid: Swift.String, groupId: Swift.String?, callType: Swift.String, userList: [Swift.String])
 }
 @objc @_inheritsConvenienceInitializers public class CallManager : ObjectiveC.NSObject {
-  public static var delegate: (any MirrorFlySDK.CallManagerDelegate)?
-  public static var featuresDelegate: (any MirrorFlySDK.FeaturesDelegate)?
-  public static var callLogDelegate: (any MirrorFlySDK.CallLogDelegate)?
-  public static var missedCallNotificationDelegate: (any MirrorFlySDK.MissedCallNotificationDelegate)?
-  public static var onCallStatusDelegate: (any MirrorFlySDK.CallStatusContactDelegate)?
+  public static var delegate: MirrorFlySDK.CallManagerDelegate?
+  public static var featuresDelegate: MirrorFlySDK.FeaturesDelegate?
+  public static var callLogDelegate: MirrorFlySDK.CallLogDelegate?
+  public static var missedCallNotificationDelegate: MirrorFlySDK.MissedCallNotificationDelegate?
+  public static var onCallStatusDelegate: MirrorFlySDK.CallStatusContactDelegate?
   public static var isCallStarted: Swift.Bool
   public static var incomingUserJidArr: [Swift.String]
   @objc override dynamic public init()
   public class func initCallSDK() throws
-  public class func setVideoWidthHeightAdjuster(videoWidthHeightAdjuster: any MirrorFlySDK.VideoWidthHeightAdjuster)
+  public class func setVideoWidthHeightAdjuster(videoWidthHeightAdjuster: MirrorFlySDK.VideoWidthHeightAdjuster)
   public class func getRoomLink() -> Swift.String
   public class func setMyInfo(name: Swift.String, imageUrl: Swift.String)
   public class func setCurrentUserId(_ myID: Swift.String)
@@ -818,8 +818,8 @@ public protocol MissedCallNotificationDelegate {
   public class func setJanusWebSocketServerUrl(_ websocketSeverUrl: Swift.String)
   public class func setIceServers(_ iceServersList: [WebRTC.RTCIceServer])
   public class func setCallViewController(_ callUIController: UIKit.UIViewController)
-  public class func setCallEventsDelegate(delegate: (any MirrorFlySDK.CallManagerDelegate)?)
-  public class func setMobileCallActionDelegate(delegate: (any MirrorFlySDK.MobileCallActionDelegate)?)
+  public class func setCallEventsDelegate(delegate: MirrorFlySDK.CallManagerDelegate?)
+  public class func setMobileCallActionDelegate(delegate: MirrorFlySDK.MobileCallActionDelegate?)
   public class func disconnectCall()
   public class func setViewToPresentController(rootViewController: UIKit.UIViewController)
   public class func getViewControllerThatPresented() -> UIKit.UIViewController?
@@ -895,7 +895,7 @@ extension MirrorFlySDK.CallManager {
 extension MirrorFlySDK.CallManager {
   public class func setupJoinCallViaLink()
   public class func startVideoCapture()
-  public class func setJoinCallDelegate(delegate: (any MirrorFlySDK.JoinCallDelegate)?)
+  public class func setJoinCallDelegate(delegate: MirrorFlySDK.JoinCallDelegate?)
   public class func subscribeToCallEvents(link: Swift.String, name: Swift.String, completion: @escaping (Swift.Bool, MirrorFlySDK.FlyError?) -> Swift.Void)
   public class func cleanUpJoinCallViaLink()
   public class func joinCall(completion: @escaping (Swift.Bool, MirrorFlySDK.FlyError?) -> Swift.Void)
@@ -927,36 +927,36 @@ public enum FileType : Swift.String {
   }
 }
 public struct LanguagesSupported : Swift.Codable {
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct Datas : Swift.Codable {
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct LanguageSelection : Swift.Codable {
   public var language: Swift.String?
   public var name: Swift.String?
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct Root : Swift.Codable {
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct FlyData : Swift.Codable {
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct Translations : Swift.Codable {
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public protocol FlyTranslationManagerDelegate : ObjectiveC.NSObjectProtocol {
   func updateTranslateMessage(jid: Swift.String, messageId: Swift.String, translatedText: Swift.String)
 }
 @objc @_inheritsConvenienceInitializers public class FlyTranslationManager : ObjectiveC.NSObject {
-  public var delegate: (any MirrorFlySDK.FlyTranslationManagerDelegate)?
+  public var delegate: MirrorFlySDK.FlyTranslationManagerDelegate?
   public static let shared: MirrorFlySDK.FlyTranslationManager
   public func supportedTranslationLanguages(TargetLanguageCode: Swift.String, GooogleAPIKey: Swift.String, complete: @escaping (_ languageList: [MirrorFlySDK.LanguageSelection], _ success: Swift.Bool, _ error: Swift.String) -> ())
   public func languageTransalation(jid: Swift.String, messageId: Swift.String, QueryString: Swift.String, targetLanguageCode: Swift.String, GooogleAPIKey: Swift.String, complete: @escaping (_ translatedText: Swift.String, _ success: Swift.Bool, _ error: Swift.String) -> ())
@@ -1142,11 +1142,11 @@ public struct HttpMethods {
   @objc public var isChatUser: [Swift.Bool]
   @objc public init()
   @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class GroupManager : ObjectiveC.NSObject {
-  public var groupDelegate: (any MirrorFlySDK.GroupEventsDelegate)?
+  public var groupDelegate: MirrorFlySDK.GroupEventsDelegate?
   public static let shared: MirrorFlySDK.GroupManager
   @objc deinit
 }
@@ -1203,24 +1203,24 @@ public struct QrCodeInfo : Swift.Codable {
   public var platform: Swift.String
   public var token: Swift.String
   public init(browser: Swift.String, platform: Swift.String, token: Swift.String)
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public struct QrCodeRequest : Swift.Codable {
   public var username: Swift.String
   public var password: Swift.String
   public var socketId: Swift.String
   public init(username: Swift.String, password: Swift.String, socketId: Swift.String)
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public struct QrCodeLoginResponse : Swift.Codable {
   public var message: Swift.String
   public var public_key: Swift.String
   public var statusCode: Swift.String
   public init(message: Swift.String, public_key: Swift.String, statusCode: Swift.String)
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public struct LinkMessage {
   public init()
@@ -1357,8 +1357,8 @@ public struct ErrorCode {
   public var mentionedUsersIds: [Swift.String]
   @objc override dynamic public init()
   @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
 }
 public protocol ConnectionEventDelegate : ObjectiveC.NSObjectProtocol {
   func onConnected()
@@ -1422,7 +1422,7 @@ extension Swift.Int {
   public static func parse(from string: Swift.String) -> Swift.Int?
 }
 extension Foundation.FileManager {
-  public func removeItem(at url: Foundation.URL, completion: @escaping (Swift.Bool, (any Swift.Error)?) -> ())
+  public func removeItem(at url: Foundation.URL, completion: @escaping (Swift.Bool, Swift.Error?) -> ())
 }
 extension Swift.Double {
   public func roundTo0f() -> Swift.String
@@ -1440,8 +1440,8 @@ public protocol WebLoginDelegate {
   func didLogin(data: [Any])
 }
 @objc @_inheritsConvenienceInitializers public class SocketConnection : ObjectiveC.NSObject {
-  public var connectionDelegate: (any MirrorFlySDK.SocketDelegate)?
-  public var webLoginDelegate: (any MirrorFlySDK.WebLoginDelegate)?
+  public var connectionDelegate: MirrorFlySDK.SocketDelegate?
+  public var webLoginDelegate: MirrorFlySDK.WebLoginDelegate?
   @objc override dynamic public init()
   public func emit(eventName: Swift.String, data: Swift.String)
   public func disConnectFor(eventName: Swift.String)
@@ -1450,7 +1450,7 @@ public protocol WebLoginDelegate {
 }
 public typealias FlySendMessageListener = (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMesage: MirrorFlySDK.ChatMessage?) -> Swift.Void
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objcMembers public class FlyMessenger : ObjectiveC.NSObject, MirrorFlySDK.FlyMediaDelegate {
-  @objc public var messageEventsDelegate: (any MirrorFlySDK.MessageEventsDelegate)?
+  @objc public var messageEventsDelegate: MirrorFlySDK.MessageEventsDelegate?
   @objc public static let shared: MirrorFlySDK.FlyMessenger
   public static func sendTextMessage(messageParams: MirrorFlySDK.TextMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
   public static func sendFileMessage(messageParams: MirrorFlySDK.FileMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
@@ -1507,7 +1507,7 @@ extension MirrorFlySDK.FlyMessenger {
   @objc public static func resetFailedMediaMessages(chatUserJid: Swift.String)
 }
 extension MirrorFlySDK.FlyMessenger : AVFoundation.AVCaptureFileOutputRecordingDelegate {
-  @objc dynamic public func fileOutput(_ output: AVFoundation.AVCaptureFileOutput, didFinishRecordingTo outputFileURL: Foundation.URL, from connections: [AVFoundation.AVCaptureConnection], error: (any Swift.Error)?)
+  @objc dynamic public func fileOutput(_ output: AVFoundation.AVCaptureFileOutput, didFinishRecordingTo outputFileURL: Foundation.URL, from connections: [AVFoundation.AVCaptureConnection], error: Swift.Error?)
   @objc public static func compressVideo(inputURL: Foundation.URL, outputURL: Foundation.URL, handler: @escaping (_ exportSession: AVFoundation.AVAssetExportSession?) -> Swift.Void)
   public static func sendNotAcknowledgeMessage(chatMessages: [MirrorFlySDK.ChatMessage?])
 }
@@ -1523,8 +1523,8 @@ public struct BusyStatus : Swift.Codable {
   public var status: Swift.String!
   public var isCurrentStatus: Swift.Bool
   public init(statusText: Swift.String, isCurrentStatus: Swift.Bool = false)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct ReportMessage : Swift.Codable {
   public init()
@@ -1532,8 +1532,8 @@ public struct ReportMessage : Swift.Codable {
   public var to: Swift.String
   public var chatType: Swift.String
   public var data: [MirrorFlySDK.ReportMessgeData]
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct ReportMessgeData : Swift.Codable {
   public init()
@@ -1543,16 +1543,16 @@ public struct ReportMessgeData : Swift.Codable {
   public var filename: Swift.String
   public var timestamp: Swift.String
   public var publisherId: Swift.String
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct MessageReceipt : Swift.Codable {
   public var messageId: Swift.String
   public var time: Swift.Double
   public var profileDetails: MirrorFlySDK.ProfileDetails?
   public init()
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 @objcMembers public class MediaChatMessage : Swift.Codable {
   @objc public var messageId: Swift.String
@@ -1572,8 +1572,8 @@ public struct MessageReceipt : Swift.Codable {
   public var audioType: MirrorFlySDK.AudioType
   @objc public init()
   @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
 }
 @objc public protocol ProfileEventsDelegate : ObjectiveC.NSObjectProtocol {
   @objc func userCameOnline(for jid: Swift.String)
@@ -1612,8 +1612,8 @@ public struct ChatTagsModel : Swift.Equatable, Swift.Codable {
   public init()
   public init(tagId: Swift.String, tagname: Swift.String, taginfo: Swift.String, isRecommentedTag: Swift.Bool = false, memberIdList: [Swift.String], currentUserId: Swift.String)
   public static func == (a: MirrorFlySDK.ChatTagsModel, b: MirrorFlySDK.ChatTagsModel) -> Swift.Bool
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 @objc @_inheritsConvenienceInitializers public class GroupCallDetails : ObjectiveC.NSObject, Swift.Codable {
   public var roomId: Swift.String?
@@ -1634,8 +1634,8 @@ public struct ChatTagsModel : Swift.Equatable, Swift.Codable {
   public var imageUrl: Swift.String?
   @objc override dynamic public init()
   @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
 }
 @objc @_inheritsConvenienceInitializers public class ContactSyncManager : ObjectiveC.NSObject {
   public static let shared: MirrorFlySDK.ContactSyncManager
@@ -1657,8 +1657,8 @@ public enum ContactSyncState : Swift.String {
   public typealias RawValue = Swift.String
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class BackupManager : ObjectiveC.NSObject {
-  public var backupDelegate: (any MirrorFlySDK.BackupEventDelegate)?
-  public var restoreDelegate: (any MirrorFlySDK.RestoreEventDelegate)?
+  public var backupDelegate: MirrorFlySDK.BackupEventDelegate?
+  public var restoreDelegate: MirrorFlySDK.RestoreEventDelegate?
   public static let shared: MirrorFlySDK.BackupManager
   public func startBackup()
   public func removeAllMessages()
@@ -1693,20 +1693,20 @@ public struct BackupRestoreModels : Swift.Codable {
   public var messages: [MirrorFlySDK.BackupMessage]
   public var recentMessages: [MirrorFlySDK.BackupRecentChat]
   public init(messages: [MirrorFlySDK.BackupMessage], recentMessages: [MirrorFlySDK.BackupRecentChat])
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct BackupMessageModel : Swift.Codable {
   public var message: MirrorFlySDK.BackupMessage
   public init(message: MirrorFlySDK.BackupMessage)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct BackupRecentModel : Swift.Codable {
   public var recentMessages: MirrorFlySDK.BackupRecentChat
   public init(recentMessages: MirrorFlySDK.BackupRecentChat)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct BackupMessage : Swift.Codable {
   public var messageId: Swift.String
@@ -1729,14 +1729,14 @@ public struct BackupMessage : Swift.Codable {
   public var messageStatusList: [MirrorFlySDK.MessageStatusList]?
   public var mentionedUsersIds: Swift.String?
   public init(messageId: Swift.String, chatUserJid: Swift.String, messageType: Swift.String, replyToMessageId: Swift.String, chatType: Swift.String, messageTime: Swift.String, isCarbon: Swift.Bool, isSender: Swift.Bool, isStarred: Swift.Bool, isRecalled: Swift.Bool, isDeleted: Swift.Bool, textModel: MirrorFlySDK.TextModel, groupUserSenderJid: Swift.String, messageStatus: Swift.Int, mentionedUsersIds: Swift.String)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct TextModel : Swift.Codable {
   public var text: Swift.String
   public init(text: Swift.String)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct MessageStatusList : Swift.Codable {
   public var id: Swift.String
@@ -1746,29 +1746,29 @@ public struct MessageStatusList : Swift.Codable {
   public var seenTime: Swift.String?
   public var broadcastMessageId: Swift.String?
   public init(id: Swift.String, jid: Swift.String)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct ContactChat : Swift.Codable {
   public var name: Swift.String
   public var numbers: [MirrorFlySDK.PhoneModel]?
   public init(name: Swift.String)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct PhoneModel : Swift.Codable {
   public var number: Swift.String
   public var activeStatus: Swift.String
   public init(number: Swift.String, activeStatus: Swift.String)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct LocationChat : Swift.Codable {
   public var latitude: Swift.Double
   public var longitude: Swift.Double
   public init(latitude: Swift.Double, longitude: Swift.Double)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct MediaChat : Swift.Codable {
   public var fileName: Swift.String
@@ -1781,8 +1781,8 @@ public struct MediaChat : Swift.Codable {
   public var fileKey: Swift.String?
   public var mediaCaptionText: Swift.String?
   public init(fileName: Swift.String)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct BackupRecentChat : Swift.Codable {
   public var jid: Swift.String
@@ -1792,8 +1792,8 @@ public struct BackupRecentChat : Swift.Codable {
   public var isMuted: Swift.Bool
   public var isPinned: Swift.Bool
   public init(jid: Swift.String, messageId: Swift.String, messageTime: Swift.String, isArchived: Swift.Bool, isMuted: Swift.Bool, isPinned: Swift.Bool)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public protocol VideoWidthHeightAdjuster {
   func getVideoHeightConstraint(usersCount: Swift.Int) -> Swift.Int
@@ -1801,7 +1801,7 @@ public protocol VideoWidthHeightAdjuster {
 }
 @objc @_inheritsConvenienceInitializers public class MediaManager : ObjectiveC.NSObject {
   public static let shared: MirrorFlySDK.MediaManager
-  public var flyMediaDelegate: (any MirrorFlySDK.FlyMediaDelegate)?
+  public var flyMediaDelegate: MirrorFlySDK.FlyMediaDelegate?
   @objc override dynamic public init()
   public func uploadFile(message: MirrorFlySDK.ChatMessage)
   public func cancelUploadTask(message: MirrorFlySDK.ChatMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool) -> Swift.Void)
@@ -1816,7 +1816,7 @@ public protocol VideoWidthHeightAdjuster {
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class WebLoginsManager : ObjectiveC.NSObject {
   public static let shared: MirrorFlySDK.WebLoginsManager
-  public var webLogoutDelegate: (any MirrorFlySDK.WebLogoutDelegate)?
+  public var webLogoutDelegate: MirrorFlySDK.WebLogoutDelegate?
   public func handleQrCodeData(qrCodeString: Swift.String, completionHandler: @escaping (_ isSuccess: Swift.Bool, _ message: Swift.String) -> Swift.Void)
   public func getSocketId(completionHandler: @escaping (_ isSuccess: Swift.Bool, _ message: Swift.String) -> Swift.Void)
   public func reset()
@@ -1920,8 +1920,8 @@ public struct FlyProfile : Swift.Codable {
   public var email: Swift.String
   public var thumbImage: Swift.String
   public init(jid: Swift.String)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 @objc @objcMembers public class ProfileDetails : ObjectiveC.NSObject, Swift.Codable {
   @objc public var jid: Swift.String!
@@ -1955,8 +1955,8 @@ public struct FlyProfile : Swift.Codable {
   public var contactType: MirrorFlySDK.ContactType
   @objc public init(jid: Swift.String)
   @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
 }
 public struct AudioDevice {
   public var name: Swift.String
@@ -2564,8 +2564,8 @@ extension MirrorFlySDK.FlyDefaults {
 }
 public struct LoginData : Swift.Codable {
   public init()
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
   public init(_ password: Swift.String, _ currentTimeStamp: Swift.Double)
 }
 public struct UserData {
@@ -2613,8 +2613,8 @@ public struct AvailableFeaturesModel : Swift.Codable {
   public var isViewAllMediasEnabled: Swift.Bool
   public var isChatHistoryEnabled: Swift.Bool
   public init()
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public enum NotificationSoundKeys : Swift.String {
   case name
@@ -3066,7 +3066,7 @@ extension MirrorFlySDK.FlyUtils {
 public protocol FlyCommonControllerDelegate : ObjectiveC.NSObjectProtocol {
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class FlyCommonController : ObjectiveC.NSObject {
-  public var delegate: (any MirrorFlySDK.FlyCommonControllerDelegate)?
+  public var delegate: MirrorFlySDK.FlyCommonControllerDelegate?
   public static let shared: MirrorFlySDK.FlyCommonController
   @objc deinit
 }
@@ -3080,8 +3080,8 @@ public struct SearchMessage : Swift.Codable {
   public init()
   public var chatUserJid: Swift.String
   public var messageId: Swift.String
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct UnsentMessage : Swift.Codable {
   public var textContent: Swift.String
@@ -3090,8 +3090,8 @@ public struct UnsentMessage : Swift.Codable {
   public var mentionLocation: [Swift.Int]
   public var mentionLength: [Swift.Int]
   public init()
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public protocol XMPPArchiveDelegate : ObjectiveC.NSObjectProtocol {
   func updateArchiveUnArchiveChats(toUser: Swift.String, archiveStatus: Swift.Bool)
@@ -3112,8 +3112,8 @@ public protocol WebLogoutDelegate {
   @objc public var groupItemId: Swift.String
   @objc public init(groupId: Swift.String)
   @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
 }
 @objcMembers public class ReplyParentChatMessage : Swift.Codable {
   @objc public var messageId: Swift.String
@@ -3133,8 +3133,8 @@ public protocol WebLogoutDelegate {
   public var isDeletedUser: Swift.Bool?
   @objc public init()
   @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
 }
 public struct ProfileStatus : Swift.Codable {
   public init()
@@ -3142,8 +3142,8 @@ public struct ProfileStatus : Swift.Codable {
   public var status: Swift.String!
   public var isCurrentStatus: Swift.Bool
   public init(statusText: Swift.String, isCurrentStatus: Swift.Bool)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct CallLog {
   public let callLogId: Swift.String
@@ -3192,7 +3192,7 @@ public enum MessageType : Swift.String, Swift.CustomStringConvertible, Swift.Cas
   }
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class ContactManager : ObjectiveC.NSObject {
-  public var profileDelegate: (any MirrorFlySDK.ProfileEventsDelegate)?
+  public var profileDelegate: MirrorFlySDK.ProfileEventsDelegate?
   public static let shared: MirrorFlySDK.ContactManager
   @objc deinit
 }
@@ -3348,7 +3348,7 @@ public struct ChatDataModel {
   @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
   public func setICEServersList(iceServers: [WebRTC.RTCIceServer]) -> MirrorFlySDK.CallSDK
   @available(*, deprecated, message: "Call CallManager.setCallEventsDelegate() to observe Call Events")
-  public func setCallDelegate(delegate: any MirrorFlySDK.CallManagerDelegate) -> MirrorFlySDK.CallSDK
+  public func setCallDelegate(delegate: MirrorFlySDK.CallManagerDelegate) -> MirrorFlySDK.CallSDK
   @objc @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
   public func buildAndInitialize() throws
   @objc deinit
@@ -3394,8 +3394,8 @@ public protocol XMPPProfileDelegate : ObjectiveC.NSObjectProtocol {
   @objc public var profileDetail: MirrorFlySDK.ProfileDetails?
   @objc public init(groupMemberId: Swift.String)
   @objc deinit
-  public func encode(to encoder: any Swift.Encoder) throws
-  required public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
 }
 public struct MessageDetail : Swift.Codable {
   public var mid: Swift.String?
@@ -3408,8 +3408,8 @@ public struct MessageDetail : Swift.Codable {
   public var contact: MirrorFlySDK.ContactModel?
   public var media: MirrorFlySDK.Media?
   public init()
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public struct ContactModel : Swift.Codable {
   public var mid: Swift.String?
@@ -3417,16 +3417,16 @@ public struct ContactModel : Swift.Codable {
   public var phone_number: [Swift.String]
   public var active_status: [Swift.String]
   public init(mid: Swift.String, name: Swift.String?, phone_number: [Swift.String], active_status: [Swift.String])
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public struct Location : Swift.Codable {
   public var mid: Swift.String?
   public var latitude: Swift.Double
   public var longitude: Swift.Double
   public init(mid: Swift.String, latitude: Swift.Double, longitude: Swift.Double)
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 public struct Media : Swift.Codable {
   public var mid: Swift.String?
@@ -3449,8 +3449,8 @@ public struct Media : Swift.Codable {
   public var androidHeight: Swift.Int?
   public var audioType: Swift.String?
   public init(mid: Swift.String, duration: Swift.Int32, file_size: Swift.Int32, file_key: Swift.String, file_type: Swift.String, file_url: Swift.String, thumb_image: Swift.String, caption: Swift.String, fileName: Swift.String, local_path: Swift.String, mediaDownloadStatus: Swift.Int, mediaUploadStatus: Swift.Int, progressStatus: Swift.Int, is_uploading: Swift.Int, is_downloaded: Swift.Int, webWidth: Swift.Int, webHeight: Swift.Int, androidWidth: Swift.Int, androidHeight: Swift.Int, audioType: Swift.String)
-  public init(from decoder: any Swift.Decoder) throws
-  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
 }
 @objc public enum MessageStatus : Swift.Int, Swift.CustomStringConvertible, Swift.Codable {
   case notAcknowledged = 0
