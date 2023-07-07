@@ -1377,7 +1377,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future getRecentChatListHistory({required int pageNo}) {
+  Future getRecentChatListHistory({required bool firstSet,int limit=15}) {
     // implement getRecentChatListHistory
     throw UnimplementedError();
   }

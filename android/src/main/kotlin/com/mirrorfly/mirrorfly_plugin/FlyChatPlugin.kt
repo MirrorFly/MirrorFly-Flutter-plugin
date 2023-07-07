@@ -149,8 +149,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private lateinit var mContext: Context
-    private val recentChatListParams = RecentChatListParams().apply { limit = 15 }
-    private var recentChatListBuilder: RecentChatListBuilder? = null
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         mContext = flutterPluginBinding.applicationContext
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, mirrorflyMethodChannel)
@@ -2659,30 +2657,31 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     private suspend fun getRecentChatListHistory(call: MethodCall, result: MethodChannel.Result){
 
-        val pageNo = call.argument("pageNo") ?: 1
-        Log.e("chat history page no", pageNo.toString());
+        val firstSet = call.argument<Boolean>("firstSet") ?: true
+        val limit = call.argument("limit") ?: 15
+        LogMessage.d("chat history firstSet", firstSet.toString());
 
-        if(recentChatListBuilder == null){
-            recentChatListBuilder = RecentChatListBuilder(recentChatListParams)
-        }
-        if(pageNo == 1) {
-            Log.e("chat history ", "first page")
-            recentChatListBuilder!!.loadRecentChatList { isSuccess, throwable, data ->
+        val recentChatListParams = RecentChatListParams()
+        recentChatListParams.limit=limit
+        val recentChatListBuilder = RecentChatListBuilder(recentChatListParams)
+        if(firstSet) {
+            LogMessage.d("chat history ", "first page")
+            recentChatListBuilder.loadRecentChatList { isSuccess, throwable, data ->
                 if (isSuccess) {
                 val recentChatList = data["data"] as ArrayList<RecentChat>
-                    Log.e("chat history item count", recentChatList.size.toString())
-                    result.success(Gson().toJson(data).toString())
+                    LogMessage.d("chat history item count", recentChatList.size.toString())
+                    result.success(data.toJsonString())
                 } else {
                     result.error("500", throwable!!.message, null)
                 }
 
             }
         }else{
-            Log.e("chat history next set data", pageNo.toString())
-            recentChatListBuilder!!.nextSetOfData { isSuccess, throwable, data ->
+            LogMessage.d("chat history next set data", "firstSet $firstSet")
+            recentChatListBuilder.nextSetOfData { isSuccess, throwable, data ->
                 if (isSuccess) {
 //                    val recentChatList = data["data"] as ArrayList<RecentChat>
-                    result.success(Gson().toJson(data).toString())
+                    result.success(data.toJsonString())
                 } else {
                     // Fetch recent chat list failed print throwable to find the exception details.
                     result.error("500", throwable!!.message, null)

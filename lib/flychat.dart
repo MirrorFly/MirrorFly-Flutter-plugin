@@ -612,12 +612,20 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.sentFileMessage(file, jid);
   }
 
+  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  ///used to get Recent chat list from the Local DB
+  ///use this method when Chat History not enabled
   static Future<dynamic> getRecentChatList() {
     return FlyChatFlutterPlatform.instance.getRecentChatList();
   }
 
-  static Future<dynamic> getRecentChatListHistory({required int pageNo}) {
-    return FlyChatFlutterPlatform.instance.getRecentChatListHistory(pageNo: pageNo);
+  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  /// * @property firstSet indicates the initial data otherwise next set of data
+  /// * @property limit set the limit of the chat list, default value 15
+  /// * if ChatHistoryEnabled in init then synced from the server
+  /// used to get Recent chat List from DB
+  static Future<dynamic> getRecentChatListHistory({required bool firstSet,int limit=15}) {
+    return FlyChatFlutterPlatform.instance.getRecentChatListHistory(firstSet: firstSet,limit: limit);
   }
 
   static Future<dynamic> getProfileStatusList() {
