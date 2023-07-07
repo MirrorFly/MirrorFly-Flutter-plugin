@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 
 import 'builder.dart';
 
 /// An implementation of [UikitFlutterPlatform] that uses method channels.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
-  /// The method channel used to interact with the native platform.
   @visibleForTesting
   final mirrorFlyMethodChannel =
       const MethodChannel('contus.mirrorfly/flyChat');
@@ -190,9 +190,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     await mirrorFlyMethodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }*/
+  static bool enableDebugLog = false;
 
   @override
   init(ChatBuilder builder) async {
+    enableDebugLog = builder.enableDebugLog;
     await mirrorFlyMethodChannel.invokeMethod('init', builder.build());
   }
 
@@ -202,13 +204,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<bool>('syncContacts', {"is_first_time": isfirsttime});
-      debugPrint('syncContacts $res');
+      LogMessage.d("syncContacts", res);
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -218,13 +220,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<String>('sendData');
-      debugPrint("sendData Result ==> $response");
+      LogMessage.d("sendData Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -236,13 +238,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       response = await mirrorFlyMethodChannel
               .invokeMethod<bool>('contactSyncStateValue') ??
           false;
-      debugPrint("contactSyncStateValue Result ==> $response");
+      LogMessage.d("contactSyncStateValue Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -252,13 +254,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('contactSyncState');
-      debugPrint("contactSyncState Result ==> $response");
+      LogMessage.d("contactSyncState Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -268,13 +270,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('revokeContactSync');
-      debugPrint("revokeContactSync Result ==> $response");
+      LogMessage.d("revokeContactSync Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -285,13 +287,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('getUsersWhoBlockedMe', {"server": server});
-      debugPrint("getUsersWhoBlockedMe Result ==> $response");
+      LogMessage.d("getUsersWhoBlockedMe Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -302,13 +304,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response =
           await mirrorFlyMethodChannel.invokeMethod('getUnKnownUserProfiles');
-      debugPrint("getUnKnownUserProfiles Result ==> $response");
+      LogMessage.d("getUnKnownUserProfiles Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -319,13 +321,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response =
           await mirrorFlyMethodChannel.invokeMethod('getMyProfileStatus');
-      debugPrint("getMyProfileStatus Result ==> $response");
+      LogMessage.d("getMyProfileStatus Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -335,13 +337,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getMyBusyStatus');
-      debugPrint("getMyBusyStatus Result ==> $response");
+      LogMessage.d("getMyBusyStatus Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -351,13 +353,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getBusyStatusList');
-      debugPrint("getBusyStatusList Result ==> $response");
+      LogMessage.d("getBusyStatusList Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -368,13 +370,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('getRecalledMessagesOfAConversation', {"jid": jid});
-      debugPrint("getRecalledMessagesOfAConversation Result ==> $response");
+      LogMessage.d("getRecalledMessagesOfAConversation Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -387,10 +389,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('setMyBusyStatus', {"status": busyStatus});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -403,10 +405,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('insertBusyStatus', {"busy_status": busyStatus});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -419,10 +421,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('enableDisableBusyStatus', {"enable": enable});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -435,10 +437,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('enableDisableHideLastSeen', {"enable": enable});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -449,13 +451,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<bool>('isBusyStatusEnabled');
-      debugPrint("isBusyStatusEnabled--> $res");
+      LogMessage.d("isBusyStatusEnabled"," $res");
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception"," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -473,10 +475,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       });
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -494,10 +496,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       });
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -508,13 +510,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response =
           await mirrorFlyMethodChannel.invokeMethod<String>('media_endpoint');
-      debugPrint("media_endpoint Result ==> $response");
+      LogMessage.d("media_endpoint Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -527,10 +529,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('unFavouriteAllFavouriteMessages');
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -543,10 +545,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('markAsRead', {"jid": jid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -559,10 +561,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('uploadMedia', {"messageid": messageid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -575,10 +577,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'deleteUnreadMessageSeparatorOfAConversation', {"jid": jid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -591,10 +593,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<int>('getMembersCountOfGroup', {"groupJid": groupJid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -608,10 +610,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'doesFetchingMembersListFromServedRequired', {"groupJid": groupJid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -624,10 +626,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('isHideLastSeenEnabled');
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -638,10 +640,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('deleteOfflineGroup', {"groupJid": groupJid});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -652,10 +654,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel.invokeMethod(
           'sendTypingStatus', {"to_jid": toJid, "chattype": chattype});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -666,10 +668,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel.invokeMethod(
           'sendTypingGoneStatus', {"to_jid": toJid, "chattype": chattype});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -680,10 +682,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel.invokeMethod(
           'updateChatMuteStatus', {"jid": jid, "mute_status": muteStatus});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -694,10 +696,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel.invokeMethod('updateRecentChatPinStatus',
           {"jid": jid, "pin_recent_chat": pinStatus});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -710,10 +712,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod('deleteRecentChat', {"jid": jid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -723,10 +725,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod('setTypingStatusListener');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -737,13 +739,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<bool>('isUserUnArchived', {"jid": jid});
-      debugPrint("isUserUnArchived==>$res");
+      LogMessage.d("isUserUnArchived","$res");
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -756,10 +758,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('getIsProfileBlockedByAdmin');
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -772,10 +774,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('deleteRecentChats', {"jidlist": jidlist});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -786,10 +788,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('markConversationAsRead', {"jidlist": jidlist});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -800,10 +802,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('markConversationAsUnread', {"jidlist": jidlist});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -813,10 +815,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod('getArchivedChatsFromServer');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -827,10 +829,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel.invokeMethod('setCustomValue',
           {"message_id": messageId, "key": key, "value": value});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -841,10 +843,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel.invokeMethod(
           'removeCustomValue', {"message_id": messageId, "key": key});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -855,10 +857,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel.invokeMethod(
           'inviteUserViaSMS', {"mobile_no": mobileNo, "message": message});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -868,10 +870,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod('cancelBackup');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -881,10 +883,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod('startBackup');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -894,10 +896,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod('cancelRestore');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -907,10 +909,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod('clearAllSDKData');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -920,10 +922,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod('getRoster');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -936,10 +938,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'getCustomValue', {"message_id": messageId, "key": key});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -952,10 +954,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('clearAllConversation');
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -968,10 +970,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('updateFcmToken', {"token": firebasetoken});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -984,10 +986,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('isMuted', {"jid": jid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1000,10 +1002,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'handleReceivedMessage', {"notificationdata": notificationdata});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1016,10 +1018,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'getLastNUnreadMessages', {"messagecount": messagesCount});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1032,10 +1034,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'getNUnreadMessagesOfEachUsers', {"messagecount": messagesCount});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1048,10 +1050,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('isArchivedSettingsEnabled');
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1064,10 +1066,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'enableDisableArchivedSettings', {"enable": enable});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1080,10 +1082,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'updateArchiveUnArchiveChat', {"jid": jid, "isArchived": isArchived});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1096,10 +1098,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'getGroupMessageStatusCount', {"messageid": messageid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1112,10 +1114,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<int>('getUnreadMessageCountExceptMutedChat');
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1128,10 +1130,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<int>('getGroupMessageStatusCount');
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1144,10 +1146,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<int>('getUnreadMessagesCount');
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1160,10 +1162,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<String>('getUnsentMessageOfAJid', {"jid": jid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1176,10 +1178,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'getUsersListToAddMembersInOldGroup', {"groupJid": groupJid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1192,10 +1194,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod('prepareChatConversationToExport', {"jid": jid});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1207,10 +1209,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       res = await mirrorFlyMethodChannel.invokeMethod('getArchivedChatList');
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1223,10 +1225,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod('getMessageActions', {"messageidlist": messageidlist});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1239,10 +1241,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod('getUsersListToAddMembersInNewGroup');
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1255,10 +1257,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'createOfflineGroupInOnline', {"groupId": groupId});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1271,10 +1273,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'getGroupProfile', {"groupJid": groupJid, "server": server});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1290,10 +1292,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "dataTransferred": dataTransferred
       });
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1309,10 +1311,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "dataTransferred": dataTransferred
       });
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1320,14 +1322,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   cancelMediaUploadOrDownload(String messageId) async {
     try {
-      debugPrint("cancelMediaUploadOrDownload--> $messageId");
+      LogMessage.d("cancelMediaUploadOrDownload",messageId);
       await mirrorFlyMethodChannel.invokeMethod(
           'cancelMediaUploadOrDownload', {"messageId": messageId});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1338,10 +1340,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('setMediaEncryption', {"encryption": encryption});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception "," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1351,10 +1353,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod('deleteAllMessages');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception "," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1365,13 +1367,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<String>('getGroupJid', {"jid": jid});
-      debugPrint("getGroupJid Result ==> $response");
+      LogMessage.d("getGroupJid Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1382,13 +1384,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<String>('getUserLastSeenTime', {"jid": jid});
-      debugPrint("getUserLastSeenTime Result ==> $response");
+      LogMessage.d("getUserLastSeenTime Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1399,14 +1401,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       registerResponse =
           await mirrorFlyMethodChannel.invokeMethod<String>('authtoken');
-      debugPrint("authToken Result ==> $registerResponse");
+      LogMessage.d("authToken Result "," $registerResponse");
 
       return registerResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1418,13 +1420,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       registerResponse = await mirrorFlyMethodChannel.invokeMethod(
           'register_user', {"userIdentifier": userIdentifier, "token": token});
-      debugPrint("Register Result ==> $registerResponse");
+      LogMessage.d("Register Result "," $registerResponse");
       return registerResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1435,13 +1437,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<String>(
           'verifyToken', {"userName": userName, "googleToken": token});
-      debugPrint("verifyToken Result ==> $response");
+      LogMessage.d("verifyToken Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1453,13 +1455,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       userJID = await mirrorFlyMethodChannel
           .invokeMethod<String?>('get_jid', {"username": username});
-      debugPrint("User JID Result ==> $userJID");
+      LogMessage.d("User JID Result "," $userJID");
       return userJID ?? '';
     } on PlatformException catch (e) {
-      debugPrint("Flutter Exception ===> $e");
+      LogMessage.d("Flutter Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Flutter Exception ==> $error");
+      LogMessage.d("Flutter Exception "," $error");
       rethrow;
     }
   }
@@ -1471,13 +1473,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('send_text_msg',
           {"message": message, "JID": jid, "replyMessageId": replyMessageId});
-      debugPrint("Text Message Result ==> $messageResp");
+      LogMessage.d("Text Message Result "," $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
-      debugPrint("Flutter Exception ===> $e");
+      LogMessage.d("Flutter Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Flutter Exception ==> $error");
+      LogMessage.d("Flutter Exception "," $error");
       rethrow;
     }
   }
@@ -1495,13 +1497,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "longitude": longitude,
         "replyMessageId": replyMessageId
       });
-      debugPrint("Location Message Result ==> $messageResp");
+      LogMessage.d("Location Message Result "," $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
-      debugPrint("Flutter Exception ===> $e");
+      LogMessage.d("Flutter Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Flutter Exception ==> $error");
+      LogMessage.d("Flutter Exception "," $error");
       rethrow;
     }
   }
@@ -1520,13 +1522,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "replyMessageId": replyMessageID,
         "imageFileUrl": imageFileUrl
       });
-      debugPrint("Image Message Result ==> $messageResp");
+      LogMessage.d("Image Message Result "," $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
-      debugPrint("Image Message Exception ===> $e");
+      LogMessage.d("Image Message Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Image Message Exception ==> $error");
+      LogMessage.d("Image Message Exception "," $error");
       rethrow;
     }
   }
@@ -1553,13 +1555,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "videoDuration": videoDuration,
         "thumbImageBase64": thumbImageBase64
       });
-      debugPrint("Video Message Result ==> $messageResp");
+      LogMessage.d("Video Message Result "," $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
-      debugPrint("Video Message Exception ===> $e");
+      LogMessage.d("Video Message Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Video Message Exception ==> $error");
+      LogMessage.d("Video Message Exception "," $error");
       rethrow;
     }
   }
@@ -1571,13 +1573,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       messageResp = await mirrorFlyMethodChannel
           .invokeMethod('getRegisteredUsers', {'server': server});
-      debugPrint("User list Result ==> $messageResp");
+      LogMessage.d("User list Result "," $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
-      debugPrint("User list Exception ===> $e");
+      LogMessage.d("User list Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("User list Exception ==> $error");
+      LogMessage.d("User list Exception "," $error");
       rethrow;
     }
   }
@@ -1592,10 +1594,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "search": search,
         "perPageResultSize": perPageResultSize
       });
-      debugPrint('RESULT ==> $re');
+      LogMessage.d('RESULT ','$re');
       return re;
     } on PlatformException catch (e) {
-      debugPrint("er $e");
+      LogMessage.d("er","$e");
       return re;
     }
   }
@@ -1830,10 +1832,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       final result = await mirrorFlyMethodChannel
           .invokeMethod<String>("get_image_path", {"image": imgurl});
-      debugPrint('RESULT ==> $result');
+      LogMessage.d('RESULT ','$result');
       return result;
     } on PlatformException catch (e) {
-      debugPrint("er $e");
+      LogMessage.d("er","$e");
       return re;
     }
   }
@@ -1846,10 +1848,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "name": name,
         "email": email,
       });
-      debugPrint('RESULT $result');
+      LogMessage.d('RESULT','$result');
       return result;
     } on PlatformException catch (e) {
-      debugPrint("er $e");
+      LogMessage.d("er ","$e");
       return result;
     }
   }
@@ -1860,10 +1862,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       final result = await mirrorFlyMethodChannel
           .invokeMethod("sent file", {"file": file, "jid": jid, "message": ""});
-      debugPrint('RESULT $result');
+      LogMessage.d('RESULT','$result');
       return result;
     } on PlatformException catch (e) {
-      debugPrint("er $e");
+      LogMessage.d("er","$e");
       return re;
     }
   }
@@ -1875,13 +1877,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       recentResponse =
           await mirrorFlyMethodChannel.invokeMethod('getRecentChatList');
-      debugPrint("recent Result ==> $recentResponse");
+      LogMessage.d("recent Result "," $recentResponse");
       return recentResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1912,13 +1914,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       statusResponse =
           await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList');
-      debugPrint("statuslist $statusResponse");
+      LogMessage.d("getProfileStatusList","$statusResponse");
       return statusResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1929,10 +1931,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('insertDefaultStatus', {"status": status});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -1980,7 +1982,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         }
       });
     } on Exception catch(er){
-      debugPrint("Exception ==> $er");
+      LogMessage.d("Exception "," $er");
     }
   }*/
 
@@ -1998,13 +2000,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "status": status,
         "image": image
       });
-      debugPrint("updateMyProfile Result ==> $profileResponse");
+      LogMessage.d("updateMyProfile Result "," $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2018,14 +2020,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod(
           'getUserProfile',
           {"jid": jid, "server": fromserver, "saveasfriend": saveasfriend});
-      debugPrint("getUserProfile Result ==> $profileResponse");
+      LogMessage.d("getUserProfile Result "," $profileResponse");
       //insertDefaultStatusToUser();
       return profileResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2036,13 +2038,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod(
           'getProfileDetails', {"jid": jid});
-      debugPrint("getProfileDetails Result ==> $profileResponse");
+      LogMessage.d("getProfileDetails Result "," $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2053,13 +2055,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       profileResponse = await mirrorFlyMethodChannel
           .invokeMethod('getUserProfile', {"jid": jid, "server": server});
-      debugPrint("getProfileLocal Result ==> $profileResponse");
+      LogMessage.d("getProfileLocal Result "," $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2071,13 +2073,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod(
           'setMyProfileStatus', {"status": status, "statusId": statusId});
-      debugPrint("setMyProfileStatus Result ==> $profileResponse");
+      LogMessage.d("setMyProfileStatus Result "," $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2088,13 +2090,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       profileResponse = await mirrorFlyMethodChannel
           .invokeMethod('insertNewProfileStatus', {"status": status});
-      debugPrint("insertNewProfileStatus Result ==> $profileResponse");
+      LogMessage.d("insertNewProfileStatus Result "," $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2106,13 +2108,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       profileResponse = await mirrorFlyMethodChannel
           .invokeMethod('updateMyProfileImage', {"image": image});
-      debugPrint("updateMyProfileImage Result ==> $profileResponse");
+      LogMessage.d("updateMyProfileImage Result "," $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2123,13 +2125,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       profileResponse =
           await mirrorFlyMethodChannel.invokeMethod<bool>('removeProfileImage');
-      debugPrint("removeProfileImage Result ==> $profileResponse");
+      LogMessage.d("removeProfileImage Result "," $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -2140,13 +2142,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<bool>('removeGroupProfileImage', {"jid": jid});
-      debugPrint("grp_image Result ==> $response");
+      LogMessage.d("grp_image Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -2157,13 +2159,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       tokenResponse =
           await mirrorFlyMethodChannel.invokeMethod<bool>('refreshAuthToken');
-      debugPrint("refreshAuthToken Result ==> $tokenResponse");
+      LogMessage.d("refreshAuthToken Result "," $tokenResponse");
       return tokenResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -2175,15 +2177,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       chatResponse = await mirrorFlyMethodChannel
           .invokeMethod('getMessagesOfJid', {"JID": jid});
-      debugPrint("user Chat Result ==> $chatResponse");
+      LogMessage.d("user Chat Result "," $chatResponse");
       // List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(chatResponse);
       // return chatMessageModel;
       return chatResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2196,13 +2198,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic chatListenerResponse;
     try {
       chatListenerResponse = await mirrorFlyMethodChannel.invokeMethod('chat_listener');
-      debugPrint("chatListenerResponse ==> $chatListenerResponse");
+      LogMessage.d("chatListenerResponse "," $chatListenerResponse");
       return chatListenerResponse;
     }on PlatformException catch (e){
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch(error){
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2212,13 +2214,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic chatListenerResponse;
     try {
       chatListenerResponse = await mirrorFlyMethodChannel.invokeMethod('groupchat_listener');
-      debugPrint("groupchatListenerResponse ==> $chatListenerResponse");
+      LogMessage.d("groupchatListenerResponse "," $chatListenerResponse");
       return chatListenerResponse;
     }on PlatformException catch (e){
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch(error){
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }*/
@@ -2230,13 +2232,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   //   dynamic media;
   //   try {//
   //     media = await mirrorFlyMethodChannel.invokeMethod('get_media',{ "message_id" : mid });
-  //     // debugPrint("mediaResponse ==> $media");
+  //     // LogMessage.d("mediaResponse "," $media");
   //     return media;
   //   }on PlatformException catch (e){
-  //     debugPrint("Platform Exception ===> $e");
+  //     LogMessage.d("Platform Exception ="," $e");
   //     rethrow;
   //   } on Exception catch(error){
-  //     debugPrint("Exception ==> $error");
+  //     LogMessage.d("Exception "," $error");
   //     rethrow;
   //   }
   // }
@@ -2249,13 +2251,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       readReceiptResponse = await mirrorFlyMethodChannel
           .invokeMethod('markAsReadDeleteUnreadSeparator', {"jid": jid});
-      // debugPrint("mediaResponse ==> $readReceiptResponse");
+      // LogMessage.d("mediaResponse "," $readReceiptResponse");
       return readReceiptResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2272,13 +2274,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "contact_name": contactName,
         "replyMessageId": replyMessageId
       });
-      // debugPrint("mediaResponse ==> $readReceiptResponse");
+      // LogMessage.d("mediaResponse "," $readReceiptResponse");
       return contactResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2290,13 +2292,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       logoutResponse =
           await mirrorFlyMethodChannel.invokeMethod('logoutOfChatSDK');
-      debugPrint("logoutResponse ==> $logoutResponse");
+      LogMessage.d("logoutResponse "," $logoutResponse");
       return logoutResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2308,10 +2310,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('setOnGoingChatUser', {"jid": jid});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2323,10 +2325,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('downloadMedia', {"mediaMessage_id": mid});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2344,13 +2346,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "replyMessageId": replyMessageId,
         "file_url": fileUrl
       });
-      debugPrint("documentResponse ==> $documentResponse");
+      LogMessage.d("documentResponse "," $documentResponse");
       return documentResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2361,13 +2363,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       documentResponse = await mirrorFlyMethodChannel
           .invokeMethod('open_file', {"filePath": filePath});
-      debugPrint("documentResponse ==> $documentResponse");
+      LogMessage.d("documentResponse "," $documentResponse");
       return documentResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2388,13 +2390,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "replyMessageId": replyMessageId,
         "audiofileUrl": audiofileUrl
       });
-      debugPrint("audioResponse ==> $audioResponse");
+      LogMessage.d("audioResponse "," $audioResponse");
       return audioResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2408,13 +2410,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('getRecentChatListIncludingArchived');
-      debugPrint("getRecentChatListIncludingArchived ==> $response");
+      LogMessage.d("getRecentChatListIncludingArchived "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2431,13 +2433,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "jidForSearch": jidForSearch,
         "globalSearch": globalSearch
       });
-      debugPrint("searchConversation ==> $response");
+      LogMessage.d("searchConversation "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2449,13 +2451,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('getRegisteredUsers', {"server": server});
-      debugPrint("getRegisteredUsers $server ==> $response");
+      LogMessage.d("getRegisteredUsers $server "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2466,13 +2468,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('getMessageOfId', {"mid": mid});
-      // debugPrint("response ==> $response");
+      // LogMessage.d("response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2483,13 +2485,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('getRecentChatOf', {"jid": jid});
-      debugPrint("getRecentChatOf response ==> $response");
+      LogMessage.d("getRecentChatOf response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2505,13 +2507,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "chat_type": chatType,
         "clear_except_starred": clearExceptStarred
       });
-      debugPrint("clear chat Response ==> $clearChatResponse");
+      LogMessage.d("clear chat Response "," $clearChatResponse");
       return clearChatResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2523,13 +2525,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic reportResponse;
     try {
       reportResponse = await mirrorFlyMethodChannel.invokeMethod('report_chat',{ "jid" : jid, "chat_type" : chatType, "selectedMessageID" : messageId});
-      debugPrint("clear chat Response ==> $reportResponse");
+      LogMessage.d("clear chat Response "," $reportResponse");
       return reportResponse;
     }on PlatformException catch (e){
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch(error){
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }*/
@@ -2540,13 +2542,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       messageListResponse = await mirrorFlyMethodChannel
           .invokeMethod('getMessagesUsingIds', {"MessageIds": messageIds});
-      debugPrint("getMessagesUsingIds Response ==> $messageListResponse");
+      LogMessage.d("getMessagesUsingIds Response "," $messageListResponse");
       return messageListResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2565,13 +2567,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "isMediaDelete": isMediaDelete,
         "message_ids": messageIds
       });
-      debugPrint("deleteMessagesForMe Response ==> $messageDeleteResponse");
+      LogMessage.d("deleteMessagesForMe Response "," $messageDeleteResponse");
       return messageDeleteResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2588,14 +2590,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "isMediaDelete": isMediaDelete,
         "message_ids": messageIds
       });
-      debugPrint(
-          "deleteMessagesForEveryone Response ==> $messageDeleteResponse");
+      LogMessage.d(
+          "deleteMessagesForEveryone Response "," $messageDeleteResponse");
       return messageDeleteResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2612,13 +2614,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "message_ids": messageIds,
         "is_delete_for_everyone": isDeleteForEveryOne
       });
-      debugPrint("Message Delete Response ==> $messageDeleteResponse");
+      LogMessage.d("Message Delete Response "," $messageDeleteResponse");
       return messageDeleteResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2631,14 +2633,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod(
           'getGroupMessageDeliveredToList',
           {"messageId": messageId, "jid": jid});
-      debugPrint(
-          "getGroupMessageDeliveredToList Response ==> $messageDeleteResponse");
+      LogMessage.d(
+          "getGroupMessageDeliveredToList Response "," $messageDeleteResponse");
       return messageDeleteResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2650,14 +2652,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod(
           'getGroupMessageReadByList', {"messageId": messageId, "jid": jid});
-      debugPrint(
-          "getGroupMessageReadByList Response ==> $messageDeleteResponse");
+      LogMessage.d(
+          "getGroupMessageReadByList Response "," $messageDeleteResponse");
       return messageDeleteResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2669,13 +2671,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       messageInfoResponse = await mirrorFlyMethodChannel.invokeMethod(
           'getMessageStatusOfASingleChatMessage', {"messageID": messageID});
-      debugPrint("Message Info Response ==> $messageInfoResponse");
+      LogMessage.d("Message Info Response "," $messageInfoResponse");
       return messageInfoResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2686,13 +2688,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       userBlockResponse = await mirrorFlyMethodChannel
           .invokeMethod('block_user', {"userJID": userJID});
-      debugPrint("Blocked Response ==> $userBlockResponse");
+      LogMessage.d("Blocked Response "," $userBlockResponse");
       return userBlockResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2704,13 +2706,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       userBlockResponse = await mirrorFlyMethodChannel
           .invokeMethod<bool>('un_block_user', {"userJID": userJID});
-      debugPrint("Un-Blocked Response ==> $userBlockResponse");
+      LogMessage.d("Un-Blocked Response "," $userBlockResponse");
       return userBlockResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2721,13 +2723,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response =
           await mirrorFlyMethodChannel.invokeMethod<String>('showCustomTones');
-      debugPrint("showCustomTones Response ==> $response");
+      LogMessage.d("showCustomTones Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2738,13 +2740,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response =
           await mirrorFlyMethodChannel.invokeMethod<String>('getRingtoneName');
-      debugPrint("getRingtoneName Response ==> $response");
+      LogMessage.d("getRingtoneName Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2755,13 +2757,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<bool>('loginWebChatViaQRCode', {"barcode": barcode});
-      debugPrint("loginWebChatViaQRCode Response ==> $response");
+      LogMessage.d("loginWebChatViaQRCode Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2772,13 +2774,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<bool>('webLoginDetailsCleared');
-      debugPrint("webLoginDetailsCleared Response ==> $response");
+      LogMessage.d("webLoginDetailsCleared Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2789,13 +2791,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<bool>('logoutWebUser', {"listWebLogin": logins});
-      debugPrint("logoutWebUser Response ==> $response");
+      LogMessage.d("logoutWebUser Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2806,13 +2808,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<bool>('iOSFileExist', {"file_path": filePath});
-      debugPrint("iOSFileExist Response ==> $response");
+      LogMessage.d("iOSFileExist Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2823,13 +2825,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response =
           await mirrorFlyMethodChannel.invokeMethod('getWebLoginDetails');
-      debugPrint("getWebLoginDetails Response ==> $response");
+      LogMessage.d("getWebLoginDetails Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2847,13 +2849,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "isFavourite": isFavourite,
         "chatType": chatType,
       });
-      debugPrint("Favourite Msg Response ==> $favResponse");
+      LogMessage.d("Favourite Msg Response "," $favResponse");
       return favResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2867,13 +2869,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod(
           'forwardMessagesToMultipleUsers',
           {"message_ids": messageIds, "userList": userList});
-      debugPrint("Forward Msg Response ==> $forwardMessageResponse");
+      LogMessage.d("Forward Msg Response "," $forwardMessageResponse");
       return forwardMessageResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2887,13 +2889,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod(
           'forwardMessages',
           {"message_ids": messageIds, "to_jid": tojid, "chat_type": chattype});
-      debugPrint("forwardMessages Response ==> $forwardMessageResponse");
+      LogMessage.d("forwardMessages Response "," $forwardMessageResponse");
       return forwardMessageResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2908,13 +2910,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "members": userJidList,
         "file": imageFilePath,
       });
-      debugPrint("create group Response ==> $response");
+      LogMessage.d("create group Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2925,13 +2927,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>(
           'addUsersToGroup', {"jid": jid, "members": userList});
-      debugPrint("addUsersToGroup Response ==> $response");
+      LogMessage.d("addUsersToGroup Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2946,13 +2948,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "jid": jid,
         "server": server,
       });
-      debugPrint("getGroupMembersList Response ==> $response");
+      LogMessage.d("getGroupMembersList Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2964,13 +2966,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       response = await mirrorFlyMethodChannel.invokeMethod('getUsersIBlocked', {
         "serverCall": server,
       });
-      debugPrint("getUsersIBlocked Response ==> $response");
+      LogMessage.d("getUsersIBlocked Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -2982,13 +2984,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       response = await mirrorFlyMethodChannel.invokeMethod('getMediaMessages', {
         "jid": jid,
       });
-      debugPrint("getMediaMessages Response ==> $response");
+      LogMessage.d("getMediaMessages Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3000,13 +3002,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       response = await mirrorFlyMethodChannel.invokeMethod('getDocsMessages', {
         "jid": jid,
       });
-      debugPrint("getDocsMessages Response ==> $response");
+      LogMessage.d("getDocsMessages Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3018,13 +3020,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       response = await mirrorFlyMethodChannel.invokeMethod('getLinkMessages', {
         "jid": jid,
       });
-      debugPrint("getLinkMessages Response ==> $response");
+      LogMessage.d("getLinkMessages Response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3035,13 +3037,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod('exportChatConversationToEmail', {"jid": jid});
-      debugPrint("exportChatConversationToEmail Response ==> $res");
+      LogMessage.d("exportChatConversationToEmail Response "," $res");
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3054,13 +3056,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>(
           'reportUserOrMessages',
           {"jid": jid, "chat_type": type, "selectedMessageID": messageId});
-      debugPrint("report Result ==> $response");
+      LogMessage.d("report Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -3071,13 +3073,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>(
           'makeAdmin', {"jid": groupjid, "userjid": userjid});
-      debugPrint("report Result ==> $response");
+      LogMessage.d("report Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -3088,13 +3090,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>(
           'removeMemberFromGroup', {"jid": groupjid, "userjid": userjid});
-      debugPrint("report Result ==> $response");
+      LogMessage.d("report Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -3105,13 +3107,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>(
           'leaveFromGroup', {"userJid": userJid, "groupJid": groupJid});
-      debugPrint("leaveFromGroup Result ==> $response");
+      LogMessage.d("leaveFromGroup Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -3122,13 +3124,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<bool>('deleteGroup', {"jid": jid});
-      debugPrint("deleteGroup Result ==> $response");
+      LogMessage.d("deleteGroup Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -3139,13 +3141,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>(
           'isAdmin', {"jid": userJid, "group_jid": groupJID});
-      debugPrint("isAdmin Result ==> $response");
+      LogMessage.d("isAdmin Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -3156,13 +3158,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>(
           'updateGroupProfileImage', {"jid": jid, "file": file});
-      debugPrint("updateGroupProfileImage Result ==> $response");
+      LogMessage.d("updateGroupProfileImage Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -3173,13 +3175,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<bool>('updateGroupName', {"jid": jid, "name": name});
-      debugPrint("updateGroupName Result ==> $response");
+      LogMessage.d("updateGroupName Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -3190,13 +3192,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>(
           'isMemberOfGroup', {"jid": jid, "userjid": userJid});
-      debugPrint("isMemberOfGroup Result ==> $response");
+      LogMessage.d("isMemberOfGroup Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -3207,13 +3209,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>(
           'sendContactUsInfo', {"title": title, "description": description});
-      debugPrint("sendContactUsInfo Result ==> $response");
+      LogMessage.d("sendContactUsInfo Result "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       return false;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       return false;
     }
   }
@@ -3224,10 +3226,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('copyTextMessages', {"messageidlist": messageIds});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3238,10 +3240,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel.invokeMethod(
           'saveUnsentMessage', {"jid": jid, "texMessage": message});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3254,10 +3256,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           {"delete_reason": reason, "delete_feedback": feedback});
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3268,13 +3270,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       favResponse =
           await mirrorFlyMethodChannel.invokeMethod('get_favourite_messages');
-      debugPrint("fav response ==> $favResponse");
+      LogMessage.d("fav response "," $favResponse");
       return favResponse;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3285,13 +3287,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('getAllGroups', {"server": server});
-      debugPrint("getAllGroups response ==> $response");
+      LogMessage.d("getAllGroups response "," $response");
       return response;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3304,10 +3306,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<String?>('getDefaultNotificationUri');
       return uri;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3317,10 +3319,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod('setDefaultNotificationSound');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3331,10 +3333,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('setNotificationSound', {"enable": enable});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3347,10 +3349,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           await mirrorFlyMethodChannel.invokeMethod('getNotificationSound');
       return isEnabled;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3361,10 +3363,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('setMuteNotification', {"enable": enable});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3375,10 +3377,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('setNotificationVibration', {"enable": enable});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3388,10 +3390,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod('cancelNotifications');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3408,10 +3410,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         'NetworkType': networkType
       });
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3424,10 +3426,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'getMediaSetting', {"NetworkType": networkType, "type": type});
       return val;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3438,13 +3440,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       val = await mirrorFlyMethodChannel
           .invokeMethod<bool?>('getMediaAutoDownload');
-      debugPrint("MediaAutoDownloadEnabled--> $val");
+      LogMessage.d("getMediaAutoDownload","$val");
       return val;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3455,10 +3457,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       await mirrorFlyMethodChannel
           .invokeMethod('setMediaAutoDownload', {'enable': enable});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3473,10 +3475,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           {"mobileNumber": mobileNumber, "countryCode": countryCode});
       return jid;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3487,13 +3489,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       val =
           await mirrorFlyMethodChannel.invokeMethod<bool?>('IS_TRIAL_LICENSE');
-      debugPrint('isTrailLicence : $val');
+      LogMessage.d('isTrailLicence','$val');
       return val;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3503,13 +3505,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic val;
     try {
       val = await mirrorFlyMethodChannel.invokeMethod('getNonChatUsers');
-      debugPrint('getNonChatUsers : $val');
+      LogMessage.d('getNonChatUsers', '$val');
       return val;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3520,13 +3522,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       val = await mirrorFlyMethodChannel
           .invokeMethod('addContact', {'number': number, 'name': name});
-      debugPrint('addContact : $number');
+      LogMessage.d('addContact',number);
       return val;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3534,14 +3536,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Future setRegionCode(String regionCode) async {
     try {
-      debugPrint('setRegionCode : $regionCode');
+      LogMessage.d('setRegionCode',regionCode);
       await mirrorFlyMethodChannel
           .invokeMethod('setRegionCode', {'regionCode': regionCode});
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3552,13 +3554,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       val = await mirrorFlyMethodChannel
           .invokeMethod('getManifestKey', {'key': key});
-      debugPrint('getManifestKey : $val');
+      LogMessage.d('getManifestKey',' $val');
       return val ?? "";
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3567,15 +3569,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<bool> makeVideoCall(String userJid) async {
     bool val;
     try {
-      debugPrint('makeVideoCall :');
+      LogMessage.d('makeVideoCall :',userJid);
       val = await mirrorFlyCallMethodChannel
           .invokeMethod('makeVideoCall', {"user_jid": userJid});
       return val;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3583,15 +3585,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<bool> makeVoiceCall(String userJid) async {
     bool val;
     try {
-      debugPrint('makeVoiceCall :');
+      LogMessage.d('makeVoiceCall :',userJid);
       val = await mirrorFlyCallMethodChannel
           .invokeMethod('makeVoiceCall', {"user_jid": userJid});
       return val;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3599,14 +3601,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<dynamic> getCallUsersList() async {
     dynamic callList;
     try {
-      debugPrint('getCallUsers :');
+      LogMessage.d('getCallUsers :','');
       callList = await mirrorFlyCallMethodChannel.invokeMethod('getCallUsersList');
       return callList;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3614,14 +3616,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<dynamic> getCallType() async {
     dynamic callType;
     try {
-      debugPrint('getCallType :');
+      LogMessage.d('getCallType :','');
       callType = await mirrorFlyCallMethodChannel.invokeMethod('getCallType');
       return callType;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3629,40 +3631,40 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<dynamic> getCallDirection() async {
     dynamic callType;
     try {
-      debugPrint('getCallDirection :');
+      LogMessage.d('getCallDirection :','');
       callType = await mirrorFlyCallMethodChannel.invokeMethod('getCallDirection');
       return callType;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
   @override
   switchCamera() async {
     try {
-      debugPrint('switchCamera :');
+      LogMessage.d('switchCamera :','');
       await mirrorFlyCallMethodChannel.invokeMethod('switchCamera');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
   @override
   declineCall() async {
     try {
-      debugPrint('declineCall :');
+      LogMessage.d('declineCall :','');
       await mirrorFlyCallMethodChannel.invokeMethod('declineCall');
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ="," $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      LogMessage.d("Exception "," $error");
       rethrow;
     }
   }
@@ -3673,14 +3675,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       try {
         res = await mirrorFlyCallMethodChannel
             .invokeMethod('muteAudio', {"muteAudio": status});
-        debugPrint('muteAudio $res');
+        LogMessage.d('muteAudio','$res');
         return res;
       } on PlatformException catch (e) {
-        debugPrint("Platform Exception ===> $e");
+        LogMessage.d("Platform Exception ="," $e");
         rethrow;
       } on Exception catch (error) {
-        debugPrint("Exception ==> $error");
+        LogMessage.d("Exception "," $error");
         rethrow;
       }
-    }
+  }
 }
