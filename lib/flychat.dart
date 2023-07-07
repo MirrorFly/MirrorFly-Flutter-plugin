@@ -1,4 +1,4 @@
-import 'package:mirrorfly_chat/builder.dart';
+import 'package:mirrorfly_plugin/builder.dart';
 
 import 'fly_chat_platform_interface.dart';
 
@@ -20,6 +20,7 @@ class Mirrorfly {
       String? storageFolderName,
       bool enableMobileNumberLogin = true,
       bool isTrialLicenceKey = true,
+      bool? chatHistoryEnable,
       // int? maximumRecentChatPin,
       // GroupConfig? groupConfig,
       // String? ivKey,
@@ -31,6 +32,7 @@ class Mirrorfly {
         storageFolderName: storageFolderName,
         enableMobileNumberLogin: enableMobileNumberLogin,
         isTrialLicenceKey: isTrialLicenceKey,
+        chatHistoryEnable: chatHistoryEnable,
         // maximumRecentChatPin: maximumRecentChatPin,
         // groupConfig: groupConfig,
         // ivKey: ivKey,
@@ -571,6 +573,33 @@ class Mirrorfly {
   static Stream<dynamic> get onSuccess =>
       FlyChatFlutterPlatform.instance.onSuccess;
 
+  static Stream<dynamic> get onCallReceiving =>
+      FlyChatFlutterPlatform.instance.onCallReceiving;
+
+  static Stream<dynamic> get onLocalVideoTrackAdded =>
+      FlyChatFlutterPlatform.instance.onLocalVideoTrackAdded;
+
+  static Stream<dynamic> get onRemoteVideoTrackAdded =>
+      FlyChatFlutterPlatform.instance.onRemoteVideoTrackAdded;
+
+  static Stream<dynamic> get onTrackAdded =>
+      FlyChatFlutterPlatform.instance.onTrackAdded;
+
+  static Stream<dynamic> get onCallStatusUpdated =>
+      FlyChatFlutterPlatform.instance.onCallStatusUpdated;
+
+  static Stream<dynamic> get onCallAction =>
+      FlyChatFlutterPlatform.instance.onCallAction;
+
+  static Stream<dynamic> get onMuteStatusUpdated =>
+      FlyChatFlutterPlatform.instance.onMuteStatusUpdated;
+
+  static Stream<dynamic> get onUserSpeaking =>
+      FlyChatFlutterPlatform.instance.onUserSpeaking;
+
+  static Stream<dynamic> get onUserStoppedSpeaking =>
+      FlyChatFlutterPlatform.instance.onUserStoppedSpeaking;
+
   static Future<String?> imagePath(String imgurl) {
     return FlyChatFlutterPlatform.instance.imagePath(imgurl);
   }
@@ -583,8 +612,20 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.sentFileMessage(file, jid);
   }
 
+  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  ///used to get Recent chat list from the Local DB
+  ///use this method when Chat History not enabled
   static Future<dynamic> getRecentChatList() {
     return FlyChatFlutterPlatform.instance.getRecentChatList();
+  }
+
+  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  /// * @property firstSet indicates the initial data otherwise next set of data
+  /// * @property limit set the limit of the chat list, default value 15
+  /// * if ChatHistoryEnabled in init then synced from the server
+  /// used to get Recent chat List from DB
+  static Future<dynamic> getRecentChatListHistory({required bool firstSet,int limit=15}) {
+    return FlyChatFlutterPlatform.instance.getRecentChatListHistory(firstSet: firstSet,limit: limit);
   }
 
   static Future<dynamic> getProfileStatusList() {
@@ -997,7 +1038,37 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.addContact(number, name);
   }
 
+
   static Future<dynamic> setRegionCode(String regionCode) async {
     return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
+  }
+
+  static Future<String> getManifestKey(String key) async {
+    return FlyChatFlutterPlatform.instance.getManifestKey(key);
+  }
+
+  static Future<bool> makeVideoCall(String userJid) async {
+    return FlyChatFlutterPlatform.instance.makeVideoCall(userJid);
+  }
+  static Future<bool> makeVoiceCall(String userJid) async {
+    return FlyChatFlutterPlatform.instance.makeVoiceCall(userJid);
+  }
+  static Future<dynamic> getCallUsersList() async {
+    return FlyChatFlutterPlatform.instance.getCallUsersList();
+  }
+  static Future<dynamic> getCallType() async {
+    return FlyChatFlutterPlatform.instance.getCallType();
+  }
+  static Future<dynamic> getCallDirection() async {
+    return FlyChatFlutterPlatform.instance.getCallDirection();
+  }
+  static switchCamera() async {
+    return FlyChatFlutterPlatform.instance.switchCamera();
+  }
+  static declineCall() async {
+    return FlyChatFlutterPlatform.instance.declineCall();
+  }
+  static Future<bool?> muteAudio(bool status) async {
+    return FlyChatFlutterPlatform.instance.muteAudio(status);
   }
 }

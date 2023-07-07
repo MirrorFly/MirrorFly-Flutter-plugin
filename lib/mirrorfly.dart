@@ -1,4 +1,4 @@
-library mirrorfly_chat;
+library mirrorfly_plugin;
 
 export 'fly_chat_method_channel.dart';
 export 'fly_chat_platform_interface.dart';
@@ -17,5 +17,6 @@ export 'model/web_login_model.dart';
 export 'model/message_delivered_model.dart';
 export 'model/message_object.dart';
 export 'model/export_model.dart';
+export 'logmessage.dart';
 export 'builder.dart';
 export 'flychat.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mirrorfly_chat/builder.dart';
+import 'package:mirrorfly_plugin/builder.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:mirrorfly_chat/fly_chat_method_channel.dart';
-import 'package:mirrorfly_chat/fly_chat_platform_interface.dart';
+import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
+import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 
 class MockFlyChatFlutterPlatform
     with MockPlatformInterfaceMixin
@@ -1264,6 +1264,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<String> getManifestKey(String key) {
+    // implement getManifestKey
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool?> iOSFileExist(String filePath) {
     // implement iOSFileExist
     throw UnimplementedError();
@@ -1284,6 +1290,97 @@ class MockFlyChatFlutterPlatform
   @override
   // implement usersProfilesFetched
   Stream<bool> get usersProfilesFetched => throw UnimplementedError();
+
+
+  @override
+  // implement onCallReceiving
+  Stream get onCallReceiving => throw UnimplementedError();
+
+  @override
+  // implement onLocalVideoTrackAdded
+  Stream get onLocalVideoTrackAdded => throw UnimplementedError();
+
+  @override
+  // implement onCallAction
+  Stream get onCallAction => throw UnimplementedError();
+
+  @override
+  // implement onCallStatusUpdated
+  Stream get onCallStatusUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onMuteStatusUpdated
+  Stream get onMuteStatusUpdated => throw UnimplementedError();
+
+  @override
+  // implement onRemoteVideoTrackAdded
+  Stream get onRemoteVideoTrackAdded => throw UnimplementedError();
+
+  @override
+  // implement onTrackAdded
+  Stream get onTrackAdded => throw UnimplementedError();
+
+  @override
+  // implement onUserSpeaking
+  Stream get onUserSpeaking => throw UnimplementedError();
+
+  @override
+  // implement onUserStoppedSpeaking
+  Stream get onUserStoppedSpeaking => throw UnimplementedError();
+
+  @override
+  Future getCallUsersList() {
+    // implement getCallUsers
+    throw UnimplementedError();
+  }
+
+  @override
+  Future switchCamera() {
+    // implement switchCamera
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getCallType() {
+    // implement getCallType
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> muteAudio(bool status) {
+    // implement muteAudio
+    throw UnimplementedError();
+  }
+
+  @override
+  Future declineCall() {
+    // implement declineCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> makeVideoCall(String userJid) {
+    //  implement makeVideoCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> makeVoiceCall(String userJid) {
+    // implement makeVoiceCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getCallDirection() {
+    // implement getCallDirection
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getRecentChatListHistory({required bool firstSet,int limit=15}) {
+    // implement getRecentChatListHistory
+    throw UnimplementedError();
+  }
 
 }
 

@@ -35,6 +35,16 @@ extension Encodable {
             return nil
         }
     }
+    
+    func convertToJson() -> String? {
+            do {
+                let jsonData = try JSONEncoder().encode(self)
+                return String(data: jsonData, encoding: .utf8)
+            } catch {
+                print("Error converting object to JSON: \(error)")
+                return nil
+            }
+        }
 }
 
 

@@ -1,3 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.mirrorfly.mirrorfly_plugin">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.mirrorfly.mirrorfly_plugin">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application>
+        <activity
+            android:name=".call.CallKitUiActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:resizeableActivity="false"
+            android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:supportsPictureInPicture="true"
+            android:taskAffinity="call.video"
+            android:turnScreenOn="true"
+            android:windowSoftInputMode="stateHidden"
+            android:lockTaskMode="if_whitelisted"
+            tools:targetApi="R"
+            android:theme="@style/CallkitIncomingTheme"
+            android:exported="false" />
+    </application>
+
 </manifest>

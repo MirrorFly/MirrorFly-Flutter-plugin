@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mirrorfly_chat/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'your license key',
+      chatHistoryEnable: false,
       iOSContainerID: 'your container id');//Must be same as AppGroups given in Xcode Capability
   runApp(const MyApp());
 }

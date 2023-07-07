@@ -1,6 +1,6 @@
-import 'package:mirrorfly_chat/builder.dart';
+import 'package:mirrorfly_plugin/builder.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:mirrorfly_chat/fly_chat_method_channel.dart';
+import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 
 abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// Constructs a UikitFlutterPlatform.
@@ -523,6 +523,33 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onSuccess =>
       throw UnimplementedError('has not been implemented.');
 
+  Stream<dynamic> get onCallReceiving =>
+      throw UnimplementedError('onCallReceiving has not been implemented.');
+
+  Stream<dynamic> get onLocalVideoTrackAdded =>
+      throw UnimplementedError('onLocalVideoTrackAdded has not been implemented.');
+
+  Stream<dynamic> get onRemoteVideoTrackAdded =>
+      throw UnimplementedError('onRemoteVideoTrackAdded has not been implemented.');
+
+  Stream<dynamic> get onTrackAdded =>
+      throw UnimplementedError('onTrackAdded has not been implemented.');
+
+  Stream<dynamic> get onCallStatusUpdated =>
+      throw UnimplementedError('onCallStatusUpdated has not been implemented.');
+
+  Stream<dynamic> get onCallAction =>
+      throw UnimplementedError('onCallAction has not been implemented.');
+
+  Stream<dynamic> get onMuteStatusUpdated =>
+      throw UnimplementedError('onMuteStatusUpdated has not been implemented.');
+
+  Stream<dynamic> get onUserSpeaking =>
+      throw UnimplementedError('onUserSpeaking has not been implemented.');
+
+  Stream<dynamic> get onUserStoppedSpeaking =>
+      throw UnimplementedError('onUserStoppedSpeaking has not been implemented.');
+
   Future<String?> imagePath(String imgurl) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -537,6 +564,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<dynamic> getRecentChatList() {
     throw UnimplementedError('has not been implemented.');
+  }
+  Future<dynamic> getRecentChatListHistory({required bool firstSet,int limit=15}) {
+    throw UnimplementedError('getRecentChatListHistory has not been implemented.');
   }
 
   Future<dynamic> getProfileStatusList() {
@@ -921,5 +951,32 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future setRegionCode(String regionCode) async {
     throw UnimplementedError('has not been implemented.');
+  }
+  Future<String> getManifestKey(String key) async {
+    throw UnimplementedError('has not been implemented.');
+  }
+  Future<bool> makeVideoCall(String userJid) async {
+    throw UnimplementedError('makeVideoCall has not been implemented.');
+  }
+  Future<bool>  makeVoiceCall(String userJid) async {
+    throw UnimplementedError('makeVoiceCall has not been implemented.');
+  }
+  Future<dynamic> getCallUsersList() async {
+    throw UnimplementedError('getCallUsers has not been implemented.');
+  }
+  Future<dynamic> getCallType() async {
+    throw UnimplementedError('getCallType has not been implemented.');
+  }
+  Future<dynamic> getCallDirection() async {
+    throw UnimplementedError('getCallDirection has not been implemented.');
+  }
+  Future switchCamera() async {
+    throw UnimplementedError('switchCamera has not been implemented.');
+  }
+  Future declineCall() async {
+    throw UnimplementedError('declineCall has not been implemented.');
+  }
+  Future<bool?> muteAudio(bool status) async {
+    throw UnimplementedError('muteAudio has not been implemented.');
   }
 }
