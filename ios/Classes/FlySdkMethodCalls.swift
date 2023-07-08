@@ -103,6 +103,38 @@ import MirrorFlySDK
         
       }
     
+    static func getPlistValue(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        var key = args["key"] as? String ?? ""
+        // Get the path to the Info.plist file
+        guard let infoPlistPath = Bundle.main.path(forResource: "Info", ofType: "plist") else {
+            result(FlutterError(code: "500",
+                                message: "Info.plist file not found",
+                                details: nil))
+            return
+        }
+
+        // Load the contents of the Info.plist file
+        guard let infoDict = NSDictionary(contentsOfFile: infoPlistPath) else {
+            result(FlutterError(code: "500",
+                                message: "Failed to load Info.plist",
+                                details: nil))
+            return
+        }
+
+        // Access the value using the appropriate key
+        if let value = infoDict[key] as? String {
+            result(value)
+        } else {
+//            print("App version not found in Info.plist.")
+            result(FlutterError(code: "500",
+                                message: "\(key) key not found in Info plist",
+                                details: nil))
+        }
+
+    }
+    
     static func registerUser(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>

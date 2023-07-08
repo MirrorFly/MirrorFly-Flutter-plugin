@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
@@ -3549,13 +3551,22 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String> getManifestKey(String key) async {
+  Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) async {
     String? val = "";
     try {
-      val = await mirrorFlyMethodChannel
-          .invokeMethod('getManifestKey', {'key': key});
-      LogMessage.d('getManifestKey',' $val');
-      return val ?? "";
+      if(Platform.isAndroid) {
+        val = await mirrorFlyMethodChannel
+            .invokeMethod('getManifestValue', {'key': androidManifestKey});
+        LogMessage.d('getValueFromManifestOrInfoPlist Android', ' $val');
+        return val ?? "";
+      }else if(Platform.isIOS){
+        val = await mirrorFlyMethodChannel
+            .invokeMethod('getPlistValue', {'key': iOSPlistKey});
+        LogMessage.d('getValueFromManifestOrInfoPlist iOS', ' $val');
+        return val ?? "";
+      }else {
+        return val;
+      }
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception ="," $e");
       rethrow;

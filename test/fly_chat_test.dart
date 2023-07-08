@@ -1264,8 +1264,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String> getManifestKey(String key) {
-    // implement getManifestKey
+  Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) {
+    // implement getValueFromManifestOrInfoPlist
     throw UnimplementedError();
   }
 

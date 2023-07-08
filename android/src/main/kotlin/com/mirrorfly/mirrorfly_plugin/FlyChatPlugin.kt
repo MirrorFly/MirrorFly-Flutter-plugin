@@ -1131,8 +1131,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("setRegionCode") -> {
                 setRegionCode(call)
             }
-            call.method.equals("getManifestKey") -> {
-                getManifestKey(call,result)
+            call.method.equals("getManifestValue") -> {
+                getManifestValue(call,result)
             }
             else -> {
                 result.notImplemented()
@@ -1141,10 +1141,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
     }
 
-    private fun getManifestKey(call: MethodCall,result: MethodChannel.Result) {
+    private fun getManifestValue(call: MethodCall,result: MethodChannel.Result) {
         val find = call.argument<String>("key")
         if(find.isNullOrEmpty()){
-            result.error("500","key must not be null","")
+            result.error("500","key must not be null or Empty","")
         }else {
             val ai: ApplicationInfo =
                 mContext.packageManager //ChatManager.applicationContext.packageManager
@@ -1160,8 +1160,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if(key!=null) {
                 result.success(key.toString())
             }else{
-                result.success("")
-//                result.error("500","couldn't find value for the key","")
+//                result.success("")
+                result.error("500","$find key not found in AndoidManifest file","")
             }
         }
     }
