@@ -1043,8 +1043,13 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
   }
 
-  static Future<String> getManifestKey(String key) async {
-    return FlyChatFlutterPlatform.instance.getManifestKey(key);
+  ///Used as a getValueFromManifestOrInfoPlist class for [Mirrorfly]
+  /// * @property androidManifestKey indicates the manifest file meta data key
+  /// * @property iOSPlistKey indicates the info plist file key
+  /// returns the value from Manifest file if its Platform.isAndroid
+  /// or if its Platform.isIOS the value from info Plist file.
+  static Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) async {
+    return FlyChatFlutterPlatform.instance.getValueFromManifestOrInfoPlist(androidManifestKey:androidManifestKey,iOSPlistKey:iOSPlistKey);
   }
 
   static Future<bool> makeVideoCall(String userJid) async {

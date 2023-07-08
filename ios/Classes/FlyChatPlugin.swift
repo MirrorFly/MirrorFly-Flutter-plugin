@@ -480,6 +480,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         case "init":
             FlySdkMethodCalls.buildChatSDK(call: methodCall)
             initializeEventListeners()
+        case "getPlistValue":
+            FlySdkMethodCalls.getPlistValue(call: methodCall,result: result)
         case "syncContacts":
             let args = methodCall.arguments as! Dictionary<String, Any>
             
