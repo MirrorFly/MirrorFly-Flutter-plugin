@@ -24,9 +24,9 @@ Pod::Spec.new do |s|
   s.dependency 'XMPPFramework/Swift'
   s.dependency 'RealmSwift' , '10.20.1'
   s.dependency 'GoogleWebRTC'
-#  s.dependency 'MirrorFlySDK', '5.8.0'
+  s.dependency 'MirrorFlySDK', '5.9.9'
   
-  s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+  #s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
 
   # Flutter.framework does not contain a i386 slice.

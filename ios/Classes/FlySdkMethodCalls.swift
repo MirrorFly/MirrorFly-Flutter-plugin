@@ -14,17 +14,18 @@ import Photos
 import Contacts
 import ContactsUI
 import MirrorFlySDK
-import os
+import UIKit
 
 
-@objc class FlySdkMethodCalls : NSObject{
+@objc class FlySdkMethodCalls : NSObject, URLSessionDelegate, URLSessionDownloadDelegate{
     
     static var isTrialLicenceKey : Bool = true;
     static var isContactSyncInProgress : Bool = false;
 //    static let SOCKETIO_SERVER_HOST = "https://signal-uikit-qa.contus.us/"
-    static private let backgroudLog = OSLog(subsystem: "com.mirrorfly.qa", category: "pushNotify")
 
     static var userlist = [ProfileDetails]()
+    
+
     
     static func buildChatSDK(call: FlutterMethodCall) {
        
@@ -2249,27 +2250,45 @@ import os
                     contentHandler?(bestAttemptContent!)
                 })
             } else {
-                os_log("Push in plugin" , log: backgroudLog, type: .error)
-//                var messageJson = "{\"chatMessage\":{\"messageTextContent\":\"fygg\",\"isSavedContact\":false,\"senderUserJid\":\"919894940560@xmpp-uikit-qa.contus.us\",\"senderNickName\":\"Saravanakumar\",\"translatedMessageTextContent\":\"\",\"senderUserName\":\"Saravanakumar\",\"audioStatus\":\"stoped\",\"messageStatus\":3,\"isDeletedUser\":false,\"isCarbonMessage\":false,\"messageId\":\"54ee8039f8004cbbaeb27df38dc1237c1688122853\",\"messageChatType\":\"singlechat\",\"isMessageSentByMe\":false,\"mentionedUsersIds\":[],\"chatUserJid\":\"919894940560@xmpp-uikit-qa.contus.us\",\"messageSentTime\":1688122854129614,\"isMessageStarred\":false,\"isMessageDeleted\":false,\"messageType\":\"text\",\"isMessageTranslated\":false,\"isMessageRecalled\":false,\"isReplyMessage\":false,\"audioTrackTime\":0,\"isRetryButtonDisabled\":false}}"
+                
+                NotificationMessageSupport.shared.didReceiveNotificationRequest(data, onCompletion: { bestAttemptContents in
 
-//                        result(messageJson)
-                NotificationMessageSupport.shared.didReceiveNotificationRequest(data, onCompletion: { [self] bestAttemptContents in
+                    let message : ChatMessage? = ChatManager.getMessageOfId(messageId: messageId)
 
-                    var message : ChatMessage? = ChatManager.getMessageOfId(messageId: messageId)
-
-                    var messageJson = message?.toJson()
-                    print("#Mirrorfly Notification getMessageOfId==**==\(String(describing: messageJson))")
+                    let messageJson = message?.toJson()
+                    NSLog("#Mirrorfly Notification -> iOS getMessageOfId==**==\(String(describing: messageJson))")
 
                     if let chatMessage = messageJson {
                         let response = "{\"groupJid\": \"\(String(""))\",\"titleContent\": \"\(String(""))\",\"chatMessage\" : " + (messageJson ?? "null")+"}"
                         result(response)
                     }
-
-
                     bestAttemptContent = bestAttemptContents
                     contentHandler?(bestAttemptContent!)
 
                 })
+            }
+        }
+    
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+            // File has been downloaded successfully
+        NSLog("#Mirrorfly Notification -> Download completed. Location: \(location.path)")
+        }
+        
+        func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+            // Calculate the download progress
+            let progress = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite)
+            let percentage = Int(progress * 100)
+            
+            // Print the download progress
+            NSLog("#Mirrorfly Notification -> Download progress: \(percentage)%")
+        }
+        
+        func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+            // Handle download completion or error
+            if let error = error {
+                NSLog("#Mirrorfly Notification -> Download failed with error: \(error.localizedDescription)")
+            } else {
+                NSLog("#Mirrorfly Notification -> Download completed successfully.")
             }
         }
 }
