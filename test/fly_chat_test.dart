@@ -1264,6 +1264,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) {
+    // implement getValueFromManifestOrInfoPlist
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool?> iOSFileExist(String filePath) {
     // implement iOSFileExist
     throw UnimplementedError();
@@ -1367,6 +1373,12 @@ class MockFlyChatFlutterPlatform
   @override
   Future getCallDirection() {
     // implement getCallDirection
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getRecentChatListHistory({required bool firstSet,int limit=15}) {
+    // implement getRecentChatListHistory
     throw UnimplementedError();
   }
 

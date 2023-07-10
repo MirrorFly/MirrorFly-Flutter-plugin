@@ -565,6 +565,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<dynamic> getRecentChatList() {
     throw UnimplementedError('has not been implemented.');
   }
+  Future<dynamic> getRecentChatListHistory({required bool firstSet,int limit=15}) {
+    throw UnimplementedError('getRecentChatListHistory has not been implemented.');
+  }
 
   Future<dynamic> getProfileStatusList() {
     throw UnimplementedError('has not been implemented.');
@@ -947,6 +950,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future setRegionCode(String regionCode) async {
+    throw UnimplementedError('has not been implemented.');
+  }
+  Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) async {
     throw UnimplementedError('has not been implemented.');
   }
   Future<bool> makeVideoCall(String userJid) async {

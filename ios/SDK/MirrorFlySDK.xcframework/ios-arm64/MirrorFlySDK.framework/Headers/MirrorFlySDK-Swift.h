@@ -283,10 +283,8 @@ SWIFT_CLASS("_TtC12MirrorFlySDK14CallLogManager")
 SWIFT_CLASS("_TtC12MirrorFlySDK11CallManager")
 @interface CallManager : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-+ (void)setAppGroupContainerIdWithId:(NSString * _Nonnull)id;
 + (void)callRingingStatusWaiting:(NSTimer * _Nonnull)timer;
 @end
-
 
 
 

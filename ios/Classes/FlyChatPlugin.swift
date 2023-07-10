@@ -480,6 +480,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         case "init":
             FlySdkMethodCalls.buildChatSDK(call: methodCall)
             initializeEventListeners()
+        case "getPlistValue":
+            FlySdkMethodCalls.getPlistValue(call: methodCall,result: result)
         case "syncContacts":
             let args = methodCall.arguments as! Dictionary<String, Any>
             
@@ -559,6 +561,10 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.deleteMessagesForEveryone(call: methodCall,  result: result)
         case "markAsRead":
             FlySdkMethodCalls.markAsRead(call: methodCall,  result: result)
+        case "markConversationAsUnread":
+            FlySdkMethodCalls.markConversationAsUnread(call: methodCall,  result: result)
+        case "markConversationAsRead":
+            FlySdkMethodCalls.markConversationAsRead(call: methodCall,  result: result)
         case "deleteUnreadMessageSeparatorOfAConversation":
             FlySdkMethodCalls.deleteUnreadMessageSeparatorOfAConversation(call: methodCall,  result: result)
         case "getRecalledMessagesOfAConversation":
@@ -606,6 +612,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.recentChatPinnedCount(call: methodCall,  result: result)
         case "getRecentChatList":
             FlySdkMethodCalls.getRecentChatList(call: methodCall,  result: result)
+        case "getRecentChatListHistory":
+            FlySdkMethodCalls.getRecentChatListHistory(call: methodCall,  result: result)
         case "getRecentChatListIncludingArchived":
             FlySdkMethodCalls.getRecentChatListIncludingArchived(call: methodCall,  result: result)
         case "getRecentChatOf":

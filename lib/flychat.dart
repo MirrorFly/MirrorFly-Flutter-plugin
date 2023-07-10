@@ -20,6 +20,7 @@ class Mirrorfly {
       String? storageFolderName,
       bool enableMobileNumberLogin = true,
       bool isTrialLicenceKey = true,
+      bool? chatHistoryEnable,
       // int? maximumRecentChatPin,
       // GroupConfig? groupConfig,
       // String? ivKey,
@@ -31,6 +32,7 @@ class Mirrorfly {
         storageFolderName: storageFolderName,
         enableMobileNumberLogin: enableMobileNumberLogin,
         isTrialLicenceKey: isTrialLicenceKey,
+        chatHistoryEnable: chatHistoryEnable,
         // maximumRecentChatPin: maximumRecentChatPin,
         // groupConfig: groupConfig,
         // ivKey: ivKey,
@@ -610,8 +612,20 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.sentFileMessage(file, jid);
   }
 
+  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  ///used to get Recent chat list from the Local DB
+  ///use this method when Chat History not enabled
   static Future<dynamic> getRecentChatList() {
     return FlyChatFlutterPlatform.instance.getRecentChatList();
+  }
+
+  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  /// * @property firstSet indicates the initial data otherwise next set of data
+  /// * @property limit set the limit of the chat list, default value 15
+  /// * if ChatHistoryEnabled in init then synced from the server
+  /// used to get Recent chat List from DB
+  static Future<dynamic> getRecentChatListHistory({required bool firstSet,int limit=15}) {
+    return FlyChatFlutterPlatform.instance.getRecentChatListHistory(firstSet: firstSet,limit: limit);
   }
 
   static Future<dynamic> getProfileStatusList() {
@@ -1027,6 +1041,15 @@ class Mirrorfly {
 
   static Future<dynamic> setRegionCode(String regionCode) async {
     return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
+  }
+
+  ///Used as a getValueFromManifestOrInfoPlist class for [Mirrorfly]
+  /// * @property androidManifestKey indicates the manifest file meta data key
+  /// * @property iOSPlistKey indicates the info plist file key
+  /// returns the value from Manifest file if its Platform.isAndroid
+  /// or if its Platform.isIOS the value from info Plist file.
+  static Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) async {
+    return FlyChatFlutterPlatform.instance.getValueFromManifestOrInfoPlist(androidManifestKey:androidManifestKey,iOSPlistKey:iOSPlistKey);
   }
 
   static Future<bool> makeVideoCall(String userJid) async {
