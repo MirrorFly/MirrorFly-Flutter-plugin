@@ -80,7 +80,6 @@ import UIKit
 
         print("ChatManager.enableChatHistory \(chatHistoryEnable)")
 
-        print("sdk version---> \(FlyDefaults.SDKVersion)")
 //        ChatManager.setSignalServer(signalServerUrl: SOCKETIO_SERVER_HOST)
         
 
@@ -103,9 +102,7 @@ import UIKit
         ChatManager.disableLocalNotification()
         
         ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
-        
-//        FlyDefaults.chatHistoryEnabled = true
-//        FlyDefaults.isBusyStatusEnabled = true
+     
         ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
 
       }

@@ -235,7 +235,7 @@ import MirrorFlySDK
             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
           default:
-            AudioManager.shared().routeAudioTo(device: .none, force: true);
+            AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
 //           default:
 //             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
