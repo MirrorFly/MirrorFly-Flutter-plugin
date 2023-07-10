@@ -9,6 +9,7 @@ import 'builder.dart';
 
 /// An implementation of [UikitFlutterPlatform] that uses method channels.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
+  /// The method channel used to interact with the native platform.
   @visibleForTesting
   final mirrorFlyMethodChannel =
       const MethodChannel('contus.mirrorfly/flyChat');
@@ -3592,6 +3593,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<bool> makeVoiceCall(String userJid) async {
     bool val;
@@ -3608,6 +3610,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<dynamic> getCallUsersList() async {
     dynamic callList;
@@ -3623,6 +3626,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<dynamic> getCallType() async {
     dynamic callType;
@@ -3638,6 +3642,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<dynamic> getCallDirection() async {
     dynamic callType;
@@ -3653,6 +3658,24 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+  @override
+  Future<dynamic> getAllAvailableAudioInput() async {
+    dynamic audioInput;
+    try {
+      LogMessage.d('getAllAvailableAudioInput :');
+      audioInput = await mirrorFlyCallMethodChannel
+          .invokeMethod('getAllAvailableAudioInput');
+      return audioInput;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   @override
   switchCamera() async {
     try {
@@ -3666,6 +3689,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   declineCall() async {
     try {
@@ -3682,18 +3706,35 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<bool?> muteAudio(bool status) async {
-      bool? res;
-      try {
-        res = await mirrorFlyCallMethodChannel
-            .invokeMethod('muteAudio', {"muteAudio": status});
-        LogMessage.d('muteAudio','$res');
-        return res;
-      } on PlatformException catch (e) {
-        LogMessage.d("Platform Exception ="," $e");
-        rethrow;
-      } on Exception catch (error) {
-        LogMessage.d("Exception "," $error");
-        rethrow;
-      }
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('muteAudio', {"muteAudio": status});
+      LogMessage.d('muteAudio','$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> routeAudioTo({required String routeType}) async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('routeAudioTo', {"routeType": routeType});
+      LogMessage.d('muteAudio', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
   }
 }

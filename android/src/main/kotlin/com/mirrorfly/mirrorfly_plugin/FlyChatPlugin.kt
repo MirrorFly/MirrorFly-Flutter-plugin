@@ -20,7 +20,9 @@ import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import com.google.gson.Gson
+import com.mirrorfly.mirrorfly_plugin.call.FlyCall
 import com.mirrorfly.mirrorfly_plugin.call.MirrorflyViewFactory
+import com.mirrorfly.mirrorfly_plugin.call.SdkCallFunctions
 import com.mirrorflysdk.AppUtils
 import com.mirrorflysdk.ChatSDK
 import com.mirrorflysdk.GroupConfig
@@ -37,6 +39,7 @@ import com.mirrorflysdk.backup.BackupListener
 import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
+import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MediaData
@@ -63,6 +66,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import io.flutter.plugin.platform.PlatformViewFactory
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
@@ -149,15 +153,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private lateinit var mContext: Context
+    private lateinit var factory : MirrorflyViewFactory
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         mContext = flutterPluginBinding.applicationContext
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, mirrorflyMethodChannel)
         channel.setMethodCallHandler(this)
+        factory = MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
         flutterPluginBinding.platformViewRegistry.registerViewFactory(
             "mirrorfly_view",
-            MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
+            factory
         )
-//        FlyCall(mContext,flutterPluginBinding.binaryMessenger)
+        FlyCall(mContext,flutterPluginBinding.binaryMessenger,factory)
         SharedPreferenceManager().init(mContext)
         EventChannel(
             flutterPluginBinding.binaryMessenger,
@@ -1238,7 +1244,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
         })
 
-//      SdkCallFunctions(mContext).initCall()
+      SdkCallFunctions(mContext).initCall()
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -1562,7 +1568,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 val jsonObject = JSONObject()
                 jsonObject.put("groupJid", groupJid)
                 jsonObject.put("titleContent", titleContent)
-                jsonObject.put("chatMessage", chatMessage.toJsonString())
+                jsonObject.put("chatMessage", JSONObject(chatMessage.toJson()))
                 jsonObject.put("cancel", false)
                 result.success(jsonObject.toString())
             }

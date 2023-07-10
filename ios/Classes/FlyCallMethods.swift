@@ -45,7 +45,7 @@ import MirrorFlySDK
         }
         
         let userListJson = jsonArray.convertToJson()
-        
+        print("\(tag) getCallUsersWithStatus \(userListJson)")
        result(userListJson)
     }
     
@@ -74,10 +74,11 @@ import MirrorFlySDK
                    print("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
                }else{
                    print("MirrorflyCall Success -->")
-                   result(isSuccess)
+//                   result(isSuccess)
                }
             }
          }
+        result(true)
     }
     func makeVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as! Dictionary<String, Any>
@@ -99,10 +100,10 @@ import MirrorFlySDK
             print("call result --> \(isSuccess) messsage --> \(message)")
             if (isSuccess){
                 print("MirrorflyCall Success")
-                result(isSuccess)
+//                result(isSuccess)
             }
         }
-//        result(true)
+        result(true)
     }
     func answerCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
         
@@ -199,6 +200,49 @@ import MirrorFlySDK
     }
     func getCallDirection(call: FlutterMethodCall, result: @escaping FlutterResult) {
         result(CallManager.getCallDirection() == .Incoming ? "Incoming" : "Outgoing")
+    }
+    func getAllAvailableAudioInput(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        var jsonArray: [[String: String]] = []
+        for item in AudioManager.shared().getAllAvailableAudioInput() {
+            let jsonObject: [String: String] = [
+                "id": item.id,
+                "name": item.name,
+                "type": item.type == .bluetooth ? "bluetooth" : item.type == .speaker ? "speaker" : item.type == .headset ? "headset" : item.type == .receiver ? "receiver" : "none"
+            ]
+            jsonArray.append(jsonObject)
+        }
+        let availableAudioListJson = jsonArray.convertToJson()
+        print("\(tag) availableAudioListJson \(availableAudioListJson)")
+       result(availableAudioListJson)
+    }
+    
+    func routeAudioTo(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let args = call.arguments as! Dictionary<String, Any>
+        let routeType = args["routeType"] as? String ?? ""
+        
+        switch (routeType) {
+          case "bluetooth":
+            AudioManager.shared().routeAudioTo(device: .bluetooth, force: true);
+            break;
+          case "headset":
+            AudioManager.shared().routeAudioTo(device: .headset, force: true);
+            break;
+          case "receiver":
+            AudioManager.shared().routeAudioTo(device: .receiver, force: true);
+            break;
+          case "speaker":
+            AudioManager.shared().routeAudioTo(device: .speaker, force: true);
+            break;
+          default:
+            AudioManager.shared().routeAudioTo(device: .none, force: true);
+            break;
+//           default:
+//             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
+//             break;
+        }
+
+        result(true)
     }
     func isCallConnected(call: FlutterMethodCall, result: @escaping FlutterResult) {
         
