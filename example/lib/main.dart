@@ -36,9 +36,9 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // var appState = context.watch<MyAppState>();
 
-    return Scaffold(
+    return const Scaffold(
       body: Column(
-        children: const [
+        children: [
           Text('Welcome to Mirrorfly'),
         ],
       ),

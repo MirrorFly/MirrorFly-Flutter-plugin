@@ -3663,15 +3663,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<dynamic> getAllAvailableAudioInput() async {
     dynamic audioInput;
     try {
-      LogMessage.d('getAllAvailableAudioInput :');
+      LogMessage.d('getAllAvailableAudioInput :','');
       audioInput = await mirrorFlyCallMethodChannel
           .invokeMethod('getAllAvailableAudioInput');
       return audioInput;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ===> $e");
+      LogMessage.d("Platform Exception ===>", "$e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception ==> $error");
+      LogMessage.d("Exception ==>", "$error");
       rethrow;
     }
   }
