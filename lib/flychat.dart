@@ -5,6 +5,7 @@ import 'fly_chat_platform_interface.dart';
 class Mirrorfly {
   Mirrorfly._();
   static var isTrialLicence = true;
+
   ///Used as a initChat class for [Mirrorfly]
   ///
   /// * @property url provides the base url for making api calls
@@ -37,7 +38,7 @@ class Mirrorfly {
         // groupConfig: groupConfig,
         // ivKey: ivKey,
         enableDebugLog: enableDebugLog);
-    isTrialLicence=isTrialLicenceKey;
+    isTrialLicence = isTrialLicenceKey;
     FlyChatFlutterPlatform.instance.init(builder);
   }
 
@@ -624,8 +625,51 @@ class Mirrorfly {
   /// * @property limit set the limit of the chat list, default value 15
   /// * if ChatHistoryEnabled in init then synced from the server
   /// used to get Recent chat List from DB
-  static Future<dynamic> getRecentChatListHistory({required bool firstSet,int limit=15}) {
-    return FlyChatFlutterPlatform.instance.getRecentChatListHistory(firstSet: firstSet,limit: limit);
+  static Future<dynamic> getRecentChatListHistory(
+      {required bool firstSet, int limit = 15}) {
+    return FlyChatFlutterPlatform.instance
+        .getRecentChatListHistory(firstSet: firstSet, limit: limit);
+  }
+
+  /// This method is used to initialize the Single/Group Chat User History to set the message filters.
+  /// * @property userJid - Chat user JID (Single/Group)
+  /// * @property messageId - Message id of the starting point (Optional)
+  /// * @property messageTime - Message time of the starting point (Optional)
+  /// * @property exclude - If true starting point message will be excluded in message list default true
+  /// * @property limit - No of messages will be fetched for each request default 25
+  /// * @property ascendingOrder - If true message list will be returned ascendingOrder by message time default false
+  static Future<dynamic> initializeMessageList(
+      {required String userJid,
+      String? messageId,
+      double? messageTime,
+      bool? exclude,
+      int limit = 25,
+      bool? ascendingOrder}) {
+    return FlyChatFlutterPlatform.instance.initializeMessageList(
+        userJid: userJid,
+        messageId: messageId,
+        messageTime: messageTime,
+        exclude: exclude,
+        limit: limit,
+        ascendingOrder: ascendingOrder);
+  }
+
+  /// This method is used to Fetch initial conversations between you and a single chat user or group.
+  /// This method should be called only after the initializeMessageList Method.
+  static Future<dynamic> loadMessages() {
+    return FlyChatFlutterPlatform.instance.loadMessages();
+  }
+
+  /// This method is used to fetch previous set of conversations between you and a single chat user or group.
+  /// This set contains the limit/length set in initializeMessageList method
+  static Future<dynamic> loadPreviousMessages() {
+    return FlyChatFlutterPlatform.instance.loadPreviousMessages();
+  }
+
+  /// This method is used to fetch next set of conversations between you and a single chat user or group.
+  /// This set contains the limit/length set in initializeMessageList method
+  static Future<dynamic> loadNextMessages() {
+    return FlyChatFlutterPlatform.instance.loadNextMessages();
   }
 
   static Future<dynamic> getProfileStatusList() {
@@ -649,8 +693,7 @@ class Mirrorfly {
   }
 
   static getProfileDetails(String jid) {
-    return FlyChatFlutterPlatform.instance
-        .getProfileDetails(jid);
+    return FlyChatFlutterPlatform.instance.getProfileDetails(jid);
   }
 
   static Future<dynamic> getProfileLocal(String jid, bool fetchFromServer) {
@@ -1038,7 +1081,6 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.addContact(number, name);
   }
 
-
   static Future<dynamic> setRegionCode(String regionCode) async {
     return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
   }
@@ -1048,31 +1090,40 @@ class Mirrorfly {
   /// * @property iOSPlistKey indicates the info plist file key
   /// returns the value from Manifest file if its Platform.isAndroid
   /// or if its Platform.isIOS the value from info Plist file.
-  static Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) async {
-    return FlyChatFlutterPlatform.instance.getValueFromManifestOrInfoPlist(androidManifestKey:androidManifestKey,iOSPlistKey:iOSPlistKey);
+  static Future<String> getValueFromManifestOrInfoPlist(
+      {String? androidManifestKey, String? iOSPlistKey}) async {
+    return FlyChatFlutterPlatform.instance.getValueFromManifestOrInfoPlist(
+        androidManifestKey: androidManifestKey, iOSPlistKey: iOSPlistKey);
   }
 
   static Future<bool> makeVideoCall(String userJid) async {
     return FlyChatFlutterPlatform.instance.makeVideoCall(userJid);
   }
+
   static Future<bool> makeVoiceCall(String userJid) async {
     return FlyChatFlutterPlatform.instance.makeVoiceCall(userJid);
   }
+
   static Future<dynamic> getCallUsersList() async {
     return FlyChatFlutterPlatform.instance.getCallUsersList();
   }
+
   static Future<dynamic> getCallType() async {
     return FlyChatFlutterPlatform.instance.getCallType();
   }
+
   static Future<dynamic> getCallDirection() async {
     return FlyChatFlutterPlatform.instance.getCallDirection();
   }
+
   static switchCamera() async {
     return FlyChatFlutterPlatform.instance.switchCamera();
   }
+
   static declineCall() async {
     return FlyChatFlutterPlatform.instance.declineCall();
   }
+
   static Future<bool?> muteAudio(bool status) async {
     return FlyChatFlutterPlatform.instance.muteAudio(status);
   }

@@ -584,7 +584,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<dynamic> initializeMessageList({required String userJid,
     String? messageId,
-    String? chatId,
     double? messageTime,
     bool? exclude,
     int limit = 25,
