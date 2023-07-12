@@ -1860,15 +1860,13 @@ import MirrorFlySDK
     
     static func loadPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-        let args = call.arguments as! Dictionary<String, Any>
-        
         if(messageListQuery == nil){
             NSLog("\(Constants.tag) Message List Not Initialized")
             result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
         }
         if(!(messageListQuery?.hasPreviousMessages() ?? false)){
             NSLog("\(Constants.tag) Reached Complete Previous Message List")
-            result("[]")
+            result(nil)
         }
         if(messageListQuery?.isFetchingInProgress() ?? false){
             result(FlutterError(code: "500", message: "Fetching Query is already in Progress", details: nil))
@@ -1893,15 +1891,13 @@ import MirrorFlySDK
     
     static func loadNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-        let args = call.arguments as! Dictionary<String, Any>
-        
         if(messageListQuery == nil){
             NSLog("\(Constants.tag) Message List Not Initialized")
             result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
         }
         
         if(!(messageListQuery?.hasNextMessages() ?? false)){
-            result("[]")
+            result(nil)
         }
         
         messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in
