@@ -20,10 +20,9 @@ struct Constants {
     static let onUserSpeakingChannel = "\(domain)/onUserSpeaking"
     static let onUserStoppedSpeakingChannel = "\(domain)/onUserStoppedSpeaking"
     
-    
+    static let voipToken = "voipToken"
     static let isLoggedIn = "isLoggedIn"
     static let isProfileSaved = "isProfileSaved"
-    
     static let tag = "#MirrorFlyCall"
 }
 enum CallStatus : String {

@@ -17,7 +17,7 @@ import MirrorFlySDK
 import UIKit
 
 
-@objc class FlySdkMethodCalls : NSObject{
+@objc public class FlySdkMethodCalls : NSObject{
     
     static var isTrialLicenceKey : Bool = true;
     static var chatHistoryEnable : Bool = false;
@@ -104,6 +104,8 @@ import UIKit
         ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
      
         ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
+        
+        ChatManager.setRegisterDeviceType(deviceType: "flutter-ios")
 
       }
 
@@ -154,7 +156,7 @@ import UIKit
                                 details: nil))
             return
         }
-        
+        print("device type \(FlyDefaults.deviceType)")
         try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, isExport: false, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
@@ -177,6 +179,7 @@ import UIKit
                 
                 
                 ChatManager.connect()
+                
                 
                 do {
                     try CallManager.initCallSDK()
@@ -1731,7 +1734,7 @@ import UIKit
 
         let args = call.arguments as! Dictionary<String, Any>
 
-        let pageNo = args["pageNo"] as? Int ?? 0
+        let isFirstSet = args["firstSet"] as? Bool ?? true
 
         let limit = args["limit"] as? Int ?? 15
 
@@ -1743,7 +1746,7 @@ import UIKit
         }else{
             print("recentChatListBuilder already set")
         }
-        if(pageNo == 1){
+        if(isFirstSet){
 
             print("loading first set")
             recentChatListBuilder!.loadRecentChatList { isSuccess, flyError, flyData in

@@ -8,11 +8,9 @@
 import Foundation
 import MirrorFlySDK
 import Flutter
+import PushKit
 
-@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, AudioManagerDelegate{
-   
-    
-    
+@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, AudioManagerDelegate, PKPushRegistryDelegate{
     
     private var methodChannel: FlutterMethodChannel?
     private var registrar: FlutterPluginRegistrar?
@@ -35,6 +33,8 @@ import Flutter
         eventChannelInitializer.initializeEventChannels(registrar: registrar)
         
         CallManager.setCallEventsDelegate(delegate: self)
+        
+        registerForVOIPNotifications()
         
     }
     
@@ -159,7 +159,7 @@ import Flutter
         print("\(Constants.tag) onRemote video Track --> \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
-        var jidJson = pluginDictToJson(dictionary: jsonObject)
+        let jidJson = pluginDictToJson(dictionary: jsonObject)
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
@@ -171,7 +171,6 @@ import Flutter
             // Handle case when unique ID is not found
         }
 
-        
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
     
@@ -196,7 +195,28 @@ import Flutter
         }
     }
     
-    
-    
-    
+    func registerForVOIPNotifications() {
+        NSLog("\(Constants.tag) Registering Voip Notification")
+        let pushRegistry = PKPushRegistry(queue: .main)
+        pushRegistry.delegate = self
+        pushRegistry.desiredPushTypes = [.voIP]
+    }
+
+    func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+
+        NSLog("\(Constants.tag) VoIP Token: \(pushCredentials)")
+        let deviceTokenString = pushCredentials.token.reduce("") { $0 + String(format: "%02X", $1) }
+        print("\(Constants.tag) #token pushRegistry VT => \(deviceTokenString)")
+        print(deviceTokenString)
+        VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
+        Utility.saveInPreference(key: Constants.voipToken, value: deviceTokenString)
+        VOIPManager.sharedInstance.updateDeviceToken()
+    }
+
+    func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+        NSLog("\(Constants.tag) Push VOIP Received with Payload - %@",payload.dictionaryPayload)
+        print("\(Constants.tag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
+        VOIPManager.sharedInstance.processPayload(payload.dictionaryPayload)
+    }
+
 }
