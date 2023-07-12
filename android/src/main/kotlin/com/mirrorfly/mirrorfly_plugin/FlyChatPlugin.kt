@@ -2268,18 +2268,18 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     private var messageListQuery : FetchMessageListQuery? = null
     private fun initializeMessageListParams(call: MethodCall,result: MethodChannel.Result){
-        val chatJid: String = call.argument("jid") ?: ""
-        val messageId: String = call.argument("message_id") ?: ""
-        val messageTime: String = call.argument("message_time") ?: ""
-        val inclusive: Boolean = call.argument("inclusive") ?: false
+        val chatJid: String = call.argument("userJid") ?: ""
+        val messageId: String = call.argument("messageId") ?: ""
+        val messageTime: String = call.argument("messageTime") ?: ""
+        val inclusive: Boolean = call.argument("exclude") ?: false
         val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: false
         val limit: Int = call.argument("limit") ?: 50
         if(ContactManager.isValidJid(chatJid)) {
             val messageListParams = FetchMessageListParams()
             messageListParams.chatJid = chatJid
-            messageListParams.messageId = messageId
-            messageListParams.messageTime = messageTime
-            messageListParams.inclusive = inclusive
+            if (messageId.isNotEmpty()) messageListParams.messageId = messageId
+            if (messageTime.isNotEmpty()) messageListParams.messageTime = messageTime
+            messageListParams.inclusive = !inclusive// for iOS using exclude , so we using NOT to match the Android and iOS
             messageListParams.ascendingOrder = ascendingOrder
             messageListParams.limit = limit
             messageListQuery = FetchMessageListQuery(messageListParams)
@@ -2301,7 +2301,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (isSuccess) {
                 val messages = data["data"] as ArrayList<ChatMessage>
                 result.success(messages.toJsonString())
+                LogMessage.d("loadMessages", "$isSuccess : ${data["data"]}")
             } else {
+                LogMessage.d("loadMessages", "$isSuccess : $throwable")
                 // Fetch messages failed print throwable to find the exception details.
                 result.error("500", "Failed to Load Initial Messages ", "$throwable")
             }
@@ -2325,7 +2327,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (isSuccess) {
                 val messages = data["data"] as ArrayList<ChatMessage>
                 result.success(messages.toJsonString())
+                LogMessage.d("loadPreviousMessages", "$isSuccess : ${data["data"]}")
             } else {
+                LogMessage.d("loadPreviousMessages", "$isSuccess : $throwable")
                 // Fetch messages failed print throwable to find the exception details.
                 result.error("500", "Failed to Load Previous Messages ", "$throwable")
             }
@@ -2349,7 +2353,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (isSuccess) {
                 val messages = data["data"] as ArrayList<ChatMessage>
                 result.success(messages.toJsonString())
+                LogMessage.d("loadNextMessages", "$isSuccess : ${data["data"]}")
             } else {
+                LogMessage.d("loadNextMessages", "$isSuccess : $throwable")
                 // Fetch messages failed print throwable to find the exception details.
                 result.error("500", "Failed to Load Next Messages ", "$throwable")
             }

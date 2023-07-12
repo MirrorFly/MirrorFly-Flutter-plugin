@@ -1927,7 +1927,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       double? messageTime,
       bool? exclude,
       int limit = 25,
-      bool? ascendingOrder}) async {
+      bool ascendingOrder=false}) async {
     bool initializeResponse;
     try {
       initializeResponse =
