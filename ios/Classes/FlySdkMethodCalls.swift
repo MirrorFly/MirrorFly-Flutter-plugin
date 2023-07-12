@@ -1799,23 +1799,19 @@ import MirrorFlySDK
                 print("Next set data is not available")
                 result("{\"data\": [] }")
             }
-
-
         }
-
-        
     }
     
     static func initializeMessageList(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
-        let userJid = args["userJid"] as? String ?? ""
+    
         
         if let messageId = args["messageId"] as? String {
             messageListParams.messageId = messageId
         }
         
-        if let chatId = args["chatId"] as? String {
+        if let chatId = args["userJid"] as? String {
             messageListParams.chatId = chatId
         }
         if let messageTime = args["messageTime"] as? Double {
@@ -1870,6 +1866,13 @@ import MirrorFlySDK
             NSLog("\(Constants.tag) Message List Not Initialized")
             result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
         }
+        if(!(messageListQuery?.hasPreviousMessages() ?? false)){
+            NSLog("\(Constants.tag) Reached Complete Previous Message List")
+            result("[]")
+        }
+        if(messageListQuery?.isFetchingInProgress() ?? false){
+            result(FlutterError(code: "500", message: "Fetching Query is already in Progress", details: nil))
+        }
         messageListQuery?.loadPreviousMessages { isSuccess, flyError, flyData in
             var data  = flyData
             if (isSuccess) {
@@ -1895,6 +1898,10 @@ import MirrorFlySDK
         if(messageListQuery == nil){
             NSLog("\(Constants.tag) Message List Not Initialized")
             result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
+        }
+        
+        if(!(messageListQuery?.hasNextMessages() ?? false)){
+            result("[]")
         }
         
         messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in

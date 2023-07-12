@@ -1934,7 +1934,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           await mirrorFlyMethodChannel.invokeMethod('initializeMessageList', {
         "userJid": userJid,
         "messageId": messageId,
-        "chatId": chatId,
         "messageTime": messageTime,
         "exclude": exclude,
         "limit": limit,
