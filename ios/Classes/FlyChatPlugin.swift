@@ -785,33 +785,17 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getMessageStatusOfASingleChatMessage(call: methodCall, result: result)
         case "addContact":
             FlySdkMethodCalls.addContact(call: methodCall, result: result)
-//            let args = methodCall.arguments as! Dictionary<String, Any>
-//            let number = args["number"] as? String ?? ""
-//
-//            let newContact = CNMutableContact()
-//
-//            newContact.phoneNumbers.append(CNLabeledValue(label: "home", value: CNPhoneNumber(stringValue: number)))
-//
-//            newContact.givenName = ""
-//            let contactVC = CNContactViewController(forUnknownContact: newContact)
-//            contactVC.contactStore = CNContactStore()
-//            contactVC.delegate = self
-//            contactVC.allowsActions = false
-//            let viewController: UIViewController =
-//                        (UIApplication.shared.delegate?.window??.rootViewController)!;
-            
-//            if let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController {
-//            viewController.show(contactVC, sender: self)//(contactVC, animated: true)//.pushViewController(contactVC, animated: true)
-//            }else{
-//                print("unabel to open controller")
-//            }
-            
-            
-            
+        case "initializeMessageList":
+            FlySdkMethodCalls.initializeMessageList(call: methodCall, result: result)
+        case "loadMessages":
+            FlySdkMethodCalls.loadMessages(call: methodCall, result: result)
+        case "loadPreviousMessages":
+            FlySdkMethodCalls.loadPreviousMessages(call: methodCall, result: result)
+        case "loadNextMessages":
+            FlySdkMethodCalls.loadNextMessages(call: methodCall, result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
-        
     }
 }
 

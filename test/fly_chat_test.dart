@@ -1382,6 +1382,30 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future initializeMessageList({required String userJid, String? messageId, String? chatId, double? messageTime, bool? exclude, int limit = 25, bool? ascendingOrder}) {
+    // implement initializeMessageList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future loadMessages() {
+    // implement loadMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future loadNextMessages() {
+    // implement loadNextMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future loadPreviousMessages() {
+    // implement loadPreviousMessages
+    throw UnimplementedError();
+  }
+
 }
 
 void main() {

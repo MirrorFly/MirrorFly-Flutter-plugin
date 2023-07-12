@@ -28,6 +28,9 @@ import MirrorFlySDK
     
     static var recentChatListBuilder: RecentChatListBuilder?
     
+    static var messageListParams = FetchMessageListParams()
+    static var messageListQuery : FetchMessageListQuery? = nil
+    
     static func buildChatSDK(call: FlutterMethodCall) {
        
         let args = call.arguments as! Dictionary<String, Any>
@@ -1802,6 +1805,116 @@ import MirrorFlySDK
 
         
     }
+    
+    static func initializeMessageList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJid = args["userJid"] as? String ?? ""
+        
+        if let messageId = args["messageId"] as? String {
+            messageListParams.messageId = messageId
+        }
+        
+        if let chatId = args["chatId"] as? String {
+            messageListParams.chatId = chatId
+        }
+        if let messageTime = args["messageTime"] as? Double {
+            messageListParams.messageTime = messageTime
+        }
+        if let exclude = args["exclude"] as? Bool {
+            messageListParams.exclude = exclude
+        }
+        if let limit = args["limit"] as? Int {
+            messageListParams.limit = limit
+        }
+        if let ascendingOrder = args["ascendingOrder"] as? Bool {
+            messageListParams.ascendingOrder = ascendingOrder
+        }
+        
+        messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
+        
+        result(true)
+        
+    }
+    
+    static func loadMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        if(messageListQuery == nil){
+            NSLog("\(Constants.tag) Message List Not Initialized")
+            result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
+        }
+        messageListQuery?.loadMessages { isSuccess, flyError, flyData in
+           var data  = flyData
+           if (isSuccess) {
+                let messageList  = data.getData() as? [ChatMessage]
+               
+               if let chatJson = messageList.toJson() {
+                   NSLog("\(Constants.tag) Initial Message List \(chatJson)")
+                   result(chatJson)
+               } else {
+                   NSLog("\(Constants.tag) Initial Message List Load Failed")
+                   result(FlutterError(code: "500", message: "Failed to Encode Chat Messages", details: nil))
+               }
+           } else {
+               NSLog("\(Constants.tag) Initial Message List Load Failed")
+               result(FlutterError(code: "500", message: "Failed to Load Chat Messages", details: flyError?.localizedDescription))
+           }
+       }
+    }
+    
+    static func loadPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        if(messageListQuery == nil){
+            NSLog("\(Constants.tag) Message List Not Initialized")
+            result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
+        }
+        messageListQuery?.loadPreviousMessages { isSuccess, flyError, flyData in
+            var data  = flyData
+            if (isSuccess) {
+                let messageList  = data.getData() as? [ChatMessage]
+                if let chatJson = messageList.toJson() {
+                    NSLog("\(Constants.tag) Previous Message List \(chatJson)")
+                    result(chatJson)
+                } else {
+                    NSLog("\(Constants.tag) Previous Message List Load Failed")
+                    result(FlutterError(code: "500", message: "Failed to Encode Previous Chat Messages", details: nil))
+                }
+            } else {
+                NSLog("\(Constants.tag) Initial Message List Load Failed")
+                result(FlutterError(code: "500", message: "Failed to Load Previous Chat Messages", details: flyError?.localizedDescription))
+            }
+        }
+    }
+    
+    static func loadNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        if(messageListQuery == nil){
+            NSLog("\(Constants.tag) Message List Not Initialized")
+            result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
+        }
+        
+        messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in
+          var data  = flyData
+          if (isSuccess) {
+                let messageList  = data.getData() as? [ChatMessage]
+              if let chatJson = messageList.toJson() {
+                  NSLog("\(Constants.tag) Next Message List \(chatJson)")
+                  result(chatJson)
+              } else {
+                  NSLog("\(Constants.tag) Next Message List Load Failed")
+                  result(FlutterError(code: "500", message: "Failed to Encode Next Chat Messages", details: nil))
+              }
+          } else {
+              NSLog("\(Constants.tag) Initial Message List Load Failed")
+              result(FlutterError(code: "500", message: "Failed to Load Next Chat Messages", details: flyError?.localizedDescription))
+          }
+        }
+    }
+    
    
     static func getRecentChatListIncludingArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
         
@@ -1814,9 +1927,9 @@ import MirrorFlySDK
     static func getRecentChatOf(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        let jid = args["jid"] as? String ?? nil
+        let jid = args["jid"] as? String ?? ""
         print("getRecentChatOf jid --> \(String(describing: jid))")
-        let recentChat = ChatManager.getRecentChatOf(jid:jid!)
+        let recentChat = ChatManager.getRecentChatOf(jid:jid)
         print("recentChat-->\(String(describing: recentChat))")
         if(recentChat == nil){
             result(nil)

@@ -565,8 +565,31 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<dynamic> getRecentChatList() {
     throw UnimplementedError('has not been implemented.');
   }
+
   Future<dynamic> getRecentChatListHistory({required bool firstSet,int limit=15}) {
     throw UnimplementedError('getRecentChatListHistory has not been implemented.');
+  }
+
+  Future<dynamic> loadMessages() {
+    throw UnimplementedError('loadMessages has not been implemented.');
+  }
+
+  Future<dynamic> loadPreviousMessages() {
+    throw UnimplementedError('loadPreviousMessages has not been implemented.');
+  }
+
+  Future<dynamic> loadNextMessages() {
+    throw UnimplementedError('loadNextMessages has not been implemented.');
+  }
+
+  Future<dynamic> initializeMessageList({required String userJid,
+    String? messageId,
+    String? chatId,
+    double? messageTime,
+    bool? exclude,
+    int limit = 25,
+    bool? ascendingOrder}) {
+    throw UnimplementedError('initializeMessageList has not been implemented.');
   }
 
   Future<dynamic> getProfileStatusList() {
