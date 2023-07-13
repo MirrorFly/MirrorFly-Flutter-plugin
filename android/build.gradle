@@ -8,7 +8,7 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/internal"
+            url "https://repo.mirrorfly.com/release"
         }
 //        mavenLocal()
     }
@@ -25,7 +25,7 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/internal"
+            url "https://repo.mirrorfly.com/release"
         }
 //        mavenLocal()
     }
@@ -70,7 +70,7 @@ android {
 }
 dependencies{
 //    api 'com.mirrorfly.sdk:appbase:0.0.13'
-    api 'com.mirrorfly.sdk:mirrorflysdk:7.5.0_pre_04'
+    api 'com.mirrorfly.sdk:mirrorflysdk:7.6.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
