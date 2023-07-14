@@ -2280,7 +2280,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (messageId.isNotEmpty()) messageListParams.messageId = messageId
             if (messageTime.isNotEmpty()) messageListParams.messageTime = messageTime
             messageListParams.inclusive = !inclusive// for iOS using exclude , so we using NOT to match the Android and iOS
-            messageListParams.ascendingOrder = !ascendingOrder
+            messageListParams.ascendingOrder = ascendingOrder
             messageListParams.limit = limit
             messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
             messageListParams.direction = "backward" // forward or backward
@@ -2303,7 +2303,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (isSuccess) {
                 val messages = data["data"] as ArrayList<ChatMessage>
                 result.success(messages.toJsonString())
-                LogMessage.d("loadMessages", "$isSuccess : ${data["data"]}")
+                LogMessage.d("loadMessages Android", "$isSuccess : ${messages.toJsonString()}")
             } else {
                 LogMessage.d("loadMessages", "$isSuccess : $throwable")
                 // Fetch messages failed print throwable to find the exception details.

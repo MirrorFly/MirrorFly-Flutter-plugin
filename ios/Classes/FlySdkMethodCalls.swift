@@ -76,7 +76,7 @@ import MirrorFlySDK
         
         print("ChatManager.enableChatHistory \(chatHistoryEnable)")
        
-        print("sdk version---> \(FlyDefaults.SDKVersion)")
+//        print("sdk version---> \(FlyDefaults.SDKVersion)")
 //        ChatManager.setSignalServer(signalServerUrl: SOCKETIO_SERVER_HOST)
         
 
@@ -102,6 +102,8 @@ import MirrorFlySDK
         
 //        FlyDefaults.chatHistoryEnabled = true
 //        FlyDefaults.isBusyStatusEnabled = true
+        print("chatHistoryEnable \(chatHistoryEnable)")
+        
         ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
         
       }
@@ -1824,6 +1826,7 @@ import MirrorFlySDK
             messageListParams.limit = limit
         }
         if let ascendingOrder = args["ascendingOrder"] as? Bool {
+            print("Ascending order value \(ascendingOrder)")
             messageListParams.ascendingOrder = ascendingOrder
         }
         
@@ -1845,10 +1848,13 @@ import MirrorFlySDK
                 let messageList  = data.getData() as? [ChatMessage]
                
                if let chatJson = messageList.toJson() {
-                   NSLog("\(Constants.tag) Initial Message List \(chatJson)")
+//                   NSLog("\(Constants.tag) Initial Message List \(chatJson)")
+                   print("\(Constants.tag) Initial Message List ios \(chatJson)")
                    result(chatJson)
                } else {
                    NSLog("\(Constants.tag) Initial Message List Load Failed")
+                   print("\(Constants.tag) Initial Message List Load Failed")
+                   
                    result(FlutterError(code: "500", message: "Failed to Encode Chat Messages", details: nil))
                }
            } else {
@@ -1859,32 +1865,38 @@ import MirrorFlySDK
     }
     
     static func loadPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+        print("calling previous message")
         if(messageListQuery == nil){
             NSLog("\(Constants.tag) Message List Not Initialized")
             result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
+            return
         }
         if(!(messageListQuery?.hasPreviousMessages() ?? false)){
             NSLog("\(Constants.tag) Reached Complete Previous Message List")
             result(nil)
+            return
         }
         if(messageListQuery?.isFetchingInProgress() ?? false){
             result(FlutterError(code: "500", message: "Fetching Query is already in Progress", details: nil))
+            return
         }
         messageListQuery?.loadPreviousMessages { isSuccess, flyError, flyData in
             var data  = flyData
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
                 if let chatJson = messageList.toJson() {
-                    NSLog("\(Constants.tag) Previous Message List \(chatJson)")
+                    print("\(Constants.tag) Previous Message List \(chatJson)")
                     result(chatJson)
+                    return
                 } else {
                     NSLog("\(Constants.tag) Previous Message List Load Failed")
                     result(FlutterError(code: "500", message: "Failed to Encode Previous Chat Messages", details: nil))
+                    return
                 }
             } else {
                 NSLog("\(Constants.tag) Initial Message List Load Failed")
                 result(FlutterError(code: "500", message: "Failed to Load Previous Chat Messages", details: flyError?.localizedDescription))
+                return
             }
         }
     }
@@ -1905,7 +1917,9 @@ import MirrorFlySDK
           if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
               if let chatJson = messageList.toJson() {
-                  NSLog("\(Constants.tag) Next Message List \(chatJson)")
+                  print("\(Constants.tag) Next Message List \(chatJson)")
+//                  NSLog("\(Constants.tag) Next Message List \(chatJson)")
+                  
                   result(chatJson)
               } else {
                   NSLog("\(Constants.tag) Next Message List Load Failed")
