@@ -157,7 +157,10 @@ import UIKit
             return
         }
         print("device type \(FlyDefaults.deviceType)")
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, isExport: false, pushServerType: .firebase) { isSuccess, flyError, flyData in
+        var voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
+        voipToken = voipToken.isEmpty ? deviceToken : voipToken
+        
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: false, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
