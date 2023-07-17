@@ -1926,8 +1926,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       String? chatId,
       double? messageTime,
       bool? exclude,
-      int limit = 25,
-      bool ascendingOrder = true}) async {
+      int limit = 25}) async {
     bool initializeResponse;
     try {
       initializeResponse =
@@ -1937,7 +1936,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "messageTime": messageTime,
         "exclude": exclude,
         "limit": limit,
-        "ascendingOrder": ascendingOrder
+        "ascendingOrder": true
       });
       LogMessage.d("initializeMessageList", "$initializeResponse");
       return initializeResponse;
