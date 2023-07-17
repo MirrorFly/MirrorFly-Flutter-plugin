@@ -1732,7 +1732,7 @@ import MirrorFlySDK
         
         let args = call.arguments as! Dictionary<String, Any>
 
-        let pageNo = args["pageNo"] as? Int ?? 0
+        let pageNo = args["firstSet"] as? Bool ?? true
         
         let limit = args["limit"] as? Int ?? 15
         
@@ -1744,7 +1744,7 @@ import MirrorFlySDK
         }else{
             print("recentChatListBuilder already set")
         }
-        if(pageNo == 1){
+        if(pageNo){
             
             print("loading first set")
             recentChatListBuilder!.loadRecentChatList { isSuccess, flyError, flyData in
