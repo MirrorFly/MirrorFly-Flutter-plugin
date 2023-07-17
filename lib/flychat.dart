@@ -11,6 +11,7 @@ class Mirrorfly {
   /// * @property [url] provides the base url for making api calls
   /// * @property [licenseKey] provides the License Key
   /// @property [iOSContainerID] provides the App Group of the iOS Project
+  /// @property [chatHistoryEnable] set true to enable chat History.
   /// @property [isTrialLicenceKey] to provide trial/live register and contact sync
   /// @property [storageFolderName] provides the Local Storage Folder Name
   /// @property [enableDebugLog] provides the Debug Log.
@@ -621,8 +622,8 @@ class Mirrorfly {
   }
 
   ///Used as a getRecentChatListHistory class for [Mirrorfly]
-  /// * @property firstSet indicates the initial data otherwise next set of data
-  /// * @property limit set the limit of the chat list, default value 15
+  /// * @property [firstSet] set true indicates the initial data otherwise next set of data
+  /// * @property [limit] set the limit of the chat list, default value 15
   /// * if ChatHistoryEnabled in init then synced from the server
   /// used to get Recent chat List from DB
   static Future<dynamic> getRecentChatListHistory(
