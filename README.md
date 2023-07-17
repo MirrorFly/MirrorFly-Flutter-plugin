@@ -30,8 +30,8 @@ Our Mirrorfly Plugin lets you initialize and configure the chat easily. With the
 Follow the below steps to get your license key:
 
 1. Sign up into [MirrorFly Console page](https://console.mirrorfly.com/register) for free MirrorFly account, If you already have a MirrorFly account, sign into your account
-2. Once you’re in! You get access to your MirrorFly account ‘Overview page’ where you can find a license key for further integration process
-3. Copy the license key from the ‘Application info’ section
+2. Once you are in! You get access to your MirrorFly account â€˜Overview pageâ€™ where you can find a license key for further integration process
+3. Copy the license key from the â€˜Application infoâ€™ section
 
 
 ### Step 2: Install packages
@@ -49,7 +49,7 @@ Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned 
         mavenCentral()
         jcenter()
         maven {
-            url "https://repo.mirrorfly.com/snapshot/"
+            url "https://repo.mirrorfly.com/release"
         }
     }
   }
@@ -81,7 +81,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 > **Note**: The App Group Must be same as `iOSContainerId` given during the SDK Initialization. [See Initialization Step 1](#Sending-your-first-message).
 
 
-![Screenshot](AppGroups-c9933d95df192665e1389f19ece4fd94.png)
+![Screenshot](https://www.mirrorfly.com/docs/assets/images/AppGroups-c9933d95df192665e1389f19ece4fd94.png)
 
 ### Flutter
 
@@ -89,7 +89,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.7
+  mirrorfly_plugin: ^0.0.9-beta
 ```
 
 - Run `flutter pub get` command in your project directory.

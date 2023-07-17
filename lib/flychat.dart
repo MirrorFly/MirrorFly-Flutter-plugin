@@ -8,7 +8,7 @@ class Mirrorfly {
 
   ///Used as a initChat class for [Mirrorfly]
   ///
-  /// * @property [url] provides the base url for making api calls
+  /// * @property [baseUrl] provides the base url for making api calls
   /// * @property [licenseKey] provides the License Key
   /// @property [iOSContainerID] provides the App Group of the iOS Project
   /// @property [chatHistoryEnable] set true to enable chat History.
