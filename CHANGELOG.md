@@ -1,3 +1,11 @@
+## [0.0.10-beta] Chat History
+
+* Chat History enable option
+* get chats from server synced with local db
+* get message from server synced with local db
+* maven url changes for android
+* Mirrorfly Android SDK updated to `7.6.2`
+
 ## [0.0.9-beta] Chat History
 
 * Chat History enable option 
