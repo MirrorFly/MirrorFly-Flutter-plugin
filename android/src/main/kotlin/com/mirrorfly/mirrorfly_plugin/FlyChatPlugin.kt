@@ -1550,12 +1550,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             override fun onMessageReceived(chatMessage: ChatMessage) {
                 //Here you need to fetch recent unread messages to build up notification content
                 //LogMessage.d("notificationdata",chatMessage.tojsonString())
-                val jsonObject = JSONObject()
+                /*val jsonObject = JSONObject()
                 jsonObject.put("groupJid", "")
                 jsonObject.put("titleContent", "")
                 jsonObject.put("chatMessage", JSONObject(chatMessage.toJson()))
                 jsonObject.put("cancel", false)
-                result.success(jsonObject.toString())
+                result.success(jsonObject.toString())*/
+                result.success(chatMessage.toJsonString())
             }
 
             override fun onGroupNotification(
@@ -1565,12 +1566,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             ) {
                 /* Create the notification for group creation with paramter values */
                 //LogMessage.d("notificationdata group",chatMessage.tojsonString())
-                val jsonObject = JSONObject()
+                /*val jsonObject = JSONObject()
                 jsonObject.put("groupJid", groupJid)
                 jsonObject.put("titleContent", titleContent)
                 jsonObject.put("chatMessage", JSONObject(chatMessage.toJson()))
                 jsonObject.put("cancel", false)
-                result.success(jsonObject.toString())
+                result.success(jsonObject.toString())*/
+                result.success(chatMessage.toJsonString())
             }
 
             override fun onCancelNotification() {
