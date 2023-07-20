@@ -15,6 +15,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.R
+import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+import com.mirrorflysdk.api.FlyCore
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.CallAction
@@ -36,6 +38,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         FlutterCall.setListener(this)
         Log.d("CallKitUiActivity", "onCreate")
         val userName = findViewById<TextView>(R.id.tvNameCaller)
+        val userImage = findViewById<CircleImageView>(R.id.ivAvatar)
         val accept = findViewById<ImageView>(R.id.ivAcceptCall)
         accept.setOnClickListener { attendCall() }
         val decline = findViewById<ImageView>(R.id.ivDeclineCall)
@@ -45,7 +48,10 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
             val user = CallManager.getCallUsersList()[0]
             val name = ContactManager.getDisplayName(user)
             userName.text = name
+            val profile = FlyCore.getUserProfile(user)
+            Utils.loadGlideImage(this,userImage,name, profile?.image ?: "")
         }
+
 
 
     }

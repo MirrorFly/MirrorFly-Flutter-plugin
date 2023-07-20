@@ -3,6 +3,20 @@ package com.mirrorfly.mirrorfly_plugin.call
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.view.View
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.media.MediaUploadHelper
 import java.lang.ref.WeakReference
 
 
@@ -62,6 +76,38 @@ class Utils {
                 it.get() == null
             }
             return this
+        }
+
+        fun loadGlideImage(mContext: Context,imageView: CircleImageView,name: String, imageUrl: String){
+            val defaultImage = imageView.getDrawableForProfile(name)
+            val options = RequestOptions().placeholder(imageView.drawable ?: defaultImage).error(defaultImage).priority(
+                Priority.HIGH)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+            if(imageUrl.isNotEmpty()){
+                val imgURL = Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon()
+                    .appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
+                LogMessage.d("imgURL",imgURL)
+                val requestBuilder = Glide.with(mContext).asDrawable().sizeMultiplier(0.1f)
+                Glide.with(mContext).load(imgURL).thumbnail(requestBuilder).apply(options)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?,
+                                                  isFirstResource: Boolean): Boolean {
+                            return if (e?.message != null && e.message!!.contains("FileNotFoundException")) {
+                                LogMessage.e("MediaUtils", e.message)
+                                true
+                            } else
+                                false
+                        }
+
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?,
+                                                     dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            return false
+                        }
+                    }).dontAnimate().dontTransform().into(imageView)
+            }else{
+                Glide.with(mContext).load(defaultImage).apply(options).into(imageView)
+//            profileView.setDrawableForProfile(name)
+            }
         }
     }
 }

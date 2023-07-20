@@ -201,10 +201,13 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
     }
 
     override fun getCallNotAttendedPendingIntent(): PendingIntent {
-
         val intent = Intent(context,CallKitUiActivity::class.java)
         return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
     }
+
+    /*override fun getCallAcceptIntent(): Intent {
+        return Intent(context,CallKitUiActivity::class.java)
+    }*/
     private fun getFlagPendingIntent(): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT

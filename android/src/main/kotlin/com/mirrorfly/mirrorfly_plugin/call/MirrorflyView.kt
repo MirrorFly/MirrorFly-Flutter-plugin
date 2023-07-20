@@ -2,8 +2,18 @@ package com.mirrorfly.mirrorfly_plugin.call
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.view.*
 import android.widget.LinearLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
 import com.mirrorflysdk.api.FlyCore
@@ -11,6 +21,8 @@ import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.TextureViewRenderer
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
+import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.media.MediaUploadHelper
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -35,6 +47,7 @@ class MirrorflyView(
         this.view = LayoutInflater.from(context).inflate(R.layout.mirrofly_profile_layout, null, false)
         this.textureView = view.findViewById(R.id.textureView)//TextureViewRenderer(context)
         this.profileView =  view.findViewById(R.id.circleImageView)
+        this.profileView.setTag(id)
         println("creationParams $id : $creationParams")
     }
     override fun getView(): View {
@@ -42,7 +55,7 @@ class MirrorflyView(
     }
 
     override fun dispose() {
-
+        this.textureView.release()
     }
 
     fun getViewById(id: Int):TextureViewRenderer{
@@ -81,12 +94,16 @@ class MirrorflyView(
     fun setProfileView(userJid: String){
         println("initial ProfileView set $id $userJid")
         val profile = FlyCore.getUserProfile(userJid)
-        if(!profile?.image.isNullOrEmpty()){
-
-        }
+        val name = if(!profile?.name.isNullOrEmpty()) profile?.name ?: "" else profile?.nickName ?: ""
+        val imageUrl = profile?.image ?: ""
         textureView.visibility=View.GONE
-        profileView.visibility=View.VISIBLE
-        profileView.setDrawableForProfile(profile?.name)
+        getImageViewbyTag(id)?.visibility=View.VISIBLE
+        LogMessage.d("imageUrl ",imageUrl)
+        Utils.loadGlideImage(mContext!!,getImageViewbyTag(id)!!,name, imageUrl)
+    }
+
+    fun getImageViewbyTag(id: Int): CircleImageView? {
+        return view.findViewWithTag<CircleImageView>(id)
     }
     fun setBackgroundColor(color: String){
         println("initial setBackgroundColor set $id $color")
