@@ -1,6 +1,63 @@
 package com.mirrorfly.mirrorfly_plugin
 
 object Constants {
+    const val mirrorflyMethodChannel = "contus.mirrorfly/flyChat"
+    const val onMessageReceivedChannel = "contus.mirrorfly/onMessageReceived"
+    const val onMessageStatusUpdatedChannel = "contus.mirrorfly/onMessageStatusUpdated"
+    const val onMediaStatusUpdatedChannel = "contus.mirrorfly/onMediaStatusUpdated"
+    const val onUploadDownloadProgressChangedChannel =
+        "contus.mirrorfly/onUploadDownloadProgressChanged"
+    const val showUpdateCancelNotificationChannel =
+        "contus.mirrorfly/showOrUpdateOrCancelNotification"
+
+    const val onGroupProfileFetchedChannel = "contus.mirrorfly/onGroupProfileFetched"
+    const val onNewGroupCreatedChannel = "contus.mirrorfly/onNewGroupCreated"
+    const val onGroupProfileUpdatedChannel = "contus.mirrorfly/onGroupProfileUpdated"
+    const val onNewMemberAddedToGroupChannel = "contus.mirrorfly/onNewMemberAddedToGroup"
+    const val onMemberRemovedFromGroupChannel = "contus.mirrorfly/onMemberRemovedFromGroup"
+    const val onFetchingGroupMembersCompletedChannel =
+        "contus.mirrorfly/onFetchingGroupMembersCompleted"
+    const val onDeleteGroupChannel = "contus.mirrorfly/onDeleteGroup"
+    const val onFetchingGroupListCompletedChannel =
+        "contus.mirrorfly/onFetchingGroupListCompleted"
+    const val onMemberMadeAsAdminChannel = "contus.mirrorfly/onMemberMadeAsAdmin"
+    const val onMemberRemovedAsAdminChannel = "contus.mirrorfly/onMemberRemovedAsAdmin"
+    const val onLeftFromGroupChannel = "contus.mirrorfly/onLeftFromGroup"
+    const val onGroupNotificationMessageChannel = "contus.mirrorfly/onGroupNotificationMessage"
+    const val onGroupDeletedLocallyChannel = "contus.mirrorfly/onGroupDeletedLocally"
+
+    const val blockedThisUserChannel = "contus.mirrorfly/blockedThisUser"
+    const val myProfileUpdatedChannel = "contus.mirrorfly/myProfileUpdated"
+    const val onAdminBlockedOtherUserChannel = "contus.mirrorfly/onAdminBlockedOtherUser"
+    const val onAdminBlockedUserChannel = "contus.mirrorfly/onAdminBlockedUser"
+    const val onContactSyncCompleteChannel = "contus.mirrorfly/onContactSyncComplete"
+    const val onLoggedOutChannel = "contus.mirrorfly/onLoggedOut"
+    const val unblockedThisUserChannel = "contus.mirrorfly/unblockedThisUser"
+    const val userBlockedMeChannel = "contus.mirrorfly/userBlockedMe"
+    const val userCameOnlineChannel = "contus.mirrorfly/userCameOnline"
+    const val userDeletedHisProfileChannel = "contus.mirrorfly/userDeletedHisProfile"
+    const val userProfileFetchedChannel = "contus.mirrorfly/userProfileFetched"
+    const val userUnBlockedMeChannel = "contus.mirrorfly/userUnBlockedMe"
+    const val userUpdatedHisProfileChannel = "contus.mirrorfly/userUpdatedHisProfile"
+    const val userWentOfflineChannel = "contus.mirrorfly/userWentOffline"
+    const val usersIBlockedListFetchedChannel = "contus.mirrorfly/usersIBlockedListFetched"
+    const val usersProfilesFetchedChannel = "contus.mirrorfly/usersProfilesFetched"
+    const val usersWhoBlockedMeListFetchedChannel =
+        "contus.mirrorfly/usersWhoBlockedMeListFetched"
+    const val onConnectedChannel = "contus.mirrorfly/onConnected"
+    const val onDisconnectedChannel = "contus.mirrorfly/onDisconnected"
+
+    //  const val onConnectionNotAuthorized_channel = "contus.mirrorfly/onConnectionNotAuthorized"
+    const val onConnectionFailedChannel = "contus.mirrorfly/onConnectionFailed"
+    const val connectionFailedChannel = "contus.mirrorfly/connectionFailed"
+    const val connectionSuccessChannel = "contus.mirrorfly/connectionSuccess"
+    const val onWebChatPasswordChangedChannel = "contus.mirrorfly/onWebChatPasswordChanged"
+    const val setTypingStatusChannel = "contus.mirrorfly/setTypingStatus"
+    const val onChatTypingStatusChannel = "contus.mirrorfly/onChatTypingStatus"
+    const val onGroupTypingStatusChannel = "contus.mirrorfly/onGroupTypingStatus"
+    const val onFailureChannel = "contus.mirrorfly/onFailure"
+    val onProgressChangedChannel = "contus.mirrorfly/onProgressChanged"
+    const val onSuccessChannel = "contus.mirrorfly/onSuccess"
     //call Method channel constants
     private const val domain = "contus.mirrorfly"
     const val callMethodChannel = "$domain/flyCall"

@@ -53,6 +53,15 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
                 val direction = if(CallDirection.INCOMING_CALL == CallManager.getCallDirection()) "Incoming" else "Outgoing"
                 result.success(direction)
             }
+            "isOnGoingCall"-> {
+                result.success(CallManager.isOnGoingCall())
+            }
+            "isOnGoingAudioCall"-> {
+                result.success(CallManager.isOnGoingAudioCall())
+            }
+            "isOnGoingVideoCall"-> {
+                result.success(CallManager.isOnGoingVideoCall())
+            }
             "getCallUsersList"-> {
                 sdk.getCallUsersList(call,result)
             }
@@ -202,12 +211,23 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
 
     override fun getCallNotAttendedPendingIntent(): PendingIntent {
         val intent = Intent(context,CallKitUiActivity::class.java)
+        intent.action=CallConstants.ACTION_SHOW_CALL_UI
+        intent.putExtra(CallConstants.ACCEPT_CALL,false)
+        intent.putExtra("FROM","getCallNotAttendedPendingIntent")
         return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
     }
 
-    /*override fun getCallAcceptIntent(): Intent {
-        return Intent(context,CallKitUiActivity::class.java)
-    }*/
+    override fun getCallAcceptPendingIntent(): PendingIntent {
+        val intentTransparent = Intent(context,CallKitUiActivity::class.java)/*TransparentActivity.getIntent(
+            context,
+            Constants.ACTION_CALL_ACCEPT,
+            null
+        )*/
+        intentTransparent.action=CallConstants.ACCEPT_CALL
+        intentTransparent.putExtra(CallConstants.ACCEPT_CALL,true)
+        intentTransparent.putExtra("FROM",CallConstants.ACCEPT_CALL)
+        return PendingIntent.getActivity(context, AppUtils.CALL_REQUEST, intentTransparent, getFlagPendingIntent())
+    }
     private fun getFlagPendingIntent(): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -224,7 +244,9 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
             CallConstants.ACTION_SHOW_CALL_UI->{
                 if(CallManager.getCallDirection()==CallDirection.INCOMING_CALL) {
                     val t = Intent(context, CallKitUiActivity::class.java)
-                    t.addFlags(FLAG_ACTIVITY_NEW_TASK)
+                    t.putExtra("FROM",CallConstants.ACTION_SHOW_CALL_UI)
+                    t.putExtra(CallConstants.ACCEPT_CALL,false)
+                    t.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(t)
                 }
             }
