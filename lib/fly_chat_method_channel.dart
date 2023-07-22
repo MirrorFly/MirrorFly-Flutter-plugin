@@ -3737,4 +3737,38 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+  @override
+  Future<bool?> isOnGoingCall() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('isOnGoingCall');
+      LogMessage.d('isOnGoingCall', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> disconnectCall() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('disconnectCall');
+      LogMessage.d('disconnectCall', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
 }

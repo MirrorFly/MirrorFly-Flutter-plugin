@@ -1394,6 +1394,19 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future<bool?> isOnGoingCall() {
+    // implement isOnGoingCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> disconnectCall() {
+    // implement isOnGoingCall
+    throw UnimplementedError();
+  }
+
+
 }
 
 void main() {

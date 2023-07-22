@@ -985,4 +985,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<bool?> routeAudioTo({required String routeType}) async {
     throw UnimplementedError('routeAudioTo has not been implemented.');
   }
+
+  Future<bool?> isOnGoingCall() async {
+    throw UnimplementedError('isOnGoingCall has not been implemented.');
+  }
+  Future<bool?> disconnectCall() async {
+    throw UnimplementedError('disconnectCall has not been implemented.');
+  }
 }

@@ -1051,35 +1051,70 @@ class Mirrorfly {
   static Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) async {
     return FlyChatFlutterPlatform.instance.getValueFromManifestOrInfoPlist(androidManifestKey:androidManifestKey,iOSPlistKey:iOSPlistKey);
   }
-
+  ///Used as a [makeVideoCall] class for [Mirrorfly]
+  /// * @property [userJid] used to make a video call to this user or group
+  ///used to make a video call
   static Future<bool> makeVideoCall(String userJid) async {
     return FlyChatFlutterPlatform.instance.makeVideoCall(userJid);
   }
+  ///Used as a [makeVoiceCall] class for [Mirrorfly]
+  /// * @property [userJid] used to make a voice call to this user or group
+  ///used to make a voice call
   static Future<bool> makeVoiceCall(String userJid) async {
     return FlyChatFlutterPlatform.instance.makeVoiceCall(userJid);
   }
+  ///Used as a [getCallUsersList] class for [Mirrorfly]
+  ///used to get user list on the call
   static Future<dynamic> getCallUsersList() async {
     return FlyChatFlutterPlatform.instance.getCallUsersList();
   }
+  ///Used as a [getCallType] class for [Mirrorfly]
+  ///used to get type of the current call, audio or video
   static Future<dynamic> getCallType() async {
     return FlyChatFlutterPlatform.instance.getCallType();
   }
+  ///Used as a [getCallDirection] class for [Mirrorfly]
+  ///used to get current call direction, incoming or outgoing.
   static Future<dynamic> getCallDirection() async {
     return FlyChatFlutterPlatform.instance.getCallDirection();
   }
+  ///Used as a [getAllAvailableAudioInput] class for [Mirrorfly]
+  ///used to get the available audio devices that connect on your device
   static Future<dynamic> getAllAvailableAudioInput() async {
     return FlyChatFlutterPlatform.instance.getAllAvailableAudioInput();
   }
+  ///Used as a [switchCamera] class for [Mirrorfly]
+  ///used to switch the camera rear or front
   static switchCamera() async {
     return FlyChatFlutterPlatform.instance.switchCamera();
   }
+  ///Used as a [declineCall] class for [Mirrorfly]
+  ///used to decline the Call an out-going call
   static declineCall() async {
     return FlyChatFlutterPlatform.instance.declineCall();
   }
+  ///Used as a [muteAudio] class for [Mirrorfly]
+  ///used to mute the Audio in the call
+  ///returns the bool value
   static Future<bool?> muteAudio(bool status) async {
     return FlyChatFlutterPlatform.instance.muteAudio(status);
   }
+  ///Used as a [routeAudioTo] class for [Mirrorfly]
+  ///used to route the Audio in the call via bluetooth, speaker, receiver..
+  ///returns the bool value
   static Future<bool?> routeAudioTo({required String routeType}) async {
     return FlyChatFlutterPlatform.instance.routeAudioTo(routeType: routeType);
   }
+  ///Used as a [isOnGoingCall] class for [Mirrorfly]
+  ///used to check if there is an ongoing call
+  ///returns the bool value
+  static Future<bool?> isOnGoingCall() async {
+    return FlyChatFlutterPlatform.instance.isOnGoingCall();
+  }
+  ///Used as a [disconnectCall] class for [Mirrorfly]
+  ///used to disconnect an on-going call
+  static Future<bool?> disconnectCall() async {
+    return FlyChatFlutterPlatform.instance.disconnectCall();
+  }
+
 }

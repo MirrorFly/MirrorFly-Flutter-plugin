@@ -69,13 +69,14 @@ class SdkCallFunctions(var context: Context) {
         })
     }
 
-    fun routeTo(call: MethodCall){
+    fun routeTo(call: MethodCall,result: MethodChannel.Result){
         val routeType = call.argument<String>("routeType") ?: ""
         LogMessage.d(tag,"routeType : $routeType")
         val selectedDevice = if(routeType=="receiver") AudioDevice.EARPIECE  else if(routeType=="speaker") AudioDevice.SPEAKER_PHONE else if(routeType=="bluetooth") AudioDevice.BLUETOOTH else if(routeType=="headset") AudioDevice.WIRED_HEADSET else AudioDevice.NONE
         //CallAudioManager.getInstance(context).selectAudioDevice(selectedDevice)
         CallManager.setAudioDevice(selectedDevice);
         LogMessage.d(tag,"selectedDevice : $selectedDevice")
+        result.success(true)
     }
     fun getAllAvailableAudioInput(result: MethodChannel.Result){
         val availableAudioDevices = JSONArray()
@@ -152,6 +153,16 @@ class SdkCallFunctions(var context: Context) {
 
     fun declineCall(){
         CallManager.declineCall()
+        LogMessage.d("declineCall","called")
+    }
+
+    fun disconnectCall(result: MethodChannel.Result){
+        CallManager.disconnectCall(object : CallActionListener{
+            override fun onResponse(isSuccess: Boolean, message: String) {
+                result.success(isSuccess)
+            }
+
+        })
         LogMessage.d("declineCall","called")
     }
 

@@ -73,7 +73,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
                 result.success(selectedAudioDevice)
             }
             "routeAudioTo" ->{
-                sdk.routeTo(call)
+                sdk.routeTo(call,result)
             }
             "makeVoiceCall" -> {
                 sdk.makeVoiceCall(call,result)
@@ -86,6 +86,9 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
             }
             "declineCall" -> {
                 sdk.declineCall()
+            }
+            "disconnectCall" -> {
+                sdk.disconnectCall(result)
             }
             "muteAudio" -> {
                 sdk.muteAudio(call,result)
@@ -159,6 +162,19 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
         json.put("callAction",callAction)
         json.put("userJid",userJid)
         onCallActionStreamHandler.onCallAction?.success(json.toString())
+        sendCallStatusUpdate(callAction,userJid)
+    }
+
+    private fun sendCallStatusUpdate(status: String,userJid: String){
+        val json = JSONObject()
+        json.put("userJid",userJid)
+        json.put("callType",CallManager.getCallType())
+        json.put("callMode",CallManager.getCallMode())
+        when(status){
+            CallAction.ACTION_REMOTE_HANGUP->json.put("callStatus","Disconnected")
+            else -> json.put("callStatus",status)
+        }
+        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
     }
 
     override fun onVideoTrackAdded(userJid: String) {
@@ -250,29 +266,18 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
                     context.startActivity(t)
                 }
             }
-            CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
+            /*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}
             CallAction.ACTION_INVITE_USERS->{}
-            CallAction.ACTION_ANSWER_CALL->{
-
-            }
+            CallAction.ACTION_ANSWER_CALL->{}
             CallAction.ACTION_DENY_CALL->{}
-            CallAction.ACTION_LOCAL_HANGUP->{
-            /*    val json = JSONObject()
-                json.put("callStatus","Disconnected")
-                json.put("userJid",CallManager.getCurrentUserId())
-                json.put("callType",CallManager.getCallType())
-                json.put("callMode",CallManager.getCallMode())
-                onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())*/
-            }
+            CallAction.ACTION_LOCAL_HANGUP->{}
             CallAction.ACTION_REMOTE_HANGUP->{}
             CallAction.ACTION_REMOTE_OTHER_BUSY->{}
             CallAction.ACTION_REMOTE_BUSY->{}
             CallAction.ACTION_REMOTE_ENGAGED->{}
-            CallAction.ACTION_CALL_AGAIN->{
-
-            }
+            CallAction.ACTION_CALL_AGAIN->{}
             CallAction.ACTION_CANCEL_CALL_AGAIN->{}
             CallAction.ACTION_SWITCH_CAMERA->{}
             CallAction.ACTION_REMOTE_VIDEO_STATUS->{}
@@ -289,7 +294,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
             CallAction.USER_SPEAKING->{}
             CallAction.USER_STOPPED_SPEAKING->{}
             CallAction.ACTION_MAKE_SERVER_CONNECTION->{}
-            CallAction.ACTION_CLOSE_SERVER_CONNECTION->{}
+            CallAction.ACTION_CLOSE_SERVER_CONNECTION->{}*/
         }
     }
 
