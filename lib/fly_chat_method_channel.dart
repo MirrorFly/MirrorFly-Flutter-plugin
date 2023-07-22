@@ -161,9 +161,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
 
   @visibleForTesting
-  final onCallReceivingChannel = const EventChannel('contus.mirrorfly/onCallReceiving');
-
-  @visibleForTesting
   final onLocalVideoTrackAddedChannel = const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
 
   @visibleForTesting
@@ -1792,10 +1789,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onSuccess =>
       onSuccessChannel.receiveBroadcastStream().cast();
-
-  @override
-  Stream<dynamic> get onCallReceiving =>
-      onCallReceivingChannel.receiveBroadcastStream().cast();
 
   @override
   Stream<dynamic> get onLocalVideoTrackAdded =>

@@ -523,9 +523,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onSuccess =>
       throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onCallReceiving =>
-      throw UnimplementedError('onCallReceiving has not been implemented.');
-
   Stream<dynamic> get onLocalVideoTrackAdded =>
       throw UnimplementedError('onLocalVideoTrackAdded has not been implemented.');
 

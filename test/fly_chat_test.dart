@@ -1293,10 +1293,6 @@ class MockFlyChatFlutterPlatform
 
 
   @override
-  // implement onCallReceiving
-  Stream get onCallReceiving => throw UnimplementedError();
-
-  @override
   // implement onLocalVideoTrackAdded
   Stream get onLocalVideoTrackAdded => throw UnimplementedError();
 

@@ -32,7 +32,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
     private var sdk = SdkCallFunctions(context)
     init {
         Logger.d("$tag init")
-        EventChannel(binaryMessenger,Constants.onCallReceiving).setStreamHandler(OnCallReceivingStreamHandler)
+//        EventChannel(binaryMessenger,Constants.onCallReceiving).setStreamHandler(OnCallReceivingStreamHandler)
         EventChannel(binaryMessenger,Constants.onLocalVideoTrackAdded).setStreamHandler(onLocalVideoTrackAddedStreamHandler)
         EventChannel(binaryMessenger,Constants.onRemoteVideoTrackAdded).setStreamHandler(onRemoteVideoTrackAddedStreamHandler)
         EventChannel(binaryMessenger,Constants.onTrackAdded).setStreamHandler(onTrackAddedStreamHandler)
