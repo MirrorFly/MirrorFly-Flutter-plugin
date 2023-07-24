@@ -1,13 +1,18 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.Manifest
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.toJson
 import com.mirrorflysdk.api.CallMessenger
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.api.GroupManager
+import com.mirrorflysdk.api.MediaNotificationHelper
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.utils.NameHelper
 import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
@@ -21,30 +26,31 @@ import com.mirrorflysdk.flycall.webrtc.api.CallHelper
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycall.webrtc.api.CallNameHelper
 import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
+import com.mirrorflysdk.flycommons.Constants
 import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.flycommons.PendingIntentHelper
 import io.flutter.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
 import org.json.JSONObject
 
-class SdkCallFunctions(var context: Context) {
+class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificationHelper {
     val tag = "#FlutterCall"
 
     fun initCall(){
         CallManager.init(context)
-        CallManager.setMissedCallListener(object : MissedCallListener {
-            override fun onMissedCall(
-                isOneToOneCall: Boolean,
-                userJid: String,
-                groupId: String?,
-                callType: String,
-                userList: ArrayList<String>
-            ){}
-        })
-
+        CallManager.setMissedCallListener(this)
+        ChatManager.setMediaNotificationHelper(this)
         CallManager.setCallHelper(object : CallHelper {
             override fun getNotificationContent(callDirection: String): String {
+                /*return if (BuildConfig.HIPAA_COMPLIANCE_ENABLED) {
+                    when (callDirection) {
+                        CallDirection.INCOMING_CALL -> resources.getString(R.string.new_incoming_call)
+                        CallDirection.OUTGOING_CALL -> resources.getString(R.string.new_outgoing_call)
+                        else -> resources.getString(R.string.new_ongoing_call)
+                    }
+                } else*/
                 return CallNotificationHelper.getNotificationMessage()
             }
 
@@ -56,7 +62,7 @@ class SdkCallFunctions(var context: Context) {
                 CallMessenger.sendCallMessage(details, users, invitedUsers)
             }
         })
-        GroupManager.setNameHelper(object : NameHelper {
+        ChatManager.setNameHelper(object : NameHelper {
             override fun getDisplayName(jid: String): String {
                 return ContactManager.getDisplayName(jid)
             }
@@ -67,6 +73,7 @@ class SdkCallFunctions(var context: Context) {
                 return ContactManager.getDisplayName(jid)
             }
         })
+        CallManager.keepConnectionInForeground(true)
     }
 
     fun routeTo(call: MethodCall,result: MethodChannel.Result){
@@ -235,6 +242,83 @@ class SdkCallFunctions(var context: Context) {
             json.put(obj)
         }
         result.success(json.toString())
+    }
+
+    override fun onMissedCall(
+        isOneToOneCall: Boolean,
+        userJid: String,
+        groupId: String?,
+        callType: String,
+        userList: ArrayList<String>
+    ) {
+        val notificationContent = getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList)
+        /*CallNotificationUtils.createNotification(
+            getContext(),
+            notificationContent.first, //Title Missed call Notification
+            notificationContent.second //Message Content Missed call from whom
+        )*/
+        val json = JSONObject()
+        json.put("title",notificationContent.first)
+        json.put("content",notificationContent.second)
+        LogMessage.d("MissedCallNotification",json.toString())
+    }
+
+    override fun setMediaNotificationIntentAction(
+        notificationCompatBuilder: NotificationCompat.Builder, jidList: List<String>) {
+        notificationCompatBuilder.setContentIntent(getPendingIntent(jidList))
+    }
+    private fun getPendingIntent(toUsers: List<String>): PendingIntent {
+        val notificationIntent = AppUtils.getAppIntent(context)//Intent(this, ChatManager.startActivity)
+        notificationIntent!!.flags = (Intent.FLAG_ACTIVITY_CLEAR_TASK
+                or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        notificationIntent.putExtra(Constants.IS_FROM_NOTIFICATION, true)
+        notificationIntent.putExtra("jid", if (toUsers.count() == 1) toUsers.elementAt(0) else Constants.EMPTY_STRING)
+        val requestID = System.currentTimeMillis().toInt()
+        return PendingIntentHelper.getActivity(context, requestID, notificationIntent)
+    }
+    private fun getMissedCallNotificationContent( isOneToOneCall: Boolean, userJid: String, groupId: String?, callType: String,
+                                                  userList: ArrayList<String>): Pair<String, String> {
+        val messageContent : String
+        val missedCallMessage = StringBuilder()
+        missedCallMessage.append("You missed ")
+        if (isOneToOneCall && groupId.isNullOrEmpty()) {
+            if (callType == CallType.AUDIO_CALL) {
+                missedCallMessage.append("an ")
+            } else {
+                missedCallMessage.append("a ")
+            }
+            missedCallMessage.append(callType).append(" call")
+            messageContent = getDisplayName(userJid)
+        } else {
+            missedCallMessage.append("a group ").append(callType).append(" call")
+            messageContent = if (!groupId.isNullOrBlank()) {
+                getDisplayName(groupId)
+            } else {
+                getCallUsersName(userList).toString()
+            }
+        }
+//        if (BuildConfig.HIPAA_COMPLIANCE_ENABLED)
+//            messageContent = resources.getString(R.string.new_missed_call)
+        return Pair(missedCallMessage.toString(), messageContent)
+    }
+
+    private fun getCallUsersName(callUsers: java.util.ArrayList<String>): StringBuilder {
+        var name = StringBuilder("")
+        for (i in callUsers.indices) {
+            if (i == 2) {
+                name.append(" and (+").append(callUsers.size - i).append(")")
+                break
+            } else if (i == 1) {
+                name.append(", ").append(getDisplayName(callUsers[i]))
+            } else {
+                name = StringBuilder(getDisplayName(callUsers[i]))
+            }
+        }
+        return name
+    }
+
+    private fun getDisplayName(jid : String):String{
+        return ContactManager.getProfileDetails(jid)?.name ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
     }
 
 }
