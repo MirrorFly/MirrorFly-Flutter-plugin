@@ -444,13 +444,13 @@ class Mirrorfly {
   static Stream<dynamic> get onUploadDownloadProgressChanged =>
       FlyChatFlutterPlatform.instance.onUploadDownloadProgressChanged;
 
-  static Stream<String> get onGroupProfileFetched =>
+  static Stream<dynamic> get onGroupProfileFetched =>
       FlyChatFlutterPlatform.instance.onGroupProfileFetched;
 
-  static Stream<String> get onNewGroupCreated =>
+  static Stream<dynamic> get onNewGroupCreated =>
       FlyChatFlutterPlatform.instance.onNewGroupCreated;
 
-  static Stream<String> get onGroupProfileUpdated =>
+  static Stream<dynamic> get onGroupProfileUpdated =>
       FlyChatFlutterPlatform.instance.onGroupProfileUpdated;
 
   static Stream<dynamic> get onNewMemberAddedToGroup =>
@@ -459,7 +459,7 @@ class Mirrorfly {
   static Stream<dynamic> get onMemberRemovedFromGroup =>
       FlyChatFlutterPlatform.instance.onMemberRemovedFromGroup;
 
-  static Stream<String> get onFetchingGroupMembersCompleted =>
+  static Stream<dynamic> get onFetchingGroupMembersCompleted =>
       FlyChatFlutterPlatform.instance.onFetchingGroupMembersCompleted;
 
   static Stream<dynamic> get onDeleteGroup =>
@@ -480,13 +480,13 @@ class Mirrorfly {
   static Stream<dynamic> get onGroupNotificationMessage =>
       FlyChatFlutterPlatform.instance.onGroupNotificationMessage;
 
-  static Stream<String> get onGroupDeletedLocally =>
+  static Stream<dynamic> get onGroupDeletedLocally =>
       FlyChatFlutterPlatform.instance.onGroupDeletedLocally;
 
   static Stream<dynamic> get blockedThisUser =>
       FlyChatFlutterPlatform.instance.blockedThisUser;
 
-  static Stream<bool> get myProfileUpdated =>
+  static Stream<dynamic> get myProfileUpdated =>
       FlyChatFlutterPlatform.instance.myProfileUpdated;
 
   static Stream<dynamic> get onAdminBlockedOtherUser =>
@@ -495,10 +495,10 @@ class Mirrorfly {
   static Stream<dynamic> get onAdminBlockedUser =>
       FlyChatFlutterPlatform.instance.onAdminBlockedUser;
 
-  static Stream<bool> get onContactSyncComplete =>
+  static Stream<dynamic> get onContactSyncComplete =>
       FlyChatFlutterPlatform.instance.onContactSyncComplete;
 
-  static Stream<bool> get onLoggedOut =>
+  static Stream<dynamic> get onLoggedOut =>
       FlyChatFlutterPlatform.instance.onLoggedOut;
 
   static Stream<dynamic> get unblockedThisUser =>
@@ -510,10 +510,10 @@ class Mirrorfly {
   static Stream<dynamic> get userCameOnline =>
       FlyChatFlutterPlatform.instance.userCameOnline;
 
-  static Stream<String> get userDeletedHisProfile =>
+  static Stream<dynamic> get userDeletedHisProfile =>
       FlyChatFlutterPlatform.instance.userDeletedHisProfile;
 
-  static Stream<bool> get usersProfilesFetched =>
+  static Stream<dynamic> get usersProfilesFetched =>
       FlyChatFlutterPlatform.instance.usersProfilesFetched;
 
   static Stream<dynamic> get userProfileFetched =>

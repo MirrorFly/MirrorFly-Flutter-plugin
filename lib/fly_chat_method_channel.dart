@@ -41,15 +41,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final onGroupProfileFetchedChannel =
       const EventChannel('contus.mirrorfly/onGroupProfileFetched');
-  final StreamController<String> onGroupProfileFetchedStreamController = StreamController<String>.broadcast();
+  final StreamController<dynamic> onGroupProfileFetchedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onNewGroupCreatedChannel =
       const EventChannel('contus.mirrorfly/onNewGroupCreated');
-  final StreamController<String> onNewGroupCreatedStreamController = StreamController<String>.broadcast();
+  final StreamController<dynamic> onNewGroupCreatedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupProfileUpdatedChannel =
       const EventChannel('contus.mirrorfly/onGroupProfileUpdated');
-  final StreamController<String> onGroupProfileUpdatedStreamController = StreamController<String>.broadcast();
+  final StreamController<dynamic> onGroupProfileUpdatedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onNewMemberAddedToGroupChannel =
       const EventChannel('contus.mirrorfly/onNewMemberAddedToGroup');
@@ -61,7 +61,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final onFetchingGroupMembersCompletedChannel =
       const EventChannel('contus.mirrorfly/onFetchingGroupMembersCompleted');
-  final StreamController<String> onFetchingGroupMembersCompletedStreamController = StreamController<String>.broadcast();
+  final StreamController<dynamic> onFetchingGroupMembersCompletedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onDeleteGroupChannel =
       const EventChannel('contus.mirrorfly/onDeleteGroup');
@@ -89,7 +89,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final onGroupDeletedLocallyChannel =
       const EventChannel('contus.mirrorfly/onGroupDeletedLocally');
-  final StreamController<String> onGroupDeletedLocallyStreamController = StreamController<String>.broadcast();
+  final StreamController<dynamic> onGroupDeletedLocallyStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final blockedThisUserChannel =
@@ -98,7 +98,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final myProfileUpdatedChannel =
       const EventChannel('contus.mirrorfly/myProfileUpdated');
-  final StreamController<bool> myProfileUpdatedStreamController = StreamController<bool>.broadcast();
+  final StreamController<dynamic> myProfileUpdatedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onAdminBlockedOtherUserChannel =
       const EventChannel('contus.mirrorfly/onAdminBlockedOtherUser');
@@ -110,10 +110,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final onContactSyncCompleteChannel =
       const EventChannel('contus.mirrorfly/onContactSyncComplete');
-  final StreamController<bool> onContactSyncCompleteStreamController = StreamController<bool>.broadcast();
+  final StreamController<dynamic> onContactSyncCompleteStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onLoggedOutChannel = const EventChannel('contus.mirrorfly/onLoggedOut');
-  final StreamController<bool> onLoggedOutStreamController = StreamController<bool>.broadcast();
+  final StreamController<dynamic> onLoggedOutStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final unblockedThisUserChannel =
       const EventChannel('contus.mirrorfly/unblockedThisUser');
@@ -129,7 +129,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final userDeletedHisProfileChannel =
       const EventChannel('contus.mirrorfly/userDeletedHisProfile');
-  final StreamController<String> userDeletedHisProfileStreamController = StreamController<String>.broadcast();
+  final StreamController<dynamic> userDeletedHisProfileStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userProfileFetchedChannel =
       const EventChannel('contus.mirrorfly/userProfileFetched');
@@ -153,7 +153,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final usersProfilesFetchedChannel =
       const EventChannel('contus.mirrorfly/usersProfilesFetched');
-  final StreamController<bool> usersProfilesFetchedStreamController = StreamController<bool>.broadcast();
+  final StreamController<dynamic> usersProfilesFetchedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final usersWhoBlockedMeListFetchedChannel =
       const EventChannel('contus.mirrorfly/usersWhoBlockedMeListFetched');
@@ -262,35 +262,35 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     mediaStatusUpdatedStreamController.addStream(mediaStatusUpdatedChannel.receiveBroadcastStream());
     uploadDownloadProgressChangedStreamController.addStream(uploadDownloadProgressChangedChannel.receiveBroadcastStream());
     showUpdateCancelNotificationStreamController.addStream(showUpdateCancelNotificationChannel.receiveBroadcastStream());
-    onGroupProfileFetchedStreamController.addStream(onGroupProfileFetchedChannel.receiveBroadcastStream() as Stream<String>);
-    onNewGroupCreatedStreamController.addStream(onNewGroupCreatedChannel.receiveBroadcastStream() as Stream<String>);
-    onGroupProfileUpdatedStreamController.addStream(onGroupProfileUpdatedChannel.receiveBroadcastStream() as Stream<String>);
+    onGroupProfileFetchedStreamController.addStream(onGroupProfileFetchedChannel.receiveBroadcastStream() /*as Stream<String>*/);
+    onNewGroupCreatedStreamController.addStream(onNewGroupCreatedChannel.receiveBroadcastStream() /*as Stream<String>*/);
+    onGroupProfileUpdatedStreamController.addStream(onGroupProfileUpdatedChannel.receiveBroadcastStream() /*as Stream<String>*/);
     onNewMemberAddedToGroupStreamController.addStream(onNewMemberAddedToGroupChannel.receiveBroadcastStream());
     onMemberRemovedFromGroupStreamController.addStream(onMemberRemovedFromGroupChannel.receiveBroadcastStream());
-    onFetchingGroupMembersCompletedStreamController.addStream(onFetchingGroupMembersCompletedChannel.receiveBroadcastStream() as Stream<String>);
+    onFetchingGroupMembersCompletedStreamController.addStream(onFetchingGroupMembersCompletedChannel.receiveBroadcastStream() /*as Stream<String>*/);
     onDeleteGroupStreamController.addStream(onDeleteGroupChannel.receiveBroadcastStream());
     onFetchingGroupListCompletedStreamController.addStream(onFetchingGroupListCompletedChannel.receiveBroadcastStream());
     onMemberMadeAsAdminStreamController.addStream(onMemberMadeAsAdminChannel.receiveBroadcastStream());
     onMemberRemovedAsAdminStreamController.addStream(onMemberRemovedAsAdminChannel.receiveBroadcastStream());
     onLeftFromGroupStreamController.addStream(onLeftFromGroupChannel.receiveBroadcastStream());
     onGroupNotificationMessageStreamController.addStream(onGroupNotificationMessageChannel.receiveBroadcastStream());
-    onGroupDeletedLocallyStreamController.addStream(onGroupDeletedLocallyChannel.receiveBroadcastStream() as Stream<String>);
+    onGroupDeletedLocallyStreamController.addStream(onGroupDeletedLocallyChannel.receiveBroadcastStream() /*as Stream<String>*/);
     blockedThisUserStreamController.addStream(blockedThisUserChannel.receiveBroadcastStream());
-    myProfileUpdatedStreamController.addStream(myProfileUpdatedChannel.receiveBroadcastStream() as Stream<bool>);
+    myProfileUpdatedStreamController.addStream(myProfileUpdatedChannel.receiveBroadcastStream() /*as Stream<bool>*/);
     onAdminBlockedOtherUserStreamController.addStream(onAdminBlockedOtherUserChannel.receiveBroadcastStream());
     onAdminBlockedUserStreamController.addStream(onAdminBlockedUserChannel.receiveBroadcastStream());
-    onContactSyncCompleteStreamController.addStream(onContactSyncCompleteChannel.receiveBroadcastStream() as Stream<bool>);
-    onLoggedOutStreamController.addStream(onLoggedOutChannel.receiveBroadcastStream() as Stream<bool>);
+    onContactSyncCompleteStreamController.addStream(onContactSyncCompleteChannel.receiveBroadcastStream() /*as Stream<bool>*/);
+    onLoggedOutStreamController.addStream(onLoggedOutChannel.receiveBroadcastStream() /*as Stream<bool>*/);
     unblockedThisUserStreamController.addStream(unblockedThisUserChannel.receiveBroadcastStream());
     userBlockedMeStreamController.addStream(userBlockedMeChannel.receiveBroadcastStream());
     userCameOnlineStreamController.addStream(userCameOnlineChannel.receiveBroadcastStream());
-    userDeletedHisProfileStreamController.addStream(userDeletedHisProfileChannel.receiveBroadcastStream() as Stream<String>);
+    userDeletedHisProfileStreamController.addStream(userDeletedHisProfileChannel.receiveBroadcastStream() /*as Stream<String>*/);
     userProfileFetchedStreamController.addStream(userProfileFetchedChannel.receiveBroadcastStream());
     userUnBlockedMeStreamController.addStream(userUnBlockedMeChannel.receiveBroadcastStream());
     userUpdatedHisProfileStreamController.addStream(userUpdatedHisProfileChannel.receiveBroadcastStream());
     userWentOfflineStreamController.addStream(userWentOfflineChannel.receiveBroadcastStream());
     usersIBlockedListFetchedStreamController.addStream(usersIBlockedListFetchedChannel.receiveBroadcastStream());
-    usersProfilesFetchedStreamController.addStream(usersProfilesFetchedChannel.receiveBroadcastStream() as Stream<bool>);
+    usersProfilesFetchedStreamController.addStream(usersProfilesFetchedChannel.receiveBroadcastStream() /*as Stream<bool>*/);
     usersWhoBlockedMeListFetchedStreamController.addStream(usersWhoBlockedMeListFetchedChannel.receiveBroadcastStream());
     onConnectedStreamController.addStream(onConnectedChannel.receiveBroadcastStream());
     onDisconnectedStreamController.addStream(onDisconnectedChannel.receiveBroadcastStream());
@@ -1735,15 +1735,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       uploadDownloadProgressChangedStreamController.stream;
 
   @override
-  Stream<String> get onGroupProfileFetched =>
+  Stream<dynamic> get onGroupProfileFetched =>
       onGroupProfileFetchedStreamController.stream;
 
   @override
-  Stream<String> get onNewGroupCreated =>
+  Stream<dynamic> get onNewGroupCreated =>
       onNewGroupCreatedStreamController.stream;
 
   @override
-  Stream<String> get onGroupProfileUpdated =>
+  Stream<dynamic> get onGroupProfileUpdated =>
       onGroupProfileUpdatedStreamController.stream;
 
   @override
@@ -1755,7 +1755,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onMemberRemovedFromGroupStreamController.stream;
 
   @override
-  Stream<String> get onFetchingGroupMembersCompleted =>
+  Stream<dynamic> get onFetchingGroupMembersCompleted =>
       onFetchingGroupMembersCompletedStreamController.stream;
 
   @override
@@ -1783,7 +1783,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onGroupNotificationMessageStreamController.stream;
 
   @override
-  Stream<String> get onGroupDeletedLocally =>
+  Stream<dynamic> get onGroupDeletedLocally =>
       onGroupDeletedLocallyStreamController.stream;
 
   @override
@@ -1791,7 +1791,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       blockedThisUserStreamController.stream;
 
   @override
-  Stream<bool> get myProfileUpdated =>
+  Stream<dynamic> get myProfileUpdated =>
       myProfileUpdatedStreamController.stream;
 
   @override
@@ -1803,11 +1803,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onAdminBlockedUserStreamController.stream;
 
   @override
-  Stream<bool> get onContactSyncComplete =>
+  Stream<dynamic> get onContactSyncComplete =>
       onContactSyncCompleteStreamController.stream;
 
   @override
-  Stream<bool> get onLoggedOut =>
+  Stream<dynamic> get onLoggedOut =>
       onLoggedOutStreamController.stream;
 
   @override
@@ -1823,7 +1823,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       userCameOnlineStreamController.stream;
 
   @override
-  Stream<String> get userDeletedHisProfile =>
+  Stream<dynamic> get userDeletedHisProfile =>
       userDeletedHisProfileStreamController.stream;
 
   @override
@@ -1847,7 +1847,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       usersIBlockedListFetchedStreamController.stream;
 
   @override
-  Stream<bool> get usersProfilesFetched =>
+  Stream<dynamic> get usersProfilesFetched =>
       usersProfilesFetchedStreamController.stream;
 
   @override
