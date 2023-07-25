@@ -8,16 +8,17 @@
 import Foundation
 import MirrorFlySDK
 import Flutter
+import PushKit
 
-@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin{
-    
-    
+@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, AudioManagerDelegate, PKPushRegistryDelegate{
     
     private var methodChannel: FlutterMethodChannel?
     private var registrar: FlutterPluginRegistrar?
     private var eventChannel : FlutterEventChannel?
     private var eventChannelInitializer: FlyEventChannelInitializer = FlyEventChannelInitializer()
     private var factory : MirrorflyViewFactory?
+    
+    var currentOutputDevice : OutputType = .receiver
     
     init(registrar: FlutterPluginRegistrar) {
         super.init()
@@ -32,6 +33,8 @@ import Flutter
         eventChannelInitializer.initializeEventChannels(registrar: registrar)
         
         CallManager.setCallEventsDelegate(delegate: self)
+        
+        registerForVOIPNotifications()
         
     }
     
@@ -121,7 +124,7 @@ import Flutter
     }
     
     func onLocalVideoTrackAdded(userId: String, videoTrack: RTCVideoTrack) {
-        print("\(Constants.tag) onlocal video Track --> \(userId)")
+        print("\(Constants.tag) onlocal video Track --> \(userId) ---> \(videoTrack)")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(FlyDefaults.myJid, forKey: "userJid")
@@ -134,6 +137,21 @@ import Flutter
 //                            result(FlutterError(code: "INVALID_VIEW_ID", message: "Invalid view identifier", details: nil))
 //                        }
         
+        let videoTrack = CallManager.getRemoteVideoTrack(jid: userId)
+        print("\(Constants.tag) delegate videoTrack--> \(String(describing: videoTrack))")
+        
+        if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
+            if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                mirrorflyView.updateVideoTrack(userJid: userId)
+            } else {
+                // Handle case when view is not found
+                print("\(Constants.tag) onLocalVideoTrackAdded --> View is not Found")
+            }
+        } else {
+            // Handle case when unique ID is not found
+            print("\(Constants.tag) onLocalVideoTrackAdded --> Unique ID is not Found")
+        }
+        
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
     
@@ -141,7 +159,7 @@ import Flutter
         print("\(Constants.tag) onRemote video Track --> \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
-        var jidJson = pluginDictToJson(dictionary: jsonObject)
+        let jidJson = pluginDictToJson(dictionary: jsonObject)
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
@@ -153,10 +171,52 @@ import Flutter
             // Handle case when unique ID is not found
         }
 
-        
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
     
+    func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
+        print("#audiomanager audioRoutedTo  CallViewController \(deviceName) \(audioDeviceType)")
+        switch audioDeviceType {
+        case .receiver:
+            currentOutputDevice = .receiver
+//            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOff" ), for: .normal)
+        case .speaker:
+            currentOutputDevice = .speaker
+//            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOn" ), for: .normal)
+        case .headset:
+            currentOutputDevice = .headset
+//            outgoingCallView?.speakerButton.setImage(UIImage(named: "headset" ), for: .normal)
+        case .bluetooth:
+            currentOutputDevice = .bluetooth
+//            outgoingCallView?.speakerButton.setImage(UIImage(named: "bluetooth_headset" ), for: .normal)
+        @unknown default:
+            currentOutputDevice = .receiver
+//            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOff" ), for: .normal)
+        }
+    }
     
-    
+    func registerForVOIPNotifications() {
+        NSLog("\(Constants.tag) Registering Voip Notification")
+        let pushRegistry = PKPushRegistry(queue: .main)
+        pushRegistry.delegate = self
+        pushRegistry.desiredPushTypes = [.voIP]
+    }
+
+    func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+
+        NSLog("\(Constants.tag) VoIP Token: \(pushCredentials)")
+        let deviceTokenString = pushCredentials.token.reduce("") { $0 + String(format: "%02X", $1) }
+        print("\(Constants.tag) #token pushRegistry VT => \(deviceTokenString)")
+        print(deviceTokenString)
+        VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
+        Utility.saveInPreference(key: Constants.voipToken, value: deviceTokenString)
+        VOIPManager.sharedInstance.updateDeviceToken()
+    }
+
+    func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+        NSLog("\(Constants.tag) Push VOIP Received with Payload - %@",payload.dictionaryPayload)
+        print("\(Constants.tag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
+        VOIPManager.sharedInstance.processPayload(payload.dictionaryPayload)
+    }
+
 }

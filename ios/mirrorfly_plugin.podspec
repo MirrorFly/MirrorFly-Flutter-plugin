@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'mirrorfly_plugin'
-  s.version          = '0.0.1'
+  s.version          = '0.0.9'
   s.summary          = 'A Mirrorfly Flutter Plugin'
   s.description      = 'A Mirrorfly Flutter plugin to Experience an outstanding real time messaging solution. The powerful communication that adds an extra mileage to build your chat app.'
 
@@ -17,6 +17,9 @@ Pod::Spec.new do |s|
   s.platform = :ios, '12.1'
   s.requires_arc = true
 
+  #s.dependency 'PhoneNumberKit/PhoneNumberKitCore', '~> 3.6.0'
+  #s.dependency 'PhoneNumberKit/PhoneNumberKitCore', '3.6.0'
+  #s.ios.deployment_target = '12.1'
   s.dependency 'libPhoneNumber-iOS'
   s.dependency 'Alamofire'
   s.dependency 'SocketRocket'
@@ -24,13 +27,16 @@ Pod::Spec.new do |s|
   s.dependency 'XMPPFramework/Swift'
   s.dependency 'RealmSwift' , '10.20.1'
   s.dependency 'GoogleWebRTC'
-#  s.dependency 'MirrorFlySDK', '5.8.0'
-  
-  s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+  s.dependency 'MirrorFlySDK', '5.10.0'
+
+
+  #s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
+  s.pod_target_xcconfig = { 'VALID_ARCHS' => 'armv7 arm64 x86_64', 'IPHONEOS_DEPLOYMENT_TARGET' => '12.1',}
+  #s.pod_target_xcconfig = { 'VALID_ARCHS' => 'armv7 arm64 x86_64', 'IPHONEOS_DEPLOYMENT_TARGET' => '12.1',}
 #  s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 #s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 #s.user_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }

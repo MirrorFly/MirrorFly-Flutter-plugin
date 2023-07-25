@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/><!--for use full screen intent-->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" /><!--for redmi device-->
+
     <application>
         <activity
             android:name=".call.CallKitUiActivity"
@@ -25,6 +28,10 @@
             tools:targetApi="R"
             android:theme="@style/CallkitIncomingTheme"
             android:exported="false" />
+        <activity
+            android:exported="false"
+            android:theme="@style/TranslucentTheme"
+            android:name=".call.TransparentActivity"/>
     </application>
 
 </manifest>

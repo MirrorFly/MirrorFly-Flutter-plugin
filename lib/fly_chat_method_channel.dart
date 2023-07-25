@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -6,9 +7,9 @@ import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import 'builder.dart';
-
 /// An implementation of [UikitFlutterPlatform] that uses method channels.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
+  /// The method channel used to interact with the native platform.
   @visibleForTesting
   final mirrorFlyMethodChannel =
       const MethodChannel('contus.mirrorfly/flyChat');
@@ -20,171 +21,223 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final messageOnReceivedChannel =
       const EventChannel('contus.mirrorfly/onMessageReceived');
+  final StreamController<dynamic> _messageOnReceivedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final messageStatusUpdatedChanel =
       const EventChannel('contus.mirrorfly/onMessageStatusUpdated');
+  final StreamController<dynamic> messageStatusUpdateStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final mediaStatusUpdatedChannel =
       const EventChannel('contus.mirrorfly/onMediaStatusUpdated');
+  final StreamController<dynamic> mediaStatusUpdatedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final uploadDownloadProgressChangedChannel =
       const EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
+  final StreamController<dynamic> uploadDownloadProgressChangedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final showUpdateCancelNotificationChannel =
       const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
+  final StreamController<dynamic> showUpdateCancelNotificationStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupProfileFetchedChannel =
       const EventChannel('contus.mirrorfly/onGroupProfileFetched');
+  final StreamController<dynamic> onGroupProfileFetchedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onNewGroupCreatedChannel =
       const EventChannel('contus.mirrorfly/onNewGroupCreated');
+  final StreamController<dynamic> onNewGroupCreatedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupProfileUpdatedChannel =
       const EventChannel('contus.mirrorfly/onGroupProfileUpdated');
+  final StreamController<dynamic> onGroupProfileUpdatedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onNewMemberAddedToGroupChannel =
       const EventChannel('contus.mirrorfly/onNewMemberAddedToGroup');
+  final StreamController<dynamic> onNewMemberAddedToGroupStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onMemberRemovedFromGroupChannel =
       const EventChannel('contus.mirrorfly/onMemberRemovedFromGroup');
+  final StreamController<dynamic> onMemberRemovedFromGroupStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onFetchingGroupMembersCompletedChannel =
       const EventChannel('contus.mirrorfly/onFetchingGroupMembersCompleted');
+  final StreamController<dynamic> onFetchingGroupMembersCompletedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onDeleteGroupChannel =
       const EventChannel('contus.mirrorfly/onDeleteGroup');
+  final StreamController<dynamic> onDeleteGroupStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onFetchingGroupListCompletedChannel =
       const EventChannel('contus.mirrorfly/onFetchingGroupListCompleted');
+  final StreamController<dynamic> onFetchingGroupListCompletedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onMemberMadeAsAdminChannel =
       const EventChannel('contus.mirrorfly/onMemberMadeAsAdmin');
+  final StreamController<dynamic> onMemberMadeAsAdminStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onMemberRemovedAsAdminChannel =
       const EventChannel('contus.mirrorfly/onMemberRemovedAsAdmin');
+  final StreamController<dynamic> onMemberRemovedAsAdminStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onLeftFromGroupChannel =
       const EventChannel('contus.mirrorfly/onLeftFromGroup');
+  final StreamController<dynamic> onLeftFromGroupStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupNotificationMessageChannel =
       const EventChannel('contus.mirrorfly/onGroupNotificationMessage');
+  final StreamController<dynamic> onGroupNotificationMessageStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupDeletedLocallyChannel =
       const EventChannel('contus.mirrorfly/onGroupDeletedLocally');
+  final StreamController<dynamic> onGroupDeletedLocallyStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final blockedThisUserChannel =
       const EventChannel('contus.mirrorfly/blockedThisUser');
+  final StreamController<dynamic> blockedThisUserStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final myProfileUpdatedChannel =
       const EventChannel('contus.mirrorfly/myProfileUpdated');
+  final StreamController<dynamic> myProfileUpdatedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onAdminBlockedOtherUserChannel =
       const EventChannel('contus.mirrorfly/onAdminBlockedOtherUser');
+  final StreamController<dynamic> onAdminBlockedOtherUserStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onAdminBlockedUserChannel =
       const EventChannel('contus.mirrorfly/onAdminBlockedUser');
+  final StreamController<dynamic> onAdminBlockedUserStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onContactSyncCompleteChannel =
       const EventChannel('contus.mirrorfly/onContactSyncComplete');
+  final StreamController<dynamic> onContactSyncCompleteStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onLoggedOutChannel = const EventChannel('contus.mirrorfly/onLoggedOut');
+  final StreamController<dynamic> onLoggedOutStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final unblockedThisUserChannel =
       const EventChannel('contus.mirrorfly/unblockedThisUser');
+  final StreamController<dynamic> unblockedThisUserStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userBlockedMeChannel =
       const EventChannel('contus.mirrorfly/userBlockedMe');
+  final StreamController<dynamic> userBlockedMeStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userCameOnlineChannel =
       const EventChannel('contus.mirrorfly/userCameOnline');
+  final StreamController<dynamic> userCameOnlineStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userDeletedHisProfileChannel =
       const EventChannel('contus.mirrorfly/userDeletedHisProfile');
+  final StreamController<dynamic> userDeletedHisProfileStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userProfileFetchedChannel =
       const EventChannel('contus.mirrorfly/userProfileFetched');
+  final StreamController<dynamic> userProfileFetchedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userUnBlockedMeChannel =
       const EventChannel('contus.mirrorfly/userUnBlockedMe');
+  final StreamController<dynamic> userUnBlockedMeStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userUpdatedHisProfileChannel =
       const EventChannel('contus.mirrorfly/userUpdatedHisProfile');
+  final StreamController<dynamic> userUpdatedHisProfileStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userWentOfflineChannel =
       const EventChannel('contus.mirrorfly/userWentOffline');
+  final StreamController<dynamic> userWentOfflineStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final usersIBlockedListFetchedChannel =
       const EventChannel('contus.mirrorfly/usersIBlockedListFetched');
+  final StreamController<dynamic> usersIBlockedListFetchedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final usersProfilesFetchedChannel =
       const EventChannel('contus.mirrorfly/usersProfilesFetched');
+  final StreamController<dynamic> usersProfilesFetchedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final usersWhoBlockedMeListFetchedChannel =
       const EventChannel('contus.mirrorfly/usersWhoBlockedMeListFetched');
+  final StreamController<dynamic> usersWhoBlockedMeListFetchedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onConnectedChannel = const EventChannel('contus.mirrorfly/onConnected');
+  final StreamController<dynamic> onConnectedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onDisconnectedChannel =
       const EventChannel('contus.mirrorfly/onDisconnected');
+  final StreamController<dynamic> onDisconnectedStreamController = StreamController<dynamic>.broadcast();
   /*@visibleForTesting
   final onConnectionNotAuthorizedChannel =
       const EventChannel('contus.mirrorfly/onConnectionNotAuthorized');*/
   @visibleForTesting
   final onConnectionFailedChannel =
       const EventChannel('contus.mirrorfly/onConnectionFailed');
+  final StreamController<dynamic> onConnectionFailedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final connectionFailedChannel =
       const EventChannel('contus.mirrorfly/connectionFailed');
+  final StreamController<dynamic> connectionFailedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final connectionSuccessChannel =
       const EventChannel('contus.mirrorfly/connectionSuccess');
+  final StreamController<dynamic> connectionSuccessStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onWebChatPasswordChangedChannel =
       const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
+  final StreamController<dynamic> onWebChatPasswordChangedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final setTypingStatusChannel =
       const EventChannel('contus.mirrorfly/setTypingStatus');
+  final StreamController<dynamic> setTypingStatusStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onChatTypingStatusChannel =
       const EventChannel('contus.mirrorfly/onChatTypingStatus');
+  final StreamController<dynamic> onChatTypingStatusStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupTypingStatusChannel =
       const EventChannel('contus.mirrorfly/onGroupTypingStatus');
+  final StreamController<dynamic> onGroupTypingStatusStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
+  final StreamController<dynamic> onFailureStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onProgressChangedChannel =
       const EventChannel('contus.mirrorfly/onProgressChanged');
+  final StreamController<dynamic> onProgressChangedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
-
-  @visibleForTesting
-  final onCallReceivingChannel = const EventChannel('contus.mirrorfly/onCallReceiving');
+  final StreamController<dynamic> onSuccessStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onLocalVideoTrackAddedChannel = const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
+  final StreamController<dynamic> onLocalVideoTrackAddedStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onRemoteVideoTrackAddedChannel = const EventChannel('contus.mirrorfly/onRemoteVideoTrackAdded');
+  final StreamController<dynamic> onRemoteVideoTrackAddedStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onTrackAddedChannel = const EventChannel('contus.mirrorfly/onTrackAdded');
+  final StreamController<dynamic> onTrackAddedStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onCallStatusUpdatedChannel = const EventChannel('contus.mirrorfly/onCallStatusUpdated');
+  final StreamController<dynamic> onCallStatusUpdatedStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onCallActionChannel = const EventChannel('contus.mirrorfly/onCallAction');
+  final StreamController<dynamic> onCallActionStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onMuteStatusUpdatedChannel = const EventChannel('contus.mirrorfly/onMuteStatusUpdated');
+  final StreamController<dynamic> onMuteStatusUpdatedStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onUserSpeakingChannel = const EventChannel('contus.mirrorfly/onUserSpeaking');
+  final StreamController<dynamic> onUserSpeakingStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onUserStoppedSpeakingChannel = const EventChannel('contus.mirrorfly/onUserStoppedSpeaking');
+  final StreamController<dynamic> onUserStoppedSpeakingStreamController = StreamController<dynamic>.broadcast();
 
   /*@override
   Future<String?> getPlatformVersion() async {
@@ -197,7 +250,68 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   init(ChatBuilder builder) async {
     enableDebugLog = builder.enableDebugLog;
+    addStreamsAllToStreamController();
     await mirrorFlyMethodChannel.invokeMethod('init', builder.build());
+  }
+
+  ///Using [addStreamsAllToStreamController] to add all streams to stream controller
+  ///benefit to use stream controller we can call multiple listeners to listen.
+  addStreamsAllToStreamController(){
+    _messageOnReceivedStreamController.addStream(messageOnReceivedChannel.receiveBroadcastStream());
+    messageStatusUpdateStreamController.addStream(messageStatusUpdatedChanel.receiveBroadcastStream());
+    mediaStatusUpdatedStreamController.addStream(mediaStatusUpdatedChannel.receiveBroadcastStream());
+    uploadDownloadProgressChangedStreamController.addStream(uploadDownloadProgressChangedChannel.receiveBroadcastStream());
+    showUpdateCancelNotificationStreamController.addStream(showUpdateCancelNotificationChannel.receiveBroadcastStream());
+    onGroupProfileFetchedStreamController.addStream(onGroupProfileFetchedChannel.receiveBroadcastStream() /*as Stream<String>*/);
+    onNewGroupCreatedStreamController.addStream(onNewGroupCreatedChannel.receiveBroadcastStream() /*as Stream<String>*/);
+    onGroupProfileUpdatedStreamController.addStream(onGroupProfileUpdatedChannel.receiveBroadcastStream() /*as Stream<String>*/);
+    onNewMemberAddedToGroupStreamController.addStream(onNewMemberAddedToGroupChannel.receiveBroadcastStream());
+    onMemberRemovedFromGroupStreamController.addStream(onMemberRemovedFromGroupChannel.receiveBroadcastStream());
+    onFetchingGroupMembersCompletedStreamController.addStream(onFetchingGroupMembersCompletedChannel.receiveBroadcastStream() /*as Stream<String>*/);
+    onDeleteGroupStreamController.addStream(onDeleteGroupChannel.receiveBroadcastStream());
+    onFetchingGroupListCompletedStreamController.addStream(onFetchingGroupListCompletedChannel.receiveBroadcastStream());
+    onMemberMadeAsAdminStreamController.addStream(onMemberMadeAsAdminChannel.receiveBroadcastStream());
+    onMemberRemovedAsAdminStreamController.addStream(onMemberRemovedAsAdminChannel.receiveBroadcastStream());
+    onLeftFromGroupStreamController.addStream(onLeftFromGroupChannel.receiveBroadcastStream());
+    onGroupNotificationMessageStreamController.addStream(onGroupNotificationMessageChannel.receiveBroadcastStream());
+    onGroupDeletedLocallyStreamController.addStream(onGroupDeletedLocallyChannel.receiveBroadcastStream() /*as Stream<String>*/);
+    blockedThisUserStreamController.addStream(blockedThisUserChannel.receiveBroadcastStream());
+    myProfileUpdatedStreamController.addStream(myProfileUpdatedChannel.receiveBroadcastStream() /*as Stream<bool>*/);
+    onAdminBlockedOtherUserStreamController.addStream(onAdminBlockedOtherUserChannel.receiveBroadcastStream());
+    onAdminBlockedUserStreamController.addStream(onAdminBlockedUserChannel.receiveBroadcastStream());
+    onContactSyncCompleteStreamController.addStream(onContactSyncCompleteChannel.receiveBroadcastStream() /*as Stream<bool>*/);
+    onLoggedOutStreamController.addStream(onLoggedOutChannel.receiveBroadcastStream() /*as Stream<bool>*/);
+    unblockedThisUserStreamController.addStream(unblockedThisUserChannel.receiveBroadcastStream());
+    userBlockedMeStreamController.addStream(userBlockedMeChannel.receiveBroadcastStream());
+    userCameOnlineStreamController.addStream(userCameOnlineChannel.receiveBroadcastStream());
+    userDeletedHisProfileStreamController.addStream(userDeletedHisProfileChannel.receiveBroadcastStream() /*as Stream<String>*/);
+    userProfileFetchedStreamController.addStream(userProfileFetchedChannel.receiveBroadcastStream());
+    userUnBlockedMeStreamController.addStream(userUnBlockedMeChannel.receiveBroadcastStream());
+    userUpdatedHisProfileStreamController.addStream(userUpdatedHisProfileChannel.receiveBroadcastStream());
+    userWentOfflineStreamController.addStream(userWentOfflineChannel.receiveBroadcastStream());
+    usersIBlockedListFetchedStreamController.addStream(usersIBlockedListFetchedChannel.receiveBroadcastStream());
+    usersProfilesFetchedStreamController.addStream(usersProfilesFetchedChannel.receiveBroadcastStream() /*as Stream<bool>*/);
+    usersWhoBlockedMeListFetchedStreamController.addStream(usersWhoBlockedMeListFetchedChannel.receiveBroadcastStream());
+    onConnectedStreamController.addStream(onConnectedChannel.receiveBroadcastStream());
+    onDisconnectedStreamController.addStream(onDisconnectedChannel.receiveBroadcastStream());
+    onConnectionFailedStreamController.addStream(onConnectionFailedChannel.receiveBroadcastStream());
+    connectionFailedStreamController.addStream(connectionFailedChannel.receiveBroadcastStream());
+    connectionSuccessStreamController.addStream(connectionSuccessChannel.receiveBroadcastStream());
+    onWebChatPasswordChangedStreamController.addStream(onWebChatPasswordChangedChannel.receiveBroadcastStream());
+    setTypingStatusStreamController.addStream(setTypingStatusChannel.receiveBroadcastStream());
+    onChatTypingStatusStreamController.addStream(onChatTypingStatusChannel.receiveBroadcastStream());
+    onGroupTypingStatusStreamController.addStream(onGroupTypingStatusChannel.receiveBroadcastStream());
+    onFailureStreamController.addStream(onFailureChannel.receiveBroadcastStream());
+    onProgressChangedStreamController.addStream(onProgressChangedChannel.receiveBroadcastStream());
+    onSuccessStreamController.addStream(onSuccessChannel.receiveBroadcastStream());
+    onLocalVideoTrackAddedStreamController.addStream(onLocalVideoTrackAddedChannel.receiveBroadcastStream());
+    onRemoteVideoTrackAddedStreamController.addStream(onRemoteVideoTrackAddedChannel.receiveBroadcastStream());
+    onTrackAddedStreamController.addStream(onTrackAddedChannel.receiveBroadcastStream());
+    onCallStatusUpdatedStreamController.addStream(onCallStatusUpdatedChannel.receiveBroadcastStream());
+    onCallActionStreamController.addStream(onCallActionChannel.receiveBroadcastStream());
+    onMuteStatusUpdatedStreamController.addStream(onMuteStatusUpdatedChannel.receiveBroadcastStream());
+    onUserSpeakingStreamController.addStream(onUserSpeakingChannel.receiveBroadcastStream());
+    onUserStoppedSpeakingStreamController.addStream(onUserStoppedSpeakingChannel.receiveBroadcastStream());
   }
 
   @override
@@ -1606,227 +1720,223 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Stream<dynamic> get onMessageReceived =>
-      messageOnReceivedChannel.receiveBroadcastStream().cast();
+      _messageOnReceivedStreamController.stream;
 
   @override
   Stream<dynamic> get onMessageStatusUpdated =>
-      messageStatusUpdatedChanel.receiveBroadcastStream().cast();
+      messageStatusUpdateStreamController.stream;
 
   @override
   Stream<dynamic> get onMediaStatusUpdated =>
-      mediaStatusUpdatedChannel.receiveBroadcastStream().cast();
+      mediaStatusUpdatedStreamController.stream;
 
   @override
   Stream<dynamic> get onUploadDownloadProgressChanged =>
-      uploadDownloadProgressChangedChannel.receiveBroadcastStream().cast();
+      uploadDownloadProgressChangedStreamController.stream;
 
   @override
-  Stream<String> get onGroupProfileFetched =>
-      onGroupProfileFetchedChannel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onGroupProfileFetched =>
+      onGroupProfileFetchedStreamController.stream;
 
   @override
-  Stream<String> get onNewGroupCreated =>
-      onNewGroupCreatedChannel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onNewGroupCreated =>
+      onNewGroupCreatedStreamController.stream;
 
   @override
-  Stream<String> get onGroupProfileUpdated =>
-      onGroupProfileUpdatedChannel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onGroupProfileUpdated =>
+      onGroupProfileUpdatedStreamController.stream;
 
   @override
   Stream<dynamic> get onNewMemberAddedToGroup =>
-      onNewMemberAddedToGroupChannel.receiveBroadcastStream().cast();
+      onNewMemberAddedToGroupStreamController.stream;
 
   @override
   Stream<dynamic> get onMemberRemovedFromGroup =>
-      onMemberRemovedFromGroupChannel.receiveBroadcastStream().cast();
+      onMemberRemovedFromGroupStreamController.stream;
 
   @override
-  Stream<String> get onFetchingGroupMembersCompleted =>
-      onFetchingGroupMembersCompletedChannel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onFetchingGroupMembersCompleted =>
+      onFetchingGroupMembersCompletedStreamController.stream;
 
   @override
   Stream<dynamic> get onDeleteGroup =>
-      onDeleteGroupChannel.receiveBroadcastStream().cast();
+      onDeleteGroupStreamController.stream;
 
   @override
   Stream<dynamic> get onFetchingGroupListCompleted =>
-      onFetchingGroupListCompletedChannel.receiveBroadcastStream().cast();
+      onFetchingGroupListCompletedStreamController.stream;
 
   @override
   Stream<dynamic> get onMemberMadeAsAdmin =>
-      onMemberMadeAsAdminChannel.receiveBroadcastStream().cast();
+      onMemberMadeAsAdminStreamController.stream;
 
   @override
   Stream<dynamic> get onMemberRemovedAsAdmin =>
-      onMemberRemovedAsAdminChannel.receiveBroadcastStream().cast();
+      onMemberRemovedAsAdminStreamController.stream;
 
   @override
   Stream<dynamic> get onLeftFromGroup =>
-      onLeftFromGroupChannel.receiveBroadcastStream().cast();
+      onLeftFromGroupStreamController.stream;
 
   @override
   Stream<dynamic> get onGroupNotificationMessage =>
-      onGroupNotificationMessageChannel.receiveBroadcastStream().cast();
+      onGroupNotificationMessageStreamController.stream;
 
   @override
-  Stream<String> get onGroupDeletedLocally =>
-      onGroupDeletedLocallyChannel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onGroupDeletedLocally =>
+      onGroupDeletedLocallyStreamController.stream;
 
   @override
   Stream<dynamic> get blockedThisUser =>
-      blockedThisUserChannel.receiveBroadcastStream().cast();
+      blockedThisUserStreamController.stream;
 
   @override
-  Stream<bool> get myProfileUpdated =>
-      myProfileUpdatedChannel.receiveBroadcastStream().cast();
+  Stream<dynamic> get myProfileUpdated =>
+      myProfileUpdatedStreamController.stream;
 
   @override
   Stream<dynamic> get onAdminBlockedOtherUser =>
-      onAdminBlockedOtherUserChannel.receiveBroadcastStream().cast();
+      onAdminBlockedOtherUserStreamController.stream;
 
   @override
   Stream<dynamic> get onAdminBlockedUser =>
-      onAdminBlockedUserChannel.receiveBroadcastStream().cast();
+      onAdminBlockedUserStreamController.stream;
 
   @override
-  Stream<bool> get onContactSyncComplete =>
-      onContactSyncCompleteChannel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onContactSyncComplete =>
+      onContactSyncCompleteStreamController.stream;
 
   @override
-  Stream<bool> get onLoggedOut =>
-      onLoggedOutChannel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onLoggedOut =>
+      onLoggedOutStreamController.stream;
 
   @override
   Stream<dynamic> get unblockedThisUser =>
-      unblockedThisUserChannel.receiveBroadcastStream().cast();
+      unblockedThisUserStreamController.stream;
 
   @override
   Stream<dynamic> get userBlockedMe =>
-      userBlockedMeChannel.receiveBroadcastStream().cast();
+      userBlockedMeStreamController.stream;
 
   @override
   Stream<dynamic> get userCameOnline =>
-      userCameOnlineChannel.receiveBroadcastStream().cast();
+      userCameOnlineStreamController.stream;
 
   @override
-  Stream<String> get userDeletedHisProfile =>
-      userDeletedHisProfileChannel.receiveBroadcastStream().cast();
+  Stream<dynamic> get userDeletedHisProfile =>
+      userDeletedHisProfileStreamController.stream;
 
   @override
   Stream<dynamic> get userProfileFetched =>
-      userProfileFetchedChannel.receiveBroadcastStream().cast();
+      userProfileFetchedStreamController.stream;
 
   @override
   Stream<dynamic> get userUnBlockedMe =>
-      userUnBlockedMeChannel.receiveBroadcastStream().cast();
+      userUnBlockedMeStreamController.stream;
 
   @override
   Stream<dynamic> get userUpdatedHisProfile =>
-      userUpdatedHisProfileChannel.receiveBroadcastStream().cast();
+      userUpdatedHisProfileStreamController.stream;
 
   @override
   Stream<dynamic> get userWentOffline =>
-      userWentOfflineChannel.receiveBroadcastStream().cast();
+      userWentOfflineStreamController.stream;
 
   @override
   Stream<dynamic> get usersIBlockedListFetched =>
-      usersIBlockedListFetchedChannel.receiveBroadcastStream().cast();
+      usersIBlockedListFetchedStreamController.stream;
 
   @override
-  Stream<bool> get usersProfilesFetched =>
-      usersProfilesFetchedChannel.receiveBroadcastStream().cast();
+  Stream<dynamic> get usersProfilesFetched =>
+      usersProfilesFetchedStreamController.stream;
 
   @override
   Stream<dynamic> get usersWhoBlockedMeListFetched =>
-      usersWhoBlockedMeListFetchedChannel.receiveBroadcastStream().cast();
+      usersWhoBlockedMeListFetchedStreamController.stream;
 
   @override
   Stream<dynamic> get onConnected =>
-      onConnectedChannel.receiveBroadcastStream().cast();
+      onConnectedStreamController.stream;
 
   @override
   Stream<dynamic> get onDisconnected =>
-      onDisconnectedChannel.receiveBroadcastStream().cast();
+      onDisconnectedStreamController.stream;
 
   /*@override
   Stream<dynamic> get onConnectionNotAuthorized =>
-      onConnectionNotAuthorizedChannel.receiveBroadcastStream().cast();*/
+      onConnectionNotAuthorizedStreamController.stream;*/
 
   @override
   Stream<dynamic> get onConnectionFailed =>
-      onConnectionFailedChannel.receiveBroadcastStream().cast();
+      onConnectionFailedStreamController.stream;
 
   @override
   Stream<dynamic> get connectionFailed =>
-      connectionFailedChannel.receiveBroadcastStream().cast();
+      connectionFailedStreamController.stream;
 
   @override
   Stream<dynamic> get connectionSuccess =>
-      connectionSuccessChannel.receiveBroadcastStream().cast();
+      connectionSuccessStreamController.stream;
 
   @override
   Stream<dynamic> get onWebChatPasswordChanged =>
-      onWebChatPasswordChangedChannel.receiveBroadcastStream().cast();
+      onWebChatPasswordChangedStreamController.stream;
 
   @override
   Stream<dynamic> get setTypingStatus =>
-      setTypingStatusChannel.receiveBroadcastStream().cast();
+      setTypingStatusStreamController.stream;
 
   @override
   Stream<dynamic> get onChatTypingStatus =>
-      onChatTypingStatusChannel.receiveBroadcastStream().cast();
+      onChatTypingStatusStreamController.stream;
 
   @override
   Stream<dynamic> get onGroupTypingStatus =>
-      onGroupTypingStatusChannel.receiveBroadcastStream().cast();
+      onGroupTypingStatusStreamController.stream;
 
   @override
   Stream<dynamic> get onFailure =>
-      onFailureChannel.receiveBroadcastStream().cast();
+      onFailureStreamController.stream;
 
   @override
   Stream<dynamic> get onProgressChanged =>
-      onProgressChangedChannel.receiveBroadcastStream().cast();
+      onProgressChangedStreamController.stream;
 
   @override
   Stream<dynamic> get onSuccess =>
-      onSuccessChannel.receiveBroadcastStream().cast();
-
-  @override
-  Stream<dynamic> get onCallReceiving =>
-      onCallReceivingChannel.receiveBroadcastStream().cast();
+      onSuccessStreamController.stream;
 
   @override
   Stream<dynamic> get onLocalVideoTrackAdded =>
-      onLocalVideoTrackAddedChannel.receiveBroadcastStream().cast();
+      onLocalVideoTrackAddedStreamController.stream;
 
   @override
   Stream<dynamic> get onRemoteVideoTrackAdded =>
-      onRemoteVideoTrackAddedChannel.receiveBroadcastStream().cast();
+      onRemoteVideoTrackAddedStreamController.stream;
 
   @override
   Stream<dynamic> get onTrackAdded =>
-      onTrackAddedChannel.receiveBroadcastStream().cast();
+      onTrackAddedStreamController.stream;
 
   @override
   Stream<dynamic> get onCallStatusUpdated =>
-      onCallStatusUpdatedChannel.receiveBroadcastStream().cast();
+      onCallStatusUpdatedStreamController.stream;
 
   @override
   Stream<dynamic> get onCallAction =>
-      onCallActionChannel.receiveBroadcastStream().cast();
+      onCallActionStreamController.stream;
 
   @override
   Stream<dynamic> get onMuteStatusUpdated =>
-      onMuteStatusUpdatedChannel.receiveBroadcastStream().cast();
+      onMuteStatusUpdatedStreamController.stream;
 
   @override
   Stream<dynamic> get onUserSpeaking =>
-      onUserSpeakingChannel.receiveBroadcastStream().cast();
+      onUserSpeakingStreamController.stream;
 
   @override
   Stream<dynamic> get onUserStoppedSpeaking =>
-      onUserStoppedSpeakingChannel.receiveBroadcastStream().cast();
+      onUserStoppedSpeakingStreamController.stream;
 
   @override
   Future<String?> imagePath(String imgurl) async {
@@ -3592,6 +3702,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<bool> makeVoiceCall(String userJid) async {
     bool val;
@@ -3608,6 +3719,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<dynamic> getCallUsersList() async {
     dynamic callList;
@@ -3623,6 +3735,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<dynamic> getCallType() async {
     dynamic callType;
@@ -3638,6 +3751,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   Future<dynamic> getCallDirection() async {
     dynamic callType;
@@ -3653,6 +3767,24 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+  @override
+  Future<dynamic> getAllAvailableAudioInput() async {
+    dynamic audioInput;
+    try {
+      LogMessage.d('getAllAvailableAudioInput :','');
+      audioInput = await mirrorFlyCallMethodChannel
+          .invokeMethod('getAllAvailableAudioInput');
+      return audioInput;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ===>", "$e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ==>", "$error");
+      rethrow;
+    }
+  }
+
   @override
   switchCamera() async {
     try {
@@ -3666,6 +3798,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
   @override
   declineCall() async {
     try {
@@ -3682,18 +3815,86 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<bool?> muteAudio(bool status) async {
-      bool? res;
-      try {
-        res = await mirrorFlyCallMethodChannel
-            .invokeMethod('muteAudio', {"muteAudio": status});
-        LogMessage.d('muteAudio','$res');
-        return res;
-      } on PlatformException catch (e) {
-        LogMessage.d("Platform Exception ="," $e");
-        rethrow;
-      } on Exception catch (error) {
-        LogMessage.d("Exception "," $error");
-        rethrow;
-      }
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('muteAudio', {"muteAudio": status});
+      LogMessage.d('muteAudio','$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> muteVideo(bool status) async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('muteVideo', {"muteVideo": status});
+      LogMessage.d('muteVideo','$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> routeAudioTo({required String routeType}) async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('routeAudioTo', {"routeType": routeType});
+      LogMessage.d('muteAudio', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> isOnGoingCall() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('isOnGoingCall');
+      LogMessage.d('isOnGoingCall', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> disconnectCall() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('disconnectCall');
+      LogMessage.d('disconnectCall', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
   }
 }

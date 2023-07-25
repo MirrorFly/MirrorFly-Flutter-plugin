@@ -41,6 +41,9 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             
             print("\(Constants.tag) userName --> \(userName)")
             videoTrack = CallManager.getRemoteVideoTrack(jid: userJid)
+            let calluserslist = CallManager.getAllCallUsersList()
+            print("\(Constants.tag) calluserslist \(calluserslist)")
+            print("\(Constants.tag) calluserslist count \(calluserslist.count)")
             print("\(Constants.tag) videoTrack--> \(String(describing: videoTrack))")
             print("\(Constants.tag) Video rendered/Audio Call")
             
