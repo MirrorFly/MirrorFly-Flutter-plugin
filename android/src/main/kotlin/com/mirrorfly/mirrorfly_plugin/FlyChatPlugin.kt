@@ -97,8 +97,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 "mirrorfly_view",
                 factory
             )
-            FlyCall(flutterPluginBinding.applicationContext,flutterPluginBinding.binaryMessenger,
-                factory)
+            FlyCall(flutterPluginBinding.applicationContext,flutterPluginBinding)
             initSharedInstance(flutterPluginBinding.applicationContext, flutterPluginBinding.binaryMessenger)
             LogMessage.d("FlyChatPlugin","sharePluginWithRegister")
         }

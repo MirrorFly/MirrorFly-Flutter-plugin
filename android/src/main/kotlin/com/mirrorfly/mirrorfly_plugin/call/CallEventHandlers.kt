@@ -95,6 +95,17 @@ object onUserStoppedSpeakingStreamHandler : EventChannel.StreamHandler{
     }
 }
 
+object onMissedCallNotificationStreamHandler : EventChannel.StreamHandler{
+    var onMissedCall: EventChannel.EventSink?=null
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        onMissedCall = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        onMissedCall = null
+    }
+}
+
 object FlutterCall{
     /**
      * Listener for show call Ui

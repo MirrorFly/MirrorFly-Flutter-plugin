@@ -15,33 +15,36 @@ import com.mirrorflysdk.flycall.webrtc.CallAudioManager
 import com.mirrorflysdk.flycall.webrtc.CallDirection
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
+import com.mirrorflysdk.flycall.webrtc.MuteEvent
 import com.mirrorflysdk.flycall.webrtc.api.CallEventsListener
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycall.webrtc.api.CallUiListener
 import com.mirrorflysdk.flycommons.LogMessage
 import io.flutter.Log
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
 
-class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val factory: MirrorflyViewFactory) :  MethodChannel.MethodCallHandler ,
+class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) :  MethodChannel.MethodCallHandler ,
     CallEventsListener,CallUiListener {
     private var tag = "#FlutterAndroidCall"
     private var sdk = SdkCallFunctions(context)
     init {
         Logger.d("$tag init")
 //        EventChannel(binaryMessenger,Constants.onCallReceiving).setStreamHandler(OnCallReceivingStreamHandler)
-        EventChannel(binaryMessenger,Constants.onLocalVideoTrackAdded).setStreamHandler(onLocalVideoTrackAddedStreamHandler)
-        EventChannel(binaryMessenger,Constants.onRemoteVideoTrackAdded).setStreamHandler(onRemoteVideoTrackAddedStreamHandler)
-        EventChannel(binaryMessenger,Constants.onTrackAdded).setStreamHandler(onTrackAddedStreamHandler)
-        EventChannel(binaryMessenger,Constants.onCallStatusUpdated).setStreamHandler(onCallStatusUpdatedStreamHandler)
-        EventChannel(binaryMessenger,Constants.onCallAction).setStreamHandler(onCallActionStreamHandler)
-        EventChannel(binaryMessenger,Constants.onMuteStatusUpdated).setStreamHandler(onMuteStatusUpdatedStreamHandler)
-        EventChannel(binaryMessenger,Constants.onUserSpeaking).setStreamHandler(onUserSpeakingStreamHandler)
-        EventChannel(binaryMessenger,Constants.onUserStoppedSpeaking).setStreamHandler(onUserStoppedSpeakingStreamHandler)
-        MethodChannel(binaryMessenger, Constants.callMethodChannel).setMethodCallHandler(this)
+        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onLocalVideoTrackAdded).setStreamHandler(onLocalVideoTrackAddedStreamHandler)
+        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onRemoteVideoTrackAdded).setStreamHandler(onRemoteVideoTrackAddedStreamHandler)
+        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onTrackAdded).setStreamHandler(onTrackAddedStreamHandler)
+        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onCallStatusUpdated).setStreamHandler(onCallStatusUpdatedStreamHandler)
+        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onCallAction).setStreamHandler(onCallActionStreamHandler)
+        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onMuteStatusUpdated).setStreamHandler(onMuteStatusUpdatedStreamHandler)
+        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onUserSpeaking).setStreamHandler(onUserSpeakingStreamHandler)
+        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onUserStoppedSpeaking).setStreamHandler(onUserStoppedSpeakingStreamHandler)
+        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onMissedCall).setStreamHandler(onMissedCallNotificationStreamHandler)
+        MethodChannel(flutterPluginBinding.binaryMessenger, Constants.callMethodChannel).setMethodCallHandler(this)
         CallManager.setCallEventsListener(this)
         CallManager.setCallUiListener(this)
 
@@ -178,16 +181,20 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
     }
 
     override fun onVideoTrackAdded(userJid: String) {
-        Log.d(tag,"#onVideoTrackAdded userJid $userJid")
+        Log.d(tag,"#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid)}")
         val json = JSONObject()
         json.put("userJid",userJid)
         onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(json.toString())
-        factory.mirrorflyViews[userJid]?.setRemoteTarget(userJid)
+        if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+            MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
+        }else{
+            Log.d(tag,"#onVideoTrackAdded view not created")
+        }
         onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
     }
 
     override fun onLocalVideoTrackAdded() {
-        Log.d(tag,"#onLocalVideoTrackAdded")
+        Log.d(tag,"#onLocalVideoTrackAdded mirrorflyViews.size ${MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())} ${MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())}")
         val json = JSONObject()
         json.put("userJid",ChatManager.getCurrentUserJid())
         onLocalVideoTrackAddedStreamHandler.onLocalVideoTrackAdded?.success(json.toString())
@@ -195,14 +202,18 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
     }
 
     override fun onMuteStatusUpdated(muteEvent: String, userJid: String) {
-        Log.d(tag,"#onMuteStatusUpdated muteEvent $muteEvent userJid $userJid")
+        Log.d(tag,"#onMuteStatusUpdated muteEvent $muteEvent userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)}")
         val json = JSONObject()
         json.put("muteEvent",muteEvent)
         json.put("userJid",userJid)
-        if(muteEvent=="REMOTE_VIDEO_MUTE"){
-            factory.mirrorflyViews[userJid]?.setProfileView(userJid)
-        }else if(muteEvent=="REMOTE_VIDEO_UN_MUTE"){
-            factory.mirrorflyViews[userJid]?.setRemoteTarget(userJid)
+        if(muteEvent==MuteEvent.ACTION_REMOTE_VIDEO_MUTE){
+            if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+                MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)
+            }
+        }else if(muteEvent==MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE){
+            if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+                MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
+            }
         }
         onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
     }
@@ -258,6 +269,7 @@ class FlyCall(private var context: Context, binaryMessenger: BinaryMessenger,val
         FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
         when(callAction){
             CallConstants.ACTION_SHOW_CALL_UI->{
+                LogMessage.d(CallConstants.ACTION_SHOW_CALL_UI, CallManager.getCallDirection())
                 if(CallManager.getCallDirection()==CallDirection.INCOMING_CALL) {
                     val t = Intent(context, CallKitUiActivity::class.java)
                     t.putExtra("FROM",CallConstants.ACTION_SHOW_CALL_UI)

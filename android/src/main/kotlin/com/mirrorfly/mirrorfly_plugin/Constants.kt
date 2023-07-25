@@ -70,6 +70,7 @@ object Constants {
     const val onMuteStatusUpdated = "$domain/onMuteStatusUpdated"
     const val onUserSpeaking = "$domain/onUserSpeaking"
     const val onUserStoppedSpeaking = "$domain/onUserStoppedSpeaking"
+    const val onMissedCall = "$domain/onMissedCall"
 
     const val ACTION_CALL_INCOMING =
         "com.mirrorfly.mirrorfly_plugin.ACTION_CALL_INCOMING"

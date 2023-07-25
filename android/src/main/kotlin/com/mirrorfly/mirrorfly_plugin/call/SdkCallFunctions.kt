@@ -73,7 +73,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
                 return ContactManager.getDisplayName(jid)
             }
         })
-        CallManager.keepConnectionInForeground(true)
+//        CallManager.keepConnectionInForeground(true)
     }
 
     fun routeTo(call: MethodCall,result: MethodChannel.Result){
@@ -164,13 +164,18 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     }
 
     fun disconnectCall(result: MethodChannel.Result){
-        CallManager.disconnectCall(object : CallActionListener{
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                result.success(isSuccess)
-            }
+//        if (checkIsUserInCall()) {
+            CallManager.disconnectCall()
+            result.success(true)
+       /* }else{
+            result.success(true)
+        }*/
+        LogMessage.d("disconnectCall","called")
+    }
 
-        })
-        LogMessage.d("declineCall","called")
+    private fun checkIsUserInCall(): Boolean {
+//        return CallManager.isOnGoingCall() || (CallManager.isCallConnected() && CallManager.is()) || isInPIPMode()
+        return true
     }
 
     fun muteAudio(call: MethodCall, result: MethodChannel.Result) {
@@ -183,6 +188,15 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         LogMessage.d(tag,"muteVideo")
         val muteVideo = call.argument<Boolean>("muteVideo") ?: false
         CallManager.muteVideo(muteVideo)
+        if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null) {
+            if (muteVideo) {
+                MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
+                    ?.setProfileView(CallManager.getCurrentUserId())
+            } else {
+                MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
+                    ?.setLocalTarget()
+            }
+        }
         result.success(true)
     }
 
@@ -261,6 +275,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         json.put("title",notificationContent.first)
         json.put("content",notificationContent.second)
         LogMessage.d("MissedCallNotification",json.toString())
+        onMissedCallNotificationStreamHandler.onMissedCall?.success(json)
     }
 
     override fun setMediaNotificationIntentAction(

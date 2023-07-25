@@ -1349,6 +1349,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<bool?> muteVideo(bool status) {
+    // implement muteVideo
+    throw UnimplementedError();
+  }
+
+  @override
   Future declineCall() {
     // implement declineCall
     throw UnimplementedError();

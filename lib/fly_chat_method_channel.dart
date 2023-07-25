@@ -3831,6 +3831,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<bool?> muteVideo(bool status) async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('muteVideo', {"muteVideo": status});
+      LogMessage.d('muteVideo','$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
+
+  @override
   Future<bool?> routeAudioTo({required String routeType}) async {
     bool? res;
     try {

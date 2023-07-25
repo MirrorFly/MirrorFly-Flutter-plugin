@@ -252,6 +252,8 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.clearAllConversation();
   }
 
+  ///Used as a [updateFcmToken] class for [Mirrorfly]
+  ///used to update FCM Token
   static Future<bool?> updateFcmToken(String firebasetoken) {
     return FlyChatFlutterPlatform.instance.updateFcmToken(firebasetoken);
   }
@@ -610,14 +612,14 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.sentFileMessage(file, jid);
   }
 
-  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  ///Used as a [getRecentChatListHistory] class for [Mirrorfly]
   ///used to get Recent chat list from the Local DB
   ///use this method when Chat History not enabled
   static Future<dynamic> getRecentChatList() {
     return FlyChatFlutterPlatform.instance.getRecentChatList();
   }
 
-  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  ///Used as a [getRecentChatListHistory] class for [Mirrorfly]
   /// * @property firstSet indicates the initial data otherwise next set of data
   /// * @property limit set the limit of the chat list, default value 15
   /// * if ChatHistoryEnabled in init then synced from the server
@@ -1041,7 +1043,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
   }
 
-  ///Used as a getValueFromManifestOrInfoPlist class for [Mirrorfly]
+  ///Used as a [getValueFromManifestOrInfoPlist] class for [Mirrorfly]
   /// * @property androidManifestKey indicates the manifest file meta data key
   /// * @property iOSPlistKey indicates the info plist file key
   /// returns the value from Manifest file if its Platform.isAndroid
@@ -1096,6 +1098,12 @@ class Mirrorfly {
   ///returns the bool value
   static Future<bool?> muteAudio(bool status) async {
     return FlyChatFlutterPlatform.instance.muteAudio(status);
+  }
+  ///Used as a [muteVideo] class for [Mirrorfly]
+  ///used to mute the Video in the call
+  ///returns the bool value
+  static Future<bool?> muteVideo(bool status) async {
+    return FlyChatFlutterPlatform.instance.muteVideo(status);
   }
   ///Used as a [routeAudioTo] class for [Mirrorfly]
   ///used to route the Audio in the call via bluetooth, speaker, receiver..

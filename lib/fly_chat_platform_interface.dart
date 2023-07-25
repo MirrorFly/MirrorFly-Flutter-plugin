@@ -979,6 +979,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<bool?> muteAudio(bool status) async {
     throw UnimplementedError('muteAudio has not been implemented.');
   }
+  Future<bool?> muteVideo(bool status) async {
+    throw UnimplementedError('muteVideo has not been implemented.');
+  }
   Future<bool?> routeAudioTo({required String routeType}) async {
     throw UnimplementedError('routeAudioTo has not been implemented.');
   }
