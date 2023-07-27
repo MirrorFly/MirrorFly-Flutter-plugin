@@ -1359,12 +1359,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
                     //LogMessage.d("Exception", e.toString())
 
-                    result.error("404", "User Name Required", null)
+                    result.error("404", e.message, e)
                 }
 
             } else {
                 //LogMessage.d("MIRROR_FLY", "user identifier is null")
                 //LogMessage.d("MIRROR_FLY", call.arguments.toString())
+                result.error("404", "User Identifier empty", "")
             }
         }
     }
