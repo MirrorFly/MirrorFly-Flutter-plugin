@@ -156,6 +156,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("userJid",userJid)
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
+        FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJid)
         onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
     }
 
