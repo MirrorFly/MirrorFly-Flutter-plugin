@@ -13,6 +13,7 @@ import com.mirrorflysdk.flycall.webrtc.AudioDevice
 import com.mirrorflysdk.flycall.webrtc.CallAction
 import com.mirrorflysdk.flycall.webrtc.CallAudioManager
 import com.mirrorflysdk.flycall.webrtc.CallDirection
+import com.mirrorflysdk.flycall.webrtc.CallStatus
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.MuteEvent
@@ -157,7 +158,35 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
         FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJid)
+        handleCallStatusMessages(callStatus,json)
+    }
+    private fun handleCallStatusMessages(@CallStatus callEvent: String, json: JSONObject){
+        LogMessage.d(tag,"callEvent : $callEvent json : $json")
+        json.put("callStatus",callEvent)
+        when (callEvent) {
+            CallStatus.CONNECTING ->{}
+            CallStatus.RINGING ->{}
+            CallStatus.CONNECTED ->{}
+            CallStatus.DISCONNECTED ->{}
+            CallStatus.ON_HOLD ->{}
+            CallStatus.ON_RESUME ->{}
+            CallStatus.USER_JOINED ->{}
+            CallStatus.USER_LEFT ->{}
+            CallStatus.INVITE_CALL_TIME_OUT ->{}
+            CallStatus.OUTGOING_CALL_TIME_OUT ->{
+                json.put("callStatus","CALL TIME OUT")
+            }
+            CallStatus.INCOMING_CALL_TIME_OUT ->{}
+            CallStatus.RECONNECTING ->{}
+            CallStatus.RECONNECTED ->{}
+            CallStatus.CALLING ->{
+                json.put("callStatus","Trying to Connect")
+            }
+            CallStatus.CALLING_10S ->{}
+            CallStatus.CALLING_AFTER_10S ->{}
+        }
         onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+
     }
 
     override fun onCallAction(callAction: String, userJid: String) {
@@ -165,8 +194,10 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         val json = JSONObject()
         json.put("callAction",callAction)
         json.put("userJid",userJid)
+        json.put("callType",CallManager.getCallType())
+        json.put("callMode",CallManager.getCallMode())
         onCallActionStreamHandler.onCallAction?.success(json.toString())
-        sendCallStatusUpdate(callAction,userJid)
+        //sendCallStatusUpdate(callAction,userJid)
     }
 
     private fun sendCallStatusUpdate(status: String,userJid: String){
@@ -175,10 +206,20 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
         when(status){
-            CallAction.ACTION_REMOTE_HANGUP->json.put("callStatus","Disconnected")
-            else -> json.put("callStatus",status)
+            CallAction.ACTION_REMOTE_HANGUP-> {
+                if(CallManager.isOneToOneCall()) {
+                    json.put("callStatus", "Disconnected")
+                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+                }
+            }
+            CallAction.ACTION_REMOTE_BUSY->{
+                if(CallManager.isOneToOneCall()) {
+                    json.put("callStatus", "Disconnected")
+                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+                }
+            }
         }
-        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+
     }
 
     override fun onVideoTrackAdded(userJid: String) {
@@ -234,6 +275,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
 
     override fun getCallAttendedPendingIntent(): PendingIntent {
         val intent: Intent? = AppUtils.getAppIntent(context)
+        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
         return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
     }
 
