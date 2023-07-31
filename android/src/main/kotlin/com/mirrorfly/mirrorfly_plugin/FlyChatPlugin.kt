@@ -1350,7 +1350,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     }
                 } catch (e: Exception) {
 
-                    //LogMessage.d("Exception", e.toString())
+                    LogMessage.d("Register Exception", e.toString())
 
                     result.error("404", "User Name Required", null)
                 }

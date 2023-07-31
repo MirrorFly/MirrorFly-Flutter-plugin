@@ -24,6 +24,9 @@ struct Constants {
     static let isLoggedIn = "isLoggedIn"
     static let isProfileSaved = "isProfileSaved"
     static let tag = "#MirrorFlyCall"
+    
+    static let licenseKey = "licenseKey"
+    static let containerID = "containerID"
 }
 enum CallStatus : String {
     case calling = "Calling";

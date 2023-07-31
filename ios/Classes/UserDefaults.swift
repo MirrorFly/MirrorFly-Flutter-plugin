@@ -9,9 +9,9 @@ import Foundation
 import CommonCrypto
 import MirrorFlySDK
 
-class Utility: NSObject{
+public class Utility: NSObject{
     
-    class func saveInPreference (key : String , value : Any) {
+    public class func saveInPreference (key : String , value : Any) {
         var stringaValue = ""
         if let boolString = value as? Bool{
             stringaValue = boolString ? "true" : "false"

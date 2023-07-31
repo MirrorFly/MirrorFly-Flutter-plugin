@@ -67,19 +67,21 @@ import UIKit
             .build()
         assert(sdkGroupConfig != nil)
         
-        do{
-            try ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
-                .setLicenseKey(key: licenseKey)
-                .isTrialLicense(isTrial: isTrialLicenceKey)
-                .setDomainBaseUrl(baseUrl: domainBaseUrl)
-                .setGroupConfiguration(groupConfig: sdkGroupConfig!)
-                .buildAndInitialize()
-        }catch (let error ){
-            print("#FlyChat Exception : \(error.localizedDescription)")
-        }
+        Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
+        Utility.saveInPreference(key: Constants.containerID, value: containerID)
+//        do{
+//            try ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
+//                .setLicenseKey(key: licenseKey)
+//                .isTrialLicense(isTrial: isTrialLicenceKey)
+//                .setDomainBaseUrl(baseUrl: domainBaseUrl)
+//                .setGroupConfiguration(groupConfig: sdkGroupConfig!)
+//                .buildAndInitialize()
+//        }catch (let error ){
+//            print("#FlyChat Exception : \(error.localizedDescription)")
+//        }
         
-        //        ChatManager.setAppGroupContainerId(id: containerID)
-        //                ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
+                ChatManager.setAppGroupContainerId(id: containerID)
+                ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
         
         
         print("ChatManager.enableChatHistory \(chatHistoryEnable)")
@@ -109,7 +111,7 @@ import UIKit
         
         ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
         
-        ChatManager.setRegisterDeviceType(deviceType: "flutter-ios")
+//        ChatManager.setRegisterDeviceType(deviceType: "android")
         
     }
     
@@ -160,11 +162,14 @@ import UIKit
                                 details: nil))
             return
         }
-        print("device type \(FlyDefaults.deviceType)")
+        NSLog("\(Constants.tag) device type \(FlyDefaults.deviceType)")
         var voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
         voipToken = voipToken.isEmpty ? deviceToken : voipToken
         
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: false, pushServerType: .firebase) { isSuccess, flyError, flyData in
+        NSLog("\(Constants.tag) voipToken \(voipToken)")
+        NSLog("\(Constants.tag) voipToken.isEmpty \(voipToken.isEmpty)")
+        
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: true, pushServerType: .applePushService) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
@@ -2231,11 +2236,13 @@ import UIKit
     }
     static func logoutOfChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
         
+        NSLog("#VOIP ******* logging out")
         ChatManager.logoutApi { isSuccess, flyError, flyData in
             if isSuccess {
                 //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
                 ChatManager.disconnect()
                 ChatManager.shared.resetFlyDefaults()
+                Utility.clearUserDefaults()
                 Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
                 result(isSuccess)
@@ -2313,6 +2320,7 @@ import UIKit
             var data  = flyData
             print(data.getMessage() as! String )
             if isSuccess {
+                Utility.clearUserDefaults()
                 let deleteResponseJson = data.dictToJson()
                 print("ContactManager.shared.deleteMyAccountRequest==**==\(String(describing: deleteResponseJson))")
                 result(deleteResponseJson)
