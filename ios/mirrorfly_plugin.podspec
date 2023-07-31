@@ -17,9 +17,6 @@ Pod::Spec.new do |s|
   s.platform = :ios, '12.1'
   s.requires_arc = true
 
-  #s.dependency 'PhoneNumberKit/PhoneNumberKitCore', '~> 3.6.0'
-  #s.dependency 'PhoneNumberKit/PhoneNumberKitCore', '3.6.0'
-  #s.ios.deployment_target = '12.1'
   s.dependency 'libPhoneNumber-iOS'
   s.dependency 'Alamofire'
   s.dependency 'SocketRocket'
@@ -27,10 +24,10 @@ Pod::Spec.new do |s|
   s.dependency 'XMPPFramework/Swift'
   s.dependency 'RealmSwift' , '10.20.1'
   s.dependency 'GoogleWebRTC'
-  s.dependency 'MirrorFlySDK', '5.10.0'
-
+  s.dependency 'MirrorFlySDK', '5.10.2'
 
   #s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+
 
 
   # Flutter.framework does not contain a i386 slice.
