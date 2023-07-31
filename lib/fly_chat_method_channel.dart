@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -209,6 +210,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   //Need to add stream controller here
   @visibleForTesting
   final onCallReceivingChannel = const EventChannel('contus.mirrorfly/onCallReceiving');
+  final StreamController<dynamic> onCallReceivingStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onLocalVideoTrackAddedChannel = const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
@@ -307,6 +309,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     onFailureStreamController.addStream(onFailureChannel.receiveBroadcastStream());
     onProgressChangedStreamController.addStream(onProgressChangedChannel.receiveBroadcastStream());
     onSuccessStreamController.addStream(onSuccessChannel.receiveBroadcastStream());
+    onCallReceivingStreamController.addStream(onCallReceivingChannel.receiveBroadcastStream());
     onLocalVideoTrackAddedStreamController.addStream(onLocalVideoTrackAddedChannel.receiveBroadcastStream());
     onRemoteVideoTrackAddedStreamController.addStream(onRemoteVideoTrackAddedChannel.receiveBroadcastStream());
     onTrackAddedStreamController.addStream(onTrackAddedChannel.receiveBroadcastStream());
@@ -1909,10 +1912,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Stream<dynamic> get onSuccess =>
       onSuccessStreamController.stream;
 
-  //need to change here
   @override
   Stream<dynamic> get onCallReceiving =>
-      onCallReceivingChannel.receiveBroadcastStream().cast();
+      onCallReceivingStreamController.stream;
 
   @override
   Stream<dynamic> get onLocalVideoTrackAdded =>
