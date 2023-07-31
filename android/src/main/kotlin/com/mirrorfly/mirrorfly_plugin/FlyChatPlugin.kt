@@ -20,9 +20,14 @@ import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import com.google.gson.Gson
+import com.mirrorfly.mirrorfly_plugin.Constants
+import com.mirrorfly.mirrorfly_plugin.Constants.onFailureChannel
+import com.mirrorfly.mirrorfly_plugin.Constants.onSuccessChannel
 import com.mirrorfly.mirrorfly_plugin.call.FlyCall
 import com.mirrorfly.mirrorfly_plugin.call.MirrorflyViewFactory
 import com.mirrorfly.mirrorfly_plugin.call.SdkCallFunctions
+import com.mirrorfly.mirrorfly_plugin.call.Utils.Companion.reapCollection
+import com.mirrorfly.mirrorfly_plugin.call.onCallStatusUpdatedStreamHandler
 import com.mirrorflysdk.AppUtils
 import com.mirrorflysdk.ChatSDK
 import com.mirrorflysdk.GroupConfig
@@ -39,7 +44,7 @@ import com.mirrorflysdk.backup.BackupListener
 import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
-import com.mirrorflysdk.flycall.webrtc.api.CallManager
+import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MediaData
@@ -51,34 +56,280 @@ import com.mirrorflysdk.utils.*
 import com.mirrorflysdk.xmpp.chat.listener.TypingStatusListener
 import com.mirrorflysdk.xmpp.chat.models.CreateGroupModel
 import com.mirrorflysdk.xmpp.chat.models.Profile
-import io.flutter.Log
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import io.flutter.plugin.platform.PlatformViewFactory
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.lang.ref.WeakReference
 
 
 /** FlyChatPlugin */
 class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
     TypingEventListener, TypingStatusListener, ActivityAware {
+    companion object{
+        @SuppressLint("StaticFieldLeak")
+        private lateinit var instance: FlyChatPlugin
+
+        public fun getInstance(): FlyChatPlugin {
+            return instance
+        }
+
+        public fun hasInstance(): Boolean {
+            return ::instance.isInitialized
+        }
+        fun sharePluginWithRegister(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+            val factory = MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
+            flutterPluginBinding.platformViewRegistry.registerViewFactory(
+                "mirrorfly_view",
+                factory
+            )
+            FlyCall(flutterPluginBinding.applicationContext,flutterPluginBinding)
+            initSharedInstance(flutterPluginBinding.applicationContext, flutterPluginBinding.binaryMessenger)
+            LogMessage.d("FlyChatPlugin","sharePluginWithRegister")
+        }
+        private val methodChannels = mutableMapOf<BinaryMessenger, MethodChannel>()
+        private val eventChannels = mutableMapOf<BinaryMessenger, List<EventChannel>>()
+        private val eventHandlers = mutableListOf<WeakReference<EventCallbackHandler>>()
+        private fun initSharedInstance(context: Context, binaryMessenger: BinaryMessenger) {
+            if (!::instance.isInitialized) {
+                instance = FlyChatPlugin()
+                instance.mContext = context
+            }
+            val channel = MethodChannel(binaryMessenger, Constants.mirrorflyMethodChannel)
+            methodChannels[binaryMessenger]=channel
+//            eventChannels[binaryMessenger] = events
+            channel.setMethodCallHandler(instance)
+            SharedPreferenceManager().init(context)
+            initMethodAndEvent(binaryMessenger)
+            LogMessage.d("FlyChatPlugin","initSharedInstance")
+        }
+
+//        private val eventHandlers = mutableListOf<WeakReference<EventCallbackHandler>>()
+        fun sendEvent(event: String, body: JSONObject) {
+            LogMessage.d("sendEvent","event : $event body : $body")
+            if(event==Constants.ACTION_CALL_ACCEPT) {
+                onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(body.toString())
+            }
+            /*eventHandlers.reapCollection().forEach {
+                it.get()?.send(event, body)
+            }*/
+        }
+        private fun initMethodAndEvent(binaryMessenger: BinaryMessenger){
+            LogMessage.d("FlyChatPlugin","initMethodAndEvent")
+            val events = arrayListOf<EventChannel>()
+            EventChannel(
+                binaryMessenger,
+                Constants.onMessageReceivedChannel
+            ).setStreamHandler(MessageReceivedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onMessageStatusUpdatedChannel
+            ).setStreamHandler(MessageStatusUpdatedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onMediaStatusUpdatedChannel
+            ).setStreamHandler(MediaStatusUpdatedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onUploadDownloadProgressChangedChannel
+            ).setStreamHandler(UploadDownloadProgressChangedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.showUpdateCancelNotificationChannel
+            ).setStreamHandler(ShowOrUpdateOrCancelNotificationStreamHandler)
+
+            EventChannel(
+                binaryMessenger,
+                Constants.onGroupProfileFetchedChannel
+            ).setStreamHandler(onGroupProfileFetchedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onNewGroupCreatedChannel
+            ).setStreamHandler(onNewGroupCreatedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onGroupProfileUpdatedChannel
+            ).setStreamHandler(onGroupProfileUpdatedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onNewMemberAddedToGroupChannel
+            ).setStreamHandler(onNewMemberAddedToGroupStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onMemberRemovedFromGroupChannel
+            ).setStreamHandler(onMemberRemovedFromGroupStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onFetchingGroupMembersCompletedChannel
+            ).setStreamHandler(onFetchingGroupMembersCompletedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onDeleteGroupChannel
+            ).setStreamHandler(onDeleteGroupStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onFetchingGroupListCompletedChannel
+            ).setStreamHandler(onFetchingGroupListCompletedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onMemberMadeAsAdminChannel
+            ).setStreamHandler(onMemberMadeAsAdminStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onMemberRemovedAsAdminChannel
+            ).setStreamHandler(onMemberRemovedAsAdminStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onLeftFromGroupChannel
+            ).setStreamHandler(onLeftFromGroupStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onGroupNotificationMessageChannel
+            ).setStreamHandler(onGroupNotificationMessageStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onGroupDeletedLocallyChannel
+            ).setStreamHandler(onGroupDeletedLocallyStreamHandler)
+
+            EventChannel(
+                binaryMessenger,
+                Constants.blockedThisUserChannel
+            ).setStreamHandler(blockedThisUserStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.myProfileUpdatedChannel
+            ).setStreamHandler(myProfileUpdatedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onAdminBlockedOtherUserChannel
+            ).setStreamHandler(onAdminBlockedOtherUserStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onAdminBlockedUserChannel
+            ).setStreamHandler(onAdminBlockedUserStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onContactSyncCompleteChannel
+            ).setStreamHandler(onContactSyncCompleteStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onLoggedOutChannel
+            ).setStreamHandler(onLoggedOutStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.unblockedThisUserChannel
+            ).setStreamHandler(unblockedThisUserStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.userBlockedMeChannel
+            ).setStreamHandler(userBlockedMeStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.userCameOnlineChannel
+            ).setStreamHandler(userCameOnlineStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.userDeletedHisProfileChannel
+            ).setStreamHandler(userDeletedHisProfileStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.userProfileFetchedChannel
+            ).setStreamHandler(userProfileFetchedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.usersProfilesFetchedChannel
+            ).setStreamHandler(usersProfilesFetchedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.userUnBlockedMeChannel
+            ).setStreamHandler(userUnBlockedMeStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.userUpdatedHisProfileChannel
+            ).setStreamHandler(userUpdatedHisProfileStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.userWentOfflineChannel
+            ).setStreamHandler(userWentOfflineStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.usersIBlockedListFetchedChannel
+            ).setStreamHandler(usersIBlockedListFetchedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.usersProfilesFetchedChannel
+            ).setStreamHandler(usersProfilesFetchedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.usersWhoBlockedMeListFetchedChannel
+            ).setStreamHandler(usersWhoBlockedMeListFetchedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onConnectedChannel
+            ).setStreamHandler(onConnectedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onDisconnectedChannel
+            ).setStreamHandler(onDisconnectedStreamHandler)
+            /*EventChannel(
+          binaryMessenger,
+          onConnectionNotAuthorized_channel
+        ).setStreamHandler(onConnectionNotAuthorizedStreamHandler)*/
+            EventChannel(
+                binaryMessenger,
+                Constants.onConnectionFailedChannel
+            ).setStreamHandler(onConnectionFailedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.connectionFailedChannel
+            ).setStreamHandler(connectionFailedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.connectionSuccessChannel
+            ).setStreamHandler(connectionSuccessStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onWebChatPasswordChangedChannel
+            ).setStreamHandler(onWebChatPasswordChangedStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.setTypingStatusChannel
+            ).setStreamHandler(setTypingStatusStreamHandler)
+
+            EventChannel(
+                binaryMessenger,
+                Constants.onChatTypingStatusChannel
+            ).setStreamHandler(onChatTypingStatusStreamHandler)
+            EventChannel(
+                binaryMessenger,
+                Constants.onGroupTypingStatusChannel
+            ).setStreamHandler(onGroupTypingStatusStreamHandler)
+            EventChannel(binaryMessenger, onFailureChannel).setStreamHandler(
+                onFailureStreamHandler
+            )
+            EventChannel(
+                binaryMessenger,
+                Constants.onProgressChangedChannel
+            ).setStreamHandler(onProgressChangedStreamHandler)
+            EventChannel(binaryMessenger, onSuccessChannel).setStreamHandler(
+                onSuccessStreamHandler
+            )
+        }
+    }
     val COUNTRY_CODE = "countryCode"
     val FIRE_BASE_TOKEN = "firebase_token"
     val MEDIA_AUTO_DOWNLOAD: String = "media_auto_download"
@@ -88,280 +339,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     val VIBRATION: String = "vibration"
     val MUTE_NOTIFICATION: String = "mute_notification"
     var isTrialLicenceKey = true
-    private val mirrorflyMethodChannel = "contus.mirrorfly/flyChat"
-    private val onMessageReceivedChannel = "contus.mirrorfly/onMessageReceived"
-    private val onMessageStatusUpdatedChannel = "contus.mirrorfly/onMessageStatusUpdated"
-    private val onMediaStatusUpdatedChannel = "contus.mirrorfly/onMediaStatusUpdated"
-    private val onUploadDownloadProgressChangedChannel =
-        "contus.mirrorfly/onUploadDownloadProgressChanged"
-    private val showUpdateCancelNotificationChannel =
-        "contus.mirrorfly/showOrUpdateOrCancelNotification"
-
-    private val onGroupProfileFetchedChannel = "contus.mirrorfly/onGroupProfileFetched"
-    private val onNewGroupCreatedChannel = "contus.mirrorfly/onNewGroupCreated"
-    private val onGroupProfileUpdatedChannel = "contus.mirrorfly/onGroupProfileUpdated"
-    private val onNewMemberAddedToGroupChannel = "contus.mirrorfly/onNewMemberAddedToGroup"
-    private val onMemberRemovedFromGroupChannel = "contus.mirrorfly/onMemberRemovedFromGroup"
-    private val onFetchingGroupMembersCompletedChannel =
-        "contus.mirrorfly/onFetchingGroupMembersCompleted"
-    private val onDeleteGroupChannel = "contus.mirrorfly/onDeleteGroup"
-    private val onFetchingGroupListCompletedChannel =
-        "contus.mirrorfly/onFetchingGroupListCompleted"
-    private val onMemberMadeAsAdminChannel = "contus.mirrorfly/onMemberMadeAsAdmin"
-    private val onMemberRemovedAsAdminChannel = "contus.mirrorfly/onMemberRemovedAsAdmin"
-    private val onLeftFromGroupChannel = "contus.mirrorfly/onLeftFromGroup"
-    private val onGroupNotificationMessageChannel = "contus.mirrorfly/onGroupNotificationMessage"
-    private val onGroupDeletedLocallyChannel = "contus.mirrorfly/onGroupDeletedLocally"
-
-    private val blockedThisUserChannel = "contus.mirrorfly/blockedThisUser"
-    private val myProfileUpdatedChannel = "contus.mirrorfly/myProfileUpdated"
-    private val onAdminBlockedOtherUserChannel = "contus.mirrorfly/onAdminBlockedOtherUser"
-    private val onAdminBlockedUserChannel = "contus.mirrorfly/onAdminBlockedUser"
-    private val onContactSyncCompleteChannel = "contus.mirrorfly/onContactSyncComplete"
-    private val onLoggedOutChannel = "contus.mirrorfly/onLoggedOut"
-    private val unblockedThisUserChannel = "contus.mirrorfly/unblockedThisUser"
-    private val userBlockedMeChannel = "contus.mirrorfly/userBlockedMe"
-    private val userCameOnlineChannel = "contus.mirrorfly/userCameOnline"
-    private val userDeletedHisProfileChannel = "contus.mirrorfly/userDeletedHisProfile"
-    private val userProfileFetchedChannel = "contus.mirrorfly/userProfileFetched"
-    private val userUnBlockedMeChannel = "contus.mirrorfly/userUnBlockedMe"
-    private val userUpdatedHisProfileChannel = "contus.mirrorfly/userUpdatedHisProfile"
-    private val userWentOfflineChannel = "contus.mirrorfly/userWentOffline"
-    private val usersIBlockedListFetchedChannel = "contus.mirrorfly/usersIBlockedListFetched"
-    private val usersProfilesFetchedChannel = "contus.mirrorfly/usersProfilesFetched"
-    private val usersWhoBlockedMeListFetchedChannel =
-        "contus.mirrorfly/usersWhoBlockedMeListFetched"
-    private val onConnectedChannel = "contus.mirrorfly/onConnected"
-    private val onDisconnectedChannel = "contus.mirrorfly/onDisconnected"
-
-    //  private val onConnectionNotAuthorized_channel = "contus.mirrorfly/onConnectionNotAuthorized"
-    private val onConnectionFailedChannel = "contus.mirrorfly/onConnectionFailed"
-    private val connectionFailedChannel = "contus.mirrorfly/connectionFailed"
-    private val connectionSuccessChannel = "contus.mirrorfly/connectionSuccess"
-    private val onWebChatPasswordChangedChannel = "contus.mirrorfly/onWebChatPasswordChanged"
-    private val setTypingStatusChannel = "contus.mirrorfly/setTypingStatus"
-    private val onChatTypingStatusChannel = "contus.mirrorfly/onChatTypingStatus"
-    private val onGroupTypingStatusChannel = "contus.mirrorfly/onGroupTypingStatus"
-    private val onFailureChannel = "contus.mirrorfly/onFailure"
-    private val onProgressChangedChannel = "contus.mirrorfly/onProgressChanged"
-    private val onSuccessChannel = "contus.mirrorfly/onSuccess"
     private val TAG = "MirrorFly"
 
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
     /// when the Flutter Engine is detached from the Activity
-    private lateinit var channel: MethodChannel
+//    private lateinit var channel: MethodChannel
     private lateinit var mContext: Context
     private lateinit var factory : MirrorflyViewFactory
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        mContext = flutterPluginBinding.applicationContext
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, mirrorflyMethodChannel)
-        channel.setMethodCallHandler(this)
-        factory = MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
-        flutterPluginBinding.platformViewRegistry.registerViewFactory(
-            "mirrorfly_view",
-            factory
-        )
-        FlyCall(mContext,flutterPluginBinding.binaryMessenger,factory)
-        SharedPreferenceManager().init(mContext)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onMessageReceivedChannel
-        ).setStreamHandler(MessageReceivedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onMessageStatusUpdatedChannel
-        ).setStreamHandler(MessageStatusUpdatedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onMediaStatusUpdatedChannel
-        ).setStreamHandler(MediaStatusUpdatedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onUploadDownloadProgressChangedChannel
-        ).setStreamHandler(UploadDownloadProgressChangedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            showUpdateCancelNotificationChannel
-        ).setStreamHandler(ShowOrUpdateOrCancelNotificationStreamHandler)
-
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onGroupProfileFetchedChannel
-        ).setStreamHandler(onGroupProfileFetchedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onNewGroupCreatedChannel
-        ).setStreamHandler(onNewGroupCreatedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onGroupProfileUpdatedChannel
-        ).setStreamHandler(onGroupProfileUpdatedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onNewMemberAddedToGroupChannel
-        ).setStreamHandler(onNewMemberAddedToGroupStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onMemberRemovedFromGroupChannel
-        ).setStreamHandler(onMemberRemovedFromGroupStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onFetchingGroupMembersCompletedChannel
-        ).setStreamHandler(onFetchingGroupMembersCompletedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onDeleteGroupChannel
-        ).setStreamHandler(onDeleteGroupStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onFetchingGroupListCompletedChannel
-        ).setStreamHandler(onFetchingGroupListCompletedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onMemberMadeAsAdminChannel
-        ).setStreamHandler(onMemberMadeAsAdminStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onMemberRemovedAsAdminChannel
-        ).setStreamHandler(onMemberRemovedAsAdminStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onLeftFromGroupChannel
-        ).setStreamHandler(onLeftFromGroupStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onGroupNotificationMessageChannel
-        ).setStreamHandler(onGroupNotificationMessageStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onGroupDeletedLocallyChannel
-        ).setStreamHandler(onGroupDeletedLocallyStreamHandler)
-
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            blockedThisUserChannel
-        ).setStreamHandler(blockedThisUserStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            myProfileUpdatedChannel
-        ).setStreamHandler(myProfileUpdatedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onAdminBlockedOtherUserChannel
-        ).setStreamHandler(onAdminBlockedOtherUserStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onAdminBlockedUserChannel
-        ).setStreamHandler(onAdminBlockedUserStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onContactSyncCompleteChannel
-        ).setStreamHandler(onContactSyncCompleteStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onLoggedOutChannel
-        ).setStreamHandler(onLoggedOutStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            unblockedThisUserChannel
-        ).setStreamHandler(unblockedThisUserStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            userBlockedMeChannel
-        ).setStreamHandler(userBlockedMeStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            userCameOnlineChannel
-        ).setStreamHandler(userCameOnlineStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            userDeletedHisProfileChannel
-        ).setStreamHandler(userDeletedHisProfileStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            userProfileFetchedChannel
-        ).setStreamHandler(userProfileFetchedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            usersProfilesFetchedChannel
-        ).setStreamHandler(usersProfilesFetchedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            userUnBlockedMeChannel
-        ).setStreamHandler(userUnBlockedMeStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            userUpdatedHisProfileChannel
-        ).setStreamHandler(userUpdatedHisProfileStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            userWentOfflineChannel
-        ).setStreamHandler(userWentOfflineStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            usersIBlockedListFetchedChannel
-        ).setStreamHandler(usersIBlockedListFetchedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            usersProfilesFetchedChannel
-        ).setStreamHandler(usersProfilesFetchedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            usersWhoBlockedMeListFetchedChannel
-        ).setStreamHandler(usersWhoBlockedMeListFetchedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onConnectedChannel
-        ).setStreamHandler(onConnectedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onDisconnectedChannel
-        ).setStreamHandler(onDisconnectedStreamHandler)
-        /*EventChannel(
-      flutterPluginBinding.binaryMessenger,
-      onConnectionNotAuthorized_channel
-    ).setStreamHandler(onConnectionNotAuthorizedStreamHandler)*/
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onConnectionFailedChannel
-        ).setStreamHandler(onConnectionFailedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            connectionFailedChannel
-        ).setStreamHandler(connectionFailedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            connectionSuccessChannel
-        ).setStreamHandler(connectionSuccessStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onWebChatPasswordChangedChannel
-        ).setStreamHandler(onWebChatPasswordChangedStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            setTypingStatusChannel
-        ).setStreamHandler(setTypingStatusStreamHandler)
-
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onChatTypingStatusChannel
-        ).setStreamHandler(onChatTypingStatusStreamHandler)
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onGroupTypingStatusChannel
-        ).setStreamHandler(onGroupTypingStatusStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger, onFailureChannel).setStreamHandler(
-            onFailureStreamHandler
-        )
-        EventChannel(
-            flutterPluginBinding.binaryMessenger,
-            onProgressChangedChannel
-        ).setStreamHandler(onProgressChangedStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger, onSuccessChannel).setStreamHandler(
-            onSuccessStreamHandler
-        )
+        sharePluginWithRegister(flutterPluginBinding)
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
@@ -825,13 +813,22 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //                listenGroupChatMessage()
 //            }
             call.method.equals("send_image_message") -> {
-                sendImageMessage(call, result)
+                runBlocking {
+                    launch {
+                        sendImageMessage(call, result)
+                    }}
             }
             call.method.equals("send_video_message") -> {
-                sendVideoMessage(call, result)
+                runBlocking {
+                    launch {
+                        sendVideoMessage(call, result)
+                    }}
             }
             call.method.equals("logoutOfChatSDK") -> {
-                logoutOfChatSDK(result)
+                runBlocking {
+                    launch {
+                        logoutOfChatSDK(result)
+                    }}
             }
             call.method.equals("setOnGoingChatUser") -> {
                 val userJID =
@@ -866,16 +863,25 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 FlyMessenger.downloadMedia(mediaId)
             }
             call.method.equals("sendContactMessage") -> {
-                sendContactMessage(call, result)
+                runBlocking {
+                    launch {
+                        sendContactMessage(call, result)
+                    }}
             }
             call.method.equals("sendDocumentMessage") -> {
-                sendDocumentMessage(call, result)
+                runBlocking {
+                    launch {
+                        sendDocumentMessage(call, result)
+                    }}
             }
             call.method.equals("open_file") -> {
                 openMediaFile(call, result)
             }
             call.method.equals("sendAudioMessage") -> {
-                sendAudioMessage(call, result)
+                runBlocking {
+                    launch {
+                        sendAudioMessage(call, result)
+                    }}
             }
             call.method.equals("getRecentChatListIncludingArchived") -> {
                 getRecentChatListIncludingArchived(result)
@@ -1243,12 +1249,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 )!!.name else com.mirrorflysdk.flycommons.Constants.EMPTY_STRING
             }
         })
-
+        Logger.enableDebugLogging(enableSDKLog);
       SdkCallFunctions(mContext).initCall()
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
+        methodChannels.remove(binding.binaryMessenger)?.setMethodCallHandler(null)
+//        channel.setMethodCallHandler(null)
     }
 
     /// Get The Build Flavor config.
@@ -1550,12 +1557,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             override fun onMessageReceived(chatMessage: ChatMessage) {
                 //Here you need to fetch recent unread messages to build up notification content
                 //LogMessage.d("notificationdata",chatMessage.tojsonString())
-                val jsonObject = JSONObject()
+                /*val jsonObject = JSONObject()
                 jsonObject.put("groupJid", "")
                 jsonObject.put("titleContent", "")
                 jsonObject.put("chatMessage", JSONObject(chatMessage.toJson()))
                 jsonObject.put("cancel", false)
-                result.success(jsonObject.toString())
+                result.success(jsonObject.toString())*/
+                result.success(chatMessage.toJsonString())
             }
 
             override fun onGroupNotification(
@@ -1565,12 +1573,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             ) {
                 /* Create the notification for group creation with paramter values */
                 //LogMessage.d("notificationdata group",chatMessage.tojsonString())
-                val jsonObject = JSONObject()
+                /*val jsonObject = JSONObject()
                 jsonObject.put("groupJid", groupJid)
                 jsonObject.put("titleContent", titleContent)
                 jsonObject.put("chatMessage", JSONObject(chatMessage.toJson()))
                 jsonObject.put("cancel", false)
-                result.success(jsonObject.toString())
+                result.success(jsonObject.toString())*/
+                result.success(chatMessage.toJsonString())
             }
 
             override fun onCancelNotification() {
@@ -1711,6 +1720,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 )
                 val jsArray = JSONArray(messageStatusList.toJson())
                 groupMessageDeliveredJsonObject.put("deliveredParticipantList", jsArray)
+                LogMessage.d("getGroupMessageDeliveredToList",data["data"].toString())
                 result.success(groupMessageDeliveredJsonObject.toString())
             } else {
                 result.error("500", throwable!!.message, throwable)
@@ -1733,8 +1743,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 )
                 val jsArray = JSONArray(messageStatusList.toJson())
                 groupMessageReadJsonObject.put("seenParticipantList", jsArray)
+                LogMessage.d("getGroupMessageReadByList",data["data"].toString())
                 result.success(groupMessageReadJsonObject.toString())
-
             } else {
                 result.error("500", throwable!!.message, throwable)
             }
@@ -3492,6 +3502,19 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onConnectionFailed(e: FlyException) {
         onConnectionFailedStreamHandler.onConnectionFailed?.success(e.message)
+        try {
+            FlyCore.logoutOfChatSDK { isSuccess, throwable, _ ->
+                if (isSuccess) {
+                    SharedPreferenceManager.instance.clearAllPreference()
+//                    result.success(true)
+                } else {
+//                    result.error("400", throwable!!.message.toString(), "")
+                }
+            }
+        } catch (e: Exception) {
+            LogMessage.d(TAG, e.message.toString())
+//            result.error("400", e.message.toString(), "")
+        }
     }
 
     override fun onDisconnected() {
@@ -3648,5 +3671,27 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
         // Launch the Contacts app with the pre-filled contact form
         (mContext as Activity).startActivity(intent)
+    }
+    class EventCallbackHandler : EventChannel.StreamHandler {
+
+        private var eventSink: EventChannel.EventSink? = null
+
+        override fun onListen(arguments: Any?, sink: EventChannel.EventSink) {
+            eventSink = sink
+        }
+
+        fun send(event: String, body: Map<String, Any>) {
+            val data = mapOf(
+                "event" to event,
+                "body" to body
+            )
+            Handler(Looper.getMainLooper()).post {
+                eventSink?.success(data)
+            }
+        }
+
+        override fun onCancel(arguments: Any?) {
+            eventSink = null
+        }
     }
 }

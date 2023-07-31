@@ -49,7 +49,7 @@ Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned 
         mavenCentral()
         jcenter()
         maven {
-            url "https://repo.mirrorfly.com/snapshot/"
+            url "https://repo.mirrorfly.com/internal/"
         }
     }
   }
@@ -90,7 +90,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.7
+  mirrorfly_plugin: ^0.0.10
 ```
 
 - Run `flutter pub get` command in your project directory.

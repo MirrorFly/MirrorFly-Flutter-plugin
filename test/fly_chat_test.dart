@@ -697,7 +697,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // myProfileUpdated
-  Stream<bool> get myProfileUpdated => throw UnimplementedError();
+  Stream get myProfileUpdated => throw UnimplementedError();
 
   @override
   // onAdminBlockedOtherUser
@@ -725,7 +725,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onContactSyncComplete
-  Stream<bool> get onContactSyncComplete => throw UnimplementedError();
+  Stream get onContactSyncComplete => throw UnimplementedError();
 
   @override
   // onDeleteGroup
@@ -745,11 +745,11 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onFetchingGroupMembersCompleted
-  Stream<String> get onFetchingGroupMembersCompleted => throw UnimplementedError();
+  Stream get onFetchingGroupMembersCompleted => throw UnimplementedError();
 
   @override
   // onGroupDeletedLocally
-  Stream<String> get onGroupDeletedLocally => throw UnimplementedError();
+  Stream get onGroupDeletedLocally => throw UnimplementedError();
 
   @override
   // onGroupNotificationMessage
@@ -757,11 +757,11 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onGroupProfileFetched
-  Stream<String> get onGroupProfileFetched => throw UnimplementedError();
+  Stream get onGroupProfileFetched => throw UnimplementedError();
 
   @override
   // onGroupProfileUpdated
-  Stream<String> get onGroupProfileUpdated => throw UnimplementedError();
+  Stream get onGroupProfileUpdated => throw UnimplementedError();
 
   @override
   // onGroupTypingStatus
@@ -773,7 +773,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onLoggedOut
-  Stream<bool> get onLoggedOut => throw UnimplementedError();
+  Stream get onLoggedOut => throw UnimplementedError();
 
   @override
   // onMediaStatusUpdated
@@ -805,7 +805,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onNewGroupCreated
-  Stream<String> get onNewGroupCreated => throw UnimplementedError();
+  Stream get onNewGroupCreated => throw UnimplementedError();
 
   @override
   // onNewMemberAddedToGroup
@@ -1293,10 +1293,6 @@ class MockFlyChatFlutterPlatform
 
 
   @override
-  // implement onCallReceiving
-  Stream get onCallReceiving => throw UnimplementedError();
-
-  @override
   // implement onLocalVideoTrackAdded
   Stream get onLocalVideoTrackAdded => throw UnimplementedError();
 
@@ -1353,6 +1349,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<bool?> muteVideo(bool status) {
+    // implement muteVideo
+    throw UnimplementedError();
+  }
+
+  @override
   Future declineCall() {
     // implement declineCall
     throw UnimplementedError();
@@ -1393,6 +1395,19 @@ class MockFlyChatFlutterPlatform
     // implement routeAudioTo
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool?> isOnGoingCall() {
+    // implement isOnGoingCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> disconnectCall() {
+    // implement isOnGoingCall
+    throw UnimplementedError();
+  }
+
 
 }
 

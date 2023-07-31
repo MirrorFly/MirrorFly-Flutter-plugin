@@ -1,21 +1,6 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
-import com.mirrorflysdk.flycall.webrtc.api.CallUiListener
 import io.flutter.plugin.common.EventChannel
-
-object OnCallReceivingStreamHandler : EventChannel.StreamHandler {
-
-    var onCallReceiving: EventChannel.EventSink? = null
-
-
-    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-        onCallReceiving = events
-    }
-
-    override fun onCancel(arguments: Any?) {
-        onCallReceiving = null
-    }
-}
 
 object onLocalVideoTrackAddedStreamHandler : EventChannel.StreamHandler {
 
@@ -107,6 +92,17 @@ object onUserStoppedSpeakingStreamHandler : EventChannel.StreamHandler{
 
     override fun onCancel(arguments: Any?) {
         onUserStoppedSpeaking = null
+    }
+}
+
+object onMissedCallNotificationStreamHandler : EventChannel.StreamHandler{
+    var onMissedCall: EventChannel.EventSink?=null
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        onMissedCall = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        onMissedCall = null
     }
 }
 

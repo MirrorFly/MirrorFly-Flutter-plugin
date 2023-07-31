@@ -2,7 +2,10 @@ package com.mirrorfly.mirrorfly_plugin.call
 
 import android.Manifest
 import android.app.Activity
+import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -14,7 +17,11 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.mirrorfly.mirrorfly_plugin.AppUtils
+import com.mirrorfly.mirrorfly_plugin.Constants
+import com.mirrorfly.mirrorfly_plugin.FlyChatPlugin
 import com.mirrorfly.mirrorfly_plugin.R
+import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+import com.mirrorflysdk.api.FlyCore
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.CallAction
@@ -34,8 +41,9 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         CallManager.configureCallActivity(this)
 //        CallManager.setCallUiListener(this)
         FlutterCall.setListener(this)
-        Log.d("CallKitUiActivity", "onCreate")
+        LogMessage.d("CallKitUiActivity", "onCreate")
         val userName = findViewById<TextView>(R.id.tvNameCaller)
+        val userImage = findViewById<CircleImageView>(R.id.ivAvatar)
         val accept = findViewById<ImageView>(R.id.ivAcceptCall)
         accept.setOnClickListener { attendCall() }
         val decline = findViewById<ImageView>(R.id.ivDeclineCall)
@@ -45,9 +53,39 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
             val user = CallManager.getCallUsersList()[0]
             val name = ContactManager.getDisplayName(user)
             userName.text = name
+            val profile = FlyCore.getUserProfile(user)
+            Utils.loadGlideImage(this,userImage,name, profile?.image ?: "")
         }
 
+        setUpCallDataAndUI()
+    }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        LogMessage.i(tag, "CALL_UI onNewIntent()")
+        setUpCallDataAndUI()
+    }
 
+    private fun setUpCallDataAndUI(){
+        LogMessage.d(tag,"FlyChatPlugin.hasInstance : ${FlyChatPlugin.hasInstance()}")
+        LogMessage.d(tag,"isActivityBExists : ${isActivityBExists()}")
+        LogMessage.d(tag,"FROM : ${intent.extras?.getString("FROM").toString()}")
+        val acceptCall = intent.extras?.getBoolean(CallConstants.ACCEPT_CALL)
+        LogMessage.d(tag,"${CallConstants.ACCEPT_CALL} : ${acceptCall.toString()}")
+        if (acceptCall!=null && acceptCall){
+            attendCall()
+        }
+    }
+
+    private fun isActivityBExists(): Boolean {
+       val intent = AppUtils.getAppIntent(this)//Intent()
+//        intent?.component = ComponentName(this.packageName, activityBClassName)
+
+        // Get the PackageManager
+        val packageManager = packageManager
+
+        // Check if the Activity B is found
+        val resolveInfo = packageManager.resolveActivity(intent!!, PackageManager.MATCH_DEFAULT_ONLY)
+        return resolveInfo != null
     }
 
     override fun onStart() {
@@ -141,6 +179,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
                     json.put("callMode",CallManager.getCallMode())
                     onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
                     finishTask()
+                    val intent = AppUtils.getAppIntent(this@CallKitUiActivity)
+                    startActivity(intent)
                 }
             }
 
@@ -223,6 +263,16 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            AppUtils.CALL_REQUEST -> {
+                attendCall()
+                LogMessage.d(tag,"onActivityResult $data")
+            }
+        }
+    }
+
 //    override fun onShowCallUi(callAction: String?) {
     override fun onShowCallUiFlutter(callAction: String?) {
         LogMessage.d(tag, "#onShowCallUi $callAction")
@@ -232,7 +282,9 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}
             CallAction.ACTION_INVITE_USERS->{}
-            CallAction.ACTION_ANSWER_CALL->{}
+            CallAction.ACTION_ANSWER_CALL->{
+
+            }
             CallAction.ACTION_DENY_CALL->{}
             CallAction.ACTION_LOCAL_HANGUP->{}
             CallAction.ACTION_REMOTE_HANGUP->{

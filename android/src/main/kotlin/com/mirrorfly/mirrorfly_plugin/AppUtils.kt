@@ -13,6 +13,7 @@ object AppUtils {
 
     const val AUDIO_PERMISSION_REQUEST_CODE = 100
     const val VIDEO_PERMISSION_REQUEST_CODE = 200
+    const val CALL_REQUEST = 5
     fun getAppIntent(context: Context, action: String? = null, data: Bundle? = null): Intent? {
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.cloneFilter()
         intent?.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_CLEAR_TOP)

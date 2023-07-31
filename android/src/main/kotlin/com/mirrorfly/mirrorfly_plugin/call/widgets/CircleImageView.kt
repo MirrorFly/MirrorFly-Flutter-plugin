@@ -300,7 +300,7 @@ class CircleImageView : AppCompatImageView {
         super.setImageDrawable(drawable)
         if (shape != Shape.RECTANGLE) initializeBitmap()
     }
-    private fun getDrawableForProfile(name: String?): Drawable {
+    fun getDrawableForProfile(name: String?): Drawable {
         var nameValue = name
         val icon = CustomDrawable(context!!)
         if (nameValue.isNullOrBlank()) {
@@ -345,7 +345,7 @@ class CircleImageView : AppCompatImageView {
             icon
         }
     }
-    fun String?.getColourCode(): Int {
+    private fun String?.getColourCode(): Int {
         if (this != null && this == Constants.YOU)
             return ContextCompat.getColor(ChatManager.applicationContext, R.color.color_black)
 

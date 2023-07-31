@@ -38,6 +38,16 @@ class MirrorFlyView extends StatefulWidget {
 class _MirrorFlyViewState extends State<MirrorFlyView> {
   final int _viewId = _nextViewCreationId++;
   final nativeViewType = "mirrorfly_view";
+  late AndroidViewController androidViewController;
+  @override
+  void initState() {
+    super.initState();
+  }
+  @override
+  Future<void> dispose() async {
+    androidViewController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     // if (!widget.isLocalUser && widget.remoteUserJid.isEmpty) {
@@ -86,8 +96,9 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
           viewType: nativeViewType,
           surfaceFactory:
               (BuildContext context, PlatformViewController controller) {
+                androidViewController=(controller as AndroidViewController);
             return AndroidViewSurface(
-              controller: (controller as AndroidViewController),
+              controller: androidViewController,
               gestureRecognizers: const <Factory<
                   OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,

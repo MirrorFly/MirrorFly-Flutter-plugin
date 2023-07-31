@@ -252,6 +252,8 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.clearAllConversation();
   }
 
+  ///Used as a [updateFcmToken] class for [Mirrorfly]
+  ///used to update FCM Token
   static Future<bool?> updateFcmToken(String firebasetoken) {
     return FlyChatFlutterPlatform.instance.updateFcmToken(firebasetoken);
   }
@@ -444,13 +446,13 @@ class Mirrorfly {
   static Stream<dynamic> get onUploadDownloadProgressChanged =>
       FlyChatFlutterPlatform.instance.onUploadDownloadProgressChanged;
 
-  static Stream<String> get onGroupProfileFetched =>
+  static Stream<dynamic> get onGroupProfileFetched =>
       FlyChatFlutterPlatform.instance.onGroupProfileFetched;
 
-  static Stream<String> get onNewGroupCreated =>
+  static Stream<dynamic> get onNewGroupCreated =>
       FlyChatFlutterPlatform.instance.onNewGroupCreated;
 
-  static Stream<String> get onGroupProfileUpdated =>
+  static Stream<dynamic> get onGroupProfileUpdated =>
       FlyChatFlutterPlatform.instance.onGroupProfileUpdated;
 
   static Stream<dynamic> get onNewMemberAddedToGroup =>
@@ -459,7 +461,7 @@ class Mirrorfly {
   static Stream<dynamic> get onMemberRemovedFromGroup =>
       FlyChatFlutterPlatform.instance.onMemberRemovedFromGroup;
 
-  static Stream<String> get onFetchingGroupMembersCompleted =>
+  static Stream<dynamic> get onFetchingGroupMembersCompleted =>
       FlyChatFlutterPlatform.instance.onFetchingGroupMembersCompleted;
 
   static Stream<dynamic> get onDeleteGroup =>
@@ -480,13 +482,13 @@ class Mirrorfly {
   static Stream<dynamic> get onGroupNotificationMessage =>
       FlyChatFlutterPlatform.instance.onGroupNotificationMessage;
 
-  static Stream<String> get onGroupDeletedLocally =>
+  static Stream<dynamic> get onGroupDeletedLocally =>
       FlyChatFlutterPlatform.instance.onGroupDeletedLocally;
 
   static Stream<dynamic> get blockedThisUser =>
       FlyChatFlutterPlatform.instance.blockedThisUser;
 
-  static Stream<bool> get myProfileUpdated =>
+  static Stream<dynamic> get myProfileUpdated =>
       FlyChatFlutterPlatform.instance.myProfileUpdated;
 
   static Stream<dynamic> get onAdminBlockedOtherUser =>
@@ -495,10 +497,10 @@ class Mirrorfly {
   static Stream<dynamic> get onAdminBlockedUser =>
       FlyChatFlutterPlatform.instance.onAdminBlockedUser;
 
-  static Stream<bool> get onContactSyncComplete =>
+  static Stream<dynamic> get onContactSyncComplete =>
       FlyChatFlutterPlatform.instance.onContactSyncComplete;
 
-  static Stream<bool> get onLoggedOut =>
+  static Stream<dynamic> get onLoggedOut =>
       FlyChatFlutterPlatform.instance.onLoggedOut;
 
   static Stream<dynamic> get unblockedThisUser =>
@@ -510,10 +512,10 @@ class Mirrorfly {
   static Stream<dynamic> get userCameOnline =>
       FlyChatFlutterPlatform.instance.userCameOnline;
 
-  static Stream<String> get userDeletedHisProfile =>
+  static Stream<dynamic> get userDeletedHisProfile =>
       FlyChatFlutterPlatform.instance.userDeletedHisProfile;
 
-  static Stream<bool> get usersProfilesFetched =>
+  static Stream<dynamic> get usersProfilesFetched =>
       FlyChatFlutterPlatform.instance.usersProfilesFetched;
 
   static Stream<dynamic> get userProfileFetched =>
@@ -573,8 +575,6 @@ class Mirrorfly {
   static Stream<dynamic> get onSuccess =>
       FlyChatFlutterPlatform.instance.onSuccess;
 
-  static Stream<dynamic> get onCallReceiving =>
-      FlyChatFlutterPlatform.instance.onCallReceiving;
 
   static Stream<dynamic> get onLocalVideoTrackAdded =>
       FlyChatFlutterPlatform.instance.onLocalVideoTrackAdded;
@@ -612,14 +612,14 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.sentFileMessage(file, jid);
   }
 
-  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  ///Used as a [getRecentChatListHistory] class for [Mirrorfly]
   ///used to get Recent chat list from the Local DB
   ///use this method when Chat History not enabled
   static Future<dynamic> getRecentChatList() {
     return FlyChatFlutterPlatform.instance.getRecentChatList();
   }
 
-  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  ///Used as a [getRecentChatListHistory] class for [Mirrorfly]
   /// * @property firstSet indicates the initial data otherwise next set of data
   /// * @property limit set the limit of the chat list, default value 15
   /// * if ChatHistoryEnabled in init then synced from the server
@@ -1043,7 +1043,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
   }
 
-  ///Used as a getValueFromManifestOrInfoPlist class for [Mirrorfly]
+  ///Used as a [getValueFromManifestOrInfoPlist] class for [Mirrorfly]
   /// * @property androidManifestKey indicates the manifest file meta data key
   /// * @property iOSPlistKey indicates the info plist file key
   /// returns the value from Manifest file if its Platform.isAndroid
@@ -1051,35 +1051,76 @@ class Mirrorfly {
   static Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) async {
     return FlyChatFlutterPlatform.instance.getValueFromManifestOrInfoPlist(androidManifestKey:androidManifestKey,iOSPlistKey:iOSPlistKey);
   }
-
+  ///Used as a [makeVideoCall] class for [Mirrorfly]
+  /// * @property [userJid] used to make a video call to this user or group
+  ///used to make a video call
   static Future<bool> makeVideoCall(String userJid) async {
     return FlyChatFlutterPlatform.instance.makeVideoCall(userJid);
   }
+  ///Used as a [makeVoiceCall] class for [Mirrorfly]
+  /// * @property [userJid] used to make a voice call to this user or group
+  ///used to make a voice call
   static Future<bool> makeVoiceCall(String userJid) async {
     return FlyChatFlutterPlatform.instance.makeVoiceCall(userJid);
   }
+  ///Used as a [getCallUsersList] class for [Mirrorfly]
+  ///used to get user list on the call
   static Future<dynamic> getCallUsersList() async {
     return FlyChatFlutterPlatform.instance.getCallUsersList();
   }
+  ///Used as a [getCallType] class for [Mirrorfly]
+  ///used to get type of the current call, audio or video
   static Future<dynamic> getCallType() async {
     return FlyChatFlutterPlatform.instance.getCallType();
   }
+  ///Used as a [getCallDirection] class for [Mirrorfly]
+  ///used to get current call direction, incoming or outgoing.
   static Future<dynamic> getCallDirection() async {
     return FlyChatFlutterPlatform.instance.getCallDirection();
   }
+  ///Used as a [getAllAvailableAudioInput] class for [Mirrorfly]
+  ///used to get the available audio devices that connect on your device
   static Future<dynamic> getAllAvailableAudioInput() async {
     return FlyChatFlutterPlatform.instance.getAllAvailableAudioInput();
   }
+  ///Used as a [switchCamera] class for [Mirrorfly]
+  ///used to switch the camera rear or front
   static switchCamera() async {
     return FlyChatFlutterPlatform.instance.switchCamera();
   }
+  ///Used as a [declineCall] class for [Mirrorfly]
+  ///used to decline the Call an out-going call
   static declineCall() async {
     return FlyChatFlutterPlatform.instance.declineCall();
   }
+  ///Used as a [muteAudio] class for [Mirrorfly]
+  ///used to mute the Audio in the call
+  ///returns the bool value
   static Future<bool?> muteAudio(bool status) async {
     return FlyChatFlutterPlatform.instance.muteAudio(status);
   }
+  ///Used as a [muteVideo] class for [Mirrorfly]
+  ///used to mute the Video in the call
+  ///returns the bool value
+  static Future<bool?> muteVideo(bool status) async {
+    return FlyChatFlutterPlatform.instance.muteVideo(status);
+  }
+  ///Used as a [routeAudioTo] class for [Mirrorfly]
+  ///used to route the Audio in the call via bluetooth, speaker, receiver..
+  ///returns the bool value
   static Future<bool?> routeAudioTo({required String routeType}) async {
     return FlyChatFlutterPlatform.instance.routeAudioTo(routeType: routeType);
   }
+  ///Used as a [isOnGoingCall] class for [Mirrorfly]
+  ///used to check if there is an ongoing call
+  ///returns the bool value
+  static Future<bool?> isOnGoingCall() async {
+    return FlyChatFlutterPlatform.instance.isOnGoingCall();
+  }
+  ///Used as a [disconnectCall] class for [Mirrorfly]
+  ///used to disconnect an on-going call
+  static Future<bool?> disconnectCall() async {
+    return FlyChatFlutterPlatform.instance.disconnectCall();
+  }
+
 }
