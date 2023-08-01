@@ -43,7 +43,7 @@ class CallStatus{
   static const String userJoined = "User_Joined";
   static const String userLeft = "User_Left";
   static const String inviteCallTimeout = "Invite call timeout";
-  static const String callTimeout = "CALL TIME OUTt";
+  static const String callTimeout = "CALL TIME OUT";
   static const String reconnecting = "Reconnecting";
   static const String reconnected = "Reconnected";
   static const String calling = "Trying to Connect";

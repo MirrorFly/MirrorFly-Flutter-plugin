@@ -149,6 +149,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "isUserVideoMuted"->{
                 sdk.isUserVideoMuted(call,result)
             }
+            "getOnGoingCallDisplayStatus"->{
+                result.success(CallManager.getOnGoingCallStatus(context))
+            }
         }
     }
     override fun onCallStatusUpdated(callStatus: String, userJid: String) {
