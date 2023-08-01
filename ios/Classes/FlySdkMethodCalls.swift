@@ -111,6 +111,8 @@ import UIKit
         
         ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
         
+        Utility.saveInPreference(key: Constants.contactSyncEnable, value: !isTrialLicenceKey)
+        
 //        FlyDefaults.chatHistoryEnabled = true
 //        FlyDefaults.isBusyStatusEnabled = true
         ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
@@ -167,13 +169,15 @@ import UIKit
             return
         }
         NSLog("\(Constants.tag) device type \(FlyDefaults.deviceType)")
-        var voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
-        voipToken = voipToken.isEmpty ? deviceToken : voipToken
+        let voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
+//        voipToken = voipToken.isEmpty ? deviceToken : voipToken
 
         NSLog("\(Constants.tag) voipToken \(voipToken)")
         NSLog("\(Constants.tag) voipToken.isEmpty \(voipToken.isEmpty)")
+        
+        NSLog("\(Constants.tag) Register Device Token \(deviceToken)")
 
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: true, pushServerType: .applePushService) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: true, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
@@ -2538,80 +2542,71 @@ import UIKit
         
         
     }
+    
+    static func updateFcmToken(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let token = args["token"] as? String ?? ""
+        
+//        VOIPManager.sharedInstance.savePushToken(token: token)
+//        Utility.saveInPreference(key: Constants.googleToken, value: token)
+//        VOIPManager.sharedInstance.updateDeviceToken()
+        
+        result(true)
+    }
 
     static func handleReceivedMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
-        var contentHandler: ((UNNotificationContent) -> Void)?
-        var bestAttemptContent: UNMutableNotificationContent?
-        let args = call.arguments as! Dictionary<String, Any>
-        let notificationData = args["notificationdata"] as? Dictionary<String, Any>
-        let messageId = notificationData!["message_id"] as? String ?? ""
-        print("mesageee>>>>", call.arguments, "notificationData>>>>>>" ,notificationData,"message_id>>>>>",messageId)
-        let data = UNMutableNotificationContent()
-        if let userInfoData = notificationData {
-            data.userInfo = userInfoData as [String: Any]
-
-
-            //            data.title = "New Message"
-            print("data.userInfo==**==\(data.userInfo)")
-        }
-
-        ChatSDK.Builder.initializeDelegate()
-        let payloadType = data.userInfo["type"] as? String
-
-        if payloadType == "media_call" {
-            NotificationExtensionSupport.shared.didReceiveNotificationRequest(data, appName: FlyDefaults.appName, onCompletion: { [self] bestAttemptContents in
-                if FlyDefaults.hideNotificationContent{
-                    bestAttemptContent?.title = FlyDefaults.appName
-                } else {
-                    if let userInfo = bestAttemptContent?.userInfo["message_id"] {
-                        bestAttemptContent?.title = encryptDecryptData(key: userInfo as? String ?? "", data: bestAttemptContent?.title ?? "", encrypt: false)
-                        print("Push Show title: \(bestAttemptContent?.title ?? "") body: \(bestAttemptContent?.body ?? ""), ID - \(userInfo)")
-                    }
-                }
-                bestAttemptContent = bestAttemptContents
-                contentHandler?(bestAttemptContent!)
-            })
-        } else {
-
-            NotificationMessageSupport.shared.didReceiveNotificationRequest(data, onCompletion: { bestAttemptContents in
-
-                let message : ChatMessage? = ChatManager.getMessageOfId(messageId: messageId)
-
-                let messageJson = message?.toJson()
-                NSLog("#Mirrorfly Notification -> iOS getMessageOfId==**==\(String(describing: messageJson))")
-
-                if let chatMessage = messageJson {
-                    let response = "{\"groupJid\": \"\(String(""))\",\"titleContent\": \"\(String(""))\",\"chatMessage\" : " + (messageJson ?? "null")+"}"
-                    result(response)
-                }
-                bestAttemptContent = bestAttemptContents
-                contentHandler?(bestAttemptContent!)
-
-            })
-        }
-    }
-
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        // File has been downloaded successfully
-        NSLog("#Mirrorfly Notification -> Download completed. Location: \(location.path)")
-    }
-
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        // Calculate the download progress
-        let progress = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite)
-        let percentage = Int(progress * 100)
-
-        // Print the download progress
-        NSLog("#Mirrorfly Notification -> Download progress: \(percentage)%")
-    }
-
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        // Handle download completion or error
-        if let error = error {
-            NSLog("#Mirrorfly Notification -> Download failed with error: \(error.localizedDescription)")
-        } else {
-            NSLog("#Mirrorfly Notification -> Download completed successfully.")
-        }
+        
+        NSLog("#Mirrorfly handleReceivedMessage")
+        
+//        var contentHandler: ((UNNotificationContent) -> Void)?
+//        var bestAttemptContent: UNMutableNotificationContent?
+//        let args = call.arguments as! Dictionary<String, Any>
+//        let notificationData = args["notificationdata"] as? Dictionary<String, Any>
+//        let messageId = notificationData!["message_id"] as? String ?? ""
+//        print("mesageee>>>>", call.arguments, "notificationData>>>>>>" ,notificationData,"message_id>>>>>",messageId)
+//        let data = UNMutableNotificationContent()
+//        if let userInfoData = notificationData {
+//            data.userInfo = userInfoData as [String: Any]
+//
+//
+//            //            data.title = "New Message"
+//            print("data.userInfo==**==\(data.userInfo)")
+//        }
+//
+//        ChatSDK.Builder.initializeDelegate()
+//        let payloadType = data.userInfo["type"] as? String
+//
+//        if payloadType == "media_call" {
+//            NotificationExtensionSupport.shared.didReceiveNotificationRequest(data, appName: FlyDefaults.appName, onCompletion: { [self] bestAttemptContents in
+//                if FlyDefaults.hideNotificationContent{
+//                    bestAttemptContent?.title = FlyDefaults.appName
+//                } else {
+//                    if let userInfo = bestAttemptContent?.userInfo["message_id"] {
+//                        bestAttemptContent?.title = encryptDecryptData(key: userInfo as? String ?? "", data: bestAttemptContent?.title ?? "", encrypt: false)
+//                        print("Push Show title: \(bestAttemptContent?.title ?? "") body: \(bestAttemptContent?.body ?? ""), ID - \(userInfo)")
+//                    }
+//                }
+//                bestAttemptContent = bestAttemptContents
+//                contentHandler?(bestAttemptContent!)
+//            })
+//        } else {
+//
+//            NotificationMessageSupport.shared.didReceiveNotificationRequest(data, onCompletion: { bestAttemptContents in
+//
+//                let message : ChatMessage? = ChatManager.getMessageOfId(messageId: messageId)
+//
+//                let messageJson = message?.toJson()
+//                NSLog("#Mirrorfly Notification -> iOS getMessageOfId==**==\(String(describing: messageJson))")
+//
+//                if let chatMessage = messageJson {
+//                    let response = "{\"groupJid\": \"\(String(""))\",\"titleContent\": \"\(String(""))\",\"chatMessage\" : " + (messageJson ?? "null")+"}"
+//                    result(response)
+//                }
+//                bestAttemptContent = bestAttemptContents
+//                contentHandler?(bestAttemptContent!)
+//
+//            })
+//        }
     }
 
 

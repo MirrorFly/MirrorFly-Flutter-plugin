@@ -53,7 +53,35 @@ import PushKit
     
     
     func getDisplayName(IncomingUser: [String]) {
-        
+        var userString = [String]()
+        if FlyDefaults.hideNotificationContent{
+            userString.append(FlyDefaults.appName)
+        }else{
+            for JID in IncomingUser where JID != FlyDefaults.myJid{
+                print("#jid \(JID)")
+                if let contact = ChatManager.getContact(jid: JID.lowercased()){
+                    let contactSync = Utility.getBoolFromPreference(key: Constants.contactSyncEnable)
+                    if contactSync{
+                        if contact.contactType == .unknown{
+                            userString.append((try? FlyUtils.getIdFromJid(jid: JID)) ?? "")
+                        }else{
+                            userString.append(getUserName(jid: contact.jid, name: contact.name, nickName: contact.nickName, contactType: contact.contactType))
+                        }
+                    }else{
+                        userString.append(getUserName(jid: contact.jid, name: contact.name, nickName: contact.nickName, contactType: contact.contactType))
+                    }
+                }else {
+                    let pd = ContactManager.shared.saveTempContact(userId: JID)
+                    userString.append(pd?.name ?? "User")
+                }
+            }
+            print("#names \(userString)")
+        }
+        CallManager.getContactNames(IncomingUserName: userString)
+    }
+    
+    func getUserName(jid : String, name : String , nickName : String, contactType : ContactType) -> String {
+        FlyUtils.getUserName(jid: jid, name: name, nickName: nickName, contactType: contactType)
     }
     
     func getGroupName(_ groupId: String) {
@@ -215,14 +243,14 @@ import PushKit
 
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
         
-        var licenseKey = Utility.getStringFromPreference(key: Constants.licenseKey)
-        var containerID = Utility.getStringFromPreference(key: Constants.containerID)
+        let licenseKey = Utility.getStringFromPreference(key: Constants.licenseKey)
+        let containerID = Utility.getStringFromPreference(key: Constants.containerID)
         
         NSLog("#VOIP licenseKey \(licenseKey)")
         NSLog("#VOIP containerID \(containerID)")
         
-        ChatManager.setAppGroupContainerId(id: "group.com.mirrorfly.qa")
-        ChatManager.initializeSDK(licenseKey: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp") { _, _, _ in }
+        ChatManager.setAppGroupContainerId(id: containerID)
+        ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
         
         do {
             try CallManager.initCallSDK()
@@ -236,13 +264,13 @@ import PushKit
         NSLog("\(Constants.tag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
 
 
-            NSLog("#VOIP myjid ***\(FlyDefaults.myJid)")
-            NSLog("#VOIP myjid Count ***\(FlyDefaults.myJid.count)")
-            NSLog("#VOIP myjid Count ***\(try? FlyUtils.getMyJid())")
-            NSLog("#VOIP isLogged In \(FlyDefaults.isLoggedIn)")
-        
-        NSLog("#VOIP myXmppUsername\(FlyDefaults.myXmppUsername)")
-        NSLog("#VOIP appGroupContainerID\(FlyDefaults.appGroupContainerID)")
+//            NSLog("#VOIP myjid ***\(FlyDefaults.myJid)")
+//            NSLog("#VOIP myjid Count ***\(FlyDefaults.myJid.count)")
+//            NSLog("#VOIP myjid Count ***\(try? FlyUtils.getMyJid())")
+//            NSLog("#VOIP isLogged In \(FlyDefaults.isLoggedIn)")
+//
+//        NSLog("#VOIP myXmppUsername\(FlyDefaults.myXmppUsername)")
+//        NSLog("#VOIP appGroupContainerID\(FlyDefaults.appGroupContainerID)")
         
 //        try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
 //            .isTrialLicense(isTrial: true)

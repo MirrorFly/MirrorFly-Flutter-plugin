@@ -276,6 +276,11 @@ import MirrorFlySDK
 
     }
     
+    func isOnGoingCall(call: FlutterMethodCall, result: @escaping FlutterResult){
+        //Method Needed for Android inorder to Launch Ongoing Call Screen
+        result(false)
+    }
+    
     
     
     func getErrorMessage(description: String) -> String {

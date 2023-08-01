@@ -255,7 +255,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   init(ChatBuilder builder) async {
     enableDebugLog = builder.enableDebugLog;
-    addStreamsAllToStreamController();
+    if(!_messageOnReceivedStreamController.hasListener) {
+      addStreamsAllToStreamController();
+    }
     await mirrorFlyMethodChannel.invokeMethod('init', builder.build());
   }
 

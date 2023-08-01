@@ -20,6 +20,8 @@ struct Constants {
     static let onUserSpeakingChannel = "\(domain)/onUserSpeaking"
     static let onUserStoppedSpeakingChannel = "\(domain)/onUserStoppedSpeaking"
     
+    static let contactSyncEnable = "contactSyncEnable"
+    
     static let voipToken = "voipToken"
     static let isLoggedIn = "isLoggedIn"
     static let isProfileSaved = "isProfileSaved"
@@ -27,6 +29,8 @@ struct Constants {
     
     static let licenseKey = "licenseKey"
     static let containerID = "containerID"
+    
+    static let googleToken = "googleToken"
 }
 enum CallStatus : String {
     case calling = "Calling";

@@ -357,7 +357,7 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             self.usersProfilesFetchedStreamHandler = UsersProfilesFetchedStreamHandler()
         }
         
-        FlutterEventChannel(name: userProfileFetched_channel, binaryMessenger: registrar.messenger()).setStreamHandler(self.usersProfilesFetchedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+        FlutterEventChannel(name: usersProfilesFetched_channel, binaryMessenger: registrar.messenger()).setStreamHandler(self.usersProfilesFetchedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
         
         
         
@@ -795,6 +795,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.loadNextMessages(call: methodCall, result: result)
         case "handleReceivedMessage":
             FlySdkMethodCalls.handleReceivedMessage(call:methodCall, result: result)
+        case "updateFcmToken":
+            FlySdkMethodCalls.updateFcmToken(call:methodCall, result: result)
 
         default:
             result(FlutterMethodNotImplemented)

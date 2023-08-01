@@ -2280,8 +2280,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             messageListParams.inclusive = !inclusive// for iOS using exclude , so we using NOT to match the Android and iOS
             messageListParams.ascendingOrder = ascendingOrder
             messageListParams.limit = limit
-            messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
-            messageListParams.direction = "backward" // forward or backward
+//            messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
+//            messageListParams.direction = "backward" // forward or backward
             messageListQuery = FetchMessageListQuery(messageListParams)
             result.success(true)
         }else{
