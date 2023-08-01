@@ -3,13 +3,12 @@ package com.mirrorfly.mirrorfly_plugin.call
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
+import androidx.lifecycle.Lifecycle
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
-import com.mirrorflysdk.flycall.webrtc.AudioDevice
 import com.mirrorflysdk.flycall.webrtc.CallAction
 import com.mirrorflysdk.flycall.webrtc.CallAudioManager
 import com.mirrorflysdk.flycall.webrtc.CallDirection
@@ -23,11 +22,13 @@ import com.mirrorflysdk.flycall.webrtc.api.CallUiListener
 import com.mirrorflysdk.flycommons.LogMessage
 import io.flutter.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
+
 
 class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) :  MethodChannel.MethodCallHandler ,
     CallEventsListener,CallUiListener {
@@ -321,11 +322,16 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                     context.startActivity(t)
                 }
             }
+            CallAction.ACTION_ANSWER_CALL->{
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ) {
+                    val y = AppUtils.getAppIntent(context)
+                    context.startActivity(y)
+                }*/
+            }
             /*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}
             CallAction.ACTION_INVITE_USERS->{}
-            CallAction.ACTION_ANSWER_CALL->{}
             CallAction.ACTION_DENY_CALL->{}
             CallAction.ACTION_LOCAL_HANGUP->{}
             CallAction.ACTION_REMOTE_HANGUP->{}
@@ -375,4 +381,22 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         }
     }*/
 
+}
+
+
+/** Provides a static method for extracting lifecycle objects from Flutter plugin bindings.  */
+object FlutterLifecycleAdapter {
+    /**
+     * Returns the lifecycle object for the activity a plugin is bound to.
+     *
+     *
+     * Returns null if the Flutter engine version does not include the lifecycle extraction code.
+     * (this probably means the Flutter engine version is too old).
+     */
+    fun getActivityLifecycle(
+        activityPluginBinding: ActivityPluginBinding
+    ): Lifecycle {
+        val reference = activityPluginBinding.lifecycle as HiddenLifecycleReference
+        return reference.lifecycle
+    }
 }

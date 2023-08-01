@@ -39,7 +39,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     val tag = "#FlutterCall"
 
     fun initCall(){
-        CallManager.init(context)
+        //CallManager.init(context)
         CallManager.setMissedCallListener(this)
         ChatManager.setMediaNotificationHelper(this)
         CallManager.setCallHelper(object : CallHelper {
