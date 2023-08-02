@@ -1127,5 +1127,17 @@ class Mirrorfly {
   static Future<String?> selectedAudioDevice() async {
     return FlyChatFlutterPlatform.instance.selectedAudioDevice();
   }
+  ///Used as a [isUserAudioMuted] class for [Mirrorfly]
+  ///used to get audio mute status an call
+  ///if you not mentioned userJid then current user audio mute status will be returned
+  static Future<bool?> isUserAudioMuted([String? userJid]) async {
+    return FlyChatFlutterPlatform.instance.isUserAudioMuted(userJid);
+  }
+  ///Used as a [isUserVideoMuted] class for [Mirrorfly]
+  ///used to get video mute status an call
+  ///if you not mentioned userJid then current user video mute status will be returned
+  static Future<bool?> isUserVideoMuted([String? userJid]) async {
+    return FlyChatFlutterPlatform.instance.isUserVideoMuted(userJid);
+  }
 
 }

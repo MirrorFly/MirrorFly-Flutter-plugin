@@ -105,6 +105,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "muteAudio" -> {
                 sdk.muteAudio(call,result)
             }
+            "isAudioMuted"->{
+                result.success(CallManager.isAudioMuted())
+            }
             "muteVideo" -> {
                 sdk.muteVideo(call, result)
             }

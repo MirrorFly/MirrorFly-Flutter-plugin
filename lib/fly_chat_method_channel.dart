@@ -3915,5 +3915,40 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+  @override
+  Future<bool?> isUserAudioMuted([String? userJid]) async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('isUserAudioMuted',{"userJid":userJid});
+      LogMessage.d('isUserAudioMuted', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
 
+
+  @override
+  Future<bool?> isUserVideoMuted([String? userJid]) async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('isUserVideoMuted',{"userJid":userJid});
+      LogMessage.d('isUserVideoMuted', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
+  
+  
 }
