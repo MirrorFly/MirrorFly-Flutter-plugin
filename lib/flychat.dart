@@ -1122,5 +1122,10 @@ class Mirrorfly {
   static Future<bool?> disconnectCall() async {
     return FlyChatFlutterPlatform.instance.disconnectCall();
   }
+  ///Used as a [selectedAudioDevice] class for [Mirrorfly]
+  ///used to get selectedAudioDevice an call
+  static Future<String?> selectedAudioDevice() async {
+    return FlyChatFlutterPlatform.instance.selectedAudioDevice();
+  }
 
 }

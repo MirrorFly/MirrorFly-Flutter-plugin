@@ -3897,4 +3897,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+  @override
+  Future<String?> selectedAudioDevice() async {
+    String? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod('selectedAudioDevice');
+      LogMessage.d('selectedAudioDevice', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
+
+
 }

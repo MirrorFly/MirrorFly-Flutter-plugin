@@ -992,4 +992,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<bool?> disconnectCall() async {
     throw UnimplementedError('disconnectCall has not been implemented.');
   }
+  Future<String?> selectedAudioDevice() async {
+    throw UnimplementedError('selectedAudioDevice has not been implemented.');
+  }
 }

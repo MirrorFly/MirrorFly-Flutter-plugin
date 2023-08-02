@@ -9,6 +9,7 @@ import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
+import com.mirrorflysdk.flycall.webrtc.AudioDevice
 import com.mirrorflysdk.flycall.webrtc.CallAction
 import com.mirrorflysdk.flycall.webrtc.CallAudioManager
 import com.mirrorflysdk.flycall.webrtc.CallDirection
@@ -74,8 +75,14 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 sdk.getAllAvailableAudioInput(result)
             }
             "selectedAudioDevice" -> {
-                val selectedAudioDevice = CallAudioManager.getInstance(context).selectedAudioDevice
-                result.success(selectedAudioDevice)
+                val type = when(CallAudioManager.getInstance(context).selectedAudioDevice){
+                    AudioDevice.EARPIECE->"receiver"
+                    AudioDevice.SPEAKER_PHONE->"speaker"
+                    AudioDevice.BLUETOOTH-> "bluetooth"
+                    AudioDevice.WIRED_HEADSET-> "headset"
+                    else -> "none"
+                }
+                result.success(type)
             }
             "routeAudioTo" ->{
                 sdk.routeTo(call,result)
