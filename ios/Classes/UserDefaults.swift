@@ -9,9 +9,9 @@ import Foundation
 import CommonCrypto
 import MirrorFlySDK
 
-class Utility: NSObject{
+public class Utility: NSObject{
     
-    class func saveInPreference (key : String , value : Any) {
+    public class func saveInPreference (key : String , value : Any) {
         var stringaValue = ""
         if let boolString = value as? Bool{
             stringaValue = boolString ? "true" : "false"
@@ -24,7 +24,7 @@ class Utility: NSObject{
         }
     }
     
-    class func getStringFromPreference(key : String) -> String {
+    public class func getStringFromPreference(key : String) -> String {
         if let value =  UserDefaults.standard.object(forKey: key) {
             if let encryptedData = value as? Data{
                 if let decryptedData = encryptDecryptFlyDefaults(key: key, data:  encryptedData, encrypt: false){
@@ -38,7 +38,7 @@ class Utility: NSObject{
         return ""
     }
     
-    class func getBoolFromPreference(key : String) -> Bool {
+    public class func getBoolFromPreference(key : String) -> Bool {
         if let value = UserDefaults.standard.object(forKey: key) {
             if let encryptedData =  value as? Data{
                 if let decryptedData = encryptDecryptFlyDefaults(key: key, data:  encryptedData, encrypt: false){

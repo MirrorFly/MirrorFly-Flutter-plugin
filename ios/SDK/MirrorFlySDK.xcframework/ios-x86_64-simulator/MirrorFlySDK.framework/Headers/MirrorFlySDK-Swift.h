@@ -278,6 +278,7 @@ SWIFT_CLASS("_TtC12MirrorFlySDK14CallLogManager")
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
+
 @class NSTimer;
 
 SWIFT_CLASS("_TtC12MirrorFlySDK11CallManager")

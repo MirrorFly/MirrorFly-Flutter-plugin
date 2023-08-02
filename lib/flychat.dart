@@ -5,14 +5,16 @@ import 'fly_chat_platform_interface.dart';
 class Mirrorfly {
   Mirrorfly._();
   static var isTrialLicence = true;
+
   ///Used as a initChat class for [Mirrorfly]
   ///
-  /// * @property url provides the base url for making api calls
-  /// * @property licenseKey provides the License Key
-  /// @property iOSContainerID provides the App Group of the iOS Project
-  /// @property isTrialLicenceKey to provide trial/live register and contact sync
-  /// @property storageFolderName provides the Local Storage Folder Name
-  /// @property enableDebugLog provides the Debug Log.
+  /// * @property [baseUrl] provides the base url for making api calls
+  /// * @property [licenseKey] provides the License Key
+  /// @property [iOSContainerID] provides the App Group of the iOS Project
+  /// @property [chatHistoryEnable] set true to enable chat History.
+  /// @property [isTrialLicenceKey] to provide trial/live register and contact sync
+  /// @property [storageFolderName] provides the Local Storage Folder Name
+  /// @property [enableDebugLog] provides the Debug Log.
   static init(
       {required String baseUrl,
       required String licenseKey,
@@ -37,7 +39,7 @@ class Mirrorfly {
         // groupConfig: groupConfig,
         // ivKey: ivKey,
         enableDebugLog: enableDebugLog);
-    isTrialLicence=isTrialLicenceKey;
+    isTrialLicence = isTrialLicenceKey;
     FlyChatFlutterPlatform.instance.init(builder);
   }
 
@@ -575,6 +577,8 @@ class Mirrorfly {
   static Stream<dynamic> get onSuccess =>
       FlyChatFlutterPlatform.instance.onSuccess;
 
+  static Stream<dynamic> get onCallReceiving =>
+      FlyChatFlutterPlatform.instance.onCallReceiving;
 
   static Stream<dynamic> get onLocalVideoTrackAdded =>
       FlyChatFlutterPlatform.instance.onLocalVideoTrackAdded;
@@ -619,13 +623,53 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getRecentChatList();
   }
 
-  ///Used as a [getRecentChatListHistory] class for [Mirrorfly]
-  /// * @property firstSet indicates the initial data otherwise next set of data
-  /// * @property limit set the limit of the chat list, default value 15
+  ///Used as a getRecentChatListHistory class for [Mirrorfly]
+  /// * @property [firstSet] set true indicates the initial data otherwise next set of data
+  /// * @property [limit] set the limit of the chat list, default value 15
   /// * if ChatHistoryEnabled in init then synced from the server
   /// used to get Recent chat List from DB
-  static Future<dynamic> getRecentChatListHistory({required bool firstSet,int limit=15}) {
-    return FlyChatFlutterPlatform.instance.getRecentChatListHistory(firstSet: firstSet,limit: limit);
+  static Future<dynamic> getRecentChatListHistory(
+      {required bool firstSet, int limit = 15}) {
+    return FlyChatFlutterPlatform.instance
+        .getRecentChatListHistory(firstSet: firstSet, limit: limit);
+  }
+
+  /// This method is used to initialize the Single/Group Chat User History to set the message filters.
+  /// * @property [userJid] - Chat user JID (Single/Group)
+  /// * @property [messageId] - Message id of the starting point (Optional)
+  /// * @property [messageTime] - Message time of the starting point (Optional)
+  /// * @property [exclude] - If true message of the Message ID given will be excluded in message list default true
+  /// * @property [limit] - No of messages will be fetched for each request default 25
+  static Future<dynamic> initializeMessageList(
+      {required String userJid,
+      String? messageId,
+      double? messageTime,
+      bool exclude = true,
+      int limit = 25}) {
+    return FlyChatFlutterPlatform.instance.initializeMessageList(
+        userJid: userJid,
+        messageId: messageId,
+        messageTime: messageTime,
+        exclude: exclude,
+        limit: limit);
+  }
+
+  /// This method is used to Fetch initial conversations between you and a single chat user or group.
+  /// This method should be called only after the initializeMessageList Method.
+  static Future<dynamic> loadMessages() {
+    return FlyChatFlutterPlatform.instance.loadMessages();
+  }
+
+  /// This method is used to fetch previous set of conversations between you and a single chat user or group.
+  /// This set contains the limit/length set in initializeMessageList method
+  static Future<dynamic> loadPreviousMessages() {
+    return FlyChatFlutterPlatform.instance.loadPreviousMessages();
+  }
+
+  /// This method is used to fetch next set of conversations between you and a single chat user or group.
+  /// This set contains the limit/length set in initializeMessageList method
+  static Future<dynamic> loadNextMessages() {
+    return FlyChatFlutterPlatform.instance.loadNextMessages();
   }
 
   static Future<dynamic> getProfileStatusList() {
@@ -649,8 +693,7 @@ class Mirrorfly {
   }
 
   static getProfileDetails(String jid) {
-    return FlyChatFlutterPlatform.instance
-        .getProfileDetails(jid);
+    return FlyChatFlutterPlatform.instance.getProfileDetails(jid);
   }
 
   static Future<dynamic> getProfileLocal(String jid, bool fetchFromServer) {
@@ -1038,7 +1081,6 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.addContact(number, name);
   }
 
-
   static Future<dynamic> setRegionCode(String regionCode) async {
     return FlyChatFlutterPlatform.instance.setRegionCode(regionCode);
   }
@@ -1048,8 +1090,10 @@ class Mirrorfly {
   /// * @property iOSPlistKey indicates the info plist file key
   /// returns the value from Manifest file if its Platform.isAndroid
   /// or if its Platform.isIOS the value from info Plist file.
-  static Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) async {
-    return FlyChatFlutterPlatform.instance.getValueFromManifestOrInfoPlist(androidManifestKey:androidManifestKey,iOSPlistKey:iOSPlistKey);
+  static Future<String> getValueFromManifestOrInfoPlist(
+      {String? androidManifestKey, String? iOSPlistKey}) async {
+    return FlyChatFlutterPlatform.instance.getValueFromManifestOrInfoPlist(
+        androidManifestKey: androidManifestKey, iOSPlistKey: iOSPlistKey);
   }
   ///Used as a [makeVideoCall] class for [Mirrorfly]
   /// * @property [userJid] used to make a video call to this user or group
