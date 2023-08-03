@@ -60,6 +60,7 @@ import com.mirrorflysdk.utils.*
 import com.mirrorflysdk.xmpp.chat.listener.TypingStatusListener
 import com.mirrorflysdk.xmpp.chat.models.CreateGroupModel
 import com.mirrorflysdk.xmpp.chat.models.Profile
+import io.flutter.Log
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -104,7 +105,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             CallManager.init(flutterPluginBinding.applicationContext)
             FlyCall(flutterPluginBinding.applicationContext,flutterPluginBinding)
             initSharedInstance(flutterPluginBinding.applicationContext, flutterPluginBinding.binaryMessenger)
-            LogMessage.d("FlyChatPlugin","sharePluginWithRegister")
+            Log.d("FlyChatPlugin","sharePluginWithRegister")
         }
         private val methodChannels = mutableMapOf<BinaryMessenger, MethodChannel>()
         private val eventChannels = mutableMapOf<BinaryMessenger, List<EventChannel>>()
@@ -120,12 +121,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             channel.setMethodCallHandler(instance)
             SharedPreferenceManager().init(context)
             initMethodAndEvent(binaryMessenger)
-            LogMessage.d("FlyChatPlugin","initSharedInstance")
+            Log.d("FlyChatPlugin","initSharedInstance")
         }
 
 //        private val eventHandlers = mutableListOf<WeakReference<EventCallbackHandler>>()
         fun sendEvent(event: String, body: JSONObject) {
-            LogMessage.d("sendEvent","event : $event body : $body")
+            Log.d("sendEvent","event : $event body : $body")
             if(event==Constants.ACTION_CALL_ACCEPT) {
                 onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(body.toString())
             }
@@ -134,7 +135,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }*/
         }
         private fun initMethodAndEvent(binaryMessenger: BinaryMessenger){
-            LogMessage.d("FlyChatPlugin","initMethodAndEvent")
+            Log.d("FlyChatPlugin","initMethodAndEvent")
             val events = arrayListOf<EventChannel>()
             EventChannel(
                 binaryMessenger,
@@ -3637,9 +3638,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        LogMessage.d("FlyChat", "onAttachedToActivity")
-        LogMessage.d("FlyChat", "onAttachedToActivity ${binding.activity}")
-        LogMessage.d("FlyChat", "onAttachedToActivity ${binding.activity.localClassName}")
+        Log.d("FlyChat", "onAttachedToActivity ${binding.activity.localClassName}")
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
         if (isRegistered) {
             ChatEventsManager.setupMessageEventListener(this)
@@ -3650,10 +3649,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
         lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
         lifecycle.addObserver(this)
-        // Bind to the service. If the service is in foreground mode, this signals to the service
-        // that since this activity is in the foreground, the service can exit foreground mode.
-        // for showing call notification
-        CallManager.bindCallService()
     }
 
     override fun onStart(owner: LifecycleOwner) {
@@ -3662,7 +3657,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         // that since this activity is in the foreground, the service can exit foreground mode.
         // for showing call notification
         CallManager.bindCallService()
-        LogMessage.d("lifecycle","onStart")
+        Log.d("lifecycle","onStart")
     }
     override fun onStop(owner: LifecycleOwner) {
         // Unbind from the service. This signals to the service that this activity is no longer
@@ -3670,20 +3665,20 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         // service.
         // for showing call notification
         CallManager.unbindCallService()
-        LogMessage.d("lifecycle","onStop")
+        Log.d("lifecycle","onStop")
         super.onStop(owner)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        LogMessage.d("FlyChat", "onDetachedFromActivityForConfigChanges")
+        Log.d("FlyChat", "onDetachedFromActivityForConfigChanges")
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        LogMessage.d("FlyChat", "onReattachedToActivityForConfigChanges")
+        Log.d("FlyChat", "onReattachedToActivityForConfigChanges")
     }
 
     override fun onDetachedFromActivity() {
-        LogMessage.d("FlyChat", "onDetachedFromActivity")
+        Log.d("FlyChat", "onDetachedFromActivity")
         ChatEventsManager.detachProfileEventsListener(this)
         ChatEventsManager.detachGroupEventsListener(this)
         ChatEventsManager.detachLoginEventsListener(this)
