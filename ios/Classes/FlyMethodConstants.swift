@@ -43,6 +43,7 @@ class FlyMethodConstants {
             "getAllAvailableAudioInput": flyCallMethods.getAllAvailableAudioInput,
             "routeAudioTo": flyCallMethods.routeAudioTo,
             "isOnGoingCall": flyCallMethods.isOnGoingCall,
+            "disconnectCall": flyCallMethods.disconnectCall,
             
         ]
     }()

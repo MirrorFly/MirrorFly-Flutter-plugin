@@ -16,6 +16,11 @@ import ContactsUI
 import MirrorFlySDK
 import UIKit
 
+#if DEBUG
+    let ISEXPORT = false
+#else
+    let ISEXPORT = true
+#endif
 
 @objc public class FlySdkMethodCalls : NSObject{
     
@@ -177,7 +182,7 @@ import UIKit
         
         NSLog("\(Constants.tag) Register Device Token \(deviceToken)")
 
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: true, pushServerType: .firebase) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 

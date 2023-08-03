@@ -32,6 +32,8 @@ import PushKit
         
         eventChannelInitializer.initializeEventChannels(registrar: registrar)
         
+        AudioManager.shared().audioManagerDelegate = self
+        
         CallManager.setCallEventsDelegate(delegate: self)
         
         registerForVOIPNotifications()
@@ -110,7 +112,11 @@ import PushKit
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         print("#MirroflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
+        if (callStatus.rawValue == "CALL TIME OUTt"){
+            jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
+        }else{
+            jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
+        }
         jsonObject.setValue(userId, forKey: "userJid")
         
         if CallManager.isOneToOneCall()  {
