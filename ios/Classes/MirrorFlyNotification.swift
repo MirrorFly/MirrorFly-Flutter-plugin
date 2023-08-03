@@ -22,21 +22,21 @@ import MirrorFlySDK
         let payloadType = bestAttemptContent?.userInfo["type"] as? String
 
         
-//        let licenseKey = Utility.getStringFromPreference(key: Constants.licenseKey)
-//        let containerID = Utility.getStringFromPreference(key: Constants.containerID)
+        let licenseKey = Utility.getStringFromPreference(key: Constants.licenseKey)
+        let containerID = Utility.getStringFromPreference(key: Constants.containerID)
 
-//        NSLog("#Mirrorfly licenseKey1 \(licenseKey)")
-//        NSLog("#Mirrorfly containerID1 \(containerID)")
+        NSLog("#Mirrorfly licenseKey1 \(licenseKey)")
+        NSLog("#Mirrorfly containerID1 \(containerID)")
         
 
-        try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
-            .isTrialLicense(isTrial: true)
-            .setLicenseKey(key: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp")
-            .setDomainBaseUrl(baseUrl: "https://api-uikit-qa.contus.us/api/v1/")
-            .buildAndInitialize()
+//        try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
+//            .isTrialLicense(isTrial: true)
+//            .setLicenseKey(key: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp")
+//            .setDomainBaseUrl(baseUrl: "https://api-uikit-qa.contus.us/api/v1/")
+//            .buildAndInitialize()
         
-//        ChatManager.setAppGroupContainerId(id: containerID)
-//        ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
+        ChatManager.setAppGroupContainerId(id: "group.com.mirrorfly.qa")
+        ChatManager.initializeSDK(licenseKey: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp") { _, _, _ in }
         
         print("#push-api withContentHandler received")
         

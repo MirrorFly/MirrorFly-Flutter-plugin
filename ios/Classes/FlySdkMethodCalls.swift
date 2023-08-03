@@ -70,19 +70,19 @@ import UIKit
 
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
-        do{
-            try ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
-                .setLicenseKey(key: licenseKey)
-                .isTrialLicense(isTrial: isTrialLicenceKey)
-                .setDomainBaseUrl(baseUrl: domainBaseUrl)
-                .setGroupConfiguration(groupConfig: sdkGroupConfig!)
-                .buildAndInitialize()
-        }catch (let error ){
-            print("#FlyChat Exception : \(error.localizedDescription)")
-        }
+//        do{
+//            try ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
+//                .setLicenseKey(key: licenseKey)
+//                .isTrialLicense(isTrial: isTrialLicenceKey)
+//                .setDomainBaseUrl(baseUrl: domainBaseUrl)
+//                .setGroupConfiguration(groupConfig: sdkGroupConfig!)
+//                .buildAndInitialize()
+//        }catch (let error ){
+//            print("#FlyChat Exception : \(error.localizedDescription)")
+//        }
         
-//                ChatManager.setAppGroupContainerId(id: containerID)
-//                ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
+                ChatManager.setAppGroupContainerId(id: containerID)
+                ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
         
         
         print("ChatManager.enableChatHistory \(chatHistoryEnable)")

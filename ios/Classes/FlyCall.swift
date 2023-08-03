@@ -256,32 +256,15 @@ import PushKit
             try CallManager.initCallSDK()
         }
         catch(let error ) {
-            print("#FlyCall Exception : \(error.localizedDescription)")
+            print("\(Constants.tag) #FlyCall Exception : \(error.localizedDescription)")
         }
         
         
         NSLog("\(Constants.tag) Push VOIP Received with Payload - %@",payload.dictionaryPayload)
         NSLog("\(Constants.tag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
 
-
-//            NSLog("#VOIP myjid ***\(FlyDefaults.myJid)")
-//            NSLog("#VOIP myjid Count ***\(FlyDefaults.myJid.count)")
-//            NSLog("#VOIP myjid Count ***\(try? FlyUtils.getMyJid())")
-//            NSLog("#VOIP isLogged In \(FlyDefaults.isLoggedIn)")
-//
-//        NSLog("#VOIP myXmppUsername\(FlyDefaults.myXmppUsername)")
-//        NSLog("#VOIP appGroupContainerID\(FlyDefaults.appGroupContainerID)")
+        VOIPManager.sharedInstance.processPayload(payload.dictionaryPayload)
         
-//        try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
-//            .isTrialLicense(isTrial: true)
-//            .setLicenseKey(key: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp")
-//            .setDomainBaseUrl(baseUrl: "https://api-uikit-qa.contus.us/api/v1/")
-//            .buildAndInitialize()
-        
-            
-            VOIPManager.sharedInstance.processPayload(payload.dictionaryPayload)
-        
-//        completion()
     }
 
 }
