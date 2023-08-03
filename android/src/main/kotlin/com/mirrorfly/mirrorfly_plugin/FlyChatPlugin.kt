@@ -19,14 +19,17 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.google.gson.Gson
 import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorfly.mirrorfly_plugin.Constants.onFailureChannel
 import com.mirrorfly.mirrorfly_plugin.Constants.onSuccessChannel
+import com.mirrorfly.mirrorfly_plugin.call.FlutterLifecycleAdapter
 import com.mirrorfly.mirrorfly_plugin.call.FlyCall
 import com.mirrorfly.mirrorfly_plugin.call.MirrorflyViewFactory
 import com.mirrorfly.mirrorfly_plugin.call.SdkCallFunctions
-import com.mirrorfly.mirrorfly_plugin.call.Utils.Companion.reapCollection
 import com.mirrorfly.mirrorfly_plugin.call.onCallStatusUpdatedStreamHandler
 import com.mirrorflysdk.AppUtils
 import com.mirrorflysdk.ChatSDK
@@ -45,6 +48,7 @@ import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
 import com.mirrorflysdk.flycall.webrtc.Logger
+import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MediaData
@@ -83,7 +87,7 @@ import com.mirrorflysdk.api.chat.FetchMessageListQuery
 /** FlyChatPlugin */
 class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
-    TypingEventListener, TypingStatusListener, ActivityAware {
+    TypingEventListener, TypingStatusListener, ActivityAware, DefaultLifecycleObserver {
     companion object{
         @SuppressLint("StaticFieldLeak")
         private lateinit var instance: FlyChatPlugin
@@ -101,6 +105,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 "mirrorfly_view",
                 factory
             )
+            CallManager.init(flutterPluginBinding.applicationContext)
             FlyCall(flutterPluginBinding.applicationContext,flutterPluginBinding)
             initSharedInstance(flutterPluginBinding.applicationContext, flutterPluginBinding.binaryMessenger)
             LogMessage.d("FlyChatPlugin","sharePluginWithRegister")
@@ -352,6 +357,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //    private lateinit var channel: MethodChannel
     private lateinit var mContext: Context
     private lateinit var factory : MirrorflyViewFactory
+    private lateinit var lifecycle : Lifecycle
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         sharePluginWithRegister(flutterPluginBinding)
     }
@@ -1357,12 +1363,14 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
                     LogMessage.d("Register Exception", e.toString())
 
-                    result.error("404", e.message.toString() , null)
+//                    result.error("404", e.message.toString() , null)
+                    result.error("404", e.message, e)
                 }
 
             } else {
                 //LogMessage.d("MIRROR_FLY", "user identifier is null")
                 //LogMessage.d("MIRROR_FLY", call.arguments.toString())
+                result.error("404", "User Identifier empty", "")
             }
         }
     }
@@ -3724,6 +3732,30 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             ChatEventsManager.attachLoginEventsListener(this)
             ChatEventsManager.attachTypingEventListener(this)
         }
+        lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
+        lifecycle.addObserver(this)
+        // Bind to the service. If the service is in foreground mode, this signals to the service
+        // that since this activity is in the foreground, the service can exit foreground mode.
+        // for showing call notification
+        CallManager.bindCallService()
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        // Bind to the service. If the service is in foreground mode, this signals to the service
+        // that since this activity is in the foreground, the service can exit foreground mode.
+        // for showing call notification
+        CallManager.bindCallService()
+        LogMessage.d("lifecycle","onStart")
+    }
+    override fun onStop(owner: LifecycleOwner) {
+        // Unbind from the service. This signals to the service that this activity is no longer
+        // in the foreground, and the service can respond by promoting itself to a foreground
+        // service.
+        // for showing call notification
+        CallManager.unbindCallService()
+        LogMessage.d("lifecycle","onStop")
+        super.onStop(owner)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -3741,6 +3773,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         ChatEventsManager.detachLoginEventsListener(this)
         ChatEventsManager.detachTypingEventListener(this)
         ChatConnectionManager.removeChatConnectionListener(this)
+        lifecycle.removeObserver(this)
     }
 
     private fun openCreateContact(call: MethodCall) {

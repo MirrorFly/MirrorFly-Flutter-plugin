@@ -1432,11 +1432,27 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<bool?> disconnectCall() {
-    // implement isOnGoingCall
+    // implement disconnectCall
     throw UnimplementedError();
   }
 
+  @override
+  Future<String?> selectedAudioDevice() {
+    // implement selectedAudioDevice
+    throw UnimplementedError();
+  }
 
+  @override
+  Future<bool?> isUserAudioMuted([String? userJid]) {
+    // implement isUserAudioMuted
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isUserVideoMuted([String? userJid]) {
+    // implement isUserVideoMuted
+    throw UnimplementedError();
+  }
 }
 
 void main() {
