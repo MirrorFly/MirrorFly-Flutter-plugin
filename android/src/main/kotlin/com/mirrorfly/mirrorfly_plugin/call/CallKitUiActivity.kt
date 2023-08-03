@@ -53,11 +53,15 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         decline.setOnClickListener { declineCall() }
 
         if (CallManager.isOneToOneCall()) {
-            val user = CallManager.getCallUsersList()[0]
-            val name = ContactManager.getDisplayName(user)
-            userName.text = name
-            val profile = FlyCore.getUserProfile(user)
-            Utils.loadGlideImage(this,userImage,name, profile?.image ?: "")
+            if(CallManager.getCallUsersList().isNotEmpty()) {
+                val user = CallManager.getCallUsersList()[0]
+                val name = ContactManager.getDisplayName(user)
+                userName.text = name
+                val profile = FlyCore.getUserProfile(user)
+                Utils.loadGlideImage(this, userImage, name, profile?.image ?: "")
+            }else{
+                finish()
+            }
         }
 
         setUpCallDataAndUI()
@@ -94,6 +98,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
 
     override fun onStart() {
         super.onStart()
+        Log.d(tag,"onStart")
         // Bind to the service. If the service is in foreground mode, this signals to the service
         // that since this activity is in the foreground, the service can exit foreground mode.
         // for showing call notification
@@ -101,14 +106,15 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         checkPermission()
     }
 
-    /*override fun onStop() {
+    override fun onStop() {
+        Log.d(tag,"onStop")
         // Unbind from the service. This signals to the service that this activity is no longer
         // in the foreground, and the service can respond by promoting itself to a foreground
         // service.
         // for showing call notification
-        CallManager.unbindCallService()
+        //CallManager.unbindCallService()
         super.onStop()
-    }*/
+    }
 
     private fun checkPermission() {
         if (CallManager.getCallDirection() == CallDirection.INCOMING_CALL) {
@@ -163,14 +169,18 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
 
     private fun attendCall() {
         if (CallManager.getCallType() == CallType.AUDIO_CALL && !CallManager.isAudioCallPermissionsGranted()) {
+            checkPermission()
             return
         }
         if (CallManager.getCallType() == CallType.VIDEO_CALL && !CallManager.isVideoCallPermissionsGranted()) {
+            checkPermission()
             return
         }
         Log.d("attendCall", "onclick")
+
         CallManager.answerCall(object : CallActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
+                LogMessage.d(tag,"isSuccess $isSuccess message $message")
                 if (isSuccess) {
                     /*val json = JSONObject()
             json.put("callAction", CallAction.ACTION_ANSWER_CALL)
@@ -317,8 +327,18 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
             CallAction.ACTION_ANSWER_CALL->{
 
             }
-            CallAction.ACTION_DENY_CALL->{}
-            CallAction.ACTION_LOCAL_HANGUP->{}
+            CallAction.ACTION_DENY_CALL->{
+                if(CallManager.isOneToOneCall()){
+                    CallManager.disconnectCall()
+                    finish()
+                }
+            }
+            CallAction.ACTION_LOCAL_HANGUP->{
+//                if(CallManager.isOneToOneCall()){
+//                    CallManager.disconnectCall()
+                    finish()
+//                }
+            }
             CallAction.ACTION_REMOTE_HANGUP->{
                 if(CallManager.isOneToOneCall()){
                     CallManager.disconnectCall()
@@ -326,7 +346,12 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
                 }
             }
             CallAction.ACTION_REMOTE_OTHER_BUSY->{}
-            CallAction.ACTION_REMOTE_BUSY->{}
+            CallAction.ACTION_REMOTE_BUSY->{
+                if(CallManager.isOneToOneCall()){
+                    CallManager.disconnectCall()
+                    finish()
+                }
+            }
             CallAction.ACTION_REMOTE_ENGAGED->{}
             CallAction.ACTION_CALL_AGAIN->{}
             CallAction.ACTION_CANCEL_CALL_AGAIN->{}
