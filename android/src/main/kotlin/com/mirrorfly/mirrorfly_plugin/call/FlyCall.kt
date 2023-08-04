@@ -171,8 +171,13 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("userJid",userJid)
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
-        FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJid)
-        handleCallStatusMessages(callStatus,json)
+        if(callStatus == CallStatus.OUTGOING_CALL_TIME_OUT && !CallManager.isCallConnected()){
+            FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJid)
+            handleCallStatusMessages(callStatus,json)
+        }else {
+            FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJid)
+            handleCallStatusMessages(callStatus, json)
+        }
     }
     private fun handleCallStatusMessages(@CallStatus callEvent: String, json: JSONObject){
         LogMessage.d(tag,"callEvent : $callEvent json : $json")
