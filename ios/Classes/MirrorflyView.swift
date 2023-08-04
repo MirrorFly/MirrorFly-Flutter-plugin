@@ -47,6 +47,10 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             NSLog("\(Constants.tag) \(userJid) videoTrack--> \(String(describing: videoTrack))")
             NSLog("\(Constants.tag) Video rendered/Audio Call")
             
+            let alignProfilePictureCenter = argument["alignProfilePictureCenter"] as? Bool ?? true
+            let profileSize = argument["profileSize"] as? Int ?? 60
+            let hideProfileView = argument["hideProfileView"] as? Bool ?? false
+            
             if(videoTrack == nil || CallManager.getCallType() == .Audio){
                 
                 
@@ -74,7 +78,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                        let circleView = UIView(frame: .zero)
                        circleView.translatesAutoresizingMaskIntoConstraints = false
                        circleView.backgroundColor = randomColor() // Generate a random background color
-                       circleView.layer.cornerRadius = 30.0
+                    circleView.layer.cornerRadius = CGFloat(profileSize / 2)
                     
                     textView = UITextView(frame: .zero)
                         textView?.translatesAutoresizingMaskIntoConstraints = false
@@ -85,30 +89,30 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                         textView?.textAlignment = .center
                         textView?.font = UIFont.systemFont(ofSize: 22.0, weight: .bold)
                         textView?.textColor = .white
-                    textView?.backgroundColor = .clear // Generate a random background color
+                    textView?.backgroundColor = .clear
                         
-//                    let padding: CGFloat = 10.0
-//                    textView!.layer.cornerRadius = 55.0
-                       
-                        // Make the text view circular
-//                    textView?.layer.cornerRadius = (textView?.bounds.width)! / 2
                         textView?.clipsToBounds = true
-                    containerView.addSubview(circleView)
-                    containerView.addSubview(textView!)
+                    if (!hideProfileView){
+                        containerView.addSubview(circleView)
+                        containerView.addSubview(textView!)
+                        
+                        NSLayoutConstraint.activate([
+                            circleView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+                            alignProfilePictureCenter ? circleView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor) : circleView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 80),
+                            circleView.widthAnchor.constraint(equalToConstant: CGFloat(profileSize)),
+                            circleView.heightAnchor.constraint(equalToConstant: CGFloat(profileSize))
+                        ])
+                        NSLayoutConstraint.activate([
+                            textView!.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+                            alignProfilePictureCenter ? textView!.centerYAnchor.constraint(equalTo: containerView.centerYAnchor) :
+                                textView!.centerYAnchor.constraint(equalTo: containerView.topAnchor, constant: 130)
+                        ])
+                    }
                     
                     _baseView.addSubview(containerView)
                     
                     
-                    NSLayoutConstraint.activate([
-                        circleView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-                        circleView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-                        circleView.widthAnchor.constraint(equalToConstant: 60),
-                        circleView.heightAnchor.constraint(equalToConstant: 60)
-                    ])
-                    NSLayoutConstraint.activate([
-                        textView!.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-                        textView!.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
-                    ])
+                    
                     NSLayoutConstraint.activate([
                         containerView.centerXAnchor.constraint(equalTo: _baseView.centerXAnchor),
                         containerView.centerYAnchor.constraint(equalTo: _baseView.centerYAnchor),

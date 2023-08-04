@@ -15,22 +15,29 @@ enum ScalingType {
 }
 
 class MirrorFlyView extends StatefulWidget {
+  /// MirrorFly View for Audio/Video View
+  /// * @property [mirror] - Mirror the view Must be a Boolean
+  /// * @property [userJid] - Call participant JID
+  /// * @property [viewBgColor] - Color for the View (optional). Random Color by Default
+  /// * @property [alignProfilePictureCenter] - Alignment of the profile Picture in Audio Call [CENTER or TOP]
+  /// * @property [profileSize] - Size of the profile picture. 60 by Default
   const MirrorFlyView(
       {Key? key,
       this.mirror = true,
       this.scalingType = ScalingType.scaleAspectFILL,
         this.viewBgColor,
-      // required this.isLocalUser,
-      // this.remoteUserJid = ""})
+        this.alignProfilePictureCenter,
+        this.profileSize,
+        this.hideProfileView,
       required this.userJid})
       : super(key: key);
-  // final Map<dynamic, dynamic> creationParams;
 
   final bool mirror;
   final ScalingType scalingType;
   final Color? viewBgColor;
-  // final bool isLocalUser;
-  // final String remoteUserJid;
+  final bool? alignProfilePictureCenter;
+  final bool? hideProfileView;
+  final int? profileSize;
   final String userJid;
 
   @override
@@ -78,9 +85,9 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
       "setMirror": widget.mirror,
       'viewId': widget.userJid.trim().toString(),
       'backgroundColor' : colorToHex(widget.viewBgColor),
-      // if (widget.isLocalUser) "isLocal": widget.isLocalUser,
-      // if (!widget.isLocalUser) "isRemote": true,
-      // if (!widget.isLocalUser) "userJid": widget.remoteUserJid.trim().toString()
+      'alignProfilePictureCenter': widget.alignProfilePictureCenter,
+      'profileSize': widget.profileSize,
+      'hideProfileView': widget.hideProfileView,
       "userJid": widget.userJid.trim().toString()
     };
   }
