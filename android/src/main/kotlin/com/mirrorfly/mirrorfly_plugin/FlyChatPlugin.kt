@@ -79,6 +79,10 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.lang.ref.WeakReference
+import com.mirrorflysdk.api.chat.FetchMessageListQuery
+
+
+
 
 
 /** FlyChatPlugin */
@@ -807,6 +811,18 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("getMessagesOfJid") -> {
                 getMessagesOfJid(call, result)
             }
+            call.method.equals("initializeMessageList") -> {
+                initializeMessageListParams(call, result)
+            }
+            call.method.equals("loadMessages") -> {
+                loadMessages(result)
+            }
+            call.method.equals("loadPreviousMessages") -> {
+                loadPreviousMessages(result)
+            }
+            call.method.equals("loadNextMessages") -> {
+                loadNextMessages(result)
+            }
             call.method.equals("markAsReadDeleteUnreadSeparator") -> {
                 markAsReadDeleteUnreadSeparator(call, result)
             }
@@ -820,22 +836,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //                listenGroupChatMessage()
 //            }
             call.method.equals("send_image_message") -> {
-                runBlocking {
-                    launch {
-                        sendImageMessage(call, result)
-                    }}
+                sendImageMessage(call, result)
             }
             call.method.equals("send_video_message") -> {
-                runBlocking {
-                    launch {
-                        sendVideoMessage(call, result)
-                    }}
+                sendVideoMessage(call, result)
             }
             call.method.equals("logoutOfChatSDK") -> {
-                runBlocking {
-                    launch {
-                        logoutOfChatSDK(result)
-                    }}
+                logoutOfChatSDK(result)
             }
             call.method.equals("setOnGoingChatUser") -> {
                 val userJID =
@@ -870,25 +877,16 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 FlyMessenger.downloadMedia(mediaId)
             }
             call.method.equals("sendContactMessage") -> {
-                runBlocking {
-                    launch {
-                        sendContactMessage(call, result)
-                    }}
+                sendContactMessage(call, result)
             }
             call.method.equals("sendDocumentMessage") -> {
-                runBlocking {
-                    launch {
-                        sendDocumentMessage(call, result)
-                    }}
+                sendDocumentMessage(call, result)
             }
             call.method.equals("open_file") -> {
                 openMediaFile(call, result)
             }
             call.method.equals("sendAudioMessage") -> {
-                runBlocking {
-                    launch {
-                        sendAudioMessage(call, result)
-                    }}
+                sendAudioMessage(call, result)
             }
             call.method.equals("getRecentChatListIncludingArchived") -> {
                 getRecentChatListIncludingArchived(result)
@@ -1364,8 +1362,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     }
                 } catch (e: Exception) {
 
-                    //LogMessage.d("Exception", e.toString())
+                    LogMessage.d("Register Exception", e.toString())
 
+//                    result.error("404", e.message.toString() , null)
                     result.error("404", e.message, e)
                 }
 
@@ -2273,6 +2272,104 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //        }
 //
 //    }
+
+    private var messageListQuery : FetchMessageListQuery? = null
+    private fun initializeMessageListParams(call: MethodCall,result: MethodChannel.Result){
+        val chatJid: String = call.argument("userJid") ?: ""
+        val messageId: String = call.argument("messageId") ?: ""
+        val messageTime: String = call.argument("messageTime") ?: ""
+        val inclusive: Boolean = call.argument("exclude") ?: false
+        val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: true
+        val limit: Int = call.argument("limit") ?: 50
+        if(ContactManager.isValidJid(chatJid)) {
+            val messageListParams = FetchMessageListParams()
+            messageListParams.chatJid = chatJid
+            if (messageId.isNotEmpty()) messageListParams.messageId = messageId
+            if (messageTime.isNotEmpty()) messageListParams.messageTime = messageTime
+            messageListParams.inclusive = !inclusive// for iOS using exclude , so we using NOT to match the Android and iOS
+            messageListParams.ascendingOrder = ascendingOrder
+            messageListParams.limit = limit
+//            messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
+//            messageListParams.direction = "backward" // forward or backward
+            messageListQuery = FetchMessageListQuery(messageListParams)
+            result.success(true)
+        }else{
+            result.error("500","jid is not Valid","")
+        }
+    }
+    private fun loadMessages(result: MethodChannel.Result){
+        if(messageListQuery == null) {
+            result.error("500", "Message List not Initialized", "")
+            return
+        }
+        if(messageListQuery!!.isFetchingInProgress()) {
+            result.error("500", "Already Message Fetching is In Progress", "")
+            return
+        }
+        messageListQuery!!.loadMessages { isSuccess, throwable, data ->
+            if (isSuccess) {
+                val messages = data["data"] as ArrayList<ChatMessage>
+                result.success(messages.toJsonString())
+                LogMessage.d("loadMessages Android", "$isSuccess : ${messages.toJsonString()}")
+            } else {
+                LogMessage.d("loadMessages", "$isSuccess : $throwable")
+                // Fetch messages failed print throwable to find the exception details.
+                result.error("500", "Failed to Load Initial Messages ", "$throwable")
+            }
+        }
+    }
+    private fun loadPreviousMessages(result: MethodChannel.Result){
+        if(messageListQuery == null) {
+            result.error("500", "Message List not Initialized", "")
+            return
+        }
+        /*if (!messageListQuery!!.hasPreviousMessages()) {
+            result.success(arrayListOf<ChatMessage>().toJsonString())
+//            result.error("500", "There is no Previous Messages", "")
+            return
+        }*/
+        if(messageListQuery!!.isFetchingInProgress()) {
+            result.error("500", "Already Message Fetching is In Progress", "")
+            return
+        }
+        messageListQuery!!.loadPreviousMessages { isSuccess, throwable, data ->
+            if (isSuccess) {
+                val messages = data["data"] as ArrayList<ChatMessage>
+                result.success(messages.toJsonString())
+                LogMessage.d("loadPreviousMessages", "$isSuccess : ${data["data"]}")
+            } else {
+                LogMessage.d("loadPreviousMessages", "$isSuccess : $throwable")
+                // Fetch messages failed print throwable to find the exception details.
+                result.error("500", "Failed to Load Previous Messages ", "$throwable")
+            }
+        }
+    }
+    private fun loadNextMessages(result: MethodChannel.Result){
+        if(messageListQuery == null) {
+            result.error("500", "Message List not Initialized", "")
+            return
+        }
+        /*if (!messageListQuery!!.hasNextMessages()) {
+            result.success(arrayListOf<ChatMessage>().toJsonString())
+//            result.error("500", "There is no Next Messages", "")
+            return
+        }*/
+        if(messageListQuery!!.isFetchingInProgress()) {
+            result.error("500", "Already Message Fetching is In Progress", "")
+            return
+        }
+        messageListQuery!!.loadNextMessages { isSuccess, throwable, data ->
+            if (isSuccess) {
+                val messages = data["data"] as ArrayList<ChatMessage>
+                result.success(messages.toJsonString())
+                LogMessage.d("loadNextMessages", "$isSuccess : ${data["data"]}")
+            } else {
+                LogMessage.d("loadNextMessages", "$isSuccess : $throwable")
+                // Fetch messages failed print throwable to find the exception details.
+                result.error("500", "Failed to Load Next Messages ", "$throwable")
+            }
+        }
+    }
 
     private fun getMessagesOfJid(call: MethodCall, result: MethodChannel.Result) {
         //if (AppUtils.isNetConnected(mContext)) {
@@ -3510,19 +3607,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onConnectionFailed(e: FlyException) {
         onConnectionFailedStreamHandler.onConnectionFailed?.success(e.message)
-        try {
-            FlyCore.logoutOfChatSDK { isSuccess, throwable, _ ->
-                if (isSuccess) {
-                    SharedPreferenceManager.instance.clearAllPreference()
-//                    result.success(true)
-                } else {
-//                    result.error("400", throwable!!.message.toString(), "")
-                }
-            }
-        } catch (e: Exception) {
-            LogMessage.d(TAG, e.message.toString())
-//            result.error("400", e.message.toString(), "")
-        }
     }
 
     override fun onDisconnected() {

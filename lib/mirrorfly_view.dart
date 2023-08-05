@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -45,9 +47,12 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   }
   @override
   Future<void> dispose() async {
-    androidViewController.dispose();
+    if (Platform.isAndroid) {
+      androidViewController.dispose();
+    }
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     // if (!widget.isLocalUser && widget.remoteUserJid.isEmpty) {

@@ -1289,8 +1289,12 @@ class MockFlyChatFlutterPlatform
 
   @override
   // implement usersProfilesFetched
-  Stream<bool> get usersProfilesFetched => throw UnimplementedError();
+  Stream get usersProfilesFetched => throw UnimplementedError();
 
+
+  @override
+  // implement onCallReceiving
+  Stream get onCallReceiving => throw UnimplementedError();
 
   @override
   // implement onLocalVideoTrackAdded
@@ -1381,6 +1385,30 @@ class MockFlyChatFlutterPlatform
   @override
   Future getRecentChatListHistory({required bool firstSet,int limit=15}) {
     // implement getRecentChatListHistory
+    throw UnimplementedError();
+  }
+
+  @override
+  Future initializeMessageList({required String userJid, String? messageId, double? messageTime, bool? exclude, int limit = 25}) {
+    // implement initializeMessageList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future loadMessages() {
+    // implement loadMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future loadNextMessages() {
+    // implement loadNextMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future loadPreviousMessages() {
+    // implement loadPreviousMessages
     throw UnimplementedError();
   }
 

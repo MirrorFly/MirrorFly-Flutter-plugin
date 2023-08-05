@@ -494,6 +494,10 @@ public protocol XMPPMessageDelegate : ObjectiveC.NSObjectProtocol {
   @objc override dynamic public init()
   @objc deinit
 }
+extension MirrorFlySDK.CallLogManager {
+  public static func getUnreadMissedCallCount() -> Swift.Int
+  public static func resetUnreadMissedCallCount()
+}
 public protocol XMPPWebLogoutDelegate : ObjectiveC.NSObjectProtocol {
   func didLogoutWeb(socketId: Swift.String)
 }
@@ -2825,6 +2829,9 @@ public struct FlyConstants {
     public static let forbidden: Swift.String
     public static let invalidSession: Swift.String
     public static let authorization_error: Swift.String
+    public static let userIdEmpty: Swift.String
+    public static let sameUserId: Swift.String
+    public static let serverDetailError: Swift.String
     public static let invalidCallLink: Swift.String
     public static let callEnded: Swift.String
     public static let maxUsersInCall: Swift.String
@@ -3153,10 +3160,12 @@ public struct CallLog {
   public var callState: MirrorFlySDK.CallState
   public var callMode: MirrorFlySDK.CallMode
   public var userList: [Swift.String]
+  public var userProfileList: [MirrorFlySDK.ProfileDetails?]
   public var groupId: Swift.String?
   public var customData: Swift.String?
   public var isLogSynced: Swift.Bool
   public var isSelected: Swift.Bool
+  public var displayName: Swift.String
 }
 @_inheritsConvenienceInitializers @objc public class NotificationExtensionSupport : ObjectiveC.NSObject {
   public typealias pushReturnBlock = (UserNotifications.UNMutableNotificationContent?) -> Swift.Void

@@ -207,6 +207,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
   final StreamController<dynamic> onSuccessStreamController = StreamController<dynamic>.broadcast();
 
+  //Need to add stream controller here
+  @visibleForTesting
+  final onCallReceivingChannel = const EventChannel('contus.mirrorfly/onCallReceiving');
+  final StreamController<dynamic> onCallReceivingStreamController = StreamController<dynamic>.broadcast();
+
   @visibleForTesting
   final onLocalVideoTrackAddedChannel = const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
   final StreamController<dynamic> onLocalVideoTrackAddedStreamController = StreamController<dynamic>.broadcast();
@@ -250,7 +255,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   init(ChatBuilder builder) async {
     enableDebugLog = builder.enableDebugLog;
-    addStreamsAllToStreamController();
+    if(!_messageOnReceivedStreamController.hasListener) {
+      addStreamsAllToStreamController();
+    }
     await mirrorFlyMethodChannel.invokeMethod('init', builder.build());
   }
 
@@ -304,6 +311,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     onFailureStreamController.addStream(onFailureChannel.receiveBroadcastStream());
     onProgressChangedStreamController.addStream(onProgressChangedChannel.receiveBroadcastStream());
     onSuccessStreamController.addStream(onSuccessChannel.receiveBroadcastStream());
+    onCallReceivingStreamController.addStream(onCallReceivingChannel.receiveBroadcastStream());
     onLocalVideoTrackAddedStreamController.addStream(onLocalVideoTrackAddedChannel.receiveBroadcastStream());
     onRemoteVideoTrackAddedStreamController.addStream(onRemoteVideoTrackAddedChannel.receiveBroadcastStream());
     onTrackAddedStreamController.addStream(onTrackAddedChannel.receiveBroadcastStream());
@@ -323,10 +331,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("syncContacts", res);
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -336,13 +344,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<String>('sendData');
-      LogMessage.d("sendData Result "," $response");
+      LogMessage.d("sendData Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -354,13 +362,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       response = await mirrorFlyMethodChannel
               .invokeMethod<bool>('contactSyncStateValue') ??
           false;
-      LogMessage.d("contactSyncStateValue Result "," $response");
+      LogMessage.d("contactSyncStateValue Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -370,13 +378,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('contactSyncState');
-      LogMessage.d("contactSyncState Result "," $response");
+      LogMessage.d("contactSyncState Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -386,13 +394,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('revokeContactSync');
-      LogMessage.d("revokeContactSync Result "," $response");
+      LogMessage.d("revokeContactSync Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -403,13 +411,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('getUsersWhoBlockedMe', {"server": server});
-      LogMessage.d("getUsersWhoBlockedMe Result "," $response");
+      LogMessage.d("getUsersWhoBlockedMe Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -420,13 +428,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response =
           await mirrorFlyMethodChannel.invokeMethod('getUnKnownUserProfiles');
-      LogMessage.d("getUnKnownUserProfiles Result "," $response");
+      LogMessage.d("getUnKnownUserProfiles Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -437,13 +445,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response =
           await mirrorFlyMethodChannel.invokeMethod('getMyProfileStatus');
-      LogMessage.d("getMyProfileStatus Result "," $response");
+      LogMessage.d("getMyProfileStatus Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -453,13 +461,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getMyBusyStatus');
-      LogMessage.d("getMyBusyStatus Result "," $response");
+      LogMessage.d("getMyBusyStatus Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -469,13 +477,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getBusyStatusList');
-      LogMessage.d("getBusyStatusList Result "," $response");
+      LogMessage.d("getBusyStatusList Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -486,13 +494,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('getRecalledMessagesOfAConversation', {"jid": jid});
-      LogMessage.d("getRecalledMessagesOfAConversation Result "," $response");
+      LogMessage.d("getRecalledMessagesOfAConversation Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -505,10 +513,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('setMyBusyStatus', {"status": busyStatus});
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -521,10 +529,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('insertBusyStatus', {"busy_status": busyStatus});
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -537,10 +545,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('enableDisableBusyStatus', {"enable": enable});
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -553,10 +561,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('enableDisableHideLastSeen', {"enable": enable});
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -567,13 +575,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<bool>('isBusyStatusEnabled');
-      LogMessage.d("isBusyStatusEnabled"," $res");
+      LogMessage.d("isBusyStatusEnabled", " $res");
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception"," $e");
+      LogMessage.d("Platform Exception", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -591,10 +599,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       });
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -612,10 +620,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       });
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -626,13 +634,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       response =
           await mirrorFlyMethodChannel.invokeMethod<String>('media_endpoint');
-      LogMessage.d("media_endpoint Result "," $response");
+      LogMessage.d("media_endpoint Result ", " $response");
       return response;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -645,10 +653,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('unFavouriteAllFavouriteMessages');
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -661,10 +669,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('markAsRead', {"jid": jid});
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -677,10 +685,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('uploadMedia', {"messageid": messageid});
       return res;
     } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception ="," $e");
+      LogMessage.d("Platform Exception =", " $e");
       rethrow;
     } on Exception catch (error) {
-      LogMessage.d("Exception "," $error");
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }
@@ -1907,6 +1915,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onSuccessStreamController.stream;
 
   @override
+  Stream<dynamic> get onCallReceiving =>
+      onCallReceivingStreamController.stream;
+
+  @override
   Stream<dynamic> get onLocalVideoTrackAdded =>
       onLocalVideoTrackAddedStreamController.stream;
 
@@ -1944,10 +1956,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       final result = await mirrorFlyMethodChannel
           .invokeMethod<String>("get_image_path", {"image": imgurl});
-      LogMessage.d('RESULT ','$result');
+      LogMessage.d('RESULT ', '$result');
       return result;
     } on PlatformException catch (e) {
-      LogMessage.d("er","$e");
+      LogMessage.d("er", "$e");
       return re;
     }
   }
@@ -1960,10 +1972,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "name": name,
         "email": email,
       });
-      LogMessage.d('RESULT','$result');
+      LogMessage.d('RESULT', '$result');
       return result;
     } on PlatformException catch (e) {
-      LogMessage.d("er ","$e");
+      LogMessage.d("er ", "$e");
       return result;
     }
   }
@@ -1974,10 +1986,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       final result = await mirrorFlyMethodChannel
           .invokeMethod("sent file", {"file": file, "jid": jid, "message": ""});
-      LogMessage.d('RESULT','$result');
+      LogMessage.d('RESULT', '$result');
       return result;
     } on PlatformException catch (e) {
-      LogMessage.d("er","$e");
+      LogMessage.d("er", "$e");
       return re;
     }
   }
@@ -2001,15 +2013,97 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getRecentChatListHistory({required bool firstSet,int limit=15}) async {
+  Future<dynamic> getRecentChatListHistory(
+      {required bool firstSet, int limit = 15}) async {
     //getRecentChats
     dynamic recentResponse;
     try {
-      LogMessage.d("getRecentChatListHistory","firstSet $firstSet");
-      recentResponse =
-          await mirrorFlyMethodChannel.invokeMethod('getRecentChatListHistory', {"firstSet": firstSet,"limit": limit});
-      LogMessage.d("getRecentChatListHistory","$recentResponse");
+      LogMessage.d("getRecentChatListHistory", "firstSet $firstSet");
+      recentResponse = await mirrorFlyMethodChannel.invokeMethod(
+          'getRecentChatListHistory', {"firstSet": firstSet, "limit": limit});
+      LogMessage.d("getRecentChatListHistory", "$recentResponse");
       return recentResponse;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> initializeMessageList(
+      {required String userJid,
+      String? messageId,
+      String? chatId,
+      double? messageTime,
+      bool? exclude,
+      int limit = 25}) async {
+    bool initializeResponse;
+    try {
+      initializeResponse =
+          await mirrorFlyMethodChannel.invokeMethod('initializeMessageList', {
+        "userJid": userJid,
+        "messageId": messageId,
+        "messageTime": messageTime,
+        "exclude": exclude,
+        "limit": limit,
+        "ascendingOrder": true
+      });
+      LogMessage.d("initializeMessageList", "$initializeResponse");
+      return initializeResponse;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<dynamic> loadMessages() async {
+    dynamic initialMessageResponse;
+    try {
+      initialMessageResponse =
+      await mirrorFlyMethodChannel.invokeMethod('loadMessages');
+      LogMessage.d("loadMessages", "$initialMessageResponse");
+      return initialMessageResponse;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<dynamic> loadPreviousMessages() async {
+    dynamic previousMessageResponse;
+    try {
+      previousMessageResponse =
+      await mirrorFlyMethodChannel.invokeMethod('loadPreviousMessages');
+      LogMessage.d("previousMessageResponse", "$previousMessageResponse");
+      return previousMessageResponse;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<dynamic> loadNextMessages() async {
+    dynamic nextMessageResponse;
+    try {
+      nextMessageResponse =
+      await mirrorFlyMethodChannel.invokeMethod('loadNextMessages');
+      LogMessage.d("nextMessageResponse", "$nextMessageResponse");
+      return nextMessageResponse;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception ="," $e");
       rethrow;
@@ -2018,6 +2112,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
 
   @override
   Future<dynamic> getProfileStatusList() async {
@@ -3798,7 +3893,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
-
   @override
   declineCall() async {
     try {

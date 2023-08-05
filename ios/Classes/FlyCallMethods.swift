@@ -53,7 +53,8 @@ import MirrorFlySDK
            
     }
     func selectedAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
-           
+        
+        print("selectedAudioDevice \(selectedAudioDevice)")
     }
     func selectAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
         
@@ -220,7 +221,7 @@ import MirrorFlySDK
     func routeAudioTo(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as! Dictionary<String, Any>
         let routeType = args["routeType"] as? String ?? ""
-        
+        print("route Type \(routeType)")
         switch (routeType) {
           case "bluetooth":
             AudioManager.shared().routeAudioTo(device: .bluetooth, force: true);
@@ -274,6 +275,16 @@ import MirrorFlySDK
         
         result(status)
 
+    }
+    
+    func isOnGoingCall(call: FlutterMethodCall, result: @escaping FlutterResult){
+        //Method Needed for Android inorder to Launch Ongoing Call Screen
+        result(false)
+    }
+    
+    func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult){
+        CallManager.disconnectCall()
+        result(true)
     }
     
     

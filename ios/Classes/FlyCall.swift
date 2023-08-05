@@ -32,6 +32,8 @@ import PushKit
         
         eventChannelInitializer.initializeEventChannels(registrar: registrar)
         
+        AudioManager.shared().audioManagerDelegate = self
+        
         CallManager.setCallEventsDelegate(delegate: self)
         
         registerForVOIPNotifications()
@@ -53,7 +55,35 @@ import PushKit
     
     
     func getDisplayName(IncomingUser: [String]) {
-        
+        var userString = [String]()
+        if FlyDefaults.hideNotificationContent{
+            userString.append(FlyDefaults.appName)
+        }else{
+            for JID in IncomingUser where JID != FlyDefaults.myJid{
+                print("#jid \(JID)")
+                if let contact = ChatManager.getContact(jid: JID.lowercased()){
+                    let contactSync = Utility.getBoolFromPreference(key: Constants.contactSyncEnable)
+                    if contactSync{
+                        if contact.contactType == .unknown{
+                            userString.append((try? FlyUtils.getIdFromJid(jid: JID)) ?? "")
+                        }else{
+                            userString.append(getUserName(jid: contact.jid, name: contact.name, nickName: contact.nickName, contactType: contact.contactType))
+                        }
+                    }else{
+                        userString.append(getUserName(jid: contact.jid, name: contact.name, nickName: contact.nickName, contactType: contact.contactType))
+                    }
+                }else {
+                    let pd = ContactManager.shared.saveTempContact(userId: JID)
+                    userString.append(pd?.name ?? "User")
+                }
+            }
+            print("#names \(userString)")
+        }
+        CallManager.getContactNames(IncomingUserName: userString)
+    }
+    
+    func getUserName(jid : String, name : String , nickName : String, contactType : ContactType) -> String {
+        FlyUtils.getUserName(jid: jid, name: name, nickName: nickName, contactType: contactType)
     }
     
     func getGroupName(_ groupId: String) {
@@ -82,7 +112,11 @@ import PushKit
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         print("#MirroflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
+        if (callStatus.rawValue == "CALL TIME OUTt"){
+            jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
+        }else{
+            jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
+        }
         jsonObject.setValue(userId, forKey: "userJid")
         
         if CallManager.isOneToOneCall()  {
@@ -206,17 +240,37 @@ import PushKit
 
         NSLog("\(Constants.tag) VoIP Token: \(pushCredentials)")
         let deviceTokenString = pushCredentials.token.reduce("") { $0 + String(format: "%02X", $1) }
-        print("\(Constants.tag) #token pushRegistry VT => \(deviceTokenString)")
-        print(deviceTokenString)
+        NSLog("\(Constants.tag) #token pushRegistry VT => \(deviceTokenString)")
+        print("\(Constants.tag) device Token \(deviceTokenString)")
         VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
         Utility.saveInPreference(key: Constants.voipToken, value: deviceTokenString)
         VOIPManager.sharedInstance.updateDeviceToken()
     }
 
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+        
+        let licenseKey = Utility.getStringFromPreference(key: Constants.licenseKey)
+        let containerID = Utility.getStringFromPreference(key: Constants.containerID)
+        
+        NSLog("#VOIP licenseKey \(licenseKey)")
+        NSLog("#VOIP containerID \(containerID)")
+        
+        ChatManager.setAppGroupContainerId(id: containerID)
+        ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
+        
+        do {
+            try CallManager.initCallSDK()
+        }
+        catch(let error ) {
+            print("\(Constants.tag) #FlyCall Exception : \(error.localizedDescription)")
+        }
+        
+        
         NSLog("\(Constants.tag) Push VOIP Received with Payload - %@",payload.dictionaryPayload)
-        print("\(Constants.tag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
+        NSLog("\(Constants.tag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
+
         VOIPManager.sharedInstance.processPayload(payload.dictionaryPayload)
+        
     }
 
 }

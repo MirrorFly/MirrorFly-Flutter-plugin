@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "MirrorFlySDK"
-  s.version      = "5.8.2"
+  s.version      = "5.10.5"
   s.summary      = "MirrorFlySDK Summary"
   s.description  = "MirrorFlySDK Description"
   s.authors      = "Vishvanath Eshwer"
@@ -28,5 +28,10 @@ Pod::Spec.new do |s|
   s.dependency 'Socket.IO-Client-Swift', '~> 15.2.0'
   s.dependency 'RealmSwift', '10.20.1'
   s.dependency 'GoogleWebRTC'
-
+  
+s.subspec 'default' do |ss|
+ss.xcconfig = {
+  'GCC_WARN_INHIBIT_ALL_WARNINGS' => 'Yes'
+}
+  end
 end

@@ -31,7 +31,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         super.init()
         
         if let argument = args as? [String: Any]{
-            print("\(Constants.tag) argument--> \(argument)")
+            NSLog("\(Constants.tag) argument--> \(argument)")
             
             let userJid = argument["userJid"] as? String ?? ""
             
@@ -39,13 +39,13 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             
             let userName = FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType)
             
-            print("\(Constants.tag) userName --> \(userName)")
+            NSLog("\(Constants.tag) userName --> \(userName)")
             videoTrack = CallManager.getRemoteVideoTrack(jid: userJid)
             let calluserslist = CallManager.getAllCallUsersList()
-            print("\(Constants.tag) calluserslist \(calluserslist)")
-            print("\(Constants.tag) calluserslist count \(calluserslist.count)")
-            print("\(Constants.tag) videoTrack--> \(String(describing: videoTrack))")
-            print("\(Constants.tag) Video rendered/Audio Call")
+            NSLog("\(Constants.tag) calluserslist \(calluserslist)")
+            NSLog("\(Constants.tag) calluserslist count \(calluserslist.count)")
+            NSLog("\(Constants.tag) \(userJid) videoTrack--> \(String(describing: videoTrack))")
+            NSLog("\(Constants.tag) Video rendered/Audio Call")
             
             if(videoTrack == nil || CallManager.getCallType() == .Audio){
                 
@@ -78,7 +78,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                     
                     textView = UITextView(frame: .zero)
                         textView?.translatesAutoresizingMaskIntoConstraints = false
-                    print("\(Constants.tag) userName \(userName)")
+                    NSLog("\(Constants.tag) userName \(userName)")
                     textView?.text = getAbbreviation(from: userName).uppercased()
                         textView?.isEditable = false
                         textView?.isScrollEnabled = false
