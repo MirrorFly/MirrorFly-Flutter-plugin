@@ -30,7 +30,8 @@ import MirrorFlySDK
         
         let localJIDJson: [String: String] = [
             "userJid": FlyDefaults.myJid,
-            "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling")
+            "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling"),
+//            "isAudioMuted" : CallManager.isAudioMuted()
         ]
         
         jsonArray.append(localJIDJson)
@@ -39,7 +40,8 @@ import MirrorFlySDK
             print("\(tag) \(memberJid) \(status)")
             let jsonObject: [String: String] = [
                 "userJid": memberJid,
-                "callStatus": status.rawValue
+                "callStatus": status.rawValue,
+//                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid)
             ]
             jsonArray.append(jsonObject)
         }
@@ -52,10 +54,11 @@ import MirrorFlySDK
     func getAudioDevices(call: FlutterMethodCall, result: @escaping FlutterResult) {
            
     }
-    func selectedAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
-        print("selectedAudioDevice \(selectedAudioDevice)")
-    }
+    //Moved to FlyCall Class to get from Delegate
+//    func selectedAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
+//
+//        print("selectedAudioDevice \(selectedAudioDevice)")
+//    }
     func selectAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
         
     }
@@ -116,12 +119,6 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let muteStatus = args["muteAudio"] as? Bool ?? false
         CallManager.muteAudio(muteStatus)
-        result(true)
-    }
-    func muteVideo(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let args = call.arguments as! Dictionary<String, Any>
-        let muteStatus = args["muteVideo"] as? Bool ?? false
-        CallManager.muteVideo(muteStatus)
         result(true)
     }
     func isVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult) {
