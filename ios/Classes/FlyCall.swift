@@ -10,7 +10,35 @@ import MirrorFlySDK
 import Flutter
 import PushKit
 
-@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, AudioManagerDelegate, PKPushRegistryDelegate{
+@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate {
+    
+    var selectedAudioRouteDevice : String = "receiver"
+    
+    func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
+        print("#MirroflyCall Call AUDIO DELEGATE \(audioDeviceType)")
+        
+        switch (audioDeviceType) {
+        case .bluetooth:
+            selectedAudioRouteDevice = "bluetooth"
+            break
+        case .receiver:
+            selectedAudioRouteDevice = "receiver"
+        case .speaker:
+            selectedAudioRouteDevice = "speaker"
+        case .headset:
+            selectedAudioRouteDevice = "headset"
+        @unknown default:
+            selectedAudioRouteDevice = "none"
+        }
+        
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(FlyDefaults.myJid, forKey: "userJid")
+        jsonObject.setValue("AUDIO_DEVICE_CHANGED", forKey: "callAction")
+        let callUpdate = pluginDictToJson(dictionary: jsonObject)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
+        
+    }
+    
     
     private var methodChannel: FlutterMethodChannel?
     private var registrar: FlutterPluginRegistrar?
@@ -32,9 +60,10 @@ import PushKit
         
         eventChannelInitializer.initializeEventChannels(registrar: registrar)
         
-        CallManager.setCallEventsDelegate(delegate: self)
-        
         registerForVOIPNotifications()
+        
+        CallManager.setCallEventsDelegate(delegate: self)
+        AudioManager.shared().audioManagerDelegate = self
         
     }
     
@@ -43,11 +72,20 @@ import PushKit
     }
         
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
-            print("\(Constants.tag) Method call \(call.method)")
-            methodHandler(call, result)
-        } else {
-            result(FlutterMethodNotImplemented)
+        
+        if (call.method == "selectedAudioDevice"){
+            selectedAudioDevice(call: call, result: result)
+        }else if (call.method == "muteVideo"){
+            muteVideo(call: call, result: result)
+        }else{
+            
+            if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
+                print("\(Constants.tag) Method call \(call.method)")
+                methodHandler(call, result)
+                
+            } else {
+                result(FlutterMethodNotImplemented)
+            }
         }
     }
     
@@ -107,10 +145,39 @@ import PushKit
         
     }
     
+    func selectedAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        print("#Mirrorfly call selectedAudioDevice \(selectedAudioRouteDevice)")
+        result(selectedAudioRouteDevice)
+        
+    }
+    
+    
+    func muteVideo(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let args = call.arguments as! Dictionary<String, Any>
+        let muteStatus = args["muteVideo"] as? Bool ?? false
+        CallManager.muteVideo(muteStatus)
+        
+        if let mirrorFlyViewId = factory?.getUniqueID(forString: FlyDefaults.myJid) {
+            if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                mirrorflyView.updateVideoTrack(userJid: FlyDefaults.myJid, updateType: muteStatus ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+            } else {
+                print("\(Constants.tag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
+            }
+        } else {
+            print("\(Constants.tag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
+        }
+        
+        result(true)
+    }
+    
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         print("#MirroflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
+        if (callStatus.rawValue == "CALL TIME OUTt"){
+            jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
+        }else{
+            jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
+        }
         jsonObject.setValue(userId, forKey: "userJid")
         
         if CallManager.isOneToOneCall()  {
@@ -121,6 +188,9 @@ import PushKit
         
         if(callStatus.rawValue == "Attended"){
             
+            print("#MirroflyCall Call Status Updated Attended")
+            AudioManager.shared().audioManagerDelegate = self
+            
             if CallManager.getCallType() == .Audio {
                 jsonObject.setValue("audio", forKey: "callType")
             } else {
@@ -128,19 +198,76 @@ import PushKit
             }
         }
         
-        let callUpdate = pluginDictToJson(dictionary: jsonObject)
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallStatusUpdateChannel, value: callUpdate)
-//        }
+        
+        
+        let callStatusUpdateJson = pluginDictToJson(dictionary: jsonObject)
+            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallStatusUpdateChannel, value: callStatusUpdateJson)
         
     }
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
         print("#MirroflyCall Event oncalll Action --> \(callAction) userID \(userId)")
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(userId, forKey: "userJid")
+        jsonObject.setValue(callAction.rawValue, forKey: "callAction")
+        let callActionJson = pluginDictToJson(dictionary: jsonObject)
+        
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callActionJson)
     }
     
     func onMuteStatusUpdated(muteEvent: MirrorFlySDK.MuteEvent, userId: String) {
         print("#MirroflyCall Event onmute status updated --> \(muteEvent) userID \(userId)")
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(userId, forKey: "userJid")
+        switch(muteEvent){
+        case .ACTION_LOCAL_AUDIO_MUTE:
+//            jsonObject.setValue("local_audio_mute", forKey: "muteEvent")
+            break;
+        case .ACTION_REMOTE_VIDEO_MUTE:
+            jsonObject.setValue("REMOTE_VIDEO_MUTE", forKey: "muteEvent")
+            if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
+                if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: muteEvent)
+                } else {
+                    // Handle case when view is not found
+                    print("\(Constants.tag) ACTION_REMOTE_VIDEO_MUTE --> View is not Found")
+                }
+            } else {
+                // Handle case when unique ID is not found
+                print("\(Constants.tag) ACTION_REMOTE_VIDEO_MUTE --> Unique ID is not Found")
+            }
+            break;
+        case .ACTION_REMOTE_VIDEO_UN_MUTE:
+            jsonObject.setValue("REMOTE_VIDEO_UN_MUTE", forKey: "muteEvent")
+            if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
+                if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: muteEvent)
+                } else {
+                    // Handle case when view is not found
+                    print("\(Constants.tag) ACTION_REMOTE_VIDEO_UN_MUTE --> View is not Found")
+                }
+            } else {
+                // Handle case when unique ID is not found
+                print("\(Constants.tag) ACTION_REMOTE_VIDEO_UN_MUTE --> Unique ID is not Found")
+            }
+            break;
+        case .ACTION_REMOTE_AUDIO_MUTE:
+            jsonObject.setValue("REMOTE_AUDIO_MUTE", forKey: "muteEvent")
+            break;
+        case .ACTION_REMOTE_AUDIO_UN_MUTE:
+            jsonObject.setValue("REMOTE_AUDIO_UN_MUTE", forKey: "muteEvent")
+            break;
+        case .ACTION_LOCAL_AUDIO_UN_MUTE:
+//            jsonObject.setValue("local_audio_unmute", forKey: "muteEvent")
+            break;
+        @unknown default:
+//            jsonObject.setValue("unknown", forKey: "muteEvent")
+            break;
+        }
+        
+        let muteActionJson = pluginDictToJson(dictionary: jsonObject)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMuteStatusUpdatedChannel, value: muteActionJson)
+        
     }
     
     func onUserSpeaking(userId: String, audioLevel: Int) {
@@ -156,7 +283,7 @@ import PushKit
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(FlyDefaults.myJid, forKey: "userJid")
-        var jidJson = pluginDictToJson(dictionary: jsonObject)
+        let jidJson = pluginDictToJson(dictionary: jsonObject)
         
 //        if let mirrorflyView = MirrorflyViewFactory.mirrorflyViews[viewId] {
 //                            mirrorflyView.updateVideoTrack(userJid: userJid)
@@ -170,7 +297,7 @@ import PushKit
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: userId)
+                mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
             } else {
                 // Handle case when view is not found
                 print("\(Constants.tag) onLocalVideoTrackAdded --> View is not Found")
@@ -191,7 +318,7 @@ import PushKit
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: userId)
+                mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
             } else {
                 // Handle case when view is not found
             }
@@ -202,26 +329,26 @@ import PushKit
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
     
-    func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
-        print("#audiomanager audioRoutedTo  CallViewController \(deviceName) \(audioDeviceType)")
-        switch audioDeviceType {
-        case .receiver:
-            currentOutputDevice = .receiver
-//            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOff" ), for: .normal)
-        case .speaker:
-            currentOutputDevice = .speaker
-//            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOn" ), for: .normal)
-        case .headset:
-            currentOutputDevice = .headset
-//            outgoingCallView?.speakerButton.setImage(UIImage(named: "headset" ), for: .normal)
-        case .bluetooth:
-            currentOutputDevice = .bluetooth
-//            outgoingCallView?.speakerButton.setImage(UIImage(named: "bluetooth_headset" ), for: .normal)
-        @unknown default:
-            currentOutputDevice = .receiver
-//            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOff" ), for: .normal)
-        }
-    }
+//    func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
+//        print("#audiomanager audioRoutedTo  CallViewController \(deviceName) \(audioDeviceType)")
+//        switch audioDeviceType {
+//        case .receiver:
+//            currentOutputDevice = .receiver
+////            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOff" ), for: .normal)
+//        case .speaker:
+//            currentOutputDevice = .speaker
+////            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOn" ), for: .normal)
+//        case .headset:
+//            currentOutputDevice = .headset
+////            outgoingCallView?.speakerButton.setImage(UIImage(named: "headset" ), for: .normal)
+//        case .bluetooth:
+//            currentOutputDevice = .bluetooth
+////            outgoingCallView?.speakerButton.setImage(UIImage(named: "bluetooth_headset" ), for: .normal)
+//        @unknown default:
+//            currentOutputDevice = .receiver
+////            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOff" ), for: .normal)
+//        }
+//    }
     
     func registerForVOIPNotifications() {
         NSLog("\(Constants.tag) Registering Voip Notification")
@@ -256,32 +383,34 @@ import PushKit
             try CallManager.initCallSDK()
         }
         catch(let error ) {
-            print("#FlyCall Exception : \(error.localizedDescription)")
+            print("\(Constants.tag) #FlyCall Exception : \(error.localizedDescription)")
         }
         
         
         NSLog("\(Constants.tag) Push VOIP Received with Payload - %@",payload.dictionaryPayload)
         NSLog("\(Constants.tag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
 
-
-//            NSLog("#VOIP myjid ***\(FlyDefaults.myJid)")
-//            NSLog("#VOIP myjid Count ***\(FlyDefaults.myJid.count)")
-//            NSLog("#VOIP myjid Count ***\(try? FlyUtils.getMyJid())")
-//            NSLog("#VOIP isLogged In \(FlyDefaults.isLoggedIn)")
-//
-//        NSLog("#VOIP myXmppUsername\(FlyDefaults.myXmppUsername)")
-//        NSLog("#VOIP appGroupContainerID\(FlyDefaults.appGroupContainerID)")
+        VOIPManager.sharedInstance.processPayload(payload.dictionaryPayload)
         
-//        try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
-//            .isTrialLicense(isTrial: true)
-//            .setLicenseKey(key: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp")
-//            .setDomainBaseUrl(baseUrl: "https://api-uikit-qa.contus.us/api/v1/")
-//            .buildAndInitialize()
-        
-            
-            VOIPManager.sharedInstance.processPayload(payload.dictionaryPayload)
-        
-//        completion()
     }
 
 }
+
+//extension FlyCall : AudioManagerDelegate {
+//
+//    func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
+//        print("#audiomanager audioRoutedTo  CallViewController \(deviceName) \(audioDeviceType)")
+//        switch audioDeviceType {
+//        case .receiver:
+//            currentOutputDevice = .receiver
+//        case .speaker:
+//            currentOutputDevice = .speaker
+//        case .headset:
+//            currentOutputDevice = .headset
+//        case .bluetooth:
+//            currentOutputDevice = .bluetooth
+//        @unknown default:
+//            currentOutputDevice = .receiver
+//        }
+//    }
+//}

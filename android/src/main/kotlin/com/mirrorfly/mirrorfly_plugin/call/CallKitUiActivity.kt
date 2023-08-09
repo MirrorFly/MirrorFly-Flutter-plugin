@@ -26,6 +26,7 @@ import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.CallAction
 import com.mirrorflysdk.flycall.webrtc.CallDirection
+import com.mirrorflysdk.flycall.webrtc.CallStatus
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
@@ -35,6 +36,7 @@ import org.json.JSONObject
 
 class CallKitUiActivity : Activity(), CallUiFlutterListener {
     private val tag = "CallKitUiActivity"
+    private lateinit var callStatusTextView : TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_call_kit_ui)
@@ -43,6 +45,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         FlutterCall.setListener(this)
         LogMessage.d("CallKitUiActivity", "onCreate")
         val userName = findViewById<TextView>(R.id.tvNameCaller)
+        callStatusTextView = findViewById<TextView>(R.id.tvNumber)
         val userImage = findViewById<CircleImageView>(R.id.ivAvatar)
         val accept = findViewById<ImageView>(R.id.ivAcceptCall)
         accept.setOnClickListener { attendCall() }
@@ -50,11 +53,15 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         decline.setOnClickListener { declineCall() }
 
         if (CallManager.isOneToOneCall()) {
-            val user = CallManager.getCallUsersList()[0]
-            val name = ContactManager.getDisplayName(user)
-            userName.text = name
-            val profile = FlyCore.getUserProfile(user)
-            Utils.loadGlideImage(this,userImage,name, profile?.image ?: "")
+            if(CallManager.getCallUsersList().isNotEmpty()) {
+                val user = CallManager.getCallUsersList()[0]
+                val name = ContactManager.getDisplayName(user)
+                userName.text = name
+                val profile = FlyCore.getUserProfile(user)
+                Utils.loadGlideImage(this, userImage, name, profile?.image ?: "")
+            }else{
+                finish()
+            }
         }
 
         setUpCallDataAndUI()
@@ -69,6 +76,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         LogMessage.d(tag,"FlyChatPlugin.hasInstance : ${FlyChatPlugin.hasInstance()}")
         LogMessage.d(tag,"isActivityBExists : ${isActivityBExists()}")
         LogMessage.d(tag,"FROM : ${intent.extras?.getString("FROM").toString()}")
+        updateCallStatus()
         val acceptCall = intent.extras?.getBoolean(CallConstants.ACCEPT_CALL)
         LogMessage.d(tag,"${CallConstants.ACCEPT_CALL} : ${acceptCall.toString()}")
         if (acceptCall!=null && acceptCall){
@@ -90,19 +98,21 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
 
     override fun onStart() {
         super.onStart()
+        Log.d(tag,"onStart")
         // Bind to the service. If the service is in foreground mode, this signals to the service
         // that since this activity is in the foreground, the service can exit foreground mode.
         // for showing call notification
-        CallManager.bindCallService()
+        //CallManager.bindCallService()
         checkPermission()
     }
 
     override fun onStop() {
+        Log.d(tag,"onStop")
         // Unbind from the service. This signals to the service that this activity is no longer
         // in the foreground, and the service can respond by promoting itself to a foreground
         // service.
         // for showing call notification
-        CallManager.unbindCallService()
+        //CallManager.unbindCallService()
         super.onStop()
     }
 
@@ -159,14 +169,18 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
 
     private fun attendCall() {
         if (CallManager.getCallType() == CallType.AUDIO_CALL && !CallManager.isAudioCallPermissionsGranted()) {
+            checkPermission()
             return
         }
         if (CallManager.getCallType() == CallType.VIDEO_CALL && !CallManager.isVideoCallPermissionsGranted()) {
+            checkPermission()
             return
         }
         Log.d("attendCall", "onclick")
+
         CallManager.answerCall(object : CallActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
+                LogMessage.d(tag,"isSuccess $isSuccess message $message")
                 if (isSuccess) {
                     /*val json = JSONObject()
             json.put("callAction", CallAction.ACTION_ANSWER_CALL)
@@ -262,6 +276,34 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
             }
         }
     }
+    private fun handleCallStatusMessages(@CallStatus callEvent: String, userJid: String){
+        LogMessage.d(tag,"callEvent : $callEvent userJid : $userJid")
+        updateCallStatus()
+        when (callEvent) {
+            CallStatus.CONNECTING ->{}
+            CallStatus.RINGING ->{}
+            CallStatus.CONNECTED ->{}
+            CallStatus.DISCONNECTED ->{}
+            CallStatus.ON_HOLD ->{}
+            CallStatus.ON_RESUME ->{}
+            CallStatus.USER_JOINED ->{}
+            CallStatus.USER_LEFT ->{}
+            CallStatus.INVITE_CALL_TIME_OUT ->{}
+            CallStatus.OUTGOING_CALL_TIME_OUT ->{}
+            CallStatus.INCOMING_CALL_TIME_OUT ->{}
+            CallStatus.RECONNECTING ->{}
+            CallStatus.RECONNECTED ->{}
+            CallStatus.CALLING ->{}
+            CallStatus.CALLING_10S ->{}
+            CallStatus.CALLING_AFTER_10S ->{}
+        }
+    }
+
+    private fun updateCallStatus(){
+        LogMessage.d(tag,"CallManager.getOnGoingCallStatus(this) ${CallManager.getOnGoingCallStatus(this)}")
+        callStatusTextView.text = CallManager.getOnGoingCallStatus(this)
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -285,8 +327,18 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
             CallAction.ACTION_ANSWER_CALL->{
 
             }
-            CallAction.ACTION_DENY_CALL->{}
-            CallAction.ACTION_LOCAL_HANGUP->{}
+            CallAction.ACTION_DENY_CALL->{
+                if(CallManager.isOneToOneCall()){
+                    CallManager.disconnectCall()
+                    finish()
+                }
+            }
+            CallAction.ACTION_LOCAL_HANGUP->{
+//                if(CallManager.isOneToOneCall()){
+//                    CallManager.disconnectCall()
+                    finish()
+//                }
+            }
             CallAction.ACTION_REMOTE_HANGUP->{
                 if(CallManager.isOneToOneCall()){
                     CallManager.disconnectCall()
@@ -294,7 +346,12 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
                 }
             }
             CallAction.ACTION_REMOTE_OTHER_BUSY->{}
-            CallAction.ACTION_REMOTE_BUSY->{}
+            CallAction.ACTION_REMOTE_BUSY->{
+                if(CallManager.isOneToOneCall()){
+                    CallManager.disconnectCall()
+                    finish()
+                }
+            }
             CallAction.ACTION_REMOTE_ENGAGED->{}
             CallAction.ACTION_CALL_AGAIN->{}
             CallAction.ACTION_CANCEL_CALL_AGAIN->{}
@@ -315,6 +372,10 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
             CallAction.ACTION_MAKE_SERVER_CONNECTION->{}
             CallAction.ACTION_CLOSE_SERVER_CONNECTION->{}
         }
+    }
+
+    override fun onCallStatusUpdated(callStatus: String, userJid: String){
+        handleCallStatusMessages(callStatus,userJid)
     }
 
     /*override fun onShowCallUiFlutter(callAction: String?) {

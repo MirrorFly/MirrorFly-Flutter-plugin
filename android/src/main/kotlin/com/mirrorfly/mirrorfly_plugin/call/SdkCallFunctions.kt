@@ -39,7 +39,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     val tag = "#FlutterCall"
 
     fun initCall(){
-        CallManager.init(context)
+        //CallManager.init(context)
         CallManager.setMissedCallListener(this)
         ChatManager.setMediaNotificationHelper(this)
         CallManager.setCallHelper(object : CallHelper {
@@ -73,7 +73,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
                 return ContactManager.getDisplayName(jid)
             }
         })
-//        CallManager.keepConnectionInForeground(true)
+        CallManager.keepConnectionInForeground(true)
     }
 
     fun routeTo(call: MethodCall,result: MethodChannel.Result){
@@ -106,6 +106,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         println("permission ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}")
         LogMessage.d("makeVoiceCall", "permission granted ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}")
         if (CallManager.isAudioCallPermissionsGranted(false)) {
+            CallManager.setAudioDevice(AudioDevice.SPEAKER_PHONE);
             CallManager.makeVoiceCall(userJid, object : CallActionListener {
                 override fun onResponse(isSuccess: Boolean, message: String) {
                     LogMessage.d("makeCall", "success $isSuccess message $message")
@@ -227,14 +228,14 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
 
     fun isUserAudioMuted(call: MethodCall,result: MethodChannel.Result){
         val userJid = call.argument<String>("userJid") ?: ""
-        val response = if (userJid == CallManager.getCurrentUserId())
+        val response = if (userJid.isEmpty() || userJid == CallManager.getCurrentUserId())
             CallManager.isAudioMuted()
         else CallManager.isRemoteAudioMuted(userJid)
         result.success(response)
     }
     fun isUserVideoMuted(call: MethodCall,result: MethodChannel.Result){
         val userJid = call.argument<String>("userJid") ?: ""
-        val response = if (userJid == CallManager.getCurrentUserId())
+        val response = if (userJid.isEmpty() || userJid == CallManager.getCurrentUserId())
             CallManager.isVideoMuted()
         else CallManager.isRemoteVideoMuted(userJid)
         result.success(response)

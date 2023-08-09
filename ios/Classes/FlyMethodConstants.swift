@@ -15,14 +15,13 @@ class FlyMethodConstants {
         return [
             "getCallUsersList": flyCallMethods.getCallUsersList,
             "getAudioDevices": flyCallMethods.getAudioDevices,
-            "selectedAudioDevice": flyCallMethods.selectedAudioDevice,
+//            "selectedAudioDevice": flyCallMethods.selectedAudioDevice,
             "selectAudioDevice": flyCallMethods.selectAudioDevice,
             "makeVoiceCall": flyCallMethods.makeCall,
             "makeVideoCall": flyCallMethods.makeVideoCall,
             "answerCall": flyCallMethods.answerCall,
             "declineCall": flyCallMethods.declineCall,
             "muteAudio": flyCallMethods.muteAudio,
-            "muteVideo": flyCallMethods.muteVideo,
             "isVideoMuted": flyCallMethods.isVideoMuted,
             "isRemoteVideoMuted": flyCallMethods.isRemoteVideoMuted,
             "isRemoteVideoPaused": flyCallMethods.isRemoteVideoPaused,
@@ -43,6 +42,7 @@ class FlyMethodConstants {
             "getAllAvailableAudioInput": flyCallMethods.getAllAvailableAudioInput,
             "routeAudioTo": flyCallMethods.routeAudioTo,
             "isOnGoingCall": flyCallMethods.isOnGoingCall,
+            "disconnectCall": flyCallMethods.disconnectCall,
             
         ]
     }()

@@ -19,15 +19,13 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.google.gson.Gson
-import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorfly.mirrorfly_plugin.Constants.onFailureChannel
 import com.mirrorfly.mirrorfly_plugin.Constants.onSuccessChannel
-import com.mirrorfly.mirrorfly_plugin.call.FlyCall
-import com.mirrorfly.mirrorfly_plugin.call.MirrorflyViewFactory
-import com.mirrorfly.mirrorfly_plugin.call.SdkCallFunctions
-import com.mirrorfly.mirrorfly_plugin.call.Utils.Companion.reapCollection
-import com.mirrorfly.mirrorfly_plugin.call.onCallStatusUpdatedStreamHandler
+import com.mirrorfly.mirrorfly_plugin.call.*
 import com.mirrorflysdk.AppUtils
 import com.mirrorflysdk.ChatSDK
 import com.mirrorflysdk.GroupConfig
@@ -45,6 +43,7 @@ import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
 import com.mirrorflysdk.flycall.webrtc.Logger
+import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MediaData
@@ -53,17 +52,16 @@ import com.mirrorflysdk.media.MediaUploadHelper
 import com.mirrorflysdk.models.MediaAutoDownloadOption
 import com.mirrorflysdk.models.RecentChatListParams
 import com.mirrorflysdk.utils.*
+import com.mirrorflysdk.utils.Utils
 import com.mirrorflysdk.xmpp.chat.listener.TypingStatusListener
 import com.mirrorflysdk.xmpp.chat.models.CreateGroupModel
 import com.mirrorflysdk.xmpp.chat.models.Profile
+import io.flutter.Log
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.*
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -74,16 +72,13 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.lang.ref.WeakReference
-import com.mirrorflysdk.api.chat.FetchMessageListQuery
-
-
-
 
 
 /** FlyChatPlugin */
 class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
-    TypingEventListener, TypingStatusListener, ActivityAware {
+    TypingEventListener, TypingStatusListener, ActivityAware, DefaultLifecycleObserver,
+    PluginRegistry.NewIntentListener{
     companion object{
         @SuppressLint("StaticFieldLeak")
         private lateinit var instance: FlyChatPlugin
@@ -101,9 +96,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 "mirrorfly_view",
                 factory
             )
+            CallManager.init(flutterPluginBinding.applicationContext)
             FlyCall(flutterPluginBinding.applicationContext,flutterPluginBinding)
             initSharedInstance(flutterPluginBinding.applicationContext, flutterPluginBinding.binaryMessenger)
-            LogMessage.d("FlyChatPlugin","sharePluginWithRegister")
+            Log.d("FlyChatPlugin","sharePluginWithRegister")
         }
         private val methodChannels = mutableMapOf<BinaryMessenger, MethodChannel>()
         private val eventChannels = mutableMapOf<BinaryMessenger, List<EventChannel>>()
@@ -119,12 +115,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             channel.setMethodCallHandler(instance)
             SharedPreferenceManager().init(context)
             initMethodAndEvent(binaryMessenger)
-            LogMessage.d("FlyChatPlugin","initSharedInstance")
+            Log.d("FlyChatPlugin","initSharedInstance")
         }
 
 //        private val eventHandlers = mutableListOf<WeakReference<EventCallbackHandler>>()
         fun sendEvent(event: String, body: JSONObject) {
-            LogMessage.d("sendEvent","event : $event body : $body")
+            Log.d("sendEvent","event : $event body : $body")
             if(event==Constants.ACTION_CALL_ACCEPT) {
                 onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(body.toString())
             }
@@ -133,7 +129,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }*/
         }
         private fun initMethodAndEvent(binaryMessenger: BinaryMessenger){
-            LogMessage.d("FlyChatPlugin","initMethodAndEvent")
+            Log.d("FlyChatPlugin","initMethodAndEvent")
             val events = arrayListOf<EventChannel>()
             EventChannel(
                 binaryMessenger,
@@ -352,6 +348,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //    private lateinit var channel: MethodChannel
     private lateinit var mContext: Context
     private lateinit var factory : MirrorflyViewFactory
+    private lateinit var lifecycle : Lifecycle
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         sharePluginWithRegister(flutterPluginBinding)
     }
@@ -841,6 +838,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 val userJID =
                     if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
                         .toString()
+                LogMessage.d("setOnGoingChatUser",userJID);
                 ChatManager.setOnGoingChatUser(userJID)
             }
             call.method.equals("getUnreadMessagesCount") -> {//name changed from unread_count
@@ -1277,10 +1275,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (userIdentifier != null) {
                 //LogMessage.d(TAG, userIdentifier.toString())
 
-                try {
+//                try {
                     FlyCore.registerUser(
                         userIdentifier,
-                        token
+                        token, forceRegister = true
                     ) { isSuccess: Boolean, throwable: Throwable?, data: HashMap<String?, Any?> ->
                         if (isSuccess) {
 
@@ -1313,6 +1311,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                             SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
                             ChatManager.connect(object : ChatConnectionListener {
                                 override fun onConnected() {
+                                    LogMessage.d(TAG, "onConnected")
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         result.success(response)
                                     }, 500)
@@ -1353,16 +1352,18 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                             }
                         }
                     }
-                } catch (e: Exception) {
+                /*} catch (e: Exception) {
 
                     LogMessage.d("Register Exception", e.toString())
 
-                    result.error("404", e.message.toString() , null)
-                }
+//                    result.error("404", e.message.toString() , null)
+                    result.error("404", e.message, e)
+                }*/
 
             } else {
                 //LogMessage.d("MIRROR_FLY", "user identifier is null")
                 //LogMessage.d("MIRROR_FLY", call.arguments.toString())
+                result.error("404", "User Identifier empty", "")
             }
         }
     }
@@ -1553,6 +1554,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         PushNotificationManager.handleReceivedMessage(notificationdata, object :
             NotificationEventListener {
             override fun onMessageReceived(chatMessage: ChatMessage) {
+                LogMessage.d("push onMessageReceived",chatMessage.toJsonString())
                 //Here you need to fetch recent unread messages to build up notification content
                 //LogMessage.d("notificationdata",chatMessage.tojsonString())
                 /*val jsonObject = JSONObject()
@@ -1569,6 +1571,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 titleContent: String,
                 chatMessage: ChatMessage
             ) {
+                LogMessage.d("push onGroupNotification","groupJid $groupJid titleContent $titleContent chatMessage ${chatMessage.toJsonString()}")
                 /* Create the notification for group creation with paramter values */
                 //LogMessage.d("notificationdata group",chatMessage.tojsonString())
                 /*val jsonObject = JSONObject()
@@ -1583,12 +1586,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             override fun onCancelNotification() {
                 // here you have to cancel notification
                 //LogMessage.d("notificationdata","cancel")
-                val jsonObject = JSONObject()
+                /*val jsonObject = JSONObject()
                 jsonObject.put("groupJid", "")
                 jsonObject.put("titleContent", "")
                 jsonObject.put("chatMessage", "")
                 jsonObject.put("cancel", true)
-                result.success(jsonObject.toString())
+                result.success(jsonObject.toString())*/
             }
 
         })
@@ -3523,7 +3526,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onLoggedOut() {
         LogMessage.d(TAG, "onLoggedOut")
-        onLoggedOutStreamHandler.onLoggedOut?.success(true)
+        runBlocking {
+            launch {
+                onLoggedOutStreamHandler.onLoggedOut?.success(true)
+            }
+        }
     }
 
     override fun unblockedThisUser(jid: String) {
@@ -3713,9 +3720,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        LogMessage.d("FlyChat", "onAttachedToActivity")
-        LogMessage.d("FlyChat", "onAttachedToActivity ${binding.activity}")
-        LogMessage.d("FlyChat", "onAttachedToActivity ${binding.activity.localClassName}")
+        Log.d("FlyChat", "onAttachedToActivity ${binding.activity.localClassName}")
+        mainActivity = binding.activity
+        val mainActivityIntent = mainActivity!!.intent
+        if (!launchedActivityFromHistory(mainActivityIntent)) {
+            /*if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.action)) {
+                val notificationResponse: Map<String, Any> =
+                    extractNotificationResponseMap(mainActivityIntent)
+                processForegroundNotificationAction(mainActivityIntent, notificationResponse)
+            }*/
+        }
+        binding.addOnNewIntentListener(this)
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
         if (isRegistered) {
             ChatEventsManager.setupMessageEventListener(this)
@@ -3724,23 +3739,48 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             ChatEventsManager.attachLoginEventsListener(this)
             ChatEventsManager.attachTypingEventListener(this)
         }
+        lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
+        lifecycle.addObserver(this)
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        // Bind to the service. If the service is in foreground mode, this signals to the service
+        // that since this activity is in the foreground, the service can exit foreground mode.
+        // for showing call notification
+        CallManager.bindCallService()
+        Log.d("lifecycle","onStart")
+    }
+    override fun onStop(owner: LifecycleOwner) {
+        // Unbind from the service. This signals to the service that this activity is no longer
+        // in the foreground, and the service can respond by promoting itself to a foreground
+        // service.
+        // for showing call notification
+        CallManager.unbindCallService()
+        Log.d("lifecycle","onStop")
+        super.onStop(owner)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        LogMessage.d("FlyChat", "onDetachedFromActivityForConfigChanges")
+        this.mainActivity = null;
+        Log.d("FlyChat", "onDetachedFromActivityForConfigChanges")
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        LogMessage.d("FlyChat", "onReattachedToActivityForConfigChanges")
+        mainActivity = binding.activity;
+        binding.addOnNewIntentListener(this);
+        Log.d("FlyChat", "onReattachedToActivityForConfigChanges")
     }
 
     override fun onDetachedFromActivity() {
-        LogMessage.d("FlyChat", "onDetachedFromActivity")
+        this.mainActivity = null;
+        Log.d("FlyChat", "onDetachedFromActivity")
         ChatEventsManager.detachProfileEventsListener(this)
         ChatEventsManager.detachGroupEventsListener(this)
         ChatEventsManager.detachLoginEventsListener(this)
         ChatEventsManager.detachTypingEventListener(this)
         ChatConnectionManager.removeChatConnectionListener(this)
+        lifecycle.removeObserver(this)
     }
 
     private fun openCreateContact(call: MethodCall) {
@@ -3754,6 +3794,68 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
         // Launch the Contacts app with the pre-filled contact form
         (mContext as Activity).startActivity(intent)
+    }
+    private var mainActivity: Activity? = null
+    private fun setActivity(flutterActivity: Activity) {
+        this.mainActivity = flutterActivity
+    }
+
+    private fun launchedActivityFromHistory(intent: Intent?): Boolean {
+        return (intent != null
+                && intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
+                == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY)
+    }
+    private fun getCallNotificationAppLaunchDetails(result: MethodChannel.Result) {
+        /*val notificationAppLaunchDetails: MutableMap<String, Any> = HashMap()
+        var notificationLaunchedApp = false
+        if (mainActivity != null) {
+            val launchIntent: Intent = mainActivity!!.intent
+            notificationLaunchedApp =
+                (launchIntent != null && (SELECT_NOTIFICATION.equals(launchIntent.action)
+                        || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.action))
+                        && !launchedActivityFromHistory(launchIntent))
+            if (notificationLaunchedApp) {
+                notificationAppLaunchDetails["notificationResponse"] =
+                    extractNotificationResponseMap(launchIntent)
+            }
+        }
+//        notificationAppLaunchDetails[NOTIFICATION_LAUNCHED_APP] = notificationLaunchedApp
+        result.success(notificationAppLaunchDetails)*/
+        val appLaunchDetail = JSONObject()
+        var notificationLaunchedApp = false
+        if(mainActivity != null){
+            val launchIntent = mainActivity!!.intent
+            notificationLaunchedApp =
+                (launchIntent != null /*&& (SELECT_NOTIFICATION.equals(launchIntent.action)
+                        || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.action))*/
+                        && !launchedActivityFromHistory(launchIntent))
+            if (notificationLaunchedApp) {
+                appLaunchDetail.put("action", launchIntent.action)
+                appLaunchDetail.put("data", extractNotificationResponseMap(launchIntent))
+            }
+        }
+        result.success(appLaunchDetail.toString())
+    }
+
+    fun extractNotificationResponseMap(intent: Intent): Map<String, Any?>? {
+//        val notificationId = intent.getIntExtra(NOTIFICATION_ID, 0)
+        val notificationResponseMap: MutableMap<String, Any?> = HashMap()
+        /*notificationResponseMap[NOTIFICATION_ID] =
+            notificationId
+        notificationResponseMap[ACTION_ID] = intent.getStringExtra(ACTION_ID)
+        notificationResponseMap[FlutterLocalNotificationsPlugin.PAYLOAD] =
+            intent.getStringExtra(FlutterLocalNotificationsPlugin.PAYLOAD)
+        val remoteInput: Bundle = RemoteInput.getResultsFromIntent(intent)
+        if (remoteInput != null) {
+            notificationResponseMap[INPUT] = remoteInput.getString(INPUT_RESULT)
+        }
+        if (SELECT_NOTIFICATION.equals(intent.action)) {
+            notificationResponseMap[NOTIFICATION_RESPONSE_TYPE] = 0
+        }
+        if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.action)) {
+            notificationResponseMap[NOTIFICATION_RESPONSE_TYPE] = 1
+        }*/
+        return notificationResponseMap
     }
     class EventCallbackHandler : EventChannel.StreamHandler {
 
@@ -3777,4 +3879,27 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             eventSink = null
         }
     }
+
+    override fun onNewIntent(intent: Intent): Boolean {
+        val res: Boolean = sendNotificationPayloadMessage(intent)
+        if (res && mainActivity != null) {
+            mainActivity!!.intent = intent
+        }
+        return res
+    }
+
+    private fun sendNotificationPayloadMessage(intent: Intent): Boolean {
+        /*if (SELECT_NOTIFICATION.equals(intent.action)
+            || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.action)
+        ) {
+            val notificationResponse = extractNotificationResponseMap(intent)
+            if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.action)) {
+                processForegroundNotificationAction(intent, notificationResponse)
+            }
+            channel.invokeMethod("didReceiveNotificationResponse", notificationResponse)
+            return true
+        }*/
+        return false
+    }
+
 }

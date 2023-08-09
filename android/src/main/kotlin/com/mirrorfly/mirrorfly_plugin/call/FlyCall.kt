@@ -3,8 +3,8 @@ package com.mirrorfly.mirrorfly_plugin.call
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
+import androidx.lifecycle.Lifecycle
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorflysdk.api.ChatManager
@@ -13,6 +13,7 @@ import com.mirrorflysdk.flycall.webrtc.AudioDevice
 import com.mirrorflysdk.flycall.webrtc.CallAction
 import com.mirrorflysdk.flycall.webrtc.CallAudioManager
 import com.mirrorflysdk.flycall.webrtc.CallDirection
+import com.mirrorflysdk.flycall.webrtc.CallStatus
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.MuteEvent
@@ -22,11 +23,13 @@ import com.mirrorflysdk.flycall.webrtc.api.CallUiListener
 import com.mirrorflysdk.flycommons.LogMessage
 import io.flutter.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
+
 
 class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) :  MethodChannel.MethodCallHandler ,
     CallEventsListener,CallUiListener {
@@ -72,8 +75,14 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 sdk.getAllAvailableAudioInput(result)
             }
             "selectedAudioDevice" -> {
-                val selectedAudioDevice = CallAudioManager.getInstance(context).selectedAudioDevice
-                result.success(selectedAudioDevice)
+                val type = when(CallAudioManager.getInstance(context).selectedAudioDevice){
+                    AudioDevice.EARPIECE->"receiver"
+                    AudioDevice.SPEAKER_PHONE->"speaker"
+                    AudioDevice.BLUETOOTH-> "bluetooth"
+                    AudioDevice.WIRED_HEADSET-> "headset"
+                    else -> "none"
+                }
+                result.success(type)
             }
             "routeAudioTo" ->{
                 sdk.routeTo(call,result)
@@ -95,6 +104,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             }
             "muteAudio" -> {
                 sdk.muteAudio(call,result)
+            }
+            "isAudioMuted"->{
+                result.success(CallManager.isAudioMuted())
             }
             "muteVideo" -> {
                 sdk.muteVideo(call, result)
@@ -147,6 +159,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "isUserVideoMuted"->{
                 sdk.isUserVideoMuted(call,result)
             }
+            "getOnGoingCallDisplayStatus"->{
+                result.success(CallManager.getOnGoingCallStatus(context))
+            }
         }
     }
     override fun onCallStatusUpdated(callStatus: String, userJid: String) {
@@ -156,7 +171,44 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("userJid",userJid)
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
+        //Call on hold if user attended other call in ongoing call after then ON_RESUME called
+        if(callStatus == CallStatus.OUTGOING_CALL_TIME_OUT && CallManager.isCallConnected()){
+            Log.d("#onCallStatusUpdated","OUTGOING_CALL_TIME_OUT connected ${CallManager.isCallConnected()}")
+            FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJid)
+//            handleCallStatusMessages(callStatus,json)
+        }else {
+            Log.d("#onCallStatusUpdated","$callStatus connected ${CallManager.isCallConnected()}")
+            FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJid)
+            handleCallStatusMessages(callStatus, json)
+        }
+    }
+    private fun handleCallStatusMessages(@CallStatus callEvent: String, json: JSONObject){
+        LogMessage.d(tag,"callEvent : $callEvent json : $json")
+        json.put("callStatus",callEvent)
+        when (callEvent) {
+            CallStatus.CONNECTING ->{}
+            CallStatus.RINGING ->{}
+            CallStatus.CONNECTED ->{}
+            CallStatus.DISCONNECTED ->{}
+            CallStatus.ON_HOLD ->{}
+            CallStatus.ON_RESUME ->{}
+            CallStatus.USER_JOINED ->{}
+            CallStatus.USER_LEFT ->{}
+            CallStatus.INVITE_CALL_TIME_OUT ->{}
+            CallStatus.OUTGOING_CALL_TIME_OUT ->{
+                json.put("callStatus","CALL TIME OUT")
+            }
+            CallStatus.INCOMING_CALL_TIME_OUT ->{}
+            CallStatus.RECONNECTING ->{}
+            CallStatus.RECONNECTED ->{}
+            CallStatus.CALLING ->{
+                json.put("callStatus","Trying to Connect")
+            }
+            CallStatus.CALLING_10S ->{}
+            CallStatus.CALLING_AFTER_10S ->{}
+        }
         onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+
     }
 
     override fun onCallAction(callAction: String, userJid: String) {
@@ -164,8 +216,11 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         val json = JSONObject()
         json.put("callAction",callAction)
         json.put("userJid",userJid)
+//        json.put("callType",CallManager.getCallType())
+//        json.put("callMode",CallManager.getCallMode())
         onCallActionStreamHandler.onCallAction?.success(json.toString())
-        sendCallStatusUpdate(callAction,userJid)
+        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
+        //sendCallStatusUpdate(callAction,userJid)
     }
 
     private fun sendCallStatusUpdate(status: String,userJid: String){
@@ -174,10 +229,20 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
         when(status){
-            CallAction.ACTION_REMOTE_HANGUP->json.put("callStatus","Disconnected")
-            else -> json.put("callStatus",status)
+            CallAction.ACTION_REMOTE_HANGUP-> {
+                if(CallManager.isOneToOneCall()) {
+                    json.put("callStatus", "Disconnected")
+                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+                }
+            }
+            CallAction.ACTION_REMOTE_BUSY->{
+                if(CallManager.isOneToOneCall()) {
+                    json.put("callStatus", "Disconnected")
+                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+                }
+            }
         }
-        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+
     }
 
     override fun onVideoTrackAdded(userJid: String) {
@@ -233,6 +298,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
 
     override fun getCallAttendedPendingIntent(): PendingIntent {
         val intent: Intent? = AppUtils.getAppIntent(context)
+        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
         return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
     }
 
@@ -278,11 +344,16 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                     context.startActivity(t)
                 }
             }
+            CallAction.ACTION_ANSWER_CALL->{
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ) {
+                    val y = AppUtils.getAppIntent(context)
+                    context.startActivity(y)
+                }*/
+            }
             /*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}
             CallAction.ACTION_INVITE_USERS->{}
-            CallAction.ACTION_ANSWER_CALL->{}
             CallAction.ACTION_DENY_CALL->{}
             CallAction.ACTION_LOCAL_HANGUP->{}
             CallAction.ACTION_REMOTE_HANGUP->{}
@@ -332,4 +403,22 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         }
     }*/
 
+}
+
+
+/** Provides a static method for extracting lifecycle objects from Flutter plugin bindings.  */
+object FlutterLifecycleAdapter {
+    /**
+     * Returns the lifecycle object for the activity a plugin is bound to.
+     *
+     *
+     * Returns null if the Flutter engine version does not include the lifecycle extraction code.
+     * (this probably means the Flutter engine version is too old).
+     */
+    fun getActivityLifecycle(
+        activityPluginBinding: ActivityPluginBinding
+    ): Lifecycle {
+        val reference = activityPluginBinding.lifecycle as HiddenLifecycleReference
+        return reference.lifecycle
+    }
 }
