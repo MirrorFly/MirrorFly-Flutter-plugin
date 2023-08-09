@@ -27,6 +27,13 @@ class CallAction{
   static const String closeServerConnection = "ACTION_CLOSE_SERVER_CONNECTION";
 }
 
+class MuteStatus{
+  static const String remoteAudioUnMute = "REMOTE_AUDIO_UN_MUTE";
+  static const String remoteAudioMute = "REMOTE_AUDIO_MUTE";
+  static const String remoteVideoMute = "REMOTE_VIDEO_MUTE";
+  static const String remoteVideoUnMute = "REMOTE_VIDEO_UN_MUTE";
+}
+
 class CallType{
   static const String oneToOne = "OneToOne";
   static const String groupCall = "GroupCall";
