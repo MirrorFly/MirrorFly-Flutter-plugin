@@ -106,6 +106,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         println("permission ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}")
         LogMessage.d("makeVoiceCall", "permission granted ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}")
         if (CallManager.isAudioCallPermissionsGranted(false)) {
+            CallManager.setAudioDevice(AudioDevice.SPEAKER_PHONE);
             CallManager.makeVoiceCall(userJid, object : CallActionListener {
                 override fun onResponse(isSuccess: Boolean, message: String) {
                     LogMessage.d("makeCall", "success $isSuccess message $message")
