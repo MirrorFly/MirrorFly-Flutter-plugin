@@ -218,6 +218,13 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("userJid",userJid)
 //        json.put("callType",CallManager.getCallType())
 //        json.put("callMode",CallManager.getCallMode())
+        if(callAction == CallAction.ACTION_REMOTE_VIDEO_STATUS){
+            if (CallManager.isRemoteVideoPaused(userJid)){
+                json.put("callAction","REMOTE_VIDEO_PAUSED")
+            }else{
+                json.put("callAction","REMOTE_VIDEO_RESUMED")
+            }
+        }
         onCallActionStreamHandler.onCallAction?.success(json.toString())
         FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
         //sendCallStatusUpdate(callAction,userJid)

@@ -11,6 +11,8 @@ class CallAction{
   static const String cancelCallAgain = "CANCEL_CALL_AGAIN";
   static const String switchCamera = "SWITCH_CAMERA";
   static const String remoteVideoStatus = "REMOTE_VIDEO_STATUS";
+  static const String remoteVideoPaused = "REMOTE_VIDEO_PAUSED";
+  static const String remoteVideoResumed = "REMOTE_VIDEO_RESUMED";
   static const String changeToAudioCall = "CHANGE_TO_AUDIO_CALL";
   static const String videoCallConversionCancel = "ACTION_VIDEO_CALL_CANCEL_CONVERSION";
   static const String videoCallConversionAccepted = "ACTION_VIDEO_CALL_CONVERSION_ACCEPTED";
