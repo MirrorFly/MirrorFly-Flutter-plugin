@@ -221,8 +221,14 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         if(callAction == CallAction.ACTION_REMOTE_VIDEO_STATUS){
             if (CallManager.isRemoteVideoPaused(userJid)){
                 json.put("callAction","REMOTE_VIDEO_PAUSED")
-            }else{
+                if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+                    MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)
+                }
+            }else if(!CallManager.isRemoteVideoPaused(userJid)){
                 json.put("callAction","REMOTE_VIDEO_RESUMED")
+                if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null && !CallManager.isRemoteVideoMuted(userJid)) {
+                    MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
+                }
             }
         }
         onCallActionStreamHandler.onCallAction?.success(json.toString())
