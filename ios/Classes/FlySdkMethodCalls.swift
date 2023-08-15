@@ -23,7 +23,7 @@ import UIKit
     static var chatHistoryEnable : Bool = false;
     static var isContactSyncInProgress : Bool = false;
     
-    static var userlist = [ProfileDetails]()
+//    static var userlist = [ProfileDetails]()
     
     static var recentChatListParams = RecentChatListParams(limit: 15)
     
@@ -476,7 +476,7 @@ import UIKit
                 
                 print("getUsersList\(userList)")
                 if let userData = userList.getData() as? [ProfileDetails] {
-                    userlist = userData
+//                    userlist = userData
                     let userDataJson = userData.toJson()
                     print("userDataJson\(String(describing: userDataJson))")
                     let totalPages = userList["totalPages"] as! Int
@@ -2435,18 +2435,44 @@ import UIKit
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
         
-        if let userProfile = userlist.filter({$0.jid == userJid}).first {
+        //        if let userProfile = userlist.filter({$0.jid == userJid}).first {
+        //
+        //            ContactManager.shared.saveUser(profileDetails: userProfile)
+        //            let userProfileJson = userProfile.toJson()
+        //            result(userProfileJson)
+        //        }else{
+        let userProfile = ChatManager.profileDetaisFor(jid: userJid)
+        print("userProfile*** \(userProfile)")
+        
+        if(userProfile == nil){
+            do {
+                try ContactManager.shared.getUserProfile(for: userJid, fetchFromServer: true, saveAsFriend: true){ isSuccess, flyError, flyData in
+                    var data  = flyData
+                    let profileData = data.getData() as? ProfileDetails
+                    print("***getUserProfile\(String(describing: profileData))")
+                    
+                    print("***getUserProfile dict\(String(describing: profileData.toJson()))")
+                    if isSuccess {
+                        //                                 let profileJSON = "{\"data\" : " + (profileData.toJson() ?? "[]") + ",\"status\": true}"
+                        //                                print("ContactManager.shared.getUserProfile==**==\(profileData.toJson())")
+                        result(profileData.toJson())
+                    } else{
+                        result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                    }
+                }
+            }catch{
+                print("Error while calling User Profile Details")
+            }
             
-            ContactManager.shared.saveUser(profileDetails: userProfile)
-            let userProfileJson = userProfile.toJson()
-            result(userProfileJson)
         }else{
-            let userProfile = ChatManager.profileDetaisFor(jid: userJid)
             let userProfileJson = userProfile.toJson()
             print("getProfileDetails==**==\(String(describing: userProfileJson))")
             result(userProfileJson)
         }
-
+        
+        
+        //        }
+        
     }
     static func deleteAccount(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
