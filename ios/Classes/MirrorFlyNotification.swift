@@ -28,12 +28,13 @@ import MirrorFlySDK
 //        NSLog("#Mirrorfly licenseKey1 \(licenseKey)")
 //        NSLog("#Mirrorfly containerID1 \(containerID)")
         
-
-        try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
-            .isTrialLicense(isTrial: true)
-            .setLicenseKey(key: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp")
-            .setDomainBaseUrl(baseUrl: "https://api-uikit-qa.contus.us/api/v1/")
-            .buildAndInitialize()
+        ChatManager.setAppGroupContainerId(id: "group.com.mirrorfly.WYNHealthTest")
+        ChatManager.initializeSDK(licenseKey: "HAbMO2fUMjcd86HuGPgHUNzTGgGYOV") { _, _, _ in }
+//        try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
+//            .isTrialLicense(isTrial: true)
+//            .setLicenseKey(key: "fBSGlLSjOZXsrAuaqaHPqeO9f0J4JU")
+//            .setDomainBaseUrl(baseUrl: "https://api-preprod-sandbox.mirrorfly.com/api/v1/")
+//            .buildAndInitialize()
         
 //        ChatManager.setAppGroupContainerId(id: containerID)
 //        ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
