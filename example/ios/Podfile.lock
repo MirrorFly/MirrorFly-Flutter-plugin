@@ -1,0 +1,93 @@
+PODS:
+  - Alamofire (5.7.1)
+  - CocoaAsyncSocket (7.6.5)
+  - CocoaLumberjack (3.8.0):
+    - CocoaLumberjack/Core (= 3.8.0)
+  - CocoaLumberjack/Core (3.8.0)
+  - CocoaLumberjack/Swift (3.8.0):
+    - CocoaLumberjack/Core
+  - Flutter (1.0.0)
+  - GoogleWebRTC (1.1.32000)
+  - KissXML (5.3.1):
+    - KissXML/All (= 5.3.1)
+  - KissXML/Additions (5.3.1):
+    - KissXML/Core
+  - KissXML/All (5.3.1):
+    - KissXML/Additions
+    - KissXML/Core
+  - KissXML/Core (5.3.1)
+  - libidn (1.35)
+  - libPhoneNumber-iOS (0.9.15)
+  - mirrorfly_plugin (0.0.1):
+    - Alamofire
+    - Flutter
+    - GoogleWebRTC
+    - libPhoneNumber-iOS
+    - RealmSwift (= 10.20.1)
+    - Socket.IO-Client-Swift (~> 15.2.0)
+    - SocketRocket
+    - XMPPFramework/Swift
+  - Realm (10.20.1):
+    - Realm/Headers (= 10.20.1)
+  - Realm/Headers (10.20.1)
+  - RealmSwift (10.20.1):
+    - Realm (= 10.20.1)
+  - Socket.IO-Client-Swift (15.2.0):
+    - Starscream (~> 3.1)
+  - SocketRocket (0.7.0)
+  - Starscream (3.1.1)
+  - XMPPFramework/default (4.0.0):
+    - CocoaAsyncSocket (~> 7.6)
+    - CocoaLumberjack
+    - KissXML (~> 5.2)
+    - libidn (~> 1.35)
+  - XMPPFramework/Swift (4.0.0):
+    - CocoaLumberjack/Swift
+    - XMPPFramework/default
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - mirrorfly_plugin (from `.symlinks/plugins/mirrorfly_plugin/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - CocoaAsyncSocket
+    - CocoaLumberjack
+    - GoogleWebRTC
+    - KissXML
+    - libidn
+    - libPhoneNumber-iOS
+    - Realm
+    - RealmSwift
+    - Socket.IO-Client-Swift
+    - SocketRocket
+    - Starscream
+    - XMPPFramework
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  mirrorfly_plugin:
+    :path: ".symlinks/plugins/mirrorfly_plugin/ios"
+
+SPEC CHECKSUMS:
+  Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
+  CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
+  CocoaLumberjack: 78abfb691154e2a9df8ded4350d504ee19d90732
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  GoogleWebRTC: 4d261187b30512efdb711d21fa961a6adf138717
+  KissXML: 5c8e0f2e8b9f071d3e1ae123dec3eb5da615c10c
+  libidn: e4576a956b797c584c77aaedfc6e3dd639b61bdc
+  libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
+  mirrorfly_plugin: ae6c80ec5f5a14d9264a5365f0b30d19075f6391
+  Realm: fac5ecd031fcb81171627b74944c885662d4b266
+  RealmSwift: 9b02d25acb46a14756bde9893abb99e2e3675923
+  Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
+  SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
+  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
+  XMPPFramework: 5d31ff9f73dce031b24bc49bcf88093627a3a86e
+
+PODFILE CHECKSUM: ee632ba14b5eeda5c7880e81969574bfa29d9062
+
+COCOAPODS: 1.12.1

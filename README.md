@@ -49,7 +49,7 @@ Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned 
         mavenCentral()
         jcenter()
         maven {
-            url "https://repo.mirrorfly.com/snapshot/"
+            url "https://repo.mirrorfly.com/release"
         }
     }
   }
@@ -81,7 +81,8 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 > **Note**: The App Group Must be same as `iOSContainerId` given during the SDK Initialization. [See Initialization Step 1](#Sending-your-first-message).
 
 
-![Screenshot](AppGroups-c9933d95df192665e1389f19ece4fd94.png)
+![Screenshot](https://www.mirrorfly.com/docs/assets/images/AppGroups-c9933d95df192665e1389f19ece4fd94.png)
+
 
 ### Flutter
 
@@ -89,7 +90,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.7
+  mirrorfly_plugin: ^0.0.10
 ```
 
 - Run `flutter pub get` command in your project directory.

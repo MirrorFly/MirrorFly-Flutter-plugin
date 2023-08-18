@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ripple_relativeLayout">
+        <attr name="ripple_color" format="color" />
+        <attr name="ripple_radius" format="dimension"/>
+        <attr name="ripple_duration" format="integer"/>
+        <attr name="ripple_amount" format="integer"/>
+        <attr name="ripple_scale" format="float"/>
+    </declare-styleable>
+
+    <declare-styleable name="CircularImageView">
+        <attr name="border" format="boolean" />
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+        <attr name="shadow" format="boolean" />
+        <attr name="is_circle" format="boolean" />
+    </declare-styleable>
+</resources>

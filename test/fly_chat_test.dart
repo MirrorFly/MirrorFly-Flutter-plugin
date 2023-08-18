@@ -697,7 +697,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // myProfileUpdated
-  Stream<bool> get myProfileUpdated => throw UnimplementedError();
+  Stream get myProfileUpdated => throw UnimplementedError();
 
   @override
   // onAdminBlockedOtherUser
@@ -725,7 +725,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onContactSyncComplete
-  Stream<bool> get onContactSyncComplete => throw UnimplementedError();
+  Stream get onContactSyncComplete => throw UnimplementedError();
 
   @override
   // onDeleteGroup
@@ -745,11 +745,11 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onFetchingGroupMembersCompleted
-  Stream<String> get onFetchingGroupMembersCompleted => throw UnimplementedError();
+  Stream get onFetchingGroupMembersCompleted => throw UnimplementedError();
 
   @override
   // onGroupDeletedLocally
-  Stream<String> get onGroupDeletedLocally => throw UnimplementedError();
+  Stream get onGroupDeletedLocally => throw UnimplementedError();
 
   @override
   // onGroupNotificationMessage
@@ -757,11 +757,11 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onGroupProfileFetched
-  Stream<String> get onGroupProfileFetched => throw UnimplementedError();
+  Stream get onGroupProfileFetched => throw UnimplementedError();
 
   @override
   // onGroupProfileUpdated
-  Stream<String> get onGroupProfileUpdated => throw UnimplementedError();
+  Stream get onGroupProfileUpdated => throw UnimplementedError();
 
   @override
   // onGroupTypingStatus
@@ -773,7 +773,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onLoggedOut
-  Stream<bool> get onLoggedOut => throw UnimplementedError();
+  Stream get onLoggedOut => throw UnimplementedError();
 
   @override
   // onMediaStatusUpdated
@@ -805,7 +805,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // onNewGroupCreated
-  Stream<String> get onNewGroupCreated => throw UnimplementedError();
+  Stream get onNewGroupCreated => throw UnimplementedError();
 
   @override
   // onNewMemberAddedToGroup
@@ -1264,6 +1264,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) {
+    // implement getValueFromManifestOrInfoPlist
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool?> iOSFileExist(String filePath) {
     // implement iOSFileExist
     throw UnimplementedError();
@@ -1283,8 +1289,170 @@ class MockFlyChatFlutterPlatform
 
   @override
   // implement usersProfilesFetched
-  Stream<bool> get usersProfilesFetched => throw UnimplementedError();
+  Stream get usersProfilesFetched => throw UnimplementedError();
 
+
+  // @override
+  // implement onCallReceiving
+  // Stream get onCallReceiving => throw UnimplementedError();
+
+  @override
+  // implement onLocalVideoTrackAdded
+  Stream get onLocalVideoTrackAdded => throw UnimplementedError();
+
+  @override
+  // implement onCallAction
+  Stream get onCallAction => throw UnimplementedError();
+
+  @override
+  // implement onCallStatusUpdated
+  Stream get onCallStatusUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onMuteStatusUpdated
+  Stream get onMuteStatusUpdated => throw UnimplementedError();
+
+  @override
+  // implement onRemoteVideoTrackAdded
+  Stream get onRemoteVideoTrackAdded => throw UnimplementedError();
+
+  @override
+  // implement onTrackAdded
+  Stream get onTrackAdded => throw UnimplementedError();
+
+  @override
+  // implement onUserSpeaking
+  Stream get onUserSpeaking => throw UnimplementedError();
+
+  @override
+  // implement onUserStoppedSpeaking
+  Stream get onUserStoppedSpeaking => throw UnimplementedError();
+
+  @override
+  Future getCallUsersList() {
+    // implement getCallUsers
+    throw UnimplementedError();
+  }
+
+  @override
+  Future switchCamera() {
+    // implement switchCamera
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getCallType() {
+    // implement getCallType
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> muteAudio(bool status) {
+    // implement muteAudio
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> muteVideo(bool status) {
+    // implement muteVideo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future declineCall() {
+    // implement declineCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> makeVideoCall(String userJid) {
+    //  implement makeVideoCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> makeVoiceCall(String userJid) {
+    // implement makeVoiceCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getCallDirection() {
+    // implement getCallDirection
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getRecentChatListHistory({required bool firstSet,int limit=15}) {
+    // implement getRecentChatListHistory
+    throw UnimplementedError();
+  }
+
+  @override
+  Future initializeMessageList({required String userJid, String? messageId, double? messageTime, bool? exclude, int limit = 25}) {
+    // implement initializeMessageList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future loadMessages() {
+    // implement loadMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future loadNextMessages() {
+    // implement loadNextMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future loadPreviousMessages() {
+    // implement loadPreviousMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getAllAvailableAudioInput() {
+    // implement getAllAvailableAudioInput
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> routeAudioTo({required String routeType}) {
+    // implement routeAudioTo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isOnGoingCall() {
+    // implement isOnGoingCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> disconnectCall() {
+    // implement disconnectCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> selectedAudioDevice() {
+    // implement selectedAudioDevice
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isUserAudioMuted([String? userJid]) {
+    // implement isUserAudioMuted
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isUserVideoMuted([String? userJid]) {
+    // implement isUserVideoMuted
+    throw UnimplementedError();
+  }
 }
 
 void main() {

@@ -676,3 +676,16 @@ class OnGroupTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
+class OnConnectionFailedStreamHandler: NSObject, FlutterStreamHandler {
+    public var OnConnectionFailed: FlutterEventSink?
+    
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.OnConnectionFailed = events
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.OnConnectionFailed = nil
+        return nil
+    }
+}
