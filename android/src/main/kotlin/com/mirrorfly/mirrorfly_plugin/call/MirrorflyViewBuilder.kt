@@ -1,6 +1,7 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.content.Context
+import android.view.Gravity
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import io.flutter.plugin.common.BinaryMessenger
 import org.webrtc.RendererCommon
@@ -9,16 +10,22 @@ class MirrorflyViewBuilder {
     fun build(id : Int, context : Context, binaryMessenger : BinaryMessenger,creationParams : Map<String,Any>,mirrorflyView: MirrorflyView?) : MirrorflyView{
         val viewId = creationParams["userJid"] ?: ""
         val newMirrorflyView = mirrorflyView ?: MirrorflyView(binaryMessenger,context,id,viewId.toString(),creationParams)
-        if(mirrorflyView==null) {
-            newMirrorflyView.init()
-        }
         val backgroundColor = creationParams["backgroundColor"] ?: ""
+        if(creationParams.containsKey("ProfileViewPositioned")){
+            newMirrorflyView.setProfileViewConfig(creationParams["ProfileViewPositioned"] as Map<String,Any>)
+        }
+        if(backgroundColor.toString().isNotEmpty()){
+            newMirrorflyView.setBackgroundColor(backgroundColor.toString())
+        }
         if (CallManager.isOnGoingAudioCall()){
             if(backgroundColor.toString().isNotEmpty()){
                 newMirrorflyView.setBackgroundColor(backgroundColor.toString())
             }
             newMirrorflyView.setProfileView(viewId.toString())
         }else {
+            if(mirrorflyView==null) {
+                newMirrorflyView.init()
+            }
             if (creationParams.containsKey("scalingType")) {
                 val scale =
                     RendererCommon.ScalingType.valueOf(creationParams["scalingType"].toString())
@@ -34,6 +41,18 @@ class MirrorflyViewBuilder {
                 newMirrorflyView.setRemoteTarget(creationParams["userJid"].toString())
             }
         }
+        if(creationParams.containsKey("profileSize")){
+            newMirrorflyView.setProfileViewSize(creationParams["profileSize"] as Int)
+        }
+        if (creationParams.containsKey("alignProfilePictureCenter")){
+            val alignProfilePictureCenter = creationParams["alignProfilePictureCenter"] as Boolean
+            val center = if(alignProfilePictureCenter) Gravity.CENTER else Gravity.TOP
+            newMirrorflyView.setProfileViewAlign(center)
+        }
+        if(creationParams.containsKey("horizontalGravity")){
+            newMirrorflyView.setProfileViewAlign(creationParams["horizontalGravity"] as Int)
+        }
+
         return newMirrorflyView
     }
 }

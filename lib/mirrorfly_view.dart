@@ -14,6 +14,12 @@ enum ScalingType {
   scaleAspectBALANCED;
 }
 
+enum HorizontalGravity{
+  top,
+  center,
+  bottom
+}
+
 class MirrorFlyView extends StatefulWidget {
   /// MirrorFly View for Audio/Video View
   /// * @property [mirror] - Mirror the view Must be a Boolean
@@ -26,8 +32,10 @@ class MirrorFlyView extends StatefulWidget {
       this.mirror = true,
       this.scalingType = ScalingType.scaleAspectFILL,
         this.viewBgColor,
-        this.alignProfilePictureCenter,
-        this.profileSize,
+        this.alignProfilePictureCenter = true,
+        // this.horizontalGravity = HorizontalGravity.center,
+        // this.profileview,
+        this.profileSize = 80,
         this.hideProfileView,
       required this.userJid})
       : super(key: key);
@@ -36,6 +44,8 @@ class MirrorFlyView extends StatefulWidget {
   final ScalingType scalingType;
   final Color? viewBgColor;
   final bool? alignProfilePictureCenter;
+  // final HorizontalGravity horizontalGravity;
+  // final ProfileViewPositioned? profileview;
   final bool? hideProfileView;
   final int? profileSize;
   final String userJid;
@@ -70,12 +80,18 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   }
 
   String getScalingType(ScalingType type) {
-    if (type == ScalingType.scaleAspectFILL) {
-      return "SCALE_ASPECT_FILL";
-    } else if (type == ScalingType.scaleAspectFIT) {
-      return "SCALE_ASPECT_FIT";
-    } else {
-      return "SCALE_ASPECT_BALANCED";
+    switch(type){
+      case ScalingType.scaleAspectFIT: return "SCALE_ASPECT_FIT";
+      case ScalingType.scaleAspectFILL: return "SCALE_ASPECT_FILL";
+      case ScalingType.scaleAspectBALANCED: return "SCALE_ASPECT_BALANCED";
+    }
+  }
+
+  int getHorizontalGravity(HorizontalGravity horizontalGravity){
+    switch(horizontalGravity){
+      case HorizontalGravity.top : return 48;
+      case HorizontalGravity.center: return 17;
+      case HorizontalGravity.bottom: return 80;
     }
   }
 
@@ -86,9 +102,11 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
       'viewId': widget.userJid.trim().toString(),
       'backgroundColor' : colorToHex(widget.viewBgColor),
       'alignProfilePictureCenter': widget.alignProfilePictureCenter,
+      // 'horizontalGravity': getHorizontalGravity(widget.horizontalGravity),
       'profileSize': widget.profileSize,
       'hideProfileView': widget.hideProfileView,
-      "userJid": widget.userJid.trim().toString()
+      "userJid": widget.userJid.trim().toString(),
+      // "ProfileViewPositioned": widget.profileview?.toMap()
     };
   }
 
@@ -165,4 +183,46 @@ extension ExtensionMirrorflyView on MirrorFlyView {
           child: this,
         ));
   }
+}
+
+class ProfileViewPositioned{
+  /// The distance that the child's left edge is inset from the left of the [MirrorFlyView].
+
+  final int? left;
+
+  /// The distance that the child's top edge is inset from the top of the [MirrorFlyView].
+
+  final int? top;
+
+  /// The distance that the child's right edge is inset from the right of the [MirrorFlyView].
+
+  final int? right;
+
+  /// The distance that the child's bottom edge is inset from the bottom of the [MirrorFlyView].
+
+  final int? bottom;
+
+  /// The child's width.
+  final int? width;
+
+  /// The child's height.
+  final int? height;
+
+  ProfileViewPositioned({
+    this.left,
+    this.top,
+    this.right,
+    this.bottom,
+    this.width,
+    this.height
+  });
+
+  Map<String, dynamic> toMap() => {
+    "left" : left,
+    "top" : top,
+    "right" : right,
+    "bottom" : bottom,
+    "width" : width,
+    "height" : height
+  };
 }

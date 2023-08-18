@@ -47,6 +47,7 @@ import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MediaData
+import com.mirrorflysdk.flycommons.models.MessageType
 import com.mirrorflysdk.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.mirrorflysdk.media.MediaUploadHelper
 import com.mirrorflysdk.models.MediaAutoDownloadOption
@@ -2099,21 +2100,38 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val duration = call.argument<String>("duration")?.toLong()
 
         LogMessage.d("isRecorded", isRecorded.toString())
-        val listener = object : SendMessageListener {
-            override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
+        val listener = object : SendMessageCallback {
+            override fun onResponse(
+                isSuccess: Boolean,
+                error: Throwable?,
+                chatMessage: ChatMessage?
+            ) {
                 if (chatMessage != null) {
                     //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("FlyMessenger.sendAudioMessage", chatMessage.tojsonString())
                     result.success(chatMessage.toJsonString())
                 } else {
-                    result.error("500", "Unable to Send Audio Message", null)
+                    result.error("500", error?.message, error)
                 }
             }
         }
         if (audioFile.exists()) {
             if (userJID != null && duration != null && isRecorded != null) {
                 if (audiofileUrl.isNotEmpty()) {
-                    FlyMessenger.sendAudioMessage(
+                    val sendMessageParams = FileMessage().apply {
+                        toId = userJID
+                        messageType = if(isRecorded) MessageType.AUDIO_RECORDED else MessageType.AUDIO
+                        replyMessageId = replyMessageID //Optional
+                        fileMessage = FileMessageParams().apply {
+                            fileUrl = audiofileUrl
+                            fileName = audioFile.name
+                            this.duration = duration
+                            this.localFilePath = filePath
+                            this.fileSize = audioFile.length()
+                        }
+                    }
+                    FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
+                    /*FlyMessenger.sendAudioMessage(
                         userJID,
                         MediaData(
                             audioFile.name,
@@ -2125,21 +2143,32 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         isRecorded,
                         replyMessageID,
                         listener
-                    )
+                    )*/
                     /*FlyMessenger.sendAudioMessage(
               userJID, audioFile.length(), audiofileUrl, filePath, duration, isRecorded,
               replyMessageID, listener
           )*/
                 } else {
-                    FlyMessenger.sendAudioMessage(
+                    val sendMessageParams = FileMessage().apply {
+                        toId = userJID
+                        messageType = if (isRecorded) MessageType.AUDIO_RECORDED else MessageType.AUDIO
+                        this.replyMessageId = replyMessageID
+                        fileMessage = FileMessageParams().apply {
+                            file = audioFile
+                        }
+                    }
+                    FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
+                    /*FlyMessenger.sendAudioMessage(
                         userJID,
                         audioFile,
                         duration,
                         isRecorded,
                         replyMessageID,
                         listener
-                    )
+                    )*/
                 }
+            }else{
+                result.error("500", "File Not Exists", "")
             }
         } else {
             result.error("500", "File Not Exists", "")
@@ -2153,7 +2182,32 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val replyMessageID = call.argument<String>("replyMessageId") ?: ""
 
         if (userJID != null && contactList != null && contactName != null) {
-            FlyMessenger.sendContactMessage(
+            val sendMessageParams = FileMessage().apply {
+                toId = userJID
+                messageType = MessageType.CONTACT
+                replyMessageId = replyMessageID //Optional
+                contactMessage = ContactMessageParams().apply {
+                    this.name = contactName
+                    this.numbers = contactList
+                }
+            }
+            FlyMessenger.sendFileMessage(sendMessageParams,listener=object : SendMessageCallback{
+                override fun onResponse(
+                    isSuccess: Boolean,
+                    error: Throwable?,
+                    chatMessage: ChatMessage?
+                ) {
+                    if (isSuccess && chatMessage != null) {
+                        //LogMessage.d("RESPONSE_CAPTURE", "===========================")
+                        //DebugUtilis.v("FlyMessenger.sendContactMessage",chatMessage.tojsonString())
+                        result.success(chatMessage.toJsonString())
+                    } else {
+                        result.error("500", error?.message, error)
+                    }
+                }
+
+            })
+           /* FlyMessenger.sendContactMessage(
                 userJID,
                 contactName,
                 contactList,
@@ -2169,7 +2223,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         }
                     }
 
-                })
+                })*/
         }
     }
 
@@ -2185,20 +2239,39 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val videoDuration = call.argument<Long>("videoDuration") ?: 0L
         val thumbImageBase64 = call.argument<String>("thumbImageBase64") ?: ""
 
-        val listener = object : SendMessageListener {
-            override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
+        val listener = object : SendMessageCallback {
+            override fun onResponse(
+                isSuccess: Boolean,
+                error: Throwable?,
+                chatMessage: ChatMessage?
+            ) {
                 if (chatMessage != null) {
                     //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("FlyMessenger.sendVideoMessage", chatMessage.tojsonString())
                     result.success(chatMessage.toJsonString())
                 } else {
-                    result.error("500", "Unable to Send Video Message", null)
+                    result.error("500", error?.message, error)
                 }
             }
         }
         if (videoFile.exists()) {
             if (videoFileUrl.isNotEmpty() && thumbImageBase64.isNotEmpty() && videoDuration != 0L) {
-                FlyMessenger.sendAudioMessage(
+                val sendMessageParams = FileMessage().apply {
+                    toId = userJid
+                    messageType = MessageType.VIDEO
+                    replyMessageId = replyMessageID //Optional
+                    fileMessage = FileMessageParams().apply {
+                        fileUrl = videoFileUrl
+                        fileName = videoFile.name
+                        this.duration = videoDuration
+                        this.localFilePath = localFilePath
+                        this.fileSize = videoFile.length()
+                        this.caption = videoCaption
+                        this.thumbImage = thumbImageBase64
+                    }
+                }
+                FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
+                /*FlyMessenger.sendVideoMessage(
                     toJid = userJid,
                     MediaData(
                         fileName = videoFile.name,
@@ -2209,7 +2282,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         caption = videoCaption,
                         duration = videoDuration
                     ), isRecorded = false, replyMessageID, listener
-                )
+                )*/
                 /*FlyMessenger.sendVideoMessage(
             toJid = userJid,
             videoFile.name,
@@ -2223,13 +2296,23 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             listener
         )*/
             } else {
-                FlyMessenger.sendVideoMessage(
+                val sendMessageParams = FileMessage().apply {
+                    toId = userJid
+                    messageType = MessageType.VIDEO
+                    replyMessageId = replyMessageID //Optional
+                    fileMessage = FileMessageParams().apply {
+                        file = videoFile
+                        this.caption = videoCaption
+                    }
+                }
+                FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
+                /*FlyMessenger.sendVideoMessage(
                     toJid = userJid,
                     file = videoFile,
                     caption = videoCaption,
                     replyMessageId = replyMessageID,
                     listener = listener
-                )
+                )*/
             }
         } else {
             result.error("500", "File Not Exists", "")
@@ -2481,7 +2564,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     return
                 }
             } else {
-                result.error("400", "Image File Null", null)
+                result.error("400", "Image not available to update profile", null)
                 return
             }
         } else {
@@ -2618,17 +2701,14 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             val receiverJID: String = call.argument("jid") ?: ""
             val file: String = call.argument("file") ?: ""
             val fileUrl: String = call.argument("file_url") ?: ""
-            val listener = object : SendMessageListener {
-                override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
+            val listener = object : SendMessageCallback {
+                override fun onResponse(isSuccess: Boolean, error: Throwable?, chatMessage: ChatMessage?
+                ) {
                     // you will get the message sent success response
-                    if (isSuccess) {
-                        //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                        if (chatMessage != null) {
-
-                            //DebugUtilis.v( "FlyMessenger.sendDocumentMessage",chatMessage.tojsonString())
-                            LogMessage.d(TAG, chatMessage.toJsonString())
-                            result.success(chatMessage.toJsonString())
-                        }
+                    if (isSuccess && chatMessage != null) {
+                        //DebugUtilis.v( "FlyMessenger.sendDocumentMessage",chatMessage.tojsonString())
+                        LogMessage.d(TAG, chatMessage.toJsonString())
+                        result.success(chatMessage.toJsonString())
                     } else {
                         //LogMessage.d(TAG, "File Message sent Failed")
                         result.error("500", "File Message sent Failed", null)
@@ -2637,7 +2717,19 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
             if (File(file).exists()) {
                 if (fileUrl.isNotEmpty()) {
-                    FlyMessenger.sendDocumentMessage(
+                    val sendMessageParams = FileMessage().apply {
+                        toId = receiverJID
+                        messageType = MessageType.DOCUMENT
+                        this.replyMessageId = replyMessageId //Optional
+                        fileMessage = FileMessageParams().apply {
+                            this.fileUrl = fileUrl
+                            fileName = File(file).name
+                            this.localFilePath = file
+                            this.fileSize = File(file).length()
+                        }
+                    }
+                    FlyMessenger.sendFileMessage(sendMessageParams,listener=listener)
+                    /*FlyMessenger.sendDocumentMessage(
                         receiverJID,
                         File(file).name,
                         File(file).length(),
@@ -2645,15 +2737,24 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         file,
                         replyMessageId,
                         listener
-                    )
+                    )*/
                 } else {
-                    FlyMessenger.sendDocumentMessage(
+                    val sendMessageParams = FileMessage().apply {
+                        toId = receiverJID
+                        messageType = MessageType.DOCUMENT
+                        this.replyMessageId = replyMessageId //Optional
+                        fileMessage = FileMessageParams().apply {
+                            this.file = File(file)
+                        }
+                    }
+                    FlyMessenger.sendFileMessage(sendMessageParams,listener=listener)
+                    /*FlyMessenger.sendDocumentMessage(
                         receiverJID,
                         File(file),
                         File(file).name,
                         replyMessageId,
                         listener
-                    )
+                    )*/
                 }
             } else {
                 result.error("500", "File not Exists", "")
@@ -2669,7 +2770,31 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val replyMessageId: String? = call.argument("replyMessageId")
 
         if (userJid.isNotEmpty() && latitude != 00.0 && longitude != 00.0 && replyMessageId != null) {
-            FlyMessenger.sendLocationMessage(
+            val sendMessageParams = FileMessage().apply {
+                toId = userJid
+                messageType = MessageType.LOCATION
+                this.replyMessageId = replyMessageId //Optional
+                locationMessage = LocationMessageParams().apply {
+                    this.latitude =latitude
+                    this.longitude = longitude
+                }
+            }
+            FlyMessenger.sendFileMessage(sendMessageParams,listener = object : SendMessageCallback {
+                override fun onResponse(
+                    isSuccess: Boolean,
+                    error: Throwable?,
+                    chatMessage: ChatMessage?
+                ) {
+                    if (isSuccess && chatMessage != null) {
+                        //LogMessage.d("RESPONSE_CAPTURE", "===========================")
+                        //DebugUtilis.v("sendLocationMessage", chatMessage.tojsonString())
+                        result.success(chatMessage.toJsonString())
+                    } else {
+                        result.error("500", error?.message, error)
+                    }
+                }
+            })
+            /*FlyMessenger.sendLocationMessage(
                 userJid,
                 latitude,
                 longitude,
@@ -2681,10 +2806,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                             //DebugUtilis.v("sendLocationMessage", chatMessage.tojsonString())
                             result.success(chatMessage.toJsonString())
                         } else {
-                            result.error("400", "Message Not Sent", null)
+                            result.error("500", error?.message, error)
                         }
                     }
-                })
+                })*/
         } else {
             if (userJid.isEmpty())
                 result.error("400", "User Jid is Empty", null)
@@ -2710,17 +2835,37 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //LogMessage.d("FILEPATH", filePath)
         LogMessage.d(TAG, filePath)
         LogMessage.d(TAG, thumbnailBase64)
-        val listener = object : SendMessageListener {
-            override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
-                if (chatMessage != null) {
+        val listener = object : SendMessageCallback {
+            override fun onResponse(
+                isSuccess: Boolean,
+                error: Throwable?,
+                chatMessage: ChatMessage?
+            ) {
+                if (isSuccess && chatMessage != null) {
                     //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("FlyMessenger.sendImageMessage", chatMessage.tojsonString())
                     result.success(Gson().toJson(chatMessage))
+                }else{
+                    result.error("500",error?.message,error)
                 }
             }
         }
         if (imageFileUrl.isNotEmpty()) {
-            FlyMessenger.sendImageMessage(
+            val sendMessageParams = FileMessage().apply {
+                toId = userJid
+                messageType = MessageType.IMAGE
+                replyMessageId = replyMessageID //Optional
+                fileMessage = FileMessageParams().apply {
+                    fileUrl = imageFileUrl
+                    fileName = imageFile.name
+                    this.localFilePath = filePath
+                    this.fileSize = imageFile.length()
+                    this.caption = caption
+                    this.thumbImage = thumbnailBase64
+                }
+            }
+            FlyMessenger.sendFileMessage(sendMessageParams,listener=listener)
+            /*FlyMessenger.sendImageMessage(
                 toJid = userJid,
                 MediaData(
                     fileName = imageFile.name,
@@ -2730,7 +2875,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     base64Thumbnail = thumbnailBase64,
                     caption
                 ), replyMessageID, listener
-            )
+            )*/
             /*FlyMessenger.sendImageMessage(
           userJid,
           imageFile.name,
@@ -2743,14 +2888,24 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
           listener
       )*/
         } else {
-            FlyMessenger.sendImageMessage(
+            val sendMessageParams = FileMessage().apply {
+                toId = userJid
+                messageType = MessageType.IMAGE
+                replyMessageId = replyMessageID //Optional
+                fileMessage = FileMessageParams().apply {
+                    file = imageFile
+                    this.caption = caption
+                }
+            }
+            FlyMessenger.sendFileMessage(sendMessageParams,listener=listener)
+            /*FlyMessenger.sendImageMessage(
                 userJid,
                 imageFile,
                 thumbnailBase64,
                 caption,
                 replyMessageID,
                 listener
-            )
+            )*/
         }
     }
 
