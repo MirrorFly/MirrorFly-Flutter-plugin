@@ -1,3 +1,9 @@
+## [0.0.10] Code Optimization
+* Minified Enabled True Support Added
+* Release Build Bug Fix
+* Profile Update Supports External URL
+
+
 ## [0.0.10-beta] Chat History
 
 * Chat History enable option
