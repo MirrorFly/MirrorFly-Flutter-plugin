@@ -122,9 +122,6 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
     
     var onConnectionFailedStreamHandler: OnConnectionFailedStreamHandler?
     
-//    public override init() {
-//            super.init()
-//        }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: mirrorflyMethodChannel, binaryMessenger: registrar.messenger())
@@ -132,6 +129,14 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         let instance = FlyChatPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
         instance.setupEventChannel(registrar: registrar)
+        
+//        let flyCalls = FlyCall(registrar: registrar)
+//
+        FlyCall.register(with: registrar)
+        
+        
+//        flyCallMethods.setupMethodChannel(registrar: registrar)
+//        flyCallMethods.setupEventChannel(registrar: registrar)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -352,7 +357,7 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             self.usersProfilesFetchedStreamHandler = UsersProfilesFetchedStreamHandler()
         }
         
-        FlutterEventChannel(name: userProfileFetched_channel, binaryMessenger: registrar.messenger()).setStreamHandler(self.usersProfilesFetchedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+        FlutterEventChannel(name: usersProfilesFetched_channel, binaryMessenger: registrar.messenger()).setStreamHandler(self.usersProfilesFetchedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
         
         
         
@@ -470,11 +475,13 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
     }
     
     func prepareMethodHandler(methodCall: FlutterMethodCall, result: @escaping FlutterResult){
-        
+//        FlyCall.handleMethodCall(call: call, result: result)
         switch methodCall.method {
         case "init":
             FlySdkMethodCalls.buildChatSDK(call: methodCall)
             initializeEventListeners()
+        case "getPlistValue":
+            FlySdkMethodCalls.getPlistValue(call: methodCall,result: result)
         case "syncContacts":
             let args = methodCall.arguments as! Dictionary<String, Any>
             
@@ -554,6 +561,10 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.deleteMessagesForEveryone(call: methodCall,  result: result)
         case "markAsRead":
             FlySdkMethodCalls.markAsRead(call: methodCall,  result: result)
+        case "markConversationAsUnread":
+            FlySdkMethodCalls.markConversationAsUnread(call: methodCall,  result: result)
+        case "markConversationAsRead":
+            FlySdkMethodCalls.markConversationAsRead(call: methodCall,  result: result)
         case "deleteUnreadMessageSeparatorOfAConversation":
             FlySdkMethodCalls.deleteUnreadMessageSeparatorOfAConversation(call: methodCall,  result: result)
         case "getRecalledMessagesOfAConversation":
@@ -601,6 +612,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.recentChatPinnedCount(call: methodCall,  result: result)
         case "getRecentChatList":
             FlySdkMethodCalls.getRecentChatList(call: methodCall,  result: result)
+        case "getRecentChatListHistory":
+            FlySdkMethodCalls.getRecentChatListHistory(call: methodCall,  result: result)
         case "getRecentChatListIncludingArchived":
             FlySdkMethodCalls.getRecentChatListIncludingArchived(call: methodCall,  result: result)
         case "getRecentChatOf":
@@ -660,10 +673,6 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getUsersIBlocked(call: methodCall,  result: result)
         case "setMyProfileStatus":
             FlySdkMethodCalls.setMyProfileStatus(call: methodCall,  result: result)
-            //            case "sendData":
-            //                let UserJid = Utility.getStringFromPreference(key: notificationUserJid)
-            //                Utility.saveInPreference(key: notificationUserJid, value: "")
-            //                result(UserJid)
         case "getMediaMessages":
             FlySdkMethodCalls.getMediaMessages(call: methodCall,  result: result)
         case "isMemberOfGroup":
@@ -776,33 +785,22 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getMessageStatusOfASingleChatMessage(call: methodCall, result: result)
         case "addContact":
             FlySdkMethodCalls.addContact(call: methodCall, result: result)
-//            let args = methodCall.arguments as! Dictionary<String, Any>
-//            let number = args["number"] as? String ?? ""
-//
-//            let newContact = CNMutableContact()
-//
-//            newContact.phoneNumbers.append(CNLabeledValue(label: "home", value: CNPhoneNumber(stringValue: number)))
-//
-//            newContact.givenName = ""
-//            let contactVC = CNContactViewController(forUnknownContact: newContact)
-//            contactVC.contactStore = CNContactStore()
-//            contactVC.delegate = self
-//            contactVC.allowsActions = false
-//            let viewController: UIViewController =
-//                        (UIApplication.shared.delegate?.window??.rootViewController)!;
-            
-//            if let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController {
-//            viewController.show(contactVC, sender: self)//(contactVC, animated: true)//.pushViewController(contactVC, animated: true)
-//            }else{
-//                print("unabel to open controller")
-//            }
-            
-            
-            
+        case "initializeMessageList":
+            FlySdkMethodCalls.initializeMessageList(call: methodCall, result: result)
+        case "loadMessages":
+            FlySdkMethodCalls.loadMessages(call: methodCall, result: result)
+        case "loadPreviousMessages":
+            FlySdkMethodCalls.loadPreviousMessages(call: methodCall, result: result)
+        case "loadNextMessages":
+            FlySdkMethodCalls.loadNextMessages(call: methodCall, result: result)
+        case "handleReceivedMessage":
+            FlySdkMethodCalls.handleReceivedMessage(call:methodCall, result: result)
+        case "updateFcmToken":
+            FlySdkMethodCalls.updateFcmToken(call:methodCall, result: result)
+
         default:
             result(FlutterMethodNotImplemented)
         }
-        
     }
 }
 
@@ -877,7 +875,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(userCameOnlineStreamHandler?.userCameOnline != nil){
             print("userCameOnline event==**==\(String(describing: jsonString))")
@@ -891,7 +888,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func userWentOffline(for jid: String) {
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(userWentOfflineStreamHandler?.userWentOffline != nil){
             print("userWentOffline event==**==\(String(describing: jsonString))")
@@ -906,7 +902,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
         jsonObject.setValue(profileDetails?.toJson(), forKey: "profileDetails")
-//        let jsonString = JSONSerializer.toJson(jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(userProfileFetchedStreamHandler?.userProfileFetched != nil){
             print("userProfileFetched event==**==\(String(describing: jsonString))")
@@ -936,7 +931,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func blockedThisUser(jid: String) {
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(blockedThisUserStreamHandler?.blockedThisUser != nil){
             print("blockedThisUser event==**==\(String(describing: jsonString))")
@@ -949,7 +943,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func unblockedThisUser(jid: String) {
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(unblockedThisUserStreamHandler?.unblockedThisUser != nil){
             print("unblockedThisUser event==**==\(String(describing: jsonString))")
@@ -962,7 +955,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public  func usersIBlockedListFetched(jidList: [String]) {
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jidList, forKey: "jidlist")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(usersIBlockedListFetchedStreamHandler?.usersIBlockedListFetched != nil){
             print("usersIBlockedListFetched event==**==\(String(describing: jsonString))")
@@ -975,7 +967,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func usersBlockedMeListFetched(jidList: [String]) {
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jidList, forKey: "jidlist")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(usersWhoBlockedMeListFetchedStreamHandler?.usersWhoBlockedMeListFetched != nil){
             print("usersBlockedMeListFetched event==**==\(String(describing: jsonString))")
@@ -988,7 +979,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func userUpdatedTheirProfile(for jid: String, profileDetails: MirrorFlySDK.ProfileDetails) {
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(userUpdatedHisProfileStreamHandler?.userUpdatedHisProfile != nil){
             print("userUpdatedTheirProfile event==**==\(String(describing: jsonString))")
@@ -1002,7 +992,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func userBlockedMe(jid: String) {
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(userBlockedMeStreamHandler?.userBlockedMe != nil){
             print("userBlockedMe event==**==\(String(describing: jsonString))")
@@ -1015,7 +1004,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func userUnBlockedMe(jid: String) {
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(userUnBlockedMeStreamHandler?.userUnBlockedMe != nil){
             print("userUnBlockedMe event==**==\(String(describing: jsonString))")
@@ -1037,7 +1025,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         print("userDeletedTheirProfile called jid --> \(jid)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(userDeletedHisProfileStreamHandler?.userDeletedHisProfile != nil){
             print("userDeletedTheirProfile event==**==\(String(describing: jsonString))")
@@ -1060,7 +1047,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         jsonObject.setValue(userJid, forKey: "userJid")
         jsonObject.setValue(status == TypingStatus.composing ? "composing" : "Gone", forKey: "status")
         
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         
         if(onsetTypingStatusStreamHandler?.onSetTyping != nil){
@@ -1078,7 +1064,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         jsonObject.setValue(groupJid, forKey: "singleOrgroupJid")
         jsonObject.setValue(groupUserJid, forKey: "userJid")
         jsonObject.setValue(status == TypingStatus.composing ? "composing" : "Gone", forKey: "status")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(onsetTypingStatusStreamHandler?.onSetTyping != nil){
             onsetTypingStatusStreamHandler?.onSetTyping?(jsonString)
@@ -1094,6 +1079,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         if(messageReceivedStreamHandler?.onMessageReceived != nil){
             print("onMessageReceived event==**==\(String(describing: messageReceivedJson))")
             messageReceivedStreamHandler?.onMessageReceived?(messageReceivedJson)
+            
             
         }else{
             print("Message Stream Handler is Nil")
@@ -1125,9 +1111,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     
     public func onMediaStatusUpdated(message : MirrorFlySDK.ChatMessage) {
         let chatMediaJson = message.toJson()
-//        var chatMediaJson = JSONSerializer.toJson(message as Any)
-//        chatMediaJson = chatMediaJson.replacingOccurrences(of: "{\"some\":", with: "")
-//        chatMediaJson = chatMediaJson.replacingOccurrences(of: "}}", with: "}")
         
         if(mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated != nil){
             print("onMediaStatusUpdated event==**==\(String(describing: chatMediaJson))")
@@ -1162,7 +1145,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(message.messageId, forKey: "message_id")
         jsonObject.setValue(progressPercentageString, forKey: "progress_percentage")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         
         if(uploadDownloadProgressChangedStreamHandler?.onUploadDownloadProgressChanged != nil){
@@ -1186,10 +1168,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
                 return
             }
             let chatMessageJson = chatMessage?.toJson()
-            
-//            var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
-//            chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")
-//            chatMessageJson = chatMessageJson.replacingOccurrences(of: "}}", with: "}")
             
             if(messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
                 print("onMessagesDeletedforEveryone event\(String(describing: chatMessageJson))")
@@ -1224,7 +1202,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userJid, forKey: "jid")
         jsonObject.setValue(isBlocked, forKey: "status")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(onAdminBlockedUserStreamHandler?.onAdminBlockedUser != nil){
             onAdminBlockedUserStreamHandler?.onAdminBlockedUser?(jsonString)
@@ -1244,7 +1221,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         jsonObject.setValue(userJid, forKey: "jid")
         jsonObject.setValue("", forKey: "type")
         jsonObject.setValue(isBlocked, forKey: "status")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(onAdminBlockedOtherUserStreamHandler?.onAdminBlockedOtherUser != nil){
             onAdminBlockedOtherUserStreamHandler?.onAdminBlockedOtherUser?(jsonString)
@@ -1259,7 +1235,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         jsonObject.setValue(groupJid, forKey: "groupJid")
         jsonObject.setValue(newMemberJid, forKey: "newMemberJid")
         jsonObject.setValue(addedByMemberJid, forKey: "addedByMemberJid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(newMemberAddedToGroupStreamHandler?.onNewMemberAddedToGroup != nil){
             newMemberAddedToGroupStreamHandler?.onNewMemberAddedToGroup?(jsonString)
@@ -1273,7 +1248,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         jsonObject.setValue(groupJid, forKey: "groupJid")
         jsonObject.setValue(removedMemberJid, forKey: "removedMemberJid")
         jsonObject.setValue(removedByMemberJid, forKey: "removedByMemberJid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(memberRemovedFromGroupStreamHandler?.onMemberRemovedFromGroup != nil){
             memberRemovedFromGroupStreamHandler?.onMemberRemovedFromGroup?(jsonString)
@@ -1308,7 +1282,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         jsonObject.setValue(groupJid, forKey: "groupJid")
         jsonObject.setValue(newAdminMemberJid, forKey: "newAdminMemberJid")
         jsonObject.setValue(madeByMemberJid, forKey: "madeByMemberJid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(memberMadeAsAdminStreamHandler?.onMemberMadeAsAdmin != nil){
             memberMadeAsAdminStreamHandler?.onMemberMadeAsAdmin?(jsonString)
@@ -1323,7 +1296,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         jsonObject.setValue(groupJid, forKey: "groupJid")
         jsonObject.setValue(removedAdminMemberJid, forKey: "removedAdminMemberJid")
         jsonObject.setValue(removedByMemberJid, forKey: "removedByMemberJid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(memberRemovedAsAdminStreamHandler?.onMemberRemovedAsAdmin != nil){
             memberRemovedAsAdminStreamHandler?.onMemberRemovedAsAdmin?(jsonString)
@@ -1346,7 +1318,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(groupJid, forKey: "groupJid")
         jsonObject.setValue(leftUserJid, forKey: "leftUserJid")
-//        let jsonString = JSONSerializer.toSimpleJson(from: jsonObject)
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         if(leftFromGroupStreamHandler?.onLeftFromGroup != nil){
             leftFromGroupStreamHandler?.onLeftFromGroup?(jsonString)
@@ -1380,9 +1351,6 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
         let groupNotificationJson = message.toJson()
         
-//        var groupNotificationJson = JSONSerializer.toJson(message)
-//        groupNotificationJson = groupNotificationJson.replacingOccurrences(of: "{\"some\":", with: "")
-//        groupNotificationJson = groupNotificationJson.replacingOccurrences(of: "}}", with: "}")
         
         if(onGroupNotificationMessageStreamHandler?.onGroupNotificationMessage != nil){
             onGroupNotificationMessageStreamHandler?.onGroupNotificationMessage?(groupNotificationJson)
@@ -1407,6 +1375,9 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         }else{
             print("onConnected Stream Handler is Nil")
         }
+//        DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+//            try! CallManager.initCallSDK()
+//        }
     }
     
     public func onDisconnected() {

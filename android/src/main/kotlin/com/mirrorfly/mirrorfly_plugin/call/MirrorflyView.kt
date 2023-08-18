@@ -1,0 +1,285 @@
+package com.mirrorfly.mirrorfly_plugin.call
+
+import android.content.Context
+import android.graphics.Color
+import android.graphics.Paint.Align
+import android.text.Layout.Alignment
+import android.util.DisplayMetrics
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.RelativeLayout
+import com.mirrorfly.mirrorfly_plugin.R
+import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+import com.mirrorflysdk.api.FlyCore
+import com.mirrorflysdk.flycall.webrtc.Logger
+import com.mirrorflysdk.flycall.webrtc.TextureViewRenderer
+import com.mirrorflysdk.flycall.webrtc.api.CallManager
+import com.mirrorflysdk.flycommons.LogMessage
+import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.platform.PlatformView
+import org.webrtc.RendererCommon
+
+
+class MirrorflyView(
+    binaryMessenger: BinaryMessenger,
+    context: Context?,
+    private var id: Int,
+    private var jid:String,
+    private var creationParams: Any
+) : PlatformView, MethodChannel.MethodCallHandler {
+    private var textureView: TextureViewRenderer
+    private var profileView : CircleImageView
+    private var view : View
+    private var mContext:Context? = context
+    private val tag = "#FlutterAndroidCall"
+    private val textureViewStart = 100
+    private val imageViewStart = 200
+
+    init {
+        mContext = context
+        MethodChannel(binaryMessenger, "mirrorfly_view_android_$jid").setMethodCallHandler(this)
+        this.view = LayoutInflater.from(context).inflate(R.layout.mirrofly_profile_layout, null, false)
+        this.textureView = view.findViewById(R.id.textureView)//TextureViewRenderer(context)
+        this.textureView.tag = jid
+        this.profileView =  view.findViewById(R.id.circleImageView)
+        this.profileView.tag = id
+        LogMessage.d(tag,"creationParams $id : $creationParams")
+    }
+    override fun getView(): View {
+        return view
+    }
+
+    override fun dispose() {
+        LogMessage.d("#FlutterAndroidCall","dispose")
+        getTextureViewByTag(jid)?.release()
+        MirrorflyViewHashMap.clearAll()
+    }
+
+    fun init(){
+        textureView.init(CallManager.getRootEglBase()?.eglBaseContext, null)
+    }
+
+    fun setScalingType(scalingType: RendererCommon.ScalingType){
+        getTextureViewByTag(jid)?.setScalingType(scalingType)
+    }
+
+    fun setLocalTarget(){
+        LogMessage.d(tag,"Target set $id $jid")
+        getTextureViewByTag(jid)?.visibility=View.VISIBLE
+        getImageViewByTag(id)?.visibility=View.GONE
+        CallManager.getLocalProxyVideoSink()?.setTarget(getTextureViewByTag(jid))
+//        Logger.d("#FlutterCall","getLocalTarget ${CallManager.getLocalProxyVideoSink()?.getTarget()}")
+    }
+
+    fun setMirror(isMirror:Boolean){
+        LogMessage.d(tag,"Mirror set $id $jid")
+        getTextureViewByTag(jid)?.setMirror(isMirror)
+    }
+
+    fun setRemoteTarget(userJid:String){
+        LogMessage.d(tag,"Remote set $id $userJid ${CallManager.getRemoteProxyVideoSink(userJid)} ${CallManager.isRemoteVideoMuted(userJid)}")
+        getTextureViewByTag(userJid)?.visibility=View.VISIBLE
+        getImageViewByTag(id)?.visibility=View.GONE
+        if(CallManager.getRemoteProxyVideoSink(userJid)!=null && !CallManager.isRemoteVideoPaused(userJid)) {
+            CallManager.getRemoteProxyVideoSink(userJid)?.setTarget(getTextureViewByTag(userJid))
+        }else{
+            LogMessage.d(tag,"video null $id $userJid ${CallManager.getRemoteProxyVideoSink(userJid)} ${CallManager.isRemoteVideoPaused(userJid)}")
+        }
+//        Logger.d("#FlutterCall","getRemoteTarget ${CallManager.getRemoteProxyVideoSink(userJid)?.getTarget()}")
+    }
+
+    fun setProfileView(userJid: String){
+        LogMessage.d(tag,"ProfileView set $id $userJid ${CallManager.isRemoteVideoMuted(userJid)}")
+        val profile = FlyCore.getUserProfile(userJid)
+        val name = if(!profile?.name.isNullOrEmpty()) profile?.name ?: "" else profile?.nickName ?: ""
+        val imageUrl = profile?.image ?: ""
+        getTextureViewByTag(userJid)?.visibility=View.GONE
+        getImageViewByTag(id)?.visibility=View.VISIBLE
+        LogMessage.d("imageUrl ",imageUrl)
+        Utils.loadGlideImage(mContext!!,getImageViewByTag(id)!!,name, imageUrl)
+    }
+
+    fun getArgs(): Any {
+        return creationParams
+    }
+
+    private fun getImageViewByTag(id: Int): CircleImageView? {
+        return view.findViewWithTag<CircleImageView>(id)
+    }
+    private fun getTextureViewByTag(id: Any): TextureViewRenderer? {
+        return view.findViewWithTag<TextureViewRenderer>(id)
+    }
+    fun setBackgroundColor(color: String){
+        LogMessage.d(tag,"initial setBackgroundColor set $id $color")
+        view.setBackgroundColor(Color.parseColor(color))
+    }
+
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        when (call.method.toString()){
+            "isLocal" ->{
+                LogMessage.d(tag,"isLocal set $id")
+                Logger.d("#FlutterCall","setLocalTarget")
+                setLocalTarget()
+                result.success(true)
+            }
+            "isRemote" ->{
+                LogMessage.d(tag,"isRemote set $id")
+                Logger.d("#FlutterCall","setRemoteTarget")
+                val userJid = call.argument<String>("user_jid") ?: ""
+                setRemoteTarget(userJid)
+                result.success(true)
+            }
+        }
+    }
+
+    fun setProfileViewSize(size: Int) {
+        val intrinsicSize = getIntrinsicSize(size,getImageViewByTag(id)!!.context);
+        LogMessage.d(tag,"setProfileViewSize $id $size $intrinsicSize")
+        val layoutParams = getImageViewByTag(id)?.layoutParams as (RelativeLayout.LayoutParams)
+        layoutParams.width = intrinsicSize
+        layoutParams.height = intrinsicSize
+        // Apply the updated layout parameters to the ImageView
+        getImageViewByTag(id)?.layoutParams = layoutParams
+    }
+
+    fun setProfileViewAlign(gravity: Int){
+        val layoutParams = getImageViewByTag(id)?.layoutParams as (RelativeLayout.LayoutParams)
+        if(gravity == Gravity.TOP) {
+            layoutParams.topMargin = getIntrinsicSize(70,mContext!!)
+            // Update the attributes
+            layoutParams.addRule(
+                RelativeLayout.ALIGN_PARENT_TOP,
+                RelativeLayout.TRUE
+            )
+            layoutParams.addRule(
+                RelativeLayout.CENTER_IN_PARENT,
+                RelativeLayout.TRUE
+            )
+        }else if(gravity == Gravity.CENTER){
+            // Update the attributes
+            layoutParams.addRule(
+                RelativeLayout.ALIGN_PARENT_TOP,
+                0
+            )
+            layoutParams.addRule(
+                RelativeLayout.CENTER_IN_PARENT,
+                RelativeLayout.TRUE
+            )
+        }else if(gravity == Gravity.BOTTOM){
+            // Update the attributes
+            layoutParams.addRule(
+                RelativeLayout.ALIGN_PARENT_BOTTOM,
+                RelativeLayout.TRUE
+            )
+            layoutParams.addRule(
+                RelativeLayout.CENTER_IN_PARENT,
+                RelativeLayout.TRUE
+            )
+        }
+        // Apply the updated layout parameters to the ImageView
+        getImageViewByTag(id)?.layoutParams = layoutParams
+
+    }
+
+    /**
+     * This method converts device specific pixels to density independent pixels.
+     *
+     * @param px A value in px (pixels) unit. Which we need to convert into db
+     * @param context Context to get resources and device specific display metrics
+     * @return A float value to represent dp equivalent to px value
+     */
+    fun convertPixelsToDp(px: Float, context: Context): Float {
+        return px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+    }
+    fun pxToDp(px: Int, context: Context): Int {
+        val displayMetrics: DisplayMetrics = context.getResources().getDisplayMetrics()
+        return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
+    }
+
+    fun dpToPx(dp: Int,context: Context): Int {
+        val displayMetrics: DisplayMetrics = context.getResources().getDisplayMetrics()
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
+    }
+
+    private fun getIntrinsicSize(dp: Int, context: Context): Int{
+        return  TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), context.resources.displayMetrics).toInt();
+    }
+
+    fun setProfileViewConfig(map: Map<String, Any>) {
+        val left = (map["left"] ?: 0) as Int
+        val top = (map["top"] ?: 0) as Int
+        val right =(map["right"] ?: 0) as Int
+        val bottom = (map["bottom"] ?: 0) as Int
+        val width = (map["width"] ?: 0) as Int
+        val height = (map["height"] ?: 0) as Int
+        if(width!=0 && height != 0) {
+            this.profileView.tag = id
+            val layoutParams = getImageViewByTag(id)?.layoutParams as (RelativeLayout.LayoutParams)
+            layoutParams.leftMargin = getIntrinsicSize(left, mContext!!)
+            layoutParams.topMargin = getIntrinsicSize(top, mContext!!)
+            layoutParams.rightMargin = getIntrinsicSize(right, mContext!!)
+            layoutParams.bottomMargin = getIntrinsicSize(bottom, mContext!!)
+            if (left == 0 && right == 0 && top == 0 && bottom == 0) {
+                layoutParams.addRule(
+                    RelativeLayout.CENTER_IN_PARENT,
+                    RelativeLayout.TRUE
+                )
+            } else {
+                if (left == 0 && right == 0 && top != 0) {
+                    layoutParams.addRule(
+                        RelativeLayout.ALIGN_PARENT_TOP,
+                        RelativeLayout.TRUE
+                    )
+                    layoutParams.addRule(
+                        RelativeLayout.CENTER_IN_PARENT,
+                        RelativeLayout.TRUE
+                    )
+                } else if (left == 0 && right == 0 && bottom != 0) {
+                    layoutParams.addRule(
+                        RelativeLayout.ALIGN_PARENT_BOTTOM,
+                        RelativeLayout.TRUE
+                    )
+                    layoutParams.addRule(
+                        RelativeLayout.CENTER_IN_PARENT,
+                        RelativeLayout.TRUE
+                    )
+                } else if (top == 0 && right != 0 && bottom == 0) {
+                    layoutParams.addRule(
+                        RelativeLayout.ALIGN_PARENT_RIGHT,
+                        RelativeLayout.TRUE
+                    )
+                    layoutParams.addRule(
+                        RelativeLayout.CENTER_IN_PARENT,
+                        RelativeLayout.TRUE
+                    )
+                } else if (top == 0 && left != 0 && bottom == 0) {
+                    layoutParams.addRule(
+                        RelativeLayout.ALIGN_PARENT_LEFT,
+                        RelativeLayout.TRUE
+                    )
+                    layoutParams.addRule(
+                        RelativeLayout.CENTER_IN_PARENT,
+                        RelativeLayout.TRUE
+                    )
+                }else{
+
+                }
+            }
+            val intrinsicWidth = getIntrinsicSize(width, getImageViewByTag(id)!!.context);
+            val intrinsicHeight = getIntrinsicSize(height, getImageViewByTag(id)!!.context);
+            layoutParams.width = intrinsicWidth
+            layoutParams.height = intrinsicHeight
+            LogMessage.d(
+                "setProfileViewConfig",
+                "left : $left, right : $right, top : $top, bottom : $bottom, width : $intrinsicWidth, height : $intrinsicHeight"
+            )
+            // Apply the updated layout parameters to the ImageView
+            getImageViewByTag(id)?.layoutParams = layoutParams
+            getImageViewByTag(id)?.visibility = View.VISIBLE
+        }
+    }
+}

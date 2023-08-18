@@ -14,25 +14,25 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  #s.dependency          = { :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'qa' }
-  #s.dependency 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'qa'
   s.platform = :ios, '12.1'
   s.requires_arc = true
 
   s.dependency 'libPhoneNumber-iOS'
   s.dependency 'Alamofire'
   s.dependency 'SocketRocket'
-  s.dependency 'Socket.IO-Client-Swift', '15.2.0'
+  s.dependency 'Socket.IO-Client-Swift', '~> 15.2.0'
   s.dependency 'XMPPFramework/Swift'
   s.dependency 'RealmSwift' , '10.20.1'
   s.dependency 'GoogleWebRTC'
-  s.dependency 'MirrorFlySDK', '5.9.9'
-  
-#  s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+  s.dependency 'MirrorFlySDK', '5.10.7'
+
+  #s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+
 
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
+  #s.pod_target_xcconfig = { 'VALID_ARCHS' => 'armv7 arm64 x86_64', 'IPHONEOS_DEPLOYMENT_TARGET' => '12.1',}
 #  s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 #s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 #s.user_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
