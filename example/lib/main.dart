@@ -6,7 +6,7 @@ Future<void> main() async {
   Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'your license key',
-      iOSContainerID: 'group.com.mirrorfly.qa');
+      iOSContainerID: 'your container id');//Must be same as AppGroups given in Xcode Capability
   runApp(const MyApp());
 }
 
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
@@ -37,8 +37,8 @@ class MyHomePage extends StatelessWidget {
 
     return Scaffold(
       body: Column(
-        children: [
-          Text('A random idea:'),
+        children: const [
+          Text('Welcome to Mirrorfly'),
         ],
       ),
     );
