@@ -6,7 +6,6 @@ Future<void> main() async {
   Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'your license key',
-      chatHistoryEnable: true,
       iOSContainerID: 'your container id');//Must be same as AppGroups given in Xcode Capability
   runApp(const MyApp());
 }

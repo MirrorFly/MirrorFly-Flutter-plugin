@@ -61,7 +61,7 @@ object Constants {
     //call Method channel constants
     private const val domain = "contus.mirrorfly"
     const val callMethodChannel = "$domain/flyCall"
-    const val onCallReceiving = "$domain/onCallReceiving"
+//    const val onCallReceiving = "$domain/onCallReceiving"
     const val onLocalVideoTrackAdded = "$domain/onLocalVideoTrackAdded"
     const val onRemoteVideoTrackAdded = "$domain/onRemoteVideoTrackAdded"
     const val onTrackAdded = "$domain/onTrackAdded"

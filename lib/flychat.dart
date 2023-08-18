@@ -22,7 +22,7 @@ class Mirrorfly {
       String? storageFolderName,
       bool enableMobileNumberLogin = true,
       bool isTrialLicenceKey = true,
-      bool? chatHistoryEnable,
+      bool chatHistoryEnable = false,
       // int? maximumRecentChatPin,
       // GroupConfig? groupConfig,
       // String? ivKey,
@@ -577,8 +577,8 @@ class Mirrorfly {
   static Stream<dynamic> get onSuccess =>
       FlyChatFlutterPlatform.instance.onSuccess;
 
-  static Stream<dynamic> get onCallReceiving =>
-      FlyChatFlutterPlatform.instance.onCallReceiving;
+  // static Stream<dynamic> get onCallReceiving =>
+  //     FlyChatFlutterPlatform.instance.onCallReceiving;
 
   static Stream<dynamic> get onLocalVideoTrackAdded =>
       FlyChatFlutterPlatform.instance.onLocalVideoTrackAdded;

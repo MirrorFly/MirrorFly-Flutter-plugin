@@ -12,7 +12,7 @@ import Flutter
 
 class FlyEventChannelInitializer {
     static let eventChannels: [(channelName: String, streamHandler: NSObjectProtocol & FlutterStreamHandler)] = [
-        (channelName: Constants.onCallReceiving, streamHandler: OnCallReceivingStreamHandler()),
+//         (channelName: Constants.onCallReceiving, streamHandler: OnCallReceivingStreamHandler()),
         (channelName: Constants.onLocalVideoTrackAddedChannel, streamHandler: OnLocalVideoTrackAddedStreamHandler()),
         (channelName: Constants.onRemoteVideoTrackAddedChannel, streamHandler: OnRemoteVideoTrackAddedStreamHandler()),
         (channelName: Constants.onTrackAddedChannel, streamHandler: OnTrackAddedStreamHandler()),

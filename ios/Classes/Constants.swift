@@ -10,7 +10,7 @@ import Foundation
 struct Constants {
     private static let domain = "contus.mirrorfly"
     static let callMethodChannel = "\(domain)/flyCall"
-    static let onCallReceiving = "\(domain)/onCallReceiving"
+//     static let onCallReceiving = "\(domain)/onCallReceiving"
     static let onLocalVideoTrackAddedChannel = "\(domain)/onLocalVideoTrackAdded"
     static let onRemoteVideoTrackAddedChannel = "\(domain)/onRemoteVideoTrackAdded"
     static let onTrackAddedChannel = "\(domain)/onTrackAdded"
