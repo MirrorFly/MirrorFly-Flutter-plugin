@@ -919,7 +919,9 @@ import UIKit
         let image = args["image"] as? String ?? nil
         let userJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
         
-        
+        if (nickName.isEmpty && mobile.isEmpty && email.isEmpty) {
+            result(FlutterError(code: "400", message: "Fill All details", details: nil))
+        }
         var myProfile = FlyProfile(jid: userJid)
         
         myProfile.email = email
@@ -939,7 +941,6 @@ import UIKit
             print("Image is null else condition")
 //            isImagePicked = false
         }
-        
         
         ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
             if isSuccess {
@@ -1083,6 +1084,8 @@ import UIKit
                     print("Failed to save the file.")
                     
                 }
+            }else{
+                result(FlutterError(code: "400", message: "Image not available to update profile", details: nil))
             }
             
         } catch {

@@ -2481,7 +2481,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     return
                 }
             } else {
-                result.error("400", "Image File Null", null)
+                result.error("400", "Image not available to update profile", null)
                 return
             }
         } else {
