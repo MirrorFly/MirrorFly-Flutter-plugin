@@ -1,4 +1,4 @@
-## [0.1.0] Code Optimization
+## [0.0.10] Code Optimization
 * Minified Enabled True Support Added
 * Release Build Bug Fix
 * Profile Update Supports External URL
