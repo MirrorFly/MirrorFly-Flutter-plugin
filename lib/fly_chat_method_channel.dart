@@ -207,11 +207,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
   final StreamController<dynamic> onSuccessStreamController = StreamController<dynamic>.broadcast();
 
-  //Need to add stream controller here
-  @visibleForTesting
-  final onCallReceivingChannel = const EventChannel('contus.mirrorfly/onCallReceiving');
-  final StreamController<dynamic> onCallReceivingStreamController = StreamController<dynamic>.broadcast();
-
   @visibleForTesting
   final onLocalVideoTrackAddedChannel = const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
   final StreamController<dynamic> onLocalVideoTrackAddedStreamController = StreamController<dynamic>.broadcast();
@@ -311,7 +306,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     onFailureStreamController.addStream(onFailureChannel.receiveBroadcastStream());
     onProgressChangedStreamController.addStream(onProgressChangedChannel.receiveBroadcastStream());
     onSuccessStreamController.addStream(onSuccessChannel.receiveBroadcastStream());
-    onCallReceivingStreamController.addStream(onCallReceivingChannel.receiveBroadcastStream());
     onLocalVideoTrackAddedStreamController.addStream(onLocalVideoTrackAddedChannel.receiveBroadcastStream());
     onRemoteVideoTrackAddedStreamController.addStream(onRemoteVideoTrackAddedChannel.receiveBroadcastStream());
     onTrackAddedStreamController.addStream(onTrackAddedChannel.receiveBroadcastStream());
@@ -1913,10 +1907,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onSuccess =>
       onSuccessStreamController.stream;
-
-  @override
-  Stream<dynamic> get onCallReceiving =>
-      onCallReceivingStreamController.stream;
 
   @override
   Stream<dynamic> get onLocalVideoTrackAdded =>
@@ -4043,6 +4033,22 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
-  
+
+  @override
+  Future<String?> openAudioFilePicker() async {
+    String? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('openAudioFilePicker');
+      LogMessage.d('openAudioFilePicker', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
   
 }

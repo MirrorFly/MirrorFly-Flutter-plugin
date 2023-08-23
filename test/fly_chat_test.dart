@@ -1291,11 +1291,6 @@ class MockFlyChatFlutterPlatform
   // implement usersProfilesFetched
   Stream get usersProfilesFetched => throw UnimplementedError();
 
-
-  @override
-  // implement onCallReceiving
-  Stream get onCallReceiving => throw UnimplementedError();
-
   @override
   // implement onLocalVideoTrackAdded
   Stream get onLocalVideoTrackAdded => throw UnimplementedError();
@@ -1450,6 +1445,12 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<bool?> isUserVideoMuted([String? userJid]) {
+    // implement isUserVideoMuted
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> openAudioFilePicker() {
     // implement isUserVideoMuted
     throw UnimplementedError();
   }

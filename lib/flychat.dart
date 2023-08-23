@@ -577,8 +577,6 @@ class Mirrorfly {
   static Stream<dynamic> get onSuccess =>
       FlyChatFlutterPlatform.instance.onSuccess;
 
-  static Stream<dynamic> get onCallReceiving =>
-      FlyChatFlutterPlatform.instance.onCallReceiving;
 
   static Stream<dynamic> get onLocalVideoTrackAdded =>
       FlyChatFlutterPlatform.instance.onLocalVideoTrackAdded;
@@ -1182,6 +1180,11 @@ class Mirrorfly {
   ///if you not mentioned userJid then current user video mute status will be returned
   static Future<bool?> isUserVideoMuted([String? userJid]) async {
     return FlyChatFlutterPlatform.instance.isUserVideoMuted(userJid);
+  }
+  ///Used as a [openAudioPicker] class for [Mirrorfly]
+  ///used to get Audio File in Platform Android Only
+  static Future<String?> openAudioFilePicker() async {
+    return FlyChatFlutterPlatform.instance.openAudioFilePicker();
   }
 
 }
