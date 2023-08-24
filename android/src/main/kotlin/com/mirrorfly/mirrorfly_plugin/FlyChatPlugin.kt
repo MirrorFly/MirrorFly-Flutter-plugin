@@ -2356,7 +2356,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val messageId: String = call.argument("messageId") ?: ""
         val messageTime: String = call.argument("messageTime") ?: ""
         val inclusive: Boolean = call.argument("exclude") ?: false
-        val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: true
+        val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: false
         val limit: Int = call.argument("limit") ?: 50
         if(ContactManager.isValidJid(chatJid)) {
             val messageListParams = FetchMessageListParams()
