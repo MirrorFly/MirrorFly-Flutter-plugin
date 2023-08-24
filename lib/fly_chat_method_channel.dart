@@ -2039,7 +2039,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       String? chatId,
       double? messageTime,
       bool? exclude,
-      int limit = 25}) async {
+      int limit = 25,
+      bool ascendingOrder = true}) async {
     bool initializeResponse;
     try {
       initializeResponse =
@@ -2049,7 +2050,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "messageTime": messageTime,
         "exclude": exclude,
         "limit": limit,
-        "ascendingOrder": true
+        "ascendingOrder": ascendingOrder
       });
       LogMessage.d("initializeMessageList", "$initializeResponse");
       return initializeResponse;
@@ -4043,6 +4044,22 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
-  
+
+  @override
+  Future<String?> openAudioFilePicker() async {
+    String? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('openAudioFilePicker');
+      LogMessage.d('openAudioFilePicker', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
   
 }

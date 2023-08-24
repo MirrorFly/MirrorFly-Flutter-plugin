@@ -25,7 +25,7 @@ struct Constants {
     static let voipToken = "voipToken"
     static let isLoggedIn = "isLoggedIn"
     static let isProfileSaved = "isProfileSaved"
-    static let tag = "#MirrorFlyCall"
+    static let tag = "#MirrorFly"
     
     static let licenseKey = "licenseKey"
     static let containerID = "containerID"

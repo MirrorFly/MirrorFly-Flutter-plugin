@@ -32,7 +32,7 @@ import PushKit
         }
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(FlyDefaults.myJid, forKey: "userJid")
+        jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
         jsonObject.setValue("AUDIO_DEVICE_CHANGED", forKey: "callAction")
         let callUpdate = pluginDictToJson(dictionary: jsonObject)
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
@@ -92,10 +92,10 @@ import PushKit
     
     func getDisplayName(IncomingUser: [String]) {
         var userString = [String]()
-        if FlyDefaults.hideNotificationContent{
-            userString.append(FlyDefaults.appName)
+        if isHideNotificationContent{
+            userString.append(APP_NAME)
         }else{
-            for JID in IncomingUser where JID != FlyDefaults.myJid{
+            for JID in IncomingUser where JID != AppUtils.getMyJid(){
                 print("#jid \(JID)")
                 if let contact = ChatManager.getContact(jid: JID.lowercased()){
                     let contactSync = Utility.getBoolFromPreference(key: Constants.contactSyncEnable)
@@ -157,9 +157,9 @@ import PushKit
         let muteStatus = args["muteVideo"] as? Bool ?? false
         CallManager.muteVideo(muteStatus)
         
-        if let mirrorFlyViewId = factory?.getUniqueID(forString: FlyDefaults.myJid) {
+        if let mirrorFlyViewId = factory?.getUniqueID(forString: AppUtils.getMyJid()) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: FlyDefaults.myJid, updateType: muteStatus ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+                mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
             } else {
                 print("\(Constants.tag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
             }
@@ -282,7 +282,7 @@ import PushKit
         print("\(Constants.tag) onlocal video Track --> \(userId) ---> \(videoTrack)")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(FlyDefaults.myJid, forKey: "userJid")
+        jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
         let jidJson = pluginDictToJson(dictionary: jsonObject)
         
 //        if let mirrorflyView = MirrorflyViewFactory.mirrorflyViews[viewId] {

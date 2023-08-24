@@ -22,7 +22,7 @@ class Mirrorfly {
       String? storageFolderName,
       bool enableMobileNumberLogin = true,
       bool isTrialLicenceKey = true,
-      bool chatHistoryEnable = false,
+      bool chatHistoryEnable = true,
       // int? maximumRecentChatPin,
       // GroupConfig? groupConfig,
       // String? ivKey,
@@ -645,12 +645,14 @@ class Mirrorfly {
       String? messageId,
       double? messageTime,
       bool exclude = true,
+      bool ascendingOrder = true,
       int limit = 25}) {
     return FlyChatFlutterPlatform.instance.initializeMessageList(
         userJid: userJid,
         messageId: messageId,
         messageTime: messageTime,
         exclude: exclude,
+        ascendingOrder: ascendingOrder,
         limit: limit);
   }
 
@@ -1182,6 +1184,11 @@ class Mirrorfly {
   ///if you not mentioned userJid then current user video mute status will be returned
   static Future<bool?> isUserVideoMuted([String? userJid]) async {
     return FlyChatFlutterPlatform.instance.isUserVideoMuted(userJid);
+  }
+  ///Used as a [openAudioPicker] class for [Mirrorfly]
+  ///used to get Audio File in Platform Android Only
+  static Future<String?> openAudioFilePicker() async {
+    return FlyChatFlutterPlatform.instance.openAudioFilePicker();
   }
 
 }
