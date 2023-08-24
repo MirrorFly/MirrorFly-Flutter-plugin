@@ -1453,6 +1453,12 @@ class MockFlyChatFlutterPlatform
     // implement isUserVideoMuted
     throw UnimplementedError();
   }
+
+  @override
+  Future<String?> openAudioFilePicker() {
+    // implement isUserVideoMuted
+    throw UnimplementedError();
+  }
 }
 
 void main() {

@@ -14,6 +14,7 @@ import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.*
 import android.provider.ContactsContract
+import android.provider.MediaStore
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import android.widget.Toast
@@ -46,7 +47,6 @@ import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
-import com.mirrorflysdk.flycommons.models.MediaData
 import com.mirrorflysdk.flycommons.models.MessageType
 import com.mirrorflysdk.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.mirrorflysdk.media.MediaUploadHelper
@@ -64,6 +64,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import io.flutter.plugin.common.PluginRegistry.Registrar
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
@@ -73,13 +74,15 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.lang.ref.WeakReference
+import java.util.*
 
 
 /** FlyChatPlugin */
 class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
     TypingEventListener, TypingStatusListener, ActivityAware, DefaultLifecycleObserver,
-    PluginRegistry.NewIntentListener{
+    PluginRegistry.NewIntentListener,PluginRegistry.ActivityResultListener{
+
     companion object{
         @SuppressLint("StaticFieldLeak")
         private lateinit var instance: FlyChatPlugin
@@ -348,9 +351,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     /// when the Flutter Engine is detached from the Activity
 //    private lateinit var channel: MethodChannel
     private lateinit var mContext: Context
+    private var FROM_GALLERY = 2
     private lateinit var factory : MirrorflyViewFactory
     private lateinit var lifecycle : Lifecycle
+
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        Log.d("FlyChat","onAttachedToEngine")
         sharePluginWithRegister(flutterPluginBinding)
     }
 
@@ -716,12 +722,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 val usersWithMessage: Map<String, List<ChatMessage>> =
                     FlyMessenger.getNUnreadMessagesOfEachUsers(messagescount)
                 result.success(usersWithMessage.toJsonString())
-            }
-            call.method.equals("getRoster") -> {
-                ContactManager.getRoster()
-            }
-            call.method.equals("setTypingStatusListener") -> {
-                ChatManager.setTypingStatusListener(this)
             }
             call.method.equals("getUnreadMessageCountExceptMutedChat") -> {
                 result.success(FlyMessenger.getUnreadMessageCountExceptMutedChat())
@@ -1142,6 +1142,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
             call.method.equals("getManifestValue") -> {
                 getManifestValue(call,result)
+            }
+            call.method.equals("openAudioFilePicker") -> {
+                selectAudioFileFromStorage(result)
             }
             else -> {
                 result.notImplemented()
@@ -2364,7 +2367,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (messageId.isNotEmpty()) messageListParams.messageId = messageId
             if (messageTime.isNotEmpty()) messageListParams.messageTime = messageTime
             messageListParams.inclusive = !inclusive// for iOS using exclude , so we using NOT to match the Android and iOS
-            messageListParams.ascendingOrder = ascendingOrder
+            messageListParams.ascendingOrder = false
             messageListParams.limit = limit
 //            messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
 //            messageListParams.direction = "backward" // forward or backward
@@ -3426,52 +3429,62 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Notification")
         if (customToneUri != "None")
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, existingCustomTone)
-        (mContext as Activity).startActivityForResult(intent, com.mirrorflysdk.flycommons.Constants.ACTIVITY_REQ_CODE)
+        mainActivity?.startActivityForResult(intent, com.mirrorflysdk.flycommons.Constants.ACTIVITY_REQ_CODE)
         /* setting isActivityStartedForResult to true to avoid xmpp disconnection */
         ChatManager.isActivityStartedForResult = true
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        /* setting isActivityStartedForResult to false for xmpp disconnection */
-        LogMessage.d("Android Notification", "onActivty Result")
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) : Boolean{
+        *//* setting isActivityStartedForResult to false for xmpp disconnection *//*
+        Log.d("onActivityResult", "onActivity Result")
         ChatManager.isActivityStartedForResult = false
-        try {
-            if (resultCode == Activity.RESULT_OK && requestCode == com.mirrorflysdk.flycommons.Constants.ACTIVITY_REQ_CODE &&
-                data?.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) != null
-            ) {
+        //try {
+            if(resultCode == Activity.RESULT_OK && requestCode == Constants.FROM_GALLERY) {
+                data?.let { handleAudioVideoIntentFromGalleryMenu(data) }
+            }else if(resultCode == Activity.RESULT_CANCELED && requestCode == Constants.FROM_GALLERY){
+                audioFileResult?.error("500","audio file picker cancelled","")
+            }else {
+                if (resultCode == Activity.RESULT_OK && requestCode == com.mirrorflysdk.flycommons.Constants.ACTIVITY_REQ_CODE &&
+                    data?.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) != null
+                ) {
 
 
-                val selectedToneUri =
-                    (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
-                        .toString())
-                LogMessage.d("Android Notification", selectedToneUri)
-                //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, data.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString())
-                //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
-                setNotificationUri(selectedToneUri)
-                ringToneResult.success(selectedToneUri)
+                    val selectedToneUri =
+                        (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                            .toString())
+                    LogMessage.d("Android Notification", selectedToneUri)
+                    //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, data.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString())
+                    //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
+                    setNotificationUri(selectedToneUri)
+                    ringToneResult.success(selectedToneUri)
+                    return true
+                }
 
+                if (data == null) {
+                    LogMessage.d("Android Notification", "data is null")
+                    setNotificationUri(existingCustomTone)
+                    ringToneResult.success(existingCustomTone)
+
+                    //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI))
+                    //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
+                    return false
+                } else if (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) == null) {
+                    LogMessage.d("Android Notification", "ringtone is null")
+                    setNotificationUri(null)
+                    ringToneResult.success("None")
+
+                    //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, "None")
+                    //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
+                    return true
+                }
             }
+            return false
+//        } catch (exception: Exception) {
+//            LogMessage.e(exception)
+//            return false
+//        }
 
-            if (data == null) {
-                LogMessage.d("Android Notification", "data is null")
-                setNotificationUri(existingCustomTone)
-                ringToneResult.success(existingCustomTone)
-
-                //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI))
-                //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
-            } else if (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) == null) {
-                LogMessage.d("Android Notification", "ringtone is null")
-                setNotificationUri(null)
-                ringToneResult.success("None")
-
-                //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, "None")
-                //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
-            }
-        } catch (exception: Exception) {
-            LogMessage.e(exception)
-        }
-
-    }
+    }*/
 
 
     private fun getRingtoneName(): String {
@@ -3875,9 +3888,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        Log.d("FlyChat", "onAttachedToActivity ${binding.activity.localClassName}")
-        mainActivity = binding.activity
-        val mainActivityIntent = mainActivity!!.intent
+        instance.activityBinding = binding
+        instance.mainActivity = binding.activity
+        binding.addActivityResultListener(this)
+        Log.d("FlyChat", "onAttachedToActivity ${instance.mainActivity}")
+        val mainActivityIntent = binding.activity.intent
         if (!launchedActivityFromHistory(mainActivityIntent)) {
             /*if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.action)) {
                 val notificationResponse: Map<String, Any> =
@@ -3894,8 +3909,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             ChatEventsManager.attachLoginEventsListener(this)
             ChatEventsManager.attachTypingEventListener(this)
         }
-        lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
-        lifecycle.addObserver(this)
+        instance.lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
+        instance.lifecycle.addObserver(this)
     }
 
     override fun onStart(owner: LifecycleOwner) {
@@ -3917,18 +3932,19 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        this.mainActivity = null;
+        instance.mainActivity = null;
         Log.d("FlyChat", "onDetachedFromActivityForConfigChanges")
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        mainActivity = binding.activity;
+        instance.mainActivity = binding.activity;
+        binding.addActivityResultListener(this)
         binding.addOnNewIntentListener(this);
         Log.d("FlyChat", "onReattachedToActivityForConfigChanges")
     }
 
     override fun onDetachedFromActivity() {
-        this.mainActivity = null;
+        instance.mainActivity = null;
         Log.d("FlyChat", "onDetachedFromActivity")
         ChatEventsManager.detachProfileEventsListener(this)
         ChatEventsManager.detachGroupEventsListener(this)
@@ -3948,11 +3964,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone)
 
         // Launch the Contacts app with the pre-filled contact form
-        (mContext as Activity).startActivity(intent)
+        mainActivity?.startActivity(intent)
     }
     private var mainActivity: Activity? = null
     private fun setActivity(flutterActivity: Activity) {
-        this.mainActivity = flutterActivity
+        instance.mainActivity = flutterActivity
     }
 
     private fun launchedActivityFromHistory(intent: Intent?): Boolean {
@@ -4054,6 +4070,119 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             channel.invokeMethod("didReceiveNotificationResponse", notificationResponse)
             return true
         }*/
+        return false
+    }
+
+//    var isFileChooser = false
+    var audioFileResult : MethodChannel.Result? = null
+    private var activityBinding: ActivityPluginBinding? = null
+    private fun selectAudioFileFromStorage(result: MethodChannel.Result) {
+        Log.d("FlyChat","selectAudioFileFromStorage ${instance.mainActivity}")
+//        isFileChooser = true
+        instance.audioFileResult = result
+        val manufacturer = Build.MANUFACTURER.toUpperCase(Locale.getDefault())
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
+        val audioListIntent = Intent(Intent.ACTION_GET_CONTENT)
+        audioListIntent.type = Constants.AUDIO_FILE
+        val audioPickerApps: List<ResolveInfo> = mContext.packageManager.queryIntentActivities(audioListIntent, 0)
+        when {
+            manufacturer.contains("HMD GLOBAL") ->{
+                openCustomOSAudioSelection()
+            }
+            manufacturer.contains("VIVO") -> {
+                openCustomOSAudioSelection()
+            }
+            manufacturer.contains("REALME") -> {
+                openCustomOSAudioSelection()
+            }
+            manufacturer.contains("SAMSUNG") -> {
+                val intent2 = Intent("com.sec.android.app.myfiles.PICK_DATA")
+                intent2.putExtra("CONTENT_TYPE", audioListIntent.type)
+                intent2.addCategory(Intent.CATEGORY_DEFAULT)
+                mainActivity?.startActivityForResult(intent2, Constants.FROM_GALLERY)
+                /* setting isActivityStartedForResult to true to avoid xmpp disconnection*/
+                ChatManager.isActivityStartedForResult = true
+            }
+            intent.resolveActivity(mContext.packageManager) != null -> {
+                mainActivity?.startActivityForResult(intent, Constants.FROM_GALLERY)
+                /* setting isActivityStartedForResult to true to avoid xmpp disconnection*/
+                ChatManager.isActivityStartedForResult = true
+            }
+            audioPickerApps.isNotEmpty() -> {
+                try {
+                    val audioIntent = Intent(Intent.ACTION_GET_CONTENT)
+                    audioIntent.setDataAndType(
+                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        Constants.AUDIO_FILE
+                    )
+                    mainActivity?.startActivityForResult(audioIntent, Constants.FROM_GALLERY)
+                } catch(e:Exception) {
+                    instance.audioFileResult?.error("500",e.message,e)
+                    LogMessage.e(TAG,e.stackTraceToString())
+                } catch(e:SecurityException) {
+                    instance.audioFileResult?.error("500",e.message,e)
+                    LogMessage.e(TAG,e.stackTraceToString())
+                }
+
+            }
+            else -> noAudioFound()
+        }
+    }
+    private fun noAudioFound(){
+//        isFileChooser = false
+        instance.audioFileResult?.error("500","No suitable app found!","")
+//        showToast("No suitable app found!")
+    }
+    private fun openCustomOSAudioSelection() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = Constants.AUDIO_FILE
+        if (intent.resolveActivity(mContext.packageManager) != null) {
+            mainActivity?.startActivityForResult(intent, Constants.FROM_GALLERY)
+            /* setting isActivityStartedForResult to true to avoid xmpp disconnection*/
+            ChatManager.isActivityStartedForResult = true
+        }
+    }
+
+    private fun handleAudioVideoIntentFromGalleryMenu(resultCode: Int,intent: Intent?) {
+        if(resultCode == Activity.RESULT_CANCELED){
+            instance.audioFileResult?.error("500","picker cancelled by user","")
+            instance.audioFileResult = null
+            return
+        }
+        val uri = intent?.data
+        if (uri != null) {
+            val uriOfSelectedFile = intent.data!!
+            val mimeType = instance.mainActivity?.applicationContext?.contentResolver?.getType(uriOfSelectedFile)
+            val pathOfSelectedFile = RealPathUtil.getRealPath(instance.mainActivity?.applicationContext!!, uriOfSelectedFile)
+            if(pathOfSelectedFile !=null) {
+                if (mimeType == null || mimeType.startsWith(com.mirrorflysdk.flycommons.Constants.MSG_TYPE_AUDIO)) {
+//                isFileChooser = true
+                    instance.audioFileResult?.success(pathOfSelectedFile)
+                    instance.audioFileResult = null
+                } else {
+                    instance.audioFileResult?.error("500", "mime type not found", "")
+                    instance.audioFileResult = null
+                }
+            }else{
+                instance.audioFileResult?.error("500", "file path null", "")
+                instance.audioFileResult = null
+            }
+        }else{
+            instance.audioFileResult?.error("500","file uri not found","")
+            instance.audioFileResult = null
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        Log.d("onActivityResult", data.toString())
+        Log.d("onActivityResult", "mainActivity ${instance.mainActivity}")
+//        setting isActivityStartedForResult to false for xmpp disconnection
+        ChatManager.isActivityStartedForResult = false
+        when (requestCode) {
+            Constants.FROM_GALLERY -> {
+                handleAudioVideoIntentFromGalleryMenu(resultCode,data)
+            }
+        }
         return false
     }
 

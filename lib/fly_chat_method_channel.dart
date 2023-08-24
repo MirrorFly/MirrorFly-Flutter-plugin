@@ -4043,6 +4043,22 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
-  
+
+  @override
+  Future<String?> openAudioFilePicker() async {
+    String? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('openAudioFilePicker');
+      LogMessage.d('openAudioFilePicker', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception ="," $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
   
 }

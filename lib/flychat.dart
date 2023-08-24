@@ -1183,5 +1183,10 @@ class Mirrorfly {
   static Future<bool?> isUserVideoMuted([String? userJid]) async {
     return FlyChatFlutterPlatform.instance.isUserVideoMuted(userJid);
   }
+  ///Used as a [openAudioPicker] class for [Mirrorfly]
+  ///used to get Audio File in Platform Android Only
+  static Future<String?> openAudioFilePicker() async {
+    return FlyChatFlutterPlatform.instance.openAudioFilePicker();
+  }
 
 }
