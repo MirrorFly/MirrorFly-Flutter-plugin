@@ -2359,7 +2359,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val messageId: String = call.argument("messageId") ?: ""
         val messageTime: String = call.argument("messageTime") ?: ""
         val inclusive: Boolean = call.argument("exclude") ?: false
-        val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: false
+        val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: true
         val limit: Int = call.argument("limit") ?: 50
         if(ContactManager.isValidJid(chatJid)) {
             val messageListParams = FetchMessageListParams()
@@ -2367,7 +2367,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (messageId.isNotEmpty()) messageListParams.messageId = messageId
             if (messageTime.isNotEmpty()) messageListParams.messageTime = messageTime
             messageListParams.inclusive = !inclusive// for iOS using exclude , so we using NOT to match the Android and iOS
-            messageListParams.ascendingOrder = false
+            messageListParams.ascendingOrder = ascendingOrder
             messageListParams.limit = limit
 //            messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
 //            messageListParams.direction = "backward" // forward or backward

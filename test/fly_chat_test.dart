@@ -1389,7 +1389,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future initializeMessageList({required String userJid, String? messageId, double? messageTime, bool? exclude, int limit = 25}) {
+  Future initializeMessageList({required String userJid, String? messageId, double? messageTime, bool? exclude,bool ascendingOrder = true, int limit = 25}) {
     // implement initializeMessageList
     throw UnimplementedError();
   }

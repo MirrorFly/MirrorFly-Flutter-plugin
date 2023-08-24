@@ -586,7 +586,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     String? messageId,
     double? messageTime,
     bool? exclude,
-    int limit = 25}) {
+    int limit = 25,
+    bool ascendingOrder = true}) {
     throw UnimplementedError('initializeMessageList has not been implemented.');
   }
 

@@ -1816,10 +1816,12 @@ import UIKit
         let limit = args["limit"] as? Int ?? 50
         messageListParams.limit = limit
     
-        if let ascendingOrder = args["ascendingOrder"] as? Bool {
-            print("Ascending order value \(ascendingOrder)")
-            messageListParams.ascendingOrder = ascendingOrder
-        }
+        let ascendingOrder = args["ascendingOrder"] as? Bool ?? true
+        
+        print("Ascending order value \(ascendingOrder)")
+        
+        messageListParams.ascendingOrder = ascendingOrder
+        
 
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
 
@@ -2510,6 +2512,15 @@ import UIKit
     static func handleReceivedMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         NSLog("#Mirrorfly handleReceivedMessage")
+        
+    }
+    static func getUnreadMessageCountExceptMutedChat(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let (messageCount, chatCount) = ChatManager.getUnreadMessageAndChatCountForUnmutedUsers()
+        
+        print("chatCount \(chatCount)")
+        
+        result(messageCount)
         
     }
 

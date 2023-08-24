@@ -799,6 +799,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.handleReceivedMessage(call:methodCall, result: result)
         case "updateFcmToken":
             FlySdkMethodCalls.updateFcmToken(call:methodCall, result: result)
+        case "getUnreadMessageCountExceptMutedChat":
+            FlySdkMethodCalls.getUnreadMessageCountExceptMutedChat(call:methodCall, result: result)
 
         default:
             result(FlutterMethodNotImplemented)

@@ -645,12 +645,14 @@ class Mirrorfly {
       String? messageId,
       double? messageTime,
       bool exclude = true,
+      bool ascendingOrder = true,
       int limit = 25}) {
     return FlyChatFlutterPlatform.instance.initializeMessageList(
         userJid: userJid,
         messageId: messageId,
         messageTime: messageTime,
         exclude: exclude,
+        ascendingOrder: ascendingOrder,
         limit: limit);
   }
 
