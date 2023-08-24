@@ -9,18 +9,12 @@ import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
-import com.mirrorflysdk.flycall.webrtc.AudioDevice
-import com.mirrorflysdk.flycall.webrtc.CallAction
-import com.mirrorflysdk.flycall.webrtc.CallAudioManager
-import com.mirrorflysdk.flycall.webrtc.CallDirection
-import com.mirrorflysdk.flycall.webrtc.CallStatus
-import com.mirrorflysdk.flycall.webrtc.CallType
-import com.mirrorflysdk.flycall.webrtc.Logger
-import com.mirrorflysdk.flycall.webrtc.MuteEvent
+import com.mirrorflysdk.flycall.webrtc.*
 import com.mirrorflysdk.flycall.webrtc.api.CallEventsListener
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycall.webrtc.api.CallUiListener
 import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.media.MediaUploadDownloadManager.handler
 import io.flutter.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -358,10 +352,20 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 }
             }
             CallAction.ACTION_ANSWER_CALL->{
-                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ) {
+                LogMessage.d(tag, "#onShowCallUi ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.R}")
+                val json = JSONObject()
+                json.put("callStatus","Attended")
+                json.put("userJid",CallManager.getCurrentUserId())
+                json.put("callType",CallManager.getCallType())
+                json.put("callMode",CallManager.getCallMode())
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R ) {
                     val y = AppUtils.getAppIntent(context)
+                    y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(y)
-                }*/
+                    handler.post(
+                        Runnable { onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString()) })
+
+                }
             }
             /*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
