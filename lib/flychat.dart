@@ -22,7 +22,7 @@ class Mirrorfly {
       String? storageFolderName,
       bool enableMobileNumberLogin = true,
       bool isTrialLicenceKey = true,
-      bool chatHistoryEnable = false,
+      bool chatHistoryEnable = true,
       // int? maximumRecentChatPin,
       // GroupConfig? groupConfig,
       // String? ivKey,

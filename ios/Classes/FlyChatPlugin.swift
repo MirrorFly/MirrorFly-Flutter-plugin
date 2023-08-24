@@ -7,6 +7,8 @@ import UIKit
 import MirrorFlySDK
 
 
+let APP_NAME = "MirrorFly Flutter"
+let isHideNotificationContent = false
 
 let mirrorflyMethodChannel = "contus.mirrorfly/flyChat"
 
@@ -1369,15 +1371,21 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         }
     }
     
+    public func invalidJidLogout(){
+        print("\(Constants.tag) Invalid JID Logout")
+        if(onLoggedOutStreamHandler?.onLoggedOut != nil){
+            onLoggedOutStreamHandler?.onLoggedOut?(true)
+        }else{
+            print("logout Stream Handler is Nil")
+        }
+    }
+    
     public func onConnected() {
         if(onConnectedStreamHandler?.onConnected != nil){
             onConnectedStreamHandler?.onConnected?(true)
         }else{
             print("onConnected Stream Handler is Nil")
         }
-//        DispatchQueue.main.asyncAfter(deadline: .now()+2) {
-//            try! CallManager.initCallSDK()
-//        }
     }
     
     public func onDisconnected() {
