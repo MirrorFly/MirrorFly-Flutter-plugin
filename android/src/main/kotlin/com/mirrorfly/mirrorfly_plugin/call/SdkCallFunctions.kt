@@ -187,17 +187,21 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     fun muteVideo(call: MethodCall, result: MethodChannel.Result) {
         LogMessage.d(tag,"muteVideo")
         val muteVideo = call.argument<Boolean>("muteVideo") ?: false
-        CallManager.muteVideo(muteVideo)
-        if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null) {
-            if (muteVideo) {
-                MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
-                    ?.setProfileView(CallManager.getCurrentUserId())
-            } else {
-                MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
-                    ?.setLocalTarget()
+        CallManager.muteVideo(muteVideo,object : CallActionListener{
+            override fun onResponse(isSuccess: Boolean, message: String) {
+                if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null && isSuccess) {
+                    if (muteVideo) {
+                        MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
+                            ?.setProfileView(CallManager.getCurrentUserId())
+                    } else {
+                        MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
+                            ?.setLocalTarget()
+                    }
+                }
+                result.success(isSuccess)
             }
-        }
-        result.success(true)
+
+        })
     }
 
     fun makeGroupVoiceCall(call: MethodCall,result: MethodChannel.Result){

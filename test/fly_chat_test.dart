@@ -23,9 +23,9 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @Deprecated('Instead of use refreshAndGetAuthToken')
   @override
   Future<String?> authToken() {
-    
     throw UnimplementedError();
   }
 
@@ -558,7 +558,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future handleReceivedMessage(Map notificationdata) {
+  Future handleReceivedMessage(Map notificationData) {
     // handleReceivedMessage
     throw UnimplementedError();
   }
@@ -842,13 +842,13 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<bool?> refreshAndGetAuthToken() {
+  Future<String?> refreshAndGetAuthToken() {
     // refreshAndGetAuthToken
     throw UnimplementedError();
   }
 
   @override
-  Future registerUser(String userIdentifier, {String token = ""}) {
+  Future registerUser(String userIdentifier, {String fcmToken = ""}) {
     // registerUser
     throw UnimplementedError();
   }
@@ -1389,7 +1389,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future initializeMessageList({required String userJid, String? messageId, double? messageTime, bool? exclude, int limit = 25}) {
+  Future initializeMessageList({required String userJid, String? messageId, double? messageTime, bool? exclude,bool ascendingOrder = true, int limit = 25}) {
     // implement initializeMessageList
     throw UnimplementedError();
   }
@@ -1450,6 +1450,12 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<bool?> isUserVideoMuted([String? userJid]) {
+    // implement isUserVideoMuted
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> openAudioFilePicker() {
     // implement isUserVideoMuted
     throw UnimplementedError();
   }
