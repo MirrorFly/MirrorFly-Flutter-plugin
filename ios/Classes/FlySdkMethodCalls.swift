@@ -994,14 +994,24 @@ import UIKit
         
     }
     static func updateMyProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        let args = call.arguments as! Dictionary<String, Any>
-//        let profileImage = args["image"] as? String ?? ""
+        let args = call.arguments as! Dictionary<String, Any>
+        let profileImage = args["image"] as? String ?? ""
 //        print("*****profileImage\(profileImage)")
 //        var localFileUrl = ""
 //        let sourceURL = URL(fileURLWithPath: profileImage)
 //        print("****sourceURL \(sourceURL)")
 //        let fileName = (profileImage as NSString).lastPathComponent
 //        print("file name" + fileName)
+        
+        ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
+                if isSuccess {
+                    // Profile Image updated successfully update the UI
+                    print("updateMyProfileImage success response\(flyData)")
+                } else{
+                    print("updateMyProfileImage Error\(flyError!.localizedDescription)")
+                }
+        }
+        
 //        do {
 //
 //            if (profileImage != ""){
