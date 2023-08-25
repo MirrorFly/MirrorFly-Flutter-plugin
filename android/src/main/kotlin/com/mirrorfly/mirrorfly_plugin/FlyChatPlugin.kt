@@ -3919,7 +3919,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         // that since this activity is in the foreground, the service can exit foreground mode.
         // for showing call notification
         CallManager.bindCallService()
-        Log.d("lifecycle","onStart")
+        Log.d("#lifecycle","onStart")
     }
     override fun onStop(owner: LifecycleOwner) {
         // Unbind from the service. This signals to the service that this activity is no longer
@@ -3927,7 +3927,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         // service.
         // for showing call notification
         CallManager.unbindCallService()
-        Log.d("lifecycle","onStop")
+        Log.d("#lifecycle","onStop")
         super.onStop(owner)
     }
 
@@ -3951,7 +3951,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         ChatEventsManager.detachLoginEventsListener(this)
         ChatEventsManager.detachTypingEventListener(this)
         ChatConnectionManager.removeChatConnectionListener(this)
-        lifecycle.removeObserver(this)
+        instance.lifecycle.removeObserver(this)
     }
 
     private fun openCreateContact(call: MethodCall) {
@@ -3964,7 +3964,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone)
 
         // Launch the Contacts app with the pre-filled contact form
-        mainActivity?.startActivity(intent)
+        instance.mainActivity?.startActivity(intent)
     }
     private var mainActivity: Activity? = null
     private fun setActivity(flutterActivity: Activity) {
