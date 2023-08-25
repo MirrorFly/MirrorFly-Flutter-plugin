@@ -1,3 +1,7 @@
+## [0.0.11] Push Notification
+* handleReceivedMessage method added to get chat message from FCM Notification
+* authToken Deprecated instead of use refreshAndGetAuthToken
+
 ## [0.0.10] Code Optimization
 * Minified Enabled True Support Added
 * Release Build Bug Fix

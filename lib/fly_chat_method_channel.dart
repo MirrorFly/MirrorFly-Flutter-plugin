@@ -1119,11 +1119,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> handleReceivedMessage(Map notificationdata) async {
+  Future<dynamic> handleReceivedMessage(Map notificationData) async {
     dynamic res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod(
-          'handleReceivedMessage', {"notificationdata": notificationdata});
+          'handleReceivedMessage', {"notificationdata": notificationData});
       return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception ="," $e");
@@ -1539,11 +1539,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<dynamic> registerUser(String userIdentifier,
-      {String token = ""}) async {
+      {String fcmToken = ""}) async {
     dynamic registerResponse;
     try {
       registerResponse = await mirrorFlyMethodChannel.invokeMethod(
-          'register_user', {"userIdentifier": userIdentifier, "token": token});
+          'register_user', {"userIdentifier": userIdentifier, "token": fcmToken});
       LogMessage.d("Register Result "," $registerResponse");
       return registerResponse;
     } on PlatformException catch (e) {
@@ -2362,19 +2362,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool?> refreshAndGetAuthToken() async {
-    bool? tokenResponse;
+  Future<String?> refreshAndGetAuthToken() async {
+    String? tokenResponse;
     try {
       tokenResponse =
-          await mirrorFlyMethodChannel.invokeMethod<bool>('refreshAuthToken');
+          await mirrorFlyMethodChannel.invokeMethod<String>('refreshAuthToken');
       LogMessage.d("refreshAuthToken Result "," $tokenResponse");
       return tokenResponse;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception ="," $e");
-      return false;
+      rethrow;
     } on Exception catch (error) {
       LogMessage.d("Exception "," $error");
-      return false;
+      rethrow;
     }
   }
 
