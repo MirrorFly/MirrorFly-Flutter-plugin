@@ -29,7 +29,7 @@ import MirrorFlySDK
         var jsonArray: [[String: String]] = []
         
         let localJIDJson: [String: String] = [
-            "userJid": FlyDefaults.myJid,
+            "userJid": AppUtils.getMyJid(),
             "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling"),
 //            "isAudioMuted" : CallManager.isAudioMuted()
         ]
@@ -259,7 +259,7 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["userJid"] as? String ?? ""
        
-        let status = (jid == FlyDefaults.myJid) ? CallManager.isAudioMuted() : CallManager.isRemoteAudioMuted(jid)
+        let status = (jid == AppUtils.getMyJid()) ? CallManager.isAudioMuted() : CallManager.isRemoteAudioMuted(jid)
 
         result(status)
     }
@@ -268,7 +268,7 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["userJid"] as? String ?? ""
        
-        let status = (jid == FlyDefaults.myJid) ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(jid)
+        let status = (jid == AppUtils.getMyJid()) ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(jid)
         
         result(status)
 

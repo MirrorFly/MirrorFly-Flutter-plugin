@@ -45,7 +45,6 @@ import UIKit
 
         let args = call.arguments as! Dictionary<String, Any>
         
-        let domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
         let licenseKey = args["licenseKey"] as? String ?? ""
         _ = args["enableMobileNumberLogin"] as? Bool ?? true
         isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
@@ -75,28 +74,12 @@ import UIKit
 
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
-//        do{
-//            try ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
-//                .setLicenseKey(key: licenseKey)
-//                .isTrialLicense(isTrial: isTrialLicenceKey)
-//                .setDomainBaseUrl(baseUrl: domainBaseUrl)
-//                .setGroupConfiguration(groupConfig: sdkGroupConfig!)
-//                .buildAndInitialize()
-//        }catch (let error ){
-//            print("#FlyChat Exception : \(error.localizedDescription)")
-//        }
         
                 ChatManager.setAppGroupContainerId(id: containerID)
                 ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
         
         
         print("ChatManager.enableChatHistory \(chatHistoryEnable)")
-       
-//        print("sdk version---> \(FlyDefaults.SDKVersion)")
-//        ChatManager.setSignalServer(signalServerUrl: SOCKETIO_SERVER_HOST)
-
-
-
         
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
 
@@ -129,7 +112,7 @@ import UIKit
     static func getPlistValue(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        var key = args["key"] as? String ?? ""
+        let key = args["key"] as? String ?? ""
         // Get the path to the Info.plist file
         guard let infoPlistPath = Bundle.main.path(forResource: "Info", ofType: "plist") else {
             result(FlutterError(code: "500",
@@ -173,7 +156,6 @@ import UIKit
                                 details: nil))
             return
         }
-        NSLog("\(Constants.tag) device type \(FlyDefaults.deviceType)")
         let voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
 //        voipToken = voipToken.isEmpty ? deviceToken : voipToken
 
@@ -194,11 +176,11 @@ import UIKit
                     "message" : "Register Trial API Success"
                 ] as [String : Any]
                 
-                FlyDefaults.isLoggedIn = true
-                FlyDefaults.myXmppPassword = data["password"] as! String
-                FlyDefaults.myXmppUsername = data["username"] as! String
-                FlyDefaults.myMobileNumber = userIdentifier
-                FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
+                ChatManager.updateAppLoggedIn(isLoggedin: true)
+//                FlyDefaults.myXmppPassword = data["password"] as! String
+//                FlyDefaults.myXmppUsername = data["username"] as! String
+//                FlyDefaults.myMobileNumber = userIdentifier
+//                FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
                 
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
                 
@@ -413,7 +395,7 @@ import UIKit
     }
     
     static func isArchivedSettingsEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
-        result(FlyDefaults.isArchivedChatEnabled)
+        result(ChatManager.isArchivedSettingsEnabled())
     }
     
     static func cancelNotifications(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -773,7 +755,7 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         
         let groupJid = args["jid"] as? String ?? ""
-        let currentJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
+        let currentJid = AppUtils.getMyJid()
         let participantJid = args["userjid"] as? String ?? currentJid
         
         
@@ -789,8 +771,8 @@ import UIKit
         var groupMembers = [GroupParticipantDetail]()
         
         
-        groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != FlyDefaults.myJid})
-        let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == FlyDefaults.myJid})
+        groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != AppUtils.getMyJid()})
+        let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == AppUtils.getMyJid()})
         if(myJid.count > 0){
             myJid[0].profileDetail?.nickName = "You"
             myJid[0].profileDetail?.name = "You"
@@ -917,7 +899,7 @@ import UIKit
         let nickName = args["name"] as? String ?? ""
         let status = args["status"] as? String ?? ""
         let image = args["image"] as? String ?? nil
-        let userJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
+        let userJid = AppUtils.getMyJid()
         
         if (nickName.isEmpty && mobile.isEmpty && email.isEmpty) {
             result(FlutterError(code: "400", message: "Fill All details", details: nil))
@@ -976,30 +958,32 @@ import UIKit
     }
     
     static func saveMyProfileDataToUserDefaults(profile : FlyProfile){
-        FlyDefaults.myName = profile.name
-        FlyDefaults.myImageUrl = profile.image
-        FlyDefaults.myMobileNumber = profile.mobileNumber
-        FlyDefaults.myStatus = profile.status
-        FlyDefaults.myEmail = profile.email
+        // Commented private flydefaults profile saved inside SDK
+//        FlyDefaults.myName = profile.name
+//        FlyDefaults.myImageUrl = profile.image
+//        FlyDefaults.myMobileNumber = profile.mobileNumber
+//        FlyDefaults.myStatus = profile.status
+//        FlyDefaults.myEmail = profile.email
         
         self.saveMyJidAsContacts()
     }
     
     static func saveMyJidAsContacts() {
-        let profileData = ProfileDetails(jid: FlyDefaults.myJid)
-        profileData.name = FlyDefaults.myName
-        profileData.nickName = FlyDefaults.myNickName
-        profileData.mobileNumber  = FlyDefaults.myMobileNumber
-        profileData.email = FlyDefaults.myEmail
-        profileData.status = FlyDefaults.myStatus
-        profileData.image = FlyDefaults.myImageUrl
         
-        ContactManager.shared.saveUser(profileDetails: profileData, saveAs: .live)
+        let profileData = ProfileDetails(jid: AppUtils.getMyJid())
+        profileData.name = ContactManager.getMyProfile().name
+        profileData.nickName = ContactManager.getMyProfile().nickName
+        profileData.mobileNumber  = ContactManager.getMyProfile().mobileNumber
+        profileData.email = ContactManager.getMyProfile().email
+        profileData.status = ContactManager.getMyProfile().status
+        profileData.image = ContactManager.getMyProfile().image
+        
+//        ContactManager.shared.saveUser(profileDetails: profileData, saveAs: .live)
     }
     
     static func getMediaEndPoint(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-        let urlString = FlyDefaults.baseURL + "" + "media" + "/"
+        let urlString = ChatManager.getAppConfigDetails().baseURL + "" + "media" + "/"
         result(urlString)
         
     }
@@ -1010,94 +994,69 @@ import UIKit
         
     }
     static func updateMyProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
-        let profileImage = args["image"] as? String ?? ""
-        print("*****profileImage\(profileImage)")
-        var localFileUrl = ""
-        let sourceURL = URL(fileURLWithPath: profileImage)
-        print("****sourceURL \(sourceURL)")
-        let fileName = (profileImage as NSString).lastPathComponent
-        print("file name" + fileName)
-        do {
-            
-            if (profileImage != ""){
-                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
-                    print("File saved at: \(fileUrl)")
-                    localFileUrl = fileUrl
-                    FlyDefaults.myImageToken = fileUrl
-                    
-                    let userJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
-                    
-                    
-                    var myProfile = FlyProfile(jid: userJid)
-                    myProfile.image = localFileUrl
-                    
-//                    myProfile.email = email
-                    
-//                    myProfile.mobileNumber = mobile
-                    
-//                    myProfile.nickName = nickName
-//                    myProfile.name = nickName
-                    
-//                    myProfile.status = status
-                    
-//                    if(image != nil){
-//                        print("Image is not null if condition")
-//                        myProfile.image = image!
-//            //            isImagePicked = false
-//                    }else{
-//                        print("Image is null else condition")
-//            //            isImagePicked = false
+//        let args = call.arguments as! Dictionary<String, Any>
+//        let profileImage = args["image"] as? String ?? ""
+//        print("*****profileImage\(profileImage)")
+//        var localFileUrl = ""
+//        let sourceURL = URL(fileURLWithPath: profileImage)
+//        print("****sourceURL \(sourceURL)")
+//        let fileName = (profileImage as NSString).lastPathComponent
+//        print("file name" + fileName)
+//        do {
+//
+//            if (profileImage != ""){
+//                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
+//                    print("File saved at: \(fileUrl)")
+//                    localFileUrl = fileUrl
+//                    FlyDefaults.myImageToken = fileUrl
+//
+//                    let userJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
+//
+//
+//                    var myProfile = FlyProfile(jid: userJid)
+//                    myProfile.image = localFileUrl
+//
+//                    ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
+//                        if isSuccess {
+//                            var data = flyData
+//
+//                            let message = data.getMessage()
+//                            print("***profile Data\(data.getData() as? FlyProfile)")
+//                            var profileUpdateResponse = data.getData() as? FlyProfile
+//                            let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
+//
+//                            if let fileName = fileArray?.last {
+//                                profileUpdateResponse?.image = fileName
+//                                    }
+//
+//                            let profileDataJson = profileUpdateResponse?.toJson()
+//                            print("***profile Data json \(profileDataJson)")
+//
+//                            Utility.saveInPreference(key: Constants.isProfileSaved, value: true)
+//
+//
+//                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+//
+//                            saveMyProfileDataToUserDefaults(profile: myProfile)
+//                            print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
+//                            result(profileResponseJson)
+//                        } else{
+//                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+//
+//                        }
 //                    }
-                    
-                    
-                    ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
-                        if isSuccess {
-                            var data = flyData
-                            
-                            let message = data.getMessage()
-                            print("***profile Data\(data.getData() as? FlyProfile)")
-                            var profileUpdateResponse = data.getData() as? FlyProfile
-                            let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
-
-                            if let fileName = fileArray?.last {
-                                profileUpdateResponse?.image = fileName
-                                    }
-                            
-                            let profileDataJson = profileUpdateResponse?.toJson()
-                            print("***profile Data json \(profileDataJson)")
-                            
-                            Utility.saveInPreference(key: Constants.isProfileSaved, value: true)
-                            
-
-                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
-
-                            saveMyProfileDataToUserDefaults(profile: myProfile)
-                            print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
-                            result(profileResponseJson)
-                        } else{
-                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
-                            
-                        }
-                    }
-                } else {
-                    print("Failed to save the file.")
-                    
-                }
-            }else{
-                result(FlutterError(code: "400", message: "Image not available to update profile", details: nil))
-            }
-            
-        } catch {
-            // Error handling
-            print("Error reading file: \(error.localizedDescription)")
-        }
-        
-        
-        
-        
-       
-        
+//                } else {
+//                    print("Failed to save the file.")
+//
+//                }
+//            }else{
+//                result(FlutterError(code: "400", message: "Image not available to update profile", details: nil))
+//            }
+//
+//        } catch {
+//            // Error handling
+//            print("Error reading file: \(error.localizedDescription)")
+//        }
         
     }
     
@@ -1854,13 +1813,15 @@ import UIKit
         if let exclude = args["exclude"] as? Bool {
             messageListParams.exclude = exclude
         }
-        if let limit = args["limit"] as? Int {
-            messageListParams.limit = limit
-        }
-        if let ascendingOrder = args["ascendingOrder"] as? Bool {
-            print("Ascending order value \(ascendingOrder)")
-            messageListParams.ascendingOrder = ascendingOrder
-        }
+        let limit = args["limit"] as? Int ?? 50
+        messageListParams.limit = limit
+    
+        let ascendingOrder = args["ascendingOrder"] as? Bool ?? true
+        
+        print("Ascending order value \(ascendingOrder)")
+        
+        messageListParams.ascendingOrder = ascendingOrder
+        
 
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
 
@@ -1873,6 +1834,9 @@ import UIKit
         if(messageListQuery == nil){
             NSLog("\(Constants.tag) Message List Not Initialized")
             result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
+        }
+        if(messageListQuery?.isFetchingInProgress() ?? false){
+            result(FlutterError(code: "500", message: "Fetching Query is already in Progress", details: nil))
         }
         messageListQuery?.loadMessages { isSuccess, flyError, flyData in
            var data  = flyData
@@ -2248,14 +2212,15 @@ import UIKit
     }
     
     static func getMediaAutoDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
-        result(FlyDefaults.autoDownloadEnable)
+        result(ChatManager.isAutoDownloadEnabled())
     }
     
     static func setMediaAutoDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let autoDownloadEnable = args["enable"] as? Bool ?? false
-        FlyDefaults.autoDownloadEnable = autoDownloadEnable
-        FlyDefaults.autoDownloadLastEnabledTime = autoDownloadEnable ? FlyUtils.getTimeInMillis() : 0
+//        FlyDefaults.autoDownloadEnable = autoDownloadEnable
+//        FlyDefaults.autoDownloadLastEnabledTime = autoDownloadEnable ? FlyUtils.getTimeInMillis() : 0
+        ChatManager.shared.enableAutoDownload(isEnable: autoDownloadEnable)
         result(true)
     }
     
@@ -2266,29 +2231,31 @@ import UIKit
         let type = args["type"] as? String ?? ""
         
         if (networkType == 0){
+            let autoDownloadMobile = ChatManager.autoDownloadMobileConfig()
             switch (type) {
             case "Photos":
-                result(FlyDefaults.autoDownloadMobile["photo"] ?? false)
+                result(autoDownloadMobile[AutoDownloadType.photo.rawValue] ?? false)
             case "Videos":
-                result(FlyDefaults.autoDownloadMobile["videos"] ?? false)
+                result(autoDownloadMobile[AutoDownloadType.videos.rawValue] ?? false)
             case "Audio":
-                result(FlyDefaults.autoDownloadMobile["audio"] ?? false)
+                result(autoDownloadMobile[AutoDownloadType.audio.rawValue] ?? false)
             case "Documents":
-                result(FlyDefaults.autoDownloadMobile["documents"] ?? false)
+                result(autoDownloadMobile[AutoDownloadType.documents.rawValue] ?? false)
             default:
                 result(false)
             }
             
         }else{
+            let autoDownloadWiFi = ChatManager.autoDownloadWiFiConfig()
             switch (type) {
             case "Photos":
-                result(FlyDefaults.autoDownloadWifi["photo"] ?? false)
+                result(autoDownloadWiFi[AutoDownloadType.photo.rawValue] ?? false)
             case "Videos":
-                result(FlyDefaults.autoDownloadWifi["videos"] ?? false)
+                result(autoDownloadWiFi[AutoDownloadType.videos.rawValue] ?? false)
             case "Audio":
-                result(FlyDefaults.autoDownloadWifi["audio"] ?? false)
+                result(autoDownloadWiFi[AutoDownloadType.audio.rawValue] ?? false)
             case "Documents":
-                result(FlyDefaults.autoDownloadWifi["documents"] ?? false)
+                result(autoDownloadWiFi[AutoDownloadType.documents.rawValue] ?? false)
             default:
                 result(false)
             }
@@ -2301,41 +2268,21 @@ import UIKit
         let isPhotoEnabled = args["Photos"] as? Bool ?? false
         let isVideoEnabled = args["Videos"] as? Bool ?? false
         let isAudioEnabled = args["Audio"] as? Bool ?? false
-        let isDocumentEnalbed = args["Documents"] as? Bool ?? false
+        let isDocumentEnabled = args["Documents"] as? Bool ?? false
         let networkType = args["NetworkType"] as? Int ?? 0
         
-        var mobiledata = [String : Bool]()
-        var wifi = [String : Bool]()
-        
         if (networkType == 0){//cellular
-            mobiledata["photo"] = isPhotoEnabled
-            FlyDefaults.autoDownloadTimeMobileDataImage = isPhotoEnabled ? FlyUtils.getTimeInMillis() : 0
-
-            mobiledata["videos"]  = isVideoEnabled
-            FlyDefaults.autoDownloadTimeMobileDataVideo = isVideoEnabled ? FlyUtils.getTimeInMillis() : 0
-
-            mobiledata["audio"] = isAudioEnabled
-            FlyDefaults.autoDownloadTimeMobileDataAudio = isAudioEnabled ? FlyUtils.getTimeInMillis() : 0
-
-            mobiledata["documents"] = isDocumentEnalbed
-            FlyDefaults.autoDownloadTimeMobileDataDocument = isDocumentEnalbed ? FlyUtils.getTimeInMillis() : 0
-
-            FlyDefaults.autoDownloadMobile = mobiledata
+            
+            ChatManager.updateAutoDownloadMobile(type: .photo, enable: isPhotoEnabled)
+            ChatManager.updateAutoDownloadMobile(type: .videos, enable: isVideoEnabled)
+            ChatManager.updateAutoDownloadMobile(type: .audio, enable: isAudioEnabled)
+            ChatManager.updateAutoDownloadMobile(type: .documents, enable: isDocumentEnabled)
             
         }else{//WIFI
-            wifi["photo"] = isPhotoEnabled
-            FlyDefaults.autoDownloadTimeWifiImage = isPhotoEnabled ? FlyUtils.getTimeInMillis() : 0
-
-            wifi["videos"] = isVideoEnabled
-            FlyDefaults.autoDownloadTimeWifiVideo = isVideoEnabled ? FlyUtils.getTimeInMillis() : 0
-
-            wifi["audio"] = isAudioEnabled
-            FlyDefaults.autoDownloadTimeWifiAudio = isAudioEnabled ? FlyUtils.getTimeInMillis() : 0
-
-            wifi["documents"] = isDocumentEnalbed
-            FlyDefaults.autoDownloadTimeWifiDocument = isDocumentEnalbed ? FlyUtils.getTimeInMillis() : 0
-
-            FlyDefaults.autoDownloadWifi = wifi
+            ChatManager.updateAutoDownloadWiFi(type: .photo, enable: isPhotoEnabled)
+            ChatManager.updateAutoDownloadWiFi(type: .videos, enable: isVideoEnabled)
+            ChatManager.updateAutoDownloadWiFi(type: .audio, enable: isAudioEnabled)
+            ChatManager.updateAutoDownloadWiFi(type: .documents, enable: isDocumentEnabled)
             
         }
     }
@@ -2555,9 +2502,9 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let token = args["token"] as? String ?? ""
         
-//        VOIPManager.sharedInstance.savePushToken(token: token)
-//        Utility.saveInPreference(key: Constants.googleToken, value: token)
-//        VOIPManager.sharedInstance.updateDeviceToken()
+        VOIPManager.sharedInstance.savePushToken(token: token)
+        Utility.saveInPreference(key: Constants.googleToken, value: token)
+        VOIPManager.sharedInstance.updateDeviceToken()
         
         result(true)
     }
@@ -2566,176 +2513,17 @@ import UIKit
         
         NSLog("#Mirrorfly handleReceivedMessage")
         
-//        var contentHandler: ((UNNotificationContent) -> Void)?
-//        var bestAttemptContent: UNMutableNotificationContent?
-//        let args = call.arguments as! Dictionary<String, Any>
-//        let notificationData = args["notificationdata"] as? Dictionary<String, Any>
-//        let messageId = notificationData!["message_id"] as? String ?? ""
-//        print("mesageee>>>>", call.arguments, "notificationData>>>>>>" ,notificationData,"message_id>>>>>",messageId)
-//        let data = UNMutableNotificationContent()
-//        if let userInfoData = notificationData {
-//            data.userInfo = userInfoData as [String: Any]
-//
-//
-//            //            data.title = "New Message"
-//            print("data.userInfo==**==\(data.userInfo)")
-//        }
-//
-//        ChatSDK.Builder.initializeDelegate()
-//        let payloadType = data.userInfo["type"] as? String
-//
-//        if payloadType == "media_call" {
-//            NotificationExtensionSupport.shared.didReceiveNotificationRequest(data, appName: FlyDefaults.appName, onCompletion: { [self] bestAttemptContents in
-//                if FlyDefaults.hideNotificationContent{
-//                    bestAttemptContent?.title = FlyDefaults.appName
-//                } else {
-//                    if let userInfo = bestAttemptContent?.userInfo["message_id"] {
-//                        bestAttemptContent?.title = encryptDecryptData(key: userInfo as? String ?? "", data: bestAttemptContent?.title ?? "", encrypt: false)
-//                        print("Push Show title: \(bestAttemptContent?.title ?? "") body: \(bestAttemptContent?.body ?? ""), ID - \(userInfo)")
-//                    }
-//                }
-//                bestAttemptContent = bestAttemptContents
-//                contentHandler?(bestAttemptContent!)
-//            })
-//        } else {
-//
-//            NotificationMessageSupport.shared.didReceiveNotificationRequest(data, onCompletion: { bestAttemptContents in
-//
-//                let message : ChatMessage? = ChatManager.getMessageOfId(messageId: messageId)
-//
-//                let messageJson = message?.toJson()
-//                NSLog("#Mirrorfly Notification -> iOS getMessageOfId==**==\(String(describing: messageJson))")
-//
-//                if let chatMessage = messageJson {
-//                    let response = "{\"groupJid\": \"\(String(""))\",\"titleContent\": \"\(String(""))\",\"chatMessage\" : " + (messageJson ?? "null")+"}"
-//                    result(response)
-//                }
-//                bestAttemptContent = bestAttemptContents
-//                contentHandler?(bestAttemptContent!)
-//
-//            })
-//        }
+    }
+    static func getUnreadMessageCountExceptMutedChat(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let (messageCount, chatCount) = ChatManager.getUnreadMessageAndChatCountForUnmutedUsers()
+        
+        print("chatCount \(chatCount)")
+        
+        result(messageCount)
+        
     }
 
-
-    public static func handleNotificationExtension(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void){
-        self.contentHandler = contentHandler
-        bestAttemptContent = ((request.content.mutableCopy() as? UNMutableNotificationContent)!)
-        NSLog("#Mirrorfly Notification Received")
-        let payloadType = bestAttemptContent!.userInfo["type"] as? String
-        try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
-                    .isTrialLicense(isTrial: true)
-                    .setLicenseKey(key: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp")
-                    .setDomainBaseUrl(baseUrl: "https://api-uikit-qa.contus.us/api/v1/")
-                    .buildAndInitialize()
-                print("#push-api withContentHandler received")
-                if payloadType == "media_call" {
-                    print("#Mirrorfly Media Call")
-                    NotificationExtensionSupport.shared.didReceiveNotificationRequest(request.content.mutableCopy() as? UNMutableNotificationContent, appName: FlyDefaults.appName, onCompletion: { bestAttemptContent in
-                        if FlyDefaults.hideNotificationContent{
-                            bestAttemptContent?.title = FlyDefaults.appName
-                        } else {
-                            if let userInfo = bestAttemptContent?.userInfo["message_id"] {
-                                bestAttemptContent?.title = encryptDecryptData(key: userInfo as? String ?? "", data: bestAttemptContent?.title ?? "", encrypt: false)
-                                print("Push Show title: \(bestAttemptContent?.title ?? "") body: \(bestAttemptContent?.body ?? ""), ID - \(userInfo)")
-                            }
-                        }
-                        self.bestAttemptContent = bestAttemptContent
-                        contentHandler(self.bestAttemptContent!)
-                    })
-                } else if payloadType == "adminblock" {
-                    NSLog("#Mirrorfly Admin Block")
-                    ChatSDK.Builder.initializeDelegate()
-                    NotificationMessageSupport.shared.handleAdminBlockNotification(request.content.mutableCopy() as? UNMutableNotificationContent) {  bestAttemptContent in
-                        contentHandler(bestAttemptContent!)
-                    }
-                } else {
-                    NSLog("#Mirrorfly Handle Push")
-
-                    /// Handle Push messages
-                    ChatSDK.Builder.initializeDelegate()
-                    NotificationMessageSupport.shared.didReceiveNotificationRequest(request.content.mutableCopy() as? UNMutableNotificationContent, onCompletion: { [self] bestAttemptContents in
-                        FlyLog.DLog(param1: "#notification request ID", param2: "\(request.identifier)")
-                        let center = UNUserNotificationCenter.current()
-                        let (messageCount, chatCount) = ChatManager.getUnreadMessageAndChatCountForUnmutedUsers()
-                        if FlyDefaults.hideNotificationContent{
-                            var titleContent = emptyString()
-                            if chatCount == 1{
-                                titleContent = "\(messageCount) \(messageCount == 1 ? "message" : "messages")"
-                            } else {
-                                titleContent = "\(messageCount) messages from \(chatCount) chats"
-                            }
-                            bestAttemptContents?.title = FlyDefaults.appName + " (\(titleContent))"
-                            bestAttemptContents?.body = "New Message"
-                        } else {
-                            if let userInfo = bestAttemptContents?.userInfo["message_id"] {
-                                print("Push Show title: \(bestAttemptContents?.title ?? "") body: \(bestAttemptContents?.body ?? ""), ID - \(userInfo)")
-                                FlyLog.DLog(param1: "NotificationMessageSupport id ", param2: "\(bestAttemptContents?.title ?? "") body: \(bestAttemptContents?.body ?? "")")
-                            }
-                        }
-                        var canVibrate = true
-                        let isMuted = ContactManager.shared.getUserProfileDetails(for: bestAttemptContents?.userInfo["from_user"] as? String ?? "")?.isMuted ?? false
-                        if !isMuted || !(FlyDefaults.isArchivedChatEnabled && ChatManager.getRechtChat(jid: bestAttemptContents?.userInfo["from_user"] as? String ?? "")?.isChatArchived ?? false){
-                            bestAttemptContents?.badge = messageCount as? NSNumber
-                        }
-
-                        let chatType = (bestAttemptContents?.userInfo["chat_type"] as? String ?? "")
-                        let messageId = (self.bestAttemptContent?.userInfo["message_id"] as? String ?? "").components(separatedBy: ",").last ?? ""
-
-                        self.bestAttemptContent = bestAttemptContents
-
-                        if ChatManager.getMessageOfId(messageId: messageId)?.senderUserJid == FlyDefaults.myJid && (chatType == "chat" || chatType == "normal") {
-                            if !FlyUtils.isValidGroupJid(groupJid: ChatManager.getMessageOfId(messageId: messageId)?.chatUserJid) {
-                                self.bestAttemptContent?.title = "You"
-                            }
-                            canVibrate = false
-                            self.bestAttemptContent?.sound = .none
-                        } else if ChatManager.getMessageOfId(messageId: messageId)?.senderUserJid != FlyDefaults.myJid {
-                            if isMuted || (FlyDefaults.isArchivedChatEnabled && ChatManager.getRechtChat(jid: bestAttemptContents?.userInfo["from_user"] as? String ?? "")?.isChatArchived ?? false) {
-                                self.bestAttemptContent?.sound = .none
-                                canVibrate = false
-                            } else if !(FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("Default") ?? false) && !(FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("None") ?? false) && FlyDefaults.notificationSoundEnable  {
-                                self.bestAttemptContent?.sound = UNNotificationSound(named: UNNotificationSoundName((FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.file.rawValue] ?? "") + "." + (FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.extensions.rawValue] ?? "")))
-                            } else if FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("Default") ?? false && FlyDefaults.notificationSoundEnable {
-                                self.bestAttemptContent?.sound = .default
-                            } else if FlyDefaults.notificationSoundEnable == false || FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("None") ?? false {
-                                self.bestAttemptContent?.sound = FlyDefaults.vibrationEnable ? UNNotificationSound(named: UNNotificationSoundName(rawValue: "1-second-of-silence.mp3"))  : nil
-                            }
-                        } else if self.bestAttemptContent?.userInfo["sent_from"] as? String ?? "" == FlyDefaults.myJid && self.bestAttemptContent?.userInfo["group_id"] != nil {
-                            self.bestAttemptContent?.sound = nil
-                            canVibrate = false
-                        } else if self.bestAttemptContent?.userInfo["sent_from"] as? String ?? "" != FlyDefaults.myJid && self.bestAttemptContent?.userInfo["group_id"] != nil {
-                            if !(FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("Default") ?? false) && !(FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("None") ?? false) && FlyDefaults.notificationSoundEnable  {
-                                self.bestAttemptContent?.sound = UNNotificationSound(named: UNNotificationSoundName((FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.file.rawValue] ?? "") + "." + (FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.extensions.rawValue] ?? "")))
-                            } else if FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("Default") ?? false && FlyDefaults.notificationSoundEnable {
-                                self.bestAttemptContent?.sound = .default
-                            } else if FlyDefaults.notificationSoundEnable == false || FlyDefaults.selectedNotificationSoundName[NotificationSoundKeys.name.rawValue]?.contains("None") ?? false {
-                                self.bestAttemptContent?.sound = FlyDefaults.vibrationEnable ? UNNotificationSound(named: UNNotificationSoundName(rawValue: "1-second-of-silence.mp3"))  : nil
-                            }
-                        }
-                        if let message = ChatManager.getMessageOfId(messageId: messageId), !message.mentionedUsersIds.isEmpty {
-                            self.bestAttemptContent?.body = convertMentionUser(message: message.messageTextContent, mentionedUsersIds: message.mentionedUsersIds)
-                        }
-
-                        contentHandler(self.bestAttemptContent!)
-                        FlyDefaults.lastNotificationId = request.identifier
-                    })
-                }
-    }
-    static func convertMentionUser(message: String, mentionedUsersIds: [String]) -> String {
-        var replyMessage = message
-
-        for user in mentionedUsersIds {
-            let JID = user + "@" + FlyDefaults.xmppDomain
-            let myJID = try? FlyUtils.getMyJid()
-            if let profileDetail = ContactManager.shared.getUserProfileDetails(for: JID) {
-                let userName = "@\(FlyUtils.getGroupUserName(profile: profileDetail))"
-                let mentionRange = (replyMessage as NSString).range(of: "@[?]")
-                replyMessage = replyMessage.replacing(userName, range: mentionRange)
-            }
-        }
-        return replyMessage
-    }
 
 }
 

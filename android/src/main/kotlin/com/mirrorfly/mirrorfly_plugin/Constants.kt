@@ -1,6 +1,14 @@
 package com.mirrorfly.mirrorfly_plugin
 
 object Constants {
+    const val EMPTY_STRING = ""
+    const val LOCAL_PATH = "UI Kit"
+    const val FILE_LOCAL_PATH = "File"
+    const val MSG_SENT_PATH = "Sent"
+    const val TEMP_FILE_NAME = "temp_file"
+    const val AUDIO_FILE = "audio/*"
+
+    const val FROM_GALLERY = 2
     const val mirrorflyMethodChannel = "contus.mirrorfly/flyChat"
     const val onMessageReceivedChannel = "contus.mirrorfly/onMessageReceived"
     const val onMessageStatusUpdatedChannel = "contus.mirrorfly/onMessageStatusUpdated"
