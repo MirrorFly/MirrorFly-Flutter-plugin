@@ -1,10 +1,10 @@
 name: mirrorfly_plugin
 description: A MirrorFly Chat to Experience an outstanding real time messaging solution. The powerful communication that adds an extra mileage to build your chat app.
-version: 0.0.10
-homepage: https://www.mirrorfly.com/docs/chat/flutter/quick-start/
+version: 0.0.11
+homepage: https://www.mirrorfly.com/docs/chat/flutter-plugin/quick-start
 
 environment:
-  sdk: '>=2.18.0 <3.0.0'
+  sdk: '>=2.18.0 <4.0.0'
   flutter: ">=2.5.0"
 
 dependencies:
