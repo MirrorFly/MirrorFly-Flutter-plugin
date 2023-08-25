@@ -380,7 +380,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getUserLastSeenTime(jid);
   }
 
-  @Deprecated('Insteadof use refreshAndGetAuthToken')
+  @Deprecated('Instead of use refreshAndGetAuthToken')
   /// This [authToken] is used to get refreshed Auth Token.
   static Future<String?> authToken() {
     return FlyChatFlutterPlatform.instance.authToken();

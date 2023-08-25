@@ -23,7 +23,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @Deprecated('Insteadof use refreshAndGetAuthToken')
+  @Deprecated('Instead of use refreshAndGetAuthToken')
   @override
   Future<String?> authToken() {
     throw UnimplementedError();
