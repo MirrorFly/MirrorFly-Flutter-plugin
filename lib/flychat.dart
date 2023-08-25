@@ -379,14 +379,16 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getUserLastSeenTime(jid);
   }
 
+  @Deprecated('Insteadof use refreshAndGetAuthToken')
+  /// This [authToken] is used to get refreshed Auth Token.
   static Future<String?> authToken() {
     return FlyChatFlutterPlatform.instance.authToken();
   }
 
   static Future<dynamic> registerUser(String userIdentifier,
-      {String token = ""}) {
+      {String fcmToken = ""}) {
     return FlyChatFlutterPlatform.instance
-        .registerUser(userIdentifier, token: token);
+        .registerUser(userIdentifier, fcmToken: fcmToken);
   }
 
   static Future<String?> verifyToken(String userName, String token) {
@@ -656,19 +658,19 @@ class Mirrorfly {
         limit: limit);
   }
 
-  /// This method is used to Fetch initial conversations between you and a single chat user or group.
+  /// This [loadMessages] is used to Fetch initial conversations between you and a single chat user or group.
   /// This method should be called only after the initializeMessageList Method.
   static Future<dynamic> loadMessages() {
     return FlyChatFlutterPlatform.instance.loadMessages();
   }
 
-  /// This method is used to fetch previous set of conversations between you and a single chat user or group.
+  /// This [loadPreviousMessages] is used to fetch previous set of conversations between you and a single chat user or group.
   /// This set contains the limit/length set in initializeMessageList method
   static Future<dynamic> loadPreviousMessages() {
     return FlyChatFlutterPlatform.instance.loadPreviousMessages();
   }
 
-  /// This method is used to fetch next set of conversations between you and a single chat user or group.
+  /// This [loadNextMessages] is used to fetch next set of conversations between you and a single chat user or group.
   /// This set contains the limit/length set in initializeMessageList method
   static Future<dynamic> loadNextMessages() {
     return FlyChatFlutterPlatform.instance.loadNextMessages();
@@ -723,7 +725,8 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.removeGroupProfileImage(jid);
   }
 
-  static Future<bool?> refreshAndGetAuthToken() {
+  /// This [refreshAndGetAuthToken] is used to get refreshed Auth Token.
+  static Future<String?> refreshAndGetAuthToken() {
     return FlyChatFlutterPlatform.instance.refreshAndGetAuthToken();
   }
 

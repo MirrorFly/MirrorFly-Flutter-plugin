@@ -23,9 +23,9 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @Deprecated('Insteadof use refreshAndGetAuthToken')
   @override
   Future<String?> authToken() {
-    
     throw UnimplementedError();
   }
 
@@ -842,13 +842,13 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<bool?> refreshAndGetAuthToken() {
+  Future<String?> refreshAndGetAuthToken() {
     // refreshAndGetAuthToken
     throw UnimplementedError();
   }
 
   @override
-  Future registerUser(String userIdentifier, {String token = ""}) {
+  Future registerUser(String userIdentifier, {String fcmToken = ""}) {
     // registerUser
     throw UnimplementedError();
   }
