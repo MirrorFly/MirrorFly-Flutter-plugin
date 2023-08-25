@@ -80,7 +80,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         val acceptCall = intent.extras?.getBoolean(CallConstants.ACCEPT_CALL)
         LogMessage.d(tag,"${CallConstants.ACCEPT_CALL} : ${acceptCall.toString()}")
         if (acceptCall!=null && acceptCall){
-            attendCall()
+            attendCall(fromIntent = true)
         }
     }
 
@@ -167,7 +167,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         }
     }
 
-    private fun attendCall() {
+    private fun attendCall(fromIntent: Boolean = false) {
         if (CallManager.getCallType() == CallType.AUDIO_CALL && !CallManager.isAudioCallPermissionsGranted()) {
             checkPermission()
             return
@@ -186,20 +186,23 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
             json.put("callAction", CallAction.ACTION_ANSWER_CALL)
             json.put("userJid", CallManager.getCallUsersList().joinToString(","))
             onCallActionStreamHandler.onCallAction?.success(json)*/
-                    val json = JSONObject()
-                    json.put("callStatus","Attended")
-                    json.put("userJid",CallManager.getCurrentUserId())
-                    json.put("callType",CallManager.getCallType())
-                    json.put("callMode",CallManager.getCallMode())
-                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
-                    finishTask()
-                    val intent = AppUtils.getAppIntent(this@CallKitUiActivity)
-                    startActivity(intent)
+                    if(fromIntent) {
+                        val json = JSONObject()
+                        json.put("callStatus", "Attended")
+                        json.put("userJid", CallManager.getCurrentUserId())
+                        json.put("callType", CallManager.getCallType())
+                        json.put("callMode", CallManager.getCallMode())
+                        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+                        finishTask()
+                        val intent = AppUtils.getAppIntent(this@CallKitUiActivity)
+                        startActivity(intent)
+                    }
                 }
             }
 
         })
     }
+
 
     private fun declineCall() {
         CallManager.declineCall()
@@ -309,7 +312,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             AppUtils.CALL_REQUEST -> {
-                attendCall()
+                attendCall(fromIntent = true)
                 LogMessage.d(tag,"onActivityResult $data")
             }
         }
