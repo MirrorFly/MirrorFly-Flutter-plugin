@@ -233,7 +233,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> handleReceivedMessage(Map notificationdata) {
+  Future<dynamic> handleReceivedMessage(Map notificationData) {
     throw UnimplementedError('has not been implemented.');
   }
 

@@ -254,8 +254,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.clearAllConversation();
   }
 
-  ///Used as a [updateFcmToken] class for [Mirrorfly]
-  ///used to update FCM Token
+
   static Future<bool?> updateFcmToken(String firebasetoken) {
     return FlyChatFlutterPlatform.instance.updateFcmToken(firebasetoken);
   }
@@ -264,9 +263,11 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.isMuted(jid);
   }
 
-  static Future<dynamic> handleReceivedMessage(Map notificationdata) {
+  ///This [handleReceivedMessage] used to get ChatMessage from FCM Notification
+  ///to Show Notification using FCM [remoteMessage.data] as [notificationData]
+  static Future<dynamic> handleReceivedMessage(Map notificationData) {
     return FlyChatFlutterPlatform.instance
-        .handleReceivedMessage(notificationdata);
+        .handleReceivedMessage(notificationData);
   }
 
   static Future<dynamic> getLastNUnreadMessages(int messagesCount) {

@@ -558,7 +558,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future handleReceivedMessage(Map notificationdata) {
+  Future handleReceivedMessage(Map notificationData) {
     // handleReceivedMessage
     throw UnimplementedError();
   }

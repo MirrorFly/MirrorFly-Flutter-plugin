@@ -1119,11 +1119,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> handleReceivedMessage(Map notificationdata) async {
+  Future<dynamic> handleReceivedMessage(Map notificationData) async {
     dynamic res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod(
-          'handleReceivedMessage', {"notificationdata": notificationdata});
+          'handleReceivedMessage', {"notificationdata": notificationData});
       return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception ="," $e");
