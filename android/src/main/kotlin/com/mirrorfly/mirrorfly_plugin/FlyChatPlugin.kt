@@ -3890,7 +3890,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         instance.activityBinding = binding
         instance.mainActivity = binding.activity
-        binding.addActivityResultListener(this)
+        binding.addActivityResultListener(instance)
         Log.d("FlyChat", "onAttachedToActivity ${instance.mainActivity}")
         val mainActivityIntent = binding.activity.intent
         if (!launchedActivityFromHistory(mainActivityIntent)) {
@@ -3900,7 +3900,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 processForegroundNotificationAction(mainActivityIntent, notificationResponse)
             }*/
         }
-        binding.addOnNewIntentListener(this)
+        binding.addOnNewIntentListener(instance)
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
         if (isRegistered) {
             ChatEventsManager.setupMessageEventListener(this)
@@ -3910,7 +3910,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             ChatEventsManager.attachTypingEventListener(this)
         }
         instance.lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
-        instance.lifecycle.addObserver(this)
+        instance.lifecycle.addObserver(instance)
     }
 
     override fun onStart(owner: LifecycleOwner) {
