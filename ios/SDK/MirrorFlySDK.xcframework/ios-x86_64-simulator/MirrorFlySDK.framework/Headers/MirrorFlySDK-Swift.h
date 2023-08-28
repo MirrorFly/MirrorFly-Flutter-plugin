@@ -348,6 +348,9 @@ SWIFT_CLASS("_TtC12MirrorFlySDK11ChatManager")
 
 
 
+
+
+
 @class ProfileDetails;
 @class ChatMessage;
 
@@ -407,6 +410,7 @@ SWIFT_CLASS("_TtC12MirrorFlySDK14ContactManager")
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
+
 
 
 
@@ -503,10 +507,10 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) FlyMessenger
 @end
 
 
+
 @interface FlyMessenger (SWIFT_EXTENSION(MirrorFlySDK))
 - (void)deleteUnreadMessageSeparatorOfAConversationWithJid:(NSString * _Nonnull)jid;
 @end
-
 
 
 @interface FlyMessenger (SWIFT_EXTENSION(MirrorFlySDK))
@@ -669,7 +673,7 @@ SWIFT_CLASS("_TtC12MirrorFlySDK28NotificationExtensionSupport")
 
 SWIFT_CLASS("_TtC12MirrorFlySDK26NotificationMessageSupport")
 @interface NotificationMessageSupport : NSObject
-- (void)didReceiveNotificationRequest:(UNMutableNotificationContent * _Nullable)bestContent onCompletion:(void (^ _Nonnull)(UNMutableNotificationContent * _Nullable))onCompletion;
+- (void)didReceiveNotificationRequest:(UNMutableNotificationContent * _Nullable)bestContent appName:(NSString * _Nonnull)appName onCompletion:(void (^ _Nonnull)(UNMutableNotificationContent * _Nullable))onCompletion;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -845,6 +849,7 @@ SWIFT_CLASS("_TtC12MirrorFlySDK10RecentChat")
 @property (nonatomic) BOOL isChatArchived;
 /// To check whether this recent chat model is a pinned to appear on top
 @property (nonatomic) BOOL isChatPinned;
+@property (nonatomic) BOOL isPrivateChat;
 @property (nonatomic, copy) NSString * _Nullable profileImage;
 @property (nonatomic, copy) NSString * _Nullable profileThumbImage;
 /// Id of the last Message sent/received between us and this recent chat profile
@@ -879,6 +884,7 @@ SWIFT_CLASS("_TtC12MirrorFlySDK10RecentChat")
 @property (nonatomic) BOOL isMentionedUser;
 /// To check whether the user mentioned
 @property (nonatomic, copy) NSArray<NSString *> * _Nonnull mentionedUsersIds;
+@property (nonatomic, copy) NSString * _Nonnull topicID;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -893,6 +899,13 @@ SWIFT_CLASS("_TtC12MirrorFlySDK21RecentChatListBuilder")
 SWIFT_CLASS("_TtC12MirrorFlySDK16SocketConnection")
 @interface SocketConnection : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+
+SWIFT_CLASS("_TtC12MirrorFlySDK20TopicChatListBuilder")
+@interface TopicChatListBuilder : NSObject
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
 
