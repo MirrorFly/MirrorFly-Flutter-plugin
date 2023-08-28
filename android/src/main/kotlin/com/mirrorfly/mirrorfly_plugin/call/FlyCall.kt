@@ -365,6 +365,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                     handler.post(
                         Runnable { onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString()) })
 
+                }else{
+                    handler.post(
+                        Runnable { onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString()) })
                 }
             }
             /*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
