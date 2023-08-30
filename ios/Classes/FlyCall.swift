@@ -171,7 +171,23 @@ import PushKit
     }
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
-        print("#MirroflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
+        print("#MirrorflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
+        
+        if let delegate = AudioManager.shared().audioManagerDelegate {
+            print("\(Constants.tag) Audio delegate is set")
+        } else {
+            print("\(Constants.tag) Audio delegate is not-set")
+        }
+
+        if userId == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED) {
+            print("#Mirrorfly Call not updating the Call Status for my jid")
+            return
+        }
+        
+        if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
+            print("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
+            return
+        }
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         if (callStatus.rawValue == "CALL TIME OUTt"){
             jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
@@ -189,7 +205,7 @@ import PushKit
         if(callStatus.rawValue == "Attended"){
             
             print("#MirroflyCall Call Status Updated Attended")
-            AudioManager.shared().audioManagerDelegate = self
+//            AudioManager.shared().audioManagerDelegate = self
             
             if CallManager.getCallType() == .Audio {
                 jsonObject.setValue("audio", forKey: "callType")
@@ -206,7 +222,7 @@ import PushKit
     }
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
-        print("#MirroflyCall Event oncalll Action --> \(callAction) userID \(userId)")
+        print("#MirrorflyCall Event oncalll Action --> \(callAction) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
         jsonObject.setValue(callAction.rawValue, forKey: "callAction")
@@ -216,7 +232,7 @@ import PushKit
     }
     
     func onMuteStatusUpdated(muteEvent: MirrorFlySDK.MuteEvent, userId: String) {
-        print("#MirroflyCall Event onmute status updated --> \(muteEvent) userID \(userId)")
+        print("#MirrorflyCall Event onmute status updated --> \(muteEvent) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
         switch(muteEvent){
@@ -271,11 +287,11 @@ import PushKit
     }
     
     func onUserSpeaking(userId: String, audioLevel: Int) {
-        print("#MirroflyCall user speaking --> \(userId) audioLevel \(audioLevel)")
+        print("#MirrorflyCall user speaking --> \(userId) audioLevel \(audioLevel)")
     }
     
     func onUserStoppedSpeaking(userId: String) {
-        print("#MirroflyCall user stopped speaking --> \(userId)")
+        print("#MirrorflyCall user stopped speaking --> \(userId)")
     }
     
     func onLocalVideoTrackAdded(userId: String, videoTrack: RTCVideoTrack) {

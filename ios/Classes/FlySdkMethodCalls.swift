@@ -76,7 +76,13 @@ import UIKit
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
         
                 ChatManager.setAppGroupContainerId(id: containerID)
-                ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
+                ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
+                    if isSuccess {
+                        print("SDK INITIALISED")
+                    }else{
+                        print("SDK FAILED TO INITIALISE \(flyError)")
+                    }
+                }
         
         
         print("ChatManager.enableChatHistory \(chatHistoryEnable)")

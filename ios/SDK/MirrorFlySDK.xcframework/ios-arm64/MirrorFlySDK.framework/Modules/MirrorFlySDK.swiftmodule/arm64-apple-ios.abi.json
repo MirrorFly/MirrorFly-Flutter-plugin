@@ -44677,6 +44677,32 @@
           },
           {
             "kind": "Function",
+            "name": "setFirstMessage",
+            "printedName": "setFirstMessage(messageId:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:12MirrorFlySDK21FetchMessageListQueryC08setFirstE09messageIdySS_tF",
+            "mangledName": "$s12MirrorFlySDK21FetchMessageListQueryC08setFirstE09messageIdySS_tF",
+            "moduleName": "MirrorFlySDK",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "hasPreviousMessages",
             "printedName": "hasPreviousMessages()",
             "children": [
@@ -138705,147 +138731,147 @@
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 7162,
+      "offset": 7332,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 17472,
+      "offset": 17732,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 18620,
+      "offset": 18880,
       "length": 1,
       "value": "4"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 18751,
+      "offset": 19011,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 18877,
+      "offset": 19137,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 47568,
+      "offset": 47828,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 51623,
+      "offset": 51883,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 70777,
+      "offset": 71037,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 70799,
+      "offset": 71059,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 70853,
+      "offset": 71113,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 70875,
+      "offset": 71135,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 78003,
+      "offset": 78263,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 97358,
+      "offset": 97618,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 97389,
+      "offset": 97649,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 116246,
+      "offset": 116506,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 121659,
+      "offset": 121919,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 129189,
+      "offset": 129449,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 129238,
+      "offset": 129498,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "Array",
-      "offset": 133734,
+      "offset": 133994,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "Array",
-      "offset": 174876,
+      "offset": 175136,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 176709,
+      "offset": 176969,
       "length": 1,
       "value": "0"
     },
@@ -139615,7 +139641,7 @@
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Database\/Models\/Message\/MessageManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 32742,
+      "offset": 32794,
       "length": 2,
       "value": "50"
     },
@@ -140959,7 +140985,7 @@
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "StringLiteral",
-      "offset": 13186,
+      "offset": 13510,
       "length": 2,
       "value": "\"\""
     },
@@ -141302,7 +141328,7 @@
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 24104,
+      "offset": 24127,
       "length": 2,
       "value": "\"\""
     },

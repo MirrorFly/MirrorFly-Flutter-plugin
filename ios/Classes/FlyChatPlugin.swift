@@ -1367,6 +1367,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func didReceiveLogout() {
         
         if(onLoggedOutStreamHandler?.onLoggedOut != nil){
+            print("\(Constants.tag) didReceiveLogout Delegate Method")
             onLoggedOutStreamHandler?.onLoggedOut?(true)
         }else{
             print("logout Stream Handler is Nil")
@@ -1376,6 +1377,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func invalidJidLogout(){
         print("\(Constants.tag) Invalid JID Logout")
         if(onLoggedOutStreamHandler?.onLoggedOut != nil){
+            print("\(Constants.tag) invalidJidLogout Delegate Method")
             onLoggedOutStreamHandler?.onLoggedOut?(true)
         }else{
             print("logout Stream Handler is Nil")
@@ -1384,6 +1386,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     
     public func onConnected() {
         if(onConnectedStreamHandler?.onConnected != nil){
+            print("\(Constants.tag) OnConnected Delegate Method")
             onConnectedStreamHandler?.onConnected?(true)
         }else{
             print("onConnected Stream Handler is Nil")
@@ -1392,6 +1395,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     
     public func onDisconnected() {
         if(onDisconnectedStreamHandler?.onDisconnected != nil){
+            print("\(Constants.tag) onDisconnected Delegate Method")
             onDisconnectedStreamHandler?.onDisconnected?(true)
         }else{
             print("onDisconnected Stream Handler is Nil")
@@ -1400,6 +1404,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     
     public func onConnectionNotAuthorized() {
         if(onConnectionNotAuthorizedStreamHandler?.onConnectionNotAuthorized != nil){
+            print("\(Constants.tag) onConnectionNotAuthorized Delegate Method")
             onConnectionNotAuthorizedStreamHandler?.onConnectionNotAuthorized?(true)
         }else{
             print("onConnectionNotAuthorized Stream Handler is Nil")
