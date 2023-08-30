@@ -15,7 +15,7 @@ import PushKit
     var selectedAudioRouteDevice : String = "receiver"
     
     func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
-        print("#MirroflyCall Call AUDIO DELEGATE \(audioDeviceType)")
+        print("#MirrorflyCall Call AUDIO DELEGATE \(audioDeviceType)")
         
         switch (audioDeviceType) {
         case .bluetooth:
@@ -127,9 +127,9 @@ import PushKit
     }
     
     func sendCallMessage(groupCallDetails: MirrorFlySDK.GroupCallDetails, users: [String], invitedUsers: [String]) {
-        print("#MirroflyCall send call message group call Details--> \(groupCallDetails)")
-        print("#MirroflyCall send call message users--> \(users)")
-        print("#MirroflyCall send call message Invited users--> \(invitedUsers)")
+        print("#MirrorflyCall send call message group call Details--> \(groupCallDetails)")
+        print("#MirrorflyCall send call message users--> \(users)")
+        print("#MirrorflyCall send call message Invited users--> \(invitedUsers)")
         
         try? FlyMessenger.sendCallMessage(for: groupCallDetails, users : users , inviteUsers: invitedUsers) { isSuccess, flyError, flyData in
             var data  = flyData
@@ -204,7 +204,7 @@ import PushKit
         
         if(callStatus.rawValue == "Attended"){
             
-            print("#MirroflyCall Call Status Updated Attended")
+            print("#MirrorflyCall Call Status Updated Attended")
 //            AudioManager.shared().audioManagerDelegate = self
             
             if CallManager.getCallType() == .Audio {
