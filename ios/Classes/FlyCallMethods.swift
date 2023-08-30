@@ -259,8 +259,7 @@ import MirrorFlySDK
         
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["userJid"] as? String ?? ""
-       
-        let status = (jid == AppUtils.getMyJid()) ? CallManager.isAudioMuted() : CallManager.isRemoteAudioMuted(jid)
+        let status = (jid == AppUtils.getMyJid() || jid == "") ? CallManager.isAudioMuted() : CallManager.isRemoteAudioMuted(jid)
 
         result(status)
     }
