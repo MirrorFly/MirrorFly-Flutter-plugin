@@ -1,7 +1,6 @@
 import 'package:mirrorfly_plugin/builder.dart';
 
 import 'fly_chat_platform_interface.dart';
-import 'model/topic_list.dart';
 import 'model/topic_metadata.dart';
 
 class Mirrorfly {

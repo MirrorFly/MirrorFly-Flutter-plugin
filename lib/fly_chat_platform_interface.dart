@@ -2,7 +2,6 @@ import 'package:mirrorfly_plugin/builder.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 
-import 'model/topic_list.dart';
 import 'model/topic_metadata.dart';
 
 abstract class FlyChatFlutterPlatform extends PlatformInterface {
