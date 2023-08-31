@@ -1,10 +1,13 @@
 import 'package:mirrorfly_plugin/builder.dart';
 
 import 'fly_chat_platform_interface.dart';
+import 'model/topic_list.dart';
+import 'model/topic_metadata.dart';
 
 class Mirrorfly {
   Mirrorfly._();
   static var isTrialLicence = true;
+  static var isChatHistoryEnabled = true;
 
   ///Used as a initChat class for [Mirrorfly]
   ///
@@ -40,6 +43,7 @@ class Mirrorfly {
         // ivKey: ivKey,
         enableDebugLog: enableDebugLog);
     isTrialLicence = isTrialLicenceKey;
+    isChatHistoryEnabled = chatHistoryEnable;
     FlyChatFlutterPlatform.instance.init(builder);
   }
 
@@ -403,29 +407,29 @@ class Mirrorfly {
   }
 
   static sendTextMessage(String message, String jid,
-      [String replyMessageId = ""]) {
+      String replyMessageId,{ String? topicId}) {
     return FlyChatFlutterPlatform.instance
-        .sendTextMessage(message, jid, replyMessageId);
+        .sendTextMessage(message, jid, replyMessageId,topicId: topicId);
   }
 
   static sendLocationMessage(
-      String jid, double latitude, double longitude, String replyMessageId) {
+      String jid, double latitude, double longitude, String replyMessageId, {String? topicId}) {
     return FlyChatFlutterPlatform.instance
-        .sendLocationMessage(jid, latitude, longitude, replyMessageId);
+        .sendLocationMessage(jid, latitude, longitude, replyMessageId,topicId: topicId);
   }
 
   static sendImageMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
-      [String? imageFileUrl]) {
+      {String? imageFileUrl, String? topicId}) {
     return FlyChatFlutterPlatform.instance
-        .sendImageMessage(jid, filePath, caption, replyMessageID, imageFileUrl);
+        .sendImageMessage(jid, filePath, caption, replyMessageID, imageFileUrl:imageFileUrl,topicId: topicId);
   }
 
   static sendVideoMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
-      [String? videoFileUrl, num? videoDuration, String? thumbImageBase64]) {
+      {String? videoFileUrl, num? videoDuration, String? thumbImageBase64, String? topicId}) {
     return FlyChatFlutterPlatform.instance.sendVideoMessage(jid, filePath,
-        caption, replyMessageID, videoFileUrl, videoDuration, thumbImageBase64);
+        caption, replyMessageID, videoFileUrl:videoFileUrl, videoDuration:videoDuration, thumbImageBase64:thumbImageBase64,topicId: topicId);
   }
 
   static Future<dynamic> getRegisteredUserList(
@@ -644,6 +648,7 @@ class Mirrorfly {
   /// * @property [messageId] - Message id of the starting point (Optional)
   /// * @property [messageTime] - Message time of the starting point (Optional)
   /// * @property [exclude] - If true message of the Message ID given will be excluded in message list default true
+  /// * @property [topicId] - use to get messages by topic id
   /// * @property [limit] - No of messages will be fetched for each request default 25
   static Future<dynamic> initializeMessageList(
       {required String userJid,
@@ -651,6 +656,7 @@ class Mirrorfly {
       double? messageTime,
       bool exclude = true,
       bool ascendingOrder = true,
+      String? topicId,
       int limit = 25}) {
     return FlyChatFlutterPlatform.instance.initializeMessageList(
         userJid: userJid,
@@ -658,6 +664,7 @@ class Mirrorfly {
         messageTime: messageTime,
         exclude: exclude,
         ascendingOrder: ascendingOrder,
+        topicId:topicId,
         limit: limit);
   }
 
@@ -754,9 +761,9 @@ class Mirrorfly {
   }
 
   static Future<dynamic> sendContactMessage(List<String> contactList,
-      String jid, String contactName, String replyMessageId) {
+      String jid, String contactName, String replyMessageId, {String? topicId}) {
     return FlyChatFlutterPlatform.instance
-        .sendContactMessage(contactList, jid, contactName, replyMessageId);
+        .sendContactMessage(contactList, jid, contactName, replyMessageId,topicId: topicId);
   }
 
   static Future<dynamic> logoutOfChatSDK() {
@@ -773,9 +780,9 @@ class Mirrorfly {
 
   static Future<dynamic> sendDocumentMessage(
       String jid, String documentPath, String replyMessageId,
-      [String? fileUrl]) {
+      {String? fileUrl, String? topicId}) {
     return FlyChatFlutterPlatform.instance
-        .sendDocumentMessage(jid, documentPath, replyMessageId, fileUrl);
+        .sendDocumentMessage(jid, documentPath, replyMessageId, fileUrl:fileUrl,topicId: topicId);
   }
 
   static Future<dynamic> openFile(String filePath) {
@@ -784,9 +791,9 @@ class Mirrorfly {
 
   static Future<dynamic> sendAudioMessage(String jid, String filePath,
       bool isRecorded, String duration, String replyMessageId,
-      [String? audiofileUrl]) {
+    {String? audioFileUrl, String? topicId}) {
     return FlyChatFlutterPlatform.instance.sendAudioMessage(
-        jid, filePath, isRecorded, duration, replyMessageId, audiofileUrl);
+        jid, filePath, isRecorded, duration, replyMessageId, audioFileUrl:audioFileUrl, topicId: topicId);
   }
 
   static Future<dynamic> getRecentChatListIncludingArchived() {
@@ -1103,6 +1110,34 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getValueFromManifestOrInfoPlist(
         androidManifestKey: androidManifestKey, iOSPlistKey: iOSPlistKey);
   }
+
+  ///Used as a [createTopic] class for [Mirrorfly]
+  ///used to create a Topic for chat
+  /// * @required [topicName] set Topic name
+  /// * @optional [metaData] set meta data of the Topic
+  static Future<String?> createTopic({required String topicName, List<TopicMetaData> metaData = const[] }) async {
+    return FlyChatFlutterPlatform.instance.createTopic(topicName: topicName,metaData: metaData);
+  }
+
+  ///Used as a [getTopics] class for [Mirrorfly]
+  ///used to get Topics by topic id's
+  /// * [topicIds] topic id's to get topics
+  static Future<String?> getTopics({required List<String> topicIds}) async {
+    return FlyChatFlutterPlatform.instance.getTopics(topicIds: topicIds);
+  }
+
+  ///Used as a getRecentChatListHistoryByTopic class for [Mirrorfly]
+  /// * @property [topicId] set topic id to get topic based chats
+  /// * @property [firstSet] set true indicates the initial data otherwise next set of data
+  /// * @property [limit] set the limit of the chat list, default value 15
+  /// * if ChatHistoryEnabled in init then synced from the server
+  /// used to get Recent chat List by Topic from DB
+  static Future<dynamic> getRecentChatListHistoryByTopic(
+      {String? topicId,required bool firstSet, int limit = 15}) {
+    return FlyChatFlutterPlatform.instance
+        .getRecentChatListHistoryByTopic(topicId: topicId,firstSet: firstSet, limit: limit);
+  }
+
   ///Used as a [makeVideoCall] class for [Mirrorfly]
   /// * @property [userJid] used to make a video call to this user or group
   ///used to make a video call

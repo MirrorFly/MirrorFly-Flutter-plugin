@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
+import 'package:mirrorfly_plugin/model/topic_list.dart';
+import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
 /// An implementation of [UikitFlutterPlatform] that uses method channels.
@@ -1592,11 +1594,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<dynamic> sendTextMessage(
-      String message, String jid, String replyMessageId) async {
+      String message, String jid,  String replyMessageId,{ String? topicId}) async {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('send_text_msg',
-          {"message": message, "JID": jid, "replyMessageId": replyMessageId});
+          {"message": message, "JID": jid, "replyMessageId": replyMessageId,"topicId": topicId});
       LogMessage.d("Text Message Result "," $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
@@ -1610,7 +1612,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<dynamic> sendLocationMessage(String jid, double latitude,
-      double longitude, String replyMessageId) async {
+      double longitude, String replyMessageId, {String? topicId}) async {
     //sentLocationMessage
     dynamic messageResp;
     try {
@@ -1619,7 +1621,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "jid": jid,
         "latitude": latitude,
         "longitude": longitude,
-        "replyMessageId": replyMessageId
+        "replyMessageId": replyMessageId,"topicId":topicId
       });
       LogMessage.d("Location Message Result "," $messageResp");
       return messageResp;
@@ -1635,7 +1637,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Future<dynamic> sendImageMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
-      [String? imageFileUrl]) async {
+      {String? imageFileUrl, String? topicId}) async {
     dynamic messageResp;
     try {
       messageResp =
@@ -1644,7 +1646,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "filePath": filePath,
         "caption": caption?.trim(),
         "replyMessageId": replyMessageID,
-        "imageFileUrl": imageFileUrl
+        "imageFileUrl": imageFileUrl,"topicId":topicId
       });
       LogMessage.d("Image Message Result "," $messageResp");
       return messageResp;
@@ -1664,9 +1666,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       String filePath,
       String? caption,
       String? replyMessageID,
-      [String? videoFileUrl,
+      {String? videoFileUrl,
       num? videoDuration,
-      String? thumbImageBase64]) async {
+      String? thumbImageBase64, String? topicId}) async {
     dynamic messageResp;
     try {
       messageResp =
@@ -1677,7 +1679,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "replyMessageId": replyMessageID,
         "videoFileUrl": videoFileUrl,
         "videoDuration": videoDuration,
-        "thumbImageBase64": thumbImageBase64
+        "thumbImageBase64": thumbImageBase64,"topicId":topicId
       });
       LogMessage.d("Video Message Result "," $messageResp");
       return messageResp;
@@ -2040,6 +2042,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       double? messageTime,
       bool? exclude,
       int limit = 25,
+      String? topicId,
       bool ascendingOrder = true}) async {
     bool initializeResponse;
     try {
@@ -2050,7 +2053,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "messageTime": messageTime,
         "exclude": exclude,
         "limit": limit,
-        "ascendingOrder": ascendingOrder
+        "ascendingOrder": ascendingOrder,
+            "topicId": topicId
       });
       LogMessage.d("initializeMessageList", "$initializeResponse");
       return initializeResponse;
@@ -2472,7 +2476,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<dynamic> sendContactMessage(List<String> contactList, String jid,
-      String contactName, String replyMessageId) async {
+      String contactName, String replyMessageId,{String? topicId}) async {
     dynamic contactResponse;
     try {
       contactResponse =
@@ -2480,7 +2484,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "contact_list": contactList,
         "jid": jid,
         "contact_name": contactName,
-        "replyMessageId": replyMessageId
+        "replyMessageId": replyMessageId,"topicId":topicId
       });
       // LogMessage.d("mediaResponse "," $readReceiptResponse");
       return contactResponse;
@@ -2544,7 +2548,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Future<dynamic> sendDocumentMessage(
       String jid, String documentPath, String replyMessageId,
-      [String? fileUrl]) async {
+      {String? fileUrl, String? topicId}) async {
     dynamic documentResponse;
     try {
       documentResponse =
@@ -2552,7 +2556,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "file": documentPath,
         "jid": jid,
         "replyMessageId": replyMessageId,
-        "file_url": fileUrl
+        "file_url": fileUrl,
+        "topicId": topicId
       });
       LogMessage.d("documentResponse "," $documentResponse");
       return documentResponse;
@@ -2585,18 +2590,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Future<dynamic> sendAudioMessage(String jid, String filePath, bool isRecorded,
       String duration, String replyMessageId,
-      [String? audiofileUrl]) async {
+      {String? audioFileUrl, String? topicId}) async {
     //sendAudio
     dynamic audioResponse;
     try {
       audioResponse =
           await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage', {
-        "filePath": filePath,
-        "jid": jid,
-        "isRecorded": isRecorded,
-        "duration": duration,
-        "replyMessageId": replyMessageId,
-        "audiofileUrl": audiofileUrl
+            "filePath": filePath,
+            "jid": jid,
+            "isRecorded": isRecorded,
+            "duration": duration,
+            "replyMessageId": replyMessageId,
+            "audiofileUrl": audioFileUrl,
+            "topicId": topicId
       });
       LogMessage.d("audioResponse "," $audioResponse");
       return audioResponse;
@@ -3778,6 +3784,68 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     } on Exception catch (error) {
       LogMessage.d("Exception "," $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String?> createTopic({required String topicName, List<TopicMetaData> metaData = const[]}) async {
+    String? val = "";
+    List<Map<String, dynamic>>? topic = metaData.map((topic) => topic.toMap()).toList();
+    LogMessage.d("createTopic", topic);
+    if(metaData.length <=3) {
+      try {
+        val = await mirrorFlyMethodChannel
+            .invokeMethod('createTopic', {'topicName': topicName, 'metaData': topic});
+        LogMessage.d('createTopic', ' $val');
+        return val;
+      } on PlatformException catch (e) {
+        LogMessage.d("Platform Exception =", " $e");
+        rethrow;
+      } on Exception catch (error) {
+        LogMessage.d("Exception ", " $error");
+        rethrow;
+      }
+    }else{
+      throw Exception("topicData Maximum Size is 3");
+    }
+  }
+
+  @override
+  Future<String?> getTopics({required List<String> topicIds}) async {
+    if(topicIds.isEmpty){
+      throw Exception("topic id's must not be empty");
+    }
+    String? val = "";
+    try {
+      val = await mirrorFlyMethodChannel
+          .invokeMethod('getTopics', {'topicIds': topicIds});
+      LogMessage.d('getTopics', ' $val');
+      return val;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<dynamic> getRecentChatListHistoryByTopic({String? topicId,required bool firstSet, int limit = 15}) async {
+    //getRecentChats
+    dynamic recentResponse;
+    try {
+      LogMessage.d("getRecentChatListHistoryByTopic", "firstSet $firstSet");
+      recentResponse = await mirrorFlyMethodChannel.invokeMethod(
+          'getRecentChatListHistoryByTopic', {"topicId": topicId,"firstSet": firstSet, "limit": limit});
+      LogMessage.d("getRecentChatListHistoryByTopic", "$recentResponse");
+      return recentResponse;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
       rethrow;
     }
   }

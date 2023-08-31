@@ -2,6 +2,9 @@ import 'package:mirrorfly_plugin/builder.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 
+import 'model/topic_list.dart';
+import 'model/topic_metadata.dart';
+
 abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// Constructs a UikitFlutterPlatform.
   FlyChatFlutterPlatform() : super(token: _token);
@@ -351,24 +354,24 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  sendTextMessage(String message, String jid, String replyMessageId) {
+  sendTextMessage(String message, String jid, String replyMessageId,{String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
   sendLocationMessage(
-      String jid, double latitude, double longitude, String replyMessageId) {
+      String jid, double latitude, double longitude, String replyMessageId, {String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
   sendImageMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
-      [String? imageFileUrl]) {
+      {String? imageFileUrl, String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
   sendVideoMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
-      [String? videoFileUrl, num? videoDuration, String? thumbImageBase64]) {
+      {String? videoFileUrl, num? videoDuration, String? thumbImageBase64, String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -587,6 +590,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     double? messageTime,
     bool? exclude,
     int limit = 25,
+    String? topicId,
     bool ascendingOrder = true}) {
     throw UnimplementedError('initializeMessageList has not been implemented.');
   }
@@ -662,7 +666,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<dynamic> sendContactMessage(List<String> contactList, String jid,
-      String contactName, String replyMessageId) {
+      String contactName, String replyMessageId, {String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -680,7 +684,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<dynamic> sendDocumentMessage(
       String jid, String documentPath, String replyMessageId,
-      [String? fileUrl]) {
+      {String? fileUrl, String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -690,7 +694,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<dynamic> sendAudioMessage(String jid, String filePath, bool isRecorded,
       String duration, String replyMessageId,
-      [String? audiofileUrl]) {
+      {String? audioFileUrl, String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -976,6 +980,15 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
   Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) async {
     throw UnimplementedError('has not been implemented.');
+  }
+  Future<String?> createTopic({required String topicName, List<TopicMetaData> metaData = const[]}) async {
+    throw UnimplementedError('createTopic has not been implemented.');
+  }
+  Future<String?> getTopics({required List<String> topicIds}) async {
+    throw UnimplementedError('getTopics has not been implemented.');
+  }
+  Future<dynamic> getRecentChatListHistoryByTopic({String? topicId,required bool firstSet,int limit=15}) async {
+    throw UnimplementedError('getRecentChatListHistoryByTopic has not been implemented.');
   }
   Future<bool> makeVideoCall(String userJid) async {
     throw UnimplementedError('makeVideoCall has not been implemented.');
