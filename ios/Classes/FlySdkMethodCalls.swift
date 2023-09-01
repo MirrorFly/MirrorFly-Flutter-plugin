@@ -42,10 +42,10 @@ import UIKit
     static var messageListQuery : FetchMessageListQuery? = nil
     
     //Need to alter this below two lines based on RecentChat list
-    static let topicChatListParams = TopicChatListParams()
-    static let topicChatListBuilder = TopicChatListBuilder(topicChatListParams: topicChatListParams)
-    static let messageListParams = FetchMessageListParams()
-    static let topicMessageListQuery =  FetchMessageListQuery(fetchMessageListParams: messageListParams)
+    static var topicChatListParams = TopicChatListParams(limit: 15)
+    static var topicChatListBuilder : TopicChatListBuilder?
+    //static let messageListParams = FetchMessageListParams()
+//    static let topicMessageListQuery =  FetchMessageListQuery(fetchMessageListParams: messageListParams)
 
     static func buildChatSDK(call: FlutterMethodCall) {
 
@@ -1741,7 +1741,7 @@ import UIKit
         
         let limit = args["limit"] as? Int ?? 15
         
-        recentChatListParams.limit = 15
+        recentChatListParams.limit = limit
         
         if(recentChatListBuilder == nil){
             print("recentChatListBuilder is nil")
@@ -1810,6 +1810,87 @@ import UIKit
 
         }
     }
+    
+    static func getRecentChatListHistoryByTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+
+        let isFirstSet = args["firstSet"] as? Bool ?? true
+        
+        let limit = args["limit"] as? Int ?? 15
+        
+        let topicId = args["topicId"] as? String ?? ""
+        
+        topicChatListParams.limit = limit
+        topicChatListParams.topicID = topicId
+        
+        if(topicChatListBuilder == nil){
+            print("topicChatListBuilder is nil")
+            topicChatListBuilder =  TopicChatListBuilder(topicChatListParams: topicChatListParams)
+        }else{
+            print("topicChatListBuilder already set")
+        }
+        if(isFirstSet){
+            
+            print("loading first set")
+            topicChatListBuilder!.loadTopicBasedChatList{ isSuccess, flyError, flyData in
+                var data  = flyData
+                if (isSuccess) {
+                    let recentChatArray  = data.getData() as? [RecentChat] ?? []
+                    if(recentChatArray.isEmpty){
+                        result("{\"data\": [] }")
+                    }else{
+                        if let recentChatJson = recentChatArray.toJson() {
+                            let recentChatListJson = "{\"data\":" + recentChatJson + "}"
+                            print("topicrecentChatList==**==\(recentChatListJson)")
+                            result(recentChatListJson)
+                        } else {
+                            print("Failed to convert object to JSON")
+                            result(FlutterError(code: "500", message: "Error Parsing the Topic based Recent Chat List", details: nil))
+                        }
+                        
+                    }
+                } else {
+                    // Fetch recentchat failed print error to know more about the exception
+                    result(FlutterError(code: "500", message: "Unable to fetch the Topic based Recent Chat List", details: nil))
+                }
+            }
+        }else{
+            print("loading next set")
+//            if(topicChatListBuilder!.hasNextRecentChatData()){
+                print("Next set has data")
+                topicChatListBuilder!.nextSetOfTopicBasedChatList { isSuccess, flyError, flyData in
+                    var data  = flyData
+                    if (isSuccess) {
+                        let recentChatArray  = data.getData() as? [RecentChat] ?? []
+                        
+                        if(recentChatArray.isEmpty){
+                            print("returning empty data")
+                            result("{\"data\": [] }")
+                        }else{
+                            if let recentChatJson = recentChatArray.toJson() {
+                                let recentChatListJson = "{\"data\":" + recentChatJson + "}"
+                                print("topicrecentChatList==**==\(recentChatListJson)")
+                                result(recentChatListJson)
+                            } else {
+                                print("Failed to convert object to JSON")
+                                result(FlutterError(code: "500", message: "Error Parsing the Topic based Recent Chat List", details: nil))
+                            }
+                            
+                        }
+                    } else {
+                        // Fetch recentchat failed print error to know more about the exception
+                        result(FlutterError(code: "500", message: "Unabke to fetch the Topic based Recent Chat List", details: nil))
+                    }
+                }
+//            }else{
+//                print("Next set data is not available")
+//                result("{\"data\": [] }")
+//            }
+
+
+        }
+    }
 
     static func initializeMessageList(call: FlutterMethodCall, result: @escaping FlutterResult){
 
@@ -1838,6 +1919,9 @@ import UIKit
         
         messageListParams.ascendingOrder = ascendingOrder
         
+        if let topicId = args["topicId"] as? String {
+            messageListParams.topicID = topicId
+        }
 
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
 
@@ -2542,56 +2626,57 @@ import UIKit
     
     static func createTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
-        let topicName = args["topic_name"] as? String ?? ""
-        
-        ChatManager.createTopic(topicName: topicName) { isSuccess, error, data in
+        let topicName = args["topicName"] as? String ?? ""
+        let metaData = args["metaData"] as? [[String: Any]] ?? []
+        print("metaData \(String(describing: metaData))")
+        var metaDataArray : [MetaData] = []
+        for data in metaData {
+            var obj = MetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+            metaDataArray.append(obj)
+        }
+//        ["message": Topic created successfully, "data": {
+//            topicId = "0b290e7f-b05c-4859-a72d-100c48f73c8d";
+//        }, "status": 200]
+        ChatManager.createTopic(topicName: topicName,metaData: metaDataArray) { isSuccess, error, data in
+            print("createTopic ==**==\(data)")
             if isSuccess{
-                
+                var resp = data
+                if let response = resp.getData() as? [String: Any] {
+                    if let topicId = response["topicId"] as? String {
+                        result(topicId)
+                    }else{
+                        result(FlutterError(code: "500",message: "data not found",details: nil))
+                    }
+                }else{
+                    result(FlutterError(code: "500",message: "data not found",details: nil))
+                }
             }else{
-                
+                result(FlutterError(code: "500",message: error?.description,details: error))
             }
         }
     }
     
     static func getTopics(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
-        let topicIds = args["topic_name"] as? [String] ?? []
-        
+        let topicIds = args["topicIds"] as? [String] ?? []
         ChatManager.getTopics(topicIds: topicIds) { isSuccess, error, data in
-                  
             if isSuccess{
-                
+                var resp = data
+                if let response = resp.getData() as? [String: Any] {
+                    if let topics = response["topics"] as? [[String: Any]] {
+                        print("getTopics ==**==\(topics.toJSONString())")
+                        result(topics.toJSONString())
+                    }else{
+                        result(FlutterError(code: "500",message: "data not found",details: nil))
+                    }
+                }else{
+                    result(FlutterError(code: "500",message: "data not found",details: nil))
+                }
             }else{
-                
+                result(FlutterError(code: "500",message: error?.description,details: error))
             }
         }
     }
-    
-    static func loadTopicBasedChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
-        topicChatListBuilder.loadTopicBasedChatList(completionHandler: { isSuccess, error, data in
-            var result  = data
-            if isSuccess {
-                let topicChatArray  = result.getData() as? [RecentChat]
-            } else {
-                // Fetch topic chat failed print error to know more about the exception
-            }
-        })
-    }
-    
-    static func nextSetOfTopicBasedChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
-        topicChatListBuilder.nextSetOfTopicBasedChatList(completionHandler: { isSuccess, error, data in
-          var result = data
-          if isSuccess {
-              var topicChatArray = result.getData() as? [RecentChat]
-          }
-          else {
-              // Fetch topic chat failed print error to know more about the exception
-          }
-        })
-    }
-    
-    
-
 }
 
 

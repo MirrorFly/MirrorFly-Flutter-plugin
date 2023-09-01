@@ -143,7 +143,7 @@ class RecentChatData {
         profileImage: json["profileImage"],
         profileName: json["profileName"],
         unreadMessageCount: json["unreadMessageCount"],
-        topicId: json["topicId"],
+        topicId: Platform.isAndroid ? json["topicId"] : json["topicID"],
       );
 
   Map<String, dynamic> toJson() => {
