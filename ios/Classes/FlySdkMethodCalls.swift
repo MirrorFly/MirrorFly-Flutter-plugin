@@ -40,6 +40,12 @@ import UIKit
 
     static var messageListParams = FetchMessageListParams()
     static var messageListQuery : FetchMessageListQuery? = nil
+    
+    //Need to alter this below two lines based on RecentChat list
+    static let topicChatListParams = TopicChatListParams()
+    static let topicChatListBuilder = TopicChatListBuilder(topicChatListParams: topicChatListParams)
+    static let messageListParams = FetchMessageListParams()
+    static let topicMessageListQuery =  FetchMessageListQuery(fetchMessageListParams: messageListParams)
 
     static func buildChatSDK(call: FlutterMethodCall) {
 
@@ -2533,7 +2539,58 @@ import UIKit
         result(messageCount)
         
     }
-
+    
+    static func createTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let topicName = args["topic_name"] as? String ?? ""
+        
+        ChatManager.createTopic(topicName: topicName) { isSuccess, error, data in
+            if isSuccess{
+                
+            }else{
+                
+            }
+        }
+    }
+    
+    static func getTopics(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let topicIds = args["topic_name"] as? [String] ?? []
+        
+        ChatManager.getTopics(topicIds: topicIds) { isSuccess, error, data in
+                  
+            if isSuccess{
+                
+            }else{
+                
+            }
+        }
+    }
+    
+    static func loadTopicBasedChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        topicChatListBuilder.loadTopicBasedChatList(completionHandler: { isSuccess, error, data in
+            var result  = data
+            if isSuccess {
+                let topicChatArray  = result.getData() as? [RecentChat]
+            } else {
+                // Fetch topic chat failed print error to know more about the exception
+            }
+        })
+    }
+    
+    static func nextSetOfTopicBasedChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        topicChatListBuilder.nextSetOfTopicBasedChatList(completionHandler: { isSuccess, error, data in
+          var result = data
+          if isSuccess {
+              var topicChatArray = result.getData() as? [RecentChat]
+          }
+          else {
+              // Fetch topic chat failed print error to know more about the exception
+          }
+        })
+    }
+    
+    
 
 }
 
