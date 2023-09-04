@@ -9,14 +9,14 @@ List<Topics> topicsFromJson(String str) => List<Topics>.from(json.decode(str).ma
 String topicsToJson(List<Topics> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Topics {
-  String topicName;
-  String topicId;
+  String? topicName;
+  String? topicId;
   dynamic metaData;
 
   Topics({
-    required this.topicName,
-    required this.topicId,
-    required this.metaData,
+    this.topicName,
+    this.topicId,
+    this.metaData,
   });
 
   factory Topics.fromJson(Map<String, dynamic> json) => Topics(
