@@ -1129,6 +1129,7 @@ public enum ChatType : Swift.String, Swift.CustomStringConvertible, Swift.Codabl
   public func loadNextMessages(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public func loadPreviousMessages(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public func setLastMessage(messageId: Swift.String)
+  public func setFirstMessage(messageId: Swift.String)
   public func hasPreviousMessages() -> Swift.Bool
   public func hasNextMessages() -> Swift.Bool
   public func isFetchingInProgress() -> Swift.Bool
@@ -2171,6 +2172,11 @@ public class CommonDefaults {
     set
     _modify
   }
+  @MirrorFlySDK.SDKDefaults public static var permissionAlertShown: Swift.Bool {
+    get
+    set
+    _modify
+  }
   @MirrorFlySDK.SDKDefaults public static var notificationSoundID: Swift.Int {
     get
     set
@@ -2456,6 +2462,7 @@ public struct FlyConstants {
   public static let mentionRange: Swift.String
   public static let mentionWord: Swift.String
   public static let pushServerType: Swift.String
+  public static let callPermissionAlertShown: Swift.String
   public struct ErrorMessage {
     public static let internetNotAvailable: Swift.String
     public static let invalidJid: Swift.String

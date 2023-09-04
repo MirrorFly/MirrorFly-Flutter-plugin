@@ -689,3 +689,16 @@ class OnConnectionFailedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
+class OnGetAvailableFeaturesStreamHandler: NSObject, FlutterStreamHandler {
+    public var OnAvailableFeatureUpdated: FlutterEventSink?
+    
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.OnAvailableFeatureUpdated = events
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.OnAvailableFeatureUpdated = nil
+        return nil
+    }
+}

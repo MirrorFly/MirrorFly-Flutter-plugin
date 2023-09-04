@@ -1459,6 +1459,12 @@ class MockFlyChatFlutterPlatform
     // implement isUserVideoMuted
     throw UnimplementedError();
   }
+
+  @override
+  Future getAvailableFeatures() {
+    // implement getAvailableFeatures
+    throw UnimplementedError();
+  }
 }
 
 void main() {

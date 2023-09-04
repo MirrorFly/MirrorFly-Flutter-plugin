@@ -1197,4 +1197,10 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.openAudioFilePicker();
   }
 
+  ///Used to get available features for the Users based on MirrorFly Plan
+  ///You can Call this to show/hide features based on the availability
+  ///If the feature is not available, then SDK methods wil throw 403 Exception.
+  static Future<dynamic> getAvailableFeatures() async {
+    return FlyChatFlutterPlatform.instance.getAvailableFeatures();
+  }
 }

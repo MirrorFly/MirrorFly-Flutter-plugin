@@ -1727,6 +1727,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<dynamic> getAvailableFeatures() async {
+    dynamic re;
+    try {
+      re = await mirrorFlyMethodChannel.invokeMethod("getAvailableFeatures");
+      LogMessage.d('getAvailableFeatures RESULT ','$re');
+      return re;
+    } on PlatformException catch (e) {
+      LogMessage.d("getAvailableFeatures error","$e");
+      return re;
+    }
+  }
+
+  @override
   Stream<dynamic> get onMessageReceived =>
       _messageOnReceivedStreamController.stream;
 

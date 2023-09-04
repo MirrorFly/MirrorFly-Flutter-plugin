@@ -2533,6 +2533,17 @@ import UIKit
         result(messageCount)
         
     }
+    
+    static func getAvailableFeatures(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let availableFeatures = ChatManager.getAvailableFeatures()
+        print("Available Features \(availableFeatures)")
+//        print("Available Features \(availableFeatures.toJson())")
+//        availableFeatures.toJson()
+        result(availableFeatures.toJson())
+    }
+    
+    
 
 
 }
