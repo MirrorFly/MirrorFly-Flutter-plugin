@@ -261,13 +261,14 @@ import UIKit
         let txtMessage = args["message"] as? String ?? nil
         let receiverJID = args["JID"] as? String ?? nil
         let replyMessageID = args["replyMessageId"] as? String ?? ""
+        let topicId = args["topicId"] as? String ?? ""
         
         if(txtMessage == nil || receiverJID == nil){
             result(FlutterError(code: "500", message: "Parameters Missing", details: nil))
             return
         }
         
-        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: []) { isSuccess,error,chatMessage in
+        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId) { isSuccess,error,chatMessage in
             if isSuccess {
                 print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
                 let textMsgResponse = chatMessage.toJson()
@@ -291,6 +292,7 @@ import UIKit
         let latitude = args["latitude"] as? Double ?? 00.0
         let longitude = args["longitude"] as? Double ?? 00.0
         let userJid = args["jid"] as? String ?? nil
+        let topicId = args["topicId"] as? String ?? ""
         let replyMessageID = args["replyMessageId"] as? String ?? ""
         
         if(latitude == 00.0 || longitude == 00.0){
@@ -302,7 +304,7 @@ import UIKit
             return
         }
         
-        FlyMessenger.sendLocationMessage(toJid: userJid!, latitude: latitude, longitude: longitude, replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
+        FlyMessenger.sendLocationMessage(toJid: userJid!, latitude: latitude, longitude: longitude, replyMessageId: replyMessageID,topicID: topicId) { isSuccess,error,chatMessage in
             if isSuccess {
                 let locationResponse = chatMessage?.toJson()
                 print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
@@ -320,6 +322,7 @@ import UIKit
         let replyMessageId = args["replyMessageId"] as? String ?? ""
         
         let caption = args["caption"] as? String ?? ""
+        let topicId = args["topicId"] as? String ?? ""
         
         let imagefileUrl = URL(fileURLWithPath: filePath)
         
@@ -355,7 +358,7 @@ import UIKit
             
         }
         
-        FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId, mentionedUsersIds: []){isSuccess,error,message in
+        FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId, mentionedUsersIds: [],topicID: topicId){isSuccess,error,message in
             let response = message?.toJson()
             result(response)
         }
@@ -367,6 +370,7 @@ import UIKit
         let replyMessageId = args["replyMessageId"] as? String ?? ""
         let isRecorded = args["isRecorded"] as? Bool ?? false
         let audiofilePath = args["filePath"] as? String ?? ""
+        let topicId = args["topicId"] as? String ?? ""
         let audiofileUrl = URL(fileURLWithPath: audiofilePath)
         
         print("audio File URL")
@@ -384,7 +388,7 @@ import UIKit
                 mediaData.fileKey = fileKey
                 mediaData.mediaType = .audio
                 
-                FlyMessenger.sendAudioMessage(toJid:  userJid, mediaData: mediaData, replyMessageId :  replyMessageId, isRecorded : isRecorded) { isSuccess,error,message in
+                FlyMessenger.sendAudioMessage(toJid:  userJid, mediaData: mediaData, replyMessageId :  replyMessageId, isRecorded : isRecorded,topicID: topicId) { isSuccess,error,message in
                     if message != nil {
                         
                         let audioResponse = message?.toJson()
@@ -519,6 +523,7 @@ import UIKit
         let filePath = args["filePath"] as? String ?? ""
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
+        let topicId = args["topicId"] as? String ?? ""
         
         let videoFileUrl = URL(fileURLWithPath: filePath)
         
@@ -584,9 +589,10 @@ import UIKit
         let userJid = args["jid"] as? String ?? ""
         let contactName = args["contact_name"] as? String ?? ""
         let replyMessageId = args["replyMessageId"] as? String ?? ""
+        let topicId = args["topicId"] as? String ?? ""
         let contactList = args["contact_list"] as? [String] ?? []
         
-        FlyMessenger.sendContactMessage(toJid: userJid, contactName: contactName, contactNumbers: contactList, replyMessageId: replyMessageId){ isSuccess,error,message  in
+        FlyMessenger.sendContactMessage(toJid: userJid, contactName: contactName, contactNumbers: contactList, replyMessageId: replyMessageId,topicID: topicId){ isSuccess,error,message  in
             if message != nil {
                 
                 let contactMessageResponse = message?.toJson()
@@ -606,6 +612,7 @@ import UIKit
         let userJid = args["jid"] as? String ?? ""
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
+        let topicId = args["topicId"] as? String ?? ""
         
         let documentFilePath = args["file"] as? String ?? ""
         let documentFileUrl = URL(fileURLWithPath: documentFilePath)
@@ -625,7 +632,7 @@ import UIKit
                 mediaData.fileSize = fileSize
                 mediaData.mediaType = .document
                 
-                FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId) { isSuccess, error, message in
+                FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId,topicID: topicId) { isSuccess, error, message in
                     if message != nil {
                         let documentMessageResponse = message?.toJson()
                         result(documentMessageResponse)
