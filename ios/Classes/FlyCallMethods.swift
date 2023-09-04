@@ -120,6 +120,8 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let muteStatus = args["muteAudio"] as? Bool ?? false
         CallManager.muteAudio(muteStatus)
+        print("\(Constants.tag) Calling the Audio Delegate")
+        AudioManager.shared().getCurrentAudioInput()
         result(true)
     }
     func isVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult) {

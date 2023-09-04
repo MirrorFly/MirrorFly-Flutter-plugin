@@ -63,8 +63,9 @@ import PushKit
         registerForVOIPNotifications()
         
         CallManager.setCallEventsDelegate(delegate: self)
-        AudioManager.shared().audioManagerDelegate = self
-        
+//        AudioManager.shared().audioManagerDelegate = self
+        AudioManager.sharedInstance.audioManagerDelegate = self
+        print("\(Constants.tag) audioManagerDelegate")
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -82,7 +83,6 @@ import PushKit
             if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
                 print("\(Constants.tag) Method call \(call.method)")
                 methodHandler(call, result)
-                
             } else {
                 result(FlutterMethodNotImplemented)
             }
@@ -172,14 +172,20 @@ import PushKit
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         print("#MirrorflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
+        var userJID = userId
+        if userJID == "" && callStatus == .DISCONNECTED{
+            print("\(Constants.tag) SDK is empty so assigning self jid")
+            userJID = AppUtils.getMyJid()
+        }
         
         if let delegate = AudioManager.shared().audioManagerDelegate {
-            print("\(Constants.tag) Audio delegate is set")
+            print("\(Constants.tag) Audio delegate is set \(delegate)")
         } else {
             print("\(Constants.tag) Audio delegate is not-set")
         }
 
-        if userId == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED) {
+        //Added this below condition based on the iOS Sample App. callStatus != .DISCONNECTED is added for flutter, bcz the network disconnection gives the own JID for disconnect.
+        if userJID == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED && callStatus != .DISCONNECTED) {
             print("#Mirrorfly Call not updating the Call Status for my jid")
             return
         }
@@ -194,7 +200,7 @@ import PushKit
         }else{
             jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
         }
-        jsonObject.setValue(userId, forKey: "userJid")
+        jsonObject.setValue(userJID, forKey: "userJid")
         
         if CallManager.isOneToOneCall()  {
             jsonObject.setValue("OneToOne", forKey: "callMode")

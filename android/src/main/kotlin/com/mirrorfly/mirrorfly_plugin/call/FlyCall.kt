@@ -160,19 +160,24 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
     }
     override fun onCallStatusUpdated(callStatus: String, userJid: String) {
         Log.d(tag,"#onCallStatusUpdated callStatus $callStatus userJid $userJid")
+        //Adding this condition to match the iOS, but this scenario is not occurred till now. Even though Adding this for exceptional cases.
+        var userJID = userJid
+        if (userJID == ""){
+            userJID = CallManager.getCurrentUserId()
+        }
         val json = JSONObject()
         json.put("callStatus",callStatus)
-        json.put("userJid",userJid)
+        json.put("userJid",userJID)
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
         //Call on hold if user attended other call in ongoing call after then ON_RESUME called
         if(callStatus == CallStatus.OUTGOING_CALL_TIME_OUT && CallManager.isCallConnected()){
             Log.d("#onCallStatusUpdated","OUTGOING_CALL_TIME_OUT connected ${CallManager.isCallConnected()}")
-            FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJid)
+            FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
 //            handleCallStatusMessages(callStatus,json)
         }else {
             Log.d("#onCallStatusUpdated","$callStatus connected ${CallManager.isCallConnected()}")
-            FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJid)
+            FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
             handleCallStatusMessages(callStatus, json)
         }
     }
