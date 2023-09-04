@@ -178,11 +178,11 @@ import PushKit
             userJID = AppUtils.getMyJid()
         }
         
-        if let delegate = AudioManager.shared().audioManagerDelegate {
-            print("\(Constants.tag) Audio delegate is set \(delegate)")
-        } else {
-            print("\(Constants.tag) Audio delegate is not-set")
-        }
+//        if let delegate = AudioManager.shared().audioManagerDelegate {
+//            print("\(Constants.tag) Audio delegate is set \(delegate)")
+//        } else {
+//            print("\(Constants.tag) Audio delegate is not-set")
+//        }
 
         //Added this below condition based on the iOS Sample App. callStatus != .DISCONNECTED is added for flutter, bcz the network disconnection gives the own JID for disconnect.
         if userJID == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED && callStatus != .DISCONNECTED) {
