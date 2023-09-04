@@ -29457,57 +29457,6 @@
             "funcSelfKind": "NonMutating"
           },
           {
-            "kind": "Var",
-            "name": "sharedInstance",
-            "printedName": "sharedInstance",
-            "children": [
-              {
-                "kind": "TypeNominal",
-                "name": "AudioManager",
-                "printedName": "MirrorFlySDK.AudioManager",
-                "usr": "s:12MirrorFlySDK12AudioManagerC"
-              }
-            ],
-            "declKind": "Var",
-            "usr": "s:12MirrorFlySDK12AudioManagerC14sharedInstanceACvpZ",
-            "mangledName": "$s12MirrorFlySDK12AudioManagerC14sharedInstanceACvpZ",
-            "moduleName": "MirrorFlySDK",
-            "static": true,
-            "declAttributes": [
-              "HasInitialValue",
-              "Final",
-              "HasStorage",
-              "AccessControl"
-            ],
-            "isLet": true,
-            "hasStorage": true,
-            "accessors": [
-              {
-                "kind": "Accessor",
-                "name": "Get",
-                "printedName": "Get()",
-                "children": [
-                  {
-                    "kind": "TypeNominal",
-                    "name": "AudioManager",
-                    "printedName": "MirrorFlySDK.AudioManager",
-                    "usr": "s:12MirrorFlySDK12AudioManagerC"
-                  }
-                ],
-                "declKind": "Accessor",
-                "usr": "s:12MirrorFlySDK12AudioManagerC14sharedInstanceACvgZ",
-                "mangledName": "$s12MirrorFlySDK12AudioManagerC14sharedInstanceACvgZ",
-                "moduleName": "MirrorFlySDK",
-                "static": true,
-                "implicit": true,
-                "declAttributes": [
-                  "Final"
-                ],
-                "accessorKind": "get"
-              }
-            ]
-          },
-          {
             "kind": "Function",
             "name": "autoReRoute",
             "printedName": "autoReRoute()",
@@ -139494,56 +139443,56 @@
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 602,
+      "offset": 555,
       "length": 12,
       "value": "\"audioQueue\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 635,
+      "offset": 588,
       "length": 15,
       "value": "\"#audiomanager\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 782,
+      "offset": 735,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 831,
+      "offset": 784,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 923,
+      "offset": 876,
       "length": 63,
       "value": "\"#audiomanager uiSelection :: \""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 964,
+      "offset": 917,
       "length": 2,
       "value": "\" to => \""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 985,
+      "offset": 938,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 14712,
+      "offset": 14661,
       "length": 5,
       "value": "false"
     },

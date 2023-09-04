@@ -63,8 +63,8 @@ import PushKit
         registerForVOIPNotifications()
         
         CallManager.setCallEventsDelegate(delegate: self)
-//        AudioManager.shared().audioManagerDelegate = self
-        AudioManager.sharedInstance.audioManagerDelegate = self
+        AudioManager.shared().audioManagerDelegate = self
+//        AudioManager.sharedInstance.audioManagerDelegate = self
         print("\(Constants.tag) audioManagerDelegate")
     }
     
