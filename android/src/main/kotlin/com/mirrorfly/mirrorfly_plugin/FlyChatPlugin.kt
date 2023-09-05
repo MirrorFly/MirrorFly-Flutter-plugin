@@ -2556,12 +2556,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (image != null) {
                 val imagefile = File(image)
                 if (imagefile.exists()) {
-                    ContactManager.updateMyProfileImage(imagefile) { isSuccess, _, data ->
+                    ContactManager.updateMyProfileImage(imagefile, flyCallback =  { isSuccess, _, data ->
                         //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                         //DebugUtilis.v("ContactManager.updateMyProfileImage", data.tojsonString())
                         data["status"] = isSuccess
                         result.success(data.toJsonString())
-                    }
+                    })
                 } else {
                     result.error("400", "Image File Not Exist", null)
                     return
