@@ -1735,7 +1735,7 @@ import UIKit
         
         let limit = args["limit"] as? Int ?? 15
         
-        recentChatListParams.limit = 15
+        recentChatListParams.limit = limit
         
         if(recentChatListBuilder == nil){
             print("recentChatListBuilder is nil")
