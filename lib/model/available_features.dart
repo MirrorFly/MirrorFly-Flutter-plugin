@@ -18,16 +18,16 @@ class AvailableFeatures {
   bool? isViewAllMediasAvailable;
   bool? isDocumentAttachmentAvailable;
   bool? isGroupCallAvailable;
-  bool? recentChatSearch;
-  bool? imageAttachment;
-  bool? groupChat;
-  bool? contactAttachment;
-  bool? starMessage;
-  bool? attachment;
-  bool? audioAttachment;
-  bool? block;
-  bool? report;
-  bool? deleteMessage;
+  bool? isRecentChatSearchAvailable;
+  bool? isImageAttachmentAvailable;
+  bool? isGroupChatAvailable;
+  bool? isContactAttachmentAvailable;
+  bool? isStarMessageAvailable;
+  bool? isAttachmentAvailable;
+  bool? isAudioAttachmentAvailable;
+  bool? isBlockAvailable;
+  bool? isReportAvailable;
+  bool? isDeleteMessageAvailable;
 
   AvailableFeatures({
     this.isLocationAttachmentAvailable,
@@ -39,16 +39,16 @@ class AvailableFeatures {
     this.isViewAllMediasAvailable,
     this.isDocumentAttachmentAvailable,
     this.isGroupCallAvailable,
-    this.recentChatSearch,
-    this.imageAttachment,
-    this.groupChat,
-    this.contactAttachment,
-    this.starMessage,
-    this.attachment,
-    this.audioAttachment,
-    this.block,
-    this.report,
-    this.deleteMessage,
+    this.isRecentChatSearchAvailable,
+    this.isImageAttachmentAvailable,
+    this.isGroupChatAvailable,
+    this.isContactAttachmentAvailable,
+    this.isStarMessageAvailable,
+    this.isAttachmentAvailable,
+    this.isAudioAttachmentAvailable,
+    this.isBlockAvailable,
+    this.isReportAvailable,
+    this.isDeleteMessageAvailable,
   });
 
   factory AvailableFeatures.fromJson(Map<String, dynamic> json) => AvailableFeatures(
@@ -61,16 +61,16 @@ class AvailableFeatures {
     isViewAllMediasAvailable: json["viewAllMedias"],
     isDocumentAttachmentAvailable: json["documentAttachment"],
     isGroupCallAvailable: json["groupCall"],
-    recentChatSearch: json["recentchatSearch"],
-    imageAttachment: json["imageAttachment"],
-    groupChat: json["groupChat"],
-    contactAttachment: json["contactAttachment"],
-    starMessage: json["starMessage"],
-    attachment: json["attachment"],
-    audioAttachment: json["audioAttachment"],
-    block: json["block"],
-    report: json["report"],
-    deleteMessage: json["deleteMessage"],
+    isRecentChatSearchAvailable: json["recentchatSearch"],
+    isImageAttachmentAvailable: json["imageAttachment"],
+    isGroupChatAvailable: json["groupChat"],
+    isContactAttachmentAvailable: json["contactAttachment"],
+    isStarMessageAvailable: json["starMessage"],
+    isAttachmentAvailable: json["attachment"],
+    isAudioAttachmentAvailable: json["audioAttachment"],
+    isBlockAvailable: json["block"],
+    isReportAvailable: json["report"],
+    isDeleteMessageAvailable: json["deleteMessage"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -83,15 +83,15 @@ class AvailableFeatures {
     "viewAllMedias": isViewAllMediasAvailable,
     "documentAttachment": isDocumentAttachmentAvailable,
     "groupCall": isGroupCallAvailable,
-    "recentchatSearch": recentChatSearch,
-    "imageAttachment": imageAttachment,
-    "groupChat": groupChat,
-    "contactAttachment": contactAttachment,
-    "starMessage": starMessage,
-    "attachment": attachment,
-    "audioAttachment": audioAttachment,
-    "block": block,
-    "report": report,
-    "deleteMessage": deleteMessage,
+    "recentchatSearch": isRecentChatSearchAvailable,
+    "imageAttachment": isImageAttachmentAvailable,
+    "groupChat": isGroupChatAvailable,
+    "contactAttachment": isContactAttachmentAvailable,
+    "starMessage": isStarMessageAvailable,
+    "attachment": isAttachmentAvailable,
+    "audioAttachment": isAudioAttachmentAvailable,
+    "block": isBlockAvailable,
+    "report": isReportAvailable,
+    "deleteMessage": isDeleteMessageAvailable,
   };
 }
