@@ -616,6 +616,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getRecentChatList(call: methodCall,  result: result)
         case "getRecentChatListHistory":
             FlySdkMethodCalls.getRecentChatListHistory(call: methodCall,  result: result)
+        case "getRecentChatListHistoryByTopic":
+            FlySdkMethodCalls.getRecentChatListHistoryByTopic(call: methodCall,  result: result)
         case "getRecentChatListIncludingArchived":
             FlySdkMethodCalls.getRecentChatListIncludingArchived(call: methodCall,  result: result)
         case "getRecentChatOf":
@@ -801,6 +803,10 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.updateFcmToken(call:methodCall, result: result)
         case "getUnreadMessageCountExceptMutedChat":
             FlySdkMethodCalls.getUnreadMessageCountExceptMutedChat(call:methodCall, result: result)
+        case "createTopic":
+            FlySdkMethodCalls.createTopic(call:methodCall, result: result)
+        case "getTopics":
+            FlySdkMethodCalls.getTopics(call:methodCall, result: result)
 
         default:
             result(FlutterMethodNotImplemented)

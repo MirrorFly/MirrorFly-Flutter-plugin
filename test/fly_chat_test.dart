@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
@@ -914,13 +915,13 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId, [String? audiofileUrl]) {
+  Future sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId, {String? audioFileUrl, String? topicId}) {
     // sendAudioMessage
     throw UnimplementedError();
   }
 
   @override
-  Future sendContactMessage(List<String> contactList, String jid, String contactName, String replyMessageId) {
+  Future sendContactMessage(List<String> contactList, String jid, String contactName, String replyMessageId,{String? topicId}) {
     // sendContactMessage
     throw UnimplementedError();
   }
@@ -932,25 +933,25 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future sendDocumentMessage(String jid, String documentPath, String replyMessageId, [String? fileUrl]) {
+  Future sendDocumentMessage(String jid, String documentPath, String replyMessageId, {String? fileUrl, String? topicId}) {
     // sendDocumentMessage
     throw UnimplementedError();
   }
 
   @override
-  sendImageMessage(String jid, String filePath, String? caption, String? replyMessageID, [String? imageFileUrl]) {
+  sendImageMessage(String jid, String filePath, String? caption, String? replyMessageID, {String? imageFileUrl, String? topicId}) {
     // sendImageMessage
     throw UnimplementedError();
   }
 
   @override
-  sendLocationMessage(String jid, double latitude, double longitude, String replyMessageId) {
+  sendLocationMessage(String jid, double latitude, double longitude, String replyMessageId, {String? topicId}) {
     // sendLocationMessage
     throw UnimplementedError();
   }
 
   @override
-  sendTextMessage(String message, String jid, String replyMessageId) {
+  sendTextMessage(String message, String jid,  String replyMessageId,{ String? topicId}) {
     // sendTextMessage
     throw UnimplementedError();
   }
@@ -968,7 +969,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  sendVideoMessage(String jid, String filePath, String? caption, String? replyMessageID, [String? videoFileUrl, num? videoDuration, String? thumbImageBase64]) {
+  sendVideoMessage(String jid, String filePath, String? caption, String? replyMessageID,
+      {String? videoFileUrl, num? videoDuration, String? thumbImageBase64, String? topicId}) {
     // sendVideoMessage
     throw UnimplementedError();
   }
@@ -1365,6 +1367,24 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<String?> createTopic({required String topicName, List<TopicMetaData> metaData = const[] }) {
+    //  implement createTopic
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getTopics({required List<String> topicIds}) {
+    //  implement getTopics
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<dynamic> getRecentChatListHistoryByTopic({String? topicId,required bool firstSet,int limit=15}) {
+    //  implement getRecentChatListHistoryByTopic
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool> makeVideoCall(String userJid) {
     //  implement makeVideoCall
     throw UnimplementedError();
@@ -1389,7 +1409,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future initializeMessageList({required String userJid, String? messageId, double? messageTime, bool? exclude,bool ascendingOrder = true, int limit = 25}) {
+  Future initializeMessageList({required String userJid, String? messageId, double? messageTime, bool? exclude,bool ascendingOrder = true,String? topicId, int limit = 25}) {
     // implement initializeMessageList
     throw UnimplementedError();
   }
