@@ -1119,15 +1119,15 @@ class Mirrorfly {
   }
 
   ///Used as a [getTopics] class for [Mirrorfly]
-  ///used to get Topics by topic id's
-  /// * [topicIds] topic id's to get topics
+  ///used to get Topic details by topic id's
+  /// * @required [topicIds] list of topic id's to get topic details
   static Future<String?> getTopics({required List<String> topicIds}) async {
     return FlyChatFlutterPlatform.instance.getTopics(topicIds: topicIds);
   }
 
   ///Used as a getRecentChatListHistoryByTopic class for [Mirrorfly]
   /// * @property [topicId] set topic id to get topic based chats
-  /// * @property [firstSet] set true indicates the initial data otherwise next set of data
+  /// * @required [firstSet] set true indicates the initial data otherwise next set of data
   /// * @property [limit] set the limit of the chat list, default value 15
   /// * if ChatHistoryEnabled in init then synced from the server
   /// used to get Recent chat List by Topic from DB
