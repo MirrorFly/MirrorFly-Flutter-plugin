@@ -196,6 +196,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
                         finishTask()
                         val intent = AppUtils.getAppIntent(this@CallKitUiActivity)
                         startActivity(intent)
+                    }else{
+                        finishTask()
                     }
                 }
             }

@@ -60,6 +60,7 @@ class RecentChatData {
     this.profileImage,
     this.profileName,
     this.unreadMessageCount,
+    this.topicId,
   });
 
   String? contactType;
@@ -87,6 +88,7 @@ class RecentChatData {
   String? profileImage;
   String? profileName;
   dynamic unreadMessageCount;
+  String? topicId;
 
   factory RecentChatData.fromJson(Map<String, dynamic> json) => RecentChatData(
         contactType: Platform.isAndroid
@@ -141,6 +143,7 @@ class RecentChatData {
         profileImage: json["profileImage"],
         profileName: json["profileName"],
         unreadMessageCount: json["unreadMessageCount"],
+        topicId: Platform.isAndroid ? json["topicId"] : json["topicID"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -169,5 +172,6 @@ class RecentChatData {
         "profileImage": profileImage,
         "profileName": profileName,
         "unreadMessageCount": unreadMessageCount,
+        "topicId": topicId,
       };
 }
