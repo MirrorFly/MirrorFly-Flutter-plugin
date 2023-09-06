@@ -14,11 +14,7 @@ enum ScalingType {
   scaleAspectBALANCED;
 }
 
-enum HorizontalGravity{
-  top,
-  center,
-  bottom
-}
+enum HorizontalGravity { top, center, bottom }
 
 class MirrorFlyView extends StatefulWidget {
   /// MirrorFly View for Audio/Video View
@@ -31,12 +27,12 @@ class MirrorFlyView extends StatefulWidget {
       {Key? key,
       this.mirror = true,
       this.scalingType = ScalingType.scaleAspectFILL,
-        this.viewBgColor,
-        this.alignProfilePictureCenter = true,
-        // this.horizontalGravity = HorizontalGravity.center,
-        // this.profileview,
-        this.profileSize = 80,
-        this.hideProfileView,
+      this.viewBgColor,
+      this.alignProfilePictureCenter = true,
+      // this.horizontalGravity = HorizontalGravity.center,
+      // this.profileview,
+      this.profileSize = 80,
+      this.hideProfileView,
       required this.userJid})
       : super(key: key);
 
@@ -62,6 +58,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   void initState() {
     super.initState();
   }
+
   @override
   Future<void> dispose() async {
     if (Platform.isAndroid) {
@@ -80,18 +77,24 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   }
 
   String getScalingType(ScalingType type) {
-    switch(type){
-      case ScalingType.scaleAspectFIT: return "SCALE_ASPECT_FIT";
-      case ScalingType.scaleAspectFILL: return "SCALE_ASPECT_FILL";
-      case ScalingType.scaleAspectBALANCED: return "SCALE_ASPECT_BALANCED";
+    switch (type) {
+      case ScalingType.scaleAspectFIT:
+        return "SCALE_ASPECT_FIT";
+      case ScalingType.scaleAspectFILL:
+        return "SCALE_ASPECT_FILL";
+      case ScalingType.scaleAspectBALANCED:
+        return "SCALE_ASPECT_BALANCED";
     }
   }
 
-  int getHorizontalGravity(HorizontalGravity horizontalGravity){
-    switch(horizontalGravity){
-      case HorizontalGravity.top : return 48;
-      case HorizontalGravity.center: return 17;
-      case HorizontalGravity.bottom: return 80;
+  int getHorizontalGravity(HorizontalGravity horizontalGravity) {
+    switch (horizontalGravity) {
+      case HorizontalGravity.top:
+        return 48;
+      case HorizontalGravity.center:
+        return 17;
+      case HorizontalGravity.bottom:
+        return 80;
     }
   }
 
@@ -100,7 +103,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
       "scalingType": getScalingType(widget.scalingType),
       "setMirror": widget.mirror,
       'viewId': widget.userJid.trim().toString(),
-      'backgroundColor' : colorToHex(widget.viewBgColor),
+      'backgroundColor': colorToHex(widget.viewBgColor),
       'alignProfilePictureCenter': widget.alignProfilePictureCenter,
       // 'horizontalGravity': getHorizontalGravity(widget.horizontalGravity),
       'profileSize': widget.profileSize,
@@ -111,7 +114,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   }
 
   String colorToHex(Color? color) {
-    if (color == null){
+    if (color == null) {
       return "";
     }
     return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
@@ -124,19 +127,17 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
         debugPrint("#Mirrorfly Call Android Platform");
         return PlatformViewLink(
           viewType: nativeViewType,
-          surfaceFactory:
-              (BuildContext context, PlatformViewController controller) {
-                androidViewController=(controller as AndroidViewController);
+          surfaceFactory: (BuildContext context, PlatformViewController controller) {
+            androidViewController = (controller as AndroidViewController);
             return AndroidViewSurface(
               controller: androidViewController,
-              gestureRecognizers: const <Factory<
-                  OneSequenceGestureRecognizer>>{},
+              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,
             );
           },
           onCreatePlatformView: (PlatformViewCreationParams params) {
             return PlatformViewsService.initSurfaceAndroidView(
-              id:_viewId,
+              id: _viewId,
               viewType: nativeViewType,
               layoutDirection: TextDirection.rtl,
               creationParams: buildParams(),
@@ -185,7 +186,7 @@ extension ExtensionMirrorflyView on MirrorFlyView {
   }
 }
 
-class ProfileViewPositioned{
+class ProfileViewPositioned {
   /// The distance that the child's left edge is inset from the left of the [MirrorFlyView].
 
   final int? left;
@@ -208,21 +209,8 @@ class ProfileViewPositioned{
   /// The child's height.
   final int? height;
 
-  ProfileViewPositioned({
-    this.left,
-    this.top,
-    this.right,
-    this.bottom,
-    this.width,
-    this.height
-  });
+  ProfileViewPositioned({this.left, this.top, this.right, this.bottom, this.width, this.height});
 
-  Map<String, dynamic> toMap() => {
-    "left" : left,
-    "top" : top,
-    "right" : right,
-    "bottom" : bottom,
-    "width" : width,
-    "height" : height
-  };
+  Map<String, dynamic> toMap() =>
+      {"left": left, "top": top, "right": right, "bottom": bottom, "width": width, "height": height};
 }
