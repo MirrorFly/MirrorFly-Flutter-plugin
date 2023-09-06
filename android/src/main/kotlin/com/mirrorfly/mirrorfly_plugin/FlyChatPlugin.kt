@@ -1352,7 +1352,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //                try {
                     FlyCore.registerUser(
                         userIdentifier,
-                        token, forceRegister = true
+                        token
                     ) { isSuccess: Boolean, throwable: Throwable?, data: HashMap<String?, Any?> ->
                         if (isSuccess) {
 
@@ -2645,12 +2645,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (image != null) {
                 val imagefile = File(image)
                 if (imagefile.exists()) {
-                    ContactManager.updateMyProfileImage(imagefile) { isSuccess, _, data ->
+                    ContactManager.updateMyProfileImage(imagefile, flyCallback =  { isSuccess, _, data ->
                         //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                         //DebugUtilis.v("ContactManager.updateMyProfileImage", data.tojsonString())
                         data["status"] = isSuccess
                         result.success(data.toJsonString())
-                    }
+                    })
                 } else {
                     result.error("500", "Image File Not Exist", null)
                     return
@@ -3831,10 +3831,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onLoggedOut() {
         LogMessage.d(TAG, "onLoggedOut")
-        runBlocking {
-            launch {
-                onLoggedOutStreamHandler.onLoggedOut?.success(true)
-            }
+        instance.mainActivity?.runOnUiThread {
+            onLoggedOutStreamHandler.onLoggedOut?.success(true)
         }
     }
 
