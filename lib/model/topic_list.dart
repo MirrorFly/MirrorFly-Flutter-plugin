@@ -20,14 +20,14 @@ class Topics {
   });
 
   factory Topics.fromJson(Map<String, dynamic> json) => Topics(
-    topicName: json["topicName"],
-    topicId: json["topicId"],
-    metaData: json["metaData"],
-  );
+        topicName: json["topicName"],
+        topicId: json["topicId"],
+        metaData: json["metaData"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "topicName": topicName,
-    "topicId": topicId,
-    "metaData": metaData,
-  };
+        "topicName": topicName,
+        "topicId": topicId,
+        "metaData": metaData,
+      };
 }
