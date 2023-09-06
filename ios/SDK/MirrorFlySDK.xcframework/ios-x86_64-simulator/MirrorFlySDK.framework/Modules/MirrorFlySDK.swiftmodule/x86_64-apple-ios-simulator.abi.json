@@ -138925,98 +138925,98 @@
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 71037,
+      "offset": 71039,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 71059,
+      "offset": 71061,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 71113,
+      "offset": 71115,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 71135,
+      "offset": 71137,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 78263,
+      "offset": 78265,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 97618,
+      "offset": 97620,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 97649,
+      "offset": 97651,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 116506,
+      "offset": 116508,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 121919,
+      "offset": 121921,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 129449,
+      "offset": 129451,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 129498,
+      "offset": 129500,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "Array",
-      "offset": 133994,
+      "offset": 133996,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "Array",
-      "offset": 175136,
+      "offset": 175138,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 176969,
+      "offset": 176971,
       "length": 1,
       "value": "0"
     },
@@ -139191,7 +139191,7 @@
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/CallLogManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 13994,
+      "offset": 14068,
       "length": 5,
       "value": "false"
     },
@@ -139443,56 +139443,56 @@
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 555,
+      "offset": 503,
       "length": 12,
       "value": "\"audioQueue\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 588,
+      "offset": 536,
       "length": 15,
       "value": "\"#audiomanager\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 735,
+      "offset": 683,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 784,
+      "offset": 732,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 876,
+      "offset": 824,
       "length": 63,
       "value": "\"#audiomanager uiSelection :: \""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 917,
+      "offset": 865,
       "length": 2,
       "value": "\" to => \""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 938,
+      "offset": 886,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 14661,
+      "offset": 14609,
       "length": 5,
       "value": "false"
     },

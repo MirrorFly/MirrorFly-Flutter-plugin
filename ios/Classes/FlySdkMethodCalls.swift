@@ -234,7 +234,7 @@ import UIKit
                 result(newToken)
 
             } else {
-                result(FlutterError(code: "500", message: "Unable to refresh token", details: flyError?.description))
+                result(FlutterError(code: "500", message: "Unable to refresh token", details: flyError?.localizedDescription))
 
             }
         }
@@ -280,7 +280,7 @@ import UIKit
                 
                 
             }else{
-                result(FlutterError(code: "500", message: error?.description, details: nil))
+                result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
             }
         }
         
@@ -483,7 +483,7 @@ import UIKit
                     result(userlistJson)
                 }
             }else{
-                result(FlutterError(code: "500", message: flyError?.description, details: nil))
+                result(FlutterError(code: "500", message: flyError?.localizedDescription, details: nil))
             }
         }
         
@@ -506,7 +506,7 @@ import UIKit
                 
                 result(userData)
             } else{
-                result(FlutterError(code: "500", message: flyError?.description, details: nil))
+                result(FlutterError(code: "500", message: flyError?.localizedDescription, details: nil))
             }
         }
     }
