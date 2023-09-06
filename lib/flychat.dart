@@ -6,7 +6,7 @@ import 'model/topic_metadata.dart';
 class Mirrorfly {
   Mirrorfly._();
   static var isTrialLicence = true;
-  static var isChatHistoryEnabled = true;
+  static var isChatHistoryEnabled = false;
 
   ///Used as a initChat class for [Mirrorfly]
   ///
@@ -24,7 +24,7 @@ class Mirrorfly {
       String? storageFolderName,
       bool enableMobileNumberLogin = true,
       bool isTrialLicenceKey = true,
-      bool chatHistoryEnable = true,
+      bool chatHistoryEnable = false,
       // int? maximumRecentChatPin,
       // GroupConfig? groupConfig,
       // String? ivKey,
