@@ -41,7 +41,7 @@ class Mirrorfly {
         // ivKey: ivKey,
         enableDebugLog: enableDebugLog);
     isTrialLicence = isTrialLicenceKey;
-    isChatHistoryEnable = chatHistoryEnable;
+    isChatHistoryEnabled = chatHistoryEnable;
     FlyChatFlutterPlatform.instance.init(builder);
   }
 
