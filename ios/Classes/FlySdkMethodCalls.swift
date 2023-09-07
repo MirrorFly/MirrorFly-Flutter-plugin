@@ -2658,7 +2658,7 @@ import UIKit
                     result(FlutterError(code: "500",message: "data not found",details: nil))
                 }
             }else{
-                result(FlutterError(code: "500",message: error?.localizedDescription,details: nil))
+                result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
             }
         }
     }
@@ -2681,7 +2681,7 @@ import UIKit
                 }
             }else{
                 print("getTopics error \(error?.localizedDescription)")
-                result(FlutterError(code: "500",message: error?.localizedDescription,details: nil))
+                result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
             }
         }
     }

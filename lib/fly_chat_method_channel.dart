@@ -3512,7 +3512,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     String? val = "";
     List<Map<String, dynamic>>? topic = metaData.map((topic) => topic.toMap()).toList();
     LogMessage.d("createTopic", topic);
-    if (metaData.length <= 3) {
+    //if (metaData.length <= 3) {
       try {
         val = await mirrorFlyMethodChannel.invokeMethod('createTopic', {'topicName': topicName, 'metaData': topic});
         LogMessage.d('createTopic', ' $val');
@@ -3524,16 +3524,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         LogMessage.d("Exception ", " $error");
         rethrow;
       }
-    } else {
-      throw Exception("topicData Maximum Size is 3");
-    }
+    // } else {
+    //   throw Exception("topicData Maximum Size is 3");
+    // }
   }
 
   @override
   Future<String?> getTopics({required List<String> topicIds}) async {
-    if (topicIds.isEmpty) {
-      throw Exception("topic id's must not be empty");
-    }
     String? val = "";
     try {
       val = await mirrorFlyMethodChannel.invokeMethod('getTopics', {'topicIds': topicIds});
