@@ -31,7 +31,7 @@ import MirrorFlySDK
         
         ChatManager.setAppGroupContainerId(id: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
-        
+
         print("#push-api withContentHandler received")
         
         
@@ -84,7 +84,7 @@ import MirrorFlySDK
                 guard let myJid = try? FlyUtils.getMyJid() else {
                     return
                 }
-                
+
                 if ChatManager.getMessageOfId(messageId: messageId)?.senderUserJid == myJid && (chatType == "chat" || chatType == "normal") {
                     if !FlyUtils.isValidGroupJid(groupJid: ChatManager.getMessageOfId(messageId: messageId)?.chatUserJid) {
                         self.bestAttemptContent?.title = "You"
