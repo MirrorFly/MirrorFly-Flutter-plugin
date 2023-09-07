@@ -1282,7 +1282,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //                try {
                     FlyCore.registerUser(
                         userIdentifier,
-                        token, forceRegister = true
+                        token
                     ) { isSuccess: Boolean, throwable: Throwable?, data: HashMap<String?, Any?> ->
                         if (isSuccess) {
 
@@ -3694,10 +3694,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onLoggedOut() {
         LogMessage.d(TAG, "onLoggedOut")
-        runBlocking {
-            launch {
+        instance.mainActivity?.runOnUiThread {
                 onLoggedOutStreamHandler.onLoggedOut?.success(true)
-            }
         }
     }
 
