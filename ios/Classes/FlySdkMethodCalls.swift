@@ -2403,13 +2403,7 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
-        
-        //        if let userProfile = userlist.filter({$0.jid == userJid}).first {
-        //
-        //            ContactManager.shared.saveUser(profileDetails: userProfile)
-        //            let userProfileJson = userProfile.toJson()
-        //            result(userProfileJson)
-        //        }else{
+
         let userProfile = ChatManager.profileDetaisFor(jid: userJid)
         print("userProfile*** \(userProfile)")
 
@@ -2438,9 +2432,6 @@ import UIKit
             print("getProfileDetails==**==\(String(describing: userProfileJson))")
             result(userProfileJson)
         }
-
-
-        //        }
 
     }
     static func deleteAccount(call: FlutterMethodCall, result: @escaping FlutterResult){
