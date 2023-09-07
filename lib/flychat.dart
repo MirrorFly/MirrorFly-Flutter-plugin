@@ -5,7 +5,7 @@ import 'fly_chat_platform_interface.dart';
 class Mirrorfly {
   Mirrorfly._();
   static var isTrialLicence = true;
-  static var isChatHistoryEnable = true;
+  static var isChatHistoryEnabled = true;
 
   ///Used as a initChat class for [Mirrorfly]
   ///
