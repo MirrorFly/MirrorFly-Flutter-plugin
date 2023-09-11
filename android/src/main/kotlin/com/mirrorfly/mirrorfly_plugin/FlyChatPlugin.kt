@@ -1146,11 +1146,20 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("openAudioFilePicker") -> {
                 selectAudioFileFromStorage(result)
             }
+            call.method.equals("getAvailableFeatures") -> {
+                getAvailableFeatures(result)
+            }
             else -> {
                 result.notImplemented()
             }
 
         }
+    }
+
+    private fun getAvailableFeatures(result: MethodChannel.Result){
+        val availableFeatures = ChatManager.getAvailableFeatures().toJsonString()
+        println("getAvailableFeatures : $availableFeatures")
+        result.success(availableFeatures)
     }
 
     private fun getManifestValue(call: MethodCall,result: MethodChannel.Result) {
