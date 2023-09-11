@@ -244,6 +244,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final onUserStoppedSpeakingChannel = const EventChannel('contus.mirrorfly/onUserStoppedSpeaking');
   final StreamController<dynamic> onUserStoppedSpeakingStreamController = StreamController<dynamic>.broadcast();
 
+  @visibleForTesting
+  final onAvailableFeaturesUpdatedChannel = const EventChannel('contus.mirrorfly/onAvailableFeaturesUpdated');
+  final StreamController<dynamic> onAvailableFeaturesUpdatedStreamController = StreamController<dynamic>.broadcast();
+
   /*@override
   Future<String?> getPlatformVersion() async {
     final version =
@@ -320,6 +324,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     onMuteStatusUpdatedStreamController.addStream(onMuteStatusUpdatedChannel.receiveBroadcastStream());
     onUserSpeakingStreamController.addStream(onUserSpeakingChannel.receiveBroadcastStream());
     onUserStoppedSpeakingStreamController.addStream(onUserStoppedSpeakingChannel.receiveBroadcastStream());
+    onAvailableFeaturesUpdatedStreamController.addStream(onAvailableFeaturesUpdatedChannel.receiveBroadcastStream());
   }
 
   @override
@@ -1962,6 +1967,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onUserStoppedSpeaking =>
       onUserStoppedSpeakingStreamController.stream;
+
+  @override
+  Stream<dynamic> get onAvailableFeaturesUpdated =>
+      onAvailableFeaturesUpdatedStreamController.stream;
 
   @override
   Future<String?> imagePath(String imgurl) async {

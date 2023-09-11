@@ -1329,6 +1329,10 @@ class MockFlyChatFlutterPlatform
   Stream get onUserStoppedSpeaking => throw UnimplementedError();
 
   @override
+  // implement onAvailableFeaturesUpdated
+  Stream get onAvailableFeaturesUpdated => throw UnimplementedError();
+
+  @override
   Future getCallUsersList() {
     // implement getCallUsers
     throw UnimplementedError();

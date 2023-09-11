@@ -550,6 +550,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onUserStoppedSpeaking =>
       throw UnimplementedError('onUserStoppedSpeaking has not been implemented.');
 
+  Stream<dynamic> get onAvailableFeaturesUpdated =>
+      throw UnimplementedError('onUpdateAvailableFeatures has not been implemented.');
+
   Future<String?> imagePath(String imgurl) {
     throw UnimplementedError('has not been implemented.');
   }

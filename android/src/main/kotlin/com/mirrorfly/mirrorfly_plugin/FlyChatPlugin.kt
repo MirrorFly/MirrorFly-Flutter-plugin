@@ -24,8 +24,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.google.gson.Gson
-import com.mirrorfly.mirrorfly_plugin.Constants.onFailureChannel
-import com.mirrorfly.mirrorfly_plugin.Constants.onSuccessChannel
 import com.mirrorfly.mirrorfly_plugin.call.*
 import com.mirrorflysdk.AppUtils
 import com.mirrorflysdk.ChatSDK
@@ -81,7 +79,7 @@ import java.util.*
 class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
     TypingEventListener, TypingStatusListener, ActivityAware, DefaultLifecycleObserver,
-    PluginRegistry.NewIntentListener,PluginRegistry.ActivityResultListener{
+    PluginRegistry.NewIntentListener,PluginRegistry.ActivityResultListener, AvailableFeaturesCallback{
 
     companion object{
         @SuppressLint("StaticFieldLeak")
@@ -322,15 +320,18 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 binaryMessenger,
                 Constants.onGroupTypingStatusChannel
             ).setStreamHandler(onGroupTypingStatusStreamHandler)
-            EventChannel(binaryMessenger, onFailureChannel).setStreamHandler(
+            EventChannel(binaryMessenger, Constants.onFailureChannel).setStreamHandler(
                 onFailureStreamHandler
             )
             EventChannel(
                 binaryMessenger,
                 Constants.onProgressChangedChannel
             ).setStreamHandler(onProgressChangedStreamHandler)
-            EventChannel(binaryMessenger, onSuccessChannel).setStreamHandler(
+            EventChannel(binaryMessenger, Constants.onSuccessChannel).setStreamHandler(
                 onSuccessStreamHandler
+            )
+            EventChannel(binaryMessenger, Constants.onAvailableFeaturesUpdatedChannel).setStreamHandler(
+                onUpdateAvailableFeaturesStreamHandler
             )
         }
     }
@@ -1321,6 +1322,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                             ChatEventsManager.attachGroupEventsListener(this)
                             ChatEventsManager.attachLoginEventsListener(this)
                             ChatEventsManager.attachTypingEventListener(this)
+                            ChatManager.setAvailableFeaturesCallback(this)
                             SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
                             ChatManager.connect(object : ChatConnectionListener {
                                 override fun onConnected() {
@@ -3911,6 +3913,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
         binding.addOnNewIntentListener(instance)
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
+        ChatManager.setAvailableFeaturesCallback(instance)
         if (isRegistered) {
             ChatEventsManager.setupMessageEventListener(this)
             ChatEventsManager.attachProfileEventsListener(this)
@@ -4193,6 +4196,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
         }
         return false
+    }
+
+    override fun onUpdateAvailableFeatures(features: Features) {
+        LogMessage.d("onAvailableFeaturesUpdated",features.toJsonString())
+        onUpdateAvailableFeaturesStreamHandler.onAvailableFeaturesUpdated?.success(features.toJsonString())
     }
 
 }

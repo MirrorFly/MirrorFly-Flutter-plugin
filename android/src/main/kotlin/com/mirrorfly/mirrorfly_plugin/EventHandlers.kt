@@ -673,3 +673,17 @@ object onSuccessStreamHandler : EventChannel.StreamHandler {
         onSuccess = null
     }
 }
+
+object onUpdateAvailableFeaturesStreamHandler : EventChannel.StreamHandler {
+
+    var onAvailableFeaturesUpdated: EventChannel.EventSink? = null
+
+
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        onAvailableFeaturesUpdated = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        onAvailableFeaturesUpdated = null
+    }
+}

@@ -609,6 +609,9 @@ class Mirrorfly {
   static Stream<dynamic> get onUserStoppedSpeaking =>
       FlyChatFlutterPlatform.instance.onUserStoppedSpeaking;
 
+  static Stream<dynamic> get onAvailableFeaturesUpdated =>
+      FlyChatFlutterPlatform.instance.onAvailableFeaturesUpdated;
+
   static Future<String?> imagePath(String imgurl) {
     return FlyChatFlutterPlatform.instance.imagePath(imgurl);
   }
