@@ -13,6 +13,7 @@ import PushKit
 @objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate {
     
     var selectedAudioRouteDevice : String = "receiver"
+    var isAudioRouteMethodCall : Bool = false
     
     func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
         print("#MirrorflyCall Call AUDIO DELEGATE \(audioDeviceType)")
@@ -30,12 +31,13 @@ import PushKit
         @unknown default:
             selectedAudioRouteDevice = "none"
         }
-        
-        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
-        jsonObject.setValue("AUDIO_DEVICE_CHANGED", forKey: "callAction")
-        let callUpdate = pluginDictToJson(dictionary: jsonObject)
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
+        if !isAudioRouteMethodCall{
+            let jsonObject: NSMutableDictionary = NSMutableDictionary()
+            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
+            jsonObject.setValue("AUDIO_DEVICE_CHANGED", forKey: "callAction")
+            let callUpdate = pluginDictToJson(dictionary: jsonObject)
+            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
+        }
         
     }
     
@@ -144,11 +146,15 @@ import PushKit
     func socketConnectionEstablished() {
         
     }
-    
+     
     func selectedAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        print("#Mirrorfly call selectedAudioDevice \(selectedAudioRouteDevice)")
-        result(selectedAudioRouteDevice)
-        
+        isAudioRouteMethodCall = true
+        AudioManager.shared().getCurrentAudioInput()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            print("#Mirrorfly call selectedAudioDevice \(self.selectedAudioRouteDevice)")
+            self.isAudioRouteMethodCall = false
+            result(self.selectedAudioRouteDevice)
+        }
     }
     
     
@@ -177,12 +183,6 @@ import PushKit
             print("\(Constants.tag) SDK is empty so assigning self jid")
             userJID = AppUtils.getMyJid()
         }
-        
-//        if let delegate = AudioManager.shared().audioManagerDelegate {
-//            print("\(Constants.tag) Audio delegate is set \(delegate)")
-//        } else {
-//            print("\(Constants.tag) Audio delegate is not-set")
-//        }
 
         //Added this below condition based on the iOS Sample App. callStatus != .DISCONNECTED is added for flutter, bcz the network disconnection gives the own JID for disconnect.
         if userJID == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED && callStatus != .DISCONNECTED) {
