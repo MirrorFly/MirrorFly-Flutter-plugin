@@ -8,6 +8,7 @@ import 'dart:io';
 AvailableFeatures availableFeaturesFromJson(String str) => AvailableFeatures.fromJson(json.decode(str));
 
 String availableFeaturesToJson(AvailableFeatures data) => json.encode(data.toJson());
+String availableFeaturesMapToJson(String str) => availableFeaturesToJson(AvailableFeatures.fromJson(json.decode(str)));
 
 class AvailableFeatures {
   bool? isLocationAttachmentAvailable;
