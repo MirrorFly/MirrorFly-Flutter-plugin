@@ -681,6 +681,7 @@ public struct FileMessage : Swift.Codable {
 }
 @_hasMissingDesignatedInitializers public class AudioManager {
   public class func shared() -> MirrorFlySDK.AudioManager
+  public static var sharedInstance: MirrorFlySDK.AudioManager
   public func autoReRoute()
   public var audioManagerDelegate: MirrorFlySDK.AudioManagerDelegate?
   public func routeToAvailableDevice(preferredDevice: MirrorFlySDK.OutputType? = nil)

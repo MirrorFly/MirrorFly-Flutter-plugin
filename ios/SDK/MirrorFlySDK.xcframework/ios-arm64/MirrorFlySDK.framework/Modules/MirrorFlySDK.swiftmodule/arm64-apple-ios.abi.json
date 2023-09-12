@@ -29457,6 +29457,106 @@
             "funcSelfKind": "NonMutating"
           },
           {
+            "kind": "Var",
+            "name": "sharedInstance",
+            "printedName": "sharedInstance",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "AudioManager",
+                "printedName": "MirrorFlySDK.AudioManager",
+                "usr": "s:12MirrorFlySDK12AudioManagerC"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:12MirrorFlySDK12AudioManagerC14sharedInstanceACvpZ",
+            "mangledName": "$s12MirrorFlySDK12AudioManagerC14sharedInstanceACvpZ",
+            "moduleName": "MirrorFlySDK",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "Final",
+              "HasStorage",
+              "AccessControl"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AudioManager",
+                    "printedName": "MirrorFlySDK.AudioManager",
+                    "usr": "s:12MirrorFlySDK12AudioManagerC"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK12AudioManagerC14sharedInstanceACvgZ",
+                "mangledName": "$s12MirrorFlySDK12AudioManagerC14sharedInstanceACvgZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AudioManager",
+                    "printedName": "MirrorFlySDK.AudioManager",
+                    "usr": "s:12MirrorFlySDK12AudioManagerC"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK12AudioManagerC14sharedInstanceACvsZ",
+                "mangledName": "$s12MirrorFlySDK12AudioManagerC14sharedInstanceACvsZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK12AudioManagerC14sharedInstanceACvMZ",
+                "mangledName": "$s12MirrorFlySDK12AudioManagerC14sharedInstanceACvMZ",
+                "moduleName": "MirrorFlySDK",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
             "kind": "Function",
             "name": "autoReRoute",
             "printedName": "autoReRoute()",
@@ -139443,56 +139543,56 @@
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 503,
+      "offset": 558,
       "length": 12,
       "value": "\"audioQueue\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 536,
+      "offset": 591,
       "length": 15,
       "value": "\"#audiomanager\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 683,
+      "offset": 738,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 732,
+      "offset": 787,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 824,
+      "offset": 879,
       "length": 63,
       "value": "\"#audiomanager uiSelection :: \""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 865,
+      "offset": 920,
       "length": 2,
       "value": "\" to => \""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "StringLiteral",
-      "offset": 886,
+      "offset": 941,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/AudioManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 14607,
+      "offset": 15219,
       "length": 5,
       "value": "false"
     },
@@ -140346,189 +140446,189 @@
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "FloatLiteral",
-      "offset": 4147,
+      "offset": 4221,
       "length": 4,
       "value": "60.0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "FloatLiteral",
-      "offset": 4183,
+      "offset": 4257,
       "length": 4,
       "value": "30.0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "FloatLiteral",
-      "offset": 4220,
+      "offset": 4294,
       "length": 4,
       "value": "60.0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 4262,
+      "offset": 4336,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 4829,
+      "offset": 4903,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 4872,
+      "offset": 4946,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 4915,
+      "offset": 4989,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 5356,
+      "offset": 5430,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 5585,
+      "offset": 5659,
       "length": 6,
       "value": "\"PING\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 5625,
+      "offset": 5699,
       "length": 6,
       "value": "\"PONG\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 5812,
+      "offset": 5886,
       "length": 9,
       "value": "\"ENGAGED\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 5904,
+      "offset": 5978,
       "length": 6,
       "value": "\"exit\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 5956,
+      "offset": 6030,
       "length": 18,
       "value": "\"SOCKET_RECONNECT\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 6019,
+      "offset": 6093,
       "length": 17,
       "value": "\"CALL_CONNECTION\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 6085,
+      "offset": 6159,
       "length": 21,
       "value": "\"CALL_CONNECTION_ACK\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 6201,
+      "offset": 6275,
       "length": 12,
       "value": "\"VIDEO_MUTE\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 6254,
+      "offset": 6328,
       "length": 13,
       "value": "\"CALL_STATUS\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 6312,
+      "offset": 6386,
       "length": 17,
       "value": "\"CALL_CONVERSION\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 6383,
+      "offset": 6457,
       "length": 26,
       "value": "\"CALL_CONVERSION_RESPONSE\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 6560,
+      "offset": 6634,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 6822,
+      "offset": 6896,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 6854,
+      "offset": 6928,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "StringLiteral",
-      "offset": 6886,
+      "offset": 6960,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 6997,
+      "offset": 7071,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 7040,
+      "offset": 7114,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 7072,
+      "offset": 7146,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/UIKit_NewSDK\/MirrorFlySDK\/Call\/Classes\/JanusWebrtc\/CallManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 7108,
+      "offset": 7182,
       "length": 5,
       "value": "false"
     },

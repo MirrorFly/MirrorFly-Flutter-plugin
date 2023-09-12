@@ -16,7 +16,7 @@ import PushKit
     var isAudioRouteMethodCall : Bool = false
     
     func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
-        print("#MirrorflyCall Call AUDIO DELEGATE \(audioDeviceType)")
+        print("#MirrorflyCall triggerDelegateForOutputs \(audioDeviceType)")
         
         switch (audioDeviceType) {
         case .bluetooth:
@@ -65,8 +65,9 @@ import PushKit
         registerForVOIPNotifications()
         
         CallManager.setCallEventsDelegate(delegate: self)
-        AudioManager.shared().audioManagerDelegate = self
-//        AudioManager.sharedInstance.audioManagerDelegate = self
+//        AudioManager.shared().audioManagerDelegate = self
+        
+        AudioManager.sharedInstance.audioManagerDelegate = self
         print("\(Constants.tag) audioManagerDelegate")
     }
     
