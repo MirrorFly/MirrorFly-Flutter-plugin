@@ -827,7 +827,7 @@ extension FlyChatPlugin : AvailableFeaturesDelegate {
         print("didUpdateAvailableFeatures event \(features)")
         if(onGetAvailableFeaturesStreamHandler?.OnAvailableFeatureUpdated != nil){
             print("didUpdateAvailableFeatures event\(String(describing: features))")
-            onGetAvailableFeaturesStreamHandler?.OnAvailableFeatureUpdated?(features)
+            onGetAvailableFeaturesStreamHandler?.OnAvailableFeatureUpdated?(features.toJson())
         }else{
             print("didUpdateAvailableFeatures Stream Handler is Nil")
         }
