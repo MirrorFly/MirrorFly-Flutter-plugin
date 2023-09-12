@@ -1324,40 +1324,47 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                             ChatEventsManager.attachTypingEventListener(this)
                             ChatManager.setAvailableFeaturesCallback(this)
                             SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
-                            ChatManager.connect(object : ChatConnectionListener {
-                                override fun onConnected() {
-                                    LogMessage.d(TAG, "onConnected")
-                                    Handler(Looper.getMainLooper()).postDelayed({
-                                        result.success(response)
-                                    }, 500)
+                            LogMessage.d(TAG, "Chat Manager Connect able ${ChatManager.connect()}")
+                            if(ChatManager.connect()) {
+                                LogMessage.d(TAG, "Chat Manager Connecting...")
+                                ChatManager.connect(object : ChatConnectionListener {
+                                    override fun onConnected() {
+                                        LogMessage.d(TAG, "onConnected")
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            result.success(response)
+                                        }, 500)
 
-                                }
+                                    }
 
-                                override fun onConnectionFailed(e: FlyException) {
-                                    LogMessage.d(TAG, "Chat Manager onConnectionFailed")
-                                    result.error(
-                                        "500",
-                                        e.message,
-                                        null
-                                    )
-                                }
+                                    override fun onConnectionFailed(e: FlyException) {
+                                        LogMessage.d(TAG, "Chat Manager onConnectionFailed")
+                                        result.error(
+                                            "500",
+                                            e.message,
+                                            null
+                                        )
+                                    }
 
-                                override fun onDisconnected() {
-                                    LogMessage.d(TAG, "Chat Manager Disconnected")
-                                }
+                                    override fun onDisconnected() {
+                                        LogMessage.d(TAG, "Chat Manager Disconnected")
+                                    }
 
-                                override fun onReconnecting() {
-                                    LogMessage.d(TAG, "Chat Manager onReconnecting")
-                                }
+                                    override fun onReconnecting() {
+                                        LogMessage.d(TAG, "Chat Manager onReconnecting")
+                                    }
 
-                                /*override fun onConnectionNotAuthorized() {
+                                    /*override fun onConnectionNotAuthorized() {
                   result.error(
                     "500",
                     "Chat Manager Connection Not Authorized",
                     null
                   )
                 }*/
-                            })
+                                })
+                            }else{
+                                LogMessage.d(TAG, "Chat Manager Already Connected")
+                                result.success(response)
+                            }
 
                         } else {
                             if (data["http_status_code"] == 403) {
