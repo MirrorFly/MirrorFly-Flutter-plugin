@@ -1,3 +1,9 @@
+## [0.0.12-beta] Topic Based Chat
+* create Topic to initiate topic based chat
+* get topic details from using getTopics
+* get Recent chat list using getRecentChatListHistoryByTopic
+* get Messages by topic using initializeMessageList with topic ID
+
 ## [0.0.11] Push Notification
 * handleReceivedMessage method added to get chat message from FCM Notification for Android Only
 * for iOS Need to add Notification Extension Service

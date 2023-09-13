@@ -46,10 +46,12 @@ import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MessageType
+import com.mirrorflysdk.flycommons.models.MetaData
 import com.mirrorflysdk.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.mirrorflysdk.media.MediaUploadHelper
 import com.mirrorflysdk.models.MediaAutoDownloadOption
 import com.mirrorflysdk.models.RecentChatListParams
+import com.mirrorflysdk.models.TopicChatListParams
 import com.mirrorflysdk.utils.*
 import com.mirrorflysdk.utils.Utils
 import com.mirrorflysdk.xmpp.chat.listener.TypingStatusListener
@@ -62,7 +64,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.PluginRegistry.Registrar
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
@@ -782,6 +783,15 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("getRecentChatList") -> {
                 getRecentChatList(result)
             }
+            call.method.equals("getRecentChatListHistoryByTopic") -> {
+                runBlocking {
+                    // Launch a coroutine
+                    launch {
+                        // Call the suspend function within the coroutine
+                        getRecentChatListHistoryByTopic(call, result)
+                    }
+                }
+            }
             call.method.equals("getRecentChatListHistory") -> {
                 runBlocking {
                     // Launch a coroutine
@@ -1150,6 +1160,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("getAvailableFeatures") -> {
                 getAvailableFeatures(result)
             }
+            call.method.equals("createTopic") -> {
+                createTopic(call,result)
+            }
+            call.method.equals("getTopics") -> {
+                getTopics(call,result)
+            }
             else -> {
                 result.notImplemented()
             }
@@ -1161,6 +1177,60 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val availableFeatures = ChatManager.getAvailableFeatures().toJsonString()
         println("getAvailableFeatures : $availableFeatures")
         result.success(availableFeatures)
+    }
+
+    private fun createTopic(call: MethodCall,result: MethodChannel.Result){
+        val topicName = call.argument<String>("topicName")
+        val metaData = call.argument<List<Map<String,Any>>>("metaData")
+        LogMessage.d("createTopic",metaData.toString())
+        if(topicName.isNullOrEmpty()){
+            return
+        }
+        if(metaData.isNullOrEmpty()){
+            return
+        }
+        val meta = extractMetaData(metaData)
+
+        ChatManager.createTopic(topicName, meta) { isSuccess, throwable, data ->
+            LogMessage.d("createTopic", "$isSuccess : $data")
+            if(isSuccess){
+                val topic = data["data"] as JSONObject
+                val topicId = topic.get("topicId")
+                LogMessage.d("topicId","$topicId")
+                result.success(topicId)
+            }else{
+                result.error(data["http_status_code"].toString(),data["message"].toString(),data)
+            }
+        }
+        //a00251d7-d388-4f47-8672-553f8afc7e11
+    }
+
+    private fun getTopics(call: MethodCall,result: MethodChannel.Result){
+        val topicIds = call.argument<List<String>>("topicIds")
+        LogMessage.d("topicIds",topicIds.toString())
+        ChatManager.getTopics(topicIds as ArrayList<String>) { isSuccess, throwable, data ->
+            LogMessage.d("getTopics", "$isSuccess : $data")
+            //D/getTopics(22473): true : {data={"topics":[{"topicName":"New Topic saravanakumar","topicId":"a00251d7-d388-4f47-8672-553f8afc7e11","metaData":{"key1":"value1"}}]}, http_status_code=200, message=Data retrieved successfully}
+            if (isSuccess) {
+                val resultData = (data["data"] as JSONObject)
+                val topics = resultData.get("topics")
+                LogMessage.d("getTopics",topics.toString())
+                //handle success
+                result.success(topics.toString())
+            } else {
+                result.error(data["http_status_code"].toString(),data["message"].toString(),data)
+                // print throwable to find the exception details.
+            }
+        }
+    }
+
+    private fun extractMetaData(data: List<Map<String, Any>>) : List<MetaData>{
+        val extractedData = ArrayList<MetaData>()
+        data.forEach { it->
+            extractedData.add(MetaData(it.get("key") as String, it.get("value") as String))
+        }
+        LogMessage.d("extractMetaData", "$data : ${extractedData.toJsonString()}")
+        return extractedData
     }
 
     private fun getManifestValue(call: MethodCall,result: MethodChannel.Result) {
@@ -1292,7 +1362,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //                try {
                     FlyCore.registerUser(
                         userIdentifier,
-                        token, forceRegister = true
+                        token
                     ) { isSuccess: Boolean, throwable: Throwable?, data: HashMap<String?, Any?> ->
                         if (isSuccess) {
 
@@ -2119,7 +2189,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val replyMessageID = call.argument<String>("replyMessageId") ?: ""
         val isRecorded = call.argument<Boolean>("isRecorded")
         val duration = call.argument<String>("duration")?.toLong()
-
+        val topicId = call.argument("topicId") ?: ""
         LogMessage.d("isRecorded", isRecorded.toString())
         val listener = object : SendMessageCallback {
             override fun onResponse(
@@ -2141,6 +2211,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 if (audiofileUrl.isNotEmpty()) {
                     val sendMessageParams = FileMessage().apply {
                         toId = userJID
+                        this.topicId = topicId
                         messageType = if(isRecorded) MessageType.AUDIO_RECORDED else MessageType.AUDIO
                         replyMessageId = replyMessageID //Optional
                         fileMessage = FileMessageParams().apply {
@@ -2172,6 +2243,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 } else {
                     val sendMessageParams = FileMessage().apply {
                         toId = userJID
+                        this.topicId = topicId
                         messageType = if (isRecorded) MessageType.AUDIO_RECORDED else MessageType.AUDIO
                         this.replyMessageId = replyMessageID
                         fileMessage = FileMessageParams().apply {
@@ -2201,10 +2273,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val userJID = call.argument<String>("jid")
         val contactName = call.argument<String>("contact_name")
         val replyMessageID = call.argument<String>("replyMessageId") ?: ""
-
+        val topicId = call.argument("topicId") ?: ""
         if (userJID != null && contactList != null && contactName != null) {
             val sendMessageParams = FileMessage().apply {
                 toId = userJID
+                this.topicId = topicId
                 messageType = MessageType.CONTACT
                 replyMessageId = replyMessageID //Optional
                 contactMessage = ContactMessageParams().apply {
@@ -2251,7 +2324,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     private fun sendVideoMessage(call: MethodCall, result: MethodChannel.Result) {
         val userJid = call.argument<String>("jid") ?: ""
         val localFilePath = call.argument<String>("filePath") ?: ""
-
+        val topicId = call.argument("topicId") ?: ""
         val videoFile = File(localFilePath)
 
         val videoCaption = call.argument<String>("caption") ?: ""
@@ -2279,6 +2352,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (videoFileUrl.isNotEmpty() && thumbImageBase64.isNotEmpty() && videoDuration != 0L) {
                 val sendMessageParams = FileMessage().apply {
                     toId = userJid
+                    this.topicId = topicId
                     messageType = MessageType.VIDEO
                     replyMessageId = replyMessageID //Optional
                     fileMessage = FileMessageParams().apply {
@@ -2319,6 +2393,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             } else {
                 val sendMessageParams = FileMessage().apply {
                     toId = userJid
+                    this.topicId = topicId
                     messageType = MessageType.VIDEO
                     replyMessageId = replyMessageID //Optional
                     fileMessage = FileMessageParams().apply {
@@ -2379,6 +2454,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val inclusive: Boolean = call.argument("exclude") ?: false
         val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: true
         val limit: Int = call.argument("limit") ?: 50
+        val topicId: String = call.argument("topicId") ?: ""
         if(ContactManager.isValidJid(chatJid)) {
             val messageListParams = FetchMessageListParams()
             messageListParams.chatJid = chatJid
@@ -2386,6 +2462,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (messageTime.isNotEmpty()) messageListParams.messageTime = messageTime
             messageListParams.inclusive = !inclusive// for iOS using exclude , so we using NOT to match the Android and iOS
             messageListParams.ascendingOrder = ascendingOrder
+            messageListParams.topicId = topicId
             messageListParams.limit = limit
 //            messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
 //            messageListParams.direction = "backward" // forward or backward
@@ -2569,27 +2646,39 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     private fun updateMyProfileImage(call: MethodCall, result: MethodChannel.Result) {
-        if (call.hasArgument("image")) {
+        if(call.hasArgument("imageUrl")){
+            val imageUrl = call.argument<String>("imageUrl") ?: ""
+            if(imageUrl.isNotEmpty()) {
+                /*ContactManager.updateMyProfileImage(File(""), imageUrl = imageUrl,
+                    flyCallback = { isSuccess, p1, data -> //LogMessage.d("RESPONSE_CAPTURE", "===========================")
+                        //DebugUtilis.v("ContactManager.updateMyProfileImage", data.tojsonString())
+                        data["status"] = isSuccess
+                        result.success(data.toJsonString())
+                    })*/
+            }else{
+                result.error("500", "Image url is Empty", null)
+            }
+        }else if (call.hasArgument("image")) {
             val image = call.argument<String>("image")
             if (image != null) {
                 val imagefile = File(image)
                 if (imagefile.exists()) {
-                    ContactManager.updateMyProfileImage(imagefile) { isSuccess, _, data ->
+                    ContactManager.updateMyProfileImage(imagefile, flyCallback =  { isSuccess, _, data ->
                         //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                         //DebugUtilis.v("ContactManager.updateMyProfileImage", data.tojsonString())
                         data["status"] = isSuccess
                         result.success(data.toJsonString())
-                    }
+                    })
                 } else {
-                    result.error("400", "Image File Not Exist", null)
+                    result.error("500", "Image File Not Exist", null)
                     return
                 }
             } else {
-                result.error("400", "Image not available to update profile", null)
+                result.error("500", "Image not available to update profile", null)
                 return
             }
         } else {
-            result.error("400", "Select Image file", null)
+            result.error("500", "Select Image file", null)
             return
         }
     }
@@ -2664,27 +2753,34 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         if (!call.hasArgument("message") && !call.hasArgument("JID")) {
             result.error("404", "Message/JID Required", null)
         } else {
+            val topicId = call.argument("topicId") ?: ""
             val txtMessage: String? = call.argument("message")
             val receiverJID: String? = call.argument("JID")
-            val replyMessageID: String? = call.argument("replyMessageId")
-            if (txtMessage != null && receiverJID != null && replyMessageID != null) {
-                FlyMessenger.sendTextMessage(
-                    receiverJID,
-                    txtMessage,
-                    replyMessageID,
-                    listener = object : SendMessageListener {
-                        override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
+            val replyMessageID = call.argument("replyMessageId") ?: ""
+            if (txtMessage != null && receiverJID != null) {
+                val textMessage = TextMessage()
+                textMessage.toId = receiverJID
+                textMessage.messageText = txtMessage
+                textMessage.replyMessageId = replyMessageID // Optional
+//                textMessage.metaData = META_DATA //Optional
+                textMessage.topicId = topicId //Optional
+                FlyMessenger.sendTextMessage(textMessage,
+                    listener = object : SendMessageCallback {
+                        override fun onResponse(
+                            isSuccess: Boolean,
+                            error: Throwable?,
+                            chatMessage: ChatMessage?
+                        ) {
                             // you will get the message sent success response
                             if (isSuccess) {
-                                LogMessage.d(TAG, "Message Sent Successfully")
-                                LogMessage.d(TAG, "chat Message==> $chatMessage")
+                                LogMessage.d("sendTextMessage", chatMessage?.toJsonString())
                                 if (chatMessage != null) {
-                                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                                    //DebugUtilis.v("sendTextMessage", chatMessage.tojsonString())
                                     result.success(chatMessage.toJsonString())
                                 }
                             } else {
                                 //LogMessage.d(TAG, "Message sent Failed")
+                                LogMessage.e("sendTextMessage", error?.message)
+                                result.error("500",error?.message,error)
                             }
                         }
                     })
@@ -2722,6 +2818,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             val receiverJID: String = call.argument("jid") ?: ""
             val file: String = call.argument("file") ?: ""
             val fileUrl: String = call.argument("file_url") ?: ""
+            val topicId = call.argument("topicId") ?: ""
             val listener = object : SendMessageCallback {
                 override fun onResponse(isSuccess: Boolean, error: Throwable?, chatMessage: ChatMessage?
                 ) {
@@ -2740,6 +2837,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 if (fileUrl.isNotEmpty()) {
                     val sendMessageParams = FileMessage().apply {
                         toId = receiverJID
+                        this.topicId = topicId
                         messageType = MessageType.DOCUMENT
                         this.replyMessageId = replyMessageId //Optional
                         fileMessage = FileMessageParams().apply {
@@ -2762,6 +2860,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 } else {
                     val sendMessageParams = FileMessage().apply {
                         toId = receiverJID
+                        this.topicId = topicId
                         messageType = MessageType.DOCUMENT
                         this.replyMessageId = replyMessageId //Optional
                         fileMessage = FileMessageParams().apply {
@@ -2789,10 +2888,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val latitude = call.argument<Double>("latitude") ?: 00.0
         val longitude = call.argument<Double>("longitude") ?: 00.0
         val replyMessageId: String? = call.argument("replyMessageId")
-
+        val topicId = call.argument("topicId") ?: ""
         if (userJid.isNotEmpty() && latitude != 00.0 && longitude != 00.0 && replyMessageId != null) {
             val sendMessageParams = FileMessage().apply {
                 toId = userJid
+                this.topicId = topicId
                 messageType = MessageType.LOCATION
                 this.replyMessageId = replyMessageId //Optional
                 locationMessage = LocationMessageParams().apply {
@@ -2833,9 +2933,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 })*/
         } else {
             if (userJid.isEmpty())
-                result.error("400", "User Jid is Empty", null)
+                result.error("500", "User Jid is Empty", null)
             else if (latitude != 00.0 || longitude != 00.0)
-                result.error("400", "Location is Empty", null)
+                result.error("500", "Location is Empty", null)
         }
     }
 
@@ -2849,7 +2949,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val caption = call.argument<String>("caption") ?: ""
         val replyMessageID = call.argument<String>("replyMessageId") ?: ""
         val imageFileUrl = call.argument<String>("imageFileUrl") ?: ""
-
+        val topicId = call.argument("topicId") ?: ""
 
         val thumbnailBase64 = getImageThumbImage(filePath)
 
@@ -2874,6 +2974,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         if (imageFileUrl.isNotEmpty()) {
             val sendMessageParams = FileMessage().apply {
                 toId = userJid
+                this.topicId = topicId
                 messageType = MessageType.IMAGE
                 replyMessageId = replyMessageID //Optional
                 fileMessage = FileMessageParams().apply {
@@ -2911,6 +3012,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         } else {
             val sendMessageParams = FileMessage().apply {
                 toId = userJid
+                this.topicId = topicId
                 messageType = MessageType.IMAGE
                 replyMessageId = replyMessageID //Optional
                 fileMessage = FileMessageParams().apply {
@@ -2951,20 +3053,55 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }*/
     }
 
+    private suspend fun getRecentChatListHistoryByTopic(call: MethodCall, result: MethodChannel.Result){
+        val firstSet = call.argument<Boolean>("firstSet") ?: true
+        val limit = call.argument("limit") ?: 15
+        val topicId = call.argument("topicId") ?: ""
+        LogMessage.d("topic chat history firstSet", firstSet.toString());
+        val topicChatListParams = TopicChatListParams().apply {
+            this.topicId=topicId
+            this.limit = limit
+        }
+        val topicChatListBuilder = TopicChatListBuilder(topicChatListParams)
+        if(firstSet){
+            LogMessage.d("topic chat history ", "first page ${topicChatListParams.topicId} ${topicChatListParams.limit}")
+            topicChatListBuilder.loadTopicBasedChatList { isSuccess, throwable, data ->
+                if (isSuccess) {
+                    val recentChatList = data["data"] as ArrayList<RecentChat>
+                    LogMessage.d("topic chat history item count", recentChatList.size.toString())
+                    result.success(data.toJsonString())
+                } else {
+                    result.error("500", throwable!!.message, null)
+                }
+
+            }
+        }else{
+            topicChatListBuilder.nextSetOfTopicBasedChatList { isSuccess, throwable, data ->
+                if (isSuccess) {
+                    val recentChatList = data["data"] as ArrayList<RecentChat>
+                    LogMessage.d("topic chat history item count", recentChatList.size.toString())
+                    result.success(data.toJsonString())
+                } else {
+                    result.error("500", throwable!!.message, null)
+                }
+
+            }
+        }
+    }
+
     private suspend fun getRecentChatListHistory(call: MethodCall, result: MethodChannel.Result){
 
         val firstSet = call.argument<Boolean>("firstSet") ?: true
         val limit = call.argument("limit") ?: 15
         LogMessage.d("chat history firstSet", firstSet.toString());
 
-        val recentChatListParams = RecentChatListParams()
-        recentChatListParams.limit=limit
+        val recentChatListParams = RecentChatListParams().apply { this.limit=limit }
         val recentChatListBuilder = RecentChatListBuilder(recentChatListParams)
         if(firstSet) {
             LogMessage.d("chat history ", "first page")
             recentChatListBuilder.loadRecentChatList { isSuccess, throwable, data ->
                 if (isSuccess) {
-                val recentChatList = data["data"] as ArrayList<RecentChat>
+                    val recentChatList = data["data"] as ArrayList<RecentChat>
                     LogMessage.d("chat history item count", recentChatList.size.toString())
                     result.success(data.toJsonString())
                 } else {
@@ -3712,10 +3849,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onLoggedOut() {
         LogMessage.d(TAG, "onLoggedOut")
-        runBlocking {
-            launch {
-                onLoggedOutStreamHandler.onLoggedOut?.success(true)
-            }
+        instance.mainActivity?.runOnUiThread {
+            onLoggedOutStreamHandler.onLoggedOut?.success(true)
         }
     }
 

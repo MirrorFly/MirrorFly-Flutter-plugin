@@ -19,6 +19,8 @@ export 'model/message_delivered_model.dart';
 export 'model/message_object.dart';
 export 'model/export_model.dart';
 export 'model/call_constants.dart';
+export 'model/topic_metadata.dart';
+export 'model/topic_list.dart';
 export 'model/available_features.dart';
 export 'logmessage.dart';
 export 'builder.dart';

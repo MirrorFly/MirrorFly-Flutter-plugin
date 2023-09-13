@@ -127,8 +127,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
     var onConnectionFailedStreamHandler: OnConnectionFailedStreamHandler?
     
     var onGetAvailableFeaturesStreamHandler: OnGetAvailableFeaturesStreamHandler?
-    
-    
+
+
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: mirrorflyMethodChannel, binaryMessenger: registrar.messenger())
         
@@ -465,9 +465,9 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         if (self.onGetAvailableFeaturesStreamHandler == nil) {
             self.onGetAvailableFeaturesStreamHandler = OnGetAvailableFeaturesStreamHandler()
         }
-        
+
         FlutterEventChannel(name: getAvailableFeatures_channel, binaryMessenger: registrar.messenger()).setStreamHandler((self.onGetAvailableFeaturesStreamHandler!))
-        
+
     }
     
     func initializeEventListeners(){
@@ -626,6 +626,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getRecentChatList(call: methodCall,  result: result)
         case "getRecentChatListHistory":
             FlySdkMethodCalls.getRecentChatListHistory(call: methodCall,  result: result)
+        case "getRecentChatListHistoryByTopic":
+            FlySdkMethodCalls.getRecentChatListHistoryByTopic(call: methodCall,  result: result)
         case "getRecentChatListIncludingArchived":
             FlySdkMethodCalls.getRecentChatListIncludingArchived(call: methodCall,  result: result)
         case "getRecentChatOf":
@@ -811,6 +813,10 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.updateFcmToken(call:methodCall, result: result)
         case "getUnreadMessageCountExceptMutedChat":
             FlySdkMethodCalls.getUnreadMessageCountExceptMutedChat(call:methodCall, result: result)
+        case "createTopic":
+            FlySdkMethodCalls.createTopic(call:methodCall, result: result)
+        case "getTopics":
+            FlySdkMethodCalls.getTopics(call:methodCall, result: result)
         case "getAvailableFeatures":
             FlySdkMethodCalls.getAvailableFeatures(call:methodCall, result: result)
 
@@ -821,9 +827,9 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
 }
 
 extension FlyChatPlugin : AvailableFeaturesDelegate {
-    
+
     public func didUpdateAvailableFeatures(features: MirrorFlySDK.AvailableFeaturesModel) {
-        
+
         print("didUpdateAvailableFeatures event \(features)")
         if(onGetAvailableFeaturesStreamHandler?.OnAvailableFeatureUpdated != nil){
             print("didUpdateAvailableFeatures event\(String(describing: features))")
@@ -832,7 +838,7 @@ extension FlyChatPlugin : AvailableFeaturesDelegate {
             print("didUpdateAvailableFeatures Stream Handler is Nil")
         }
     }
-    
+
 }
 
 extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate, BackupEventDelegate, RestoreEventDelegate {
@@ -885,7 +891,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
     }
     
-    
+
     public func backupProgressDidReceive(completedCount: String, completedSize: String) {
         
     }
