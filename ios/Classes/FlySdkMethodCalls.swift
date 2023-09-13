@@ -40,7 +40,7 @@ import UIKit
 
     static var messageListParams = FetchMessageListParams()
     static var messageListQuery : FetchMessageListQuery? = nil
-    
+
     //Need to alter this below two lines based on RecentChat list
     static var topicChatListParams = TopicChatListParams(limit: 15)
     static var topicChatListBuilder : TopicChatListBuilder?
@@ -262,7 +262,7 @@ import UIKit
         let receiverJID = args["JID"] as? String ?? nil
         let replyMessageID = args["replyMessageId"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
-        
+
         if(txtMessage == nil || receiverJID == nil){
             result(FlutterError(code: "500", message: "Parameters Missing", details: nil))
             return
@@ -323,7 +323,7 @@ import UIKit
         
         let caption = args["caption"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
-        
+
         let imagefileUrl = URL(fileURLWithPath: filePath)
         
         
@@ -524,7 +524,7 @@ import UIKit
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
-        
+
         let videoFileUrl = URL(fileURLWithPath: filePath)
         
         var thumbnail : UIImage?
@@ -613,7 +613,7 @@ import UIKit
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
-        
+
         let documentFilePath = args["file"] as? String ?? ""
         let documentFileUrl = URL(fileURLWithPath: documentFilePath)
         
@@ -1817,20 +1817,20 @@ import UIKit
 
         }
     }
-    
+
     static func getRecentChatListHistoryByTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+
         let args = call.arguments as! Dictionary<String, Any>
 
         let isFirstSet = args["firstSet"] as? Bool ?? true
-        
+
         let limit = args["limit"] as? Int ?? 15
-        
+
         let topicId = args["topicId"] as? String ?? ""
-        
+
         topicChatListParams.limit = limit
         topicChatListParams.topicID = topicId
-        
+
         if(topicChatListBuilder == nil){
             print("topicChatListBuilder is nil")
             topicChatListBuilder =  TopicChatListBuilder(topicChatListParams: topicChatListParams)
@@ -1838,7 +1838,7 @@ import UIKit
             print("topicChatListBuilder already set")
         }
         if(isFirstSet){
-            
+
             print("loading first set")
             topicChatListBuilder!.loadTopicBasedChatList{ isSuccess, flyError, flyData in
                 var data  = flyData
@@ -1855,7 +1855,7 @@ import UIKit
                             print("Failed to convert object to JSON")
                             result(FlutterError(code: "500", message: "Error Parsing the Topic based Recent Chat List", details: nil))
                         }
-                        
+
                     }
                 } else {
                     // Fetch recentchat failed print error to know more about the exception
@@ -1870,7 +1870,7 @@ import UIKit
                     var data  = flyData
                     if (isSuccess) {
                         let recentChatArray  = data.getData() as? [RecentChat] ?? []
-                        
+
                         if(recentChatArray.isEmpty){
                             print("returning empty data")
                             result("{\"data\": [] }")
@@ -1883,7 +1883,7 @@ import UIKit
                                 print("Failed to convert object to JSON")
                                 result(FlutterError(code: "500", message: "Error Parsing the Topic based Recent Chat List", details: nil))
                             }
-                            
+
                         }
                     } else {
                         // Fetch recentchat failed print error to know more about the exception
@@ -2630,7 +2630,7 @@ import UIKit
         result(messageCount)
         
     }
-    
+
     static func createTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let topicName = args["topicName"] as? String ?? ""
@@ -2658,11 +2658,20 @@ import UIKit
                     result(FlutterError(code: "500",message: "data not found",details: nil))
                 }
             }else{
-                result(FlutterError(code: "500",message: error?.localizedDescription,details: nil))
+                result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
             }
         }
     }
-    
+
+    static func getAvailableFeatures(call: FlutterMethodCall, result: @escaping FlutterResult){
+
+        let availableFeatures = ChatManager.getAvailableFeatures()
+        print("Available Features \(availableFeatures)")
+//        print("Available Features \(availableFeatures.toJson())")
+//        availableFeatures.toJson()
+        result(availableFeatures.toJson())
+    }
+
     static func getTopics(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let topicIds = args["topicIds"] as? [String] ?? []
@@ -2681,7 +2690,7 @@ import UIKit
                 }
             }else{
                 print("getTopics error \(error?.localizedDescription)")
-                result(FlutterError(code: "500",message: error?.localizedDescription,details: nil))
+                result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
             }
         }
     }

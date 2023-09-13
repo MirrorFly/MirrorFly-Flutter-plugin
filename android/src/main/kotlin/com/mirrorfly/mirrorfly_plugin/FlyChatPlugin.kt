@@ -24,8 +24,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.google.gson.Gson
-import com.mirrorfly.mirrorfly_plugin.Constants.onFailureChannel
-import com.mirrorfly.mirrorfly_plugin.Constants.onSuccessChannel
 import com.mirrorfly.mirrorfly_plugin.call.*
 import com.mirrorflysdk.AppUtils
 import com.mirrorflysdk.ChatSDK
@@ -82,7 +80,7 @@ import java.util.*
 class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
     TypingEventListener, TypingStatusListener, ActivityAware, DefaultLifecycleObserver,
-    PluginRegistry.NewIntentListener,PluginRegistry.ActivityResultListener{
+    PluginRegistry.NewIntentListener,PluginRegistry.ActivityResultListener, AvailableFeaturesCallback{
 
     companion object{
         @SuppressLint("StaticFieldLeak")
@@ -323,15 +321,18 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 binaryMessenger,
                 Constants.onGroupTypingStatusChannel
             ).setStreamHandler(onGroupTypingStatusStreamHandler)
-            EventChannel(binaryMessenger, onFailureChannel).setStreamHandler(
+            EventChannel(binaryMessenger, Constants.onFailureChannel).setStreamHandler(
                 onFailureStreamHandler
             )
             EventChannel(
                 binaryMessenger,
                 Constants.onProgressChangedChannel
             ).setStreamHandler(onProgressChangedStreamHandler)
-            EventChannel(binaryMessenger, onSuccessChannel).setStreamHandler(
+            EventChannel(binaryMessenger, Constants.onSuccessChannel).setStreamHandler(
                 onSuccessStreamHandler
+            )
+            EventChannel(binaryMessenger, Constants.onAvailableFeaturesUpdatedChannel).setStreamHandler(
+                onUpdateAvailableFeaturesStreamHandler
             )
         }
     }
@@ -1156,6 +1157,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("openAudioFilePicker") -> {
                 selectAudioFileFromStorage(result)
             }
+            call.method.equals("getAvailableFeatures") -> {
+                getAvailableFeatures(result)
+            }
             call.method.equals("createTopic") -> {
                 createTopic(call,result)
             }
@@ -1169,16 +1173,22 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
     }
 
+    private fun getAvailableFeatures(result: MethodChannel.Result){
+        val availableFeatures = ChatManager.getAvailableFeatures().toJsonString()
+        println("getAvailableFeatures : $availableFeatures")
+        result.success(availableFeatures)
+    }
+
     private fun createTopic(call: MethodCall,result: MethodChannel.Result){
-        val topicName = call.argument<String>("topicName")
-        val metaData = call.argument<List<Map<String,Any>>>("metaData")
+        val topicName = call.argument<String>("topicName") ?: ""
+        val metaData = call.argument<List<Map<String,Any>>>("metaData") ?: arrayListOf()
         LogMessage.d("createTopic",metaData.toString())
-        if(topicName.isNullOrEmpty()){
+        /*if(topicName.isNullOrEmpty()){
             return
         }
         if(metaData.isNullOrEmpty()){
             return
-        }
+        }*/
         val meta = extractMetaData(metaData)
 
         ChatManager.createTopic(topicName, meta) { isSuccess, throwable, data ->
@@ -1189,7 +1199,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 LogMessage.d("topicId","$topicId")
                 result.success(topicId)
             }else{
-                result.error(data["http_status_code"].toString(),data["message"].toString(),data)
+                result.error("807",throwable?.message,null)
             }
         }
         //a00251d7-d388-4f47-8672-553f8afc7e11
@@ -1208,7 +1218,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 //handle success
                 result.success(topics.toString())
             } else {
-                result.error(data["http_status_code"].toString(),data["message"].toString(),data)
+                result.error("807",throwable?.message,null)
                 // print throwable to find the exception details.
             }
         }
@@ -1382,41 +1392,49 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                             ChatEventsManager.attachGroupEventsListener(this)
                             ChatEventsManager.attachLoginEventsListener(this)
                             ChatEventsManager.attachTypingEventListener(this)
+                            ChatManager.setAvailableFeaturesCallback(this)
                             SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
-                            ChatManager.connect(object : ChatConnectionListener {
-                                override fun onConnected() {
-                                    LogMessage.d(TAG, "onConnected")
-                                    Handler(Looper.getMainLooper()).postDelayed({
-                                        result.success(response)
-                                    }, 500)
+                            LogMessage.d(TAG, "Chat Manager Connect able ${ChatManager.connect()}")
+                            if(ChatManager.connect()) {
+                                LogMessage.d(TAG, "Chat Manager Connecting...")
+                                ChatManager.connect(object : ChatConnectionListener {
+                                    override fun onConnected() {
+                                        LogMessage.d(TAG, "onConnected")
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            result.success(response)
+                                        }, 500)
 
-                                }
+                                    }
 
-                                override fun onConnectionFailed(e: FlyException) {
-                                    LogMessage.d(TAG, "Chat Manager onConnectionFailed")
-                                    result.error(
-                                        "500",
-                                        e.message,
-                                        null
-                                    )
-                                }
+                                    override fun onConnectionFailed(e: FlyException) {
+                                        LogMessage.d(TAG, "Chat Manager onConnectionFailed")
+                                        result.error(
+                                            "500",
+                                            e.message,
+                                            null
+                                        )
+                                    }
 
-                                override fun onDisconnected() {
-                                    LogMessage.d(TAG, "Chat Manager Disconnected")
-                                }
+                                    override fun onDisconnected() {
+                                        LogMessage.d(TAG, "Chat Manager Disconnected")
+                                    }
 
-                                override fun onReconnecting() {
-                                    LogMessage.d(TAG, "Chat Manager onReconnecting")
-                                }
+                                    override fun onReconnecting() {
+                                        LogMessage.d(TAG, "Chat Manager onReconnecting")
+                                    }
 
-                                /*override fun onConnectionNotAuthorized() {
+                                    /*override fun onConnectionNotAuthorized() {
                   result.error(
                     "500",
                     "Chat Manager Connection Not Authorized",
                     null
                   )
                 }*/
-                            })
+                                })
+                            }else{
+                                LogMessage.d(TAG, "Chat Manager Already Connected")
+                                result.success(response)
+                            }
 
                         } else {
                             if (data["http_status_code"] == 403) {
@@ -1978,7 +1996,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                             //LogMessage.d("ChatManager.forwardMessagesToMultipleUsers", message)
                             result.success(message)
                         } else {
-                            result.error("500", "Unable to Favourite the Message", message)
+                            result.error("500", message, message)
                         }
 
                     }
@@ -3053,7 +3071,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     LogMessage.d("topic chat history item count", recentChatList.size.toString())
                     result.success(data.toJsonString())
                 } else {
-                    result.error("500", throwable!!.message, null)
+                    result.error("500", throwable?.message, null)
                 }
 
             }
@@ -3064,7 +3082,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     LogMessage.d("topic chat history item count", recentChatList.size.toString())
                     result.success(data.toJsonString())
                 } else {
-                    result.error("500", throwable!!.message, null)
+                    result.error("500", throwable?.message, null)
                 }
 
             }
@@ -4037,6 +4055,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
         binding.addOnNewIntentListener(instance)
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
+        ChatManager.setAvailableFeaturesCallback(instance)
         if (isRegistered) {
             ChatEventsManager.setupMessageEventListener(this)
             ChatEventsManager.attachProfileEventsListener(this)
@@ -4319,6 +4338,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
         }
         return false
+    }
+
+    override fun onUpdateAvailableFeatures(features: Features) {
+        LogMessage.d("onAvailableFeaturesUpdated",features.toJsonString())
+        onUpdateAvailableFeaturesStreamHandler.onAvailableFeaturesUpdated?.success(features.toJsonString())
     }
 
 }

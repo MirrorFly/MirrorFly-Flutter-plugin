@@ -8,7 +8,6 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
-
 /// An implementation of [UikitFlutterPlatform] that uses method channels.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   /// The method channel used to interact with the native platform.
@@ -202,6 +201,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final onUserStoppedSpeakingChannel = const EventChannel('contus.mirrorfly/onUserStoppedSpeaking');
   final StreamController<dynamic> onUserStoppedSpeakingStreamController = StreamController<dynamic>.broadcast();
 
+  @visibleForTesting
+  final onAvailableFeaturesUpdatedChannel = const EventChannel('contus.mirrorfly/onAvailableFeaturesUpdated');
+  final StreamController<dynamic> onAvailableFeaturesUpdatedStreamController = StreamController<dynamic>.broadcast();
+
   /*@override
   Future<String?> getPlatformVersion() async {
     final version =
@@ -290,6 +293,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     onMuteStatusUpdatedStreamController.addStream(onMuteStatusUpdatedChannel.receiveBroadcastStream());
     onUserSpeakingStreamController.addStream(onUserSpeakingChannel.receiveBroadcastStream());
     onUserStoppedSpeakingStreamController.addStream(onUserStoppedSpeakingChannel.receiveBroadcastStream());
+    onAvailableFeaturesUpdatedStreamController.addStream(onAvailableFeaturesUpdatedChannel.receiveBroadcastStream());
   }
 
   @override
@@ -1627,6 +1631,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<dynamic> getAvailableFeatures() async {
+    dynamic re;
+    try {
+      re = await mirrorFlyMethodChannel.invokeMethod("getAvailableFeatures");
+      LogMessage.d('getAvailableFeatures RESULT ','$re');
+      return re;
+    } on PlatformException catch (e) {
+      LogMessage.d("getAvailableFeatures error","$e");
+      return re;
+    }
+  }
+
+  @override
   Stream<dynamic> get onMessageReceived => _messageOnReceivedStreamController.stream;
 
   @override
@@ -1795,6 +1812,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Stream<dynamic> get onUserStoppedSpeaking => onUserStoppedSpeakingStreamController.stream;
+
+  @override
+  Stream<dynamic> get onAvailableFeaturesUpdated =>
+      onAvailableFeaturesUpdatedStreamController.stream;
 
   @override
   Future<String?> imagePath(String imgurl) async {
@@ -3512,7 +3533,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     String? val = "";
     List<Map<String, dynamic>>? topic = metaData.map((topic) => topic.toMap()).toList();
     LogMessage.d("createTopic", topic);
-    if (metaData.length <= 3) {
+    //if (metaData.length <= 3) {
       try {
         val = await mirrorFlyMethodChannel.invokeMethod('createTopic', {'topicName': topicName, 'metaData': topic});
         LogMessage.d('createTopic', ' $val');
@@ -3524,16 +3545,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         LogMessage.d("Exception ", " $error");
         rethrow;
       }
-    } else {
-      throw Exception("topicData Maximum Size is 3");
-    }
+    // } else {
+    //   throw Exception("topicData Maximum Size is 3");
+    // }
   }
 
   @override
   Future<String?> getTopics({required List<String> topicIds}) async {
-    if (topicIds.isEmpty) {
-      throw Exception("topic id's must not be empty");
-    }
     String? val = "";
     try {
       val = await mirrorFlyMethodChannel.invokeMethod('getTopics', {'topicIds': topicIds});

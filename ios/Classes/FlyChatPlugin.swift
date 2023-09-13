@@ -68,6 +68,8 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
 let onMessageDeleteForEveryOne_channel = "contus.mirrorfly/onMessageDeleteForEveryOne"
 let onConnectionFailed_channel = "contus.mirrorfly/onConnectionFailed"
 
+let getAvailableFeatures_channel = "contus.mirrorfly/onAvailableFeaturesUpdated"
+
 public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDelegate {
     
     var messageReceivedStreamHandler: MessageReceivedStreamHandler?
@@ -124,7 +126,9 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
     
     var onConnectionFailedStreamHandler: OnConnectionFailedStreamHandler?
     
-    
+    var onGetAvailableFeaturesStreamHandler: OnGetAvailableFeaturesStreamHandler?
+
+
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: mirrorflyMethodChannel, binaryMessenger: registrar.messenger())
         
@@ -458,6 +462,12 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         
         FlutterEventChannel(name: onConnectionFailed_channel, binaryMessenger: registrar.messenger()).setStreamHandler((self.onConnectionFailedStreamHandler!))
         
+        if (self.onGetAvailableFeaturesStreamHandler == nil) {
+            self.onGetAvailableFeaturesStreamHandler = OnGetAvailableFeaturesStreamHandler()
+        }
+
+        FlutterEventChannel(name: getAvailableFeatures_channel, binaryMessenger: registrar.messenger()).setStreamHandler((self.onGetAvailableFeaturesStreamHandler!))
+
     }
     
     func initializeEventListeners(){
@@ -807,6 +817,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.createTopic(call:methodCall, result: result)
         case "getTopics":
             FlySdkMethodCalls.getTopics(call:methodCall, result: result)
+        case "getAvailableFeatures":
+            FlySdkMethodCalls.getAvailableFeatures(call:methodCall, result: result)
 
         default:
             result(FlutterMethodNotImplemented)
@@ -814,7 +826,22 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
     }
 }
 
-extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate,AvailableFeaturesDelegate, BackupEventDelegate, RestoreEventDelegate {
+extension FlyChatPlugin : AvailableFeaturesDelegate {
+
+    public func didUpdateAvailableFeatures(features: MirrorFlySDK.AvailableFeaturesModel) {
+
+        print("didUpdateAvailableFeatures event \(features)")
+        if(onGetAvailableFeaturesStreamHandler?.OnAvailableFeatureUpdated != nil){
+            print("didUpdateAvailableFeatures event\(String(describing: features))")
+            onGetAvailableFeaturesStreamHandler?.OnAvailableFeatureUpdated?(features.toJson())
+        }else{
+            print("didUpdateAvailableFeatures Stream Handler is Nil")
+        }
+    }
+
+}
+
+extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate, BackupEventDelegate, RestoreEventDelegate {
     public func onMediaStatusFailed(error: String, messageId: String, errorCode: Int) {
         let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
         
@@ -864,11 +891,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
     }
     
-    
-    public func didUpdateAvailableFeatures(features: MirrorFlySDK.AvailableFeaturesModel) {
-        
-    }
-    
+
     public func backupProgressDidReceive(completedCount: String, completedSize: String) {
         
     }

@@ -1331,6 +1331,10 @@ class MockFlyChatFlutterPlatform
   Stream get onUserStoppedSpeaking => throw UnimplementedError();
 
   @override
+  // implement onAvailableFeaturesUpdated
+  Stream get onAvailableFeaturesUpdated => throw UnimplementedError();
+
+  @override
   Future getCallUsersList() {
     // implement getCallUsers
     throw UnimplementedError();
@@ -1477,6 +1481,12 @@ class MockFlyChatFlutterPlatform
   @override
   Future<String?> openAudioFilePicker() {
     // implement isUserVideoMuted
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getAvailableFeatures() {
+    // implement getAvailableFeatures
     throw UnimplementedError();
   }
 }
