@@ -1996,7 +1996,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                             //LogMessage.d("ChatManager.forwardMessagesToMultipleUsers", message)
                             result.success(message)
                         } else {
-                            result.error("500", "Unable to Favourite the Message", message)
+                            result.error("500", message, message)
                         }
 
                     }
