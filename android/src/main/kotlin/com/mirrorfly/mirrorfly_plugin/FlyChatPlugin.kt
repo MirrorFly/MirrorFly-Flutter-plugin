@@ -1180,15 +1180,15 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     private fun createTopic(call: MethodCall,result: MethodChannel.Result){
-        val topicName = call.argument<String>("topicName")
-        val metaData = call.argument<List<Map<String,Any>>>("metaData")
+        val topicName = call.argument<String>("topicName") ?: ""
+        val metaData = call.argument<List<Map<String,Any>>>("metaData") ?: arrayListOf()
         LogMessage.d("createTopic",metaData.toString())
-        if(topicName.isNullOrEmpty()){
+        /*if(topicName.isNullOrEmpty()){
             return
         }
         if(metaData.isNullOrEmpty()){
             return
-        }
+        }*/
         val meta = extractMetaData(metaData)
 
         ChatManager.createTopic(topicName, meta) { isSuccess, throwable, data ->
@@ -1199,7 +1199,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 LogMessage.d("topicId","$topicId")
                 result.success(topicId)
             }else{
-                result.error(data["http_status_code"].toString(),data["message"].toString(),data)
+                result.error("807",throwable?.message,null)
             }
         }
         //a00251d7-d388-4f47-8672-553f8afc7e11
@@ -1218,7 +1218,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 //handle success
                 result.success(topics.toString())
             } else {
-                result.error(data["http_status_code"].toString(),data["message"].toString(),data)
+                result.error("807",throwable?.message,null)
                 // print throwable to find the exception details.
             }
         }
@@ -3071,7 +3071,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     LogMessage.d("topic chat history item count", recentChatList.size.toString())
                     result.success(data.toJsonString())
                 } else {
-                    result.error("500", throwable!!.message, null)
+                    result.error("500", throwable?.message, null)
                 }
 
             }
@@ -3082,7 +3082,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     LogMessage.d("topic chat history item count", recentChatList.size.toString())
                     result.success(data.toJsonString())
                 } else {
-                    result.error("500", throwable!!.message, null)
+                    result.error("500", throwable?.message, null)
                 }
 
             }
