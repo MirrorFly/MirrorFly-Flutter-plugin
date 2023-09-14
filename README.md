@@ -6,9 +6,10 @@
 ## Table of contents
 
 1. [Introduction](#Introduction)
-1. [Requirements](#requirements)
-1. [Sending your first message](#sending-your-first-message)
-1. [Getting help](#getting-help)
+2. [Requirements](#requirements)
+3. [Sending your first message](#sending-your-first-message)
+4. [Call_Feature](#call-feature)
+5. [Getting help](#getting-help)
 
 ## Introduction
 
@@ -171,6 +172,31 @@ Mirrorfly.onMessageReceived.listen(result){
   var chatMessage = sendMessageModelFromJson(result)
 }
 ```
+
+## Call Feature
+
+> **Note**: To enable the Call Feature in iOS, need to enable VOIP as shown below.
+
+
+![Screenshot](https://www.mirrorfly.com/docs/assets/images/capabilities-voip2-1760b4b8264b2f928df4d6fb5d933b62.png)
+
+
+## To make a Video Call
+
+```dart
+Mirrorfly.makeVideoCall(userJID).then((value) {
+  
+})
+```
+## To make a Voice Call
+
+```dart
+Mirrorfly.makeVoiceCall(userJID).then((value) {
+  
+})
+```
+
+> **Note**: Provide Microphone and Camera permission and usage description in the iOS plist and Android Manifest file of your project.
 
 ### Try the sample app
 
