@@ -187,7 +187,7 @@ import PushKit
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         print("#MirrorflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
         
-        if AudioManager.shared().audioManagerDelegate == nil {
+        if AudioManager.shared().audioManagerDelegate == nil  && callStatus != .DISCONNECTED{
             print("\(Constants.tag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
             AudioManager.shared().audioManagerDelegate = self
         }
@@ -244,7 +244,11 @@ import PushKit
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
         print("#MirrorflyCall Event oncalll Action --> \(callAction.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(userId, forKey: "userJid")
+        if userId == ""{
+            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
+        }else{
+            jsonObject.setValue(userId, forKey: "userJid")
+        }
         jsonObject.setValue(callAction.rawValue, forKey: "callAction")
         let callActionJson = pluginDictToJson(dictionary: jsonObject)
         
