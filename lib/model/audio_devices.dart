@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-List<AudioDevices> audioDevicesFromJson(String str) => List<AudioDevices>.from(json.decode(str).map((x) => AudioDevices.fromJson(x)));
+List<AudioDevices> audioDevicesFromJson(String str) => List<AudioDevices>.from(
+    json.decode(str).map((x) => AudioDevices.fromJson(x)));
 
-String audioDevicesToJson(List<AudioDevices> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String audioDevicesToJson(List<AudioDevices> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class AudioDevices {
   String? id;
@@ -20,14 +22,14 @@ class AudioDevices {
   });
 
   factory AudioDevices.fromJson(Map<String, dynamic> json) => AudioDevices(
-    id: json["id"],
-    type: json["type"],
-    name: json["name"],
-  );
+        id: json["id"],
+        type: json["type"],
+        name: json["name"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "type": type,
-    "name": name,
-  };
+        "id": id,
+        "type": type,
+        "name": name,
+      };
 }
