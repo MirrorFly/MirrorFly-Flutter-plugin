@@ -253,9 +253,9 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.isMuted(jid);
   }
 
-  ///This [handleReceivedMessage] used to get ChatMessage from FCM Notification [Android] Only
-  ///to Show Notification using FCM [remoteMessage.data] as [notificationData]
-  ///for [iOS] Need to add Notification Extension Service
+  ///This [handleReceivedMessage] used to get ChatMessage from FCM Notification Android Only
+  ///to Show Notification using FCM 'remoteMessage.data' as [notificationData]
+  ///for iOS Need to add Notification Extension Service
   ///add this line in your extension service MirrorFlyNotification().handleNotification(notificationRequest: request, contentHandler: contentHandler, containerID: "xxx", licenseKey: "xxxx")
   static Future<dynamic> handleReceivedMessage(Map notificationData) {
     return FlyChatFlutterPlatform.instance.handleReceivedMessage(notificationData);
@@ -1118,7 +1118,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.isUserVideoMuted(userJid);
   }
 
-  ///Used as a [openAudioPicker] class for [Mirrorfly]
+  ///Used as a openAudioPicker class for [Mirrorfly]
   ///used to get Audio File in Platform Android Only
   static Future<String?> openAudioFilePicker() async {
     return FlyChatFlutterPlatform.instance.openAudioFilePicker();

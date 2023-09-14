@@ -8,7 +8,7 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
-/// An implementation of [UikitFlutterPlatform] that uses method channels.
+/// An implementation of UikitFlutterPlatform that uses method channels.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting

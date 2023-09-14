@@ -1,4 +1,4 @@
-///Used as a Builder class for [FlyChat]
+///Used as a Builder class for FlyChat
 ///
 /// @property apiKey for the SDK
 /// @property enableMobileNumberLogin to enable login via mobile number
@@ -6,7 +6,7 @@
 /// @property domainBaseUrl provides the base url for making api calls
 /// @property storageFolderName provides the Local Storage Folder Name
 /// @property iOSContainerID provides the App Group of the iOS Project
-/// * @property licenseKey provides the License Key
+/// @property licenseKey provides the License Key
 /// @property groupConfig provides the data required for group implementation
 class ChatBuilder {
   ChatBuilder(

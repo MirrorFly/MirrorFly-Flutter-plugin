@@ -14,7 +14,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   /// The default instance of [FlyChatFlutterPlatform] to use.
   ///
-  /// Defaults to [MethodChannelUikitFlutter].
+  /// Defaults to MethodChannelUikitFlutter.
   static FlyChatFlutterPlatform get instance => _instance;
 
   /// Platform-specific implementations should set this with their own
