@@ -2420,7 +2420,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         try {
             FlyCore.logoutOfChatSDK { isSuccess, throwable, _ ->
                 if (isSuccess) {
-                    SharedPreferenceManager.instance.clearAllPreference()
+//                    SharedPreferenceManager.instance.clearAllPreference()
                     result.success(true)
                 } else {
                     result.error("400", throwable!!.message.toString(), "")
@@ -3850,7 +3850,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun onLoggedOut() {
         LogMessage.d(TAG, "onLoggedOut")
         instance.mainActivity?.runOnUiThread {
-            onLoggedOutStreamHandler.onLoggedOut?.success(true)
+                onLoggedOutStreamHandler.onLoggedOut?.success(true)
         }
     }
 
