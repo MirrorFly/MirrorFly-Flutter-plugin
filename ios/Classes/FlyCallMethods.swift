@@ -220,21 +220,26 @@ import MirrorFlySDK
     func routeAudioTo(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as! Dictionary<String, Any>
         let routeType = args["routeType"] as? String ?? ""
-        print("route Type \(routeType)")
+        print("triggerDelegateForOutputs route Type \(routeType)")
         switch (routeType) {
           case "bluetooth":
+            print("****triggerDelegateForOutputs routed to bluetooth")
             AudioManager.shared().routeAudioTo(device: .bluetooth, force: true);
             break;
           case "headset":
+            print("****triggerDelegateForOutputs routed to headset")
             AudioManager.shared().routeAudioTo(device: .headset, force: true);
             break;
           case "receiver":
+            print("****triggerDelegateForOutputs routed to receiver")
             AudioManager.shared().routeAudioTo(device: .receiver, force: true);
             break;
           case "speaker":
+            print("****triggerDelegateForOutputs routed to speaker")
             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
           default:
+            print("****triggerDelegateForOutputs routed to default speaker")
             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
 //           default:

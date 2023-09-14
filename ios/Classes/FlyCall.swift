@@ -65,9 +65,9 @@ import PushKit
         registerForVOIPNotifications()
         
         CallManager.setCallEventsDelegate(delegate: self)
-//        AudioManager.shared().audioManagerDelegate = self
+        AudioManager.shared().audioManagerDelegate = self
         
-        AudioManager.sharedInstance.audioManagerDelegate = self
+//        AudioManager.sharedInstance.audioManagerDelegate = self
         print("\(Constants.tag) audioManagerDelegate")
     }
     
@@ -82,7 +82,14 @@ import PushKit
         }else if (call.method == "muteVideo"){
             muteVideo(call: call, result: result)
         }else{
-            
+            if (call.method == "makeVoiceCall" || call.method == "makeVideoCall" || call.method == "makeGroupVideoCall" || call.method == "makeGroupVoiceCall"){
+                
+                if AudioManager.shared().audioManagerDelegate == nil {
+                    print("\(Constants.tag) AudioManager Delegate is Nil, setting new Delegate")
+                    AudioManager.shared().audioManagerDelegate = self
+                }
+
+            }
             if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
                 print("\(Constants.tag) Method call \(call.method)")
                 methodHandler(call, result)
@@ -150,7 +157,7 @@ import PushKit
      
     func selectedAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
         isAudioRouteMethodCall = true
-        AudioManager.shared().getCurrentAudioInput()
+//        AudioManager.sharedInstance.getCurrentAudioInput()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             print("#Mirrorfly call selectedAudioDevice \(self.selectedAudioRouteDevice)")
             self.isAudioRouteMethodCall = false
@@ -179,6 +186,12 @@ import PushKit
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         print("#MirrorflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
+        
+        if AudioManager.shared().audioManagerDelegate == nil {
+            print("\(Constants.tag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
+            AudioManager.shared().audioManagerDelegate = self
+        }
+
         var userJID = userId
         if userJID == "" && callStatus == .DISCONNECTED{
             print("\(Constants.tag) SDK is empty so assigning self jid")
@@ -229,7 +242,7 @@ import PushKit
     }
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
-        print("#MirrorflyCall Event oncalll Action --> \(callAction) userID \(userId)")
+        print("#MirrorflyCall Event oncalll Action --> \(callAction.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
         jsonObject.setValue(callAction.rawValue, forKey: "callAction")
