@@ -1,3 +1,8 @@
+## [0.0.12] One to One Call Feature
+* Enable VOIP in iOS Capability Background Modes to get the VOIP token to register for Call Feature in iOS.
+* Enable FCM Notification for Call Feature in Android.
+* iOS SDK Optimisation.
+
 ## [0.0.12-beta] Topic Based Chat
 * create Topic to initiate topic based chat
 * get topic details from using getTopics

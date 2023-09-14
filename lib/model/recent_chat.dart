@@ -125,13 +125,13 @@ class RecentChatData {
         lastMessageId: json["lastMessageId"],
         lastMessageStatus: Platform.isAndroid
             ? json["lastMessageStatus"]
-            : json["lastMessageStatus"] == 2//acknowledge
+            : json["lastMessageStatus"] == 2 //acknowledge
                 ? "A"
-                : json["lastMessageStatus"] == 3//delivered
+                : json["lastMessageStatus"] == 3 //delivered
                     ? "D"
-                    : json["lastMessageStatus"] == 4//seen
+                    : json["lastMessageStatus"] == 4 //seen
                         ? "S"
-                        : json["lastMessageStatus"] == 5//received
+                        : json["lastMessageStatus"] == 5 //received
                             ? "R"
                             : "N", //"N" for "notAcknowledged" in iOS,
         // lastMessageTime: Platform.isAndroid ? json["lastMessageTime"] : json["isGroup"] ? json["lastMessageTime"] * 1000 : json["lastMessageTime"],

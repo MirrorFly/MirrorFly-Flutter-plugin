@@ -8,6 +8,7 @@
 import Foundation
 import Flutter
 import MirrorFlySDK
+import SDWebImage
 
 class MirrorflyView: NSObject, FlutterPlatformView {
     
@@ -15,6 +16,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     private let viewId: Int64
     
     private var textView: UITextView?
+    private var userProfileView: UIImageView?
     private var videoView: UIView?
     private var audioView: UIView?
     private var videoTrack: RTCVideoTrack?
@@ -37,7 +39,10 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             
             let contact = ChatManager.profileDetaisFor(jid: userJid)
             
+            print("===contact \(contact?.image)")
+            
             let userName = FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType)
+            
             
             NSLog("\(Constants.tag) userName --> \(userName)")
             videoTrack = CallManager.getRemoteVideoTrack(jid: userJid)
@@ -47,7 +52,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             NSLog("\(Constants.tag) \(userJid) videoTrack--> \(String(describing: videoTrack))")
             NSLog("\(Constants.tag) Video rendered/Audio Call")
             
-            createAudioView(argument: argument, userName: userName)
+            createAudioView(argument: argument, userName: userName, contact: contact)
             
             createVideoView(argument: argument)
             
@@ -92,13 +97,13 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         ])
     }
     
-    private func createAudioView(argument : [String: Any], userName : String){
+    private func createAudioView(argument : [String: Any], userName : String, contact: ProfileDetails?){
         
         let alignProfilePictureCenter = argument["alignProfilePictureCenter"] as? Bool ?? true
         let profileSize = argument["profileSize"] as? Int ?? 60
         let hideProfileView = argument["hideProfileView"] as? Bool ?? false
         
-        if textView == nil {
+        if textView == nil || userProfileView == nil {
             
             audioView = UIView(frame: .zero)
             audioView?.translatesAutoresizingMaskIntoConstraints = false
@@ -116,33 +121,67 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             circleView.backgroundColor = randomColor() // Generate a random background color
             circleView.layer.cornerRadius = CGFloat(profileSize / 2)
             
-            textView = UITextView(frame: .zero)
-            textView?.translatesAutoresizingMaskIntoConstraints = false
-            NSLog("\(Constants.tag) userName \(userName)")
-            textView?.text = getAbbreviation(from: userName).uppercased()
-            textView?.isEditable = false
-            textView?.isScrollEnabled = false
-            textView?.textAlignment = .center
-            textView?.font = UIFont.systemFont(ofSize: 22.0, weight: .bold)
-            textView?.textColor = .white
-            textView?.backgroundColor = .clear
             
-            textView?.clipsToBounds = true
             if (!hideProfileView){
-                audioView?.addSubview(circleView)
-                audioView?.addSubview(textView!)
+                //
+                //
+                //Need to remove the below lone when working on profiel view
+                contact?.image = ""
+                //
+                //
+                //
+                if contact?.image == nil || (contact!.image.isEmpty) {
+                    audioView?.addSubview(circleView)
+                    print("===contact image is empty")
+                    textView = UITextView(frame: .zero)
+                    textView?.translatesAutoresizingMaskIntoConstraints = false
+                    NSLog("\(Constants.tag) userName \(userName)")
+                    textView?.text = getAbbreviation(from: userName).uppercased()
+                    textView?.isEditable = false
+                    textView?.isScrollEnabled = false
+                    textView?.textAlignment = .center
+                    textView?.font = UIFont.systemFont(ofSize: 22.0, weight: .bold)
+                    textView?.textColor = .white
+                    textView?.backgroundColor = .clear
+                    
+                    textView?.clipsToBounds = true
+                    audioView?.addSubview(textView!)
+                }else{
+                    print("===contact image is not empty \(profileSize)")
+                    userProfileView = UIImageView(frame: .zero)
+//                    userProfileView?.translatesAutoresizingMaskIntoConstraints = false
+//                    userProfileView?.frame.size = CGSize(width: profileSize, height: profileSize)
+                    userProfileView?.layer.cornerRadius = CGFloat(profileSize / 2)
+                    userProfileView?.loadFlyImage(imageURL: contact?.image ?? "", name: FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType), jid: contact?.jid ?? "")
+                    userProfileView?.clipsToBounds = true
+                    audioView?.addSubview(userProfileView!)
+                }
                 
-                NSLayoutConstraint.activate([
-                    circleView.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor),
-                    alignProfilePictureCenter ? circleView.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor) : circleView.topAnchor.constraint(equalTo: audioView!.topAnchor, constant: 80),
-                    circleView.widthAnchor.constraint(equalToConstant: CGFloat(profileSize)),
-                    circleView.heightAnchor.constraint(equalToConstant: CGFloat(profileSize))
-                ])
-                NSLayoutConstraint.activate([
-                    textView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor),
-                    alignProfilePictureCenter ? textView!.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor) :
-                        textView!.centerYAnchor.constraint(equalTo: audioView!.topAnchor, constant: 130)
-                ])
+            
+                var constraints: [NSLayoutConstraint] = []
+                
+                if(textView == nil){
+                    constraints.append(userProfileView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
+                    alignProfilePictureCenter ? constraints.append(userProfileView!.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor)) :
+                    constraints.append(userProfileView!.topAnchor.constraint(equalTo: audioView!.topAnchor, constant: 80))
+                }else{
+                    constraints.append(textView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
+                    alignProfilePictureCenter ? constraints.append(textView!.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor)) : constraints.append(textView!.centerYAnchor.constraint(equalTo: audioView!.topAnchor, constant: 130))
+                    
+                    constraints.append(circleView.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
+                    alignProfilePictureCenter ? constraints.append(circleView.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor)) : constraints.append(circleView.topAnchor.constraint(equalTo: audioView!.topAnchor, constant: 80))
+                    constraints.append(circleView.widthAnchor.constraint(equalToConstant: CGFloat(profileSize)))
+                    constraints.append(circleView.heightAnchor.constraint(equalToConstant: CGFloat(profileSize)))
+                    
+                }
+                NSLayoutConstraint.activate(constraints)
+//                NSLayoutConstraint.activate([
+//                    textView == nil ? userProfileView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor) : textView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor),
+//                    textView != nil ? alignProfilePictureCenter ? textView!.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor) :
+//                        textView!.centerYAnchor.constraint(equalTo: audioView!.topAnchor, constant: 130) : alignProfilePictureCenter ? userProfileView!.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor) :
+//                        userProfileView!.centerYAnchor.constraint(equalTo: audioView!.topAnchor, constant: 130),
+//                    textView != nil ? alignProfilePictureCenter ? userProfileView!.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor) : userProfileView!.topAnchor.constraint(equalTo: audioView!.topAnchor, constant: 80): nil,
+//                ])
             }
             
             _baseView.addSubview(audioView!)
@@ -267,6 +306,42 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         
         return ""
     }
-    
-    
 }
+
+private func getIsBlockedByMe(jid: String) -> Bool {
+    return ChatManager.getContact(jid: jid)?.isBlockedMe ?? false
+}
+
+extension UIImageView {
+    func loadFlyImage(imageURL: String, name: String, chatType: ChatType = .singleChat, uniqueId: String = "", contactType : ContactType = .unknown,jid: String, isBlockedByAdmin: Bool = false, validateBlock: Bool = true){
+        let urlString = ChatManager.getImageUrl(imageName: imageURL)
+        var url = URL(string: urlString)
+        var placeholder : UIImage?
+        if isBlockedByAdmin {
+            url = URL(string: "")
+        }
+        self.sd_setImage(with: url, placeholderImage: placeholder, options: [.continueInBackground,.decodeFirstFrameOnly,.lowPriority], progress: nil){ (image, responseError, isFromCache, imageUrl) in
+            if let error =  responseError as? NSError{
+                if let errorCode = error.userInfo[SDWebImageErrorDownloadStatusCodeKey] as? Int {
+                    if errorCode == 401{
+                        print("===contact 401 error")
+                        ChatManager.refreshToken { [weak self] isSuccess, error, data in
+                            if isSuccess{
+                                self?.loadFlyImage(imageURL: imageURL, name: name, chatType : chatType, jid: jid)
+                            }else{
+//                                self?.image = placeholder
+                                print("===contact refresh token error")
+                            }
+                        }
+                    }else{
+//                        self.image = placeholder
+                        print("===contact image load error code \(errorCode)")
+                    }
+                }
+            }else{
+                self.image = image
+            }
+        }
+    }
+}
+
