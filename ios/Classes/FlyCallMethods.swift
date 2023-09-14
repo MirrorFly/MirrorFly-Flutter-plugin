@@ -113,7 +113,7 @@ import MirrorFlySDK
         
     }
     func declineCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        print("\(Constants.tag) Disconnecting Call")
+        print("\(Constants.tag) declineCall Call")
         CallManager.disconnectCall()
     }
     func muteAudio(call: FlutterMethodCall, result: @escaping FlutterResult) {
