@@ -8,15 +8,13 @@ import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 class MockFlyChatFlutterPlatform
     with MockPlatformInterfaceMixin
     implements FlyChatFlutterPlatform {
-
-
   @override
   init(ChatBuilder builder) {
     // implement init
     throw UnimplementedError();
   }
 
- /* @override
+  /* @override
   Future<String?> getPlatformVersion() => Future.value('42');
 */
   @override
@@ -133,7 +131,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<bool?> deleteBusyStatus(String id, String status, bool isCurrentStatus) {
+  Future<bool?> deleteBusyStatus(
+      String id, String status, bool isCurrentStatus) {
     // deleteBusyStatus
     throw UnimplementedError();
   }
@@ -145,19 +144,22 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future deleteMessages(String jid, List<String> messageIds, bool isDeleteForEveryOne) {
+  Future deleteMessages(
+      String jid, List<String> messageIds, bool isDeleteForEveryOne) {
     // deleteMessages
     throw UnimplementedError();
   }
 
   @override
-  Future deleteMessagesForEveryone(String jid, String chatType, List<String> messageIds, bool? isMediaDelete) {
+  Future deleteMessagesForEveryone(String jid, String chatType,
+      List<String> messageIds, bool? isMediaDelete) {
     // deleteMessagesForEveryone
     throw UnimplementedError();
   }
 
   @override
-  Future deleteMessagesForMe(String jid, String chatType, List<String> messageIds, bool? isMediaDelete) {
+  Future deleteMessagesForMe(String jid, String chatType,
+      List<String> messageIds, bool? isMediaDelete) {
     // deleteMessagesForMe
     throw UnimplementedError();
   }
@@ -169,7 +171,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<bool?> deleteProfileStatus(String id, String status, bool isCurrentStatus) {
+  Future<bool?> deleteProfileStatus(
+      String id, String status, bool isCurrentStatus) {
     // deleteProfileStatus
     throw UnimplementedError();
   }
@@ -229,13 +232,15 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future forwardMessages(List<String> messageIds, String tojid, String chattype) {
+  Future forwardMessages(
+      List<String> messageIds, String tojid, String chattype) {
     // forwardMessages
     throw UnimplementedError();
   }
 
   @override
-  Future forwardMessagesToMultipleUsers(List<String> messageIds, List<String> userList) {
+  Future forwardMessagesToMultipleUsers(
+      List<String> messageIds, List<String> userList) {
     // forwardMessagesToMultipleUsers
     throw UnimplementedError();
   }
@@ -523,7 +528,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  getUserProfile(String jid, [bool fromserver = false, bool saveasfriend = false]) {
+  getUserProfile(String jid,
+      [bool fromserver = false, bool saveasfriend = false]) {
     // getUserProfile
     throw UnimplementedError();
   }
@@ -583,7 +589,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<bool?> isAdmin(String jid,String groupJid) {
+  Future<bool?> isAdmin(String jid, String groupJid) {
     // isAdmin
     throw UnimplementedError();
   }
@@ -885,7 +891,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<bool?> reportUserOrMessages(String jid, String type, String? messageId) {
+  Future<bool?> reportUserOrMessages(
+      String jid, String type, String? messageId) {
     // reportUserOrMessages
     throw UnimplementedError();
   }
@@ -909,19 +916,24 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future searchConversation(String searchKey, [String? jidForSearch, bool globalSearch = true]) {
+  Future searchConversation(String searchKey,
+      [String? jidForSearch, bool globalSearch = true]) {
     // searchConversation
     throw UnimplementedError();
   }
 
   @override
-  Future sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId, {String? audioFileUrl, String? topicId}) {
+  Future sendAudioMessage(String jid, String filePath, bool isRecorded,
+      String duration, String replyMessageId,
+      {String? audioFileUrl, String? topicId}) {
     // sendAudioMessage
     throw UnimplementedError();
   }
 
   @override
-  Future sendContactMessage(List<String> contactList, String jid, String contactName, String replyMessageId,{String? topicId}) {
+  Future sendContactMessage(List<String> contactList, String jid,
+      String contactName, String replyMessageId,
+      {String? topicId}) {
     // sendContactMessage
     throw UnimplementedError();
   }
@@ -933,25 +945,32 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future sendDocumentMessage(String jid, String documentPath, String replyMessageId, {String? fileUrl, String? topicId}) {
+  Future sendDocumentMessage(
+      String jid, String documentPath, String replyMessageId,
+      {String? fileUrl, String? topicId}) {
     // sendDocumentMessage
     throw UnimplementedError();
   }
 
   @override
-  sendImageMessage(String jid, String filePath, String? caption, String? replyMessageID, {String? imageFileUrl, String? topicId}) {
+  sendImageMessage(
+      String jid, String filePath, String? caption, String? replyMessageID,
+      {String? imageFileUrl, String? topicId}) {
     // sendImageMessage
     throw UnimplementedError();
   }
 
   @override
-  sendLocationMessage(String jid, double latitude, double longitude, String replyMessageId, {String? topicId}) {
+  sendLocationMessage(
+      String jid, double latitude, double longitude, String replyMessageId,
+      {String? topicId}) {
     // sendLocationMessage
     throw UnimplementedError();
   }
 
   @override
-  sendTextMessage(String message, String jid,  String replyMessageId,{ String? topicId}) {
+  sendTextMessage(String message, String jid, String replyMessageId,
+      {String? topicId}) {
     // sendTextMessage
     throw UnimplementedError();
   }
@@ -969,8 +988,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  sendVideoMessage(String jid, String filePath, String? caption, String? replyMessageID,
-      {String? videoFileUrl, num? videoDuration, String? thumbImageBase64, String? topicId}) {
+  sendVideoMessage(
+      String jid, String filePath, String? caption, String? replyMessageID,
+      {String? videoFileUrl,
+      num? videoDuration,
+      String? thumbImageBase64,
+      String? topicId}) {
     // sendVideoMessage
     throw UnimplementedError();
   }
@@ -1006,7 +1029,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future setMyProfileStatus(String status,[String? statusId]) {
+  Future setMyProfileStatus(String status, [String? statusId]) {
     // setMyProfileStatus
     throw UnimplementedError();
   }
@@ -1092,7 +1115,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future updateFavouriteStatus(String messageID, String chatUserJID, bool isFavourite, String chatType) {
+  Future updateFavouriteStatus(
+      String messageID, String chatUserJID, bool isFavourite, String chatType) {
     // updateFavouriteStatus
     throw UnimplementedError();
   }
@@ -1116,19 +1140,22 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  updateMediaDownloadStatus(String mediaMessageId, int progress, int downloadStatus, num dataTransferred) {
+  updateMediaDownloadStatus(String mediaMessageId, int progress,
+      int downloadStatus, num dataTransferred) {
     // updateMediaDownloadStatus
     throw UnimplementedError();
   }
 
   @override
-  updateMediaUploadStatus(String mediaMessageId, int progress, int uploadStatus, num dataTransferred) {
+  updateMediaUploadStatus(String mediaMessageId, int progress, int uploadStatus,
+      num dataTransferred) {
     // updateMediaUploadStatus
     throw UnimplementedError();
   }
 
   @override
-  updateMyProfile(String name, String email, String mobile, String status, String? image) {
+  updateMyProfile(
+      String name, String email, String mobile, String status, String? image) {
     // updateMyProfile
     throw UnimplementedError();
   }
@@ -1200,7 +1227,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String?> getJidFromPhoneNumber(String mobileNumber, String countryCode) {
+  Future<String?> getJidFromPhoneNumber(
+      String mobileNumber, String countryCode) {
     // getJidFromPhoneNumber
     throw UnimplementedError();
   }
@@ -1224,7 +1252,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  saveMediaSettings(bool photos, bool videos, bool audio, bool documents, int networkType) {
+  saveMediaSettings(
+      bool photos, bool videos, bool audio, bool documents, int networkType) {
     // saveMediaSettings
     throw UnimplementedError();
   }
@@ -1266,7 +1295,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) {
+  Future<String> getValueFromManifestOrInfoPlist(
+      {String? androidManifestKey, String? iOSPlistKey}) {
     // implement getValueFromManifestOrInfoPlist
     throw UnimplementedError();
   }
@@ -1292,7 +1322,6 @@ class MockFlyChatFlutterPlatform
   @override
   // implement usersProfilesFetched
   Stream get usersProfilesFetched => throw UnimplementedError();
-
 
   // @override
   // implement onCallReceiving
@@ -1331,6 +1360,10 @@ class MockFlyChatFlutterPlatform
   Stream get onUserStoppedSpeaking => throw UnimplementedError();
 
   @override
+  // implement onAvailableFeaturesUpdated
+  Stream get onAvailableFeaturesUpdated => throw UnimplementedError();
+
+  @override
   Future getCallUsersList() {
     // implement getCallUsers
     throw UnimplementedError();
@@ -1367,7 +1400,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String?> createTopic({required String topicName, List<TopicMetaData> metaData = const[] }) {
+  Future<String?> createTopic(
+      {required String topicName, List<TopicMetaData> metaData = const []}) {
     //  implement createTopic
     throw UnimplementedError();
   }
@@ -1379,7 +1413,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<dynamic> getRecentChatListHistoryByTopic({String? topicId,required bool firstSet,int limit=15}) {
+  Future<dynamic> getRecentChatListHistoryByTopic(
+      {String? topicId, required bool firstSet, int limit = 15}) {
     //  implement getRecentChatListHistoryByTopic
     throw UnimplementedError();
   }
@@ -1403,13 +1438,20 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future getRecentChatListHistory({required bool firstSet,int limit=15}) {
+  Future getRecentChatListHistory({required bool firstSet, int limit = 15}) {
     // implement getRecentChatListHistory
     throw UnimplementedError();
   }
 
   @override
-  Future initializeMessageList({required String userJid, String? messageId, double? messageTime, bool? exclude,bool ascendingOrder = true,String? topicId, int limit = 25}) {
+  Future initializeMessageList(
+      {required String userJid,
+      String? messageId,
+      double? messageTime,
+      bool? exclude,
+      bool ascendingOrder = true,
+      String? topicId,
+      int limit = 25}) {
     // implement initializeMessageList
     throw UnimplementedError();
   }
@@ -1479,10 +1521,17 @@ class MockFlyChatFlutterPlatform
     // implement isUserVideoMuted
     throw UnimplementedError();
   }
+
+  @override
+  Future getAvailableFeatures() {
+    // implement getAvailableFeatures
+    throw UnimplementedError();
+  }
 }
 
 void main() {
-  final FlyChatFlutterPlatform initialPlatform = FlyChatFlutterPlatform.instance;
+  final FlyChatFlutterPlatform initialPlatform =
+      FlyChatFlutterPlatform.instance;
 
   test('$MethodChannelFlyChatFlutter is the default instance', () {
     expect(initialPlatform, isInstanceOf<MethodChannelFlyChatFlutter>());
