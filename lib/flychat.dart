@@ -565,12 +565,13 @@ class Mirrorfly {
   /// * @property [exclude] - If true message of the Message ID given will be excluded in message list default true
   /// * @property [topicId] - use to get messages by topic id
   /// * @property [limit] - No of messages will be fetched for each request default 25
+  /// * @property [ascendingOrder] - If true message list will be returned ascendingOrder by message time default false
   static Future<dynamic> initializeMessageList(
       {required String userJid,
       String? messageId,
       double? messageTime,
       bool exclude = true,
-      bool ascendingOrder = true,
+      bool ascendingOrder = false,
       String? topicId,
       int limit = 25}) {
     return FlyChatFlutterPlatform.instance.initializeMessageList(
