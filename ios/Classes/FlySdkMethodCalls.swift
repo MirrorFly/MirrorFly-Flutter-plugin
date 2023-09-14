@@ -41,6 +41,12 @@ import UIKit
     static var messageListParams = FetchMessageListParams()
     static var messageListQuery : FetchMessageListQuery? = nil
 
+    //Need to alter this below two lines based on RecentChat list
+    static var topicChatListParams = TopicChatListParams(limit: 15)
+    static var topicChatListBuilder : TopicChatListBuilder?
+    //static let messageListParams = FetchMessageListParams()
+//    static let topicMessageListQuery =  FetchMessageListQuery(fetchMessageListParams: messageListParams)
+
     static func buildChatSDK(call: FlutterMethodCall) {
 
         let args = call.arguments as! Dictionary<String, Any>
@@ -261,13 +267,14 @@ import UIKit
         let txtMessage = args["message"] as? String ?? nil
         let receiverJID = args["JID"] as? String ?? nil
         let replyMessageID = args["replyMessageId"] as? String ?? ""
-        
+        let topicId = args["topicId"] as? String ?? ""
+
         if(txtMessage == nil || receiverJID == nil){
             result(FlutterError(code: "500", message: "Parameters Missing", details: nil))
             return
         }
         
-        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: []) { isSuccess,error,chatMessage in
+        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId) { isSuccess,error,chatMessage in
             if isSuccess {
                 print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
                 let textMsgResponse = chatMessage.toJson()
@@ -291,6 +298,7 @@ import UIKit
         let latitude = args["latitude"] as? Double ?? 00.0
         let longitude = args["longitude"] as? Double ?? 00.0
         let userJid = args["jid"] as? String ?? nil
+        let topicId = args["topicId"] as? String ?? ""
         let replyMessageID = args["replyMessageId"] as? String ?? ""
         
         if(latitude == 00.0 || longitude == 00.0){
@@ -302,7 +310,7 @@ import UIKit
             return
         }
         
-        FlyMessenger.sendLocationMessage(toJid: userJid!, latitude: latitude, longitude: longitude, replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
+        FlyMessenger.sendLocationMessage(toJid: userJid!, latitude: latitude, longitude: longitude, replyMessageId: replyMessageID,topicID: topicId) { isSuccess,error,chatMessage in
             if isSuccess {
                 let locationResponse = chatMessage?.toJson()
                 print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
@@ -320,7 +328,8 @@ import UIKit
         let replyMessageId = args["replyMessageId"] as? String ?? ""
         
         let caption = args["caption"] as? String ?? ""
-        
+        let topicId = args["topicId"] as? String ?? ""
+
         let imagefileUrl = URL(fileURLWithPath: filePath)
         
         
@@ -355,7 +364,7 @@ import UIKit
             
         }
         
-        FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId, mentionedUsersIds: []){isSuccess,error,message in
+        FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId, mentionedUsersIds: [],topicID: topicId){isSuccess,error,message in
             let response = message?.toJson()
             result(response)
         }
@@ -367,6 +376,7 @@ import UIKit
         let replyMessageId = args["replyMessageId"] as? String ?? ""
         let isRecorded = args["isRecorded"] as? Bool ?? false
         let audiofilePath = args["filePath"] as? String ?? ""
+        let topicId = args["topicId"] as? String ?? ""
         let audiofileUrl = URL(fileURLWithPath: audiofilePath)
         
         print("audio File URL")
@@ -384,7 +394,7 @@ import UIKit
                 mediaData.fileKey = fileKey
                 mediaData.mediaType = .audio
                 
-                FlyMessenger.sendAudioMessage(toJid:  userJid, mediaData: mediaData, replyMessageId :  replyMessageId, isRecorded : isRecorded) { isSuccess,error,message in
+                FlyMessenger.sendAudioMessage(toJid:  userJid, mediaData: mediaData, replyMessageId :  replyMessageId, isRecorded : isRecorded,topicID: topicId) { isSuccess,error,message in
                     if message != nil {
                         
                         let audioResponse = message?.toJson()
@@ -519,7 +529,8 @@ import UIKit
         let filePath = args["filePath"] as? String ?? ""
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
-        
+        let topicId = args["topicId"] as? String ?? ""
+
         let videoFileUrl = URL(fileURLWithPath: filePath)
         
         var thumbnail : UIImage?
@@ -584,9 +595,10 @@ import UIKit
         let userJid = args["jid"] as? String ?? ""
         let contactName = args["contact_name"] as? String ?? ""
         let replyMessageId = args["replyMessageId"] as? String ?? ""
+        let topicId = args["topicId"] as? String ?? ""
         let contactList = args["contact_list"] as? [String] ?? []
         
-        FlyMessenger.sendContactMessage(toJid: userJid, contactName: contactName, contactNumbers: contactList, replyMessageId: replyMessageId){ isSuccess,error,message  in
+        FlyMessenger.sendContactMessage(toJid: userJid, contactName: contactName, contactNumbers: contactList, replyMessageId: replyMessageId,topicID: topicId){ isSuccess,error,message  in
             if message != nil {
                 
                 let contactMessageResponse = message?.toJson()
@@ -606,7 +618,8 @@ import UIKit
         let userJid = args["jid"] as? String ?? ""
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
-        
+        let topicId = args["topicId"] as? String ?? ""
+
         let documentFilePath = args["file"] as? String ?? ""
         let documentFileUrl = URL(fileURLWithPath: documentFilePath)
         
@@ -625,7 +638,7 @@ import UIKit
                 mediaData.fileSize = fileSize
                 mediaData.mediaType = .document
                 
-                FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId) { isSuccess, error, message in
+                FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId,topicID: topicId) { isSuccess, error, message in
                     if message != nil {
                         let documentMessageResponse = message?.toJson()
                         result(documentMessageResponse)
@@ -1741,7 +1754,7 @@ import UIKit
         
         let limit = args["limit"] as? Int ?? 15
         
-        recentChatListParams.limit = 15
+        recentChatListParams.limit = limit
         
         if(recentChatListBuilder == nil){
             print("recentChatListBuilder is nil")
@@ -1811,6 +1824,87 @@ import UIKit
         }
     }
 
+    static func getRecentChatListHistoryByTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
+
+        let args = call.arguments as! Dictionary<String, Any>
+
+        let isFirstSet = args["firstSet"] as? Bool ?? true
+
+        let limit = args["limit"] as? Int ?? 15
+
+        let topicId = args["topicId"] as? String ?? ""
+
+        topicChatListParams.limit = limit
+        topicChatListParams.topicID = topicId
+
+        if(topicChatListBuilder == nil){
+            print("topicChatListBuilder is nil")
+            topicChatListBuilder =  TopicChatListBuilder(topicChatListParams: topicChatListParams)
+        }else{
+            print("topicChatListBuilder already set")
+        }
+        if(isFirstSet){
+
+            print("loading first set")
+            topicChatListBuilder!.loadTopicBasedChatList{ isSuccess, flyError, flyData in
+                var data  = flyData
+                if (isSuccess) {
+                    let recentChatArray  = data.getData() as? [RecentChat] ?? []
+                    if(recentChatArray.isEmpty){
+                        result("{\"data\": [] }")
+                    }else{
+                        if let recentChatJson = recentChatArray.toJson() {
+                            let recentChatListJson = "{\"data\":" + recentChatJson + "}"
+                            print("topicrecentChatList==**==\(recentChatListJson)")
+                            result(recentChatListJson)
+                        } else {
+                            print("Failed to convert object to JSON")
+                            result(FlutterError(code: "500", message: "Error Parsing the Topic based Recent Chat List", details: nil))
+                        }
+
+                    }
+                } else {
+                    // Fetch recentchat failed print error to know more about the exception
+                    result(FlutterError(code: "500", message: "Unable to fetch the Topic based Recent Chat List", details: nil))
+                }
+            }
+        }else{
+            print("loading next set")
+//            if(topicChatListBuilder!.hasNextRecentChatData()){
+                print("Next set has data")
+                topicChatListBuilder!.nextSetOfTopicBasedChatList { isSuccess, flyError, flyData in
+                    var data  = flyData
+                    if (isSuccess) {
+                        let recentChatArray  = data.getData() as? [RecentChat] ?? []
+
+                        if(recentChatArray.isEmpty){
+                            print("returning empty data")
+                            result("{\"data\": [] }")
+                        }else{
+                            if let recentChatJson = recentChatArray.toJson() {
+                                let recentChatListJson = "{\"data\":" + recentChatJson + "}"
+                                print("topicrecentChatList==**==\(recentChatListJson)")
+                                result(recentChatListJson)
+                            } else {
+                                print("Failed to convert object to JSON")
+                                result(FlutterError(code: "500", message: "Error Parsing the Topic based Recent Chat List", details: nil))
+                            }
+
+                        }
+                    } else {
+                        // Fetch recentchat failed print error to know more about the exception
+                        result(FlutterError(code: "500", message: "Unabke to fetch the Topic based Recent Chat List", details: nil))
+                    }
+                }
+//            }else{
+//                print("Next set data is not available")
+//                result("{\"data\": [] }")
+//            }
+
+
+        }
+    }
+
     static func initializeMessageList(call: FlutterMethodCall, result: @escaping FlutterResult){
 
         let args = call.arguments as! Dictionary<String, Any>
@@ -1838,6 +1932,9 @@ import UIKit
 
         messageListParams.ascendingOrder = ascendingOrder
 
+        if let topicId = args["topicId"] as? String {
+            messageListParams.topicID = topicId
+        }
 
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
 
@@ -2557,7 +2654,69 @@ import UIKit
 
     }
 
+    static func createTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let topicName = args["topicName"] as? String ?? ""
+        let metaData = args["metaData"] as? [[String: Any]] ?? []
+        print("metaData \(String(describing: metaData))")
+        var metaDataArray : [MetaData] = []
+        for data in metaData {
+            var obj = MetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+            metaDataArray.append(obj)
+        }
+//        ["message": Topic created successfully, "data": {
+//            topicId = "0b290e7f-b05c-4859-a72d-100c48f73c8d";
+//        }, "status": 200]
+        ChatManager.createTopic(topicName: topicName,metaData: metaDataArray) { isSuccess, error, data in
+            print("createTopic ==**==\(data)")
+            if isSuccess{
+                var resp = data
+                if let response = resp.getData() as? [String: Any] {
+                    if let topicId = response["topicId"] as? String {
+                        result(topicId)
+                    }else{
+                        result(FlutterError(code: "500",message: "data not found",details: nil))
+                    }
+                }else{
+                    result(FlutterError(code: "500",message: "data not found",details: nil))
+                }
+            }else{
+                result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
+            }
+        }
+    }
 
+    static func getAvailableFeatures(call: FlutterMethodCall, result: @escaping FlutterResult){
+
+        let availableFeatures = ChatManager.getAvailableFeatures()
+        print("Available Features \(availableFeatures)")
+//        print("Available Features \(availableFeatures.toJson())")
+//        availableFeatures.toJson()
+        result(availableFeatures.toJson())
+    }
+
+    static func getTopics(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let topicIds = args["topicIds"] as? [String] ?? []
+        ChatManager.getTopics(topicIds: topicIds) { isSuccess, error, data in
+            if isSuccess{
+                var resp = data
+                if let response = resp.getData() as? [String: Any] {
+                    if let topics = response["topics"] as? [[String: Any]] {
+                        print("getTopics ==**==\(topics.toJSONString())")
+                        result(topics.toJSONString())
+                    }else{
+                        result(FlutterError(code: "500",message: "data not found",details: nil))
+                    }
+                }else{
+                    result(FlutterError(code: "500",message: "data not found",details: nil))
+                }
+            }else{
+                print("getTopics error \(error?.localizedDescription)")
+                result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
+            }
+        }
+    }
 }
 
 
