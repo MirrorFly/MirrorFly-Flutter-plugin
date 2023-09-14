@@ -28,7 +28,7 @@ import UIKit
     static var chatHistoryEnable : Bool = false;
     static var isContactSyncInProgress : Bool = false;
     
-    static var userlist = [ProfileDetails]()
+//    static var userlist = [ProfileDetails]()
     
     static var recentChatListParams = RecentChatListParams(limit: 15)
     
@@ -50,7 +50,7 @@ import UIKit
     static func buildChatSDK(call: FlutterMethodCall) {
 
         let args = call.arguments as! Dictionary<String, Any>
-        
+
         let licenseKey = args["licenseKey"] as? String ?? ""
         _ = args["enableMobileNumberLogin"] as? Bool ?? true
         isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
@@ -80,9 +80,15 @@ import UIKit
 
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
-        
+
                 ChatManager.setAppGroupContainerId(id: containerID)
-                ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
+                ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
+                    if isSuccess {
+                        print("SDK INITIALISED")
+                    }else{
+                        print("SDK FAILED TO INITIALISE \(flyError)")
+                    }
+                }
         
         
         print("ChatManager.enableChatHistory \(chatHistoryEnable)")
@@ -234,7 +240,7 @@ import UIKit
                 result(newToken)
 
             } else {
-                result(FlutterError(code: "500", message: "Unable to refresh token", details: flyError?.description))
+                result(FlutterError(code: "500", message: "Unable to refresh token", details: flyError?.localizedDescription))
 
             }
         }
@@ -281,7 +287,7 @@ import UIKit
                 
                 
             }else{
-                result(FlutterError(code: "500", message: error?.description, details: nil))
+                result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
             }
         }
         
@@ -471,7 +477,7 @@ import UIKit
                 
                 print("getUsersList\(userList)")
                 if let userData = userList.getData() as? [ProfileDetails] {
-                    userlist = userData
+//                    userlist = userData
                     let userDataJson = userData.toJson()
                     print("userDataJson\(String(describing: userDataJson))")
                     let totalPages = userList["totalPages"] as! Int
@@ -487,7 +493,7 @@ import UIKit
                     result(userlistJson)
                 }
             }else{
-                result(FlutterError(code: "500", message: flyError?.description, details: nil))
+                result(FlutterError(code: "500", message: flyError?.localizedDescription, details: nil))
             }
         }
         
@@ -510,7 +516,7 @@ import UIKit
                 
                 result(userData)
             } else{
-                result(FlutterError(code: "500", message: flyError?.description, details: nil))
+                result(FlutterError(code: "500", message: flyError?.localizedDescription, details: nil))
             }
         }
     }
@@ -936,7 +942,7 @@ import UIKit
             print("Image is null else condition")
 //            isImagePicked = false
         }
-        
+
         ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
             if isSuccess {
                 var data = flyData
@@ -990,7 +996,7 @@ import UIKit
         profileData.email = ContactManager.getMyProfile().email
         profileData.status = ContactManager.getMyProfile().status
         profileData.image = ContactManager.getMyProfile().image
-        
+
 //        ContactManager.shared.saveUser(profileDetails: profileData, saveAs: .live)
     }
     
@@ -1015,7 +1021,7 @@ import UIKit
 //        print("****sourceURL \(sourceURL)")
 //        let fileName = (profileImage as NSString).lastPathComponent
 //        print("file name" + fileName)
-        
+
         ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
                 if isSuccess {
                     // Profile Image updated successfully update the UI
@@ -1080,7 +1086,7 @@ import UIKit
 //            // Error handling
 //            print("Error reading file: \(error.localizedDescription)")
 //        }
-        
+
     }
     
     static func contactSyncStateValue(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1919,13 +1925,13 @@ import UIKit
         }
         let limit = args["limit"] as? Int ?? 50
         messageListParams.limit = limit
-    
+
         let ascendingOrder = args["ascendingOrder"] as? Bool ?? true
-        
+
         print("Ascending order value \(ascendingOrder)")
-        
+
         messageListParams.ascendingOrder = ascendingOrder
-        
+
         if let topicId = args["topicId"] as? String {
             messageListParams.topicID = topicId
         }
@@ -2377,9 +2383,9 @@ import UIKit
         let isAudioEnabled = args["Audio"] as? Bool ?? false
         let isDocumentEnabled = args["Documents"] as? Bool ?? false
         let networkType = args["NetworkType"] as? Int ?? 0
-        
+
         if (networkType == 0){//cellular
-            
+
             ChatManager.updateAutoDownloadMobile(type: .photo, enable: isPhotoEnabled)
             ChatManager.updateAutoDownloadMobile(type: .videos, enable: isVideoEnabled)
             ChatManager.updateAutoDownloadMobile(type: .audio, enable: isAudioEnabled)
@@ -2494,14 +2500,31 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
-        
-        if let userProfile = userlist.filter({$0.jid == userJid}).first {
-            
-            ContactManager.shared.saveUser(profileDetails: userProfile)
-            let userProfileJson = userProfile.toJson()
-            result(userProfileJson)
+
+        let userProfile = ChatManager.profileDetaisFor(jid: userJid)
+        print("userProfile*** \(userProfile)")
+
+        if(userProfile == nil){
+            do {
+                try ContactManager.shared.getUserProfile(for: userJid, fetchFromServer: true, saveAsFriend: true){ isSuccess, flyError, flyData in
+                    var data  = flyData
+                    let profileData = data.getData() as? ProfileDetails
+                    print("***getUserProfile\(String(describing: profileData))")
+
+                    print("***getUserProfile dict\(String(describing: profileData.toJson()))")
+                    if isSuccess {
+                        //                                 let profileJSON = "{\"data\" : " + (profileData.toJson() ?? "[]") + ",\"status\": true}"
+                        //                                print("ContactManager.shared.getUserProfile==**==\(profileData.toJson())")
+                        result(profileData.toJson())
+                    } else{
+                        result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                    }
+                }
+            }catch{
+                print("Error while calling User Profile Details")
+            }
+
         }else{
-            let userProfile = ChatManager.profileDetaisFor(jid: userJid)
             let userProfileJson = userProfile.toJson()
             print("getProfileDetails==**==\(String(describing: userProfileJson))")
             result(userProfileJson)
@@ -2619,16 +2642,16 @@ import UIKit
     static func handleReceivedMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         NSLog("#Mirrorfly handleReceivedMessage")
-        
+
     }
     static func getUnreadMessageCountExceptMutedChat(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+
         let (messageCount, chatCount) = ChatManager.getUnreadMessageAndChatCountForUnmutedUsers()
-        
+
         print("chatCount \(chatCount)")
-        
+
         result(messageCount)
-        
+
     }
 
     static func createTopic(call: FlutterMethodCall, result: @escaping FlutterResult){

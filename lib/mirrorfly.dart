@@ -1,3 +1,4 @@
+/// A MirrorFly Plugin to Experience an outstanding real time messaging solution.
 library mirrorfly_plugin;
 
 export 'fly_chat_method_channel.dart';

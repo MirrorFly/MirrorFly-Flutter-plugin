@@ -47,7 +47,7 @@ import MirrorFlySDK
         }
         
         let userListJson = jsonArray.convertToJson()
-        print("\(tag) getCallUsersWithStatus \(userListJson)")
+        print("\(tag) getCallUsersWithStatus \(String(describing: userListJson))")
        result(userListJson)
     }
     
@@ -113,12 +113,14 @@ import MirrorFlySDK
         
     }
     func declineCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        print("\(Constants.tag) declineCall Call")
         CallManager.disconnectCall()
     }
     func muteAudio(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as! Dictionary<String, Any>
         let muteStatus = args["muteAudio"] as? Bool ?? false
         CallManager.muteAudio(muteStatus)
+        print("\(Constants.tag) Calling the Audio Delegate")
         result(true)
     }
     func isVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -218,21 +220,26 @@ import MirrorFlySDK
     func routeAudioTo(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as! Dictionary<String, Any>
         let routeType = args["routeType"] as? String ?? ""
-        print("route Type \(routeType)")
+        print("triggerDelegateForOutputs route Type \(routeType)")
         switch (routeType) {
           case "bluetooth":
+            print("****triggerDelegateForOutputs routed to bluetooth")
             AudioManager.shared().routeAudioTo(device: .bluetooth, force: true);
             break;
           case "headset":
+            print("****triggerDelegateForOutputs routed to headset")
             AudioManager.shared().routeAudioTo(device: .headset, force: true);
             break;
           case "receiver":
+            print("****triggerDelegateForOutputs routed to receiver")
             AudioManager.shared().routeAudioTo(device: .receiver, force: true);
             break;
           case "speaker":
+            print("****triggerDelegateForOutputs routed to speaker")
             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
           default:
+            print("****triggerDelegateForOutputs routed to default speaker")
             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
 //           default:
@@ -258,8 +265,7 @@ import MirrorFlySDK
         
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["userJid"] as? String ?? ""
-       
-        let status = (jid == AppUtils.getMyJid()) ? CallManager.isAudioMuted() : CallManager.isRemoteAudioMuted(jid)
+        let status = (jid == AppUtils.getMyJid() || jid == "") ? CallManager.isAudioMuted() : CallManager.isRemoteAudioMuted(jid)
 
         result(status)
     }
@@ -280,7 +286,9 @@ import MirrorFlySDK
     }
     
     func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult){
+        print("\(Constants.tag) Disconnecting Call")
         CallManager.disconnectCall()
+        CallManager.incomingUserJidArr.removeAll()
         result(true)
     }
     

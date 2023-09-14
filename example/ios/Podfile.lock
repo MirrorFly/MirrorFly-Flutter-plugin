@@ -18,7 +18,7 @@ PODS:
   - KissXML/Core (5.3.1)
   - libidn (1.35)
   - libPhoneNumber-iOS (0.9.15)
-  - mirrorfly_plugin (0.0.1):
+  - mirrorfly_plugin (0.0.9):
     - Alamofire
     - Flutter
     - GoogleWebRTC
@@ -80,7 +80,7 @@ SPEC CHECKSUMS:
   KissXML: 5c8e0f2e8b9f071d3e1ae123dec3eb5da615c10c
   libidn: e4576a956b797c584c77aaedfc6e3dd639b61bdc
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
-  mirrorfly_plugin: ae6c80ec5f5a14d9264a5365f0b30d19075f6391
+  mirrorfly_plugin: 9ec260ca1a58e644b7a93ddabeb7db8eac0f705b
   Realm: fac5ecd031fcb81171627b74944c885662d4b266
   RealmSwift: 9b02d25acb46a14756bde9893abb99e2e3675923
   Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c

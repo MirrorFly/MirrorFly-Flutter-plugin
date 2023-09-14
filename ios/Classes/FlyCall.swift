@@ -13,9 +13,10 @@ import PushKit
 @objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate {
     
     var selectedAudioRouteDevice : String = "receiver"
+    var isAudioRouteMethodCall : Bool = false
     
     func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
-        print("#MirroflyCall Call AUDIO DELEGATE \(audioDeviceType)")
+        print("#MirrorflyCall triggerDelegateForOutputs \(audioDeviceType)")
         
         switch (audioDeviceType) {
         case .bluetooth:
@@ -30,12 +31,13 @@ import PushKit
         @unknown default:
             selectedAudioRouteDevice = "none"
         }
-        
-        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
-        jsonObject.setValue("AUDIO_DEVICE_CHANGED", forKey: "callAction")
-        let callUpdate = pluginDictToJson(dictionary: jsonObject)
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
+        if !isAudioRouteMethodCall{
+            let jsonObject: NSMutableDictionary = NSMutableDictionary()
+            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
+            jsonObject.setValue("AUDIO_DEVICE_CHANGED", forKey: "callAction")
+            let callUpdate = pluginDictToJson(dictionary: jsonObject)
+            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
+        }
         
     }
     
@@ -65,6 +67,8 @@ import PushKit
         CallManager.setCallEventsDelegate(delegate: self)
         AudioManager.shared().audioManagerDelegate = self
         
+//        AudioManager.sharedInstance.audioManagerDelegate = self
+        print("\(Constants.tag) audioManagerDelegate")
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -78,11 +82,17 @@ import PushKit
         }else if (call.method == "muteVideo"){
             muteVideo(call: call, result: result)
         }else{
-            
+            if (call.method == "makeVoiceCall" || call.method == "makeVideoCall" || call.method == "makeGroupVideoCall" || call.method == "makeGroupVoiceCall"){
+                
+                if AudioManager.shared().audioManagerDelegate == nil {
+                    print("\(Constants.tag) AudioManager Delegate is Nil, setting new Delegate")
+                    AudioManager.shared().audioManagerDelegate = self
+                }
+
+            }
             if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
                 print("\(Constants.tag) Method call \(call.method)")
                 methodHandler(call, result)
-                
             } else {
                 result(FlutterMethodNotImplemented)
             }
@@ -127,9 +137,9 @@ import PushKit
     }
     
     func sendCallMessage(groupCallDetails: MirrorFlySDK.GroupCallDetails, users: [String], invitedUsers: [String]) {
-        print("#MirroflyCall send call message group call Details--> \(groupCallDetails)")
-        print("#MirroflyCall send call message users--> \(users)")
-        print("#MirroflyCall send call message Invited users--> \(invitedUsers)")
+        print("#MirrorflyCall send call message group call Details--> \(groupCallDetails)")
+        print("#MirrorflyCall send call message users--> \(users)")
+        print("#MirrorflyCall send call message Invited users--> \(invitedUsers)")
         
         try? FlyMessenger.sendCallMessage(for: groupCallDetails, users : users , inviteUsers: invitedUsers) { isSuccess, flyError, flyData in
             var data  = flyData
@@ -144,11 +154,15 @@ import PushKit
     func socketConnectionEstablished() {
         
     }
-    
+     
     func selectedAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        print("#Mirrorfly call selectedAudioDevice \(selectedAudioRouteDevice)")
-        result(selectedAudioRouteDevice)
-        
+        isAudioRouteMethodCall = true
+//        AudioManager.sharedInstance.getCurrentAudioInput()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            print("#Mirrorfly call selectedAudioDevice \(self.selectedAudioRouteDevice)")
+            self.isAudioRouteMethodCall = false
+            result(self.selectedAudioRouteDevice)
+        }
     }
     
     
@@ -171,14 +185,36 @@ import PushKit
     }
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
-        print("#MirroflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
+        print("#MirrorflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
+        
+        if AudioManager.shared().audioManagerDelegate == nil  && callStatus != .DISCONNECTED{
+            print("\(Constants.tag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
+            AudioManager.shared().audioManagerDelegate = self
+        }
+
+        var userJID = userId
+        if userJID == "" && callStatus == .DISCONNECTED{
+            print("\(Constants.tag) SDK is empty so assigning self jid")
+            userJID = AppUtils.getMyJid()
+        }
+
+        //Added this below condition based on the iOS Sample App. callStatus != .DISCONNECTED is added for flutter, bcz the network disconnection gives the own JID for disconnect.
+        if userJID == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED && callStatus != .DISCONNECTED) {
+            print("#Mirrorfly Call not updating the Call Status for my jid")
+            return
+        }
+        
+        if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
+            print("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
+            return
+        }
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         if (callStatus.rawValue == "CALL TIME OUTt"){
             jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
         }else{
             jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
         }
-        jsonObject.setValue(userId, forKey: "userJid")
+        jsonObject.setValue(userJID, forKey: "userJid")
         
         if CallManager.isOneToOneCall()  {
             jsonObject.setValue("OneToOne", forKey: "callMode")
@@ -188,8 +224,8 @@ import PushKit
         
         if(callStatus.rawValue == "Attended"){
             
-            print("#MirroflyCall Call Status Updated Attended")
-            AudioManager.shared().audioManagerDelegate = self
+            print("#MirrorflyCall Call Status Updated Attended")
+//            AudioManager.shared().audioManagerDelegate = self
             
             if CallManager.getCallType() == .Audio {
                 jsonObject.setValue("audio", forKey: "callType")
@@ -206,9 +242,13 @@ import PushKit
     }
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
-        print("#MirroflyCall Event oncalll Action --> \(callAction) userID \(userId)")
+        print("#MirrorflyCall Event oncalll Action --> \(callAction.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(userId, forKey: "userJid")
+        if userId == ""{
+            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
+        }else{
+            jsonObject.setValue(userId, forKey: "userJid")
+        }
         jsonObject.setValue(callAction.rawValue, forKey: "callAction")
         let callActionJson = pluginDictToJson(dictionary: jsonObject)
         
@@ -216,7 +256,7 @@ import PushKit
     }
     
     func onMuteStatusUpdated(muteEvent: MirrorFlySDK.MuteEvent, userId: String) {
-        print("#MirroflyCall Event onmute status updated --> \(muteEvent) userID \(userId)")
+        print("#MirrorflyCall Event onmute status updated --> \(muteEvent) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
         switch(muteEvent){
@@ -271,11 +311,11 @@ import PushKit
     }
     
     func onUserSpeaking(userId: String, audioLevel: Int) {
-        print("#MirroflyCall user speaking --> \(userId) audioLevel \(audioLevel)")
+        print("#MirrorflyCall user speaking --> \(userId) audioLevel \(audioLevel)")
     }
     
     func onUserStoppedSpeaking(userId: String) {
-        print("#MirroflyCall user stopped speaking --> \(userId)")
+        print("#MirrorflyCall user stopped speaking --> \(userId)")
     }
     
     func onLocalVideoTrackAdded(userId: String, videoTrack: RTCVideoTrack) {

@@ -24,9 +24,10 @@ Pod::Spec.new do |s|
   s.dependency 'XMPPFramework/Swift'
   s.dependency 'RealmSwift' , '10.20.1'
   s.dependency 'GoogleWebRTC'
-  #s.dependency 'MirrorFlySDK', '5.11.1'
+  s.dependency 'SDWebImage'
+  s.dependency 'MirrorFlySDK', '5.11.6'
 
-  s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+  #s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
 
 

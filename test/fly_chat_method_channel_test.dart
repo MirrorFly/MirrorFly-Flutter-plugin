@@ -11,9 +11,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger.setMockMethodCallHandler(
+    TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
+        .setMockMethodCallHandler(
       channel,
-          (MethodCall methodCall) async {
+      (MethodCall methodCall) async {
         log.add(methodCall);
         return '42';
       },
@@ -22,10 +23,14 @@ void main() {
 
   tearDown(() {
     log.clear();
-    TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
+    TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('init', () async {
-    await platform.init(ChatBuilder(domainBaseUrl: 'domainBaseUrl', licenseKey: 'licenseKey', iOSContainerID: ''));
+    await platform.init(ChatBuilder(
+        domainBaseUrl: 'domainBaseUrl',
+        licenseKey: 'licenseKey',
+        iOSContainerID: ''));
   });
 }

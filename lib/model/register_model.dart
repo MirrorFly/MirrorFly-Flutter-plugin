@@ -4,7 +4,8 @@
 
 import 'dart:convert';
 
-RegisterModel registerModelFromJson(String str) => RegisterModel.fromJson(json.decode(str));
+RegisterModel registerModelFromJson(String str) =>
+    RegisterModel.fromJson(json.decode(str));
 
 String registerModelToJson(RegisterModel data) => json.encode(data.toJson());
 
@@ -20,16 +21,16 @@ class RegisterModel {
   });
 
   factory RegisterModel.fromJson(Map<String, dynamic> json) => RegisterModel(
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-    isNewUser: json["is_new_user"],
-    message: json["message"],
-  );
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+        isNewUser: json["is_new_user"],
+        message: json["message"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "data": data?.toJson(),
-    "is_new_user": isNewUser,
-    "message": message,
-  };
+        "data": data?.toJson(),
+        "is_new_user": isNewUser,
+        "message": message,
+      };
 }
 
 class Data {
@@ -54,26 +55,26 @@ class Data {
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    config: json["config"] == null ? null : Config.fromJson(json["config"]),
-    isExisting: json["isExisting"],
-    isProfileUpdated: json["isProfileUpdated"],
-    message: json["message"],
-    newLogin: json["newLogin"],
-    password: json["password"],
-    token: json["token"],
-    username: json["username"],
-  );
+        config: json["config"] == null ? null : Config.fromJson(json["config"]),
+        isExisting: json["isExisting"],
+        isProfileUpdated: json["isProfileUpdated"],
+        message: json["message"],
+        newLogin: json["newLogin"],
+        password: json["password"],
+        token: json["token"],
+        username: json["username"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "config": config?.toJson(),
-    "isExisting": isExisting,
-    "isProfileUpdated": isProfileUpdated,
-    "message": message,
-    "newLogin": newLogin,
-    "password": password,
-    "token": token,
-    "username": username,
-  };
+        "config": config?.toJson(),
+        "isExisting": isExisting,
+        "isProfileUpdated": isProfileUpdated,
+        "message": message,
+        "newLogin": newLogin,
+        "password": password,
+        "token": token,
+        "username": username,
+      };
 }
 
 class Config {
@@ -176,104 +177,110 @@ class Config {
   });
 
   factory Config.fromJson(Map<String, dynamic> json) => Config(
-    adminUser: json["adminUser"],
-    attachment: json["attachment"],
-    audioAttachment: json["audioAttachment"],
-    audioLimit: json["audioLimit"],
-    block: json["block"],
-    callRoutingServer: json["callRoutingServer"],
-    chatBackupFrequency: json["chatBackupFrequency"],
-    chatBackupType: json["chatBackupType"],
-    clearChat: json["clearChat"],
-    contactAttachment: json["contactAttachment"],
-    deleteChat: json["deleteChat"],
-    deleteMessage: json["deleteMessage"],
-    documentAttachment: json["documentAttachment"],
-    domain: json["domain"],
-    fileSizeLimit: json["fileSizeLimit"],
-    googleTranslate: json["googleTranslate"],
-    groupCall: json["groupCall"],
-    groupChat: json["groupChat"],
-    imageAttachment: json["imageAttachment"],
-    isLiveStreamingEnabled: json["isLiveStreamingEnabled"],
-    iv: json["iv"],
-    ivProfile: json["ivProfile"],
-    liveStreamingSignalServer: json["liveStreamingSignalServer"],
-    locationAttachment: json["locationAttachment"],
-    notificationHelpUrl: json["notificationHelpUrl"],
-    one2OneCall: json["one2oneCall"],
-    pinExpireDays: json["pinExpireDays"],
-    pinTimeOut: json["pinTimeOut"],
-    privateTime: json["privateTime"],
-    recallTime: json["recallTime"],
-    recentchatSearch: json["recentchatSearch"],
-    report: json["report"],
-    sdkUrl: json["sdkUrl"],
-    signalServerDomain: json["signalServerDomain"],
-    sipcallEnabled: json["sipcallEnabled"],
-    sipServer: json["sipServer"],
-    starMessage: json["starMessage"],
-    stuns: json["stuns"] == null ? [] : List<String>.from(json["stuns"]!.map((x) => x)),
-    translation: json["translation"],
-    turns: json["turns"] == null ? [] : List<Turn>.from(json["turns"]!.map((x) => Turn.fromJson(x))),
-    videoAttachment: json["videoAttachment"],
-    videoLimit: json["videoLimit"],
-    viewAllMedias: json["viewAllMedias"],
-    xmppDomain: json["xmppDomain"],
-    xmppHost: json["xmppHost"],
-    xmppPort: json["xmppPort"],
-    xmppPortWeb: json["xmppPortWeb"],
-  );
+        adminUser: json["adminUser"],
+        attachment: json["attachment"],
+        audioAttachment: json["audioAttachment"],
+        audioLimit: json["audioLimit"],
+        block: json["block"],
+        callRoutingServer: json["callRoutingServer"],
+        chatBackupFrequency: json["chatBackupFrequency"],
+        chatBackupType: json["chatBackupType"],
+        clearChat: json["clearChat"],
+        contactAttachment: json["contactAttachment"],
+        deleteChat: json["deleteChat"],
+        deleteMessage: json["deleteMessage"],
+        documentAttachment: json["documentAttachment"],
+        domain: json["domain"],
+        fileSizeLimit: json["fileSizeLimit"],
+        googleTranslate: json["googleTranslate"],
+        groupCall: json["groupCall"],
+        groupChat: json["groupChat"],
+        imageAttachment: json["imageAttachment"],
+        isLiveStreamingEnabled: json["isLiveStreamingEnabled"],
+        iv: json["iv"],
+        ivProfile: json["ivProfile"],
+        liveStreamingSignalServer: json["liveStreamingSignalServer"],
+        locationAttachment: json["locationAttachment"],
+        notificationHelpUrl: json["notificationHelpUrl"],
+        one2OneCall: json["one2oneCall"],
+        pinExpireDays: json["pinExpireDays"],
+        pinTimeOut: json["pinTimeOut"],
+        privateTime: json["privateTime"],
+        recallTime: json["recallTime"],
+        recentchatSearch: json["recentchatSearch"],
+        report: json["report"],
+        sdkUrl: json["sdkUrl"],
+        signalServerDomain: json["signalServerDomain"],
+        sipcallEnabled: json["sipcallEnabled"],
+        sipServer: json["sipServer"],
+        starMessage: json["starMessage"],
+        stuns: json["stuns"] == null
+            ? []
+            : List<String>.from(json["stuns"]!.map((x) => x)),
+        translation: json["translation"],
+        turns: json["turns"] == null
+            ? []
+            : List<Turn>.from(json["turns"]!.map((x) => Turn.fromJson(x))),
+        videoAttachment: json["videoAttachment"],
+        videoLimit: json["videoLimit"],
+        viewAllMedias: json["viewAllMedias"],
+        xmppDomain: json["xmppDomain"],
+        xmppHost: json["xmppHost"],
+        xmppPort: json["xmppPort"],
+        xmppPortWeb: json["xmppPortWeb"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "adminUser": adminUser,
-    "attachment": attachment,
-    "audioAttachment": audioAttachment,
-    "audioLimit": audioLimit,
-    "block": block,
-    "callRoutingServer": callRoutingServer,
-    "chatBackupFrequency": chatBackupFrequency,
-    "chatBackupType": chatBackupType,
-    "clearChat": clearChat,
-    "contactAttachment": contactAttachment,
-    "deleteChat": deleteChat,
-    "deleteMessage": deleteMessage,
-    "documentAttachment": documentAttachment,
-    "domain": domain,
-    "fileSizeLimit": fileSizeLimit,
-    "googleTranslate": googleTranslate,
-    "groupCall": groupCall,
-    "groupChat": groupChat,
-    "imageAttachment": imageAttachment,
-    "isLiveStreamingEnabled": isLiveStreamingEnabled,
-    "iv": iv,
-    "ivProfile": ivProfile,
-    "liveStreamingSignalServer": liveStreamingSignalServer,
-    "locationAttachment": locationAttachment,
-    "notificationHelpUrl": notificationHelpUrl,
-    "one2oneCall": one2OneCall,
-    "pinExpireDays": pinExpireDays,
-    "pinTimeOut": pinTimeOut,
-    "privateTime": privateTime,
-    "recallTime": recallTime,
-    "recentchatSearch": recentchatSearch,
-    "report": report,
-    "sdkUrl": sdkUrl,
-    "signalServerDomain": signalServerDomain,
-    "sipcallEnabled": sipcallEnabled,
-    "sipServer": sipServer,
-    "starMessage": starMessage,
-    "stuns": stuns == null ? [] : List<dynamic>.from(stuns!.map((x) => x)),
-    "translation": translation,
-    "turns": turns == null ? [] : List<dynamic>.from(turns!.map((x) => x.toJson())),
-    "videoAttachment": videoAttachment,
-    "videoLimit": videoLimit,
-    "viewAllMedias": viewAllMedias,
-    "xmppDomain": xmppDomain,
-    "xmppHost": xmppHost,
-    "xmppPort": xmppPort,
-    "xmppPortWeb": xmppPortWeb,
-  };
+        "adminUser": adminUser,
+        "attachment": attachment,
+        "audioAttachment": audioAttachment,
+        "audioLimit": audioLimit,
+        "block": block,
+        "callRoutingServer": callRoutingServer,
+        "chatBackupFrequency": chatBackupFrequency,
+        "chatBackupType": chatBackupType,
+        "clearChat": clearChat,
+        "contactAttachment": contactAttachment,
+        "deleteChat": deleteChat,
+        "deleteMessage": deleteMessage,
+        "documentAttachment": documentAttachment,
+        "domain": domain,
+        "fileSizeLimit": fileSizeLimit,
+        "googleTranslate": googleTranslate,
+        "groupCall": groupCall,
+        "groupChat": groupChat,
+        "imageAttachment": imageAttachment,
+        "isLiveStreamingEnabled": isLiveStreamingEnabled,
+        "iv": iv,
+        "ivProfile": ivProfile,
+        "liveStreamingSignalServer": liveStreamingSignalServer,
+        "locationAttachment": locationAttachment,
+        "notificationHelpUrl": notificationHelpUrl,
+        "one2oneCall": one2OneCall,
+        "pinExpireDays": pinExpireDays,
+        "pinTimeOut": pinTimeOut,
+        "privateTime": privateTime,
+        "recallTime": recallTime,
+        "recentchatSearch": recentchatSearch,
+        "report": report,
+        "sdkUrl": sdkUrl,
+        "signalServerDomain": signalServerDomain,
+        "sipcallEnabled": sipcallEnabled,
+        "sipServer": sipServer,
+        "starMessage": starMessage,
+        "stuns": stuns == null ? [] : List<dynamic>.from(stuns!.map((x) => x)),
+        "translation": translation,
+        "turns": turns == null
+            ? []
+            : List<dynamic>.from(turns!.map((x) => x.toJson())),
+        "videoAttachment": videoAttachment,
+        "videoLimit": videoLimit,
+        "viewAllMedias": viewAllMedias,
+        "xmppDomain": xmppDomain,
+        "xmppHost": xmppHost,
+        "xmppPort": xmppPort,
+        "xmppPortWeb": xmppPortWeb,
+      };
 }
 
 class Turn {
@@ -288,14 +295,14 @@ class Turn {
   });
 
   factory Turn.fromJson(Map<String, dynamic> json) => Turn(
-    password: json["password"],
-    turn: json["turn"],
-    username: json["username"],
-  );
+        password: json["password"],
+        turn: json["turn"],
+        username: json["username"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "password": password,
-    "turn": turn,
-    "username": username,
-  };
+        "password": password,
+        "turn": turn,
+        "username": username,
+      };
 }

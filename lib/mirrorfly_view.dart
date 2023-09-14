@@ -21,7 +21,7 @@ class MirrorFlyView extends StatefulWidget {
   /// * @property [mirror] - Mirror the view Must be a Boolean
   /// * @property [userJid] - Call participant JID
   /// * @property [viewBgColor] - Color for the View (optional). Random Color by Default
-  /// * @property [alignProfilePictureCenter] - Alignment of the profile Picture in Audio Call [CENTER or TOP]
+  /// * @property [alignProfilePictureCenter] - Alignment of the profile Picture in Audio Call CENTER or TOP
   /// * @property [profileSize] - Size of the profile picture. 60 by Default
   const MirrorFlyView(
       {Key? key,
@@ -127,11 +127,13 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
         debugPrint("#Mirrorfly Call Android Platform");
         return PlatformViewLink(
           viewType: nativeViewType,
-          surfaceFactory: (BuildContext context, PlatformViewController controller) {
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
             androidViewController = (controller as AndroidViewController);
             return AndroidViewSurface(
               controller: androidViewController,
-              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+              gestureRecognizers: const <Factory<
+                  OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,
             );
           },
@@ -209,8 +211,15 @@ class ProfileViewPositioned {
   /// The child's height.
   final int? height;
 
-  ProfileViewPositioned({this.left, this.top, this.right, this.bottom, this.width, this.height});
+  ProfileViewPositioned(
+      {this.left, this.top, this.right, this.bottom, this.width, this.height});
 
-  Map<String, dynamic> toMap() =>
-      {"left": left, "top": top, "right": right, "bottom": bottom, "width": width, "height": height};
+  Map<String, dynamic> toMap() => {
+        "left": left,
+        "top": top,
+        "right": right,
+        "bottom": bottom,
+        "width": width,
+        "height": height
+      };
 }

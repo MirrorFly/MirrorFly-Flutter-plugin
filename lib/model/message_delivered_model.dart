@@ -61,10 +61,13 @@ class DeliveredParticipantList {
 
   factory DeliveredParticipantList.fromJson(Map<String, dynamic> json) =>
       DeliveredParticipantList(
-        memberProfileDetails:
-            MemberProfileDetails.fromJson(Platform.isAndroid ? json["memberProfileDetails"] : json["profileDetails"]),
+        memberProfileDetails: MemberProfileDetails.fromJson(Platform.isAndroid
+            ? json["memberProfileDetails"]
+            : json["profileDetails"]),
         messageId: json["messageId"],
-        status: Platform.isAndroid ? Status.fromJson(json["status"]) : json["status"],
+        status: Platform.isAndroid
+            ? Status.fromJson(json["status"])
+            : json["status"],
         time: json["time"].toString(),
         userJid: json["userJid"],
       );
