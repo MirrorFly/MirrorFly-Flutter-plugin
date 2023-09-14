@@ -34,7 +34,7 @@ class FlyEventChannelInitializer {
     
     func updateSinkValue(forChannel channelName: String, value: String?) {
         guard let streamHandler = FlyEventChannelInitializer.eventChannels.first(where: { $0.channelName == channelName })?.streamHandler else {
-                print("#MirroflyCall else condition")
+                print("#MirrorflyCall else condition")
                return
            }
            
