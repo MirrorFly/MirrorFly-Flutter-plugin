@@ -1394,6 +1394,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                             ChatEventsManager.attachLoginEventsListener(this)
                             ChatEventsManager.attachTypingEventListener(this)
                             ChatManager.setAvailableFeaturesCallback(this)
+                            CallManager.setMissedCallListener(this)
                             SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
                             LogMessage.d(TAG, "Chat Manager Connect able ${ChatManager.connect()}")
                             if(ChatManager.connect()) {
@@ -3720,7 +3721,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun showOrUpdateOrCancelNotification(jid: String, chatMessage: ChatMessage?) {
-        ShowOrUpdateOrCancelNotificationStreamHandler.showOrUpdateOrCancelNotification?.success(jid)
+        chatMessage?.let {
+            LogMessage.d("showOrUpdateOrCancelNotification","jid $jid chatMessage ${chatMessage.toJsonString()}")
+            val json = JSONObject()
+            json.put("jid",jid)
+            json.put("chatMessage",chatMessage.toJsonString())
+            ShowOrUpdateOrCancelNotificationStreamHandler.showOrUpdateOrCancelNotification?.success(json.toString())
+        }
     }
 
     override fun onDeleteGroup(groupJid: String) {

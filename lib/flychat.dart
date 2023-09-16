@@ -502,6 +502,9 @@ class Mirrorfly {
   static Stream<dynamic> get onGroupNotificationMessage =>
       FlyChatFlutterPlatform.instance.onGroupNotificationMessage;
 
+  static Stream<dynamic> get showOrUpdateOrCancelNotification =>
+      FlyChatFlutterPlatform.instance.showOrUpdateOrCancelNotification;
+
   static Stream<dynamic> get onGroupDeletedLocally =>
       FlyChatFlutterPlatform.instance.onGroupDeletedLocally;
 

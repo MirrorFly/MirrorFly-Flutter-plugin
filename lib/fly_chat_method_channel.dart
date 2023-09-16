@@ -108,6 +108,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onGroupNotificationMessageStreamController =
       StreamController<dynamic>.broadcast();
   @visibleForTesting
+  final showOrUpdateOrCancelNotificationChannel =
+      const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
+  final StreamController<dynamic> showOrUpdateOrCancelNotificationStreamController =
+      StreamController<dynamic>.broadcast();
+  @visibleForTesting
   final onGroupDeletedLocallyChannel =
       const EventChannel('contus.mirrorfly/onGroupDeletedLocally');
   final StreamController<dynamic> onGroupDeletedLocallyStreamController =
@@ -378,6 +383,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         .addStream(onLeftFromGroupChannel.receiveBroadcastStream());
     onGroupNotificationMessageStreamController
         .addStream(onGroupNotificationMessageChannel.receiveBroadcastStream());
+    showOrUpdateOrCancelNotificationStreamController
+        .addStream(showOrUpdateOrCancelNotificationChannel.receiveBroadcastStream());
     onGroupDeletedLocallyStreamController.addStream(onGroupDeletedLocallyChannel
         .receiveBroadcastStream() /*as Stream<String>*/);
     blockedThisUserStreamController
@@ -455,6 +462,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         .addStream(onUserSpeakingChannel.receiveBroadcastStream());
     onUserStoppedSpeakingStreamController
         .addStream(onUserStoppedSpeakingChannel.receiveBroadcastStream());
+    onMissedCallStreamController
+        .addStream(onMissedCallChannel.receiveBroadcastStream());
     onAvailableFeaturesUpdatedStreamController
         .addStream(onAvailableFeaturesUpdatedChannel.receiveBroadcastStream());
   }
@@ -1948,6 +1957,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onGroupNotificationMessage =>
       onGroupNotificationMessageStreamController.stream;
+
+  @override
+  Stream<dynamic> get showOrUpdateOrCancelNotification =>
+      showOrUpdateOrCancelNotificationStreamController.stream;
 
   @override
   Stream<dynamic> get onGroupDeletedLocally =>

@@ -763,6 +763,10 @@ class MockFlyChatFlutterPlatform
   Stream get onGroupNotificationMessage => throw UnimplementedError();
 
   @override
+  // onShowOrUpdateOrCancelNotification
+  Stream get showOrUpdateOrCancelNotification => throw UnimplementedError();
+
+  @override
   // onGroupProfileFetched
   Stream get onGroupProfileFetched => throw UnimplementedError();
 

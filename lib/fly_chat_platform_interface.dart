@@ -437,6 +437,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onGroupNotificationMessage =>
       throw UnimplementedError('has not been implemented.');
 
+  Stream<dynamic> get showOrUpdateOrCancelNotification =>
+      throw UnimplementedError('has not been implemented.');
+
   Stream<dynamic> get onGroupDeletedLocally =>
       throw UnimplementedError('has not been implemented.');
 
