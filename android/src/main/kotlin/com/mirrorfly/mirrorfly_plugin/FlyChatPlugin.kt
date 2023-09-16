@@ -43,6 +43,7 @@ import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
+import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MessageType
@@ -80,7 +81,7 @@ import java.util.*
 class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
     TypingEventListener, TypingStatusListener, ActivityAware, DefaultLifecycleObserver,
-    PluginRegistry.NewIntentListener,PluginRegistry.ActivityResultListener, AvailableFeaturesCallback{
+    PluginRegistry.NewIntentListener,PluginRegistry.ActivityResultListener, AvailableFeaturesCallback,MissedCallListener{
 
     companion object{
         @SuppressLint("StaticFieldLeak")
@@ -4056,6 +4057,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         binding.addOnNewIntentListener(instance)
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
         ChatManager.setAvailableFeaturesCallback(instance)
+        CallManager.setMissedCallListener(instance)
         if (isRegistered) {
             ChatEventsManager.setupMessageEventListener(this)
             ChatEventsManager.attachProfileEventsListener(this)
@@ -4345,4 +4347,32 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         onUpdateAvailableFeaturesStreamHandler.onAvailableFeaturesUpdated?.success(features.toJsonString())
     }
 
+    override fun onMissedCall(
+        isOneToOneCall: Boolean,
+        userJid: String,
+        groupId: String?,
+        callType: String,
+        userList: ArrayList<String>
+    ) {
+//        val notificationContent = getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList)
+//        LogMessage.d("onMissedCall",notificationContent.toString())
+        /*CallNotificationUtils.createNotification(
+            getContext(),
+            notificationContent.first, //Title Missed call Notification
+            notificationContent.second //Message Content Missed call from whom
+        )*/
+        val json = JSONObject()
+        /*json.put("title",notificationContent.first)
+        json.put("content",notificationContent.second)
+        LogMessage.d("MissedCallNotification",json.toString())
+        onMissedCallNotificationStreamHandler.onMissedCall?.success(json)*/
+        json.put("isOneToOneCall",isOneToOneCall)
+        json.put("userJid",userJid)
+        json.put("groupId",groupId)
+        json.put("callType",callType)
+        json.put("userList",userList.joinToString(","))
+        instance.mainActivity?.runOnUiThread {
+            onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
+        }
+    }
 }

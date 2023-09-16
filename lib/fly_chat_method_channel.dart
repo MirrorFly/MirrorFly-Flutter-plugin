@@ -312,6 +312,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       StreamController<dynamic>.broadcast();
 
   @visibleForTesting
+  final onMissedCallChannel =
+      const EventChannel('contus.mirrorfly/onMissedCall');
+  final StreamController<dynamic> onMissedCallStreamController =
+      StreamController<dynamic>.broadcast();
+
+  @visibleForTesting
   final onAvailableFeaturesUpdatedChannel =
       const EventChannel('contus.mirrorfly/onAvailableFeaturesUpdated');
   final StreamController<dynamic> onAvailableFeaturesUpdatedStreamController =
@@ -2088,6 +2094,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onUserStoppedSpeaking =>
       onUserStoppedSpeakingStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMissedCall =>
+      onMissedCallStreamController.stream;
 
   @override
   Stream<dynamic> get onAvailableFeaturesUpdated =>

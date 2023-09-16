@@ -622,6 +622,9 @@ class Mirrorfly {
   static Stream<dynamic> get onUserStoppedSpeaking =>
       FlyChatFlutterPlatform.instance.onUserStoppedSpeaking;
 
+  static Stream<dynamic> get onMissedCall =>
+      FlyChatFlutterPlatform.instance.onMissedCall;
+
   static Stream<dynamic> get onAvailableFeaturesUpdated =>
       FlyChatFlutterPlatform.instance.onAvailableFeaturesUpdated;
 
