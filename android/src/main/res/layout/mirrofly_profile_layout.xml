@@ -14,6 +14,18 @@
         android:layout_weight="1"
         android:visibility="gone" />
 
+    <com.mirrorfly.mirrorfly_plugin.call.widgets.RippleBackgroundView
+        android:id="@+id/speakingRipple"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        app:rb_color="#80FFFFFF"
+        app:rb_duration="2000"
+        app:rb_radius="50dp"
+        app:rb_rippleAmount="4"
+        app:rb_scale="1.5"
+        app:rb_strokeWidth="0dp"
+        app:rb_type="fillRipple"/>
+
     <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
         android:id="@+id/circleImageView"
         android:layout_width="80dp"

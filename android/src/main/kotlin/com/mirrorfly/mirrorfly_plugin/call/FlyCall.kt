@@ -300,11 +300,17 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         val json = JSONObject()
         json.put("audioLevel",audioLevel)
         json.put("userJid",userJid)
+        if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+            MirrorflyViewHashMap.getMirrorflyView(userJid)?.userSpeaking(userJid)
+        }
         onUserSpeakingStreamHandler.onUserSpeaking?.success(json.toString())
     }
 
     override fun onUserStoppedSpeaking(userJid: String) {
         Log.d(tag,"#onUserStoppedSpeaking $userJid")
+        if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+            MirrorflyViewHashMap.getMirrorflyView(userJid)?.userStoppedSpeaking(userJid)
+        }
         onUserStoppedSpeakingStreamHandler.onUserStoppedSpeaking?.success(userJid)
     }
 

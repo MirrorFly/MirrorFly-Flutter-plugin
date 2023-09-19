@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.RelativeLayout
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+import com.mirrorfly.mirrorfly_plugin.call.widgets.RippleBackgroundView
 import com.mirrorflysdk.api.FlyCore
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.TextureViewRenderer
@@ -29,10 +30,11 @@ class MirrorflyView(
     context: Context?,
     private var id: Int,
     private var jid:String,
-    private var creationParams: Any
+    private var creationParams: Map<String,Any>
 ) : PlatformView, MethodChannel.MethodCallHandler {
     private var textureView: TextureViewRenderer
     private var profileView : CircleImageView
+    private var speakingRipple : RippleBackgroundView
     private var view : View
     private var mContext:Context? = context
     private val tag = "#FlutterAndroidCall"
@@ -47,6 +49,8 @@ class MirrorflyView(
         this.textureView.tag = jid
         this.profileView =  view.findViewById(R.id.circleImageView)
         this.profileView.tag = id
+        this.speakingRipple =  view.findViewById(R.id.speakingRipple)
+        this.speakingRipple.tag = jid +"_ripple"
         LogMessage.d(tag,"creationParams $id : $creationParams")
     }
     override fun getView(): View {
@@ -98,9 +102,18 @@ class MirrorflyView(
         val name = if(!profile?.name.isNullOrEmpty()) profile?.name ?: "" else profile?.nickName ?: ""
         val imageUrl = profile?.image ?: ""
         getTextureViewByTag(userJid)?.visibility=View.GONE
-        getImageViewByTag(id)?.visibility=View.VISIBLE
+        getImageViewByTag(id)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
+        getSpeakingRippleView(jid)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
         LogMessage.d("imageUrl ",imageUrl)
         Utils.loadGlideImage(mContext!!,getImageViewByTag(id)!!,name, imageUrl)
+    }
+
+    fun userSpeaking(userJid: String){
+        getSpeakingRippleView(userJid)?.onUserSpeaking()
+    }
+
+    fun userStoppedSpeaking(userJid: String){
+        getSpeakingRippleView(userJid)?.onUserStoppedSpeaking()
     }
 
     fun getArgs(): Any {
@@ -109,6 +122,9 @@ class MirrorflyView(
 
     private fun getImageViewByTag(id: Int): CircleImageView? {
         return view.findViewWithTag<CircleImageView>(id)
+    }
+    private fun getSpeakingRippleView(jid: String): RippleBackgroundView? {
+        return view.findViewWithTag<RippleBackgroundView>(jid +"_ripple")
     }
     private fun getTextureViewByTag(id: Any): TextureViewRenderer? {
         return view.findViewWithTag<TextureViewRenderer>(id)
@@ -144,6 +160,31 @@ class MirrorflyView(
         layoutParams.height = intrinsicSize
         // Apply the updated layout parameters to the ImageView
         getImageViewByTag(id)?.layoutParams = layoutParams
+        speakingRippleSize(size)
+    }
+
+    private fun speakingRippleSize(size: Int){
+        val intrinsicSize = getIntrinsicSize(size*2,getSpeakingRippleView(jid)!!.context);
+        LogMessage.d(tag,"speakingRippleSize $jid ${size*2} $intrinsicSize")
+        val layoutParams = getSpeakingRippleView(jid)?.layoutParams as (RelativeLayout.LayoutParams)
+        layoutParams.width = intrinsicSize
+        layoutParams.height = intrinsicSize
+        // Apply the updated layout parameters to the ImageView
+        getSpeakingRippleView(jid)?.layoutParams = layoutParams
+    }
+
+    private fun viewAble() : Boolean {
+        if(creationParams.containsKey("hideProfileView")) {
+            return !(creationParams["hideProfileView"] as Boolean)
+        }else {
+            return true
+        }
+    }
+    fun setProfileViewHide(hide : Boolean){
+        if(hide) {
+            getImageViewByTag(id)?.visibility = View.GONE
+            getSpeakingRippleView(jid)?.visibility = View.GONE
+        }
     }
 
     fun setProfileViewAlign(gravity: Int){
@@ -182,6 +223,7 @@ class MirrorflyView(
         }
         // Apply the updated layout parameters to the ImageView
         getImageViewByTag(id)?.layoutParams = layoutParams
+        getSpeakingRippleView(jid)?.layoutParams = layoutParams
 
     }
 
@@ -279,7 +321,8 @@ class MirrorflyView(
             )
             // Apply the updated layout parameters to the ImageView
             getImageViewByTag(id)?.layoutParams = layoutParams
-            getImageViewByTag(id)?.visibility = View.VISIBLE
+            getImageViewByTag(id)?.visibility = if(viewAble()) View.VISIBLE else View.GONE
+            getSpeakingRippleView(jid)?.visibility = if(viewAble()) View.VISIBLE else View.GONE
         }
     }
 }

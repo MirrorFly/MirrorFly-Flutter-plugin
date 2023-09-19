@@ -107,7 +107,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
       'alignProfilePictureCenter': widget.alignProfilePictureCenter,
       // 'horizontalGravity': getHorizontalGravity(widget.horizontalGravity),
       'profileSize': widget.profileSize,
-      'hideProfileView': widget.hideProfileView,
+      'hideProfileView': widget.hideProfileView ?? false,
       "userJid": widget.userJid.trim().toString(),
       // "ProfileViewPositioned": widget.profileview?.toMap()
     };

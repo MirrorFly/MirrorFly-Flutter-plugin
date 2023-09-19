@@ -85,8 +85,7 @@ class Utils {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
             if(imageUrl.isNotEmpty()){
                 val url = Regex("r\"^((((H|h)(T|t)|(F|f))(T|t)(P|p)((S|s)?))\\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,6}(\\:[0-9]{1,5})*(/(\$|[a-zA-Z0-9\\.\\,\\;\\?\\'\\\\\\+&amp;%\\\$#\\=~_\\-]+))*\$\"")
-                val imgURL = if (imageUrl.matches(url)) imageUrl else Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon()
-                    .appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
+                val imgURL = if (imageUrl.matches(url)) imageUrl else Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon().appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
                 LogMessage.d("imgURL",imgURL)
                 val requestBuilder = Glide.with(mContext).asDrawable().sizeMultiplier(0.1f)
                 Glide.with(mContext).load(imgURL).thumbnail(requestBuilder).apply(options)
