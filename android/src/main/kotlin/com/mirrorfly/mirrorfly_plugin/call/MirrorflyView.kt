@@ -35,6 +35,7 @@ class MirrorflyView(
     private var textureView: TextureViewRenderer
     private var profileView : CircleImageView
     private var speakingRipple : RippleBackgroundView
+    private var layout : RelativeLayout
     private var view : View
     private var mContext:Context? = context
     private val tag = "#FlutterAndroidCall"
@@ -47,6 +48,8 @@ class MirrorflyView(
         this.view = LayoutInflater.from(context).inflate(R.layout.mirrofly_profile_layout, null, false)
         this.textureView = view.findViewById(R.id.textureView)//TextureViewRenderer(context)
         this.textureView.tag = jid
+        this.layout = view.findViewById(R.id.layout_profile)//TextureViewRenderer(context)
+        this.layout.tag = jid+"_layout"
         this.profileView =  view.findViewById(R.id.circleImageView)
         this.profileView.tag = id
         this.speakingRipple =  view.findViewById(R.id.speakingRipple)
@@ -109,11 +112,15 @@ class MirrorflyView(
     }
 
     fun userSpeaking(userJid: String){
-        getSpeakingRippleView(userJid)?.onUserSpeaking()
+        if(RippleViewAble()) {
+            getSpeakingRippleView(userJid)?.onUserSpeaking()
+        }
     }
 
     fun userStoppedSpeaking(userJid: String){
-        getSpeakingRippleView(userJid)?.onUserStoppedSpeaking()
+        if(RippleViewAble()) {
+            getSpeakingRippleView(userJid)?.onUserStoppedSpeaking()
+        }
     }
 
     fun getArgs(): Any {
@@ -122,6 +129,9 @@ class MirrorflyView(
 
     private fun getImageViewByTag(id: Int): CircleImageView? {
         return view.findViewWithTag<CircleImageView>(id)
+    }
+    private fun getLayoutViewByTag(jid: String): RelativeLayout? {
+        return view.findViewWithTag<RelativeLayout>(jid + "_layout")
     }
     private fun getSpeakingRippleView(jid: String): RippleBackgroundView? {
         return view.findViewWithTag<RippleBackgroundView>(jid +"_ripple")
@@ -160,12 +170,13 @@ class MirrorflyView(
         layoutParams.height = intrinsicSize
         // Apply the updated layout parameters to the ImageView
         getImageViewByTag(id)?.layoutParams = layoutParams
-        speakingRippleSize(size)
+//        speakingRippleSize(size)
     }
 
     private fun speakingRippleSize(size: Int){
-        val intrinsicSize = getIntrinsicSize(size*2,getSpeakingRippleView(jid)!!.context);
-        LogMessage.d(tag,"speakingRippleSize $jid ${size*2} $intrinsicSize")
+        val extra = 20
+        val intrinsicSize = getIntrinsicSize((size+extra)*2,getSpeakingRippleView(jid)!!.context);
+        LogMessage.d(tag,"speakingRippleSize $jid ${(size+extra)*2} $intrinsicSize")
         val layoutParams = getSpeakingRippleView(jid)?.layoutParams as (RelativeLayout.LayoutParams)
         layoutParams.width = intrinsicSize
         layoutParams.height = intrinsicSize
@@ -180,15 +191,28 @@ class MirrorflyView(
             return true
         }
     }
+    private fun RippleViewAble() : Boolean {
+        if(creationParams.containsKey("showSpeakingRipple")) {
+            return (creationParams["showSpeakingRipple"] as Boolean)
+        }else {
+            return false
+        }
+    }
     fun setProfileViewHide(hide : Boolean){
         if(hide) {
             getImageViewByTag(id)?.visibility = View.GONE
+//            getSpeakingRippleView(jid)?.visibility = View.GONE
+        }
+    }
+
+    fun setSpeakingViewHide(show : Boolean){
+        if(!show) {
             getSpeakingRippleView(jid)?.visibility = View.GONE
         }
     }
 
     fun setProfileViewAlign(gravity: Int){
-        val layoutParams = getImageViewByTag(id)?.layoutParams as (RelativeLayout.LayoutParams)
+        val layoutParams = getLayoutViewByTag(jid)?.layoutParams as (RelativeLayout.LayoutParams)
         if(gravity == Gravity.TOP) {
             layoutParams.topMargin = getIntrinsicSize(70,mContext!!)
             // Update the attributes
@@ -222,8 +246,9 @@ class MirrorflyView(
             )
         }
         // Apply the updated layout parameters to the ImageView
-        getImageViewByTag(id)?.layoutParams = layoutParams
-        getSpeakingRippleView(jid)?.layoutParams = layoutParams
+//        getImageViewByTag(id)?.layoutParams = layoutParams
+        getLayoutViewByTag(jid)?.layoutParams = layoutParams
+//        getSpeakingRippleView(jid)?.layoutParams = layoutParams
 
     }
 
