@@ -857,9 +857,7 @@ extension FlyChatPlugin : LocalNotificationDelegate {
         }else{
             print("showOrUpdateOrCancelNotification Stream Handler is Nil")
         }
-        
     }
-    
     
 }
 

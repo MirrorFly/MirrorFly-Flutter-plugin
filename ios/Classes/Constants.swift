@@ -27,6 +27,7 @@ struct Constants {
     static let isLoggedIn = "isLoggedIn"
     static let isProfileSaved = "isProfileSaved"
     static let tag = "#MirrorFly"
+    static let callTag = "#MirrorFlyCall"
     
     static let licenseKey = "licenseKey"
     static let containerID = "containerID"

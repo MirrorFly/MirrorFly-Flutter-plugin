@@ -28,12 +28,12 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         arguments args: Any?,
         binaryMessenger messenger: FlutterBinaryMessenger?
     ) {
-        print("\(Constants.tag) viewId \(viewId)")
+        print("\(Constants.callTag) viewId \(viewId)")
         self.viewId = viewId
         super.init()
         
         if let argument = args as? [String: Any]{
-            NSLog("\(Constants.tag) argument--> \(argument)")
+            NSLog("\(Constants.callTag) argument--> \(argument)")
             
             let userJid = argument["userJid"] as? String ?? ""
             
@@ -44,13 +44,13 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             let userName = FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType)
             
             
-            NSLog("\(Constants.tag) userName --> \(userName)")
+            NSLog("\(Constants.callTag) userName --> \(userName)")
             videoTrack = CallManager.getRemoteVideoTrack(jid: userJid)
             let calluserslist = CallManager.getAllCallUsersList()
-            NSLog("\(Constants.tag) calluserslist \(calluserslist)")
-            NSLog("\(Constants.tag) calluserslist count \(calluserslist.count)")
-            NSLog("\(Constants.tag) \(userJid) videoTrack--> \(String(describing: videoTrack))")
-            NSLog("\(Constants.tag) Video rendered/Audio Call")
+            NSLog("\(Constants.callTag) calluserslist \(calluserslist)")
+            NSLog("\(Constants.callTag) calluserslist count \(calluserslist.count)")
+            NSLog("\(Constants.callTag) \(userJid) videoTrack--> \(String(describing: videoTrack))")
+            NSLog("\(Constants.callTag) Video rendered/Audio Call")
             
             createAudioView(argument: argument, userName: userName, contact: contact)
             
@@ -70,8 +70,12 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         
     }
     
+    func dispose() {
+        
+    }
+    
     private func createVideoView(argument : [String: Any]){
-        print("\(Constants.tag) Video rendered")
+        print("\(Constants.callTag) createVideoView")
         if videoView == nil {
             videoView = getVideoView()
             _baseView.addSubview(videoView!)
@@ -86,7 +90,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         if argument["setMirror"] is Bool{
             videoView?.transform = CGAffineTransform(scaleX: -1, y: 1)
         }
-        
+        print("\(Constants.callTag) Adding video track")
         videoTrack?.add(videoView as! RTCVideoRenderer)
         
         NSLayoutConstraint.activate([
@@ -135,7 +139,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                     print("===contact image is empty")
                     textView = UITextView(frame: .zero)
                     textView?.translatesAutoresizingMaskIntoConstraints = false
-                    NSLog("\(Constants.tag) userName \(userName)")
+                    NSLog("\(Constants.callTag) userName \(userName)")
                     textView?.text = getAbbreviation(from: userName).uppercased()
                     textView?.isEditable = false
                     textView?.isScrollEnabled = false
@@ -213,14 +217,15 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     }
     
     func updateVideoTrack(userJid: String, updateType: MuteEvent) {
-        print("\(Constants.tag) Update Video Track viewId\(viewId) userJid\(userJid)")
+        print("\(Constants.callTag) Update Video Track viewId\(viewId) userJid\(userJid)")
         
         if(updateType == .ACTION_REMOTE_VIDEO_UN_MUTE){
+            print("\(Constants.callTag) Removing video track")
             videoTrack?.remove(videoView as! RTCVideoRenderer)
             videoTrack = CallManager.getRemoteVideoTrack(jid: userJid)
             
             if let track = videoTrack {
-                print("\(Constants.tag) get remote track \(track)")
+                print("\(Constants.callTag) get remote track \(track)")
                 if videoView == nil{
                     videoView = getVideoView()
                 }
@@ -237,11 +242,11 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                 ])
                 audioView?.removeFromSuperview()
             }else{
-                print("\(Constants.tag) video track is null")
+                print("\(Constants.callTag) video track is null")
                 
             }
         }else{
-            print("\(Constants.tag) show Audio View")
+            print("\(Constants.callTag) show Audio View")
             videoView?.removeFromSuperview()
             _baseView.addSubview(audioView!)
             
@@ -266,6 +271,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     }
     
     private func removeVideoView() {
+        print("\(Constants.callTag) removing video track removeVideoView")
         videoTrack?.remove(videoView as! RTCVideoRenderer)
         videoView?.removeFromSuperview()
     }

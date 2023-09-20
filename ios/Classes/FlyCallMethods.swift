@@ -113,14 +113,17 @@ import MirrorFlySDK
         
     }
     func declineCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        print("\(Constants.tag) declineCall Call")
+        print("\(Constants.callTag) declineCall")
+        CallManager.incomingUserJidArr.removeAll()
         CallManager.disconnectCall()
+        result(true)
+       
     }
     func muteAudio(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as! Dictionary<String, Any>
         let muteStatus = args["muteAudio"] as? Bool ?? false
         CallManager.muteAudio(muteStatus)
-        print("\(Constants.tag) Calling the Audio Delegate")
+        print("\(Constants.callTag) Calling the Audio Delegate")
         result(true)
     }
     func isVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -286,9 +289,9 @@ import MirrorFlySDK
     }
     
     func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult){
-        print("\(Constants.tag) Disconnecting Call")
+        print("\(Constants.callTag) Disconnecting Call")
+        CallManager.incomingUserJidArr.removeAll()
         CallManager.disconnectCall()
-//        CallManager.incomingUserJidArr.removeAll()
         result(true)
     }
     

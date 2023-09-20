@@ -10,7 +10,7 @@ import MirrorFlySDK
 import Flutter
 import PushKit
 
-@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate {
+@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate {
     
     var selectedAudioRouteDevice : String = "receiver"
     var isAudioRouteMethodCall : Bool = false
@@ -69,7 +69,7 @@ import PushKit
         CallManager.missedCallNotificationDelegate = self
         
 //        AudioManager.sharedInstance.audioManagerDelegate = self
-        print("\(Constants.tag) audioManagerDelegate")
+        print("\(Constants.callTag) audioManagerDelegate")
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -86,13 +86,17 @@ import PushKit
             if (call.method == "makeVoiceCall" || call.method == "makeVideoCall" || call.method == "makeGroupVideoCall" || call.method == "makeGroupVoiceCall"){
                 
                 if AudioManager.shared().audioManagerDelegate == nil {
-                    print("\(Constants.tag) AudioManager Delegate is Nil, setting new Delegate")
+                    print("\(Constants.callTag) AudioManager Delegate is Nil, setting new Delegate")
                     AudioManager.shared().audioManagerDelegate = self
                 }
 
             }
+            if (call.method == "declineCall" || call.method == "disconnectCall"){
+                print("\(Constants.callTag) clearing Mirrorfly Views in method call")
+                factory?.clearMirrorflyView()
+            }
             if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
-                print("\(Constants.tag) Method call \(call.method)")
+                print("\(Constants.callTag) Method call \(call.method)")
                 methodHandler(call, result)
             } else {
                 result(FlutterMethodNotImplemented)
@@ -176,10 +180,10 @@ import PushKit
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
                 mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
             } else {
-                print("\(Constants.tag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
+                print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
             }
         } else {
-            print("\(Constants.tag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
+            print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
         }
         
         result(true)
@@ -187,16 +191,25 @@ import PushKit
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         print("#MirrorflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
-        
+        //for testing purpose
+//        if (callStatus == .DISCONNECTED){
+//            print("\(Constants.callTag) Avoiding the call disconnect")
+//            return
+//        }
         if AudioManager.shared().audioManagerDelegate == nil  && callStatus != .DISCONNECTED{
-            print("\(Constants.tag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
+            print("\(Constants.callTag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
             AudioManager.shared().audioManagerDelegate = self
         }
 
         var userJID = userId
         if userJID == "" && callStatus == .DISCONNECTED{
-            print("\(Constants.tag) SDK is empty so assigning self jid")
+            print("\(Constants.callTag) SDK is empty so assigning self jid")
             userJID = AppUtils.getMyJid()
+        }
+        
+        if(callStatus == .DISCONNECTED){
+            print("\(Constants.callTag) clearing Mirrorfly Views")
+            factory?.clearMirrorflyView()
         }
 
         //Added this below condition based on the iOS Sample App. callStatus != .DISCONNECTED is added for flutter, bcz the network disconnection gives the own JID for disconnect.
@@ -225,7 +238,7 @@ import PushKit
         
 //        if(callStatus.rawValue == "Attended"){
             
-            print("#MirrorflyCall Call Status Updated Attended")
+//            print("#MirrorflyCall Call Status Updated Attended")
 //            AudioManager.shared().audioManagerDelegate = self
             
             if CallManager.getCallType() == .Audio {
@@ -271,11 +284,11 @@ import PushKit
                     mirrorflyView.updateVideoTrack(userJid: userId, updateType: muteEvent)
                 } else {
                     // Handle case when view is not found
-                    print("\(Constants.tag) ACTION_REMOTE_VIDEO_MUTE --> View is not Found")
+                    print("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> View is not Found")
                 }
             } else {
                 // Handle case when unique ID is not found
-                print("\(Constants.tag) ACTION_REMOTE_VIDEO_MUTE --> Unique ID is not Found")
+                print("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> Unique ID is not Found")
             }
             break;
         case .ACTION_REMOTE_VIDEO_UN_MUTE:
@@ -285,11 +298,11 @@ import PushKit
                     mirrorflyView.updateVideoTrack(userJid: userId, updateType: muteEvent)
                 } else {
                     // Handle case when view is not found
-                    print("\(Constants.tag) ACTION_REMOTE_VIDEO_UN_MUTE --> View is not Found")
+                    print("\(Constants.callTag) ACTION_REMOTE_VIDEO_UN_MUTE --> View is not Found")
                 }
             } else {
                 // Handle case when unique ID is not found
-                print("\(Constants.tag) ACTION_REMOTE_VIDEO_UN_MUTE --> Unique ID is not Found")
+                print("\(Constants.callTag) ACTION_REMOTE_VIDEO_UN_MUTE --> Unique ID is not Found")
             }
             break;
         case .ACTION_REMOTE_AUDIO_MUTE:
@@ -320,7 +333,7 @@ import PushKit
     }
     
     func onLocalVideoTrackAdded(userId: String, videoTrack: RTCVideoTrack) {
-        print("\(Constants.tag) onlocal video Track --> \(userId) ---> \(videoTrack)")
+        print("\(Constants.callTag) onlocal video Track --> \(userId) ---> \(videoTrack)")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
@@ -334,25 +347,25 @@ import PushKit
 //                        }
         
         let videoTrack = CallManager.getRemoteVideoTrack(jid: userId)
-        print("\(Constants.tag) delegate videoTrack--> \(String(describing: videoTrack))")
+        print("\(Constants.callTag) delegate videoTrack--> \(String(describing: videoTrack))")
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
                 mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
             } else {
                 // Handle case when view is not found
-                print("\(Constants.tag) onLocalVideoTrackAdded --> View is not Found")
+                print("\(Constants.callTag) onLocalVideoTrackAdded --> View is not Found")
             }
         } else {
             // Handle case when unique ID is not found
-            print("\(Constants.tag) onLocalVideoTrackAdded --> Unique ID is not Found")
+            print("\(Constants.callTag) onLocalVideoTrackAdded --> Unique ID is not Found")
         }
         
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
     
     func onRemoteVideoTrackAdded(userId: String, track: RTCVideoTrack) {
-        print("\(Constants.tag) onRemote video Track --> \(userId)")
+        print("\(Constants.callTag) onRemote video Track --> \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
         let jidJson = pluginDictToJson(dictionary: jsonObject)
@@ -392,7 +405,7 @@ import PushKit
 //    }
     
     func registerForVOIPNotifications() {
-        NSLog("\(Constants.tag) Registering Voip Notification")
+        NSLog("\(Constants.callTag) Registering Voip Notification")
         let pushRegistry = PKPushRegistry(queue: .main)
         pushRegistry.delegate = self
         pushRegistry.desiredPushTypes = [.voIP]
@@ -400,10 +413,10 @@ import PushKit
 
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
 
-        NSLog("\(Constants.tag) VoIP Token: \(pushCredentials)")
+        NSLog("\(Constants.callTag) VoIP Token: \(pushCredentials)")
         let deviceTokenString = pushCredentials.token.reduce("") { $0 + String(format: "%02X", $1) }
-        NSLog("\(Constants.tag) #token pushRegistry VT => \(deviceTokenString)")
-        print("\(Constants.tag) device Token \(deviceTokenString)")
+        NSLog("\(Constants.callTag) #token pushRegistry VT => \(deviceTokenString)")
+        print("\(Constants.callTag) device Token \(deviceTokenString)")
         VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
         Utility.saveInPreference(key: Constants.voipToken, value: deviceTokenString)
         VOIPManager.sharedInstance.updateDeviceToken()
@@ -424,22 +437,19 @@ import PushKit
             try CallManager.initCallSDK()
         }
         catch(let error ) {
-            print("\(Constants.tag) #FlyCall Exception : \(error.localizedDescription)")
+            print("\(Constants.callTag) #FlyCall Exception : \(error.localizedDescription)")
         }
         
         
-        NSLog("\(Constants.tag) Push VOIP Received with Payload - %@",payload.dictionaryPayload)
-        NSLog("\(Constants.tag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
+        NSLog("\(Constants.callTag) Push VOIP Received with Payload - %@",payload.dictionaryPayload)
+        NSLog("\(Constants.callTag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
 
         VOIPManager.sharedInstance.processPayload(payload.dictionaryPayload)
         
     }
-
-}
-
-extension FlyCall : MissedCallNotificationDelegate {
+    
     func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String]) {
-        print("\(Constants.tag) onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(groupId) callType: \(callType) userList: \(userList)")
+        print("\(Constants.callTag) onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(String(describing: groupId)) callType: \(callType) userList: \(userList)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userJid, forKey: "userJid")
         jsonObject.setValue(isOneToOneCall, forKey: "isOneToOneCall")
@@ -451,9 +461,26 @@ extension FlyCall : MissedCallNotificationDelegate {
         
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMissedCallChannel, value: onMissedCallJson)
     }
-    
-    
+
 }
+
+//extension FlyCall : MissedCallNotificationDelegate {
+//    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String]) {
+//        print("\(Constants.callTag) onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(groupId) callType: \(callType) userList: \(userList)")
+//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//        jsonObject.setValue(userJid, forKey: "userJid")
+//        jsonObject.setValue(isOneToOneCall, forKey: "isOneToOneCall")
+//        jsonObject.setValue(groupId, forKey: "groupId")
+//        jsonObject.setValue(callType, forKey: "callType")
+//        jsonObject.setValue(userList.joined(separator: ","), forKey: "userList")
+//
+//        let onMissedCallJson = pluginDictToJson(dictionary: jsonObject)
+//
+//        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMissedCallChannel, value: onMissedCallJson)
+//    }
+//
+//
+//}
 
 //extension FlyCall : AudioManagerDelegate {
 //
