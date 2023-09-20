@@ -19,6 +19,7 @@ struct Constants {
     static let onMuteStatusUpdatedChannel = "\(domain)/onMuteStatusUpdated"
     static let onUserSpeakingChannel = "\(domain)/onUserSpeaking"
     static let onUserStoppedSpeakingChannel = "\(domain)/onUserStoppedSpeaking"
+    static let onMissedCallChannel = "\(domain)/onMissedCall"
     
     static let contactSyncEnable = "contactSyncEnable"
     

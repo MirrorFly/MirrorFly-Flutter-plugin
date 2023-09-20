@@ -288,7 +288,7 @@ import MirrorFlySDK
     func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult){
         print("\(Constants.tag) Disconnecting Call")
         CallManager.disconnectCall()
-        CallManager.incomingUserJidArr.removeAll()
+//        CallManager.incomingUserJidArr.removeAll()
         result(true)
     }
     

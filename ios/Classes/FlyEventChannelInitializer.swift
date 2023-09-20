@@ -21,6 +21,7 @@ class FlyEventChannelInitializer {
         (channelName: Constants.onMuteStatusUpdatedChannel, streamHandler: OnMuteStatusUpdatedStreamHandler()),
         (channelName: Constants.onUserSpeakingChannel, streamHandler: OnUserSpeakingStreamHandler()),
         (channelName: Constants.onUserStoppedSpeakingChannel, streamHandler: OnUserStoppedSpeakingStreamHandler()),
+        (channelName: Constants.onMissedCallChannel, streamHandler: OnMissedCallStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
     

@@ -484,6 +484,7 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         ChatManager.shared.availableFeaturesDelegate = self
         BackupManager.shared.backupDelegate = self
         BackupManager.shared.restoreDelegate = self
+        ChatManager.shared.localNotificationDelegate = self
     }
     
     func prepareMethodHandler(methodCall: FlutterMethodCall, result: @escaping FlutterResult){
@@ -839,6 +840,27 @@ extension FlyChatPlugin : AvailableFeaturesDelegate {
         }
     }
 
+}
+
+extension FlyChatPlugin : LocalNotificationDelegate {
+    
+    public func showOrUpdateOrCancelNotification(jid: String, chatMessage: MirrorFlySDK.ChatMessage, groupId: String) {
+        
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        jsonObject.setValue(chatMessage.toJson(), forKey: "chatMessage")
+        let jsonString = pluginDictToJson(dictionary: jsonObject)
+        
+        if(showOrUpdateOrCancelNotificationStreamHandler?.showOrUpdateOrCancelNotification != nil){
+            print("showOrUpdateOrCancelNotification event\(String(describing: jsonString))")
+            showOrUpdateOrCancelNotificationStreamHandler?.showOrUpdateOrCancelNotification?(jsonString)
+        }else{
+            print("showOrUpdateOrCancelNotification Stream Handler is Nil")
+        }
+        
+    }
+    
+    
 }
 
 extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate, BackupEventDelegate, RestoreEventDelegate {

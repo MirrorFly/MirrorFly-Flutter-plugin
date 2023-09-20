@@ -66,6 +66,7 @@ import PushKit
         
         CallManager.setCallEventsDelegate(delegate: self)
         AudioManager.shared().audioManagerDelegate = self
+        CallManager.missedCallNotificationDelegate = self
         
 //        AudioManager.sharedInstance.audioManagerDelegate = self
         print("\(Constants.tag) audioManagerDelegate")
@@ -222,7 +223,7 @@ import PushKit
             jsonObject.setValue("GroupCall", forKey: "callMode")
         }
         
-        if(callStatus.rawValue == "Attended"){
+//        if(callStatus.rawValue == "Attended"){
             
             print("#MirrorflyCall Call Status Updated Attended")
 //            AudioManager.shared().audioManagerDelegate = self
@@ -232,7 +233,7 @@ import PushKit
             } else {
                 jsonObject.setValue("video", forKey: "callType")
             }
-        }
+//        }
         
         
         
@@ -434,6 +435,24 @@ import PushKit
         
     }
 
+}
+
+extension FlyCall : MissedCallNotificationDelegate {
+    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String]) {
+        print("\(Constants.tag) onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(groupId) callType: \(callType) userList: \(userList)")
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(userJid, forKey: "userJid")
+        jsonObject.setValue(isOneToOneCall, forKey: "isOneToOneCall")
+        jsonObject.setValue(groupId, forKey: "groupId")
+        jsonObject.setValue(callType, forKey: "callType")
+        jsonObject.setValue(userList.joined(separator: ","), forKey: "userList")
+        
+        let onMissedCallJson = pluginDictToJson(dictionary: jsonObject)
+        
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMissedCallChannel, value: onMissedCallJson)
+    }
+    
+    
 }
 
 //extension FlyCall : AudioManagerDelegate {

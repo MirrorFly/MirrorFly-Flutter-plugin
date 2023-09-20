@@ -4378,6 +4378,22 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         json.put("groupId",groupId)
         json.put("callType",callType)
         json.put("userList",userList.joinToString(","))
+        /*
+
+        Instead of doing the string concatenation above, we can try this below
+
+        val json = JSONObject()
+
+        // Convert the array to a JSON array and add it to the JSON object
+        val jsonArray = JSONArray(userList)
+        json.put("userList", jsonArray)
+
+        OR
+
+        we can pass the array list directly as done in usersIBlockedListFetched
+
+         */
+
         instance.mainActivity?.runOnUiThread {
             onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
         }
