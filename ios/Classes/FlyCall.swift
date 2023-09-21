@@ -191,11 +191,7 @@ import PushKit
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         print("#MirrorflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
-        //for testing purpose
-//        if (callStatus == .DISCONNECTED){
-//            print("\(Constants.callTag) Avoiding the call disconnect")
-//            return
-//        }
+ 
         if AudioManager.shared().audioManagerDelegate == nil  && callStatus != .DISCONNECTED{
             print("\(Constants.callTag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
             AudioManager.shared().audioManagerDelegate = self

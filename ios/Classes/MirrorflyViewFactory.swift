@@ -43,6 +43,17 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
                 print("\(Constants.callTag) MirrorflyViewFactory Unique ID generated \(String(describing: uniqueID))")
                 if let generatedUniqueID = uniqueID {
                     viewUniqueID = generatedUniqueID
+                    if (self.mirrorflyViews.keys.contains(generatedUniqueID)){
+                        if let (_, mirrorflyView) = self.mirrorflyViews[generatedUniqueID] {
+                            print("\(Constants.callTag) MirrorflyViewFactory View Already Exists so disposing \(generatedUniqueID)")
+                            mirrorflyView.dispose()
+                            self.mirrorflyViews.removeValue(forKey: generatedUniqueID)
+                            print("\(Constants.callTag) MirrorflyViewFactory View disposed \(generatedUniqueID)")
+                        } else {
+                            // Handle case when view is not found
+                            print("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed \(generatedUniqueID)")
+                        }
+                    }
                     mirrorflyView = MirrorflyView(
                         frame: frame,
                         viewIdentifier: generatedUniqueID,
@@ -58,7 +69,12 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
         }
         
         if let jid = userJid, let mirrorflyViewID = viewUniqueID, let view = mirrorflyView {
-            mirrorflyViews[mirrorflyViewID] = (jid, view)
+            if (mirrorflyViews.keys.contains(mirrorflyViewID)){
+                print("\(Constants.callTag) MirrorflyViewFactory this view for jid - uniq ID: \(mirrorflyViewID) is already inserted in array list ")
+            }else{
+                mirrorflyViews[mirrorflyViewID] = (jid, view)
+            }
+            print("\(Constants.callTag) MirrorflyViewFactory mirrorflyViews length after assigning--> \(mirrorflyViews.count)")
         }else{
             print("\(Constants.callTag) MirrorflyViewFactory Error while inserting the mirrorflyViews array.")
         }
@@ -94,17 +110,18 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
     public func clearMirrorflyView() -> Void{
         
         if(mirrorflyViews.count > 0){
-            print("\(Constants.callTag) clearing Mirrorfly Views view Factory")
+            print("\(Constants.callTag) MirrorflyViewFactory clearing Mirrorfly Views")
             for (uniqueID, _) in mirrorflyViews {
                 if let (_, mirrorflyView) = mirrorflyViews[uniqueID] {
-                    print("\(Constants.callTag) View disposing \(uniqueID)")
+                    print("\(Constants.callTag) MirrorflyViewFactory View disposing \(uniqueID)")
                     mirrorflyView.dispose()
-                    print("\(Constants.callTag) View disposed \(uniqueID)")
+                    print("\(Constants.callTag) MirrorflyViewFactory View disposed \(uniqueID)")
                 } else {
                     // Handle case when view is not found
-                    print("\(Constants.callTag) View Cannot be disposed")
+                    print("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed")
                 }
                 mirrorflyViews.removeValue(forKey: uniqueID)
+                print("\(Constants.tag) MirrorflyViewFactory after removal of view from Array list size --> \(mirrorflyViews.count)")
                 
             }
 //            mirrorflyViews.removeAll()
