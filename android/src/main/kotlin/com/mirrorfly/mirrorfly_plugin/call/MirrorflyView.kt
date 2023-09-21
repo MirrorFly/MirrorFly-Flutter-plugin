@@ -80,11 +80,15 @@ class MirrorflyView(
     }
 
     fun setLocalTarget(){
-        LogMessage.d(tag,"Target set $id $jid")
-        getTextureViewByTag(jid)?.visibility=View.VISIBLE
-        getImageViewByTag(id)?.visibility=View.GONE
-        CallManager.getLocalProxyVideoSink()?.setTarget(getTextureViewByTag(jid))
+        if(!CallManager.isVideoMuted()) {
+            LogMessage.d(tag, "Target set $id $jid")
+            getTextureViewByTag(jid)?.visibility = View.VISIBLE
+            getImageViewByTag(id)?.visibility = View.GONE
+            CallManager.getLocalProxyVideoSink()?.setTarget(getTextureViewByTag(jid))
 //        Logger.d("#FlutterCall","getLocalTarget ${CallManager.getLocalProxyVideoSink()?.getTarget()}")
+        }else{
+            setProfileView(jid)
+        }
     }
 
     fun setMirror(isMirror:Boolean){
