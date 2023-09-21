@@ -37,9 +37,11 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             
             let userJid = argument["userJid"] as? String ?? ""
             
+            let muteStatus = userJid == AppUtils.getMyJid() ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(userJid)
+            
             let contact = ChatManager.profileDetaisFor(jid: userJid)
             
-            print("===contact \(contact?.image)")
+            print("===contact \(String(describing: contact?.image))")
             
             let userName = FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType)
             
@@ -56,7 +58,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             
             createVideoView(argument: argument)
             
-            if(videoTrack == nil || CallManager.getCallType() == .Audio){
+            if(videoTrack == nil || CallManager.getCallType() == .Audio || muteStatus){
                 
 //                showAudioView(argument: argument, userName: userName)
                 videoView?.removeFromSuperview()

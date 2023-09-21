@@ -33,7 +33,7 @@ class MirrorFlyView extends StatefulWidget {
       // this.horizontalGravity = HorizontalGravity.center,
       // this.profileview,
       this.profileSize = 80,
-      // this.hideProfileView = false,
+      this.hideProfileView = false,
       required this.userJid, this.showSpeakingRipple = false})
       : super(key: key);
 
@@ -43,7 +43,7 @@ class MirrorFlyView extends StatefulWidget {
   final bool? alignProfilePictureCenter;
   // final HorizontalGravity horizontalGravity;
   // final ProfileViewPositioned? profileview;
-  // final bool? hideProfileView;
+  final bool? hideProfileView;
   final bool? showSpeakingRipple;
   final int? profileSize;
   final String userJid;
@@ -109,7 +109,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
       'alignProfilePictureCenter': widget.alignProfilePictureCenter,
       // 'horizontalGravity': getHorizontalGravity(widget.horizontalGravity),
       'profileSize': widget.profileSize,
-      // 'hideProfileView': widget.hideProfileView,
+      'hideProfileView': widget.hideProfileView,
       'showSpeakingRipple': widget.showSpeakingRipple,
       "userJid": widget.userJid.trim().toString(),
       // "ProfileViewPositioned": widget.profileview?.toMap()

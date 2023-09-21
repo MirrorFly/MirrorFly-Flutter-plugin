@@ -54,8 +54,7 @@ import PushKit
         super.init()
         
         self.registrar = registrar
-        methodChannel = FlutterMethodChannel(name: Constants.callMethodChannel, binaryMessenger: registrar.messenger())
-        registrar.addMethodCallDelegate(self, channel: methodChannel!)
+        
         
         factory = MirrorflyViewFactory(messenger: registrar.messenger())
         registrar.register(factory!, withId: "mirrorfly_view")
@@ -63,6 +62,9 @@ import PushKit
         eventChannelInitializer.initializeEventChannels(registrar: registrar)
         
         registerForVOIPNotifications()
+        
+        methodChannel = FlutterMethodChannel(name: Constants.callMethodChannel, binaryMessenger: registrar.messenger())
+        registrar.addMethodCallDelegate(self, channel: methodChannel!)
         
         CallManager.setCallEventsDelegate(delegate: self)
         AudioManager.shared().audioManagerDelegate = self
@@ -80,8 +82,8 @@ import PushKit
         
         if (call.method == "selectedAudioDevice"){
             selectedAudioDevice(call: call, result: result)
-        }else if (call.method == "muteVideo"){
-            muteVideo(call: call, result: result)
+//        }else if (call.method == "muteVideo"){
+//            muteVideo(call: call, result: result)
         }else{
             if (call.method == "makeVoiceCall" || call.method == "makeVideoCall" || call.method == "makeGroupVideoCall" || call.method == "makeGroupVoiceCall"){
                 
@@ -91,13 +93,13 @@ import PushKit
                 }
 
             }
-            if (call.method == "declineCall" || call.method == "disconnectCall"){
-                print("\(Constants.callTag) clearing Mirrorfly Views in method call")
-                factory?.clearMirrorflyView()
-            }
+//            if (call.method == "declineCall" || call.method == "disconnectCall"){
+//                print("\(Constants.callTag) clearing Mirrorfly Views in method call")
+//                factory?.clearMirrorflyView()
+//            }
             if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
                 print("\(Constants.callTag) Method call \(call.method)")
-                methodHandler(call, result)
+                methodHandler(call, result, factory)
             } else {
                 result(FlutterMethodNotImplemented)
             }
@@ -171,27 +173,11 @@ import PushKit
     }
     
     
-    func muteVideo(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let args = call.arguments as! Dictionary<String, Any>
-        let muteStatus = args["muteVideo"] as? Bool ?? false
-        CallManager.muteVideo(muteStatus)
-        
-        if let mirrorFlyViewId = factory?.getUniqueID(forString: AppUtils.getMyJid()) {
-            if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
-            } else {
-                print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
-            }
-        } else {
-            print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
-        }
-        
-        result(true)
-    }
+    
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         print("#MirrorflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
- 
+            
         if AudioManager.shared().audioManagerDelegate == nil  && callStatus != .DISCONNECTED{
             print("\(Constants.callTag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
             AudioManager.shared().audioManagerDelegate = self
@@ -199,8 +185,10 @@ import PushKit
 
         var userJID = userId
         if userJID == "" && callStatus == .DISCONNECTED{
-            print("\(Constants.callTag) SDK is empty so assigning self jid")
-            userJID = AppUtils.getMyJid()
+//            print("\(Constants.callTag) SDK is empty so assigning self jid")
+            print("\(Constants.callTag) Disconnected is Called on Empty User ID so assuming self disconnect is called and not returning the Delegate")
+//            userJID = AppUtils.getMyJid()
+            return
         }
         
         if(callStatus == .DISCONNECTED){
