@@ -1046,7 +1046,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('switchCamera has not been implemented.');
   }
 
-  Future declineCall() async {
+  Future<bool?> declineCall() async {
     throw UnimplementedError('declineCall has not been implemented.');
   }
 

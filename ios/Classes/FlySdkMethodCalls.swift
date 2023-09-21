@@ -1770,8 +1770,10 @@ import UIKit
                 if (isSuccess) {
                     let recentChatArray  = data.getData() as? [RecentChat] ?? []
                     if(recentChatArray.isEmpty){
+                        print("recentChatList is Empty")
                         result("{\"data\": [] }")
                     }else{
+                        print("recentChatList count \(recentChatArray.count)")
                         if let recentChatJson = recentChatArray.toJson() {
                             let recentChatListJson = "{\"data\":" + recentChatJson + "}"
                             print("ChatManager.getRecentChatList==**==\(recentChatListJson)")

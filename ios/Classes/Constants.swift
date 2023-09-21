@@ -19,6 +19,7 @@ struct Constants {
     static let onMuteStatusUpdatedChannel = "\(domain)/onMuteStatusUpdated"
     static let onUserSpeakingChannel = "\(domain)/onUserSpeaking"
     static let onUserStoppedSpeakingChannel = "\(domain)/onUserStoppedSpeaking"
+    static let onMissedCallChannel = "\(domain)/onMissedCall"
     
     static let contactSyncEnable = "contactSyncEnable"
     
@@ -26,6 +27,7 @@ struct Constants {
     static let isLoggedIn = "isLoggedIn"
     static let isProfileSaved = "isProfileSaved"
     static let tag = "#MirrorFly"
+    static let callTag = "#MirrorFlyCall"
     
     static let licenseKey = "licenseKey"
     static let containerID = "containerID"

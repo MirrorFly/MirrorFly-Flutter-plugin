@@ -1210,7 +1210,7 @@ class Mirrorfly {
 
   ///Used as a [declineCall] class for [Mirrorfly]
   ///used to decline the Call an out-going call
-  static declineCall() async {
+  static Future<bool?> declineCall() async {
     return FlyChatFlutterPlatform.instance.declineCall();
   }
 

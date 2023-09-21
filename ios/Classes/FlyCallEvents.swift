@@ -42,3 +42,4 @@ public class OnCallActionStreamHandler: EventStreamHandler { }
 public class OnMuteStatusUpdatedStreamHandler: EventStreamHandler { }
 public class OnUserSpeakingStreamHandler: EventStreamHandler { }
 public class OnUserStoppedSpeakingStreamHandler: EventStreamHandler { }
+public class OnMissedCallStreamHandler: EventStreamHandler { }

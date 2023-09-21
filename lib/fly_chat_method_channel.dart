@@ -4134,10 +4134,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  declineCall() async {
+  Future<bool?> declineCall() async {
+    bool? res;
     try {
-      LogMessage.d('declineCall :', '');
-      await mirrorFlyCallMethodChannel.invokeMethod('declineCall');
+      res = await mirrorFlyCallMethodChannel.invokeMethod('declineCall');
+      LogMessage.d('declineCall', '$res');
+      return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;

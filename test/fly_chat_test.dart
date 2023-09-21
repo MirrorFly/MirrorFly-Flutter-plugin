@@ -1402,7 +1402,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future declineCall() {
+  Future<bool?> declineCall() {
     // implement declineCall
     throw UnimplementedError();
   }
