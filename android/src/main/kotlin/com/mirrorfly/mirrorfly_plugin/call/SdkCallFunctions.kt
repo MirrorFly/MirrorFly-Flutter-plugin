@@ -244,12 +244,16 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
             val obj = JSONObject()
             obj.put("userJid",CallManager.getCurrentUserId())
             obj.put("callStatus",CallManager.getCallStatus(CallManager.getCurrentUserId()))
+            obj.put("isAudioMuted",CallManager.isAudioMuted())
+            obj.put("isVideoMuted",CallManager.isVideoMuted())
             json.put(obj)
         }
         users.forEach {jid->
             val obj = JSONObject()
             obj.put("userJid",jid)
             obj.put("callStatus",CallManager.getCallStatus(jid))
+            obj.put("isAudioMuted",CallManager.isRemoteAudioMuted(jid))
+            obj.put("isVideoMuted",CallManager.isRemoteVideoMuted(jid))
             json.put(obj)
         }
         result.success(json.toString())
