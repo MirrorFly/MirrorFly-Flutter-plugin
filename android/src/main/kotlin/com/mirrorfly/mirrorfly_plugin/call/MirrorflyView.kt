@@ -38,7 +38,7 @@ class MirrorflyView(
     private var layout : RelativeLayout
     private var view : View
     private var mContext:Context? = context
-    private val tag = "#FlutterAndroidCall"
+    private val tag = "#MirrorflyView"
     private val textureViewStart = 100
     private val imageViewStart = 200
 
@@ -61,9 +61,14 @@ class MirrorflyView(
     }
 
     override fun dispose() {
-        LogMessage.d("#FlutterAndroidCall","dispose")
-        getTextureViewByTag(jid)?.release()
-        MirrorflyViewHashMap.clearAll()
+        LogMessage.d("$tag Lifecycle","dispose $id ${MirrorflyViewHashMap.getMirrorflyViewId(jid)}")
+        if(id == MirrorflyViewHashMap.getMirrorflyViewId(jid)!!) {
+            MirrorflyViewHashMap.remove(id,jid)
+            LogMessage.d("$tag Lifecycle","dispose")
+            getTextureViewByTag(jid)?.release()
+        }else{
+            LogMessage.d("$tag Lifecycle","not dispose")
+        }
     }
 
     fun init(){

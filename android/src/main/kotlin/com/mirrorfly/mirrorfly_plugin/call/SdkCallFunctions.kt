@@ -181,6 +181,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         val muteVideo = call.argument<Boolean>("muteVideo") ?: false
         CallManager.muteVideo(muteVideo,object : CallActionListener{
             override fun onResponse(isSuccess: Boolean, message: String) {
+                LogMessage.d(tag,"$muteVideo ${CallManager.getCurrentUserId()} ${MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())}")
                 if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null && isSuccess) {
                     if (muteVideo) {
                         MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
