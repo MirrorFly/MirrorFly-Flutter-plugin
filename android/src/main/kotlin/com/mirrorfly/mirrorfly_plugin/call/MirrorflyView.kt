@@ -117,7 +117,9 @@ class MirrorflyView(
         getImageViewByTag(id)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
         getSpeakingRippleView(jid)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
         LogMessage.d("imageUrl ",imageUrl)
-        Utils.loadGlideImage(mContext!!,getImageViewByTag(id)!!,name, imageUrl)
+        if(viewAble()) {
+            Utils.loadGlideImage(mContext!!, getImageViewByTag(id)!!, name, imageUrl)
+        }
     }
 
     fun userSpeaking(userJid: String){
