@@ -1268,13 +1268,19 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.isUserVideoMuted(userJid);
   }
 
-  ///Used as a openAudioPicker class for [Mirrorfly]
+  ///Used to get [getUnreadMissedCallCount]
+  static Future<int?> getUnreadMissedCallCount() async {
+    return FlyChatFlutterPlatform.instance
+        .getUnreadMissedCallCount();
+  }
+
+  ///Used as a [openAudioPicker] class for [Mirrorfly]
   ///used to get Audio File in Platform Android Only
   static Future<String?> openAudioFilePicker() async {
     return FlyChatFlutterPlatform.instance.openAudioFilePicker();
   }
 
-  ///Used to get available features for the Users based on MirrorFly Plan
+  ///Used to [getAvailableFeatures] for the Users based on MirrorFly Plan
   ///You can Call this to show/hide features based on the availability
   ///If the feature is not available, then SDK methods wil throw 403 Exception.
   static Future<dynamic> getAvailableFeatures() async {

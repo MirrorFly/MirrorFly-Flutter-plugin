@@ -4284,6 +4284,22 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<int?> getUnreadMissedCallCount() async {
+    int? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod<int>('getUnreadMissedCallCount');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
   Future<String?> openAudioFilePicker() async {
     String? res;
     try {

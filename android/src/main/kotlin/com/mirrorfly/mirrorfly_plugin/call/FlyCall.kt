@@ -11,6 +11,7 @@ import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.*
 import com.mirrorflysdk.flycall.webrtc.api.CallEventsListener
+import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycall.webrtc.api.CallUiListener
 import com.mirrorflysdk.flycommons.LogMessage
@@ -155,6 +156,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             }
             "getOnGoingCallDisplayStatus"->{
                 result.success(CallManager.getOnGoingCallStatus(context))
+            }
+            "getUnreadMissedCallCount" -> {
+                result.success(CallLogManager.getUnreadMissedCallCount())
             }
         }
     }
@@ -373,12 +377,18 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                     val y = AppUtils.getAppIntent(context)
                     y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(y)
-                    handler.post(
-                        Runnable { onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString()) })
+                    handler.post {
+                        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+                            json.toString()
+                        )
+                    }
 
                 }else{
-                    handler.post(
-                        Runnable { onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString()) })
+                    handler.post {
+                        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+                            json.toString()
+                        )
+                    }
                 }
             }
             /*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
