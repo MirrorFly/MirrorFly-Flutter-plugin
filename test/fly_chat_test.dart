@@ -1525,6 +1525,18 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<int?> getUnreadMissedCallCount() {
+    // getUnreadMissedCallCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> appLaunchedFromMissedCall() {
+    // getUnreadMissedCallCount
+    throw UnimplementedError();
+  }
+
+  @override
   Future<String?> openAudioFilePicker() {
     // implement isUserVideoMuted
     throw UnimplementedError();

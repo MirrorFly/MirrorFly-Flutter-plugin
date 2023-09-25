@@ -38,7 +38,7 @@ class MirrorflyView(
     private var layout : RelativeLayout
     private var view : View
     private var mContext:Context? = context
-    private val tag = "#FlutterAndroidCall"
+    private val tag = "#MirrorflyView"
     private val textureViewStart = 100
     private val imageViewStart = 200
 
@@ -61,9 +61,14 @@ class MirrorflyView(
     }
 
     override fun dispose() {
-        LogMessage.d("#FlutterAndroidCall","dispose")
-        getTextureViewByTag(jid)?.release()
-        MirrorflyViewHashMap.clearAll()
+        LogMessage.d("$tag Lifecycle","dispose $id ${MirrorflyViewHashMap.getMirrorflyViewId(jid)}")
+        if(id == MirrorflyViewHashMap.getMirrorflyViewId(jid)!!) {
+            MirrorflyViewHashMap.remove(id,jid)
+            LogMessage.d("$tag Lifecycle","dispose")
+            getTextureViewByTag(jid)?.release()
+        }else{
+            LogMessage.d("$tag Lifecycle","not dispose")
+        }
     }
 
     fun init(){
@@ -75,11 +80,15 @@ class MirrorflyView(
     }
 
     fun setLocalTarget(){
-        LogMessage.d(tag,"Target set $id $jid")
-        getTextureViewByTag(jid)?.visibility=View.VISIBLE
-        getImageViewByTag(id)?.visibility=View.GONE
-        CallManager.getLocalProxyVideoSink()?.setTarget(getTextureViewByTag(jid))
+        if(!CallManager.isVideoMuted()) {
+            LogMessage.d(tag, "Target set $id $jid")
+            getTextureViewByTag(jid)?.visibility = View.VISIBLE
+            getImageViewByTag(id)?.visibility = View.GONE
+            CallManager.getLocalProxyVideoSink()?.setTarget(getTextureViewByTag(jid))
 //        Logger.d("#FlutterCall","getLocalTarget ${CallManager.getLocalProxyVideoSink()?.getTarget()}")
+        }else{
+            setProfileView(jid)
+        }
     }
 
     fun setMirror(isMirror:Boolean){
@@ -108,7 +117,9 @@ class MirrorflyView(
         getImageViewByTag(id)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
         getSpeakingRippleView(jid)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
         LogMessage.d("imageUrl ",imageUrl)
-        Utils.loadGlideImage(mContext!!,getImageViewByTag(id)!!,name, imageUrl)
+        if(viewAble()) {
+            Utils.loadGlideImage(mContext!!, getImageViewByTag(id)!!, name, imageUrl)
+        }
     }
 
     fun userSpeaking(userJid: String){

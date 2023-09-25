@@ -1082,6 +1082,14 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('isUserVideoMuted has not been implemented.');
   }
 
+  Future<int?> getUnreadMissedCallCount() {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<bool?> appLaunchedFromMissedCall() {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Future<String?> openAudioFilePicker() async {
     throw UnimplementedError('openAudioFilePicker has not been implemented.');
   }

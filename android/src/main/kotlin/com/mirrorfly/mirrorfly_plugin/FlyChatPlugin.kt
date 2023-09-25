@@ -2,6 +2,7 @@ package com.mirrorfly.mirrorfly_plugin
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -41,6 +42,7 @@ import com.mirrorflysdk.backup.BackupListener
 import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
+import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
@@ -113,10 +115,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 instance = FlyChatPlugin()
                 instance.mContext = context
             }
+            instance.mContext = context
             val channel = MethodChannel(binaryMessenger, Constants.mirrorflyMethodChannel)
             methodChannels[binaryMessenger]=channel
 //            eventChannels[binaryMessenger] = events
             channel.setMethodCallHandler(instance)
+            CallManager.setMissedCallListener(instance)
             SharedPreferenceManager().init(context)
             initMethodAndEvent(binaryMessenger)
             Log.d("FlyChatPlugin","initSharedInstance")
@@ -367,6 +371,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         when {
             call.method == "init" -> {
                 buildChatSDK(call)
+            }
+            call.method == "appLaunchedFromMissedCall" -> {
+                val fromCall = instance.fromCallNotification
+                instance.fromCallNotification=false
+                Log.d("appLaunchedFromMissedCall",fromCall.toString())
+                result.success(fromCall)
+
             }
             call.method == "getPlatformVersion" -> {
                 result.success("Android ${Build.VERSION.RELEASE}")
@@ -4054,6 +4065,14 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         binding.addActivityResultListener(instance)
         Log.d("FlyChat", "onAttachedToActivity ${instance.mainActivity}")
         val mainActivityIntent = binding.activity.intent
+        Log.d("FlyChat", "mainActivityIntent ${mainActivityIntent.extras}")
+        instance.fromCallNotification = false
+        mainActivityIntent.extras?.let {
+            Log.d("FlyChat", "mainActivityIntent ${it.getBoolean("IS_CALL_NOTIFICATION")}")
+            if(it.getBoolean("IS_CALL_NOTIFICATION")){
+                instance.fromCallNotification = true
+            }
+        }
         if (!launchedActivityFromHistory(mainActivityIntent)) {
             /*if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.action)) {
                 val notificationResponse: Map<String, Any> =
@@ -4130,6 +4149,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         instance.mainActivity?.startActivity(intent)
     }
     private var mainActivity: Activity? = null
+    private var fromCallNotification: Boolean = false
     private fun setActivity(flutterActivity: Activity) {
         instance.mainActivity = flutterActivity
     }
@@ -4223,6 +4243,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     private fun sendNotificationPayloadMessage(intent: Intent): Boolean {
+        Log.d("sendNotificationPayloadMessage","${intent.extras}")
         /*if (SELECT_NOTIFICATION.equals(intent.action)
             || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.action)
         ) {
@@ -4361,6 +4382,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         callType: String,
         userList: ArrayList<String>
     ) {
+        Log.d("FlyChatPlugin onMissedCall","onMissedCall ${instance.mainActivity}")
 //        val notificationContent = getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList)
 //        LogMessage.d("onMissedCall",notificationContent.toString())
         /*CallNotificationUtils.createNotification(
@@ -4393,9 +4415,59 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         we can pass the array list directly as done in usersIBlockedListFetched
 
          */
-
-        instance.mainActivity?.runOnUiThread {
-            onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
+        if(instance.mainActivity!=null) {
+            instance.mainActivity?.runOnUiThread {
+                onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
+            }
+        }else{
+            val notificationContent = getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList)
+            Log.d("FlyChatPlugin onMissedCall","else $notificationContent")
+            CallNotificationUtils.createNotification(instance.mContext,notificationContent.first,notificationContent.second)
         }
+    }
+
+    private fun getMissedCallNotificationContent( isOneToOneCall: Boolean, userJid: String, groupId: String?, callType: String,
+                                                  userList: ArrayList<String>): Pair<String, String> {
+        val messageContent : String
+        val missedCallMessage = StringBuilder()
+        missedCallMessage.append("You missed ")
+        if (isOneToOneCall && groupId.isNullOrEmpty()) {
+            if (callType == CallType.AUDIO_CALL) {
+                missedCallMessage.append("an ")
+            } else {
+                missedCallMessage.append("a ")
+            }
+            missedCallMessage.append(callType).append(" call")
+            messageContent = getDisplayName(userJid)
+        } else {
+            missedCallMessage.append("a group ").append(callType).append(" call")
+            messageContent = if (!groupId.isNullOrBlank()) {
+                getDisplayName(groupId)
+            } else {
+                getCallUsersName(userList).toString()
+            }
+        }
+//        if (BuildConfig.HIPAA_COMPLIANCE_ENABLED)
+//            messageContent = resources.getString(R.string.new_missed_call)
+        return Pair(missedCallMessage.toString(), messageContent)
+    }
+
+    private fun getCallUsersName(callUsers: java.util.ArrayList<String>): StringBuilder {
+        var name = StringBuilder("")
+        for (i in callUsers.indices) {
+            if (i == 2) {
+                name.append(" and (+").append(callUsers.size - i).append(")")
+                break
+            } else if (i == 1) {
+                name.append(", ").append(getDisplayName(callUsers[i]))
+            } else {
+                name = StringBuilder(getDisplayName(callUsers[i]))
+            }
+        }
+        return name
+    }
+
+    private fun getDisplayName(jid : String):String{
+        return ContactManager.getProfileDetails(jid)?.name ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
     }
 }
