@@ -354,4 +354,44 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         return ContactManager.getProfileDetails(jid)?.name ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
     }
 
+    fun requestVideoCallSwitch(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.requestVideoCallSwitch()
+        result.success(true)
+    }
+
+    fun cancelVideoCallSwitch(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.cancelVideoCallSwitchRequest()
+        result.success(true)
+    }
+    fun acceptVideoCallSwitchRequest(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.acceptVideoCallSwitchRequest()
+        result.success(true)
+    }
+    fun changeCallType(call: MethodCall, result: MethodChannel.Result) {
+        val callType = call.argument<String>("callType") ?: ""
+        if (callType == "video"){
+
+            //in iOS there is a methods mentioned below 3 lines. need to do in Android
+//            CallManager.setCallType(callType: .Video)
+//            CallManager.enableVideo()
+//            AudioManager.shared().autoReRoute()
+            CallManager.muteVideo(false)
+
+        }else{
+//in iOS there is a methods mentioned below 3 lines. need to do in Android
+//            CallManager.setCallType(callType: .Audio)
+//            CallManager.disableVideo()
+//            AudioManager.shared().autoReRoute()
+            CallManager.muteVideo(true)
+        }
+        result.success(true)
+    }
+
+
+    fun reRouteAudio(call: MethodCall, result: MethodChannel.Result) {
+
+//        AudioManager.shared().autoReRoute()
+
+    }
+
 }

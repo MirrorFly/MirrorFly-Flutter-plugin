@@ -45,6 +45,11 @@ class FlyMethodConstants {
             "disconnectCall": flyCallMethods.disconnectCall,
             "muteVideo": flyCallMethods.muteVideo,
             "getUnreadMissedCallCount": flyCallMethods.getUnreadMissedCallCount,
+            "requestVideoCallSwitch": flyCallMethods.requestVideoCallSwitch,
+            "cancelVideoCallSwitch": flyCallMethods.cancelVideoCallSwitch,
+            "acceptVideoCallSwitchRequest": flyCallMethods.acceptVideoCallSwitchRequest,
+            "changeCallType": flyCallMethods.changeCallType,
+            "reRouteAudio": flyCallMethods.reRouteAudio,
             
         ]
     }()

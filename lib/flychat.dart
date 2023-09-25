@@ -1292,4 +1292,35 @@ class Mirrorfly {
   static Future<dynamic> getAvailableFeatures() async {
     return FlyChatFlutterPlatform.instance.getAvailableFeatures();
   }
+
+  ///Used to [requestVideoCallSwitch] from Audio to Video Call
+  /// You can switch the Audio Call to Video Call on requesting the Remote User
+  /// If the remote User Accepts, Audio Call will be changed to Video Call.
+  static Future<dynamic> requestVideoCallSwitch() async {
+    return FlyChatFlutterPlatform.instance.requestVideoCallSwitch();
+  }
+
+  /// [cancelVideoCallSwitch] Used to Cancel the Video Call Request from Audio to Video Call
+  /// You can use this cancelVideoCallSwitch to deny the request and also When the Request Timeouts
+  static Future<dynamic> cancelVideoCallSwitch() async {
+    return FlyChatFlutterPlatform.instance.cancelVideoCallSwitch();
+  }
+
+  /// [acceptVideoCallSwitchRequest] Used to Accept the Video Call Request from Audio to Video Call
+  static Future<dynamic> acceptVideoCallSwitchRequest() async {
+    return FlyChatFlutterPlatform.instance.acceptVideoCallSwitchRequest();
+  }
+
+  /// [changeCallType] Used to Change the Call Type
+  /// audio for Switching to Audio Call
+  /// video for Switching to Video Call
+  static Future<dynamic> changeCallType({required String switchType}) async {
+    return FlyChatFlutterPlatform.instance.changeCallType(switchType: switchType);
+  }
+
+  /// [reRouteAudio] Used to Re-Route the Audio Output in Call
+  /// It will Re-Route the audio to available device
+  static Future reRouteAudio() async {
+    return FlyChatFlutterPlatform.instance.reRouteAudio();
+  }
 }

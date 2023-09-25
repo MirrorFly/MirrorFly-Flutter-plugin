@@ -72,11 +72,14 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             if(videoTrack == nil || CallManager.getCallType() == .Audio || muteStatus){
                 
 //                showAudioView(argument: argument, userName: userName)
-                videoView?.removeFromSuperview()
+//                DispatchQueue.main.async {
+                    self.videoView?.removeFromSuperview()
+//                }
                 
             }else{
-                
-                audioView?.removeFromSuperview()
+//                DispatchQueue.main.async {
+                    self.audioView?.removeFromSuperview()
+//                }
                 
             }
         }
@@ -91,7 +94,9 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         NSLog("\(Constants.callTag) createVideoView")
         if videoView == nil {
             videoView = getVideoView()
-            _baseView.addSubview(videoView!)
+//            DispatchQueue.main.async {
+                self._baseView.addSubview(self.videoView!)
+//            }
             
         }
         
@@ -145,7 +150,9 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             if (!hideProfileView){
          
                 if contact?.image == nil || (contact!.image.isEmpty) {
-                    audioView?.addSubview(circleView)
+//                    DispatchQueue.main.async {
+                        self.audioView?.addSubview(self.circleView)
+//                    }
 
                     
                     NSLog("===contact image is empty")
@@ -161,7 +168,9 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                     textView?.backgroundColor = .clear
                     
                     textView?.clipsToBounds = true
-                    audioView?.addSubview(textView!)
+//                    DispatchQueue.main.async {
+                        self.audioView?.addSubview(self.textView!)
+//                    }
                     
                     
                 }else{
@@ -172,7 +181,9 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                     userProfileView?.layer.cornerRadius = CGFloat(profileSize / 2)
                     userProfileView?.loadFlyImage(imageURL: contact?.image ?? "", name: FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType), jid: contact?.jid ?? "")
                     userProfileView?.clipsToBounds = true
-                    audioView?.addSubview(userProfileView!)
+//                    DispatchQueue.main.async {
+                        self.audioView?.addSubview(self.userProfileView!)
+//                    }
                 }
                 
             
@@ -249,8 +260,11 @@ class MirrorflyView: NSObject, FlutterPlatformView {
 //            // Start the ripple animation
 //            rippleView.startRippleAnimation()
 
-            
-            _baseView.addSubview(audioView!)
+//            DispatchQueue.main.async {
+                
+                self._baseView.addSubview(self.audioView!)
+                
+//            }
             
             
             
@@ -260,8 +274,9 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                 audioView!.topAnchor.constraint(equalTo: _baseView.topAnchor),
                 audioView!.bottomAnchor.constraint(equalTo: _baseView.bottomAnchor)
             ])
-            
-            videoView?.removeFromSuperview()
+//            DispatchQueue.main.async {
+                self.videoView?.removeFromSuperview()
+//            }
         }
     }
     
@@ -338,31 +353,38 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                 }
                 
                 track.add(videoView as! RTCVideoRenderer)
-                _baseView.addSubview(videoView!)
+                DispatchQueue.main.async {
+                    self._baseView.addSubview(self.videoView!)
+//                }
                 
                 
                 NSLayoutConstraint.activate([
-                    videoView!.leadingAnchor.constraint(equalTo: _baseView.leadingAnchor),
-                    videoView!.trailingAnchor.constraint(equalTo: _baseView.trailingAnchor),
-                    videoView!.topAnchor.constraint(equalTo: _baseView.topAnchor),
-                    videoView!.bottomAnchor.constraint(equalTo: _baseView.bottomAnchor)
+                    self.videoView!.leadingAnchor.constraint(equalTo: self._baseView.leadingAnchor),
+                    self.videoView!.trailingAnchor.constraint(equalTo: self._baseView.trailingAnchor),
+                    self.videoView!.topAnchor.constraint(equalTo: self._baseView.topAnchor),
+                    self.videoView!.bottomAnchor.constraint(equalTo: self._baseView.bottomAnchor)
                 ])
-                audioView?.removeFromSuperview()
+//                DispatchQueue.main.async {
+                    self.audioView?.removeFromSuperview()
+                }
             }else{
                 NSLog("\(Constants.callTag) video track is null")
                 
             }
         }else{
             NSLog("\(Constants.callTag) show Audio View")
-            videoView?.removeFromSuperview()
-            _baseView.addSubview(audioView!)
-            
-            NSLayoutConstraint.activate([
-                audioView!.centerXAnchor.constraint(equalTo: _baseView.centerXAnchor),
-                audioView!.centerYAnchor.constraint(equalTo: _baseView.centerYAnchor),
-                audioView!.topAnchor.constraint(equalTo: _baseView.topAnchor),
-                audioView!.bottomAnchor.constraint(equalTo: _baseView.bottomAnchor)
-            ])
+            DispatchQueue.main.async {
+                self.videoView?.removeFromSuperview()
+                self._baseView.addSubview(self.audioView!)
+                //            }
+                
+                NSLayoutConstraint.activate([
+                    self.audioView!.centerXAnchor.constraint(equalTo: self._baseView.centerXAnchor),
+                    self.audioView!.centerYAnchor.constraint(equalTo: self._baseView.centerYAnchor),
+                    self.audioView!.topAnchor.constraint(equalTo: self._baseView.topAnchor),
+                    self.audioView!.bottomAnchor.constraint(equalTo: self._baseView.bottomAnchor)
+                ])
+            }
         }
     }
     
@@ -374,13 +396,17 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         #endif
     }
     private func removeTextView() {
-        textView?.removeFromSuperview()
+//        DispatchQueue.main.async {
+            self.textView?.removeFromSuperview()
+//        }
     }
     
     private func removeVideoView() {
         NSLog("\(Constants.callTag) removing video track removeVideoView")
-        videoTrack?.remove(videoView as! RTCVideoRenderer)
-        videoView?.removeFromSuperview()
+//        DispatchQueue.main.async {
+            self.videoTrack?.remove(self.videoView as! RTCVideoRenderer)
+            self.videoView?.removeFromSuperview()
+//        }
     }
     
     func hexStringToUIColor (hex:String) -> UIColor {

@@ -160,6 +160,21 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "getUnreadMissedCallCount" -> {
                 result.success(CallLogManager.getUnreadMissedCallCount())
             }
+            "requestVideoCallSwitch" -> {
+                sdk.requestVideoCallSwitch(call, result)
+            }
+            "cancelVideoCallSwitch" -> {
+                sdk.cancelVideoCallSwitch(call, result)
+            }
+            "acceptVideoCallSwitchRequest" -> {
+                sdk.acceptVideoCallSwitchRequest(call, result)
+            }
+            "changeCallType" -> {
+                sdk.changeCallType(call, result)
+            }
+            "reRouteAudio" -> {
+                sdk.reRouteAudio(call, result)
+            }
         }
     }
     override fun onCallStatusUpdated(callStatus: String, userJid: String) {

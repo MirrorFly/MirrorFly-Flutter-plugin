@@ -350,4 +350,43 @@ import MirrorFlySDK
         NSLog("\(Constants.callTag) getUnreadMissedCallCount --> \(String(describing: getUnreadMissedCallCount))")
         result(missedCallCount)
     }
+    
+    func requestVideoCallSwitch(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.requestVideoCallSwitch { isSuccess in
+           result(isSuccess)
+        }
+    }
+    
+    func cancelVideoCallSwitch(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.cancelVideoCallSwitch()
+        result(true)
+    }
+    
+    func acceptVideoCallSwitchRequest(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.acceptVideoCallSwitchRequest()
+        result(true)
+    }
+    
+    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        let args = call.arguments as! Dictionary<String, Any>
+        let callType = args["callType"] as? String ?? ""
+        print("***callType \(callType)")
+        if callType == "video"{
+            
+            CallManager.setCallType(callType: .Video)
+            CallManager.muteVideo(false)
+            CallManager.enableVideo()
+            AudioManager.shared().autoReRoute()
+        }else{
+            CallManager.setCallType(callType: .Audio)
+            CallManager.muteVideo(true)
+            CallManager.disableVideo()
+            AudioManager.shared().autoReRoute()
+        }
+        result(true)
+    }
+    
+    func reRouteAudio(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        AudioManager.shared().autoReRoute()
+    }
 }
