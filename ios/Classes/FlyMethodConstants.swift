@@ -44,6 +44,7 @@ class FlyMethodConstants {
             "isOnGoingCall": flyCallMethods.isOnGoingCall,
             "disconnectCall": flyCallMethods.disconnectCall,
             "muteVideo": flyCallMethods.muteVideo,
+            "getUnreadMissedCallCount": flyCallMethods.getUnreadMissedCallCount,
             
         ]
     }()

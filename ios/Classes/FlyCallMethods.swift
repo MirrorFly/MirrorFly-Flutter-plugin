@@ -339,4 +339,10 @@ import MirrorFlySDK
         return errorMessage
     }
     
+    
+    func getUnreadMissedCallCount(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        let missedCallCount = CallLogManager.getUnreadMissedCallCount()
+        NSLog("\(Constants.callTag) getUnreadMissedCallCount --> \(String(describing: getUnreadMissedCallCount))")
+        result(missedCallCount)
+    }
 }
