@@ -1,6 +1,7 @@
 package com.mirrorfly.mirrorfly_plugin
 
 object Constants {
+    const val IS_CALL_NOTIFICATION = "IS_CALL_NOTIFICATION"
     const val EMPTY_STRING = ""
     const val LOCAL_PATH = "UI Kit"
     const val FILE_LOCAL_PATH = "File"

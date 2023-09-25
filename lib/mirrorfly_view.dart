@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 
 int _nextViewCreationId = 0;
 
@@ -23,6 +24,7 @@ class MirrorFlyView extends StatefulWidget {
   /// * @property [viewBgColor] - Color for the View (optional). Random Color by Default
   /// * @property [alignProfilePictureCenter] - Alignment of the profile Picture in Audio Call CENTER or TOP
   /// * @property [profileSize] - Size of the profile picture. 60 by Default
+  /// * @property [showSpeakingRipple] - to show Speaking Ripple effect in Profile view background
   const MirrorFlyView(
       {Key? key,
       this.mirror = true,
@@ -32,8 +34,8 @@ class MirrorFlyView extends StatefulWidget {
       // this.horizontalGravity = HorizontalGravity.center,
       // this.profileview,
       this.profileSize = 80,
-      this.hideProfileView,
-      required this.userJid})
+      this.hideProfileView = false,
+      required this.userJid, this.showSpeakingRipple = false})
       : super(key: key);
 
   final bool mirror;
@@ -43,6 +45,7 @@ class MirrorFlyView extends StatefulWidget {
   // final HorizontalGravity horizontalGravity;
   // final ProfileViewPositioned? profileview;
   final bool? hideProfileView;
+  final bool? showSpeakingRipple;
   final int? profileSize;
   final String userJid;
 
@@ -53,18 +56,21 @@ class MirrorFlyView extends StatefulWidget {
 class _MirrorFlyViewState extends State<MirrorFlyView> {
   final int _viewId = _nextViewCreationId++;
   final nativeViewType = "mirrorfly_view";
-  late AndroidViewController androidViewController;
+  AndroidViewController? androidViewController;
   @override
   void initState() {
     super.initState();
   }
 
   @override
-  Future<void> dispose() async {
-    if (Platform.isAndroid) {
-      androidViewController.dispose();
-    }
+  void dispose() {
     super.dispose();
+    LogMessage.d("MirrorFlyView", "dispose");
+    if (Platform.isAndroid) {
+      if(androidViewController!=null) {
+        androidViewController?.dispose();
+      }
+    }
   }
 
   @override
@@ -108,6 +114,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
       // 'horizontalGravity': getHorizontalGravity(widget.horizontalGravity),
       'profileSize': widget.profileSize,
       'hideProfileView': widget.hideProfileView,
+      'showSpeakingRipple': widget.showSpeakingRipple,
       "userJid": widget.userJid.trim().toString(),
       // "ProfileViewPositioned": widget.profileview?.toMap()
     };
@@ -131,7 +138,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
               (BuildContext context, PlatformViewController controller) {
             androidViewController = (controller as AndroidViewController);
             return AndroidViewSurface(
-              controller: androidViewController,
+              controller: androidViewController!,
               gestureRecognizers: const <Factory<
                   OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,

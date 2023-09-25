@@ -1,26 +1,19 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
-import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.mirrorfly.mirrorfly_plugin.AppUtils
-import com.mirrorfly.mirrorfly_plugin.toJson
 import com.mirrorflysdk.api.CallMessenger
 import com.mirrorflysdk.api.ChatManager
-import com.mirrorflysdk.api.GroupManager
 import com.mirrorflysdk.api.MediaNotificationHelper
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.utils.NameHelper
 import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
 import com.mirrorflysdk.flycall.webrtc.AudioDevice
-import com.mirrorflysdk.flycall.webrtc.CallDirection
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.GroupCallDetails
-import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
 import com.mirrorflysdk.flycall.webrtc.api.CallHelper
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
@@ -29,7 +22,6 @@ import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
 import com.mirrorflysdk.flycommons.Constants
 import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.flycommons.PendingIntentHelper
-import io.flutter.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
@@ -40,7 +32,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
 
     fun initCall(){
         //CallManager.init(context)
-        CallManager.setMissedCallListener(this)
+//        CallManager.setMissedCallListener(this)
         ChatManager.setMediaNotificationHelper(this)
         CallManager.setCallHelper(object : CallHelper {
             override fun getNotificationContent(callDirection: String): String {
@@ -81,7 +73,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         LogMessage.d(tag,"routeType : $routeType")
         val selectedDevice = if(routeType=="receiver") AudioDevice.EARPIECE  else if(routeType=="speaker") AudioDevice.SPEAKER_PHONE else if(routeType=="bluetooth") AudioDevice.BLUETOOTH else if(routeType=="headset") AudioDevice.WIRED_HEADSET else AudioDevice.NONE
         //CallAudioManager.getInstance(context).selectAudioDevice(selectedDevice)
-        CallManager.setAudioDevice(selectedDevice);
+        CallManager.setAudioDevice(selectedDevice)
         LogMessage.d(tag,"selectedDevice : $selectedDevice")
         result.success(true)
     }
@@ -189,6 +181,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         val muteVideo = call.argument<Boolean>("muteVideo") ?: false
         CallManager.muteVideo(muteVideo,object : CallActionListener{
             override fun onResponse(isSuccess: Boolean, message: String) {
+                LogMessage.d(tag,"$muteVideo ${CallManager.getCurrentUserId()} ${MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())}")
                 if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null && isSuccess) {
                     if (muteVideo) {
                         MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
@@ -251,12 +244,16 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
             val obj = JSONObject()
             obj.put("userJid",CallManager.getCurrentUserId())
             obj.put("callStatus",CallManager.getCallStatus(CallManager.getCurrentUserId()))
+            obj.put("isAudioMuted",CallManager.isAudioMuted())
+            obj.put("isVideoMuted",CallManager.isVideoMuted())
             json.put(obj)
         }
         users.forEach {jid->
             val obj = JSONObject()
             obj.put("userJid",jid)
             obj.put("callStatus",CallManager.getCallStatus(jid))
+            obj.put("isAudioMuted",CallManager.isRemoteAudioMuted(jid))
+            obj.put("isVideoMuted",CallManager.isRemoteVideoMuted(jid))
             json.put(obj)
         }
         result.success(json.toString())
@@ -270,16 +267,33 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         userList: ArrayList<String>
     ) {
         val notificationContent = getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList)
+        LogMessage.d("onMissedCall",notificationContent.toString())
         /*CallNotificationUtils.createNotification(
             getContext(),
             notificationContent.first, //Title Missed call Notification
             notificationContent.second //Message Content Missed call from whom
         )*/
         val json = JSONObject()
-        json.put("title",notificationContent.first)
+        /*json.put("title",notificationContent.first)
         json.put("content",notificationContent.second)
         LogMessage.d("MissedCallNotification",json.toString())
-        onMissedCallNotificationStreamHandler.onMissedCall?.success(json)
+        onMissedCallNotificationStreamHandler.onMissedCall?.success(json)*/
+        json.put("isOneToOneCall",isOneToOneCall)
+        json.put("userJid",userJid)
+        json.put("groupId",groupId)
+        json.put("callType",callType)
+        json.put("userList",userList.joinToString(","))
+        /*
+
+        Instead of doing the string concatenation above, we can try this below
+
+        val json = JSONObject()
+
+        // Convert the array to a JSON array and add it to the JSON object
+        val jsonArray = JSONArray(userList)
+        json.put("userList", jsonArray)
+         */
+        onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
     }
 
     override fun setMediaNotificationIntentAction(

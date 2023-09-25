@@ -437,6 +437,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onGroupNotificationMessage =>
       throw UnimplementedError('has not been implemented.');
 
+  Stream<dynamic> get showOrUpdateOrCancelNotification =>
+      throw UnimplementedError('has not been implemented.');
+
   Stream<dynamic> get onGroupDeletedLocally =>
       throw UnimplementedError('has not been implemented.');
 
@@ -556,6 +559,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get onUserStoppedSpeaking => throw UnimplementedError(
       'onUserStoppedSpeaking has not been implemented.');
+
+  Stream<dynamic> get onMissedCall => throw UnimplementedError(
+      'onMissedCall has not been implemented.');
 
   Stream<dynamic> get onAvailableFeaturesUpdated => throw UnimplementedError(
       'onUpdateAvailableFeatures has not been implemented.');
@@ -1040,7 +1046,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('switchCamera has not been implemented.');
   }
 
-  Future declineCall() async {
+  Future<bool?> declineCall() async {
     throw UnimplementedError('declineCall has not been implemented.');
   }
 
@@ -1074,6 +1080,14 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<bool?> isUserVideoMuted([String? userJid]) async {
     throw UnimplementedError('isUserVideoMuted has not been implemented.');
+  }
+
+  Future<int?> getUnreadMissedCallCount() {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<bool?> appLaunchedFromMissedCall() {
+    throw UnimplementedError('has not been implemented.');
   }
 
   Future<String?> openAudioFilePicker() async {

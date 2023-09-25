@@ -14,7 +14,7 @@ import MirrorFlySDK
     
     let tag = "#MirrorFlyCall"
     
-    func getCallUsersList(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func getCallUsersList(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
         let userListStatus = CallManager.getCallUsersWithStatus()
         let userList = CallManager.getCallUsersList()
@@ -51,7 +51,25 @@ import MirrorFlySDK
        result(userListJson)
     }
     
-    func getAudioDevices(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func muteVideo(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
+        let args = call.arguments as! Dictionary<String, Any>
+        let muteStatus = args["muteVideo"] as? Bool ?? false
+        CallManager.muteVideo(muteStatus)
+        
+        if let mirrorFlyViewId = factory?.getUniqueID(forString: AppUtils.getMyJid()) {
+            if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+            } else {
+                print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
+            }
+        } else {
+            print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
+        }
+        
+        result(true)
+    }
+    
+    func getAudioDevices(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
            
     }
     //Moved to FlyCall Class to get from Delegate
@@ -59,10 +77,10 @@ import MirrorFlySDK
 //
 //        print("selectedAudioDevice \(selectedAudioDevice)")
 //    }
-    func selectAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func selectAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func makeCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func makeCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["user_jid"] as? String ?? ""
         
@@ -84,7 +102,7 @@ import MirrorFlySDK
          }
         result(true)
     }
-    func makeVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func makeVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["user_jid"] as? String ?? ""
         print("making video call")
@@ -109,30 +127,35 @@ import MirrorFlySDK
         }
         result(true)
     }
-    func answerCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func answerCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func declineCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        print("\(Constants.tag) declineCall Call")
+    func declineCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
+        print("\(Constants.callTag) declineCall")
+        print("\(Constants.callTag) clearing Mirrorfly Views in method call")
+        factory?.clearMirrorflyView()
+        CallManager.incomingUserJidArr.removeAll()
         CallManager.disconnectCall()
+        result(true)
+       
     }
-    func muteAudio(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func muteAudio(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let muteStatus = args["muteAudio"] as? Bool ?? false
         CallManager.muteAudio(muteStatus)
-        print("\(Constants.tag) Calling the Audio Delegate")
+        print("\(Constants.callTag) Calling the Audio Delegate")
         result(true)
     }
-    func isVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func isRemoteVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isRemoteVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func isRemoteVideoPaused(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isRemoteVideoPaused(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func makeGroupVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func makeGroupVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let groupJid = args["groupJid"] as? String ?? ""
         let jidList = args["jidList"] as? [String] ?? []
@@ -153,7 +176,7 @@ import MirrorFlySDK
         }
         result(true)
     }
-    func makeGroupVoiceCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func makeGroupVoiceCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let groupJid = args["groupJid"] as? String ?? ""
         let jidList = args["jidList"] as? [String] ?? []
@@ -172,7 +195,7 @@ import MirrorFlySDK
         }
         result(true)
     }
-    func inviteUsersToOngoingCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func inviteUsersToOngoingCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let userList = args["userList"] as? [String] ?? []
         
@@ -186,22 +209,22 @@ import MirrorFlySDK
             }
         };
     }
-    func switchCamera(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func switchCamera(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         CallManager.switchCamera()
     }
-    func isCallOnHold(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isCallOnHold(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func isOneToOneCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isOneToOneCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func getCallType(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func getCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         result(CallManager.getCallType().rawValue)
     }
-    func getCallDirection(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func getCallDirection(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         result(CallManager.getCallDirection() == .Incoming ? "Incoming" : "Outgoing")
     }
-    func getAllAvailableAudioInput(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func getAllAvailableAudioInput(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
         var jsonArray: [[String: String]] = []
         for item in AudioManager.shared().getAllAvailableAudioInput() {
@@ -213,11 +236,11 @@ import MirrorFlySDK
             jsonArray.append(jsonObject)
         }
         let availableAudioListJson = jsonArray.convertToJson()
-        print("\(tag) availableAudioListJson \(availableAudioListJson)")
+        print("\(tag) availableAudioListJson \(String(describing: availableAudioListJson))")
        result(availableAudioListJson)
     }
     
-    func routeAudioTo(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func routeAudioTo(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let routeType = args["routeType"] as? String ?? ""
         print("triggerDelegateForOutputs route Type \(routeType)")
@@ -249,19 +272,19 @@ import MirrorFlySDK
 
         result(true)
     }
-    func isCallConnected(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isCallConnected(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func isVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func isAudioCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isAudioCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func isCallNotConnected(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isCallNotConnected(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
-    func isUserAudioMuted(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isUserAudioMuted(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["userJid"] as? String ?? ""
@@ -269,26 +292,41 @@ import MirrorFlySDK
 
         result(status)
     }
-    func isUserVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func isUserVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["userJid"] as? String ?? ""
+        print("isUserVideoMuted jid \(jid)")
        
-        let status = (jid == AppUtils.getMyJid()) ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(jid)
+        let status = (jid == AppUtils.getMyJid() || jid.isEmpty) ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(jid)
         
+        if let mirrorFlyViewId = factory?.getUniqueID(forString: jid.isEmpty ? AppUtils.getMyJid() : jid) {
+                    if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                        mirrorflyView.updateVideoTrack(userJid: jid.isEmpty ? AppUtils.getMyJid() : jid, updateType: status ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+                    } else {
+                        print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
+                    }
+                } else {
+                    print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
+                }
+        
+        print("isUserVideoMuted \(jid == AppUtils.getMyJid() || jid.isEmpty)")
+        print("isUserVideoMuted status \(status)")
         result(status)
 
     }
     
-    func isOnGoingCall(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func isOnGoingCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
         //Method Needed for Android inorder to Launch Ongoing Call Screen
         result(false)
     }
     
-    func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult){
-        print("\(Constants.tag) Disconnecting Call")
-        CallManager.disconnectCall()
+    func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        print("\(Constants.callTag) Disconnecting Call")
+        print("\(Constants.callTag) clearing Mirrorfly Views in method call")
+        factory?.clearMirrorflyView()
         CallManager.incomingUserJidArr.removeAll()
+        CallManager.disconnectCall()
         result(true)
     }
     

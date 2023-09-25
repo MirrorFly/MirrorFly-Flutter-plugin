@@ -40,10 +40,30 @@ class MuteStatus {
 }
 
 class CallType {
+  static const String audio = "audio";
+  static const String video = "video";
   static const String oneToOne = "OneToOne";
   static const String groupCall = "GroupCall";
 }
 
+class AudioLevel {
+  static const String audioTooLow = "audio_too_low";
+  static const String audioLow = "audio_low";
+  static const String audioMedium = "audio_medium";
+  static const String audioHigh = "audio_high";
+  static const String audioPeak = "audio_peak";
+}
+extension AudioLevelExtension on num {
+  String getAudioLevel() {
+    switch(this){
+      case 1: return AudioLevel.audioTooLow;
+      case 3: return AudioLevel.audioLow;
+      case 4: return AudioLevel.audioMedium;
+      case 5: return AudioLevel.audioHigh;
+      default: return AudioLevel.audioPeak;
+    }
+  }
+}
 class CallStatus {
   static const String connecting = "Connecting";
   static const String ringing = "Ringing";

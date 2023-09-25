@@ -44,6 +44,9 @@ class MirrorflyViewBuilder {
         if(creationParams.containsKey("profileSize")){
             newMirrorflyView.setProfileViewSize(creationParams["profileSize"] as Int)
         }
+        if(creationParams.containsKey("hideProfileView")){
+            newMirrorflyView.setProfileViewHide(creationParams["hideProfileView"] as Boolean)
+        }
         if (creationParams.containsKey("alignProfilePictureCenter")){
             val alignProfilePictureCenter = creationParams["alignProfilePictureCenter"] as Boolean
             val center = if(alignProfilePictureCenter) Gravity.CENTER else Gravity.TOP

@@ -11,7 +11,7 @@ import Flutter
 class FlyMethodConstants {
     
     static let flyCallMethods = FlyCallMethods()
-    static let callMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult) -> Void] = {
+    static let callMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult, MirrorflyViewFactory?) -> Void] = {
         return [
             "getCallUsersList": flyCallMethods.getCallUsersList,
             "getAudioDevices": flyCallMethods.getAudioDevices,
@@ -43,6 +43,7 @@ class FlyMethodConstants {
             "routeAudioTo": flyCallMethods.routeAudioTo,
             "isOnGoingCall": flyCallMethods.isOnGoingCall,
             "disconnectCall": flyCallMethods.disconnectCall,
+            "muteVideo": flyCallMethods.muteVideo,
             
         ]
     }()

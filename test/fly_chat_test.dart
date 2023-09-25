@@ -763,6 +763,10 @@ class MockFlyChatFlutterPlatform
   Stream get onGroupNotificationMessage => throw UnimplementedError();
 
   @override
+  // onShowOrUpdateOrCancelNotification
+  Stream get showOrUpdateOrCancelNotification => throw UnimplementedError();
+
+  @override
   // onGroupProfileFetched
   Stream get onGroupProfileFetched => throw UnimplementedError();
 
@@ -1360,6 +1364,10 @@ class MockFlyChatFlutterPlatform
   Stream get onUserStoppedSpeaking => throw UnimplementedError();
 
   @override
+  // implement onMissedCall
+  Stream get onMissedCall => throw UnimplementedError();
+
+  @override
   // implement onAvailableFeaturesUpdated
   Stream get onAvailableFeaturesUpdated => throw UnimplementedError();
 
@@ -1394,7 +1402,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future declineCall() {
+  Future<bool?> declineCall() {
     // implement declineCall
     throw UnimplementedError();
   }
@@ -1513,6 +1521,18 @@ class MockFlyChatFlutterPlatform
   @override
   Future<bool?> isUserVideoMuted([String? userJid]) {
     // implement isUserVideoMuted
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> getUnreadMissedCallCount() {
+    // getUnreadMissedCallCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> appLaunchedFromMissedCall() {
+    // getUnreadMissedCallCount
     throw UnimplementedError();
   }
 

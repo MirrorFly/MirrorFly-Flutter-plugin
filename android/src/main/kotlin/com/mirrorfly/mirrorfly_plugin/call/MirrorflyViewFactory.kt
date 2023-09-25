@@ -12,10 +12,12 @@ class MirrorflyViewFactory(private var binaryMessenger: BinaryMessenger) : Platf
         val creationParams = args ?: hashMapOf<String?, Any?>()
         val builder = MirrorflyViewBuilder()
         creationParams as Map<String, Any>
-        val viewId = creationParams["userJid"] ?: ""
-        val view = builder.build(id,context,binaryMessenger,creationParams as Map<String, Any>,MirrorflyViewHashMap.getMirrorflyView(viewId.toString()))
-        MirrorflyViewHashMap.saveMirrorflyView(id,viewId.toString(),view)
-        LogMessage.d("#FlutterAndroidCall create", "${MirrorflyViewHashMap.getMirrorflyView(viewId.toString())} ${MirrorflyViewHashMap.getMirrorflyViewId(viewId.toString())}")
+        val userJid = creationParams["userJid"] ?: ""
+        val oldViewId = MirrorflyViewHashMap.getMirrorflyViewId(userJid.toString())
+        val already = if(oldViewId!=null) oldViewId == id else false
+        val view = builder.build(id,context,binaryMessenger,creationParams as Map<String, Any>,if(already) MirrorflyViewHashMap.getMirrorflyView(userJid.toString()) else null)
+        LogMessage.d("#MirrorflyView Lifecycle", " create $already ${MirrorflyViewHashMap.getMirrorflyViewId(userJid.toString())} $id $userJid ${MirrorflyViewHashMap.getMirrorflyView(userJid.toString())} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid.toString())}")
+        MirrorflyViewHashMap.saveMirrorflyView(id,userJid.toString(),view)
         return view
     }
 }

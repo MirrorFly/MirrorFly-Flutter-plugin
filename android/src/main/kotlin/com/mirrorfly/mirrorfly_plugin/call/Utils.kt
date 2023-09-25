@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
@@ -18,6 +17,8 @@ import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
 import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.media.MediaUploadHelper
 import java.lang.ref.WeakReference
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 class Utils {
@@ -84,9 +85,7 @@ class Utils {
                 Priority.HIGH)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
             if(imageUrl.isNotEmpty()){
-                val url = Regex("r\"^((((H|h)(T|t)|(F|f))(T|t)(P|p)((S|s)?))\\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,6}(\\:[0-9]{1,5})*(/(\$|[a-zA-Z0-9\\.\\,\\;\\?\\'\\\\\\+&amp;%\\\$#\\=~_\\-]+))*\$\"")
-                val imgURL = if (imageUrl.matches(url)) imageUrl else Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon()
-                    .appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
+                val imgURL = if (isValidURL(imageUrl)) imageUrl else Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon().appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
                 LogMessage.d("imgURL",imgURL)
                 val requestBuilder = Glide.with(mContext).asDrawable().sizeMultiplier(0.1f)
                 Glide.with(mContext).load(imgURL).thumbnail(requestBuilder).apply(options)
@@ -110,5 +109,32 @@ class Utils {
 //            profileView.setDrawableForProfile(name)
             }
         }
+        private fun isValidURL(url: String?):Boolean {
+            // Regex to check valid URL
+            val regex = ("((http|https)://)(www.)?"
+                    + "[a-zA-Z0-9@:%._\\+~#?&//=]"
+                    + "{2,256}\\.[a-z]"
+                    + "{2,6}\\b([-a-zA-Z0-9@:%"
+                    + "._\\+~#?&//=]*)")
+
+            // Compile the ReGex
+            val p = Pattern.compile(regex)
+
+            // If the string is empty
+            // return false
+            if (url == null) {
+                return false
+            }
+
+            // Find match between given string
+            // and regular expression
+            // using Pattern.matcher()
+            val m: Matcher = p.matcher(url)
+
+            // Return if the string
+            // matched the ReGex
+            return m.matches()
+        }
+
     }
 }

@@ -108,6 +108,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onGroupNotificationMessageStreamController =
       StreamController<dynamic>.broadcast();
   @visibleForTesting
+  final showOrUpdateOrCancelNotificationChannel =
+      const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
+  final StreamController<dynamic> showOrUpdateOrCancelNotificationStreamController =
+      StreamController<dynamic>.broadcast();
+  @visibleForTesting
   final onGroupDeletedLocallyChannel =
       const EventChannel('contus.mirrorfly/onGroupDeletedLocally');
   final StreamController<dynamic> onGroupDeletedLocallyStreamController =
@@ -312,6 +317,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       StreamController<dynamic>.broadcast();
 
   @visibleForTesting
+  final onMissedCallChannel =
+      const EventChannel('contus.mirrorfly/onMissedCall');
+  final StreamController<dynamic> onMissedCallStreamController =
+      StreamController<dynamic>.broadcast();
+
+  @visibleForTesting
   final onAvailableFeaturesUpdatedChannel =
       const EventChannel('contus.mirrorfly/onAvailableFeaturesUpdated');
   final StreamController<dynamic> onAvailableFeaturesUpdatedStreamController =
@@ -372,6 +383,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         .addStream(onLeftFromGroupChannel.receiveBroadcastStream());
     onGroupNotificationMessageStreamController
         .addStream(onGroupNotificationMessageChannel.receiveBroadcastStream());
+    showOrUpdateOrCancelNotificationStreamController
+        .addStream(showOrUpdateOrCancelNotificationChannel.receiveBroadcastStream());
     onGroupDeletedLocallyStreamController.addStream(onGroupDeletedLocallyChannel
         .receiveBroadcastStream() /*as Stream<String>*/);
     blockedThisUserStreamController
@@ -449,6 +462,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         .addStream(onUserSpeakingChannel.receiveBroadcastStream());
     onUserStoppedSpeakingStreamController
         .addStream(onUserStoppedSpeakingChannel.receiveBroadcastStream());
+    onMissedCallStreamController
+        .addStream(onMissedCallChannel.receiveBroadcastStream());
     onAvailableFeaturesUpdatedStreamController
         .addStream(onAvailableFeaturesUpdatedChannel.receiveBroadcastStream());
   }
@@ -1944,6 +1959,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onGroupNotificationMessageStreamController.stream;
 
   @override
+  Stream<dynamic> get showOrUpdateOrCancelNotification =>
+      showOrUpdateOrCancelNotificationStreamController.stream;
+
+  @override
   Stream<dynamic> get onGroupDeletedLocally =>
       onGroupDeletedLocallyStreamController.stream;
 
@@ -2088,6 +2107,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onUserStoppedSpeaking =>
       onUserStoppedSpeakingStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMissedCall =>
+      onMissedCallStreamController.stream;
 
   @override
   Stream<dynamic> get onAvailableFeaturesUpdated =>
@@ -4111,10 +4134,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  declineCall() async {
+  Future<bool?> declineCall() async {
+    bool? res;
     try {
-      LogMessage.d('declineCall :', '');
-      await mirrorFlyCallMethodChannel.invokeMethod('declineCall');
+      res = await mirrorFlyCallMethodChannel.invokeMethod('declineCall');
+      LogMessage.d('declineCall', '$res');
+      return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -4248,6 +4273,39 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       res = await mirrorFlyCallMethodChannel
           .invokeMethod('isUserVideoMuted', {"userJid": userJid});
       LogMessage.d('isUserVideoMuted', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<int?> getUnreadMissedCallCount() async {
+    int? res;
+    try {
+      res = await mirrorFlyCallMethodChannel
+          .invokeMethod<int>('getUnreadMissedCallCount');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> appLaunchedFromMissedCall() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('appLaunchedFromMissedCall');
+      LogMessage.d('appLaunchedFromMissedCall', '$res');
       return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
