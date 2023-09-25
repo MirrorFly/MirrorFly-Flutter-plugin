@@ -4300,6 +4300,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<bool?> appLaunchedFromMissedCall() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('appLaunchedFromMissedCall');
+      LogMessage.d('appLaunchedFromMissedCall', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
   Future<String?> openAudioFilePicker() async {
     String? res;
     try {

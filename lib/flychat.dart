@@ -1274,6 +1274,12 @@ class Mirrorfly {
         .getUnreadMissedCallCount();
   }
 
+  ///Used to get [appLaunchedFromMissedCall]
+  static Future<bool?> appLaunchedFromMissedCall() async {
+    return FlyChatFlutterPlatform.instance
+        .appLaunchedFromMissedCall();
+  }
+
   ///Used as a [openAudioPicker] class for [Mirrorfly]
   ///used to get Audio File in Platform Android Only
   static Future<String?> openAudioFilePicker() async {

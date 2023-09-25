@@ -1086,6 +1086,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  Future<bool?> appLaunchedFromMissedCall() {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Future<String?> openAudioFilePicker() async {
     throw UnimplementedError('openAudioFilePicker has not been implemented.');
   }
