@@ -26,11 +26,13 @@ import MirrorFlySDK
         
 //        ["917010279986@xmpp-uikit-qa.contus.us": MirrorFlySDK.CALLSTATUS.CONNECTED]
         
-        var jsonArray: [[String: String]] = []
+        var jsonArray: [[String: Any]] = []
         
-        let localJIDJson: [String: String] = [
+        let localJIDJson: [String: Any] = [
             "userJid": AppUtils.getMyJid(),
             "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling"),
+            "isAudioMuted" : CallManager.isAudioMuted(),
+            "isVideoMuted" : CallManager.isVideoMuted()
 //            "isAudioMuted" : CallManager.isAudioMuted()
         ]
         
@@ -38,15 +40,18 @@ import MirrorFlySDK
             
         for (memberJid,status) in CallManager.getCallUsersWithStatus() {
             NSLog("\(tag) \(memberJid) \(status)")
-            let jsonObject: [String: String] = [
+            let jsonObject: [String: Any] = [
                 "userJid": memberJid,
                 "callStatus": status.rawValue,
+                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid),
+                "isVideoMuted" : CallManager.isRemoteAudioMuted(memberJid)
 //                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid)
             ]
             jsonArray.append(jsonObject)
         }
         
-        let userListJson = jsonArray.convertToJson()
+        
+        let userListJson = convertArrayToJSONString(array: jsonArray)
         NSLog("\(tag) getCallUsersWithStatus \(String(describing: userListJson))")
        result(userListJson)
     }
