@@ -4379,7 +4379,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
-  @override
+  /*@override
   Future<bool?> changeCallType({required String switchType}) async {
     bool? res;
     try {
@@ -4408,5 +4408,5 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 }

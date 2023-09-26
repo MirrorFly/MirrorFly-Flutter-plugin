@@ -48,8 +48,8 @@ class FlyMethodConstants {
             "requestVideoCallSwitch": flyCallMethods.requestVideoCallSwitch,
             "cancelVideoCallSwitch": flyCallMethods.cancelVideoCallSwitch,
             "acceptVideoCallSwitchRequest": flyCallMethods.acceptVideoCallSwitchRequest,
-            "changeCallType": flyCallMethods.changeCallType,
-            "reRouteAudio": flyCallMethods.reRouteAudio,
+//            "changeCallType": flyCallMethods.changeCallType,
+//            "reRouteAudio": flyCallMethods.reRouteAudio,
             
         ]
     }()

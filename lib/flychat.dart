@@ -1311,7 +1311,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.acceptVideoCallSwitchRequest();
   }
 
-  /// [changeCallType] Used to Change the Call Type
+/*  /// [changeCallType] Used to Change the Call Type
   /// audio for Switching to Audio Call
   /// video for Switching to Video Call
   static Future<dynamic> changeCallType({required String switchType}) async {
@@ -1322,5 +1322,5 @@ class Mirrorfly {
   /// It will Re-Route the audio to available device
   static Future reRouteAudio() async {
     return FlyChatFlutterPlatform.instance.reRouteAudio();
-  }
+  }*/
 }

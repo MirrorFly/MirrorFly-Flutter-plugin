@@ -248,6 +248,21 @@ import PushKit
             jsonObject.setValue(userId, forKey: "userJid")
         }
         jsonObject.setValue(callAction.rawValue, forKey: "callAction")
+        
+        if (callAction == .CHANGE_TO_AUDIO_CALL){
+            CallManager.setCallType(callType: .Audio)
+            CallManager.muteVideo(true)
+            CallManager.disableVideo()
+            AudioManager.shared().autoReRoute()
+        }
+        
+        if (callAction == .ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
+            CallManager.setCallType(callType: .Video)
+            CallManager.muteVideo(false)
+            CallManager.enableVideo()
+            AudioManager.shared().autoReRoute()
+        }
+        
         let callActionJson = pluginDictToJson(dictionary: jsonObject)
         
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callActionJson)

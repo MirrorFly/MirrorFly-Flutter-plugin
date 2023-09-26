@@ -367,7 +367,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         CallManager.acceptVideoCallSwitchRequest()
         result.success(true)
     }
-    fun changeCallType(call: MethodCall, result: MethodChannel.Result) {
+    /*fun changeCallType(call: MethodCall, result: MethodChannel.Result) {
         val callType = call.argument<String>("callType") ?: ""
         if (callType == "video"){
 
@@ -392,6 +392,6 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
 
 //        AudioManager.shared().autoReRoute()
 
-    }
+    }*/
 
 }

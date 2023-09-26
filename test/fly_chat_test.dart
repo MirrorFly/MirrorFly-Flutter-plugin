@@ -1566,7 +1566,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+ /* @override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType
     throw UnimplementedError();
@@ -1576,7 +1576,7 @@ class MockFlyChatFlutterPlatform
   Future reRouteAudio() {
     // implement reRouteAudio
     throw UnimplementedError();
-  }
+  }*/
 }
 
 void main() {

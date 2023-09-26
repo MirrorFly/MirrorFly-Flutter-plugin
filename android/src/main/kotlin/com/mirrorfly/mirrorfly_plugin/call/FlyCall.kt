@@ -169,12 +169,12 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "acceptVideoCallSwitchRequest" -> {
                 sdk.acceptVideoCallSwitchRequest(call, result)
             }
-            "changeCallType" -> {
+            /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }
             "reRouteAudio" -> {
                 sdk.reRouteAudio(call, result)
-            }
+            }*/
         }
     }
     override fun onCallStatusUpdated(callStatus: String, userJid: String) {
