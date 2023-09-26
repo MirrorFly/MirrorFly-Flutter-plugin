@@ -820,6 +820,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getTopics(call:methodCall, result: result)
         case "getAvailableFeatures":
             FlySdkMethodCalls.getAvailableFeatures(call:methodCall, result: result)
+        case "appLaunchedFromMissedCall":
+            result(false)
 
         default:
             result(FlutterMethodNotImplemented)

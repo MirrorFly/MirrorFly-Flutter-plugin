@@ -160,6 +160,24 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "getUnreadMissedCallCount" -> {
                 result.success(CallLogManager.getUnreadMissedCallCount())
             }
+            "requestVideoCallSwitch" -> {
+                sdk.requestVideoCallSwitch(call, result)
+            }
+            "cancelVideoCallSwitch" -> {
+                sdk.cancelVideoCallSwitch(call, result)
+            }
+            "acceptVideoCallSwitchRequest" -> {
+                sdk.acceptVideoCallSwitchRequest(call, result)
+            }
+            "declineVideoCallSwitchRequest" -> {
+                sdk.declineVideoCallSwitchRequest(call, result)
+            }
+            /*"changeCallType" -> {
+                sdk.changeCallType(call, result)
+            }
+            "reRouteAudio" -> {
+                sdk.reRouteAudio(call, result)
+            }*/
         }
     }
     override fun onCallStatusUpdated(callStatus: String, userJid: String) {
@@ -279,6 +297,11 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         val json = JSONObject()
         json.put("userJid",ChatManager.getCurrentUserJid())
         onLocalVideoTrackAddedStreamHandler.onLocalVideoTrackAdded?.success(json.toString())
+        if(MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())!=null) {
+            MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())?.setLocalTarget()
+        }else{
+            Log.d(tag,"#onVideoTrackAdded view not created")
+        }
         onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
     }
 
@@ -355,43 +378,47 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
     override fun onShowCallUi(callAction: String?) {
         LogMessage.d(tag, "#onShowCallUi $callAction")
         FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
-        when(callAction){
-            CallConstants.ACTION_SHOW_CALL_UI->{
-                LogMessage.d(CallConstants.ACTION_SHOW_CALL_UI, CallManager.getCallDirection())
-                if(CallManager.getCallDirection()==CallDirection.INCOMING_CALL) {
-                    val t = Intent(context, CallKitUiActivity::class.java)
-                    t.putExtra("FROM",CallConstants.ACTION_SHOW_CALL_UI)
-                    t.putExtra(CallConstants.ACCEPT_CALL,false)
-                    t.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(t)
-                }
-            }
-            CallAction.ACTION_ANSWER_CALL->{
-                LogMessage.d(tag, "#onShowCallUi ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.R}")
-                val json = JSONObject()
-                json.put("callStatus","Attended")
-                json.put("userJid",CallManager.getCurrentUserId())
-                json.put("callType",CallManager.getCallType())
-                json.put("callMode",CallManager.getCallMode())
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R ) {
-                    val y = AppUtils.getAppIntent(context)
-                    y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(y)
-                    handler.post {
-                        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
-                            json.toString()
-                        )
+        if(callAction!=null) {
+            when (callAction) {
+                CallConstants.ACTION_SHOW_CALL_UI -> {
+                    LogMessage.d(CallConstants.ACTION_SHOW_CALL_UI, CallManager.getCallDirection())
+                    if (CallManager.getCallDirection() == CallDirection.INCOMING_CALL) {
+                        val t = Intent(context, CallKitUiActivity::class.java)
+                        t.putExtra("FROM", CallConstants.ACTION_SHOW_CALL_UI)
+                        t.putExtra(CallConstants.ACCEPT_CALL, false)
+                        t.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(t)
                     }
+                }
+                CallAction.ACTION_ANSWER_CALL -> {
+                    LogMessage.d(
+                        tag,
+                        "#onShowCallUi ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.R}"
+                    )
+                    val json = JSONObject()
+                    json.put("callStatus", "Attended")
+                    json.put("userJid", CallManager.getCurrentUserId())
+                    json.put("callType", CallManager.getCallType())
+                    json.put("callMode", CallManager.getCallMode())
+                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+                        val y = AppUtils.getAppIntent(context)
+                        y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(y)
+                        handler.post {
+                            onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+                                json.toString()
+                            )
+                        }
 
-                }else{
-                    handler.post {
-                        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
-                            json.toString()
-                        )
+                    } else {
+                        handler.post {
+                            onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+                                json.toString()
+                            )
+                        }
                     }
                 }
-            }
-            /*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
+                /*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}
             CallAction.ACTION_INVITE_USERS->{}
@@ -419,6 +446,16 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             CallAction.USER_STOPPED_SPEAKING->{}
             CallAction.ACTION_MAKE_SERVER_CONNECTION->{}
             CallAction.ACTION_CLOSE_SERVER_CONNECTION->{}*/
+            }
+        }else{
+            if(CallManager.isCallConversionRequestAvailable()){
+                val json = JSONObject()
+                json.put("callAction","ACTION_VIDEO_CALL_CONVERSION")
+                json.put("userJid",CallManager.getCurrentUserId())
+                handler.post {
+                    onCallActionStreamHandler.onCallAction?.success(json.toString())
+                }
+            }
         }
     }
 

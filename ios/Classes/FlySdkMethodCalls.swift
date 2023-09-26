@@ -107,7 +107,7 @@ import UIKit
         }
 
         
-        ChatManager.disableLocalNotification()
+//        ChatManager.disableLocalNotification()
         
         ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
         

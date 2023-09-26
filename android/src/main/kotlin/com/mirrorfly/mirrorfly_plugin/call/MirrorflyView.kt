@@ -100,6 +100,7 @@ class MirrorflyView(
         LogMessage.d(tag,"Remote set $id $userJid ${CallManager.getRemoteProxyVideoSink(userJid)} ${CallManager.isRemoteVideoMuted(userJid)}")
         getTextureViewByTag(userJid)?.visibility=View.VISIBLE
         getImageViewByTag(id)?.visibility=View.GONE
+        getSpeakingRippleView(jid)?.visibility=View.GONE
         if(CallManager.getRemoteProxyVideoSink(userJid)!=null && !CallManager.isRemoteVideoPaused(userJid)) {
             CallManager.getRemoteProxyVideoSink(userJid)?.setTarget(getTextureViewByTag(userJid))
         }else{

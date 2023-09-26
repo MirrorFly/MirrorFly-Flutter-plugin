@@ -17,20 +17,20 @@ class MirrorflyViewBuilder {
         if(backgroundColor.toString().isNotEmpty()){
             newMirrorflyView.setBackgroundColor(backgroundColor.toString())
         }
+        if(mirrorflyView==null) {
+            newMirrorflyView.init()
+        }
+        if (creationParams.containsKey("scalingType")) {
+            val scale =
+                RendererCommon.ScalingType.valueOf(creationParams["scalingType"].toString())
+            newMirrorflyView.setScalingType(scale)
+        }
         if (CallManager.isOnGoingAudioCall()){
             if(backgroundColor.toString().isNotEmpty()){
                 newMirrorflyView.setBackgroundColor(backgroundColor.toString())
             }
             newMirrorflyView.setProfileView(viewId.toString())
         }else {
-            if(mirrorflyView==null) {
-                newMirrorflyView.init()
-            }
-            if (creationParams.containsKey("scalingType")) {
-                val scale =
-                    RendererCommon.ScalingType.valueOf(creationParams["scalingType"].toString())
-                newMirrorflyView.setScalingType(scale)
-            }
             if (creationParams.containsKey("isLocal") || (viewId.toString() == CallManager.getCurrentUserId() && CallManager.isOnGoingVideoCall())) {
                 newMirrorflyView.setLocalTarget()
             }

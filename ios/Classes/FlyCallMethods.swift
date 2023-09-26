@@ -19,35 +19,40 @@ import MirrorFlySDK
         let userListStatus = CallManager.getCallUsersWithStatus()
         let userList = CallManager.getCallUsersList()
         
-        print("userListStatus \(userListStatus)")
-        print("userlist \(String(describing: userList))")
+        NSLog("userListStatus \(userListStatus)")
+        NSLog("userlist \(String(describing: userList))")
         
 //        let userListStatusJson = userListStatus.dictToJson()
         
 //        ["917010279986@xmpp-uikit-qa.contus.us": MirrorFlySDK.CALLSTATUS.CONNECTED]
         
-        var jsonArray: [[String: String]] = []
+        var jsonArray: [[String: Any]] = []
         
-        let localJIDJson: [String: String] = [
+        let localJIDJson: [String: Any] = [
             "userJid": AppUtils.getMyJid(),
             "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling"),
+            "isAudioMuted" : CallManager.isAudioMuted(),
+            "isVideoMuted" : CallManager.isVideoMuted()
 //            "isAudioMuted" : CallManager.isAudioMuted()
         ]
         
         jsonArray.append(localJIDJson)
             
         for (memberJid,status) in CallManager.getCallUsersWithStatus() {
-            print("\(tag) \(memberJid) \(status)")
-            let jsonObject: [String: String] = [
+            NSLog("\(tag) \(memberJid) \(status)")
+            let jsonObject: [String: Any] = [
                 "userJid": memberJid,
                 "callStatus": status.rawValue,
+                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid),
+                "isVideoMuted" : CallManager.isRemoteAudioMuted(memberJid)
 //                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid)
             ]
             jsonArray.append(jsonObject)
         }
         
-        let userListJson = jsonArray.convertToJson()
-        print("\(tag) getCallUsersWithStatus \(String(describing: userListJson))")
+        
+        let userListJson = convertArrayToJSONString(array: jsonArray)
+        NSLog("\(tag) getCallUsersWithStatus \(String(describing: userListJson))")
        result(userListJson)
     }
     
@@ -60,10 +65,10 @@ import MirrorFlySDK
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
                 mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
             } else {
-                print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
+                NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
             }
         } else {
-            print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
+            NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
         }
         
         result(true)
@@ -75,7 +80,7 @@ import MirrorFlySDK
     //Moved to FlyCall Class to get from Delegate
 //    func selectedAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
 //
-//        print("selectedAudioDevice \(selectedAudioDevice)")
+//        NSLog("selectedAudioDevice \(selectedAudioDevice)")
 //    }
     func selectAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
@@ -87,15 +92,15 @@ import MirrorFlySDK
         try! CallManager.makeVoiceCall(jid) { [weak self] (isSuccess , message)  in
            if isSuccess  {
                if(!CallManager.isAudioCallPermissionsGranted()){
-                   print("MirrorflyCall Audio call permission not granted")
+                   NSLog("MirrorflyCall Audio call permission not granted")
                    result(FlutterError(code: "500", message: "Microphone Permission not enabled", details: nil))
                    return
                }
                if isSuccess == false {
                    let errorMessage = self?.getErrorMessage(description: message)
-                   print("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
+                   NSLog("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
                }else{
-                   print("MirrorflyCall Success -->")
+                   NSLog("MirrorflyCall Success -->")
 //                   result(isSuccess)
                }
             }
@@ -105,23 +110,23 @@ import MirrorFlySDK
     func makeVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["user_jid"] as? String ?? ""
-        print("making video call")
+        NSLog("making video call")
         
         if(!CallManager.isAudioCallPermissionsGranted()){
-            print("MirrorflyCall Audio call permission not granted")
+            NSLog("MirrorflyCall Audio call permission not granted")
             result(FlutterError(code: "500", message: "Microphone Permission not enabled", details: nil))
             return
 
         }
         if(!CallManager.isVideoCallPermissionsGranted()){
-            print("MirrorflyCall Video call permission not granted")
+            NSLog("MirrorflyCall Video call permission not granted")
             result(FlutterError(code: "500", message: "Camera Permission not enabled", details: nil))
             return
         }
         try! CallManager.makeVideoCall(jid) { isSuccess , message in
-            print("call result --> \(isSuccess) messsage --> \(message)")
+            NSLog("call result --> \(isSuccess) messsage --> \(message)")
             if (isSuccess){
-                print("MirrorflyCall Success")
+                NSLog("MirrorflyCall Success")
 //                result(isSuccess)
             }
         }
@@ -131,8 +136,8 @@ import MirrorFlySDK
         
     }
     func declineCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        print("\(Constants.callTag) declineCall")
-        print("\(Constants.callTag) clearing Mirrorfly Views in method call")
+        NSLog("\(Constants.callTag) declineCall")
+        NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
         factory?.clearMirrorflyView()
         CallManager.incomingUserJidArr.removeAll()
         CallManager.disconnectCall()
@@ -143,7 +148,7 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let muteStatus = args["muteAudio"] as? Bool ?? false
         CallManager.muteAudio(muteStatus)
-        print("\(Constants.callTag) Calling the Audio Delegate")
+        NSLog("\(Constants.callTag) Calling the Audio Delegate")
         result(true)
     }
     func isVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
@@ -160,19 +165,19 @@ import MirrorFlySDK
         let groupJid = args["groupJid"] as? String ?? ""
         let jidList = args["jidList"] as? [String] ?? []
         
-        print("***making group call")
+        NSLog("***making group call")
         do {
             try CallManager.makeGroupVideoCall(jidList, groupID: groupJid) { (isSuccess, message) in
                 
                 
                 if isSuccess{
-                    print("***Make Group Video Call Success")
+                    NSLog("***Make Group Video Call Success")
                 }else{
-                    print("***Make Group Video Call Failed \(message)")
+                    NSLog("***Make Group Video Call Failed \(message)")
                 }
             }
         }catch(let error ) {
-            print("***makeGroupVideoCall Error \(error.localizedDescription)")
+            NSLog("***makeGroupVideoCall Error \(error.localizedDescription)")
         }
         result(true)
     }
@@ -181,17 +186,17 @@ import MirrorFlySDK
         let groupJid = args["groupJid"] as? String ?? ""
         let jidList = args["jidList"] as? [String] ?? []
         
-        print("***making group call")
+        NSLog("***making group call")
         do {
             try CallManager.makeGroupVoiceCall(jidList, groupID: groupJid) { (isSuccess, message) in
                 if isSuccess{
-                    print("***Make Group Voice Call Success")
+                    NSLog("***Make Group Voice Call Success")
                 }else{
-                    print("***Make Group Voice Call Failed \(message)")
+                    NSLog("***Make Group Voice Call Failed \(message)")
                 }
             }
         }catch(let error ) {
-            print("***makeGroupVideoCall Error \(error.localizedDescription)")
+            NSLog("***makeGroupVideoCall Error \(error.localizedDescription)")
         }
         result(true)
     }
@@ -205,7 +210,7 @@ import MirrorFlySDK
                
             } else {
                 let errorMessage = self.getErrorMessage(description: message)
-                print("inviteUsersToOngoingCall Error\(errorMessage.description) ")
+                NSLog("inviteUsersToOngoingCall Error\(errorMessage.description) ")
             }
         };
     }
@@ -236,33 +241,33 @@ import MirrorFlySDK
             jsonArray.append(jsonObject)
         }
         let availableAudioListJson = jsonArray.convertToJson()
-        print("\(tag) availableAudioListJson \(String(describing: availableAudioListJson))")
+        NSLog("\(tag) availableAudioListJson \(String(describing: availableAudioListJson))")
        result(availableAudioListJson)
     }
     
     func routeAudioTo(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let routeType = args["routeType"] as? String ?? ""
-        print("triggerDelegateForOutputs route Type \(routeType)")
+        NSLog("triggerDelegateForOutputs route Type \(routeType)")
         switch (routeType) {
           case "bluetooth":
-            print("****triggerDelegateForOutputs routed to bluetooth")
+            NSLog("****triggerDelegateForOutputs routed to bluetooth")
             AudioManager.shared().routeAudioTo(device: .bluetooth, force: true);
             break;
           case "headset":
-            print("****triggerDelegateForOutputs routed to headset")
+            NSLog("****triggerDelegateForOutputs routed to headset")
             AudioManager.shared().routeAudioTo(device: .headset, force: true);
             break;
           case "receiver":
-            print("****triggerDelegateForOutputs routed to receiver")
+            NSLog("****triggerDelegateForOutputs routed to receiver")
             AudioManager.shared().routeAudioTo(device: .receiver, force: true);
             break;
           case "speaker":
-            print("****triggerDelegateForOutputs routed to speaker")
+            NSLog("****triggerDelegateForOutputs routed to speaker")
             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
           default:
-            print("****triggerDelegateForOutputs routed to default speaker")
+            NSLog("****triggerDelegateForOutputs routed to default speaker")
             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
 //           default:
@@ -296,7 +301,7 @@ import MirrorFlySDK
         
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["userJid"] as? String ?? ""
-        print("isUserVideoMuted jid \(jid)")
+        NSLog("isUserVideoMuted jid \(jid)")
        
         let status = (jid == AppUtils.getMyJid() || jid.isEmpty) ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(jid)
         
@@ -304,14 +309,14 @@ import MirrorFlySDK
                     if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
                         mirrorflyView.updateVideoTrack(userJid: jid.isEmpty ? AppUtils.getMyJid() : jid, updateType: status ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
                     } else {
-                        print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
+                        NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
                     }
                 } else {
-                    print("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
+                    NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
                 }
         
-        print("isUserVideoMuted \(jid == AppUtils.getMyJid() || jid.isEmpty)")
-        print("isUserVideoMuted status \(status)")
+        NSLog("isUserVideoMuted \(jid == AppUtils.getMyJid() || jid.isEmpty)")
+        NSLog("isUserVideoMuted status \(status)")
         result(status)
 
     }
@@ -322,8 +327,8 @@ import MirrorFlySDK
     }
     
     func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-        print("\(Constants.callTag) Disconnecting Call")
-        print("\(Constants.callTag) clearing Mirrorfly Views in method call")
+        NSLog("\(Constants.callTag) Disconnecting Call")
+        NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
         factory?.clearMirrorflyView()
         CallManager.incomingUserJidArr.removeAll()
         CallManager.disconnectCall()
@@ -339,4 +344,57 @@ import MirrorFlySDK
         return errorMessage
     }
     
+    
+    func getUnreadMissedCallCount(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        let missedCallCount = CallLogManager.getUnreadMissedCallCount()
+        NSLog("\(Constants.callTag) getUnreadMissedCallCount --> \(String(describing: getUnreadMissedCallCount))")
+        result(missedCallCount)
+    }
+    
+    func requestVideoCallSwitch(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.requestVideoCallSwitch { isSuccess in
+           result(isSuccess)
+        }
+    }
+    
+    func cancelVideoCallSwitch(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.cancelVideoCallSwitch()
+        result(true)
+    }
+    
+    func declineVideoCallSwitchRequest(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.declineVideoCallSwitchRequest()
+        result(true)
+    }
+    
+    func acceptVideoCallSwitchRequest(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.acceptVideoCallSwitchRequest()
+        CallManager.muteVideo(false)
+        CallManager.setCallType(callType: .Video)
+        AudioManager.shared().autoReRoute()
+        result(true)
+    }
+    
+//    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+//        let args = call.arguments as! Dictionary<String, Any>
+//        let callType = args["callType"] as? String ?? ""
+//        print("***callType \(callType)")
+//        if callType == "video"{
+//
+//            CallManager.setCallType(callType: .Video)
+//            CallManager.muteVideo(false)
+//            CallManager.enableVideo()
+//            AudioManager.shared().autoReRoute()
+//        }else{
+//            CallManager.setCallType(callType: .Audio)
+//            CallManager.muteVideo(true)
+//            CallManager.disableVideo()
+//            AudioManager.shared().autoReRoute()
+//        }
+//        result(true)
+//    }
+//
+//    func reRouteAudio(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+//        AudioManager.shared().autoReRoute()
+//    }
 }

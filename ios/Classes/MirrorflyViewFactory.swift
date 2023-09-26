@@ -17,7 +17,7 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
     
     init(messenger: FlutterBinaryMessenger) {
         self.messenger = messenger
-        print("\(Constants.callTag) MirrorflyViewFactory init")
+        NSLog("\(Constants.callTag) MirrorflyViewFactory init")
         super.init()
     }
     
@@ -28,8 +28,8 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
     ) -> FlutterPlatformView {
         
         let argument = args as? [String: Any]
-        print("\(Constants.callTag) MirrorflyViewFactory argument--> \(String(describing: argument))")
-        print("\(Constants.callTag) MirrorflyViewFactory mirrorflyViews length--> \(mirrorflyViews.count)")
+        NSLog("\(Constants.callTag) MirrorflyViewFactory argument--> \(String(describing: argument))")
+        NSLog("\(Constants.callTag) MirrorflyViewFactory mirrorflyViews length--> \(mirrorflyViews.count)")
         
         let userJid : String? = argument?["userJid"] as? String
         
@@ -40,18 +40,18 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
         if let jidForUniqID = userJid {
 //            uniqueID = generateUniqueID(from: userJid!)
             generateUniqueID(from: jidForUniqID) { uniqueID in
-                print("\(Constants.callTag) MirrorflyViewFactory Unique ID generated \(String(describing: uniqueID))")
+                NSLog("\(Constants.callTag) MirrorflyViewFactory Unique ID generated \(String(describing: uniqueID))")
                 if let generatedUniqueID = uniqueID {
                     viewUniqueID = generatedUniqueID
                     if (self.mirrorflyViews.keys.contains(generatedUniqueID)){
                         if let (_, mirrorflyView) = self.mirrorflyViews[generatedUniqueID] {
-                            print("\(Constants.callTag) MirrorflyViewFactory View Already Exists so disposing \(generatedUniqueID)")
+                            NSLog("\(Constants.callTag) MirrorflyViewFactory View Already Exists so disposing \(generatedUniqueID)")
                             mirrorflyView.dispose()
                             self.mirrorflyViews.removeValue(forKey: generatedUniqueID)
-                            print("\(Constants.callTag) MirrorflyViewFactory View disposed \(generatedUniqueID)")
+                            NSLog("\(Constants.callTag) MirrorflyViewFactory View disposed \(generatedUniqueID)")
                         } else {
                             // Handle case when view is not found
-                            print("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed \(generatedUniqueID)")
+                            NSLog("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed \(generatedUniqueID)")
                         }
                     }
                     mirrorflyView = MirrorflyView(
@@ -60,25 +60,25 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
                         arguments: args,
                         binaryMessenger: self.messenger)
                 }else{
-                    print("\(Constants.callTag) MirrorflyViewFactory Failed to generate uniqueID.")
+                    NSLog("\(Constants.callTag) MirrorflyViewFactory Failed to generate uniqueID.")
                 }
             }
            
         }else{
-            print("\(Constants.callTag) MirrorflyViewFactory userJID is nil")
+            NSLog("\(Constants.callTag) MirrorflyViewFactory userJID is nil")
         }
         
         if let jid = userJid, let mirrorflyViewID = viewUniqueID, let view = mirrorflyView {
             if (mirrorflyViews.keys.contains(mirrorflyViewID)){
-                print("\(Constants.callTag) MirrorflyViewFactory this view for jid - uniq ID: \(mirrorflyViewID) is already inserted in array list ")
+                NSLog("\(Constants.callTag) MirrorflyViewFactory this view for jid - uniq ID: \(mirrorflyViewID) is already inserted in array list ")
             }else{
                 mirrorflyViews[mirrorflyViewID] = (jid, view)
             }
-            print("\(Constants.callTag) MirrorflyViewFactory mirrorflyViews length after assigning--> \(mirrorflyViews.count)")
+            NSLog("\(Constants.callTag) MirrorflyViewFactory mirrorflyViews length after assigning--> \(mirrorflyViews.count)")
         }else{
-            print("\(Constants.callTag) MirrorflyViewFactory Error while inserting the mirrorflyViews array.")
+            NSLog("\(Constants.callTag) MirrorflyViewFactory Error while inserting the mirrorflyViews array.")
         }
-        print("MirrorflyViewFactory returning view")
+        NSLog("MirrorflyViewFactory returning view")
         return mirrorflyView!
     }
     
@@ -110,18 +110,18 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
     public func clearMirrorflyView() -> Void{
         
         if(mirrorflyViews.count > 0){
-            print("\(Constants.callTag) MirrorflyViewFactory clearing Mirrorfly Views")
+            NSLog("\(Constants.callTag) MirrorflyViewFactory clearing Mirrorfly Views")
             for (uniqueID, _) in mirrorflyViews {
                 if let (_, mirrorflyView) = mirrorflyViews[uniqueID] {
-                    print("\(Constants.callTag) MirrorflyViewFactory View disposing \(uniqueID)")
+                    NSLog("\(Constants.callTag) MirrorflyViewFactory View disposing \(uniqueID)")
                     mirrorflyView.dispose()
-                    print("\(Constants.callTag) MirrorflyViewFactory View disposed \(uniqueID)")
+                    NSLog("\(Constants.callTag) MirrorflyViewFactory View disposed \(uniqueID)")
                 } else {
                     // Handle case when view is not found
-                    print("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed")
+                    NSLog("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed")
                 }
                 mirrorflyViews.removeValue(forKey: uniqueID)
-                print("\(Constants.tag) MirrorflyViewFactory after removal of view from Array list size --> \(mirrorflyViews.count)")
+                NSLog("\(Constants.tag) MirrorflyViewFactory after removal of view from Array list size --> \(mirrorflyViews.count)")
                 
             }
 //            mirrorflyViews.removeAll()

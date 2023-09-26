@@ -1547,6 +1547,42 @@ class MockFlyChatFlutterPlatform
     // implement getAvailableFeatures
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool?> requestVideoCallSwitch() {
+    // implement requestVideoCallSwitch
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> cancelVideoCallSwitch() {
+    // implement cancelVideoCallSwitch
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> acceptVideoCallSwitchRequest() {
+    // implement acceptVideoCallSwitchRequest
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> declineVideoCallSwitchRequest() {
+    // implement declineVideoCallSwitchRequest
+    throw UnimplementedError();
+  }
+
+ /* @override
+  Future<bool?> changeCallType({required String switchType}) {
+    // implement changeCallType
+    throw UnimplementedError();
+  }
+
+  @override
+  Future reRouteAudio() {
+    // implement reRouteAudio
+    throw UnimplementedError();
+  }*/
 }
 
 void main() {

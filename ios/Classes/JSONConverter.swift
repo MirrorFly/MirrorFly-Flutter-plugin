@@ -77,6 +77,15 @@ extension Dictionary where Key == String, Value == Any {
 enum JSONParsingError: Error {
     case extractionError
 }
+func convertArrayToJSONString(array: [[String: Any]]) -> String? {
+    do {
+        let jsonData = try JSONSerialization.data(withJSONObject: array, options: [])
+        return String(data: jsonData, encoding: .utf8)
+    } catch {
+        print("Error converting array to JSON string: \(error)")
+        return nil
+    }
+}
 
 
 func extractData(from jsonString: String) -> [String: Any]? {

@@ -13,13 +13,15 @@ class CallAction {
   static const String remoteVideoStatus = "REMOTE_VIDEO_STATUS";
   static const String remoteVideoPaused = "REMOTE_VIDEO_PAUSED";
   static const String remoteVideoResumed = "REMOTE_VIDEO_RESUMED";
-  static const String changeToAudioCall = "CHANGE_TO_AUDIO_CALL";
+  static const String changedToAudioCall = "CHANGE_TO_AUDIO_CALL";
   static const String videoCallConversionCancel =
       "ACTION_VIDEO_CALL_CANCEL_CONVERSION";
   static const String videoCallConversionAccepted =
       "ACTION_VIDEO_CALL_CONVERSION_ACCEPTED";
   static const String videoCallConversionRejected =
       "ACTION_VIDEO_CALL_CONVERSION_REJECTED";
+  static const String videoCallConversionRequest =
+      "ACTION_VIDEO_CALL_CONVERSION";
   static const String remoteVideoAdded = "REMOTE_VIDEO_ADDED";
   static const String audioDeviceChanged = "AUDIO_DEVICE_CHANGED";
   static const String cameraSwitchSuccess = "CAMERA_SWITCH_SUCCESS";

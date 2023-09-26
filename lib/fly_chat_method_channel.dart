@@ -4331,4 +4331,98 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+  @override
+  Future<bool?> requestVideoCallSwitch() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel.invokeMethod('requestVideoCallSwitch');
+      LogMessage.d('requestVideoCallSwitch', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> cancelVideoCallSwitch() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel.invokeMethod('cancelVideoCallSwitch');
+      LogMessage.d('cancelVideoCallSwitch', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> acceptVideoCallSwitchRequest() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel.invokeMethod('acceptVideoCallSwitchRequest');
+      LogMessage.d('acceptVideoCallSwitchRequest', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> declineVideoCallSwitchRequest() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel.invokeMethod('declineVideoCallSwitchRequest');
+      LogMessage.d('declineVideoCallSwitchRequest', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+  /*@override
+  Future<bool?> changeCallType({required String switchType}) async {
+    bool? res;
+    try {
+      LogMessage.d('changeCallType --> switchType', switchType);
+      res = await mirrorFlyCallMethodChannel.invokeMethod('changeCallType', {'switchType': switchType});
+      LogMessage.d('changeCallType', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future reRouteAudio() async {
+    try {
+      await mirrorFlyCallMethodChannel
+          .invokeMethod('reRouteAudio');
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }*/
 }
