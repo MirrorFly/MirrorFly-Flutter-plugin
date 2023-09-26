@@ -367,6 +367,10 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         CallManager.acceptVideoCallSwitchRequest()
         result.success(true)
     }
+    fun declineVideoCallSwitchRequest(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.declineVideoCallSwitchRequest()
+        result.success(true)
+    }
     /*fun changeCallType(call: MethodCall, result: MethodChannel.Result) {
         val callType = call.argument<String>("callType") ?: ""
         if (callType == "video"){

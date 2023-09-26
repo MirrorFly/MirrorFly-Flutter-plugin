@@ -362,8 +362,15 @@ import MirrorFlySDK
         result(true)
     }
     
+    func declineVideoCallSwitchRequest(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.declineVideoCallSwitchRequest()
+        result(true)
+    }
+    
     func acceptVideoCallSwitchRequest(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
         CallManager.acceptVideoCallSwitchRequest()
+        CallManager.muteVideo(false)
+        CallManager.setCallType(callType: .Video)
         AudioManager.shared().autoReRoute()
         result(true)
     }

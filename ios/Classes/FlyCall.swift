@@ -251,12 +251,18 @@ import PushKit
         
         if (callAction == .CHANGE_TO_AUDIO_CALL){
             CallManager.setCallType(callType: .Audio)
-            CallManager.muteVideo(true)
+//            CallManager.muteVideo(true)
             CallManager.disableVideo()
             AudioManager.shared().autoReRoute()
         }
         
         if (callAction == .ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
+//            if AudioManager.shared().audioManagerDelegate == nil {
+//                NSLog("\(Constants.callTag) AudioManager Delegate is Nil, setting new Delegate")
+//                AudioManager.shared().audioManagerDelegate = self
+//            }else{
+//                NSLog("\(Constants.callTag) AudioManager Delegate is already set")
+//            }
             CallManager.setCallType(callType: .Video)
             CallManager.muteVideo(false)
             CallManager.enableVideo()

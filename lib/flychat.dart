@@ -1311,6 +1311,11 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.acceptVideoCallSwitchRequest();
   }
 
+  /// [declineVideoCallSwitchRequest] Used to Decline the Video Call Request from Remote User
+  static Future<dynamic> declineVideoCallSwitchRequest() async {
+    return FlyChatFlutterPlatform.instance.declineVideoCallSwitchRequest();
+  }
+
 /*  /// [changeCallType] Used to Change the Call Type
   /// audio for Switching to Audio Call
   /// video for Switching to Video Call

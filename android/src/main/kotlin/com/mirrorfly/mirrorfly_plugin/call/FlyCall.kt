@@ -169,6 +169,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "acceptVideoCallSwitchRequest" -> {
                 sdk.acceptVideoCallSwitchRequest(call, result)
             }
+            "declineVideoCallSwitchRequest" -> {
+                sdk.declineVideoCallSwitchRequest(call, result)
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }

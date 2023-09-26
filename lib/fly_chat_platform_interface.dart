@@ -1110,6 +1110,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('acceptVideoCallSwitchRequest has not been implemented.');
   }
 
+  Future<dynamic> declineVideoCallSwitchRequest() async {
+    throw UnimplementedError('declineVideoCallSwitchRequest has not been implemented.');
+  }
+
   /*Future<dynamic> changeCallType({required String switchType}) async {
     throw UnimplementedError('changeCallType has not been implemented.');
   }

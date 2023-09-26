@@ -1566,6 +1566,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future<bool?> declineVideoCallSwitchRequest() {
+    // implement declineVideoCallSwitchRequest
+    throw UnimplementedError();
+  }
+
  /* @override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType
