@@ -453,7 +453,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             if(CallManager.isCallConversionRequestAvailable()){
                 val json = JSONObject()
                 json.put("callAction","ACTION_VIDEO_CALL_CONVERSION")
-                json.put("userJid",CallManager.getCurrentUserId())
+                json.put("userJid",CallManager.getEndCallerJid())
                 handler.post {
                     onCallActionStreamHandler.onCallAction?.success(json.toString())
                 }
