@@ -219,7 +219,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             CallStatus.OUTGOING_CALL_TIME_OUT ->{
                 json.put("callStatus","CALL TIME OUT")
             }
-            CallStatus.INCOMING_CALL_TIME_OUT ->{}
+            CallStatus.INCOMING_CALL_TIME_OUT ->{
+                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT)
+            }
             CallStatus.RECONNECTING ->{}
             CallStatus.RECONNECTED ->{}
             CallStatus.CALLING ->{

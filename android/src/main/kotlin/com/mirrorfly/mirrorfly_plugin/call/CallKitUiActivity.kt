@@ -2,9 +2,6 @@ package com.mirrorfly.mirrorfly_plugin.call
 
 import android.Manifest
 import android.app.Activity
-import android.app.PendingIntent
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -14,10 +11,7 @@ import android.os.Looper
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.mirrorfly.mirrorfly_plugin.AppUtils
-import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorfly.mirrorfly_plugin.FlyChatPlugin
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
@@ -324,6 +318,12 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
     override fun onShowCallUiFlutter(callAction: String?) {
         LogMessage.d(tag, "#onShowCallUi $callAction")
         when(callAction){
+            CallStatus.INCOMING_CALL_TIME_OUT->{
+                if(CallManager.isOneToOneCall()){
+                    CallManager.disconnectCall()
+                    finish()
+                }
+            }
             CallConstants.ACTION_SHOW_CALL_UI->{}
             CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
