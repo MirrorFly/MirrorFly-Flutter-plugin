@@ -241,6 +241,8 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("userJid",userJid)
 //        json.put("callType",CallManager.getCallType())
 //        json.put("callMode",CallManager.getCallMode())
+        onCallActionStreamHandler.onCallAction?.success(json.toString())
+        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
         if(callAction == CallAction.ACTION_REMOTE_VIDEO_STATUS){
             if (CallManager.isRemoteVideoPaused(userJid)){
                 json.put("callAction","REMOTE_VIDEO_PAUSED")
@@ -254,8 +256,17 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 }
             }
         }
-        onCallActionStreamHandler.onCallAction?.success(json.toString())
-        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
+        if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
+            if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null && !CallManager.isVideoMuted()) {
+                MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
+                    ?.setLocalTarget()
+            }
+            if(!CallManager.isRemoteVideoPaused(userJid)){
+                if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null && !CallManager.isRemoteVideoMuted(userJid)) {
+                    MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
+                }
+            }
+        }
         //sendCallStatusUpdate(callAction,userJid)
     }
 
@@ -417,6 +428,23 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                             onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
                                 json.toString()
                             )
+                        }
+                    }
+                }
+                CallAction.CALL_REQUEST_RESPONSE->{
+                    handler.post {
+                        if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId()) != null && !CallManager.isVideoMuted() && CallManager.getLocalProxyVideoSink()!=null) {
+                            MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
+                                ?.setLocalTarget()
+                        }
+                        if (!CallManager.isRemoteVideoPaused(CallManager.getEndCallerJid())) {
+                            if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getEndCallerJid()) != null && !CallManager.isRemoteVideoMuted(
+                                    CallManager.getEndCallerJid()
+                                )
+                            ) {
+                                MirrorflyViewHashMap.getMirrorflyView(CallManager.getEndCallerJid())
+                                    ?.setRemoteTarget(CallManager.getEndCallerJid())
+                            }
                         }
                     }
                 }
