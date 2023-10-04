@@ -191,16 +191,22 @@ import PushKit
             return
         }
         
+        if userJID == ""{
+            userJID = AppUtils.getMyJid()
+        }
+        
         if(userJID != "" && callStatus == .DISCONNECTED){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
             factory?.clearMirrorflyView()
         }
 
-        //Added this below condition based on the iOS Sample App. callStatus != .DISCONNECTED is added for flutter, bcz the network disconnection gives the own JID for disconnect.
-        if userJID == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED && callStatus != .DISCONNECTED) {
-            NSLog("#Mirrorfly Call not updating the Call Status for my jid")
-            return
-        }
+        //Added this below condition based on the iOS Sample App.
+        //callStatus != .DISCONNECTED is added for flutter, bcz the network disconnection gives the own JID for disconnect.
+        //callStatus != .ON_HOLD && callStatus != .ON_RESUME for flutter to handle Call Hold and Resume
+//        if userJID == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED && callStatus != .DISCONNECTED && callStatus != .ON_HOLD && callStatus != .ON_RESUME) {
+//            NSLog("#Mirrorfly Call not updating the Call Status for my jid")
+//            return
+//        }
         
         if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
             NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
