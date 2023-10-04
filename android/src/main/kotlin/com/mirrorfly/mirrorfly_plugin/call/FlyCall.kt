@@ -296,16 +296,18 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
     }
 
     override fun onVideoTrackAdded(userJid: String) {
-        Log.d(tag,"#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid)}")
-        val json = JSONObject()
-        json.put("userJid",userJid)
-        onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(json.toString())
-        if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
-            MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
-        }else{
-            Log.d(tag,"#onVideoTrackAdded view not created")
+        Log.d(tag,"#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid)} isCallConversionRequestAvailable : ${CallManager.isCallConversionRequestAvailable()}")
+        if(!CallManager.isCallConversionRequestAvailable()) {
+            val json = JSONObject()
+            json.put("userJid", userJid)
+            onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(json.toString())
+            if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
+                MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
+            } else {
+                Log.d(tag, "#onVideoTrackAdded view not created")
+            }
+            onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
         }
-        onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
     }
 
     override fun onLocalVideoTrackAdded() {
@@ -331,7 +333,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)
             }
         }else if(muteEvent==MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE){
-            if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+            if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null&& !CallManager.isCallConversionRequestAvailable()) {
                 MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
             }
         }
@@ -481,6 +483,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             CallAction.ACTION_CLOSE_SERVER_CONNECTION->{}*/
             }
         }else{
+            LogMessage.d(tag, "#onShowCallUi isCallConversionRequestAvailable ${CallManager.isCallConversionRequestAvailable()}")
             if(CallManager.isCallConversionRequestAvailable()){
                 CallAudioManager.getInstance(context).playIncomingRequestTone()
                 val json = JSONObject()
