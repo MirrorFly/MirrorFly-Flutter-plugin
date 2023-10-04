@@ -268,7 +268,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             }
         }
         if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_REJECTED || callAction == CallAction.ACTION_VIDEO_CALL_CANCEL_CONVERSION || callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
-            CallAudioManager.getInstance(context).stopIncomingRequestTone()
+            //CallAudioManager.getInstance(context).stopIncomingRequestTone()
         }
         //sendCallStatusUpdate(callAction,userJid)
     }
@@ -485,7 +485,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         }else{
             LogMessage.d(tag, "#onShowCallUi isCallConversionRequestAvailable ${CallManager.isCallConversionRequestAvailable()}")
             if(CallManager.isCallConversionRequestAvailable()){
-                CallAudioManager.getInstance(context).playIncomingRequestTone()
+                //CallAudioManager.getInstance(context).playIncomingRequestTone()
                 val json = JSONObject()
                 json.put("callAction","ACTION_VIDEO_CALL_CONVERSION")
                 json.put("userJid",CallManager.getEndCallerJid())
