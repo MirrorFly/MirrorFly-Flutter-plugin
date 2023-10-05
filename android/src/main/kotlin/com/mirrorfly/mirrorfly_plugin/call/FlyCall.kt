@@ -219,7 +219,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             CallStatus.OUTGOING_CALL_TIME_OUT ->{
                 json.put("callStatus","CALL TIME OUT")
             }
-            CallStatus.INCOMING_CALL_TIME_OUT ->{}
+            CallStatus.INCOMING_CALL_TIME_OUT ->{
+                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT)
+            }
             CallStatus.RECONNECTING ->{}
             CallStatus.RECONNECTED ->{}
             CallStatus.CALLING ->{
@@ -239,6 +241,8 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("userJid",userJid)
 //        json.put("callType",CallManager.getCallType())
 //        json.put("callMode",CallManager.getCallMode())
+        onCallActionStreamHandler.onCallAction?.success(json.toString())
+        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
         if(callAction == CallAction.ACTION_REMOTE_VIDEO_STATUS){
             if (CallManager.isRemoteVideoPaused(userJid)){
                 json.put("callAction","REMOTE_VIDEO_PAUSED")
@@ -252,8 +256,20 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 }
             }
         }
-        onCallActionStreamHandler.onCallAction?.success(json.toString())
-        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
+        if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
+            if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null && !CallManager.isVideoMuted()) {
+                MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
+                    ?.setLocalTarget()
+            }
+            if(!CallManager.isRemoteVideoPaused(userJid)){
+                if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null && !CallManager.isRemoteVideoMuted(userJid)) {
+                    MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
+                }
+            }
+        }
+        if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_REJECTED || callAction == CallAction.ACTION_VIDEO_CALL_CANCEL_CONVERSION || callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
+            //CallAudioManager.getInstance(context).stopIncomingRequestTone()
+        }
         //sendCallStatusUpdate(callAction,userJid)
     }
 
@@ -280,16 +296,18 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
     }
 
     override fun onVideoTrackAdded(userJid: String) {
-        Log.d(tag,"#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid)}")
-        val json = JSONObject()
-        json.put("userJid",userJid)
-        onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(json.toString())
-        if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
-            MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
-        }else{
-            Log.d(tag,"#onVideoTrackAdded view not created")
+        Log.d(tag,"#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid)} isCallConversionRequestAvailable : ${CallManager.isCallConversionRequestAvailable()}")
+        if(!CallManager.isCallConversionRequestAvailable()) {
+            val json = JSONObject()
+            json.put("userJid", userJid)
+            onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(json.toString())
+            if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
+                MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
+            } else {
+                Log.d(tag, "#onVideoTrackAdded view not created")
+            }
+            onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
         }
-        onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
     }
 
     override fun onLocalVideoTrackAdded() {
@@ -315,7 +333,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)
             }
         }else if(muteEvent==MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE){
-            if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+            if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null&& !CallManager.isCallConversionRequestAvailable()) {
                 MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
             }
         }
@@ -418,6 +436,23 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                         }
                     }
                 }
+                CallAction.CALL_REQUEST_RESPONSE->{
+                    handler.post {
+                        if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId()) != null && !CallManager.isVideoMuted() && CallManager.getLocalProxyVideoSink()!=null) {
+                            MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
+                                ?.setLocalTarget()
+                        }
+                        if (!CallManager.isRemoteVideoPaused(CallManager.getEndCallerJid())) {
+                            if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getEndCallerJid()) != null && !CallManager.isRemoteVideoMuted(
+                                    CallManager.getEndCallerJid()
+                                )
+                            ) {
+                                MirrorflyViewHashMap.getMirrorflyView(CallManager.getEndCallerJid())
+                                    ?.setRemoteTarget(CallManager.getEndCallerJid())
+                            }
+                        }
+                    }
+                }
                 /*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}
@@ -448,10 +483,12 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             CallAction.ACTION_CLOSE_SERVER_CONNECTION->{}*/
             }
         }else{
+            LogMessage.d(tag, "#onShowCallUi isCallConversionRequestAvailable ${CallManager.isCallConversionRequestAvailable()}")
             if(CallManager.isCallConversionRequestAvailable()){
+                //CallAudioManager.getInstance(context).playIncomingRequestTone()
                 val json = JSONObject()
                 json.put("callAction","ACTION_VIDEO_CALL_CONVERSION")
-                json.put("userJid",CallManager.getCurrentUserId())
+                json.put("userJid",CallManager.getEndCallerJid())
                 handler.post {
                     onCallActionStreamHandler.onCallAction?.success(json.toString())
                 }

@@ -8,7 +8,17 @@ import com.mirrorflysdk.flycall.webrtc.CallStatus
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.Constants
+import com.mirrorflysdk.flycommons.LogMessage
 
+fun CallManager.getEndCallerJid() : String {
+    return try {
+        if (getCallUsersList()
+                .isNotEmpty()) getCallUsersList().first() else ""
+    } catch (e: Exception) {
+        LogMessage.e("getEndCallerJid", "$e")
+        ""
+    }
+}
 fun CallManager.isAudioCall() = getCallType() == CallType.AUDIO_CALL
 fun CallManager.isOutgoingCall() = getCallDirection() == CallDirection.OUTGOING_CALL
 
