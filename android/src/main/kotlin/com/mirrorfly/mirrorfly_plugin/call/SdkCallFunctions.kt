@@ -200,8 +200,8 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     fun makeGroupVoiceCall(call: MethodCall,result: MethodChannel.Result){
         if (CallManager.isAudioCallPermissionsGranted(false)) {
             val groupJid = call.argument<String>("groupJid") ?: ""
-            val jidList = call.argument<String>("jidList") ?: ""
-            CallManager.makeGroupVoiceCall(jidList.split(",") as ArrayList<String>, groupJid, object : CallActionListener {
+            val jidList = call.argument<List<String>>("jidList")
+            CallManager.makeGroupVoiceCall(jidList as ArrayList<String>, groupJid, object : CallActionListener {
                 override fun onResponse(isSuccess: Boolean, message: String) {
                     LogMessage.d("makeGroupVoiceCall", "success $isSuccess message $message")
                     result.success(isSuccess)
