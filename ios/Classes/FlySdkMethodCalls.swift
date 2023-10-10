@@ -176,7 +176,7 @@ import UIKit
         
         NSLog("\(Constants.tag) Register Device Token \(deviceToken)")
 
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT, pushServerType: .firebase) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,userType: "d", pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 

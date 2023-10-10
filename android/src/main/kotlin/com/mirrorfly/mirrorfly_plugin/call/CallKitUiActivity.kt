@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.mirrorfly.mirrorfly_plugin.AppUtils
@@ -40,22 +41,40 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         LogMessage.d("CallKitUiActivity", "onCreate")
         val userName = findViewById<TextView>(R.id.tvNameCaller)
         callStatusTextView = findViewById<TextView>(R.id.tvNumber)
+        val imageCallMember1 = findViewById<CircleImageView>(R.id.image_call_member_1)
+        val imageCallMember2 = findViewById<CircleImageView>(R.id.image_call_member_2)
+        val imageCallMember3 = findViewById<CircleImageView>(R.id.image_call_member_3)
+        val imageCallMember4 = findViewById<CircleImageView>(R.id.image_call_member_4)
         val userImage = findViewById<CircleImageView>(R.id.ivAvatar)
         val accept = findViewById<ImageView>(R.id.ivAcceptCall)
         accept.setOnClickListener { attendCall() }
         val decline = findViewById<ImageView>(R.id.ivDeclineCall)
         decline.setOnClickListener { declineCall() }
 
+        LogMessage.d(tag,CallManager.getCallUsersList().joinToString(","))
         if (CallManager.isOneToOneCall()) {
             if(CallManager.getCallUsersList().isNotEmpty()) {
-                val user = CallManager.getCallUsersList()[0]
-                val name = ContactManager.getDisplayName(user)
-                userName.text = name
-                val profile = FlyCore.getUserProfile(user)
-                Utils.loadGlideImage(this, userImage, name, profile?.image ?: "")
+                if(CallManager.getCallUsersList().size == 1) {
+                    val user = CallManager.getCallUsersList()[0]
+                    val name = ContactManager.getDisplayName(user)
+                    userName.text = name
+                    val profile = FlyCore.getUserProfile(user)
+                    Utils.loadGlideImage(this, userImage, name, profile?.image ?: "")
+                }
             }else{
                 finish()
             }
+        }else{
+            userImage.visibility = View.INVISIBLE
+            val membersName = Utils.setGroupMemberProfile(
+                this,
+                CallManager.getCallUsersList(),
+                imageCallMember1,
+                imageCallMember2,
+                imageCallMember3,
+                imageCallMember4
+            )
+            userName.text = membersName
         }
 
         setUpCallDataAndUI()
