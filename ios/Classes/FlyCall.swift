@@ -140,7 +140,15 @@ import PushKit
     }
     
     func getGroupName(_ groupId: String) {
-        
+        if isHideNotificationContent {
+            CallManager.getContactNames(IncomingUserName: [APP_NAME])
+        }else{
+            if let groupContact =  ChatManager.getContact(jid: groupId.lowercased()){
+                CallManager.getContactNames(IncomingUserName: [groupContact.name])
+            }else{
+                CallManager.getContactNames(IncomingUserName: ["Call from Group"])
+            }
+        }
     }
     
     func sendCallMessage(groupCallDetails: MirrorFlySDK.GroupCallDetails, users: [String], invitedUsers: [String]) {
@@ -336,7 +344,7 @@ import PushKit
     }
     
     func onUserSpeaking(userId: String, audioLevel: Int) {
-        NSLog("#MirrorflyCall user speaking --> \(userId) audioLevel \(audioLevel)")
+//        NSLog("#MirrorflyCall user speaking --> \(userId) audioLevel \(audioLevel)")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
@@ -363,7 +371,7 @@ import PushKit
     }
     
     func onUserStoppedSpeaking(userId: String) {
-        NSLog("#MirrorflyCall user stopped speaking --> \(userId)")
+//        NSLog("#MirrorflyCall user stopped speaking --> \(userId)")
         if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
