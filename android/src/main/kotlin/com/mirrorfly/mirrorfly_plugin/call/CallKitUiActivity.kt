@@ -179,6 +179,11 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         super.onStop()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        FlutterCall.setListener(null)
+    }
+
     private fun checkPermission() {
         if (CallManager.getCallDirection() == CallDirection.INCOMING_CALL) {
             if (CallManager.getCallType() == CallType.AUDIO_CALL && !CallManager.isAudioCallPermissionsGranted(false)) {
