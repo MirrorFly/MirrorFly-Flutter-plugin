@@ -133,6 +133,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "isOneToOneCall"->{
                 result.success(CallManager.isOneToOneCall())
             }
+            "getGroupID"->{
+                result.success(CallManager.getGroupID())
+            }
             "getCallType"->{
                 result.success(CallManager.getCallType())
             }

@@ -162,7 +162,7 @@ class Utils {
         fun View.gone() {
             let { visibility = View.GONE }
         }
-        private fun makeViewsGone(vararg views: View) {
+        fun makeViewsGone(vararg views: View) {
             views.map { it.gone() }
         }
 
@@ -204,24 +204,28 @@ class Utils {
             var isMaxMemberNameNotReached = true
             for (i in callUsers.indices) {
                 val pair = getNameAndProfileDetails(callUsers[i])
+                if(i == 1){
+                    imageCallMember2.show()
+                    loadUserProfilePic(context, imageCallMember2, pair)
+                }else if(i == 2){
+                    imageCallMember3.show()
+                    loadUserProfilePic(context, imageCallMember3, pair)
+                }
                 if (i == 0) {
                     val actualMemberName = getActualMemberName(StringBuilder(pair.first))
                     membersName = actualMemberName.first
                     isMaxMemberNameNotReached = actualMemberName.second
+                    imageCallMember1.show()
                     loadUserProfilePic(context, imageCallMember1, pair)
                 } else if (isMaxMemberNameNotReached && i == 1) {
                     membersName.append(", ").append(pair.first)
                     val actualMemberName = getActualMemberName(membersName)
                     membersName = actualMemberName.first
                     isMaxMemberNameNotReached = actualMemberName.second
-                    imageCallMember2.show()
-                    loadUserProfilePic(context, imageCallMember2, pair)
                 } else if (isMaxMemberNameNotReached && i == 2) {
                     membersName.append(", ").append(pair.first)
                     val actualMemberName = getActualMemberName(membersName)
                     membersName = actualMemberName.first
-                    imageCallMember3.show()
-                    loadUserProfilePic(context, imageCallMember3, pair)
                 } else {
                     membersName.append(" (+").append(callUsers.size - i).append(")")
                     imageCallMember4.show()

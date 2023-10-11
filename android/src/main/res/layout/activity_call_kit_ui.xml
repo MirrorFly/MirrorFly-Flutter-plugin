@@ -22,87 +22,52 @@
         android:orientation="vertical">
 
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/llBackgroundAnimation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/base_margin_revert_x5"
             android:layout_weight="1"
-            android:fitsSystemWindows="false">
+            android:fitsSystemWindows="false"
+            android:gravity="center|top"
+            android:orientation="vertical">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:visibility="visible">
-
-                <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
-                    android:id="@+id/image_call_member_1"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:gravity="center"
-                    android:padding="2dp"
-                    android:src="@drawable/profile_img"
-                    android:visibility="gone" />
-
-                <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
-                    android:id="@+id/image_call_member_2"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:gravity="center"
-                    android:padding="2dp"
-                    android:src="@drawable/profile_img"
-                    android:visibility="gone" />
-
-                <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
-                    android:id="@+id/image_call_member_3"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:gravity="center"
-                    android:padding="2dp"
-                    android:src="@drawable/profile_img"
-                    android:visibility="gone" />
-
-                <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
-                    android:id="@+id/image_call_member_4"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:gravity="center"
-                    android:padding="2dp"
-                    android:src="@drawable/profile_img"
-                    android:visibility="gone" />
-            </LinearLayout>
-
-            <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
-                android:id="@+id/ivAvatar"
-                android:layout_width="@dimen/size_avatar"
-                android:layout_height="@dimen/size_avatar"
-                android:layout_centerInParent="true"
-                android:src="@drawable/profile_img" />
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/ivAvatar"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/base_margin_x2"
+                android:layout_marginTop="30dp"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tvNameCaller"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvNumber"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:textColor="@color/action_text"
+                    android:textSize="@dimen/size_text_action"
+                    tools:text="Some info" />
+
+                <TextView
+                    android:id="@+id/tvNameCaller"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:autoSizeMaxTextSize="@dimen/size_text_name"
                     android:autoSizeMinTextSize="12sp"
                     android:autoSizeStepGranularity="2sp"
                     android:autoSizeTextType="uniform"
                     android:ellipsize="end"
+                    android:gravity="center"
                     android:maxLines="1"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/size_text_name"
                     app:autoSizeMaxTextSize="@dimen/size_text_name"
@@ -114,19 +79,93 @@
                     tools:text="Caller Name" />
 
                 <TextView
-                    android:id="@+id/tvNumber"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/participants"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="16dp"
+                    android:autoSizeMaxTextSize="@dimen/size_text_name"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeStepGranularity="2sp"
+                    android:autoSizeTextType="uniform"
                     android:ellipsize="end"
+                    android:gravity="center"
                     android:maxLines="1"
-                    android:textColor="@color/action_text"
-                    android:textSize="@dimen/size_text_action"
-                    tools:text="Some info" />
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/size_text_name"
+                    android:visibility="gone"
+                    app:autoSizeMaxTextSize="@dimen/size_text_name"
+                    app:autoSizeMinTextSize="12sp"
+                    app:autoSizeStepGranularity="2sp"
+                    app:autoSizeTextType="uniform"
+                    tools:ignore="MissingPrefix"
+                    tools:targetApi="o" />
 
             </LinearLayout>
 
-        </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="@dimen/base_margin_x2"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                    <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+                        android:id="@+id/image_call_member_1"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:gravity="center"
+                        android:padding="2dp"
+                        android:src="@drawable/profile_img"
+                        android:visibility="gone" />
+
+                    <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+                        android:id="@+id/image_call_member_2"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:gravity="center"
+                        android:padding="2dp"
+                        android:src="@drawable/profile_img"
+                        android:visibility="gone" />
+
+                    <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+                        android:id="@+id/image_call_member_3"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:gravity="center"
+                        android:padding="2dp"
+                        android:src="@drawable/profile_img"
+                        android:visibility="gone" />
+
+                    <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+                        android:id="@+id/image_call_member_4"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:gravity="center"
+                        android:padding="2dp"
+                        android:src="@drawable/profile_img"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+                    android:id="@+id/ivAvatar"
+                    android:layout_width="@dimen/size_avatar"
+                    android:layout_height="@dimen/size_avatar"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/profile_img" />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
 
 
         <Space

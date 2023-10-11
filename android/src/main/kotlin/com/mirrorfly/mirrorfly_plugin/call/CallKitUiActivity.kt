@@ -17,7 +17,9 @@ import com.mirrorfly.mirrorfly_plugin.FlyChatPlugin
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
 import com.mirrorflysdk.api.FlyCore
+import com.mirrorflysdk.api.chat.ProfileEventsListener
 import com.mirrorflysdk.api.contacts.ContactManager
+import com.mirrorflysdk.api.contacts.ProfileDetails
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.CallAction
 import com.mirrorflysdk.flycall.webrtc.CallDirection
@@ -29,7 +31,7 @@ import com.mirrorflysdk.flycommons.LogMessage
 import org.json.JSONObject
 
 
-class CallKitUiActivity : Activity(), CallUiFlutterListener {
+class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListener {
     private val tag = "CallKitUiActivity"
     private lateinit var callStatusTextView : TextView
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,8 +53,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
         val decline = findViewById<ImageView>(R.id.ivDeclineCall)
         decline.setOnClickListener { declineCall() }
 
-        LogMessage.d(tag,CallManager.getCallUsersList().joinToString(","))
-        if (CallManager.isOneToOneCall()) {
+        /*if (CallManager.isOneToOneCall()) {
             if(CallManager.getCallUsersList().isNotEmpty()) {
                 if(CallManager.getCallUsersList().size == 1) {
                     val user = CallManager.getCallUsersList()[0]
@@ -75,9 +76,58 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
                 imageCallMember4
             )
             userName.text = membersName
-        }
+        }*/
+        updateUsersProfile()
 
         setUpCallDataAndUI()
+    }
+
+    private fun updateUsersProfile(){
+        LogMessage.d(tag,CallManager.getCallUsersList().joinToString(","))
+        val imageCallMember1 = findViewById<CircleImageView>(R.id.image_call_member_1)
+        val imageCallMember2 = findViewById<CircleImageView>(R.id.image_call_member_2)
+        val imageCallMember3 = findViewById<CircleImageView>(R.id.image_call_member_3)
+        val imageCallMember4 = findViewById<CircleImageView>(R.id.image_call_member_4)
+        val userImage = findViewById<CircleImageView>(R.id.ivAvatar)
+        val userName = findViewById<TextView>(R.id.tvNameCaller)
+        val participants = findViewById<TextView>(R.id.participants)
+        val users = CallManager.getCallUsersList()
+        if(users.isNotEmpty()) {
+            if(!CallManager.isOneToOneCall()) {
+                if(CallManager.getGroupID().isNotEmpty()){
+                    userImage.visibility = View.VISIBLE
+                    userName.visibility = View.VISIBLE
+                    val name = ContactManager.getDisplayName(CallManager.getGroupID())
+                    userName.text = name
+                    val profile = FlyCore.getUserProfile(CallManager.getGroupID())
+                    Utils.loadGlideImage(this, userImage, name, profile?.image ?: "")
+                }else {
+                    userImage.visibility = View.GONE
+                    userName.visibility = View.GONE
+                }
+                val membersName = Utils.setGroupMemberProfile(
+                    this,
+                    users,
+                    imageCallMember1,
+                    imageCallMember2,
+                    imageCallMember3,
+                    imageCallMember4
+                )
+                participants.text = membersName
+                participants.visibility = View.VISIBLE
+            }else{
+                Utils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
+                userName.visibility = View.VISIBLE
+                userImage.visibility = View.VISIBLE
+                val name = ContactManager.getDisplayName(CallManager.getEndCallerJid())
+                userName.text = name
+                val profile = FlyCore.getUserProfile(CallManager.getEndCallerJid())
+                Utils.loadGlideImage(this, userImage, name, profile?.image ?: "")
+            }
+        }else{
+            finish()
+        }
+
     }
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -369,7 +419,9 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
                     finish()
                 }
             }
-            CallAction.ACTION_REMOTE_OTHER_BUSY->{}
+            CallAction.ACTION_REMOTE_OTHER_BUSY->{
+                updateUsersProfile()
+            }
             CallAction.ACTION_REMOTE_BUSY->{
                 if(CallManager.isOneToOneCall()){
                     CallManager.disconnectCall()
@@ -400,6 +452,74 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener {
 
     override fun onCallStatusUpdated(callStatus: String, userJid: String){
         handleCallStatusMessages(callStatus,userJid)
+    }
+
+    override fun blockedThisUser(jid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun myProfileUpdated(isSuccess: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onAdminBlockedOtherUser(jid: String, type: String, status: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onAdminBlockedUser(jid: String, status: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onContactSyncComplete(isSuccess: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onLoggedOut() {
+        TODO("Not yet implemented")
+    }
+
+    override fun unblockedThisUser(jid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun userBlockedMe(jid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun userCameOnline(jid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun userDeletedHisProfile(jid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun userProfileFetched(jid: String, profileDetails: ProfileDetails) {
+        TODO("Not yet implemented")
+    }
+
+    override fun userUnBlockedMe(jid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun userUpdatedHisProfile(jid: String) {
+        updateUsersProfile()
+    }
+
+    override fun userWentOffline(jid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun usersIBlockedListFetched(jidList: List<String>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun usersProfilesFetched() {
+        TODO("Not yet implemented")
+    }
+
+    override fun usersWhoBlockedMeListFetched(jidList: List<String>) {
+        TODO("Not yet implemented")
     }
 
     /*override fun onShowCallUiFlutter(callAction: String?) {
