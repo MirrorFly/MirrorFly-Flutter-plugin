@@ -1439,6 +1439,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+   @override
+  Future<bool> makeGroupVoiceCall(String groupJid,List<String>? jidList) {
+    // implement makeGroupVoiceCall
+    throw UnimplementedError();
+  }
+
   @override
   Future getCallDirection() {
     // implement getCallDirection
@@ -1569,6 +1575,12 @@ class MockFlyChatFlutterPlatform
   @override
   Future<bool?> declineVideoCallSwitchRequest() {
     // implement declineVideoCallSwitchRequest
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> getMaxCallUsersCount() {
+    // implement getMaxCallUsersCount
     throw UnimplementedError();
   }
 

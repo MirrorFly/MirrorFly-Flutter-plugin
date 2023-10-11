@@ -4053,6 +4053,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<bool> makeGroupVoiceCall(String groupJid,List<String>? jidList) async {
+    bool val;
+    try {
+      LogMessage.d('makeGroupVoiceCall :', "groupJid : $groupJid, jidList : $jidList");
+      val = await mirrorFlyCallMethodChannel
+          .invokeMethod('makeGroupVoiceCall', {"groupJid": groupJid,"jidList": jidList});
+      return val;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
   Future<dynamic> getCallUsersList() async {
     dynamic callList;
     try {
@@ -4386,6 +4403,22 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       res = await mirrorFlyCallMethodChannel.invokeMethod('declineVideoCallSwitchRequest');
       LogMessage.d('declineVideoCallSwitchRequest', '$res');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<int?> getMaxCallUsersCount() async {
+    int? res;
+    try {
+      res = await mirrorFlyCallMethodChannel.invokeMethod('getMaxCallUsersCount');
+      LogMessage.d('getMaxCallUsersCount', '$res');
       return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");

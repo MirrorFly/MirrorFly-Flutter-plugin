@@ -1178,6 +1178,14 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.makeVoiceCall(userJid);
   }
 
+  ///Used as a [makeGroupVoiceCall] class for [Mirrorfly]
+  /// * @property [groupJid] used to make a Group voice call to this groupJid
+  /// * @property [jidList] used to make a Group voice call to this user jid list
+  ///used to make a voice call
+  static Future<bool> makeGroupVoiceCall({String groupJid = "", List<String> jidList = const []}) async {
+    return FlyChatFlutterPlatform.instance.makeGroupVoiceCall(groupJid,jidList);
+  }
+
   ///Used as a [getCallUsersList] class for [Mirrorfly]
   ///used to get user list on the call
   static Future<dynamic> getCallUsersList() async {
@@ -1314,6 +1322,11 @@ class Mirrorfly {
   /// [declineVideoCallSwitchRequest] Used to Decline the Video Call Request from Remote User
   static Future<dynamic> declineVideoCallSwitchRequest() async {
     return FlyChatFlutterPlatform.instance.declineVideoCallSwitchRequest();
+  }
+
+  /// [getMaxCallUsersCount] Used to get Maximum call users count
+  static Future<int?> getMaxCallUsersCount() async {
+    return FlyChatFlutterPlatform.instance.getMaxCallUsersCount();
   }
 
 /*  /// [changeCallType] Used to Change the Call Type

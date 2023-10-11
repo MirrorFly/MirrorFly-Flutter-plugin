@@ -172,6 +172,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "declineVideoCallSwitchRequest" -> {
                 sdk.declineVideoCallSwitchRequest(call, result)
             }
+            "getMaxCallUsersCount" -> {
+                result.success(CallManager.getMaxCallUsersCount())
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }
