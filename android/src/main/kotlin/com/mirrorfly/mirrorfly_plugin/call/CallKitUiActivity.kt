@@ -94,17 +94,6 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         val users = CallManager.getCallUsersList()
         if(users.isNotEmpty()) {
             if(!CallManager.isOneToOneCall()) {
-                if(CallManager.getGroupID().isNotEmpty()){
-                    userImage.visibility = View.VISIBLE
-                    userName.visibility = View.VISIBLE
-                    val name = ContactManager.getDisplayName(CallManager.getGroupID())
-                    userName.text = name
-                    val profile = FlyCore.getUserProfile(CallManager.getGroupID())
-                    Utils.loadGlideImage(this, userImage, name, profile?.image ?: "")
-                }else {
-                    userImage.visibility = View.GONE
-                    userName.visibility = View.GONE
-                }
                 val membersName = Utils.setGroupMemberProfile(
                     this,
                     users,
@@ -115,6 +104,18 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 )
                 participants.text = membersName
                 participants.visibility = View.VISIBLE
+                if(CallManager.getGroupID().isNotEmpty()){
+                    Utils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
+                    userImage.visibility = View.VISIBLE
+                    userName.visibility = View.VISIBLE
+                    val name = ContactManager.getDisplayName(CallManager.getGroupID())
+                    userName.text = name
+                    val profile = FlyCore.getUserProfile(CallManager.getGroupID())
+                    Utils.loadGlideImage(this, userImage, name, profile?.image ?: "")
+                }else {
+                    userImage.visibility = View.GONE
+                    userName.visibility = View.GONE
+                }
             }else{
                 Utils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
                 userName.visibility = View.VISIBLE
