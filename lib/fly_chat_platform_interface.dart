@@ -1029,6 +1029,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('makeGroupVoiceCall has not been implemented.');
   }
 
+  Future<bool> makeGroupVideoCall(String groupJid,List<String>? jidList) async {
+    throw UnimplementedError('makeGroupVideoCall has not been implemented.');
+  }
+
   Future<dynamic> getCallUsersList() async {
     throw UnimplementedError('getCallUsers has not been implemented.');
   }

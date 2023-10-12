@@ -212,8 +212,8 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     fun makeGroupVideoCall(call: MethodCall,result: MethodChannel.Result){
         LogMessage.d(tag,"muteVideo")
         val groupJid = call.argument<String>("groupJid") ?: ""
-        val jidList = call.argument<String>("jidList") ?: ""
-        CallManager.makeGroupVideoCall(jidList.split(",") as ArrayList<String>,groupJid,object: CallActionListener{
+        val jidList = call.argument<List<String>>("jidList")
+        CallManager.makeGroupVideoCall(jidList as ArrayList<String>,groupJid,object: CallActionListener{
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d("makeGroupVideoCall", "success $isSuccess message $message")
                 result.success(isSuccess)

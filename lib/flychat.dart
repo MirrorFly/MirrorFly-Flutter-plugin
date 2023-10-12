@@ -1186,6 +1186,14 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.makeGroupVoiceCall(groupJid,jidList);
   }
 
+  ///Used as a [makeGroupVideoCall] class for [Mirrorfly]
+  /// * @property [groupJid] used to make a Group video call to this groupJid
+  /// * @property [jidList] used to make a Group video call to this user jid list
+  ///used to make a video call
+  static Future<bool> makeGroupVideoCall({String groupJid = "", List<String> jidList = const []}) async {
+    return FlyChatFlutterPlatform.instance.makeGroupVideoCall(groupJid,jidList);
+  }
+
   ///Used as a [getCallUsersList] class for [Mirrorfly]
   ///used to get user list on the call
   static Future<dynamic> getCallUsersList() async {

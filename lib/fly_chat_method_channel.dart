@@ -4070,6 +4070,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<bool> makeGroupVideoCall(String groupJid,List<String>? jidList) async {
+    bool val;
+    try {
+      LogMessage.d('makeGroupVideoCall :', "groupJid : $groupJid, jidList : $jidList");
+      val = await mirrorFlyCallMethodChannel
+          .invokeMethod('makeGroupVideoCall', {"groupJid": groupJid,"jidList": jidList});
+      return val;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
   Future<dynamic> getCallUsersList() async {
     dynamic callList;
     try {

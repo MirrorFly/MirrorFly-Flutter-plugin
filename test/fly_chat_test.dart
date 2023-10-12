@@ -1445,9 +1445,15 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-   @override
+  @override
   Future<bool> makeGroupVoiceCall(String groupJid,List<String>? jidList) {
     // implement makeGroupVoiceCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> makeGroupVideoCall(String groupJid,List<String>? jidList) {
+    // implement makeGroupVideoCall
     throw UnimplementedError();
   }
 
