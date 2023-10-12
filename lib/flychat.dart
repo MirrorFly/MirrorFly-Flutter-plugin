@@ -1194,13 +1194,19 @@ class Mirrorfly {
 
   ///Used as a [getCallType] class for [Mirrorfly]
   ///used to get type of the current call, audio or video
-  static Future<dynamic> getCallType() async {
+  static Future<String> getCallType() async {
     return FlyChatFlutterPlatform.instance.getCallType();
+  }
+
+  ///Used as a [getGroupId] class for [Mirrorfly]
+  ///used to get type of the current call, audio or video
+  static Future<String> getGroupId() async {
+    return FlyChatFlutterPlatform.instance.getGroupId();
   }
 
   ///Used as a [getCallDirection] class for [Mirrorfly]
   ///used to get current call direction, incoming or outgoing.
-  static Future<dynamic> getCallDirection() async {
+  static Future<String> getCallDirection() async {
     return FlyChatFlutterPlatform.instance.getCallDirection();
   }
 

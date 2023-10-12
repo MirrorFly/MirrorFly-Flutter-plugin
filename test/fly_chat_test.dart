@@ -1384,8 +1384,14 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future getCallType() {
+  Future<String> getCallType() {
     // implement getCallType
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getGroupId() {
+    // implement getGroupId
     throw UnimplementedError();
   }
 
@@ -1446,7 +1452,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future getCallDirection() {
+  Future<String> getCallDirection() {
     // implement getCallDirection
     throw UnimplementedError();
   }

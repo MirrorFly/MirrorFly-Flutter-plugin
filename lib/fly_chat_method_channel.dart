@@ -4087,8 +4087,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getCallType() async {
-    dynamic callType;
+  Future<String> getCallType() async {
+    String callType;
     try {
       LogMessage.d('getCallType :', '');
       callType = await mirrorFlyCallMethodChannel.invokeMethod('getCallType');
@@ -4103,13 +4103,29 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getCallDirection() async {
-    dynamic callType;
+  Future<String> getGroupId() async {
+    String getGroupId;
+    try {
+      LogMessage.d('getGroupId :', '');
+      getGroupId = await mirrorFlyCallMethodChannel.invokeMethod('getGroupID');
+      return getGroupId;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> getCallDirection() async {
+    String callDirection;
     try {
       LogMessage.d('getCallDirection :', '');
-      callType =
+      callDirection =
           await mirrorFlyCallMethodChannel.invokeMethod('getCallDirection');
-      return callType;
+      return callDirection;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;

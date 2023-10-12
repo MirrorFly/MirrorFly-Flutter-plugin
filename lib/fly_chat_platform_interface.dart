@@ -1033,11 +1033,15 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getCallUsers has not been implemented.');
   }
 
-  Future<dynamic> getCallType() async {
+  Future<String> getCallType() async {
     throw UnimplementedError('getCallType has not been implemented.');
   }
 
-  Future<dynamic> getCallDirection() async {
+  Future<String> getGroupId() async {
+    throw UnimplementedError('getGroupId has not been implemented.');
+  }
+
+  Future<String> getCallDirection() async {
     throw UnimplementedError('getCallDirection has not been implemented.');
   }
 

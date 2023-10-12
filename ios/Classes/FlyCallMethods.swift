@@ -226,6 +226,9 @@ import MirrorFlySDK
     func getCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         result(CallManager.getCallType().rawValue)
     }
+    func getGroupID(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
+        result(CallManager.getGroupID())
+    }
     func getCallDirection(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         result(CallManager.getCallDirection() == .Incoming ? "Incoming" : "Outgoing")
     }
