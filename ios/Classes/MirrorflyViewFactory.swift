@@ -107,7 +107,7 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
         completion(positiveUniqueID)
     }
     
-    public func clearMirrorflyView() -> Void{
+    public func clearMirrorflyView(userJID: String) -> Void{
         
         if(mirrorflyViews.count > 0){
             NSLog("\(Constants.callTag) MirrorflyViewFactory clearing Mirrorfly Views")

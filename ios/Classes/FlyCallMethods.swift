@@ -138,7 +138,7 @@ import MirrorFlySDK
     func declineCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         NSLog("\(Constants.callTag) declineCall")
         NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
-        factory?.clearMirrorflyView()
+        factory?.clearMirrorflyView(userJID: AppUtils.getMyJid())
         CallManager.incomingUserJidArr.removeAll()
         CallManager.disconnectCall()
         result(true)
@@ -227,7 +227,9 @@ import MirrorFlySDK
         result(CallManager.getCallType().rawValue)
     }
     func getGroupID(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        result(CallManager.getGroupID())
+        let groupID = CallManager.getGroupID()
+        print("getGroupID \(groupID)")
+        result(groupID ?? "")
     }
     func getCallDirection(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         result(CallManager.getCallDirection() == .Incoming ? "Incoming" : "Outgoing")
@@ -332,7 +334,7 @@ import MirrorFlySDK
     func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
         NSLog("\(Constants.callTag) Disconnecting Call")
         NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
-        factory?.clearMirrorflyView()
+        factory?.clearMirrorflyView(userJID: AppUtils.getMyJid())
         CallManager.incomingUserJidArr.removeAll()
         CallManager.disconnectCall()
         result(true)
@@ -376,6 +378,9 @@ import MirrorFlySDK
         CallManager.setCallType(callType: .Video)
         AudioManager.shared().autoReRoute()
         result(true)
+    }
+    func getMaxCallUsersCount(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        result(8)
     }
     
 //    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){

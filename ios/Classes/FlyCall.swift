@@ -205,7 +205,7 @@ import PushKit
         
         if(userJID != "" && callStatus == .DISCONNECTED){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
-            factory?.clearMirrorflyView()
+            factory?.clearMirrorflyView(userJID: userJID)
         }
 
         //Added this below condition based on the iOS Sample App.
@@ -229,9 +229,9 @@ import PushKit
         jsonObject.setValue(userJID, forKey: "userJid")
         
         if CallManager.isOneToOneCall()  {
-            jsonObject.setValue("OneToOne", forKey: "callMode")
+            jsonObject.setValue("onetoone", forKey: "callMode")
         }else{
-            jsonObject.setValue("GroupCall", forKey: "callMode")
+            jsonObject.setValue("onetomany", forKey: "callMode")
         }
         
 //        if(callStatus.rawValue == "Attended"){
