@@ -63,6 +63,12 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   }
 
   @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    LogMessage.d("MirrorFlyView", "setState $fn");
+  }
+
+  @override
   void dispose() {
     super.dispose();
     LogMessage.d("MirrorFlyView", "dispose");

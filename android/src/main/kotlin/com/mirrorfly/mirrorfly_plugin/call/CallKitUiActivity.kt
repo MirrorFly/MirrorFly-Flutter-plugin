@@ -94,17 +94,18 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         val users = CallManager.getCallUsersList()
         if(users.isNotEmpty()) {
             if(!CallManager.isOneToOneCall()) {
-                val membersName = Utils.setGroupMemberProfile(
-                    this,
-                    users,
-                    imageCallMember1,
-                    imageCallMember2,
-                    imageCallMember3,
-                    imageCallMember4
-                )
-                participants.text = membersName
-                participants.visibility = View.VISIBLE
                 if(CallManager.getGroupID().isNotEmpty()){
+                    val membersName = Utils.setGroupMemberProfile(
+                        this,
+                        users,
+                        imageCallMember1,
+                        imageCallMember2,
+                        imageCallMember3,
+                        imageCallMember4
+                    )
+                    participants.text = membersName
+                    participants.visibility = View.VISIBLE
+
                     Utils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
                     userImage.visibility = View.VISIBLE
                     userName.visibility = View.VISIBLE
@@ -114,7 +115,17 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     Utils.loadGlideImage(this, userImage, name, profile?.image ?: "")
                 }else {
                     userImage.visibility = View.GONE
-                    userName.visibility = View.GONE
+                    participants.visibility = View.GONE
+                    val membersName = Utils.setGroupMemberProfile(
+                        this,
+                        users,
+                        imageCallMember1,
+                        imageCallMember2,
+                        imageCallMember3,
+                        imageCallMember4
+                    )
+                    userName.text = membersName
+                    userName.visibility = View.VISIBLE
                 }
             }else{
                 Utils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
