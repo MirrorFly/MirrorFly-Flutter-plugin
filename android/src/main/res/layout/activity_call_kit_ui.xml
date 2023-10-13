@@ -92,7 +92,7 @@
                     android:maxLines="1"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
-                    android:textColor="@android:color/white"
+                    android:textColor="#CCFFFFFF"
                     android:textSize="@dimen/size_text_name"
                     android:visibility="gone"
                     app:autoSizeMaxTextSize="@dimen/size_text_name"

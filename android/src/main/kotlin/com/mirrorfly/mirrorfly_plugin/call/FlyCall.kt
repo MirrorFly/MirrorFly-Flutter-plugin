@@ -199,7 +199,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
         //Call on hold if user attended other call in ongoing call after then ON_RESUME called
-        if(callStatus == CallStatus.OUTGOING_CALL_TIME_OUT && CallManager.isCallConnected()){
+        if(callStatus == CallStatus.OUTGOING_CALL_TIME_OUT && CallManager.isCallConnected() && CallManager.isOneToOneCall()){
             Log.d("#onCallStatusUpdated","OUTGOING_CALL_TIME_OUT connected ${CallManager.isCallConnected()}")
             FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
 //            handleCallStatusMessages(callStatus,json)
