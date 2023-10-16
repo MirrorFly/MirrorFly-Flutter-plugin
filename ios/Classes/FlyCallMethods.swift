@@ -28,15 +28,7 @@ import MirrorFlySDK
         
         var jsonArray: [[String: Any]] = []
         
-        let localJIDJson: [String: Any] = [
-            "userJid": AppUtils.getMyJid(),
-            "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling"),
-            "isAudioMuted" : CallManager.isAudioMuted(),
-            "isVideoMuted" : CallManager.isVideoMuted()
-//            "isAudioMuted" : CallManager.isAudioMuted()
-        ]
         
-        jsonArray.append(localJIDJson)
             
         for (memberJid,status) in CallManager.getCallUsersWithStatus() {
             NSLog("\(tag) \(memberJid) \(status)")
@@ -49,6 +41,16 @@ import MirrorFlySDK
             ]
             jsonArray.append(jsonObject)
         }
+        
+        let localJIDJson: [String: Any] = [
+            "userJid": AppUtils.getMyJid(),
+            "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling"),
+            "isAudioMuted" : CallManager.isAudioMuted(),
+            "isVideoMuted" : CallManager.isVideoMuted()
+//            "isAudioMuted" : CallManager.isAudioMuted()
+        ]
+        
+        jsonArray.append(localJIDJson)
         
         
         let userListJson = convertArrayToJSONString(array: jsonArray)

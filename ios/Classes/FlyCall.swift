@@ -205,7 +205,10 @@ import PushKit
         
         if(userJID != "" && callStatus == .DISCONNECTED){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
-            factory?.clearMirrorflyView(userJID: userJID)
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.factory?.clearMirrorflyView(userJID: userJID)
+//            }
+            
         }
 
         //Added this below condition based on the iOS Sample App.

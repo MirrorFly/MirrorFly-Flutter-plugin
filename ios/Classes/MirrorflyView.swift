@@ -88,6 +88,12 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     
     func dispose() {
         
+        self.videoView?.removeFromSuperview()
+        self.audioView?.removeFromSuperview()
+        self.textView?.removeFromSuperview()
+        self.userProfileView?.removeFromSuperview()
+        pulsatingTimer?.invalidate()
+        pulsatingTimer = nil
     }
     
     private func createVideoView(argument : [String: Any]){

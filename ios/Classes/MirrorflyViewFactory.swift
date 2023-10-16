@@ -109,7 +109,8 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
     
     public func clearMirrorflyView(userJID: String) -> Void{
         
-        NSLog("\(Constants.callTag) ")
+        NSLog("\(Constants.callTag) clearMirrorflyView userJID \(userJID)")
+        NSLog("\(Constants.callTag) Native List View", mirrorflyViews)
         
         if let mirrorFlyViewId = getUniqueID(forString: userJID) {
             if let (_, mirrorflyView) = mirrorflyViews[mirrorFlyViewId] {
@@ -121,6 +122,7 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
                 NSLog("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed")
             }
             mirrorflyViews.removeValue(forKey: mirrorFlyViewId)
+            NSLog("\(Constants.callTag) Native List View", mirrorflyViews)
             NSLog("\(Constants.tag) MirrorflyViewFactory after removal of view from Array list size --> \(mirrorflyViews.count)")
         } else {
             // Handle case when unique ID is not found

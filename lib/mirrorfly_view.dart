@@ -144,6 +144,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
               (BuildContext context, PlatformViewController controller) {
             androidViewController = (controller as AndroidViewController);
             return AndroidViewSurface(
+              key: widget.key,
               controller: androidViewController!,
               gestureRecognizers: const <Factory<
                   OneSequenceGestureRecognizer>>{},
@@ -166,6 +167,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
         debugPrint("build params ${buildParams()}");
         debugPrint("#Mirrorfly Call iOS Platform");
         return UiKitView(
+          key: widget.key,
           viewType: nativeViewType,
           layoutDirection: TextDirection.ltr,
           creationParams: buildParams(),
