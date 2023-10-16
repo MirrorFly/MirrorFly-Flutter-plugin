@@ -205,7 +205,10 @@ import PushKit
         
         if(userJID != "" && callStatus == .DISCONNECTED){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
-            factory?.clearMirrorflyView(userJID: userJID)
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.factory?.clearMirrorflyView(userJID: userJID)
+//            }
+            
         }
 
         //Added this below condition based on the iOS Sample App.
@@ -223,6 +226,8 @@ import PushKit
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         if (callStatus.rawValue == "CALL TIME OUTt"){
             jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
+        }else if (!CallManager.isOneToOneCall() && callStatus == .DISCONNECTED){
+            jsonObject.setValue("User_Left", forKey: "callStatus")
         }else{
             jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
         }
