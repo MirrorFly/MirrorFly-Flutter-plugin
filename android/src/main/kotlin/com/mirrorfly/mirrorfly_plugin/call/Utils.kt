@@ -93,7 +93,7 @@ class Utils {
             return this
         }
 
-        fun loadGlideImage(mContext: Context,imageView: CircleImageView,name: String, imageUrl: String){
+        fun loadGlideImage(mContext: Context,imageView: CircleImageView,name: String, imageUrl: String,isGroup: Boolean){
             val defaultImage = imageView.getDrawableForProfile(name)
             val options = RequestOptions().placeholder(imageView.drawable ?: defaultImage).error(defaultImage).priority(
                 Priority.HIGH)
@@ -119,7 +119,7 @@ class Utils {
                         }
                     }).dontAnimate().dontTransform().into(imageView)
             }else{
-                Glide.with(mContext).load(defaultImage).apply(options).into(imageView)
+                Glide.with(mContext).load(if(!isGroup)defaultImage else R.drawable.ic_grp_bg).apply(options).into(imageView)
 //            profileView.setDrawableForProfile(name)
             }
         }

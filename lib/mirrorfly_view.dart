@@ -70,13 +70,13 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
 
   @override
   void dispose() {
-    super.dispose();
     LogMessage.d("MirrorFlyView", "dispose");
     if (Platform.isAndroid) {
       if(androidViewController!=null) {
         androidViewController?.dispose();
       }
     }
+    super.dispose();
   }
 
   @override
