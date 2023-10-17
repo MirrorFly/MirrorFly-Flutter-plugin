@@ -88,6 +88,12 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     
     func dispose() {
         
+        self.videoView?.removeFromSuperview()
+        self.audioView?.removeFromSuperview()
+        self.textView?.removeFromSuperview()
+        self.userProfileView?.removeFromSuperview()
+        pulsatingTimer?.invalidate()
+        pulsatingTimer = nil
     }
     
     private func createVideoView(argument : [String: Any]){
@@ -285,7 +291,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     public func startAnimation(userID: String) {
         // Check if the timer is nil or invalidated
         if pulsatingTimer == nil || !pulsatingTimer!.isValid {
-            NSLog("Starting Ripple animation for user: \(userID)")
+//             NSLog("Starting Ripple animation for user: \(userID)")
             pulsatingTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { [weak self] _ in
                 guard let self = self else { return }
 
@@ -309,17 +315,17 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             // Start the timer
             pulsatingTimer?.fire()
         } else {
-            NSLog("Ripple animation is already running for user: \(userID)")
+//             NSLog("Ripple animation is already running for user: \(userID)")
         }
     }
 
     public func stopAnimation(userID: String) {
         if pulsatingTimer != nil && pulsatingTimer!.isValid {
-            NSLog("Stopping Ripple animation for user: \(userID)")
+//             NSLog("Stopping Ripple animation for user: \(userID)")
             pulsatingTimer?.invalidate()
             pulsatingTimer = nil
         } else {
-            NSLog("Ripple animation is not running for user: \(userID)")
+//             NSLog("Ripple animation is not running for user: \(userID)")
         }
     }
 

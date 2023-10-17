@@ -140,7 +140,15 @@ import PushKit
     }
     
     func getGroupName(_ groupId: String) {
-        
+        if isHideNotificationContent {
+            CallManager.getContactNames(IncomingUserName: [APP_NAME])
+        }else{
+            if let groupContact =  ChatManager.getContact(jid: groupId.lowercased()){
+                CallManager.getContactNames(IncomingUserName: [groupContact.name])
+            }else{
+                CallManager.getContactNames(IncomingUserName: ["Call from Group"])
+            }
+        }
     }
     
     func sendCallMessage(groupCallDetails: MirrorFlySDK.GroupCallDetails, users: [String], invitedUsers: [String]) {
@@ -195,9 +203,12 @@ import PushKit
             userJID = AppUtils.getMyJid()
         }
         
-        if(userJID != "" && callStatus == .DISCONNECTED){
+        if(userJID != "" && callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
-            factory?.clearMirrorflyView()
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.factory?.clearMirrorflyView(userJID: userJID)
+//            }
+            
         }
 
         //Added this below condition based on the iOS Sample App.
@@ -215,15 +226,18 @@ import PushKit
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         if (callStatus.rawValue == "CALL TIME OUTt"){
             jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
+            //Below is a work around for user left delegate not received
+        }else if ((!CallManager.isOneToOneCall() || CallManager.isOngoingCall()) && callStatus == .DISCONNECTED){
+            jsonObject.setValue("User_Left", forKey: "callStatus")
         }else{
             jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
         }
         jsonObject.setValue(userJID, forKey: "userJid")
         
         if CallManager.isOneToOneCall()  {
-            jsonObject.setValue("OneToOne", forKey: "callMode")
+            jsonObject.setValue("onetoone", forKey: "callMode")
         }else{
-            jsonObject.setValue("GroupCall", forKey: "callMode")
+            jsonObject.setValue("onetomany", forKey: "callMode")
         }
         
 //        if(callStatus.rawValue == "Attended"){
@@ -336,7 +350,7 @@ import PushKit
     }
     
     func onUserSpeaking(userId: String, audioLevel: Int) {
-        NSLog("#MirrorflyCall user speaking --> \(userId) audioLevel \(audioLevel)")
+//        NSLog("#MirrorflyCall user speaking --> \(userId) audioLevel \(audioLevel)")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
@@ -363,7 +377,7 @@ import PushKit
     }
     
     func onUserStoppedSpeaking(userId: String) {
-        NSLog("#MirrorflyCall user stopped speaking --> \(userId)")
+//        NSLog("#MirrorflyCall user stopped speaking --> \(userId)")
         if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

@@ -1178,6 +1178,22 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.makeVoiceCall(userJid);
   }
 
+  ///Used as a [makeGroupVoiceCall] class for [Mirrorfly]
+  /// * @property [groupJid] used to make a Group voice call to this groupJid
+  /// * @property [jidList] used to make a Group voice call to this user jid list
+  ///used to make a voice call
+  static Future<bool> makeGroupVoiceCall({String groupJid = "", List<String> jidList = const []}) async {
+    return FlyChatFlutterPlatform.instance.makeGroupVoiceCall(groupJid,jidList);
+  }
+
+  ///Used as a [makeGroupVideoCall] class for [Mirrorfly]
+  /// * @property [groupJid] used to make a Group video call to this groupJid
+  /// * @property [jidList] used to make a Group video call to this user jid list
+  ///used to make a video call
+  static Future<bool> makeGroupVideoCall({String groupJid = "", List<String> jidList = const []}) async {
+    return FlyChatFlutterPlatform.instance.makeGroupVideoCall(groupJid,jidList);
+  }
+
   ///Used as a [getCallUsersList] class for [Mirrorfly]
   ///used to get user list on the call
   static Future<dynamic> getCallUsersList() async {
@@ -1186,13 +1202,19 @@ class Mirrorfly {
 
   ///Used as a [getCallType] class for [Mirrorfly]
   ///used to get type of the current call, audio or video
-  static Future<dynamic> getCallType() async {
+  static Future<String> getCallType() async {
     return FlyChatFlutterPlatform.instance.getCallType();
+  }
+
+  ///Used as a [getGroupId] class for [Mirrorfly]
+  ///used to get type of the current call, audio or video
+  static Future<String> getGroupId() async {
+    return FlyChatFlutterPlatform.instance.getGroupId();
   }
 
   ///Used as a [getCallDirection] class for [Mirrorfly]
   ///used to get current call direction, incoming or outgoing.
-  static Future<dynamic> getCallDirection() async {
+  static Future<String> getCallDirection() async {
     return FlyChatFlutterPlatform.instance.getCallDirection();
   }
 
@@ -1314,6 +1336,11 @@ class Mirrorfly {
   /// [declineVideoCallSwitchRequest] Used to Decline the Video Call Request from Remote User
   static Future<dynamic> declineVideoCallSwitchRequest() async {
     return FlyChatFlutterPlatform.instance.declineVideoCallSwitchRequest();
+  }
+
+  /// [getMaxCallUsersCount] Used to get Maximum call users count
+  static Future<int?> getMaxCallUsersCount() async {
+    return FlyChatFlutterPlatform.instance.getMaxCallUsersCount();
   }
 
 /*  /// [changeCallType] Used to Change the Call Type

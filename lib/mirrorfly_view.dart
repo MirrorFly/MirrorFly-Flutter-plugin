@@ -63,14 +63,20 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   }
 
   @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    LogMessage.d("MirrorFlyView", "setState $fn");
+  }
+
+  @override
   void dispose() {
-    super.dispose();
     LogMessage.d("MirrorFlyView", "dispose");
     if (Platform.isAndroid) {
       if(androidViewController!=null) {
         androidViewController?.dispose();
       }
     }
+    super.dispose();
   }
 
   @override
@@ -138,6 +144,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
               (BuildContext context, PlatformViewController controller) {
             androidViewController = (controller as AndroidViewController);
             return AndroidViewSurface(
+              key: widget.key,
               controller: androidViewController!,
               gestureRecognizers: const <Factory<
                   OneSequenceGestureRecognizer>>{},
@@ -160,6 +167,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
         debugPrint("build params ${buildParams()}");
         debugPrint("#Mirrorfly Call iOS Platform");
         return UiKitView(
+          key: widget.key,
           viewType: nativeViewType,
           layoutDirection: TextDirection.ltr,
           creationParams: buildParams(),

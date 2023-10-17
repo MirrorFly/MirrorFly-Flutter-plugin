@@ -1384,8 +1384,14 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future getCallType() {
+  Future<String> getCallType() {
     // implement getCallType
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getGroupId() {
+    // implement getGroupId
     throw UnimplementedError();
   }
 
@@ -1440,7 +1446,19 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future getCallDirection() {
+  Future<bool> makeGroupVoiceCall(String groupJid,List<String>? jidList) {
+    // implement makeGroupVoiceCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> makeGroupVideoCall(String groupJid,List<String>? jidList) {
+    // implement makeGroupVideoCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getCallDirection() {
     // implement getCallDirection
     throw UnimplementedError();
   }
@@ -1569,6 +1587,12 @@ class MockFlyChatFlutterPlatform
   @override
   Future<bool?> declineVideoCallSwitchRequest() {
     // implement declineVideoCallSwitchRequest
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> getMaxCallUsersCount() {
+    // implement getMaxCallUsersCount
     throw UnimplementedError();
   }
 

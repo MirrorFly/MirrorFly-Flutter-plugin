@@ -1025,15 +1025,27 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('makeVoiceCall has not been implemented.');
   }
 
+  Future<bool> makeGroupVoiceCall(String groupJid,List<String>? jidList) async {
+    throw UnimplementedError('makeGroupVoiceCall has not been implemented.');
+  }
+
+  Future<bool> makeGroupVideoCall(String groupJid,List<String>? jidList) async {
+    throw UnimplementedError('makeGroupVideoCall has not been implemented.');
+  }
+
   Future<dynamic> getCallUsersList() async {
     throw UnimplementedError('getCallUsers has not been implemented.');
   }
 
-  Future<dynamic> getCallType() async {
+  Future<String> getCallType() async {
     throw UnimplementedError('getCallType has not been implemented.');
   }
 
-  Future<dynamic> getCallDirection() async {
+  Future<String> getGroupId() async {
+    throw UnimplementedError('getGroupId has not been implemented.');
+  }
+
+  Future<String> getCallDirection() async {
     throw UnimplementedError('getCallDirection has not been implemented.');
   }
 
@@ -1112,6 +1124,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<dynamic> declineVideoCallSwitchRequest() async {
     throw UnimplementedError('declineVideoCallSwitchRequest has not been implemented.');
+  }
+
+  Future<int?> getMaxCallUsersCount() async {
+    throw UnimplementedError('getMaxCallUsersCount has not been implemented.');
   }
 
   /*Future<dynamic> changeCallType({required String switchType}) async {

@@ -133,6 +133,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "isOneToOneCall"->{
                 result.success(CallManager.isOneToOneCall())
             }
+            "getGroupID"->{
+                result.success(CallManager.getGroupID())
+            }
             "getCallType"->{
                 result.success(CallManager.getCallType())
             }
@@ -172,6 +175,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "declineVideoCallSwitchRequest" -> {
                 sdk.declineVideoCallSwitchRequest(call, result)
             }
+            "getMaxCallUsersCount" -> {
+                result.success(CallManager.getMaxCallUsersCount())
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }
@@ -197,6 +203,11 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             Log.d("#onCallStatusUpdated","OUTGOING_CALL_TIME_OUT connected ${CallManager.isCallConnected()}")
             FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
 //            handleCallStatusMessages(callStatus,json)
+            CallManager.getTimeOutUsersList().forEach {
+                json.put("userJid",it)
+                FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, it)
+                handleCallStatusMessages(callStatus, json)
+            }
         }else {
             Log.d("#onCallStatusUpdated","$callStatus connected ${CallManager.isCallConnected()}")
             FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)

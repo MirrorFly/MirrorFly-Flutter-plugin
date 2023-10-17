@@ -200,8 +200,8 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     fun makeGroupVoiceCall(call: MethodCall,result: MethodChannel.Result){
         if (CallManager.isAudioCallPermissionsGranted(false)) {
             val groupJid = call.argument<String>("groupJid") ?: ""
-            val jidList = call.argument<String>("jidList") ?: ""
-            CallManager.makeGroupVoiceCall(jidList.split(",") as ArrayList<String>, groupJid, object : CallActionListener {
+            val jidList = call.argument<List<String>>("jidList")
+            CallManager.makeGroupVoiceCall(jidList as ArrayList<String>, groupJid, object : CallActionListener {
                 override fun onResponse(isSuccess: Boolean, message: String) {
                     LogMessage.d("makeGroupVoiceCall", "success $isSuccess message $message")
                     result.success(isSuccess)
@@ -212,8 +212,8 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     fun makeGroupVideoCall(call: MethodCall,result: MethodChannel.Result){
         LogMessage.d(tag,"muteVideo")
         val groupJid = call.argument<String>("groupJid") ?: ""
-        val jidList = call.argument<String>("jidList") ?: ""
-        CallManager.makeGroupVideoCall(jidList.split(",") as ArrayList<String>,groupJid,object: CallActionListener{
+        val jidList = call.argument<List<String>>("jidList")
+        CallManager.makeGroupVideoCall(jidList as ArrayList<String>,groupJid,object: CallActionListener{
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d("makeGroupVideoCall", "success $isSuccess message $message")
                 result.success(isSuccess)
@@ -240,22 +240,25 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     fun getCallUsersList(call: MethodCall,result: MethodChannel.Result) {
         val json = JSONArray()
         val users = CallManager.getCallUsersList()
-        if (!users.contains(CallManager.getCurrentUserId()) && CallManager.getCurrentUserId().isNotEmpty()){
-            val obj = JSONObject()
-            obj.put("userJid",CallManager.getCurrentUserId())
-            obj.put("callStatus",CallManager.getCallStatus(CallManager.getCurrentUserId()))
-            obj.put("isAudioMuted",CallManager.isAudioMuted())
-            obj.put("isVideoMuted",CallManager.isVideoMuted())
+        users.forEachIndexed { index, jid ->
+            var obj = JSONObject()
+            obj.put("userJid", jid)
+            obj.put("callStatus", CallManager.getCallStatus(jid))
+            obj.put("isAudioMuted", CallManager.isRemoteAudioMuted(jid))
+            obj.put("isVideoMuted", CallManager.isRemoteVideoMuted(jid))
             json.put(obj)
+            if(index==users.lastIndex){
+                if (!users.contains(CallManager.getCurrentUserId()) && CallManager.getCurrentUserId().isNotEmpty()){
+                    obj = JSONObject()
+                    obj.put("userJid",CallManager.getCurrentUserId())
+                    obj.put("callStatus",CallManager.getCallStatus(CallManager.getCurrentUserId()))
+                    obj.put("isAudioMuted",CallManager.isAudioMuted())
+                    obj.put("isVideoMuted",CallManager.isVideoMuted())
+                    json.put(obj)
+                }
+            }
         }
-        users.forEach {jid->
-            val obj = JSONObject()
-            obj.put("userJid",jid)
-            obj.put("callStatus",CallManager.getCallStatus(jid))
-            obj.put("isAudioMuted",CallManager.isRemoteAudioMuted(jid))
-            obj.put("isVideoMuted",CallManager.isRemoteVideoMuted(jid))
-            json.put(obj)
-        }
+
         result.success(json.toString())
     }
 

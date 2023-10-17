@@ -44,8 +44,11 @@ class MuteStatus {
 class CallType {
   static const String audio = "audio";
   static const String video = "video";
-  static const String oneToOne = "OneToOne";
-  static const String groupCall = "GroupCall";
+}
+
+class CallMode {
+  static const String oneToOne = "onetoone";
+  static const String groupCall = "onetomany";
 }
 
 class AudioLevel {

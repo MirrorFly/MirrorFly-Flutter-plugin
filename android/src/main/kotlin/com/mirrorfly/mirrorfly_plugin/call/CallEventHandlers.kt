@@ -111,7 +111,7 @@ object FlutterCall{
      * Listener for show call Ui
      */
     var callUiListener: CallUiFlutterListener? = null
-    fun setListener(listener: CallUiFlutterListener){
+    fun setListener(listener: CallUiFlutterListener?){
         callUiListener = listener
     }
 }

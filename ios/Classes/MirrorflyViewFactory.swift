@@ -107,26 +107,45 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
         completion(positiveUniqueID)
     }
     
-    public func clearMirrorflyView() -> Void{
+    public func clearMirrorflyView(userJID: String) -> Void{
         
-        if(mirrorflyViews.count > 0){
-            NSLog("\(Constants.callTag) MirrorflyViewFactory clearing Mirrorfly Views")
-            for (uniqueID, _) in mirrorflyViews {
-                if let (_, mirrorflyView) = mirrorflyViews[uniqueID] {
-                    NSLog("\(Constants.callTag) MirrorflyViewFactory View disposing \(uniqueID)")
-                    mirrorflyView.dispose()
-                    NSLog("\(Constants.callTag) MirrorflyViewFactory View disposed \(uniqueID)")
-                } else {
-                    // Handle case when view is not found
-                    NSLog("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed")
-                }
-                mirrorflyViews.removeValue(forKey: uniqueID)
-                NSLog("\(Constants.tag) MirrorflyViewFactory after removal of view from Array list size --> \(mirrorflyViews.count)")
-                
+        NSLog("\(Constants.callTag) clearMirrorflyView userJID \(userJID)")
+        NSLog("\(Constants.callTag) Native List View", mirrorflyViews)
+        
+        if let mirrorFlyViewId = getUniqueID(forString: userJID) {
+            if let (_, mirrorflyView) = mirrorflyViews[mirrorFlyViewId] {
+                NSLog("\(Constants.callTag) MirrorflyViewFactory View disposing \(mirrorFlyViewId)")
+                mirrorflyView.dispose()
+                NSLog("\(Constants.callTag) MirrorflyViewFactory View disposed \(mirrorFlyViewId)")
+            } else {
+                // Handle case when view is not found
+                NSLog("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed")
             }
-//            mirrorflyViews.removeAll()
-            
+            mirrorflyViews.removeValue(forKey: mirrorFlyViewId)
+            NSLog("\(Constants.callTag) Native List View", mirrorflyViews)
+            NSLog("\(Constants.tag) MirrorflyViewFactory after removal of view from Array list size --> \(mirrorflyViews.count)")
+        } else {
+            // Handle case when unique ID is not found
+            NSLog("\(Constants.callTag) MirrorflyViewFactory View --> Unique ID is not Found")
         }
+        
+//        if(mirrorflyViews.count > 0){
+//            NSLog("\(Constants.callTag) MirrorflyViewFactory clearing Mirrorfly Views")
+//            for (uniqueID, _) in mirrorflyViews {
+//                if let (_, mirrorflyView) = mirrorflyViews[uniqueID] {
+//                    NSLog("\(Constants.callTag) MirrorflyViewFactory View disposing \(uniqueID)")
+//                    mirrorflyView.dispose()
+//                    NSLog("\(Constants.callTag) MirrorflyViewFactory View disposed \(uniqueID)")
+//                } else {
+//                    // Handle case when view is not found
+//                    NSLog("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed")
+//                }
+//                mirrorflyViews.removeValue(forKey: uniqueID)
+//                NSLog("\(Constants.tag) MirrorflyViewFactory after removal of view from Array list size --> \(mirrorflyViews.count)")
+//
+//            }
+//
+//        }
     }
 
     

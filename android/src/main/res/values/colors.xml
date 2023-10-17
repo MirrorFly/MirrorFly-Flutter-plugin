@@ -6,7 +6,7 @@
     <color name="decline">#F44336</color>
     <color name="decline_ripple">#FB8D85</color>
     <color name="colorSecondary">#4879f9</color>
-    <color name="action_text">#FFFFFF</color>
+    <color name="action_text">#DEDEDE</color>
     <color name="ripple_main_color">#80ffffff</color>
 
     <color name="color_black">#000000</color>

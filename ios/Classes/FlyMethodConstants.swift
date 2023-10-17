@@ -31,6 +31,7 @@ class FlyMethodConstants {
             "isCallOnHold": flyCallMethods.isCallOnHold,
             "isOneToOneCall": flyCallMethods.isOneToOneCall,
             "getCallType": flyCallMethods.getCallType,
+            "getGroupID": flyCallMethods.getGroupID,
             "isCallConnected": flyCallMethods.isCallConnected,
             "isVideoCall": flyCallMethods.isVideoCall,
             "isAudioCall": flyCallMethods.isAudioCall,
@@ -49,6 +50,7 @@ class FlyMethodConstants {
             "cancelVideoCallSwitch": flyCallMethods.cancelVideoCallSwitch,
             "acceptVideoCallSwitchRequest": flyCallMethods.acceptVideoCallSwitchRequest,
             "declineVideoCallSwitchRequest": flyCallMethods.declineVideoCallSwitchRequest,
+            "getMaxCallUsersCount": flyCallMethods.getMaxCallUsersCount,
 //            "changeCallType": flyCallMethods.changeCallType,
 //            "reRouteAudio": flyCallMethods.reRouteAudio,
             
