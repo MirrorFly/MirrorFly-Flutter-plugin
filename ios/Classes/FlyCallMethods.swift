@@ -333,14 +333,14 @@ import MirrorFlySDK
         result(false)
     }
     
-    func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-        NSLog("\(Constants.callTag) Disconnecting Call")
-        NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
-        factory?.clearMirrorflyView(userJID: AppUtils.getMyJid())
-        CallManager.incomingUserJidArr.removeAll()
-        CallManager.disconnectCall()
-        result(true)
-    }
+//    func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+//        NSLog("\(Constants.callTag) Disconnecting Call")
+//        NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
+//        factory?.clearMirrorflyView(userJID: AppUtils.getMyJid())
+//        CallManager.incomingUserJidArr.removeAll()
+//        CallManager.disconnectCall()
+//        result(true)
+//    }
     
     
     
