@@ -186,7 +186,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                     userProfileView?.translatesAutoresizingMaskIntoConstraints = false
                     userProfileView?.frame.size = CGSize(width: profileSize, height: profileSize)
                     userProfileView?.layer.cornerRadius = CGFloat(profileSize / 2)
-                    userProfileView?.loadFlyImage(imageURL: contact?.image ?? "", name: FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType), jid: contact?.jid ?? "", textview: self.textView!, circleview: self.circleView)
+//                    userProfileView?.loadFlyImage(imageURL: contact?.image ?? "", name: FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType), jid: contact?.jid ?? "", textview: self.textView!, circleview: self.circleView)
                     userProfileView?.clipsToBounds = true
 //                    DispatchQueue.main.async {
                         self.audioView?.addSubview(self.userProfileView!)
@@ -194,27 +194,44 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                 }
                 
             
+            
+
                 var constraints: [NSLayoutConstraint] = []
+                
                 
 //                if(textView == nil){
                 if(contact?.image != nil || (!contact!.image.isEmpty)){
+                    NSLog("setting constraint 1")
                     constraints.append(userProfileView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
+                    NSLog("setting constraint 2")
                     alignProfilePictureCenter ? constraints.append(userProfileView!.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor)) :
                     constraints.append(userProfileView!.topAnchor.constraint(equalTo: audioView!.topAnchor, constant: 80))
+                    NSLog("setting constraint 3")
                     constraints.append(userProfileView!.widthAnchor.constraint(equalToConstant: CGFloat(profileSize)))
+                    NSLog("setting constraint 4")
                     constraints.append(userProfileView!.heightAnchor.constraint(equalToConstant: CGFloat(profileSize)))
                 }
 //                }else{
+                
+                NSLog("setting constraint 5")
                     constraints.append(textView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
+                NSLog("setting constraint 6")
                     alignProfilePictureCenter ? constraints.append(textView!.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor)) : constraints.append(textView!.centerYAnchor.constraint(equalTo: audioView!.topAnchor, constant: 130))
-                    
+                NSLog("setting constraint 7")
                     constraints.append(circleView.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
+                NSLog("setting constraint 8")
                     alignProfilePictureCenter ? constraints.append(circleView.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor)) : constraints.append(circleView.topAnchor.constraint(equalTo: audioView!.topAnchor, constant: 80))
+                NSLog("setting constraint 9")
                     constraints.append(circleView.widthAnchor.constraint(equalToConstant: CGFloat(profileSize)))
+                NSLog("setting constraint 10")
                     constraints.append(circleView.heightAnchor.constraint(equalToConstant: CGFloat(profileSize)))
                     
 //                }
                 NSLayoutConstraint.activate(constraints)
+                
+                if contact?.image != nil || (!contact!.image.isEmpty) {
+                    userProfileView?.loadFlyImage(imageURL: contact?.image ?? "", name: FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType), jid: contact?.jid ?? "", textview: self.textView!, circleview: self.circleView)
+                }
 
             }
             
