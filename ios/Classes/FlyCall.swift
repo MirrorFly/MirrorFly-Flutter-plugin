@@ -82,8 +82,30 @@ import PushKit
         
         if (call.method == "selectedAudioDevice"){
             selectedAudioDevice(call: call, result: result)
-//        }else if (call.method == "muteVideo"){
-//            muteVideo(call: call, result: result)
+        }else if (call.method == "disconnectCall"){
+            NSLog("\(Constants.callTag) Disconnecting Call")
+            NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
+            factory?.clearMirrorflyView(userJID: AppUtils.getMyJid())
+            CallManager.incomingUserJidArr.removeAll()
+            CallManager.disconnectCall()
+            
+            let jsonObject: NSMutableDictionary = NSMutableDictionary()
+            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
+            jsonObject.setValue("LOCAL_HANGUP", forKey: "callAction")
+            if CallManager.isOneToOneCall()  {
+                jsonObject.setValue("onetoone", forKey: "callMode")
+            }else{
+                jsonObject.setValue("onetomany", forKey: "callMode")
+            }
+            if CallManager.getCallType() == .Audio {
+                jsonObject.setValue("audio", forKey: "callType")
+            } else {
+                jsonObject.setValue("video", forKey: "callType")
+            }
+            let callUpdate = pluginDictToJson(dictionary: jsonObject)
+            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
+            
+            result(true)
         }else{
             if (call.method == "makeVoiceCall" || call.method == "makeVideoCall" || call.method == "makeGroupVideoCall" || call.method == "makeGroupVoiceCall"){
                 
@@ -287,6 +309,17 @@ import PushKit
             CallManager.muteVideo(false)
             CallManager.enableVideo()
             AudioManager.shared().autoReRoute()
+        }
+        
+        if CallManager.isOneToOneCall()  {
+            jsonObject.setValue("onetoone", forKey: "callMode")
+        }else{
+            jsonObject.setValue("onetomany", forKey: "callMode")
+        }
+        if CallManager.getCallType() == .Audio {
+            jsonObject.setValue("audio", forKey: "callType")
+        } else {
+            jsonObject.setValue("video", forKey: "callType")
         }
         
         let callActionJson = pluginDictToJson(dictionary: jsonObject)

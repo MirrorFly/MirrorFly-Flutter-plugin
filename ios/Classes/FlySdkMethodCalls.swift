@@ -175,6 +175,7 @@ import UIKit
         NSLog("\(Constants.tag) voipToken.isEmpty \(voipToken.isEmpty)")
         
         NSLog("\(Constants.tag) Register Device Token \(deviceToken)")
+        NSLog("\(Constants.tag) ISEXPORT \(ISEXPORT)")
 
         try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,userType: "d", pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
@@ -1022,12 +1023,13 @@ import UIKit
 //        let fileName = (profileImage as NSString).lastPathComponent
 //        print("file name" + fileName)
 
+        NSLog("iOS updateMyProfileImage Called", profileImage)
         ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
                 if isSuccess {
                     // Profile Image updated successfully update the UI
-                    print("updateMyProfileImage success response\(flyData)")
+                    NSLog("updateMyProfileImage success response\(flyData)")
                 } else{
-                    print("updateMyProfileImage Error\(flyError!.localizedDescription)")
+                    NSLog("updateMyProfileImage Error\(flyError!.localizedDescription)")
                 }
         }
         

@@ -250,8 +250,8 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         val json = JSONObject()
         json.put("callAction",callAction)
         json.put("userJid",userJid)
-//        json.put("callType",CallManager.getCallType())
-//        json.put("callMode",CallManager.getCallMode())
+        json.put("callType",CallManager.getCallType())
+        json.put("callMode",CallManager.getCallMode())
         onCallActionStreamHandler.onCallAction?.success(json.toString())
         FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
         if(callAction == CallAction.ACTION_REMOTE_VIDEO_STATUS){
@@ -500,6 +500,8 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 val json = JSONObject()
                 json.put("callAction","ACTION_VIDEO_CALL_CONVERSION")
                 json.put("userJid",CallManager.getEndCallerJid())
+                json.put("callType",CallManager.getCallType())
+                json.put("callMode",CallManager.getCallMode())
                 handler.post {
                     onCallActionStreamHandler.onCallAction?.success(json.toString())
                 }
