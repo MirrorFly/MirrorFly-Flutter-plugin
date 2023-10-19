@@ -445,7 +445,9 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     finish()
                 }
             }
-            CallAction.ACTION_REMOTE_ENGAGED->{}
+            CallAction.ACTION_REMOTE_ENGAGED->{
+                updateUsersProfile()
+            }
             CallAction.ACTION_CALL_AGAIN->{}
             CallAction.ACTION_CANCEL_CALL_AGAIN->{}
             CallAction.ACTION_SWITCH_CAMERA->{}
