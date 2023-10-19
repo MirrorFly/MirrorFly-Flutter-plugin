@@ -155,7 +155,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             
             if (!hideProfileView){
          
-                if contact?.image == nil || (contact!.image.isEmpty) {
+//                if contact?.image == nil || (contact!.image.isEmpty) {
 //                    DispatchQueue.main.async {
                         self.audioView?.addSubview(self.circleView)
 //                    }
@@ -179,13 +179,14 @@ class MirrorflyView: NSObject, FlutterPlatformView {
 //                    }
                     
                     
-                }else{
+//                }else{
+                if contact?.image != nil || (!contact!.image.isEmpty) {
                     NSLog("===contact image is not empty \(profileSize)")
                     userProfileView = UIImageView(frame: .zero)
                     userProfileView?.translatesAutoresizingMaskIntoConstraints = false
                     userProfileView?.frame.size = CGSize(width: profileSize, height: profileSize)
                     userProfileView?.layer.cornerRadius = CGFloat(profileSize / 2)
-                    userProfileView?.loadFlyImage(imageURL: contact?.image ?? "", name: FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType), jid: contact?.jid ?? "")
+//                    userProfileView?.loadFlyImage(imageURL: contact?.image ?? "", name: FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType), jid: contact?.jid ?? "", textview: self.textView!, circleview: self.circleView)
                     userProfileView?.clipsToBounds = true
 //                    DispatchQueue.main.async {
                         self.audioView?.addSubview(self.userProfileView!)
@@ -193,25 +194,44 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                 }
                 
             
+            
+
                 var constraints: [NSLayoutConstraint] = []
                 
-                if(textView == nil){
+                
+//                if(textView == nil){
+                if(contact?.image != nil || (!contact!.image.isEmpty)){
+                    NSLog("setting constraint 1")
                     constraints.append(userProfileView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
+                    NSLog("setting constraint 2")
                     alignProfilePictureCenter ? constraints.append(userProfileView!.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor)) :
                     constraints.append(userProfileView!.topAnchor.constraint(equalTo: audioView!.topAnchor, constant: 80))
+                    NSLog("setting constraint 3")
                     constraints.append(userProfileView!.widthAnchor.constraint(equalToConstant: CGFloat(profileSize)))
+                    NSLog("setting constraint 4")
                     constraints.append(userProfileView!.heightAnchor.constraint(equalToConstant: CGFloat(profileSize)))
-                }else{
+                }
+//                }else{
+                
+                NSLog("setting constraint 5")
                     constraints.append(textView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
+                NSLog("setting constraint 6")
                     alignProfilePictureCenter ? constraints.append(textView!.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor)) : constraints.append(textView!.centerYAnchor.constraint(equalTo: audioView!.topAnchor, constant: 130))
-                    
+                NSLog("setting constraint 7")
                     constraints.append(circleView.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
+                NSLog("setting constraint 8")
                     alignProfilePictureCenter ? constraints.append(circleView.centerYAnchor.constraint(equalTo: audioView!.centerYAnchor)) : constraints.append(circleView.topAnchor.constraint(equalTo: audioView!.topAnchor, constant: 80))
+                NSLog("setting constraint 9")
                     constraints.append(circleView.widthAnchor.constraint(equalToConstant: CGFloat(profileSize)))
+                NSLog("setting constraint 10")
                     constraints.append(circleView.heightAnchor.constraint(equalToConstant: CGFloat(profileSize)))
                     
-                }
+//                }
                 NSLayoutConstraint.activate(constraints)
+                
+                if contact?.image != nil || (!contact!.image.isEmpty) {
+                    userProfileView?.loadFlyImage(imageURL: contact?.image ?? "", name: FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType), jid: contact?.jid ?? "", textview: self.textView!, circleview: self.circleView)
+                }
 
             }
             
@@ -514,7 +534,7 @@ private func getIsBlockedByMe(jid: String) -> Bool {
 }
 
 extension UIImageView {
-    func loadFlyImage(imageURL: String, name: String, chatType: ChatType = .singleChat, uniqueId: String = "", contactType : ContactType = .unknown,jid: String, isBlockedByAdmin: Bool = false, validateBlock: Bool = true){
+    func loadFlyImage(imageURL: String, name: String, chatType: ChatType = .singleChat, uniqueId: String = "", contactType : ContactType = .unknown,jid: String, isBlockedByAdmin: Bool = false, validateBlock: Bool = true, textview: UITextView, circleview: UIView){
         NSLog("loadFlyImage imageURL \(imageURL) jid\(jid)")
         var urlString = ""
         if imageURL.hasPrefix("http") {
@@ -529,6 +549,7 @@ extension UIImageView {
         var url = URL(string: urlString)
         var placeholder : UIImage?
         if isBlockedByAdmin {
+            NSLog("===contact Blocked By Admin")
             url = URL(string: "")
         }
         self.sd_setImage(with: url, placeholderImage: placeholder, options: [.continueInBackground,.decodeFirstFrameOnly,.lowPriority], progress: nil){ (image, responseError, isFromCache, imageUrl) in
@@ -538,7 +559,7 @@ extension UIImageView {
                         NSLog("===contact 401 error")
                         ChatManager.refreshToken { [weak self] isSuccess, error, data in
                             if isSuccess{
-                                self?.loadFlyImage(imageURL: imageURL, name: name, chatType : chatType, jid: jid)
+                                self?.loadFlyImage(imageURL: imageURL, name: name, chatType : chatType, jid: jid, textview: textview, circleview: circleview)
                             }else{
 //                                self?.image = placeholder
                                 NSLog("===contact refresh token error")
@@ -550,6 +571,9 @@ extension UIImageView {
                     }
                 }
             }else{
+                NSLog("======contact error else");
+                textview.removeFromSuperview()
+                circleview.removeFromSuperview()
                 self.image = image
             }
         }
