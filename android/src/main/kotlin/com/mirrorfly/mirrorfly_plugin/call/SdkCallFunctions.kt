@@ -5,13 +5,15 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.mirrorfly.mirrorfly_plugin.AppUtils
-import com.mirrorflysdk.api.CallMessenger
+import com.mirrorfly.mirrorfly_plugin.toJsonString
+//import com.mirrorflysdk.api.CallMessenger
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.api.MediaNotificationHelper
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.utils.NameHelper
 import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
 import com.mirrorflysdk.flycall.webrtc.AudioDevice
+import com.mirrorflysdk.flycall.webrtc.CallStatus
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.GroupCallDetails
 import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
@@ -46,13 +48,13 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
                 return CallNotificationHelper.getNotificationMessage()
             }
 
-            override fun sendCallMessage(
+            /*override fun sendCallMessage(
                 details: GroupCallDetails,
                 users: List<String>,
                 invitedUsers: List<String>
             ) {
                 CallMessenger.sendCallMessage(details, users, invitedUsers)
-            }
+            }*/
         })
         ChatManager.setNameHelper(object : NameHelper {
             override fun getDisplayName(jid: String): String {
@@ -238,12 +240,14 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     }
 
     fun getCallUsersList(call: MethodCall,result: MethodChannel.Result) {
+        LogMessage.d(tag,"getCallUsersList : "+CallManager.getCallUsersList().toJsonString())
         val json = JSONArray()
         val users = CallManager.getCallUsersList()
         users.forEachIndexed { index, jid ->
             var obj = JSONObject()
             obj.put("userJid", jid)
-            obj.put("callStatus", CallManager.getCallStatus(jid))
+            //Calling status not in iOS so here we sent Trying to Connect status
+            obj.put("callStatus", if(CallManager.getCallStatus(jid)==CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(jid))
             obj.put("isAudioMuted", CallManager.isRemoteAudioMuted(jid))
             obj.put("isVideoMuted", CallManager.isRemoteVideoMuted(jid))
             json.put(obj)
@@ -251,7 +255,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
                 if (!users.contains(CallManager.getCurrentUserId()) && CallManager.getCurrentUserId().isNotEmpty()){
                     obj = JSONObject()
                     obj.put("userJid",CallManager.getCurrentUserId())
-                    obj.put("callStatus",CallManager.getCallStatus(CallManager.getCurrentUserId()))
+                    obj.put("callStatus",if(CallManager.getCallStatus(CallManager.getCurrentUserId())==CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(CallManager.getCurrentUserId()))
                     obj.put("isAudioMuted",CallManager.isAudioMuted())
                     obj.put("isVideoMuted",CallManager.isVideoMuted())
                     json.put(obj)

@@ -198,19 +198,20 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("userJid",userJID)
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
+        FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
         //Call on hold if user attended other call in ongoing call after then ON_RESUME called
-        if(callStatus == CallStatus.OUTGOING_CALL_TIME_OUT && CallManager.isCallConnected()){
-            Log.d("#onCallStatusUpdated","OUTGOING_CALL_TIME_OUT connected ${CallManager.isCallConnected()}")
-            FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
+        if(callStatus == CallStatus.CALL_TIME_OUT && CallManager.isCallConnected()){
+            Log.d("#onCallStatusUpdated","CALL_TIME_OUT connected ${CallManager.isCallConnected()}")
+            //FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
 //            handleCallStatusMessages(callStatus,json)
-            CallManager.getTimeOutUsersList().forEach {
-                json.put("userJid",it)
-                FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, it)
+//            CallManager.getTimeOutUsersList().forEach {
+//                json.put("userJid",it)
+                //FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, it)
                 handleCallStatusMessages(callStatus, json)
-            }
-        }else {
+//            }
+        }else if (callStatus != CallStatus.OUTGOING_CALL_TIME_OUT && callStatus != CallStatus.INCOMING_CALL_TIME_OUT && callStatus != CallStatus.INVITE_CALL_TIME_OUT){
             Log.d("#onCallStatusUpdated","$callStatus connected ${CallManager.isCallConnected()}")
-            FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
+            //FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
             handleCallStatusMessages(callStatus, json)
         }
     }
@@ -230,12 +231,17 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             CallStatus.OUTGOING_CALL_TIME_OUT ->{
                 json.put("callStatus","CALL TIME OUT")
             }
+            CallStatus.CALL_TIME_OUT ->{
+                json.put("callStatus","CALL TIME OUT")
+                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT)
+            }
             CallStatus.INCOMING_CALL_TIME_OUT ->{
                 FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT)
             }
             CallStatus.RECONNECTING ->{}
             CallStatus.RECONNECTED ->{}
             CallStatus.CALLING ->{
+                //Calling status not in iOS so here we sent Trying to Connect status
                 json.put("callStatus","Trying to Connect")
             }
             CallStatus.CALLING_10S ->{}

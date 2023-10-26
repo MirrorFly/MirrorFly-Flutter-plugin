@@ -92,6 +92,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         val userName = findViewById<TextView>(R.id.tvNameCaller)
         val participants = findViewById<TextView>(R.id.participants)
         val users = CallManager.getCallUsersList()
+        LogMessage.d(tag,"getCallUsersList : "+users.joinToString(","))
         if(users.isNotEmpty()) {
             if(!CallManager.isOneToOneCall()) {
                 if(CallManager.getGroupID().isNotEmpty()){
@@ -124,6 +125,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                         imageCallMember3,
                         imageCallMember4
                     )
+                    LogMessage.d("membersName ${users.joinToString(",")} ",membersName.toString());
                     userName.text = membersName
                     userName.visibility = View.VISIBLE
                 }
