@@ -107,6 +107,7 @@ class Utils {
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?,
                                                   isFirstResource: Boolean): Boolean {
+                            LogMessage.e("onLoadFailed", e.toString())
                             return if (e?.message != null && e.message!!.contains("FileNotFoundException")) {
                                 LogMessage.e("MediaUtils", e.message)
                                 true

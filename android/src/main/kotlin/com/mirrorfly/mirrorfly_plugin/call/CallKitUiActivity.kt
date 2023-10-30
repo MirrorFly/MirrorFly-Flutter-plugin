@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.FlyChatPlugin
 import com.mirrorfly.mirrorfly_plugin.R
@@ -403,7 +404,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
     }
 
 //    override fun onShowCallUi(callAction: String?) {
-    override fun onShowCallUiFlutter(callAction: String?) {
+    override fun onShowCallUiFlutter(callAction: String?,userJid: String?) {
         LogMessage.d(tag, "#onShowCallUi $callAction")
         when(callAction){
             CallStatus.INCOMING_CALL_TIME_OUT->{
@@ -440,6 +441,9 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
             }
             CallAction.ACTION_REMOTE_OTHER_BUSY->{
                 updateUsersProfile()
+                if (userJid!=null && userJid.isNotEmpty()) {
+                    Toast.makeText(this, ContactManager.getDisplayName(userJid)+" is Busy",Toast.LENGTH_SHORT).show()
+                }
             }
             CallAction.ACTION_REMOTE_BUSY->{
                 if(CallManager.isOneToOneCall()){

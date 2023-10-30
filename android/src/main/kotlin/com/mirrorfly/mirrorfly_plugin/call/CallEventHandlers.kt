@@ -116,6 +116,6 @@ object FlutterCall{
     }
 }
 interface CallUiFlutterListener {
-    fun onShowCallUiFlutter(callAction: String?)
+    fun onShowCallUiFlutter(callAction: String?,userJid: String?)
     fun onCallStatusUpdated(callStatus: String, userJid: String)
 }

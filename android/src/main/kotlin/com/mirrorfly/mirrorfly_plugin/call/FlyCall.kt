@@ -233,10 +233,10 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             }
             CallStatus.CALL_TIME_OUT ->{
                 json.put("callStatus","CALL TIME OUT")
-                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT)
+                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT,json.getString("userJid"))
             }
             CallStatus.INCOMING_CALL_TIME_OUT ->{
-                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT)
+                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT,json.getString("userJid"))
             }
             CallStatus.RECONNECTING ->{}
             CallStatus.RECONNECTED ->{}
@@ -259,7 +259,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
         onCallActionStreamHandler.onCallAction?.success(json.toString())
-        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
+        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction,userJid)
         if(callAction == CallAction.ACTION_REMOTE_VIDEO_STATUS){
             if (CallManager.isRemoteVideoPaused(userJid)){
                 json.put("callAction","REMOTE_VIDEO_PAUSED")
@@ -412,7 +412,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
 
     override fun onShowCallUi(callAction: String?) {
         LogMessage.d(tag, "#onShowCallUi $callAction")
-        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction)
+        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction,null)
         if(callAction!=null) {
             when (callAction) {
                 CallConstants.ACTION_SHOW_CALL_UI -> {
