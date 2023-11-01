@@ -4090,9 +4090,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<dynamic> getCallUsersList() async {
     dynamic callList;
     try {
-      LogMessage.d('getCallUsers :', '');
       callList =
           await mirrorFlyCallMethodChannel.invokeMethod('getCallUsersList');
+      LogMessage.d('getCallUsers :', '$callList');
       return callList;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
