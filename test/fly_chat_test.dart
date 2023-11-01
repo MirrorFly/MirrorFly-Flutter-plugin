@@ -1596,6 +1596,24 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  getCallLogsList(int currentPage) {
+    // TODO: implement getCallLogsList
+    throw UnimplementedError();
+  }
+
+  @override
+  getCallLogTimeDuration(int startTime,int endTime) {
+    // TODO: implement getCallLogTimeDuration
+    throw UnimplementedError();
+  }
+
+  @override
+  getCallLogListener() {
+    // TODO: implement getCallLogTimeDuration
+    throw UnimplementedError();
+  }
+
  /* @override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType

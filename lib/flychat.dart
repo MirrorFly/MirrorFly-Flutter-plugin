@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:mirrorfly_plugin/builder.dart';
 
 import 'fly_chat_platform_interface.dart';
@@ -450,6 +452,21 @@ class Mirrorfly {
   static getUserList(int page, String search, [int perPageResultSize = 20]) {
     return FlyChatFlutterPlatform.instance
         .getUserList(page, search, perPageResultSize);
+  }
+
+  static getCallLogsList(int currentPage) {
+    return FlyChatFlutterPlatform.instance
+        .getCallLogsList(currentPage);
+  }
+
+  static getCallLogDuration(int startTime, int endTime) {
+    return FlyChatFlutterPlatform.instance
+        .getCallLogTimeDuration(startTime, endTime);
+  }
+
+  static getCallLogListener() {
+    return FlyChatFlutterPlatform.instance
+        .getCallLogListener();
   }
 
   static Stream<dynamic> get onMessageReceived =>
