@@ -455,10 +455,12 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 }
                 CallAction.CALL_REQUEST_RESPONSE->{
                     handler.post {
+                        LogMessage.d(tag, "#onShowCallUi CallManager.isVideoMuted() ${CallManager.isVideoMuted()} CallManager.getLocalProxyVideoSink() ${CallManager.getLocalProxyVideoSink()}")
                         if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId()) != null && !CallManager.isVideoMuted() && CallManager.getLocalProxyVideoSink()!=null) {
                             MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
                                 ?.setLocalTarget()
                         }
+                        LogMessage.d(tag, "#onShowCallUi CallManager.isRemoteVideoPaused(${CallManager.getEndCallerJid()}) ${CallManager.isRemoteVideoPaused(CallManager.getEndCallerJid())} CallManager.isRemoteVideoMuted(${CallManager.getEndCallerJid()}) ${CallManager.isRemoteVideoMuted(CallManager.getEndCallerJid())}")
                         if (!CallManager.isRemoteVideoPaused(CallManager.getEndCallerJid())) {
                             if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getEndCallerJid()) != null && !CallManager.isRemoteVideoMuted(
                                     CallManager.getEndCallerJid()
