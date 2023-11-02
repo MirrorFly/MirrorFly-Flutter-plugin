@@ -89,21 +89,21 @@ import PushKit
             CallManager.incomingUserJidArr.removeAll()
             CallManager.disconnectCall()
             
-            let jsonObject: NSMutableDictionary = NSMutableDictionary()
-            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
-            jsonObject.setValue("LOCAL_HANGUP", forKey: "callAction")
-            if CallManager.isOneToOneCall()  {
-                jsonObject.setValue("onetoone", forKey: "callMode")
-            }else{
-                jsonObject.setValue("onetomany", forKey: "callMode")
-            }
-            if CallManager.getCallType() == .Audio {
-                jsonObject.setValue("audio", forKey: "callType")
-            } else {
-                jsonObject.setValue("video", forKey: "callType")
-            }
-            let callUpdate = pluginDictToJson(dictionary: jsonObject)
-            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
+//            let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
+//            jsonObject.setValue("LOCAL_HANGUP", forKey: "callAction")
+//            if CallManager.isOneToOneCall()  {
+//                jsonObject.setValue("onetoone", forKey: "callMode")
+//            }else{
+//                jsonObject.setValue("onetomany", forKey: "callMode")
+//            }
+//            if CallManager.getCallType() == .Audio {
+//                jsonObject.setValue("audio", forKey: "callType")
+//            } else {
+//                jsonObject.setValue("video", forKey: "callType")
+//            }
+//            let callUpdate = pluginDictToJson(dictionary: jsonObject)
+//            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
             
             result(true)
         }else{
