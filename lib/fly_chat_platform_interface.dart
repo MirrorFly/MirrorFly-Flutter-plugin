@@ -392,18 +392,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  getCallLogTimeDuration(int startTime, int endTime){
-    throw UnimplementedError('has not been implemented.');
-  }
-
-  getCallLogListener(){
-    throw UnimplementedError('has not been implemented.');
-  }
-
-  getCallLogUserNames(String toUser,List<String> callUsers){
-    throw UnimplementedError('has not been implemented.');
-  }
-
   Stream<dynamic> get onMessageReceived =>
       throw UnimplementedError('has not been implemented.');
 
@@ -581,6 +569,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
       'onMissedCall has not been implemented.');
 
   Stream<dynamic> get onAvailableFeaturesUpdated => throw UnimplementedError(
+      'onUpdateAvailableFeatures has not been implemented.');
+
+  Stream<dynamic> get onCallLog => throw UnimplementedError(
       'onUpdateAvailableFeatures has not been implemented.');
 
   Future<String?> imagePath(String imgurl) {

@@ -46,6 +46,7 @@ import com.mirrorflysdk.flycall.call.database.model.CallLog
 import com.mirrorflysdk.flycall.call.utils.CallTimeFormatter
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
+import com.mirrorflysdk.flycall.webrtc.api.CallLogListener
 import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
@@ -80,13 +81,14 @@ import java.io.FileWriter
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /** FlyChatPlugin */
 class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
     TypingEventListener, TypingStatusListener, ActivityAware, DefaultLifecycleObserver,
-    PluginRegistry.NewIntentListener, PluginRegistry.ActivityResultListener, AvailableFeaturesCallback, MissedCallListener {
+    PluginRegistry.NewIntentListener, PluginRegistry.ActivityResultListener, AvailableFeaturesCallback, MissedCallListener, CallLogManager.CallLogsListener{
 
     companion object {
         @SuppressLint("StaticFieldLeak")
@@ -344,6 +346,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             )
             EventChannel(binaryMessenger, Constants.onAvailableFeaturesUpdatedChannel).setStreamHandler(
                 onUpdateAvailableFeaturesStreamHandler
+            )
+            EventChannel(binaryMessenger, Constants.onCallLogChannel).setStreamHandler(
+                onCallLogStreamHandler
             )
         }
     }
@@ -1366,19 +1371,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 getCallLogsList(call, result)
             }
 
-            call.method.equals("get_call_logs_time_duration") -> {
-                getCallLogTimeDuration(call, result)
-            }
-
-            call.method.equals("get_call_logs_listener") -> {
-                getCallLogListener(call, result)
-            }
-
-            call.method.equals("get_call_log_user_names") -> {
-                getCallLogUserNames(call, result)
-            }
-
-
             else -> {
                 result.notImplemented()
             }
@@ -1605,6 +1597,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         ChatEventsManager.attachGroupEventsListener(this)
                         ChatEventsManager.attachLoginEventsListener(this)
                         ChatEventsManager.attachTypingEventListener(this)
+                        CallLogManager.setCallLogsListener(this)
                         ChatManager.setAvailableFeaturesCallback(this)
                         CallManager.setMissedCallListener(this)
                         SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
@@ -4290,6 +4283,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
         ChatManager.setAvailableFeaturesCallback(instance)
         CallManager.setMissedCallListener(instance)
+        CallLogManager.setCallLogsListener(this)
         if (isRegistered) {
             ChatEventsManager.setupMessageEventListener(this)
             ChatEventsManager.attachProfileEventsListener(this)
@@ -4420,6 +4414,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }*/
         return notificationResponseMap
     }
+
 
     class EventCallbackHandler : EventChannel.StreamHandler {
 
@@ -4709,49 +4704,14 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         } else {
             Toast.makeText(mContext, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
         }
-
     }
 
-    private fun getCallLogTimeDuration(call: MethodCall, result: MethodChannel.Result) {
-        val callLogStartTime = call.argument("callLogStartTime") ?: 0
-        val callLogEndTime = call.argument("callLogEndTime") ?: 0
-        val res = CallTimeFormatter.getCallDurationTime(1698825000814000, 1698825006131000)
-        result.success(res)
+    override fun onCallLogsDeleted(isClearAll: Boolean, callIdList: ArrayList<String>) {
+        LogMessage.d("onCallLogs ", "Deleted Called")
     }
 
-    private fun getCallLogListener(call: MethodCall, result: MethodChannel.Result) {
-        CallLogManager.setCallLogsListener(object : CallLogManager.CallLogsListener {
-            override fun onCallLogsDeleted(isClearAll: Boolean, callidList: ArrayList<String>) {
-            }
-
-            override fun onCallLogsUpdated() {
-                result.success("updated")
-                println("Call Logs Updated")
-            }
-        })
-    }
-
-    private fun getCallLogUserNames(call: MethodCall, result: MethodChannel.Result) {
-        val callUsers = call.argument<List<String>>("callUsers") ?: arrayListOf<String>()
-        val toUser = call.argument<String>("toUser") ?: ""
-
-        val userNames = mutableListOf<String?>()
-        if (toUser != null && toUser != CallManager.getCurrentUserId()) {
-            userNames.add(getDisplayName(toUser))
-        }
-        if (callUsers != null) {
-            for (jid in callUsers) {
-                if (jid.isNotEmpty()
-                    && jid != CallManager.getCurrentUserId()
-                    && !userNames.contains(getDisplayName(jid))
-                )
-                    userNames.add(getDisplayName(jid))
-            }
-        }
-        if (userNames.isNotEmpty() && userNames != null) {
-            result.success(userNames.filter { !it.isNullOrEmpty() }.joinToString(", "))
-        } else {
-            result.error("getCallLogUserNames", "user name error", "")
-        }
+    override fun onCallLogsUpdated() {
+        LogMessage.d("onCallLogs Updated ", "Updated Called")
+        onCallLogStreamHandler.onCallLog?.success("1")
     }
 }

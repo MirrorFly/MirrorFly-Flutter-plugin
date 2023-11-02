@@ -458,21 +458,6 @@ class Mirrorfly {
         .getCallLogsList(currentPage);
   }
 
-  static getCallLogDuration(int startTime, int endTime) {
-    return FlyChatFlutterPlatform.instance
-        .getCallLogTimeDuration(startTime, endTime);
-  }
-
-  static getCallLogListener() {
-    return FlyChatFlutterPlatform.instance
-        .getCallLogListener();
-  }
-
-  static getCallLogUserNames(String toUser,List<String> callUsers) {
-    return FlyChatFlutterPlatform.instance
-        .getCallLogUserNames(toUser,callUsers);
-  }
-
   static Stream<dynamic> get onMessageReceived =>
       FlyChatFlutterPlatform.instance.onMessageReceived;
 
@@ -651,6 +636,9 @@ class Mirrorfly {
 
   static Stream<dynamic> get onAvailableFeaturesUpdated =>
       FlyChatFlutterPlatform.instance.onAvailableFeaturesUpdated;
+
+  static Stream<dynamic> get onCallLog =>
+      FlyChatFlutterPlatform.instance.onCallLog;
 
   static Future<String?> imagePath(String imgurl) {
     return FlyChatFlutterPlatform.instance.imagePath(imgurl);

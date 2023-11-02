@@ -328,6 +328,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onAvailableFeaturesUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
+  @visibleForTesting
+  final onCallLogChannel =
+  const EventChannel('contus.mirrorfly/onCallLog');
+  final StreamController<dynamic> onCallLogStreamController =
+  StreamController<dynamic>.broadcast();
+
   /*@override
   Future<String?> getPlatformVersion() async {
     final version =
@@ -466,6 +472,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         .addStream(onMissedCallChannel.receiveBroadcastStream());
     onAvailableFeaturesUpdatedStreamController
         .addStream(onAvailableFeaturesUpdatedChannel.receiveBroadcastStream());
+    onCallLogStreamController.addStream(onCallLogChannel.receiveBroadcastStream());
   }
 
   @override
@@ -1892,45 +1899,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getCallLogTimeDuration(int startTime, int endTime) async {
-    dynamic re;
-    try {
-      re = await mirrorFlyMethodChannel.invokeMethod("get_call_logs_time_duration", {"callLogStartTime": startTime, "callLogEndTime": endTime});
-      LogMessage.d('RESULT ', '$re');
-      return re;
-    } on PlatformException catch (e) {
-      LogMessage.d("er", "$e");
-      return re;
-    }
-  }
-
-  @override
-  Future<dynamic> getCallLogListener() async {
-    dynamic re;
-    try {
-      re = await mirrorFlyMethodChannel.invokeMethod("get_call_logs_listener", {});
-      LogMessage.d('RESULT ', '$re');
-      return re;
-    } on PlatformException catch (e) {
-      LogMessage.d("er", "$e");
-      return re;
-    }
-  }
-
-  @override
-  Future<dynamic> getCallLogUserNames(String toUser, List<String> callUsers) async {
-    dynamic re;
-    try {
-      re = await mirrorFlyMethodChannel.invokeMethod("get_call_log_user_names", {"toUser": toUser, "callUsers": callUsers});
-      LogMessage.d('RESULT ', '$re');
-      return re;
-    } on PlatformException catch (e) {
-      LogMessage.d("er", "$e");
-      return re;
-    }
-  }
-
-  @override
   Future<dynamic> getAvailableFeatures() async {
     dynamic re;
     try {
@@ -2162,6 +2130,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onAvailableFeaturesUpdated =>
       onAvailableFeaturesUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onCallLog =>
+      onCallLogStreamController.stream;
 
   @override
   Future<String?> imagePath(String imgurl) async {

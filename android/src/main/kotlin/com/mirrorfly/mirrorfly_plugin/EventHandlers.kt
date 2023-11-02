@@ -687,3 +687,16 @@ object onUpdateAvailableFeaturesStreamHandler : EventChannel.StreamHandler {
         onAvailableFeaturesUpdated = null
     }
 }
+
+object onCallLogStreamHandler : EventChannel.StreamHandler {
+
+    var onCallLog: EventChannel.EventSink? = null
+
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        onCallLog = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        onCallLog = null
+    }
+}
