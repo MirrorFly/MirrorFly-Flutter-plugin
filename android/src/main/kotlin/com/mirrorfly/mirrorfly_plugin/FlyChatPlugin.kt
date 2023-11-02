@@ -1374,6 +1374,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 getCallLogListener(call, result)
             }
 
+            call.method.equals("get_call_log_user_names") -> {
+                getCallLogUserNames(call, result)
+            }
+
+
             else -> {
                 result.notImplemented()
             }
@@ -4708,10 +4713,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     private fun getCallLogTimeDuration(call: MethodCall, result: MethodChannel.Result) {
-        // val callLogStartTime = call.argument("callLogStartTime")
-        // val callLogEndTime = call.argument("callLogEndTime")
-        //var res = CallTimeFormatter.getCallDurationTime(callLogStartTime,callLogEndTime)
-        result.success("res)")
+        val callLogStartTime = call.argument("callLogStartTime") ?: 0
+        val callLogEndTime = call.argument("callLogEndTime") ?: 0
+        val res = CallTimeFormatter.getCallDurationTime(1698825000814000, 1698825006131000)
+        result.success(res)
     }
 
     private fun getCallLogListener(call: MethodCall, result: MethodChannel.Result) {
@@ -4720,9 +4725,33 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
 
             override fun onCallLogsUpdated() {
-                getCallLogsList(call, result)
+                result.success("updated")
                 println("Call Logs Updated")
             }
         })
+    }
+
+    private fun getCallLogUserNames(call: MethodCall, result: MethodChannel.Result) {
+        val callUsers = call.argument<List<String>>("callUsers") ?: arrayListOf<String>()
+        val toUser = call.argument<String>("toUser") ?: ""
+
+        val userNames = mutableListOf<String?>()
+        if (toUser != null && toUser != CallManager.getCurrentUserId()) {
+            userNames.add(getDisplayName(toUser))
+        }
+        if (callUsers != null) {
+            for (jid in callUsers) {
+                if (jid.isNotEmpty()
+                    && jid != CallManager.getCurrentUserId()
+                    && !userNames.contains(getDisplayName(jid))
+                )
+                    userNames.add(getDisplayName(jid))
+            }
+        }
+        if (userNames.isNotEmpty() && userNames != null) {
+            result.success(userNames.filter { !it.isNullOrEmpty() }.joinToString(", "))
+        } else {
+            result.error("getCallLogUserNames", "user name error", "")
+        }
     }
 }

@@ -1614,6 +1614,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  getCallLogUserNames(String toUser, List<String> callUsers) {
+    // TODO: implement getCallLogUserNames
+    throw UnimplementedError();
+  }
+
  /* @override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType

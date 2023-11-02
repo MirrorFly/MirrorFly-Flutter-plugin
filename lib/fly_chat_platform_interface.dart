@@ -401,6 +401,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  getCallLogUserNames(String toUser,List<String> callUsers){
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Stream<dynamic> get onMessageReceived =>
       throw UnimplementedError('has not been implemented.');
 

@@ -469,6 +469,11 @@ class Mirrorfly {
         .getCallLogListener();
   }
 
+  static getCallLogUserNames(String toUser,List<String> callUsers) {
+    return FlyChatFlutterPlatform.instance
+        .getCallLogUserNames(toUser,callUsers);
+  }
+
   static Stream<dynamic> get onMessageReceived =>
       FlyChatFlutterPlatform.instance.onMessageReceived;
 
