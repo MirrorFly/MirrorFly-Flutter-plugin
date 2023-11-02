@@ -21,6 +21,7 @@ import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
 import com.mirrorfly.mirrorfly_plugin.call.widgets.SetDrawable
+import com.mirrorfly.mirrorfly_plugin.toJsonString
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
 import com.mirrorflysdk.flycall.call.utils.CallConstants
@@ -106,6 +107,7 @@ class Utils {
                     .listener(object : RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?,
                                                   isFirstResource: Boolean): Boolean {
+                            LogMessage.e("onLoadFailed", e.toString())
                             return if (e?.message != null && e.message!!.contains("FileNotFoundException")) {
                                 LogMessage.e("MediaUtils", e.message)
                                 true
@@ -204,6 +206,7 @@ class Utils {
             var isMaxMemberNameNotReached = true
             for (i in callUsers.indices) {
                 val pair = getNameAndProfileDetails(callUsers[i])
+                LogMessage.d("pair",pair.first+" : "+pair.second?.toJsonString())
                 if(i == 1){
                     imageCallMember2.show()
                     loadUserProfilePic(context, imageCallMember2, pair)
@@ -213,21 +216,24 @@ class Utils {
                 }
                 if (i == 0) {
                     val actualMemberName = getActualMemberName(StringBuilder(pair.first))
+                    LogMessage.d("actualMemberName$i",actualMemberName.first.toString()+" : "+actualMemberName.second)
                     membersName = actualMemberName.first
                     isMaxMemberNameNotReached = actualMemberName.second
-                    imageCallMember1.show()
                     loadUserProfilePic(context, imageCallMember1, pair)
                 } else if (isMaxMemberNameNotReached && i == 1) {
                     membersName.append(", ").append(pair.first)
                     val actualMemberName = getActualMemberName(membersName)
+                    LogMessage.d("actualMemberName$i",actualMemberName.first.toString()+" : "+actualMemberName.second)
                     membersName = actualMemberName.first
                     isMaxMemberNameNotReached = actualMemberName.second
                 } else if (isMaxMemberNameNotReached && i == 2) {
                     membersName.append(", ").append(pair.first)
                     val actualMemberName = getActualMemberName(membersName)
+                    LogMessage.d("actualMemberName$i",actualMemberName.first.toString()+" : "+actualMemberName.second)
                     membersName = actualMemberName.first
                 } else {
                     membersName.append(" (+").append(callUsers.size - i).append(")")
+                    LogMessage.d("actualMemberName$i",membersName.toString())
                     imageCallMember4.show()
                     val text = "+${callUsers.size - i}"
                     val setDrawable = SetDrawable(context)

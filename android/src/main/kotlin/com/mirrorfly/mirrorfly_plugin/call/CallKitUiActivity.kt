@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.FlyChatPlugin
 import com.mirrorfly.mirrorfly_plugin.R
@@ -92,6 +93,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         val userName = findViewById<TextView>(R.id.tvNameCaller)
         val participants = findViewById<TextView>(R.id.participants)
         val users = CallManager.getCallUsersList()
+        LogMessage.d(tag,"getCallUsersList : "+users.joinToString(","))
         if(users.isNotEmpty()) {
             if(!CallManager.isOneToOneCall()) {
                 if(CallManager.getGroupID().isNotEmpty()){
@@ -124,6 +126,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                         imageCallMember3,
                         imageCallMember4
                     )
+                    LogMessage.d("membersName ${users.joinToString(",")} ",membersName.toString());
                     userName.text = membersName
                     userName.visibility = View.VISIBLE
                 }
@@ -198,12 +201,18 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
 
     private fun checkPermission() {
         if (CallManager.getCallDirection() == CallDirection.INCOMING_CALL) {
-            if (CallManager.getCallType() == CallType.AUDIO_CALL && !CallManager.isAudioCallPermissionsGranted(false)) {
+            if (CallManager.getCallType() == CallType.AUDIO_CALL && (!CallManager.isAudioCallPermissionsGranted(false) || !CallManager.isNotificationPermissionsGranted())) {
                 //ask Audio call Permission
                 val permissionsToRequest = mutableListOf<String>()
                 val recordPermissionGranted = AppUtils.isPermissionAllowed(this,Manifest.permission.RECORD_AUDIO)
                 val bluetoothPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     AppUtils.isPermissionAllowed(this,Manifest.permission.BLUETOOTH_CONNECT)
+                } else {
+                    true
+                }
+                val postNotificationPermissionGranted = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    AppUtils.isPermissionAllowed(this,
+                        Manifest.permission.POST_NOTIFICATIONS)
                 } else {
                     true
                 }
@@ -217,16 +226,24 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 if(!bluetoothPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
                 }
+                if(!postNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+                }
                 if(permissionsToRequest.isNotEmpty()) {
                     AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
                 }
-            }else if (CallManager.getCallType() == CallType.VIDEO_CALL && !CallManager.isVideoCallPermissionsGranted(false)) {
+            }else if (CallManager.getCallType() == CallType.VIDEO_CALL && (!CallManager.isVideoCallPermissionsGranted(false) || !CallManager.isNotificationPermissionsGranted())) {
                 //ask Audio and Video call Permission
                 val hasCameraPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.CAMERA)
                 val hasMicPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.RECORD_AUDIO)
                 val hasPhoneStatePermission = AppUtils.isPermissionAllowed(this,Manifest.permission.READ_PHONE_STATE)
                 val hasBluetoothPermission = CallManager.isBluetoothPermissionsGranted()
-
+                val postNotificationPermissionGranted = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    AppUtils.isPermissionAllowed(this,
+                        Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    true
+                }
                 val permissionsToRequest = mutableListOf<String>()
                 if (!hasCameraPermission) {
                     permissionsToRequest.add(Manifest.permission.CAMERA)
@@ -240,6 +257,9 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !hasBluetoothPermission) {
                     permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
                 }
+                if(!postNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+                }
                 if(permissionsToRequest.isNotEmpty()) {
                     AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
                 }
@@ -248,11 +268,11 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
     }
 
     private fun attendCall(fromIntent: Boolean = false) {
-        if (CallManager.getCallType() == CallType.AUDIO_CALL && !CallManager.isAudioCallPermissionsGranted()) {
+        if (CallManager.getCallType() == CallType.AUDIO_CALL && (!CallManager.isAudioCallPermissionsGranted() || !CallManager.isNotificationPermissionsGranted())) {
             checkPermission()
             return
         }
-        if (CallManager.getCallType() == CallType.VIDEO_CALL && !CallManager.isVideoCallPermissionsGranted()) {
+        if (CallManager.getCallType() == CallType.VIDEO_CALL && (!CallManager.isVideoCallPermissionsGranted() || !CallManager.isNotificationPermissionsGranted())) {
             checkPermission()
             return
         }
@@ -321,6 +341,12 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 } else {
                     true
                 }
+                val postNotificationPermissionGranted = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    AppUtils.isPermissionAllowed(this,
+                        Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    true
+                }
                 val phoneStatePermissionGranted = AppUtils.isPermissionAllowed(this,Manifest.permission.READ_PHONE_STATE)
                 if(!recordPermissionGranted){
                     permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
@@ -331,6 +357,9 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 if(!bluetoothPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
                 }
+                if(!postNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+                }
                 if(permissionsToRequest.isNotEmpty()) {
                     AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
                 }
@@ -340,7 +369,12 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 val hasMicPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.RECORD_AUDIO)
                 val hasPhoneStatePermission = AppUtils.isPermissionAllowed(this,Manifest.permission.READ_PHONE_STATE)
                 val hasBluetoothPermission = CallManager.isBluetoothPermissionsGranted()
-
+                val postNotificationPermissionGranted = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    AppUtils.isPermissionAllowed(this,
+                        Manifest.permission.POST_NOTIFICATIONS)
+                } else {
+                    true
+                }
                 val permissionsToRequest = mutableListOf<String>()
                 if (!hasCameraPermission) {
                     permissionsToRequest.add(Manifest.permission.CAMERA)
@@ -354,7 +388,10 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !hasBluetoothPermission) {
                     permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
                 }
-                if (!hasCameraPermission || !hasMicPermission)
+                if(!postNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+                }
+                if (!hasCameraPermission || !hasMicPermission || !postNotificationPermissionGranted)
                     CallManager.sendCallPermissionDenied()
                 else
                     CallManager.startVideoCapture()
@@ -401,7 +438,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
     }
 
 //    override fun onShowCallUi(callAction: String?) {
-    override fun onShowCallUiFlutter(callAction: String?) {
+    override fun onShowCallUiFlutter(callAction: String?,userJid: String?) {
         LogMessage.d(tag, "#onShowCallUi $callAction")
         when(callAction){
             CallStatus.INCOMING_CALL_TIME_OUT->{
@@ -438,6 +475,9 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
             }
             CallAction.ACTION_REMOTE_OTHER_BUSY->{
                 updateUsersProfile()
+                if (userJid!=null && userJid.isNotEmpty()) {
+                    Toast.makeText(this, ContactManager.getDisplayName(userJid)+" is Busy",Toast.LENGTH_SHORT).show()
+                }
             }
             CallAction.ACTION_REMOTE_BUSY->{
                 if(CallManager.isOneToOneCall()){

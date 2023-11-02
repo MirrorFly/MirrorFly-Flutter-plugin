@@ -35,7 +35,7 @@ class MirrorFlyView extends StatefulWidget {
       // this.profileview,
       this.profileSize = 80,
       this.hideProfileView = false,
-      required this.userJid, this.showSpeakingRipple = false})
+      required this.userJid, this.showSpeakingRipple = false, this.onClick})
       : super(key: key);
 
   final bool mirror;
@@ -48,6 +48,7 @@ class MirrorFlyView extends StatefulWidget {
   final bool? showSpeakingRipple;
   final int? profileSize;
   final String userJid;
+  final Function()? onClick;
 
   @override
   State<MirrorFlyView> createState() => _MirrorFlyViewState();
@@ -85,7 +86,12 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
     if (widget.userJid.isEmpty) {
       throw Exception("remoteUserJid must not be empty");
     }
-    return buildHybridCompositionView();
+    return Stack(
+      children: [
+        buildHybridCompositionView(),
+        InkWell(onTap: widget.onClick)
+      ],
+    );
   }
 
   String getScalingType(ScalingType type) {

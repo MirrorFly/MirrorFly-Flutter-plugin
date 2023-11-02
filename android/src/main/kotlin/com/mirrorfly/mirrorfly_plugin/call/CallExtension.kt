@@ -82,7 +82,8 @@ fun CallManager.getCallConnectedStatus(context: Context): String {
 fun isCallTryingToConnect(callStatus: String) = callStatus.isEmpty()
         || callStatus == CallStatus.DISCONNECTED
 fun isCallTimeOut(callStatus: String) =
-    callStatus.isNotBlank() && callStatus == CallStatus.OUTGOING_CALL_TIME_OUT
+    callStatus.isNotBlank() && (callStatus == CallStatus.CALL_TIME_OUT || callStatus == CallStatus.OUTGOING_CALL_TIME_OUT)
+
 
 fun isCallConnecting(callStatus: String) = callStatus == CallStatus.CONNECTING || callStatus == CallStatus.CONNECTED
 
