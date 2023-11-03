@@ -36,7 +36,7 @@ import MirrorFlySDK
                 "userJid": memberJid,
                 "callStatus": status.rawValue,
                 "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid),
-                "isVideoMuted" : CallManager.isRemoteAudioMuted(memberJid)
+                "isVideoMuted" : CallManager.isRemoteVideoMuted(memberJid)
 //                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid)
             ]
             jsonArray.append(jsonObject)
