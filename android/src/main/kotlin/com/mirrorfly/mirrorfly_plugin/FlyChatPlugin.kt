@@ -2580,7 +2580,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     private fun getUserList(call: MethodCall, result: MethodChannel.Result) {
-        if (AppUtils.isNetConnected(mContext)) {
+        //if (AppUtils.isNetConnected(mContext)) {
             val page = call.argument("page") ?: 1
             val perPageResultSize = call.argument("perPageResultSize") ?: 20
             val search = call.argument("search") ?: ""
@@ -2597,10 +2597,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 }
 
             }
-        } else {
-            Toast.makeText(mContext, "Please Check Your Internet connection", Toast.LENGTH_SHORT)
-                .show()
-        }
+        //} else {
+            /*Toast.makeText(mContext, "Please Check Your Internet connection", Toast.LENGTH_SHORT)
+                .show()*/
+        //}
     }
 
     private fun getJid(call: MethodCall, result: MethodChannel.Result) {
