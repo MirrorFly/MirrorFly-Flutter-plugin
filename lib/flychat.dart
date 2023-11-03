@@ -1,3 +1,4 @@
+
 import 'package:mirrorfly_plugin/builder.dart';
 
 import 'fly_chat_platform_interface.dart';
@@ -452,6 +453,11 @@ class Mirrorfly {
         .getUserList(page, search, perPageResultSize);
   }
 
+  static getCallLogsList(int currentPage) {
+    return FlyChatFlutterPlatform.instance
+        .getCallLogsList(currentPage);
+  }
+
   static Stream<dynamic> get onMessageReceived =>
       FlyChatFlutterPlatform.instance.onMessageReceived;
 
@@ -630,6 +636,9 @@ class Mirrorfly {
 
   static Stream<dynamic> get onAvailableFeaturesUpdated =>
       FlyChatFlutterPlatform.instance.onAvailableFeaturesUpdated;
+
+  static Stream<dynamic> get onCallLogsUpdated =>
+      FlyChatFlutterPlatform.instance.onCallLogsUpdated;
 
   static Future<String?> imagePath(String imgurl) {
     return FlyChatFlutterPlatform.instance.imagePath(imgurl);

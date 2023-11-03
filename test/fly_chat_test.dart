@@ -1372,6 +1372,10 @@ class MockFlyChatFlutterPlatform
   Stream get onAvailableFeaturesUpdated => throw UnimplementedError();
 
   @override
+  // implement onAvailableFeaturesUpdated
+  Stream get onCallLogsUpdated => throw UnimplementedError();
+
+  @override
   Future getCallUsersList() {
     // implement getCallUsers
     throw UnimplementedError();
@@ -1385,7 +1389,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<String> getCallType() {
-    // implement getCallType
+    // implement getCallTypeonAvailable
     throw UnimplementedError();
   }
 
@@ -1593,6 +1597,12 @@ class MockFlyChatFlutterPlatform
   @override
   Future<int?> getMaxCallUsersCount() {
     // implement getMaxCallUsersCount
+    throw UnimplementedError();
+  }
+
+  @override
+  getCallLogsList(int currentPage) {
+    // TODO: implement getCallLogsList
     throw UnimplementedError();
   }
 

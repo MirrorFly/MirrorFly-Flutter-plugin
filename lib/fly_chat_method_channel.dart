@@ -328,6 +328,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onAvailableFeaturesUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
+  @visibleForTesting
+  final onCallLogsUpdatedChannel =
+  const EventChannel('contus.mirrorfly/onCallLog');
+  final StreamController<dynamic> onCallLogsUpdatedStreamController =
+  StreamController<dynamic>.broadcast();
+
   /*@override
   Future<String?> getPlatformVersion() async {
     final version =
@@ -466,6 +472,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         .addStream(onMissedCallChannel.receiveBroadcastStream());
     onAvailableFeaturesUpdatedStreamController
         .addStream(onAvailableFeaturesUpdatedChannel.receiveBroadcastStream());
+    onCallLogsUpdatedStreamController.addStream(onCallLogsUpdatedChannel.receiveBroadcastStream());
   }
 
   @override
@@ -1866,15 +1873,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getUserList(int page, String search,
-      [int perPageResultSize = 20]) async {
+  Future<dynamic> getUserList(int page, String search, [int perPageResultSize = 20]) async {
     dynamic re;
     try {
-      re = await mirrorFlyMethodChannel.invokeMethod("get_user_list", {
-        "page": page,
-        "search": search,
-        "perPageResultSize": perPageResultSize
-      });
+      re = await mirrorFlyMethodChannel.invokeMethod("get_user_list", {"page": page, "search": search, "perPageResultSize": perPageResultSize});
+      LogMessage.d('RESULT ', '$re');
+      return re;
+    } on PlatformException catch (e) {
+      LogMessage.d("er", "$e");
+      return re;
+    }
+  }
+
+  @override
+  Future<dynamic> getCallLogsList(int currentPage) async {
+    dynamic re;
+    try {
+      re = await mirrorFlyMethodChannel.invokeMethod("get_call_logs", {"currentPage": currentPage});
       LogMessage.d('RESULT ', '$re');
       return re;
     } on PlatformException catch (e) {
@@ -2115,6 +2130,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onAvailableFeaturesUpdated =>
       onAvailableFeaturesUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onCallLogsUpdated =>
+      onCallLogsUpdatedStreamController.stream;
 
   @override
   Future<String?> imagePath(String imgurl) async {

@@ -1,3 +1,4 @@
+
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
@@ -387,6 +388,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  getCallLogsList(int currentPage){
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Stream<dynamic> get onMessageReceived =>
       throw UnimplementedError('has not been implemented.');
 
@@ -565,6 +570,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get onAvailableFeaturesUpdated => throw UnimplementedError(
       'onUpdateAvailableFeatures has not been implemented.');
+
+  Stream<dynamic> get onCallLogsUpdated => throw UnimplementedError(
+      'onCallLogsUpdated has not been implemented.');
 
   Future<String?> imagePath(String imgurl) {
     throw UnimplementedError('has not been implemented.');

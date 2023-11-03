@@ -83,6 +83,7 @@ object Constants {
     val onProgressChangedChannel = "contus.mirrorfly/onProgressChanged"
     const val onSuccessChannel = "contus.mirrorfly/onSuccess"
     const val onAvailableFeaturesUpdatedChannel = "contus.mirrorfly/onAvailableFeaturesUpdated"
+    const val onCallLogsUpdatedChannel = "contus.mirrorfly/onCallLog"
     //call Method channel constants
     private const val domain = "contus.mirrorfly"
     const val callMethodChannel = "$domain/flyCall"
