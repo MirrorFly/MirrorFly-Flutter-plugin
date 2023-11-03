@@ -1373,7 +1373,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   // implement onAvailableFeaturesUpdated
-  Stream get onCallLog => throw UnimplementedError();
+  Stream get onCallLogsUpdated => throw UnimplementedError();
 
   @override
   Future getCallUsersList() {

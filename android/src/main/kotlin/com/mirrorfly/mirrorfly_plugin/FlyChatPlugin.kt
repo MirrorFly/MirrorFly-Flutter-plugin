@@ -347,8 +347,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             EventChannel(binaryMessenger, Constants.onAvailableFeaturesUpdatedChannel).setStreamHandler(
                 onUpdateAvailableFeaturesStreamHandler
             )
-            EventChannel(binaryMessenger, Constants.onCallLogChannel).setStreamHandler(
-                onCallLogStreamHandler
+            EventChannel(binaryMessenger, Constants.onCallLogsUpdatedChannel).setStreamHandler(
+                onCallLogsUpdatedStreamHandler
             )
         }
     }
@@ -2776,7 +2776,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //}
     }
 
-    private fun getUserList(call: MethodCall, result: MethodChannel.Result) {
+    private fun  getUserList(call: MethodCall, result: MethodChannel.Result) {
         if (AppUtils.isNetConnected(mContext)) {
             val page = call.argument("page") ?: 1
             val perPageResultSize = call.argument("perPageResultSize") ?: 20
@@ -4712,6 +4712,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onCallLogsUpdated() {
         LogMessage.d("onCallLogs Updated ", "Updated Called")
-        onCallLogStreamHandler.onCallLog?.success("1")
+        onCallLogsUpdatedStreamHandler.onCallLogsUpdated?.success(true)
     }
 }

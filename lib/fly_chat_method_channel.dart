@@ -329,9 +329,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       StreamController<dynamic>.broadcast();
 
   @visibleForTesting
-  final onCallLogChannel =
+  final onCallLogsUpdatedChannel =
   const EventChannel('contus.mirrorfly/onCallLog');
-  final StreamController<dynamic> onCallLogStreamController =
+  final StreamController<dynamic> onCallLogsUpdatedStreamController =
   StreamController<dynamic>.broadcast();
 
   /*@override
@@ -472,7 +472,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         .addStream(onMissedCallChannel.receiveBroadcastStream());
     onAvailableFeaturesUpdatedStreamController
         .addStream(onAvailableFeaturesUpdatedChannel.receiveBroadcastStream());
-    onCallLogStreamController.addStream(onCallLogChannel.receiveBroadcastStream());
+    onCallLogsUpdatedStreamController.addStream(onCallLogsUpdatedChannel.receiveBroadcastStream());
   }
 
   @override
@@ -2132,8 +2132,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onAvailableFeaturesUpdatedStreamController.stream;
 
   @override
-  Stream<dynamic> get onCallLog =>
-      onCallLogStreamController.stream;
+  Stream<dynamic> get onCallLogsUpdated =>
+      onCallLogsUpdatedStreamController.stream;
 
   @override
   Future<String?> imagePath(String imgurl) async {
