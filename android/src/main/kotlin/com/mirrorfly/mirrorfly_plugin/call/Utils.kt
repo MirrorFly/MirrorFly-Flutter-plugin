@@ -278,8 +278,9 @@ class Utils {
             var options = RequestOptions().placeholder(imageView.drawable ?: defaultImage).error(defaultImage).priority(Priority.HIGH)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
             if (imageUrl != null && imageUrl.isNotEmpty()) {
-                val imgURL = Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon()
-                    .appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
+                val imgURL = if (isValidURL(imageUrl)) imageUrl else Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon().appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
+                LogMessage.d("imgURL",imgURL)
+//                val imgURL = Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon().appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
                 val requestBuilder = Glide.with(context).asDrawable().sizeMultiplier(0.1f)
                 Glide.with(context).load(imgURL).thumbnail(requestBuilder).apply(options)
                     .listener(object : RequestListener<Drawable> {
