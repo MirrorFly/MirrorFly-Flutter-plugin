@@ -435,7 +435,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                     json.put("userJid", CallManager.getCurrentUserId())
                     json.put("callType", CallManager.getCallType())
                     json.put("callMode", CallManager.getCallMode())
-                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         val y = AppUtils.getAppIntent(context)
                         y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         context.startActivity(y)

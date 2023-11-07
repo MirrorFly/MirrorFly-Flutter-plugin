@@ -29,6 +29,7 @@ import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.media.MediaUploadDownloadManager
 import org.json.JSONObject
 
 
@@ -439,7 +440,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
 
 //    override fun onShowCallUi(callAction: String?) {
     override fun onShowCallUiFlutter(callAction: String?,userJid: String?) {
-        LogMessage.d(tag, "#onShowCallUi $callAction")
+        LogMessage.d(tag, "#onShowCallUi $callAction ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.R}")
         when(callAction){
             CallStatus.INCOMING_CALL_TIME_OUT->{
                 if(CallManager.isOneToOneCall()){
@@ -453,7 +454,11 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}
             CallAction.ACTION_INVITE_USERS->{}
             CallAction.ACTION_ANSWER_CALL->{
-
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    val y = AppUtils.getAppIntent(this)
+                    y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    this.startActivity(y)
+                }
             }
             CallAction.ACTION_DENY_CALL->{
                 if(CallManager.isOneToOneCall()){
