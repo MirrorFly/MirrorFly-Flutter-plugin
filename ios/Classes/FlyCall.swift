@@ -129,7 +129,7 @@ import PushKit
     }
     
     
-    func getDisplayName(IncomingUser: [String]) {
+    func getDisplayName(IncomingUser: [String], incomingUserName: String) {
         var userString = [String]()
         if isHideNotificationContent{
             userString.append(APP_NAME)
@@ -173,20 +173,20 @@ import PushKit
         }
     }
     
-    func sendCallMessage(groupCallDetails: MirrorFlySDK.GroupCallDetails, users: [String], invitedUsers: [String]) {
-        NSLog("#MirrorflyCall send call message group call Details--> \(groupCallDetails)")
-        NSLog("#MirrorflyCall send call message users--> \(users)")
-        NSLog("#MirrorflyCall send call message Invited users--> \(invitedUsers)")
-        
-        try? FlyMessenger.sendCallMessage(for: groupCallDetails, users : users , inviteUsers: invitedUsers) { isSuccess, flyError, flyData in
-            var data  = flyData
-            if isSuccess {
-                NSLog(data.getMessage() as? String ?? "")
-            } else{
-                NSLog(data.getMessage() as! String)
-            }
-        }
-    }
+//    func sendCallMessage(groupCallDetails: MirrorFlySDK.GroupCallDetails, users: [String], invitedUsers: [String]) {
+//        NSLog("#MirrorflyCall send call message group call Details--> \(groupCallDetails)")
+//        NSLog("#MirrorflyCall send call message users--> \(users)")
+//        NSLog("#MirrorflyCall send call message Invited users--> \(invitedUsers)")
+//        
+//        try? FlyMessenger.sendCallMessage(for: groupCallDetails, users : users , inviteUsers: invitedUsers) { isSuccess, flyError, flyData in
+//            var data  = flyData
+//            if isSuccess {
+//                NSLog(data.getMessage() as? String ?? "")
+//            } else{
+//                NSLog(data.getMessage() as! String)
+//            }
+//        }
+//    }
     
     func socketConnectionEstablished() {
         
