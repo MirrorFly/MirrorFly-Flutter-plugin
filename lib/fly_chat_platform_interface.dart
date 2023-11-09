@@ -1138,6 +1138,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getMaxCallUsersCount has not been implemented.');
   }
 
+  Future inviteUsersToOngoingCall(List<String> jidList) async {
+    throw UnimplementedError('inviteUsersToOngoingCall has not been implemented.');
+  }
+
   /*Future<dynamic> changeCallType({required String switchType}) async {
     throw UnimplementedError('changeCallType has not been implemented.');
   }

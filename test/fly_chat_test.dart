@@ -1606,6 +1606,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  inviteUsersToOngoingCall(List<String> jidList) {
+    // TODO: implement inviteUsersToOngoingCall
+    throw UnimplementedError();
+  }
+
  /* @override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType

@@ -378,6 +378,12 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         CallManager.declineVideoCallSwitchRequest()
         result.success(true)
     }
+
+    fun inviteUsersToOngoingCall(call: MethodCall, result: MethodChannel.Result) {
+        val jidList = call.argument<List<String>>("jidList") ?: arrayListOf()
+        CallManager.inviteUsersToOngoingCall(jidList as ArrayList<String>)
+    }
+
     /*fun changeCallType(call: MethodCall, result: MethodChannel.Result) {
         val callType = call.argument<String>("callType") ?: ""
         if (callType == "video"){

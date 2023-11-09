@@ -4480,6 +4480,21 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+  @override
+  Future inviteUsersToOngoingCall(List<String>? jidList) async {
+    try {
+      LogMessage.d('inviteUsersToOngoingCall :', " jidList : $jidList");
+      await mirrorFlyCallMethodChannel
+          .invokeMethod('inviteUsersToOngoingCall', {"jidList": jidList});
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
   /*@override
   Future<bool?> changeCallType({required String switchType}) async {
     bool? res;

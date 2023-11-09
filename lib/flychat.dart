@@ -1352,7 +1352,12 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getMaxCallUsersCount();
   }
 
-/*  /// [changeCallType] Used to Change the Call Type
+  /// [inviteUsersToOngoingCall] Used to get Maximum call users count
+  static Future inviteUsersToOngoingCall({List<String> jidList = const[]}) async {
+    return FlyChatFlutterPlatform.instance.inviteUsersToOngoingCall(jidList);
+  }
+
+  /* /// [changeCallType] Used to Change the Call Type
   /// audio for Switching to Audio Call
   /// video for Switching to Video Call
   static Future<dynamic> changeCallType({required String switchType}) async {
