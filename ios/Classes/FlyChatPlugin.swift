@@ -864,6 +864,10 @@ extension FlyChatPlugin : LocalNotificationDelegate {
 }
 
 extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate, BackupEventDelegate, RestoreEventDelegate {
+    public func didRevokedAdminAccess(groupJid: String, revokedAdminMemberJid: String, revokedByMemberJid: String) {
+        NSLog("GroupEventsDelegate didRevokedAdminAccess Delegate Triggered")
+    }
+    
     public func onMediaStatusFailed(error: String, messageId: String, errorCode: Int) {
         let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
         
