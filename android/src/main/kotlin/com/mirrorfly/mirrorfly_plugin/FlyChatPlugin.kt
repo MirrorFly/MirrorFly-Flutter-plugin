@@ -3934,6 +3934,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val map = JSONObject()
         map.put("jid", jid)
         userUpdatedHisProfileStreamHandler.userUpdatedHisProfile?.success(map.toString())
+        FlutterChat.profileListener?.userUpdatedHisProfile(jid);
     }
 
     override fun userWentOffline(jid: String) {
