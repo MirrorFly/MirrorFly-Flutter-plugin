@@ -2448,7 +2448,7 @@ import UIKit
                 //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
                 ChatManager.disconnect()
                 ChatManager.shared.resetFlyDefaults()
-                Utility.clearUserDefaults()
+                //Utility.clearUserDefaults()
                 Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
                 result(isSuccess)

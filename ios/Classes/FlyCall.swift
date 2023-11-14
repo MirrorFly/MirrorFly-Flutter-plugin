@@ -89,21 +89,21 @@ import PushKit
             CallManager.incomingUserJidArr.removeAll()
             CallManager.disconnectCall()
             
-            let jsonObject: NSMutableDictionary = NSMutableDictionary()
-            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
-            jsonObject.setValue("LOCAL_HANGUP", forKey: "callAction")
-            if CallManager.isOneToOneCall()  {
-                jsonObject.setValue("onetoone", forKey: "callMode")
-            }else{
-                jsonObject.setValue("onetomany", forKey: "callMode")
-            }
-            if CallManager.getCallType() == .Audio {
-                jsonObject.setValue("audio", forKey: "callType")
-            } else {
-                jsonObject.setValue("video", forKey: "callType")
-            }
-            let callUpdate = pluginDictToJson(dictionary: jsonObject)
-            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
+//            let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
+//            jsonObject.setValue("LOCAL_HANGUP", forKey: "callAction")
+//            if CallManager.isOneToOneCall()  {
+//                jsonObject.setValue("onetoone", forKey: "callMode")
+//            }else{
+//                jsonObject.setValue("onetomany", forKey: "callMode")
+//            }
+//            if CallManager.getCallType() == .Audio {
+//                jsonObject.setValue("audio", forKey: "callType")
+//            } else {
+//                jsonObject.setValue("video", forKey: "callType")
+//            }
+//            let callUpdate = pluginDictToJson(dictionary: jsonObject)
+//            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
             
             result(true)
         }else{
@@ -172,12 +172,12 @@ import PushKit
             }
         }
     }
-    
+    //This method has been moved inside SDK from latest release
 //    func sendCallMessage(groupCallDetails: MirrorFlySDK.GroupCallDetails, users: [String], invitedUsers: [String]) {
 //        NSLog("#MirrorflyCall send call message group call Details--> \(groupCallDetails)")
 //        NSLog("#MirrorflyCall send call message users--> \(users)")
 //        NSLog("#MirrorflyCall send call message Invited users--> \(invitedUsers)")
-//        
+//
 //        try? FlyMessenger.sendCallMessage(for: groupCallDetails, users : users , inviteUsers: invitedUsers) { isSuccess, flyError, flyData in
 //            var data  = flyData
 //            if isSuccess {
@@ -207,23 +207,24 @@ import PushKit
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         NSLog("#MirrorflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
-            
+        NSLog("#MirrorflyCall Call Status Updated calling--> \(CALLSTATUS.CALLING.rawValue)")
+
         if AudioManager.shared().audioManagerDelegate == nil  && callStatus != .DISCONNECTED{
             NSLog("\(Constants.callTag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
             AudioManager.shared().audioManagerDelegate = self
         }
 
         var userJID = userId
-        if userJID == "" && callStatus == .DISCONNECTED{
-//            NSLog("\(Constants.callTag) SDK is empty so assigning self jid")
-            NSLog("\(Constants.callTag) Disconnected is Called on Empty User ID so assuming self disconnect is called and not returning the Delegate")
+//        if userJID == AppUtils.getMyJid() && callStatus == .DISCONNECTED{
+////            NSLog("\(Constants.callTag) SDK is empty so assigning self jid")
+//            NSLog("\(Constants.callTag) Disconnected is Called on Empty User ID so assuming self disconnect is called and not returning the Delegate")
+////            userJID = AppUtils.getMyJid()
+//            return
+//        }
+
+//        if userJID == ""{
 //            userJID = AppUtils.getMyJid()
-            return
-        }
-        
-        if userJID == ""{
-            userJID = AppUtils.getMyJid()
-        }
+//        }
         
         if(userJID != "" && callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
@@ -241,10 +242,10 @@ import PushKit
 //            return
 //        }
         
-        if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
-            NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
-            return
-        }
+//        if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
+//            NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
+//            return
+//        }
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         if (callStatus.rawValue == "CALL TIME OUTt"){
             jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
@@ -284,11 +285,11 @@ import PushKit
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
         NSLog("#MirrorflyCall Event oncalll Action --> \(callAction.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        if userId == ""{
-            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
-        }else{
+//         if userId == ""{
+//             jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
+//         }else{
             jsonObject.setValue(userId, forKey: "userJid")
-        }
+//         }
         jsonObject.setValue(callAction.rawValue, forKey: "callAction")
         
         if (callAction == .CHANGE_TO_AUDIO_CALL){
