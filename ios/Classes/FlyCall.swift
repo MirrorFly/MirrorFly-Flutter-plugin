@@ -215,12 +215,12 @@ import PushKit
         }
         
         var userJID = userId
-        if userJID == AppUtils.getMyJid() && callStatus == .DISCONNECTED{
-//            NSLog("\(Constants.callTag) SDK is empty so assigning self jid")
-            NSLog("\(Constants.callTag) Disconnected is Called on Empty User ID so assuming self disconnect is called and not returning the Delegate")
-//            userJID = AppUtils.getMyJid()
-            return
-        }
+//        if userJID == AppUtils.getMyJid() && callStatus == .DISCONNECTED{
+////            NSLog("\(Constants.callTag) SDK is empty so assigning self jid")
+//            NSLog("\(Constants.callTag) Disconnected is Called on Empty User ID so assuming self disconnect is called and not returning the Delegate")
+////            userJID = AppUtils.getMyJid()
+//            return
+//        }
         
 //        if userJID == ""{
 //            userJID = AppUtils.getMyJid()
@@ -242,10 +242,10 @@ import PushKit
 //            return
 //        }
         
-        if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
-            NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
-            return
-        }
+//        if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
+//            NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
+//            return
+//        }
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         if (callStatus.rawValue == "CALL TIME OUTt"){
             jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
