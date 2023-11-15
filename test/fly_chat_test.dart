@@ -1612,7 +1612,13 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
- /* @override
+  @override
+  Future<List<String>> getInvitedUsersList() {
+    // TODO: implement getInvitedUsersList
+    throw UnimplementedError();
+  }
+
+  /*@override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType
     throw UnimplementedError();

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -4487,6 +4488,22 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d('inviteUsersToOngoingCall :', " jidList : $jidList");
       await mirrorFlyCallMethodChannel
           .invokeMethod('inviteUsersToOngoingCall', {"jidList": jidList});
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<String>> getInvitedUsersList() async {
+    try {
+      var users = await mirrorFlyCallMethodChannel
+          .invokeMethod('getInvitedUsersList');
+      LogMessage.d('getInvitedUsersList :', " jidList : $users");
+      return List<String>.from(json.decode(users).map((x) => x.toString()));//json.decode(users) as List<String>;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;

@@ -1357,6 +1357,11 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.inviteUsersToOngoingCall(jidList);
   }
 
+  /// [getInvitedUsersList] Used to get invited users list
+  static Future<List<String>> getInvitedUsersList() async {
+    return FlyChatFlutterPlatform.instance.getInvitedUsersList();
+  }
+
   /* /// [changeCallType] Used to Change the Call Type
   /// audio for Switching to Audio Call
   /// video for Switching to Video Call
