@@ -2,8 +2,6 @@ package com.mirrorfly.mirrorfly_plugin.call
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Paint.Align
-import android.text.Layout.Alignment
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.Gravity
@@ -14,11 +12,6 @@ import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
 import com.mirrorfly.mirrorfly_plugin.call.widgets.RippleBackgroundView
 import com.mirrorfly.mirrorfly_plugin.toJsonString
-import com.mirrorflysdk.api.ChatEventsManager
-import com.mirrorflysdk.api.ChatManager
-import com.mirrorflysdk.api.FlyCore
-import com.mirrorflysdk.api.contacts.ContactManager
-import com.mirrorflysdk.api.chat.ProfileEventsListener
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
 import com.mirrorflysdk.flycall.webrtc.Logger
