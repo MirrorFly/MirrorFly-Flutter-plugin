@@ -1193,6 +1193,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 getCallLogsList(call, result)
             }
 
+            call.method.equals("get_filtered_call_logs") -> {
+                filteredCallLog(call, result)
+            }
+
             else -> {
                 result.notImplemented()
             }
@@ -3930,6 +3934,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val map = JSONObject()
         map.put("jid", jid)
         userUpdatedHisProfileStreamHandler.userUpdatedHisProfile?.success(map.toString())
+        FlutterChat.profileListener?.userUpdatedHisProfile(jid);
     }
 
     override fun userWentOffline(jid: String) {
@@ -4496,6 +4501,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
             CallManager.getCallLogs(currentPage) { isSuccess, throwable, data ->
                 if (isSuccess) {
+                    LogMessage.d("callLogsList Normal: ", data.toJsonString())
                     result.success(data.toJsonString())
                 } else {
                     println("call logs error : " + throwable.toString())
@@ -4515,5 +4521,16 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun onCallLogsUpdated() {
         LogMessage.d("onCallLogs Updated ", "Updated Called")
         onCallLogsUpdatedStreamHandler.onCallLogsUpdated?.success(true)
+    }
+
+    private fun filteredCallLog(call: MethodCall, result: MethodChannel.Result){
+        val callLogsList = CallLogManager.getCallLogs()
+        if (callLogsList != null){
+            LogMessage.d("callLogsList Search: ", callLogsList.toJsonString())
+            result.success(callLogsList.toJsonString())
+        }else{
+            result.error("400", "filteredCallLog error", "")
+        }
+
     }
 }

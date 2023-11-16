@@ -1900,6 +1900,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<dynamic> filteredCallLog() async {
+    dynamic re;
+    try {
+      re = await mirrorFlyMethodChannel.invokeMethod("get_filtered_call_logs", {});
+      LogMessage.d('RESULT ', '$re');
+      return re;
+    } on PlatformException catch (e) {
+      LogMessage.d("er", "$e");
+      return re;
+    }
+  }
+
+  @override
   Future<dynamic> getAvailableFeatures() async {
     dynamic re;
     try {

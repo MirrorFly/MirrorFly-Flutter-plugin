@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycommons.Constants
+import com.mirrorflysdk.flycommons.LogMessage
 import java.util.ArrayList
 import java.util.regex.Pattern
 import kotlin.math.abs
@@ -311,6 +312,7 @@ class CircleImageView : AppCompatImageView {
         }
         nameValue = nameValue.trim { it <= ' ' }
         val initialName = nameValue.split("\\s+".toRegex()).toTypedArray()
+        LogMessage.d("initialName",initialName.toString())
         return if (initialName.size == 1) {
             val username = initialName[0].trim { it <= ' ' }
             when {
@@ -360,6 +362,7 @@ class CircleImageView : AppCompatImageView {
     }
     private fun getProfileNameIcon(username: String): String {
         var profileLetters = username.substring(0, 2)
+        LogMessage.d("profileLetters ",profileLetters)
         if (isEmojiOnly(profileLetters) == true) {
             profileLetters = if (isEmojiOnly(username.substring(0, 4)) == true) username.substring(0, 4) else username.substring(0, 3)
         }
