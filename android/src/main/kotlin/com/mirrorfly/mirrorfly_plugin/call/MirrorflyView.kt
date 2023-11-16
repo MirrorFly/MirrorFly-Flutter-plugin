@@ -107,6 +107,8 @@ class MirrorflyView(
             CallManager.getRemoteProxyVideoSink(userJid)?.setTarget(getTextureViewByTag(userJid))
         }else{
             LogMessage.d(tag,"video null $id $userJid ${CallManager.getRemoteProxyVideoSink(userJid)} ${CallManager.isRemoteVideoPaused(userJid)}")
+            //invite user from video call
+            setProfileView(userJid)
         }
 //        Logger.d("#FlutterCall","getRemoteTarget ${CallManager.getRemoteProxyVideoSink(userJid)?.getTarget()}")
     }
@@ -119,9 +121,9 @@ class MirrorflyView(
         getTextureViewByTag(userJid)?.visibility=View.GONE
         getImageViewByTag(jid)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
         getSpeakingRippleView(jid)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
-        LogMessage.d("imageUrl ",imageUrl)
+        LogMessage.d(tag, "imageUrl $imageUrl ViewAble() ${viewAble()}")
         if (profile != null) {
-            LogMessage.d("profile ",profile.toJsonString())
+            LogMessage.d(tag,"profile "+profile.toJsonString())
         }
         if(viewAble()) {
             Utils.loadGlideImage(mContext!!, getImageViewByTag(jid)!!, name, imageUrl,false)
