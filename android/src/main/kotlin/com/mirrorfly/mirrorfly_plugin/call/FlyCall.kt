@@ -178,6 +178,12 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "getMaxCallUsersCount" -> {
                 result.success(CallManager.getMaxCallUsersCount())
             }
+            "inviteUsersToOngoingCall" -> {
+                sdk.inviteUsersToOngoingCall(call,result)
+            }
+            "getInvitedUsersList" -> {
+                sdk.getInvitedUsersList(call,result)
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }

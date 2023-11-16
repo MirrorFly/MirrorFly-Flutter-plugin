@@ -1,12 +1,12 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
+//import com.mirrorflysdk.api.CallMessenger
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.toJsonString
-//import com.mirrorflysdk.api.CallMessenger
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.api.MediaNotificationHelper
 import com.mirrorflysdk.api.contacts.ContactManager
@@ -15,12 +15,7 @@ import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
 import com.mirrorflysdk.flycall.webrtc.AudioDevice
 import com.mirrorflysdk.flycall.webrtc.CallStatus
 import com.mirrorflysdk.flycall.webrtc.CallType
-import com.mirrorflysdk.flycall.webrtc.GroupCallDetails
-import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
-import com.mirrorflysdk.flycall.webrtc.api.CallHelper
-import com.mirrorflysdk.flycall.webrtc.api.CallManager
-import com.mirrorflysdk.flycall.webrtc.api.CallNameHelper
-import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
+import com.mirrorflysdk.flycall.webrtc.api.*
 import com.mirrorflysdk.flycommons.Constants
 import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.flycommons.PendingIntentHelper
@@ -378,6 +373,16 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         CallManager.declineVideoCallSwitchRequest()
         result.success(true)
     }
+
+    fun inviteUsersToOngoingCall(call: MethodCall, result: MethodChannel.Result) {
+        val jidList = call.argument<List<String>>("jidList") ?: arrayListOf()
+        CallManager.inviteUsersToOngoingCall(jidList as ArrayList<String>)
+    }
+
+    fun getInvitedUsersList(call: MethodCall,result: MethodChannel.Result){
+        result.success(CallManager.getInvitedUsersList().toJsonString())
+    }
+
     /*fun changeCallType(call: MethodCall, result: MethodChannel.Result) {
         val callType = call.argument<String>("callType") ?: ""
         if (callType == "video"){

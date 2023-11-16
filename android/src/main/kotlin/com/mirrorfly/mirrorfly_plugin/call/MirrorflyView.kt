@@ -2,8 +2,6 @@ package com.mirrorfly.mirrorfly_plugin.call
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Paint.Align
-import android.text.Layout.Alignment
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.Gravity
@@ -13,10 +11,7 @@ import android.widget.RelativeLayout
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
 import com.mirrorfly.mirrorfly_plugin.call.widgets.RippleBackgroundView
-import com.mirrorflysdk.api.ChatEventsManager
-import com.mirrorflysdk.api.ChatManager
-import com.mirrorflysdk.api.FlyCore
-import com.mirrorflysdk.api.chat.ProfileEventsListener
+import com.mirrorfly.mirrorfly_plugin.toJsonString
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
 import com.mirrorflysdk.flycall.webrtc.Logger
@@ -112,19 +107,24 @@ class MirrorflyView(
             CallManager.getRemoteProxyVideoSink(userJid)?.setTarget(getTextureViewByTag(userJid))
         }else{
             LogMessage.d(tag,"video null $id $userJid ${CallManager.getRemoteProxyVideoSink(userJid)} ${CallManager.isRemoteVideoPaused(userJid)}")
+            //invite user from video call
+            setProfileView(userJid)
         }
 //        Logger.d("#FlutterCall","getRemoteTarget ${CallManager.getRemoteProxyVideoSink(userJid)?.getTarget()}")
     }
 
     fun setProfileView(userJid: String){
         LogMessage.d(tag,"ProfileView set $id $userJid ${CallManager.isRemoteVideoMuted(userJid)}")
-        val profile = FlyCore.getUserProfile(userJid)
+        val profile = ContactManager.getProfileDetails(userJid)
         val name = if(!profile?.name.isNullOrEmpty()) profile?.name ?: "" else profile?.nickName ?: ""
         val imageUrl = profile?.image ?: ""
         getTextureViewByTag(userJid)?.visibility=View.GONE
         getImageViewByTag(jid)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
         getSpeakingRippleView(jid)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
-        LogMessage.d("imageUrl ",imageUrl)
+        LogMessage.d(tag, "imageUrl $imageUrl ViewAble() ${viewAble()}")
+        if (profile != null) {
+            LogMessage.d(tag,"profile "+profile.toJsonString())
+        }
         if(viewAble()) {
             Utils.loadGlideImage(mContext!!, getImageViewByTag(jid)!!, name, imageUrl,false)
         }

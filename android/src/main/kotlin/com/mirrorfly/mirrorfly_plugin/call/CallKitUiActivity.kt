@@ -61,7 +61,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     val user = CallManager.getCallUsersList()[0]
                     val name = ContactManager.getDisplayName(user)
                     userName.text = name
-                    val profile = FlyCore.getUserProfile(user)
+                    val profile = ContactManager.getProfileDetails(user)
                     Utils.loadGlideImage(this, userImage, name, profile?.image ?: "")
                 }
             }else{
@@ -114,7 +114,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     userName.visibility = View.VISIBLE
                     val name = ContactManager.getDisplayName(CallManager.getGroupID())
                     userName.text = name
-                    val profile = FlyCore.getUserProfile(CallManager.getGroupID())
+                    val profile = ContactManager.getProfileDetails(CallManager.getGroupID())
                     Utils.loadGlideImage(this, userImage, name, profile?.image ?: "",true)
                 }else {
                     userImage.visibility = View.GONE
@@ -137,7 +137,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 userImage.visibility = View.VISIBLE
                 val name = ContactManager.getDisplayName(CallManager.getEndCallerJid())
                 userName.text = name
-                val profile = FlyCore.getUserProfile(CallManager.getEndCallerJid())
+                val profile = ContactManager.getProfileDetails(CallManager.getEndCallerJid())
                 Utils.loadGlideImage(this, userImage, name, profile?.image ?: "",false)
             }
         }else{
