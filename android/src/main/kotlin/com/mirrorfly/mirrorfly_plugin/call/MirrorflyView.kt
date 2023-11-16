@@ -13,7 +13,9 @@ import android.widget.RelativeLayout
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
 import com.mirrorfly.mirrorfly_plugin.call.widgets.RippleBackgroundView
+import com.mirrorfly.mirrorfly_plugin.toJsonString
 import com.mirrorflysdk.api.FlyCore
+import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.TextureViewRenderer
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
@@ -111,13 +113,16 @@ class MirrorflyView(
 
     fun setProfileView(userJid: String){
         LogMessage.d(tag,"ProfileView set $id $userJid ${CallManager.isRemoteVideoMuted(userJid)}")
-        val profile = FlyCore.getUserProfile(userJid)
+        val profile = ContactManager.getProfileDetails(userJid)
         val name = if(!profile?.name.isNullOrEmpty()) profile?.name ?: "" else profile?.nickName ?: ""
         val imageUrl = profile?.image ?: ""
         getTextureViewByTag(userJid)?.visibility=View.GONE
         getImageViewByTag(id)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
         getSpeakingRippleView(jid)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
         LogMessage.d("imageUrl ",imageUrl)
+        if (profile != null) {
+            LogMessage.d("profile ",profile.toJsonString())
+        }
         if(viewAble()) {
             Utils.loadGlideImage(mContext!!, getImageViewByTag(id)!!, name, imageUrl,false)
         }
