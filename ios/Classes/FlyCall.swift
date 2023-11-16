@@ -10,7 +10,11 @@ import MirrorFlySDK
 import Flutter
 import PushKit
 
-@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate {
+@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate {
+    func userProfileDidChange(for jid: String, profileDetails: MirrorFlySDK.ProfileDetails) {
+        NSLog("\(Constants.callTag) Fly Call userProfileDidChange")
+    }
+    
     
     var selectedAudioRouteDevice : String = "receiver"
     var isAudioRouteMethodCall : Bool = false
@@ -23,6 +27,7 @@ import PushKit
             selectedAudioRouteDevice = "bluetooth"
             break
         case .receiver:
+            selectedAudioRouteDevice = "receiver"
             selectedAudioRouteDevice = "receiver"
         case .speaker:
             selectedAudioRouteDevice = "speaker"
@@ -242,10 +247,10 @@ import PushKit
 //            return
 //        }
         
-//        if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
-//            NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
-//            return
-//        }
+        if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
+            NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
+            return
+        }
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         if (callStatus.rawValue == "CALL TIME OUTt"){
             jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
@@ -553,6 +558,8 @@ import PushKit
         jsonObject.setValue(userList.joined(separator: ","), forKey: "userList")
         
         let onMissedCallJson = pluginDictToJson(dictionary: jsonObject)
+        
+        
         
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMissedCallChannel, value: onMissedCallJson)
     }

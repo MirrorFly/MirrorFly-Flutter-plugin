@@ -39,6 +39,7 @@ import MirrorFlySDK
                 "isVideoMuted" : CallManager.isRemoteVideoMuted(memberJid)
 //                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid)
             ]
+            NSLog("Appending CallUsersList \(jsonObject)")
             jsonArray.append(jsonObject)
         }
         

@@ -128,7 +128,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
     
     var onGetAvailableFeaturesStreamHandler: OnGetAvailableFeaturesStreamHandler?
 
-
+    var flyChatUserDelegate : FlyChatUserDelegate? = nil
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: mirrorflyMethodChannel, binaryMessenger: registrar.messenger())
         
@@ -1045,6 +1046,8 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         }else{
             print("userUpdatedTheirProfile Stream Handler is Nil")
         }
+        
+        flyChatUserDelegate?.userProfileDidChange(for: jid, profileDetails: profileDetails)
         
     }
     
