@@ -1613,12 +1613,18 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<List<String>> getInvitedUsersList() {
+    // TODO: implement getInvitedUsersList
+    throw UnimplementedError();
+  }
+
+  @override
   filteredCallLog() {
     // TODO: implement filteredCallLog
     throw UnimplementedError();
   }
 
- /* @override
+  /*@override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType
     throw UnimplementedError();
