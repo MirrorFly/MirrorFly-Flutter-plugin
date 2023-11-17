@@ -219,6 +219,7 @@ class Utils {
                     LogMessage.d("actualMemberName$i",actualMemberName.first.toString()+" : "+actualMemberName.second)
                     membersName = actualMemberName.first
                     isMaxMemberNameNotReached = actualMemberName.second
+                    imageCallMember1.show()
                     loadUserProfilePic(context, imageCallMember1, pair)
                 } else if (isMaxMemberNameNotReached && i == 1) {
                     membersName.append(", ").append(pair.first)
