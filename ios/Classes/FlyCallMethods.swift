@@ -36,9 +36,10 @@ import MirrorFlySDK
                 "userJid": memberJid,
                 "callStatus": status.rawValue,
                 "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid),
-                "isVideoMuted" : CallManager.isRemoteAudioMuted(memberJid)
+                "isVideoMuted" : CallManager.isRemoteVideoMuted(memberJid)
 //                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid)
             ]
+            NSLog("Appending CallUsersList \(jsonObject)")
             jsonArray.append(jsonObject)
         }
         
@@ -204,15 +205,16 @@ import MirrorFlySDK
     }
     func inviteUsersToOngoingCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
-        let userList = args["userList"] as? [String] ?? []
+        let jidList = args["jidList"] as? [String] ?? []
         
-        CallManager.inviteUsersToOngoingCall(userList) { isSuccess, message in
+        CallManager.inviteUsersToOngoingCall(jidList) { isSuccess, message in
             if isSuccess {
-                
-               
+                NSLog("inviteUsersToOngoingCall Success")
+                result(true)
             } else {
                 let errorMessage = self.getErrorMessage(description: message)
                 NSLog("inviteUsersToOngoingCall Error\(errorMessage.description) ")
+                result(FlutterError(code: "500", message: "Invite Users To OngoingCall Failed", details: errorMessage.description))
             }
         };
     }
