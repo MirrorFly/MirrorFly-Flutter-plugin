@@ -134,7 +134,8 @@ import PushKit
     }
     
     
-    func getDisplayName(IncomingUser: [String], incomingUserName: String) {
+//    func getDisplayName(IncomingUser: [String], incomingUserName: String) {
+    func getDisplayName(IncomingUser: [String]) {
         var userString = [String]()
         if isHideNotificationContent{
             userString.append(APP_NAME)

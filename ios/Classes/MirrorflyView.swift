@@ -50,9 +50,30 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             
             let muteStatus = userJid == AppUtils.getMyJid() ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(userJid)
             
-            let contact = ChatManager.profileDetaisFor(jid: userJid)
+            var contact = ChatManager.profileDetaisFor(jid: userJid)
             
             NSLog("===contact \(String(describing: contact?.image))")
+            
+            if(contact == nil){
+                do {
+                    try ContactManager.shared.getUserProfile(for: userJid, fetchFromServer: true, saveAsFriend: true){ isSuccess, flyError, flyData in
+                        var data  = flyData
+                        let profileData = data.getData() as? ProfileDetails
+                        print("***getUserProfile\(String(describing: profileData))")
+
+                        print("***getUserProfile dict\(String(describing: profileData.toJson()))")
+                        if isSuccess {
+                            contact = profileData
+                        } else{
+//                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                            NSLog("\(Constants.callTag) ContactManager.shared.getUserProfile Error fetching Profile")
+                        }
+                    }
+                }catch{
+                    print("Error while calling User Profile Details")
+                }
+
+            }
             
             let userName = FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType)
             
