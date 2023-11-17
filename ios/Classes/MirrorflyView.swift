@@ -48,42 +48,74 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             
             let userJid = argument["userJid"] as? String ?? ""
             
-            let muteStatus = userJid == AppUtils.getMyJid() ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(userJid)
             
-            let contact = ChatManager.profileDetaisFor(jid: userJid)
+            var contact = ChatManager.profileDetaisFor(jid: userJid)
             
             NSLog("===contact \(String(describing: contact?.image))")
             
-            let userName = FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType)
-            
-            
-            NSLog("\(Constants.callTag) userName --> \(userName)")
-            videoTrack = CallManager.getRemoteVideoTrack(jid: userJid)
-            let calluserslist = CallManager.getAllCallUsersList()
-            NSLog("\(Constants.callTag) calluserslist \(calluserslist)")
-            NSLog("\(Constants.callTag) calluserslist count \(calluserslist.count)")
-            NSLog("\(Constants.callTag) \(userJid) videoTrack--> \(String(describing: videoTrack))")
-            NSLog("\(Constants.callTag) Video rendered/Audio Call")
-            
-            createAudioView(argument: argument, userName: userName, contact: contact)
-            
-            createVideoView(argument: argument)
-            
-            if(videoTrack == nil || CallManager.getCallType() == .Audio || muteStatus){
-                
-//                showAudioView(argument: argument, userName: userName)
-//                DispatchQueue.main.async {
-                    self.videoView?.removeFromSuperview()
-//                }
-                
+            if(contact == nil){
+                do {
+                    try ContactManager.shared.getUserProfile(for: userJid, fetchFromServer: true, saveAsFriend: true){ isSuccess, flyError, flyData in
+                        var data  = flyData
+                        let profileData = data.getData() as? ProfileDetails
+                        print("***getUserProfile\(String(describing: profileData))")
+
+                        print("***getUserProfile dict\(String(describing: profileData.toJson()))")
+                        if isSuccess {
+                            contact = profileData
+                            self.handleUserProfileDetails(userJid: userJid, contact: contact, argument: argument)
+                                                
+                        } else{
+//                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                            NSLog("\(Constants.callTag) ContactManager.shared.getUserProfile Error fetching Profile")
+                        }
+                    }
+                }catch{
+                    print("Error while calling User Profile Details")
+                }
+
             }else{
-//                DispatchQueue.main.async {
-                    self.audioView?.removeFromSuperview()
-//                }
-                
+                handleUserProfileDetails(userJid: userJid, contact: contact, argument: argument)
             }
+            
+        
         }
         
+    }
+    
+    private func handleUserProfileDetails(userJid: String, contact: ProfileDetails?, argument: [String: Any]) {
+        
+        let muteStatus = userJid == AppUtils.getMyJid() ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(userJid)
+        
+
+        let userName = FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType)
+        
+        
+        NSLog("\(Constants.callTag) userName --> \(userName)")
+        videoTrack = CallManager.getRemoteVideoTrack(jid: userJid)
+        let calluserslist = CallManager.getAllCallUsersList()
+        NSLog("\(Constants.callTag) calluserslist \(calluserslist)")
+        NSLog("\(Constants.callTag) calluserslist count \(calluserslist.count)")
+        NSLog("\(Constants.callTag) \(userJid) videoTrack--> \(String(describing: videoTrack))")
+        NSLog("\(Constants.callTag) Video rendered/Audio Call")
+        
+        createAudioView(argument: argument, userName: userName, contact: contact)
+        
+        createVideoView(argument: argument)
+        
+        if(videoTrack == nil || CallManager.getCallType() == .Audio || muteStatus){
+            
+//                showAudioView(argument: argument, userName: userName)
+//                DispatchQueue.main.async {
+                self.videoView?.removeFromSuperview()
+//                }
+            
+        }else{
+//                DispatchQueue.main.async {
+                self.audioView?.removeFromSuperview()
+//                }
+            
+        }
     }
     
     func dispose() {

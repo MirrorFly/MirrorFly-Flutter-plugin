@@ -387,6 +387,12 @@ import MirrorFlySDK
         result(8)
     }
     
+    func getInvitedUsersList(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        let invitedUserList = CallManager.getInvitedUsersList()
+        NSLog("\(Constants.callTag) getInvitedUsersList \(String(describing: invitedUserList.toJson()))")
+        result(invitedUserList.toJson())
+    }
+    
 //    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
 //        let args = call.arguments as! Dictionary<String, Any>
 //        let callType = args["callType"] as? String ?? ""

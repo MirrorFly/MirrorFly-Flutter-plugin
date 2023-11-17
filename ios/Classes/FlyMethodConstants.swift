@@ -51,6 +51,7 @@ class FlyMethodConstants {
             "acceptVideoCallSwitchRequest": flyCallMethods.acceptVideoCallSwitchRequest,
             "declineVideoCallSwitchRequest": flyCallMethods.declineVideoCallSwitchRequest,
             "getMaxCallUsersCount": flyCallMethods.getMaxCallUsersCount,
+            "getInvitedUsersList": flyCallMethods.getInvitedUsersList,
 //            "changeCallType": flyCallMethods.changeCallType,
 //            "reRouteAudio": flyCallMethods.reRouteAudio,
             
