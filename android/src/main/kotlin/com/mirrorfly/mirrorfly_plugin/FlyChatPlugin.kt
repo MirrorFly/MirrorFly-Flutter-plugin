@@ -4105,8 +4105,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
         ChatManager.setAvailableFeaturesCallback(instance)
         CallManager.setMissedCallListener(instance)
-        CallLogManager.setCallLogsListener(instance)
         if (isRegistered) {
+            CallLogManager.setCallLogsListener(instance)
             ChatEventsManager.setupMessageEventListener(this)
             ChatEventsManager.attachProfileEventsListener(this)
             ChatEventsManager.attachGroupEventsListener(this)
