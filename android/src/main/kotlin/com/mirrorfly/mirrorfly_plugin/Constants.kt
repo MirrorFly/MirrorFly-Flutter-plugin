@@ -155,4 +155,7 @@ object Constants {
         "EXTRA_CALLKIT_MISSED_CALL_NOTIFICATION_CHANNEL_NAME"
 
     const val EXTRA_CALLKIT_ACTION_FROM = "EXTRA_CALLKIT_ACTION_FROM"
+
+    const val AUDIO_CALL_PERMISSION = "Record audio and PhoneState record permissions are needed for Audio calling features"
+    const val VIDEO_CALL_PERMISSION = "Record audio, Camera and PhoneState record permissions are needed for Video calling features"
 }

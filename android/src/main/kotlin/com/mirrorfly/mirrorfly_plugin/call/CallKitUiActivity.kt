@@ -13,11 +13,13 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.mirrorfly.mirrorfly_plugin.AppUtils
+import com.mirrorfly.mirrorfly_plugin.AppUtils.checkAndAddPermissions
+import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorfly.mirrorfly_plugin.FlyChatPlugin
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
-import com.mirrorflysdk.api.FlyCore
 import com.mirrorflysdk.api.chat.ProfileEventsListener
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
@@ -29,7 +31,6 @@ import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.LogMessage
-import com.mirrorflysdk.media.MediaUploadDownloadManager
 import org.json.JSONObject
 
 
@@ -204,37 +205,50 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         if (CallManager.getCallDirection() == CallDirection.INCOMING_CALL) {
             if (CallManager.getCallType() == CallType.AUDIO_CALL && (!CallManager.isAudioCallPermissionsGranted(false) || !CallManager.isNotificationPermissionsGranted())) {
                 //ask Audio call Permission
-                val permissionsToRequest = mutableListOf<String>()
-                val recordPermissionGranted = AppUtils.isPermissionAllowed(this,Manifest.permission.RECORD_AUDIO)
-                val bluetoothPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    AppUtils.isPermissionAllowed(this,Manifest.permission.BLUETOOTH_CONNECT)
-                } else {
-                    true
+                val permissionsToCheck = mutableListOf<String>()
+                permissionsToCheck.add(Manifest.permission.RECORD_AUDIO)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    permissionsToCheck.add(Manifest.permission.BLUETOOTH_CONNECT)
                 }
-                val postNotificationPermissionGranted = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    AppUtils.isPermissionAllowed(this,
-                        Manifest.permission.POST_NOTIFICATIONS)
-                } else {
-                    true
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    permissionsToCheck.add(Manifest.permission.POST_NOTIFICATIONS)
                 }
-                val phoneStatePermissionGranted = AppUtils.isPermissionAllowed(this,Manifest.permission.READ_PHONE_STATE)
-                if(!recordPermissionGranted){
-                    permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
+
+                permissionsToCheck.add(Manifest.permission.READ_PHONE_STATE)
+
+                val (deniedPermissions, permanentlyDeniedPermissions) = checkAndAddPermissions(this, permissionsToCheck)
+
+                LogMessage.d("Returned denied Permissions", deniedPermissions.toString())
+                LogMessage.d("Returned permanently denied Permissions", permanentlyDeniedPermissions.toString())
+
+                if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
+                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), Constants.AUDIO_CALL_PERMISSION, permissionsToCheck.toTypedArray())
                 }
-                if(!phoneStatePermissionGranted){
-                    permissionsToRequest.add(Manifest.permission.READ_PHONE_STATE)
-                }
-                if(!bluetoothPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
-                }
-                if(!postNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
-                }
-                if(permissionsToRequest.isNotEmpty()) {
-                    AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
-                }
+
+
             }else if (CallManager.getCallType() == CallType.VIDEO_CALL && (!CallManager.isVideoCallPermissionsGranted(false) || !CallManager.isNotificationPermissionsGranted())) {
-                //ask Audio and Video call Permission
+
+                val permissionsToCheck = mutableListOf<String>()
+                permissionsToCheck.add(Manifest.permission.CAMERA)
+                permissionsToCheck.add(Manifest.permission.RECORD_AUDIO)
+                permissionsToCheck.add(Manifest.permission.READ_PHONE_STATE)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    permissionsToCheck.add(Manifest.permission.BLUETOOTH_CONNECT)
+                }
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    permissionsToCheck.add(Manifest.permission.POST_NOTIFICATIONS)
+                }
+
+
+                val (deniedPermissions, permanentlyDeniedPermissions) = checkAndAddPermissions(this, permissionsToCheck)
+
+                if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
+                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), Constants.VIDEO_CALL_PERMISSION, permissionsToCheck.toTypedArray())
+                }
+
+
+                /*//ask Audio and Video call Permission
                 val hasCameraPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.CAMERA)
                 val hasMicPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.RECORD_AUDIO)
                 val hasPhoneStatePermission = AppUtils.isPermissionAllowed(this,Manifest.permission.READ_PHONE_STATE)
@@ -262,8 +276,10 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
                 }
                 if(permissionsToRequest.isNotEmpty()) {
-                    AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
-                }
+                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), Constants.VIDEO_CALL_PERMISSION, permissionsToRequest.toTypedArray())
+//
+//                    AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
+                }*/
             }
         }
     }
@@ -332,10 +348,45 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        LogMessage.d(" onRequestPermissionsResult", "${grantResults[0]}")
+        LogMessage.d(" onRequestPermissionsResult", "$grantResults")
 //        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             AppUtils.AUDIO_PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty()) {
-                val permissionsToRequest = mutableListOf<String>()
+
+                val permissionsToCheck = mutableListOf<String>()
+                val permanentlyDeniedPermissions = mutableListOf<String>()
+
+                    for (i in permissions.indices) {
+                        val permission = permissions[i]
+                        val grantResult = grantResults[i]
+
+                        Log.d("permission result loop", permission)
+                        Log.d("permission result loop grantResult", grantResult.toString())
+                        when {
+                            grantResult == PackageManager.PERMISSION_GRANTED -> {
+                                Log.d("PermissionResult", "$permission is granted")
+                            }
+                            !ActivityCompat.shouldShowRequestPermissionRationale(this, permission) -> {
+                                Log.d("PermissionResult", "$permission is permanently denied")
+                                permanentlyDeniedPermissions.add(permission)
+                            }
+                            else -> {
+                                Log.d("PermissionResult", "$permission is denied")
+                                permissionsToCheck.add(permission)
+                            }
+                        }
+                    }
+
+                if (permanentlyDeniedPermissions.isNotEmpty()){
+                    AppUtils.openAppSettings(this)
+                }else if(permissionsToCheck.isNotEmpty()){
+                    AppUtils.askPermission(this, permissionsToCheck.toTypedArray())
+                }
+
+
+
+                /*val permissionsToRequest = mutableListOf<String>()
                 val recordPermissionGranted = AppUtils.isPermissionAllowed(this,Manifest.permission.RECORD_AUDIO)
                 val bluetoothPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     AppUtils.isPermissionAllowed(this,Manifest.permission.BLUETOOTH_CONNECT)
@@ -349,6 +400,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     true
                 }
                 val phoneStatePermissionGranted = AppUtils.isPermissionAllowed(this,Manifest.permission.READ_PHONE_STATE)
+
                 if(!recordPermissionGranted){
                     permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
                 }
@@ -363,10 +415,33 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 }
                 if(permissionsToRequest.isNotEmpty()) {
                     AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
-                }
+                }*/
             }
             AppUtils.VIDEO_PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty()){
-                val hasCameraPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.CAMERA)
+
+                val permissionsToCheck = mutableListOf<String>()
+                permissionsToCheck.add(Manifest.permission.CAMERA)
+                permissionsToCheck.add(Manifest.permission.RECORD_AUDIO)
+                permissionsToCheck.add(Manifest.permission.READ_PHONE_STATE)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    permissionsToCheck.add(Manifest.permission.BLUETOOTH_CONNECT)
+                }
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    permissionsToCheck.add(Manifest.permission.POST_NOTIFICATIONS)
+                }
+
+
+                val (deniedPermissions, permanentlyDeniedPermissions) = checkAndAddPermissions(this, permissionsToCheck)
+
+                if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
+                    CallManager.sendCallPermissionDenied()
+//                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), Constants.AUDIO_CALL_PERMISSION, permissionsToCheck.toTypedArray())
+                }else{
+                    CallManager.startVideoCapture()
+                }
+
+                /*val hasCameraPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.CAMERA)
                 val hasMicPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.RECORD_AUDIO)
                 val hasPhoneStatePermission = AppUtils.isPermissionAllowed(this,Manifest.permission.READ_PHONE_STATE)
                 val hasBluetoothPermission = CallManager.isBluetoothPermissionsGranted()
@@ -391,11 +466,11 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 }
                 if(!postNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
-                }
-                if (!hasCameraPermission || !hasMicPermission || !postNotificationPermissionGranted)
-                    CallManager.sendCallPermissionDenied()
-                else
-                    CallManager.startVideoCapture()
+                }*/
+//                if (!hasCameraPermission || !hasMicPermission || !postNotificationPermissionGranted)
+//                    CallManager.sendCallPermissionDenied()
+//                else
+//                    CallManager.startVideoCapture()
             }
         }
     }
