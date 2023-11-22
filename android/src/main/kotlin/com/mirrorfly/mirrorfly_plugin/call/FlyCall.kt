@@ -245,7 +245,24 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT,json.getString("userJid"))
             }
             CallStatus.RECONNECTING ->{}
-            CallStatus.RECONNECTED ->{}
+            CallStatus.RECONNECTED ->{
+                val userJid = json.getString("userJid")
+                LogMessage.d(tag,"CallManager.isCallConversionRequestAvailable()"+CallManager.isCallConversionRequestAvailable())
+                if(CallManager.getCurrentUserId()!=userJid && CallManager.isRemoteVideoMuted(userJid)) {
+                    if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
+                        MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)
+                    }
+                }else{
+                    if(CallManager.isCallConversionRequestAvailable() && CallManager.isOneToOneCall()) {
+                        val jsons = JSONObject()
+                        jsons.put("callAction", "ACTION_VIDEO_CALL_CONVERSION")
+                        jsons.put("userJid", CallManager.getEndCallerJid())
+                        jsons.put("callType", CallManager.getCallType())
+                        jsons.put("callMode", CallManager.getCallMode())
+                        onCallActionStreamHandler.onCallAction?.success(jsons.toString())
+                    }
+                }
+            }
             CallStatus.CALLING ->{
                 //Calling status not in iOS so here we sent Trying to Connect status
                 json.put("callStatus","Trying to Connect")
@@ -509,7 +526,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             }
         }else{
             LogMessage.d(tag, "#onShowCallUi isCallConversionRequestAvailable ${CallManager.isCallConversionRequestAvailable()}")
-            if(CallManager.isCallConversionRequestAvailable()){
+            if(CallManager.isCallConversionRequestAvailable() && CallManager.isOneToOneCall()){
                 //CallAudioManager.getInstance(context).playIncomingRequestTone()
                 val json = JSONObject()
                 json.put("callAction","ACTION_VIDEO_CALL_CONVERSION")
