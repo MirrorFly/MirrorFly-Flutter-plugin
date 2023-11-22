@@ -220,9 +220,13 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
 
                 LogMessage.d("Returned denied Permissions", deniedPermissions.toString())
                 LogMessage.d("Returned permanently denied Permissions", permanentlyDeniedPermissions.toString())
+                var message = Constants.AUDIO_CALL_PERMISSION
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                    message = Constants.AUDIO_CALL_PERMISSION12
+                }
 
                 if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
-                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), Constants.AUDIO_CALL_PERMISSION, permissionsToCheck.toTypedArray())
+                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), message, permissionsToCheck.toTypedArray())
                 }
 
 
@@ -243,8 +247,14 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
 
                 val (deniedPermissions, permanentlyDeniedPermissions) = checkAndAddPermissions(this, permissionsToCheck)
 
+                LogMessage.d("Returned denied Permissions", deniedPermissions.toString())
+                LogMessage.d("Returned permanently denied Permissions", permanentlyDeniedPermissions.toString())
+                var message = Constants.VIDEO_CALL_PERMISSION
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                    message = Constants.VIDEO_CALL_PERMISSION12
+                }
                 if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
-                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), Constants.VIDEO_CALL_PERMISSION, permissionsToCheck.toTypedArray())
+                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), message, permissionsToCheck.toTypedArray())
                 }
 
 
