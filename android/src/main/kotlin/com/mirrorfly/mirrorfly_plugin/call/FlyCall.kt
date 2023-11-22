@@ -260,7 +260,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
     override fun onCallAction(callAction: String, userJid: String) {
         Log.d(tag,"#onCallAction callAction $callAction userJid $userJid")
         val json = JSONObject()
-        json.put("callAction",callAction)
+        json.put("callAction" , if(userJid==ChatManager.getCurrentUserJid() && callAction==CallAction.ACTION_REMOTE_HANGUP) CallAction.ACTION_LOCAL_HANGUP else callAction)
         json.put("userJid",userJid)
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
