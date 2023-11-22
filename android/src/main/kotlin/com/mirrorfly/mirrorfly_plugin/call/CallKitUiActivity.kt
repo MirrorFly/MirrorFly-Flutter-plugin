@@ -570,6 +570,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 }
             }
             CallAction.ACTION_REMOTE_BUSY->{
+                updateUsersProfile()
                 if(CallManager.isOneToOneCall()){
                     CallManager.disconnectCall()
                     finish()
@@ -577,6 +578,9 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
             }
             CallAction.ACTION_REMOTE_ENGAGED->{
                 updateUsersProfile()
+                if (userJid!=null && userJid.isNotEmpty()) {
+                    Toast.makeText(this, ContactManager.getDisplayName(userJid)+" is on another call",Toast.LENGTH_SHORT).show()
+                }
             }
             CallAction.ACTION_CALL_AGAIN->{}
             CallAction.ACTION_CANCEL_CALL_AGAIN->{}
