@@ -297,6 +297,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             }
         }
         if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
+            LogMessage.d("#onCallAction","CallManager.isRemoteVideoPaused($userJid) ${CallManager.isRemoteVideoPaused(userJid)} ${MirrorflyViewHashMap.getMirrorflyView(userJid)}")
             if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null && !CallManager.isVideoMuted()) {
                 MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
                     ?.setLocalTarget()
