@@ -256,8 +256,9 @@ import PushKit
         if (callStatus.rawValue == "CALL TIME OUTt"){
             jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
             //Below is a work around for user left delegate not received
-        }else if ((!CallManager.isOneToOneCall() || CallManager.isOngoingCall()) && callStatus == .DISCONNECTED){
-            jsonObject.setValue("User_Left", forKey: "callStatus")
+            //Commented as the User left is handled in SDK latest release
+//        }else if ((!CallManager.isOneToOneCall() || CallManager.isOngoingCall()) && callStatus == .DISCONNECTED){
+//            jsonObject.setValue("User_Left", forKey: "callStatus")
         }else{
             jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
         }
