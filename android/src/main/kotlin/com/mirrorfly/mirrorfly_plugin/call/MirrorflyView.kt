@@ -66,7 +66,7 @@ class MirrorflyView(
         LogMessage.d("$tag Lifecycle","dispose $id ${MirrorflyViewHashMap.getMirrorflyViewId(jid)}")
         if(id == MirrorflyViewHashMap.getMirrorflyViewId(jid)!!) {
             MirrorflyViewHashMap.remove(id,jid)
-            LogMessage.d("$tag Lifecycle","dispose")
+            LogMessage.d("$tag Lifecycle","dispose $jid")
             getTextureViewByTag(jid)?.release()
         }else{
             LogMessage.d("$tag Lifecycle","not dispose")
@@ -74,7 +74,7 @@ class MirrorflyView(
     }
 
     fun init(){
-        textureView.init(CallManager.getRootEglBase()?.eglBaseContext, null)
+        getTextureViewByTag(jid)?.init(CallManager.getRootEglBase()?.eglBaseContext, null)
     }
 
     fun setScalingType(scalingType: RendererCommon.ScalingType){
@@ -99,11 +99,12 @@ class MirrorflyView(
     }
 
     fun setRemoteTarget(userJid:String){
-        LogMessage.d(tag,"Remote set $id $userJid ${CallManager.getRemoteProxyVideoSink(userJid)} ${CallManager.isRemoteVideoMuted(userJid)}")
-        getTextureViewByTag(userJid)?.visibility=View.VISIBLE
-        getImageViewByTag(jid)?.visibility=View.GONE
-        getSpeakingRippleView(jid)?.visibility=View.GONE
-        if(CallManager.getRemoteProxyVideoSink(userJid)!=null && !CallManager.isRemoteVideoPaused(userJid)) {
+        LogMessage.d(tag,"Remote set $id $userJid ${CallManager.getRemoteProxyVideoSink(userJid)} ${CallManager.isRemoteVideoMuted(userJid)} ${getTextureViewByTag(jid)} ${getTextureViewByTag(userJid)?.context}")
+        if(CallManager.getRemoteProxyVideoSink(userJid)!=null && !CallManager.isRemoteVideoMuted(userJid)) {
+            getTextureViewByTag(userJid)?.visibility=View.VISIBLE
+            getImageViewByTag(jid)?.visibility=View.GONE
+            getSpeakingRippleView(jid)?.visibility=View.GONE
+            LogMessage.d(tag,"Remote Target set $id $userJid ${CallManager.getRemoteProxyVideoSink(userJid)} ${CallManager.isRemoteVideoMuted(userJid)}")
             CallManager.getRemoteProxyVideoSink(userJid)?.setTarget(getTextureViewByTag(userJid))
         }else{
             LogMessage.d(tag,"video null $id $userJid ${CallManager.getRemoteProxyVideoSink(userJid)} ${CallManager.isRemoteVideoPaused(userJid)}")
@@ -155,8 +156,8 @@ class MirrorflyView(
     private fun getSpeakingRippleView(jid: String): RippleBackgroundView? {
         return getView().findViewWithTag<RippleBackgroundView>(jid +"_ripple")
     }
-    private fun getTextureViewByTag(id: Any): TextureViewRenderer? {
-        return getView().findViewWithTag<TextureViewRenderer>(id)
+    private fun getTextureViewByTag(jid: String): TextureViewRenderer? {
+        return getView().findViewWithTag<TextureViewRenderer>(jid)
     }
     fun setBackgroundColor(color: String){
         LogMessage.d(tag,"initial setBackgroundColor set $id $color")

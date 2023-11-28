@@ -26,7 +26,7 @@ object MirrorflyViewHashMap {
     fun remove(id:Int,userJid:String){
         mirrorflyViews.remove(id)
         viewidsforJid.remove(userJid)
-        LogMessage.d("#MirrorflyView #Hash","remove $mirrorflyViews $viewidsforJid")
+        LogMessage.d("#MirrorflyView #Hash","removed $mirrorflyViews $viewidsforJid")
     }
 
     fun clearAll(){
