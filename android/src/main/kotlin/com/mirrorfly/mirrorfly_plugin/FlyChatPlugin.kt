@@ -1357,7 +1357,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             override fun getDisplayName(jid: String): String {
                 return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(
                     jid
-                )!!.name else com.mirrorflysdk.flycommons.Constants.EMPTY_STRING
+                )!!.getDisplayName() else com.mirrorflysdk.flycommons.Constants.EMPTY_STRING
             }
         })
         Logger.enableDebugLogging(enableSDKLog);

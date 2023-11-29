@@ -7,13 +7,11 @@ import android.os.Build
 import androidx.lifecycle.Lifecycle
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.Constants
+import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.*
-import com.mirrorflysdk.flycall.webrtc.api.CallEventsListener
-import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
-import com.mirrorflysdk.flycall.webrtc.api.CallManager
-import com.mirrorflysdk.flycall.webrtc.api.CallUiListener
+import com.mirrorflysdk.flycall.webrtc.api.*
 import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.media.MediaUploadDownloadManager.handler
 import io.flutter.Log
@@ -184,6 +182,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "getInvitedUsersList" -> {
                 sdk.getInvitedUsersList(call,result)
             }
+            "isOnTelephonyCall" -> {
+                result.success(CallManager.isOnTelephonyCall(context))
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }
@@ -297,6 +298,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             }
         }
         if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
+            LogMessage.d("#onCallAction","CallManager.isRemoteVideoPaused($userJid) ${CallManager.isRemoteVideoPaused(userJid)} ${MirrorflyViewHashMap.getMirrorflyView(userJid)}")
             if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null && !CallManager.isVideoMuted()) {
                 MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
                     ?.setLocalTarget()
@@ -441,6 +443,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 CallConstants.ACTION_SHOW_CALL_UI -> {
                     LogMessage.d(CallConstants.ACTION_SHOW_CALL_UI, CallManager.getCallDirection())
                     if (CallManager.getCallDirection() == CallDirection.INCOMING_CALL) {
+                        LogMessage.d(tag, "#onShowCallUi start Activity $context")
                         val t = Intent(context, CallKitUiActivity::class.java)
                         t.putExtra("FROM", CallConstants.ACTION_SHOW_CALL_UI)
                         t.putExtra(CallConstants.ACCEPT_CALL, false)
@@ -458,16 +461,11 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                     json.put("userJid", CallManager.getCurrentUserId())
                     json.put("callType", CallManager.getCallType())
                     json.put("callMode", CallManager.getCallMode())
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        val y = AppUtils.getAppIntent(context)
-                        y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        context.startActivity(y)
-                        handler.post {
-                            onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
-                                json.toString()
-                            )
-                        }
-
+                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
+                        LogMessage.d(tag, "#onShowCallUi ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.Q} need to accept ${CallManager.getCallType()} call ${CallManager.isCallConnected()}")
+                        answerCall()
+                    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        answerCall()
                     } else {
                         handler.post {
                             onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
@@ -561,6 +559,68 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             OnCallReceivingStreamHandler.onCallReceiving?.success(json)
         }
     }*/
+
+    private fun answerCall(){
+        val json = JSONObject()
+        json.put("callStatus", "Attended")
+        json.put("userJid", CallManager.getCurrentUserId())
+        json.put("callType", CallManager.getCallType())
+        json.put("callMode", CallManager.getCallMode())
+        if(CallManager.getCallType().isNotEmpty()) {
+            if (CallManager.isAudioCall() && CallManager.isAudioCallPermissionsGranted()) {
+                LogMessage.d(
+                    tag,
+                    "#onShowCallUi ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.Q} need to accept audio call"
+                )
+                val y = AppUtils.getAppIntent(context)
+                y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(y)
+                handler.post {
+                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+                        json.toString()
+                    )
+                }
+
+            } else if (CallManager.isVideoCall() && CallManager.isVideoCallPermissionsGranted()) {
+                LogMessage.d(
+                    tag,
+                    "#onShowCallUi ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.Q} need to accept video call"
+                )
+                val y = AppUtils.getAppIntent(context)
+                y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(y)
+                handler.post {
+                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+                        json.toString()
+                    )
+                }
+            } else {
+                LogMessage.d(
+                    tag,
+                    "#onShowCallUi ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.Q} need Permissions to accept call"
+                )
+                val t = Intent(context, CallKitUiActivity::class.java)
+                t.putExtra("FROM", CallConstants.ACTION_SHOW_CALL_UI)
+                t.putExtra(CallConstants.ACCEPT_CALL, false)
+                t.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(t)
+            }
+        }
+
+        /*CallManager.answerCall(object : CallActionListener {
+            override fun onResponse(isSuccess: Boolean, message: String) {
+                LogMessage.d(tag,"isSuccess $isSuccess message $message")
+                if (isSuccess) {
+                    val json = JSONObject()
+                    json.put("callStatus", "Attended")
+                    json.put("userJid", CallManager.getCurrentUserId())
+                    json.put("callType", CallManager.getCallType())
+                    json.put("callMode", CallManager.getCallMode())
+                }
+            }
+
+        })*/
+    }
 
 }
 

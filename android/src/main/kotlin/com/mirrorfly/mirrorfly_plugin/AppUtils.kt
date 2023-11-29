@@ -1,5 +1,6 @@
 package com.mirrorfly.mirrorfly_plugin
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -12,7 +13,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import android.provider.Settings
 import android.net.Uri
+import android.os.Build
 import android.util.Log
+import com.mirrorflysdk.flycall.webrtc.CallDirection
+import com.mirrorflysdk.flycall.webrtc.CallType
+import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.LogMessage
 
 
@@ -66,6 +71,72 @@ object AppUtils {
         val uri: Uri = Uri.fromParts("package", activity.packageName, null)
         intent.data = uri
         activity.startActivity(intent)
+    }
+
+    fun checkPermission(context: Context,activity: Activity?,view: View) {
+        if (CallManager.getCallDirection() == CallDirection.INCOMING_CALL) {
+            if (CallManager.getCallType() == CallType.AUDIO_CALL && (!CallManager.isAudioCallPermissionsGranted(false) || !CallManager.isNotificationPermissionsGranted())) {
+                //ask Audio call Permission
+                val permissionsToCheck = mutableListOf<String>()
+                permissionsToCheck.add(Manifest.permission.RECORD_AUDIO)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    permissionsToCheck.add(Manifest.permission.BLUETOOTH_CONNECT)
+                }
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    permissionsToCheck.add(Manifest.permission.POST_NOTIFICATIONS)
+                }
+
+                permissionsToCheck.add(Manifest.permission.READ_PHONE_STATE)
+
+                val (deniedPermissions, permanentlyDeniedPermissions) = checkAndAddPermissions(context, permissionsToCheck)
+
+                LogMessage.d("Returned denied Permissions", deniedPermissions.toString())
+                LogMessage.d("Returned permanently denied Permissions", permanentlyDeniedPermissions.toString())
+                var message = Constants.AUDIO_CALL_PERMISSION
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                    message = Constants.AUDIO_CALL_PERMISSION12
+                }
+
+                if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
+                    if(activity!=null) {
+                        showPermissionSnackBar(
+                            activity,
+                            view,
+                            message,
+                            permissionsToCheck.toTypedArray()
+                        )
+                    }
+                }
+
+
+            }else if (CallManager.getCallType() == CallType.VIDEO_CALL && (!CallManager.isVideoCallPermissionsGranted(false) || !CallManager.isNotificationPermissionsGranted())) {
+
+                val permissionsToCheck = mutableListOf<String>()
+                permissionsToCheck.add(Manifest.permission.CAMERA)
+                permissionsToCheck.add(Manifest.permission.RECORD_AUDIO)
+                permissionsToCheck.add(Manifest.permission.READ_PHONE_STATE)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    permissionsToCheck.add(Manifest.permission.BLUETOOTH_CONNECT)
+                }
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                    permissionsToCheck.add(Manifest.permission.POST_NOTIFICATIONS)
+                }
+
+
+                val (deniedPermissions, permanentlyDeniedPermissions) = checkAndAddPermissions(context, permissionsToCheck)
+
+                LogMessage.d("Returned denied Permissions", deniedPermissions.toString())
+                LogMessage.d("Returned permanently denied Permissions", permanentlyDeniedPermissions.toString())
+                var message = Constants.VIDEO_CALL_PERMISSION
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                    message = Constants.VIDEO_CALL_PERMISSION12
+                }
+                if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
+                    activity?.let { showPermissionSnackBar(it, view, message, permissionsToCheck.toTypedArray()) }
+                }
+            }
+        }
     }
 
     fun askPermission(activity: Activity, permissions: Array<String>) {
