@@ -62,7 +62,14 @@ import MirrorFlySDK
     func muteVideo(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let muteStatus = args["muteVideo"] as? Bool ?? false
+        NSLog("\(Constants.callTag) muteVideo Method MuteStatus \(muteStatus)")
         CallManager.muteVideo(muteStatus)
+        
+        if !CallManager.isOneToOneCall() && !muteStatus{
+            CallManager.enableVideo()
+        }else if !CallManager.isOneToOneCall() && muteStatus{
+            CallManager.disableVideo()
+        }
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: AppUtils.getMyJid()) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
