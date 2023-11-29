@@ -8,8 +8,8 @@ import org.webrtc.RendererCommon
 
 class MirrorflyViewBuilder {
     fun build(id : Int, context : Context, binaryMessenger : BinaryMessenger,creationParams : Map<String,Any>,mirrorflyView: MirrorflyView?) : MirrorflyView{
-        val viewId = creationParams["userJid"] ?: ""
-        val newMirrorflyView = mirrorflyView ?: MirrorflyView(binaryMessenger,context,id,viewId.toString(),creationParams)
+        val userJid = creationParams["userJid"] ?: ""
+        val newMirrorflyView = mirrorflyView ?: MirrorflyView(binaryMessenger,context,id,userJid.toString(),creationParams)
         val backgroundColor = creationParams["backgroundColor"] ?: ""
         if(creationParams.containsKey("ProfileViewPositioned")){
             newMirrorflyView.setProfileViewConfig(creationParams["ProfileViewPositioned"] as Map<String,Any>)
@@ -17,30 +17,25 @@ class MirrorflyViewBuilder {
         if(backgroundColor.toString().isNotEmpty()){
             newMirrorflyView.setBackgroundColor(backgroundColor.toString())
         }
-        if(mirrorflyView==null) {
-            newMirrorflyView.init()
-        }
+        newMirrorflyView.init()
         if (creationParams.containsKey("scalingType")) {
             val scale =
                 RendererCommon.ScalingType.valueOf(creationParams["scalingType"].toString())
             newMirrorflyView.setScalingType(scale)
         }
-        if (CallManager.isOnGoingAudioCall()){
-            if(backgroundColor.toString().isNotEmpty()){
-                newMirrorflyView.setBackgroundColor(backgroundColor.toString())
-            }
-            newMirrorflyView.setProfileView(viewId.toString())
-        }else {
-            if (creationParams.containsKey("isLocal") || (viewId.toString() == CallManager.getCurrentUserId() && CallManager.isOnGoingVideoCall())) {
+//        if (CallManager.isOnGoingAudioCall()){
+//            newMirrorflyView.setProfileView(viewId.toString())
+//        }else {
+            if (creationParams.containsKey("isLocal") || (userJid.toString() == CallManager.getCurrentUserId())) {
                 newMirrorflyView.setLocalTarget()
             }
             if (creationParams.containsKey("setMirror")) {
                 newMirrorflyView.setMirror(creationParams["setMirror"] as Boolean)
             }
-            if (creationParams.containsKey("isRemote") || (viewId.toString() != CallManager.getCurrentUserId() && CallManager.isOnGoingVideoCall())) {
-                newMirrorflyView.setRemoteTarget(creationParams["userJid"].toString())
+            if (creationParams.containsKey("isRemote") || (userJid.toString() != CallManager.getCurrentUserId())) {
+                newMirrorflyView.setRemoteTarget(userJid.toString())
             }
-        }
+//        }
         if(creationParams.containsKey("profileSize")){
             newMirrorflyView.setProfileViewSize(creationParams["profileSize"] as Int)
         }

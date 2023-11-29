@@ -15,6 +15,7 @@ import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
 import com.mirrorflysdk.flycall.webrtc.AudioDevice
 import com.mirrorflysdk.flycall.webrtc.CallStatus
 import com.mirrorflysdk.flycall.webrtc.CallType
+import com.mirrorflysdk.flycall.webrtc.MuteEvent
 import com.mirrorflysdk.flycall.webrtc.api.*
 import com.mirrorflysdk.flycommons.Constants
 import com.mirrorflysdk.flycommons.LogMessage
@@ -368,6 +369,10 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     fun acceptVideoCallSwitchRequest(call: MethodCall, result: MethodChannel.Result) {
         CallManager.acceptVideoCallSwitchRequest()
         result.success(true)
+        val json = JSONObject()
+        json.put("muteEvent",MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+        json.put("userJid",CallManager.getEndCallerJid())
+        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
     }
     fun declineVideoCallSwitchRequest(call: MethodCall, result: MethodChannel.Result) {
         CallManager.declineVideoCallSwitchRequest()

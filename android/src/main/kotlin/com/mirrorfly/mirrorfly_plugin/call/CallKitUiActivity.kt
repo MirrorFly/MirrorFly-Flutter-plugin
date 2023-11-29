@@ -183,7 +183,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         // that since this activity is in the foreground, the service can exit foreground mode.
         // for showing call notification
         //CallManager.bindCallService()
-        checkPermission()
+        AppUtils.checkPermission(this,this,findViewById(R.id.actions))
     }
 
     override fun onStop() {
@@ -201,7 +201,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         FlutterCall.setListener(null)
     }
 
-    private fun checkPermission() {
+    /*private fun checkPermission() {
         if (CallManager.getCallDirection() == CallDirection.INCOMING_CALL) {
             if (CallManager.getCallType() == CallType.AUDIO_CALL && (!CallManager.isAudioCallPermissionsGranted(false) || !CallManager.isNotificationPermissionsGranted())) {
                 //ask Audio call Permission
@@ -226,7 +226,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 }
 
                 if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
-                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), message, permissionsToCheck.toTypedArray())
+                    AppUtils.showPermissionSnackBar(this, findViewById(R.id.actions), message, permissionsToCheck.toTypedArray())
                 }
 
 
@@ -254,53 +254,19 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     message = Constants.VIDEO_CALL_PERMISSION12
                 }
                 if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
-                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), message, permissionsToCheck.toTypedArray())
+                    AppUtils.showPermissionSnackBar(this, findViewById(R.id.actions), message, permissionsToCheck.toTypedArray())
                 }
-
-
-                /*//ask Audio and Video call Permission
-                val hasCameraPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.CAMERA)
-                val hasMicPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.RECORD_AUDIO)
-                val hasPhoneStatePermission = AppUtils.isPermissionAllowed(this,Manifest.permission.READ_PHONE_STATE)
-                val hasBluetoothPermission = CallManager.isBluetoothPermissionsGranted()
-                val postNotificationPermissionGranted = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    AppUtils.isPermissionAllowed(this,
-                        Manifest.permission.POST_NOTIFICATIONS)
-                } else {
-                    true
-                }
-                val permissionsToRequest = mutableListOf<String>()
-                if (!hasCameraPermission) {
-                    permissionsToRequest.add(Manifest.permission.CAMERA)
-                }
-                if (!hasMicPermission) {
-                    permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
-                }
-                if (!hasPhoneStatePermission) {
-                    permissionsToRequest.add(Manifest.permission.READ_PHONE_STATE)
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !hasBluetoothPermission) {
-                    permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
-                }
-                if(!postNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
-                }
-                if(permissionsToRequest.isNotEmpty()) {
-                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), Constants.VIDEO_CALL_PERMISSION, permissionsToRequest.toTypedArray())
-//
-//                    AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
-                }*/
             }
         }
-    }
+    }*/
 
     private fun attendCall(fromIntent: Boolean = false) {
         if (CallManager.getCallType() == CallType.AUDIO_CALL && (!CallManager.isAudioCallPermissionsGranted() || !CallManager.isNotificationPermissionsGranted())) {
-            checkPermission()
+            AppUtils.checkPermission(this,this,findViewById(R.id.actions))
             return
         }
         if (CallManager.getCallType() == CallType.VIDEO_CALL && (!CallManager.isVideoCallPermissionsGranted() || !CallManager.isNotificationPermissionsGranted())) {
-            checkPermission()
+            AppUtils.checkPermission(this,this,findViewById(R.id.actions))
             return
         }
         Log.d("attendCall", "onclick")
@@ -309,10 +275,6 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d(tag,"isSuccess $isSuccess message $message")
                 if (isSuccess) {
-                    /*val json = JSONObject()
-            json.put("callAction", CallAction.ACTION_ANSWER_CALL)
-            json.put("userJid", CallManager.getCallUsersList().joinToString(","))
-            onCallActionStreamHandler.onCallAction?.success(json)*/
                     if(fromIntent) {
                         val json = JSONObject()
                         json.put("callStatus", "Attended")
@@ -525,7 +487,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
 
 //    override fun onShowCallUi(callAction: String?) {
     override fun onShowCallUiFlutter(callAction: String?,userJid: String?) {
-        LogMessage.d(tag, "#onShowCallUi $callAction ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.R}")
+        LogMessage.d(tag, "#onShowCallUi $callAction ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.Q}")
         when(callAction){
             CallStatus.INCOMING_CALL_TIME_OUT->{
                 if(CallManager.isOneToOneCall()){
@@ -539,7 +501,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}
             CallAction.ACTION_INVITE_USERS->{}
             CallAction.ACTION_ANSWER_CALL->{
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val y = AppUtils.getAppIntent(this)
                     y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     this.startActivity(y)
