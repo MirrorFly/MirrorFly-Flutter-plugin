@@ -292,47 +292,57 @@ import PushKit
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
         NSLog("#MirrorflyCall Event oncalll Action --> \(callAction.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-//         if userId == ""{
-//             jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
-//         }else{
-            jsonObject.setValue(userId, forKey: "userJid")
-//         }
-        jsonObject.setValue(callAction.rawValue, forKey: "callAction")
+        jsonObject.setValue(userId, forKey: "userJid")
         
-        if (callAction == .CHANGE_TO_AUDIO_CALL){
-            CallManager.setCallType(callType: .Audio)
-//            CallManager.muteVideo(true)
-            CallManager.disableVideo()
-            AudioManager.shared().autoReRoute()
-        }
-        
-        if (callAction == .ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
-//            if AudioManager.shared().audioManagerDelegate == nil {
-//                NSLog("\(Constants.callTag) AudioManager Delegate is Nil, setting new Delegate")
-//                AudioManager.shared().audioManagerDelegate = self
-//            }else{
-//                NSLog("\(Constants.callTag) AudioManager Delegate is already set")
-//            }
-            CallManager.setCallType(callType: .Video)
-            CallManager.muteVideo(false)
-            CallManager.enableVideo()
-            AudioManager.shared().autoReRoute()
-        }
-        
-        if CallManager.isOneToOneCall()  {
-            jsonObject.setValue("onetoone", forKey: "callMode")
+        if (callAction == CallAction.ACTION_LOCAL_AUDIO_MUTE || callAction == CallAction.ACTION_LOCAL_VIDEO_MUTE || callAction == CallAction.ACTION_LOCAL_AUDIO_UNMUTE || callAction == CallAction.ACTION_LOCAL_VIDEO_UNMUTE){
+            if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
+                if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: getMuteEvent(muteName: callAction))
+                } else {
+                    // Handle case when view is not found
+                    NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> View is not Found")
+                }
+            } else {
+                // Handle case when unique ID is not found
+                NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> Unique ID is not Found")
+            }
+            jsonObject.setValue(callAction.rawValue, forKey: "muteEvent")
+            let muteActionJson = pluginDictToJson(dictionary: jsonObject)
+            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMuteStatusUpdatedChannel, value: muteActionJson)
         }else{
-            jsonObject.setValue("onetomany", forKey: "callMode")
+            
+            
+            jsonObject.setValue(callAction.rawValue, forKey: "callAction")
+            
+            if (callAction == .CHANGE_TO_AUDIO_CALL){
+                CallManager.setCallType(callType: .Audio)
+                //            CallManager.muteVideo(true)
+                CallManager.disableVideo()
+                AudioManager.shared().autoReRoute()
+            }
+            
+            if (callAction == .ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
+                CallManager.setCallType(callType: .Video)
+                CallManager.muteVideo(false)
+                CallManager.enableVideo()
+                AudioManager.shared().autoReRoute()
+            }
+            
+            if CallManager.isOneToOneCall()  {
+                jsonObject.setValue("onetoone", forKey: "callMode")
+            }else{
+                jsonObject.setValue("onetomany", forKey: "callMode")
+            }
+            if CallManager.getCallType() == .Audio {
+                jsonObject.setValue("audio", forKey: "callType")
+            } else {
+                jsonObject.setValue("video", forKey: "callType")
+            }
+            
+            let callActionJson = pluginDictToJson(dictionary: jsonObject)
+            
+            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callActionJson)
         }
-        if CallManager.getCallType() == .Audio {
-            jsonObject.setValue("audio", forKey: "callType")
-        } else {
-            jsonObject.setValue("video", forKey: "callType")
-        }
-        
-        let callActionJson = pluginDictToJson(dictionary: jsonObject)
-        
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callActionJson)
     }
     
     func onMuteStatusUpdated(muteEvent: MirrorFlySDK.MuteEvent, userId: String) {
@@ -347,7 +357,7 @@ import PushKit
             jsonObject.setValue("REMOTE_VIDEO_MUTE", forKey: "muteEvent")
             if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
                 if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: muteEvent)
+                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.REMOTE_VIDEO_MUTE)
                 } else {
                     // Handle case when view is not found
                     NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> View is not Found")
@@ -361,7 +371,7 @@ import PushKit
             jsonObject.setValue("REMOTE_VIDEO_UN_MUTE", forKey: "muteEvent")
             if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
                 if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: muteEvent)
+                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.REMOTE_VIDEO_UN_MUTE)
                 } else {
                     // Handle case when view is not found
                     NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_UN_MUTE --> View is not Found")
@@ -453,7 +463,7 @@ import PushKit
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+                mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.REMOTE_VIDEO_UN_MUTE)
             } else {
                 // Handle case when view is not found
                 NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> View is not Found")
@@ -474,7 +484,7 @@ import PushKit
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+                mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.REMOTE_VIDEO_UN_MUTE)
             } else {
                 // Handle case when view is not found
             }
@@ -604,3 +614,41 @@ import PushKit
 //        }
 //    }
 //}
+
+public enum MuteEvent {
+    
+    case REMOTE_VIDEO_MUTE
+    
+    case REMOTE_VIDEO_UN_MUTE
+    
+    case REMOTE_AUDIO_MUTE
+    
+    case REMOTE_AUDIO_UN_MUTE
+    
+    case LOCAL_AUDIO_MUTE
+    
+    case LOCAL_AUDIO_UN_MUTE
+        
+    case LOCAL_VIDEO_MUTE
+
+    case LOCAL_VIDEO_UNMUTE
+    
+}
+
+private func getMuteEvent(muteName : CallAction) -> MuteEvent{
+    let muteNameMapping: [CallAction: MuteEvent] = [
+            .ACTION_LOCAL_AUDIO_MUTE: .LOCAL_AUDIO_MUTE,
+            .ACTION_LOCAL_VIDEO_MUTE: .LOCAL_VIDEO_MUTE,
+            .ACTION_LOCAL_AUDIO_UNMUTE: .LOCAL_AUDIO_UN_MUTE,
+            .ACTION_LOCAL_VIDEO_UNMUTE: .LOCAL_VIDEO_UNMUTE
+        ]
+
+        guard let muteEvent = muteNameMapping[muteName] else {
+            // Handle the case where muteName is not in the mapping
+            // You might want to return a default value or throw an error
+            fatalError("Invalid muteName")
+        }
+
+        return muteEvent
+    
+}
