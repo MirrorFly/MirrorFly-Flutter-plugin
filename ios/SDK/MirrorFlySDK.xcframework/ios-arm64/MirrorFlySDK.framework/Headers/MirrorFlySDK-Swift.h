@@ -331,6 +331,7 @@ SWIFT_CLASS("_TtC12MirrorFlySDK14CallLogManager")
 SWIFT_CLASS("_TtC12MirrorFlySDK11CallManager")
 @interface CallManager : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
++ (void)receiverSeemsToBeOffline:(NSTimer * _Nonnull)timer;
 + (void)callRingingStatusWaiting:(NSTimer * _Nonnull)timer;
 @end
 
@@ -416,7 +417,7 @@ SWIFT_PROTOCOL("_TtP12MirrorFlySDK19GroupEventsDelegate_")
 /// called whenever get make Admin message is received in user group
 - (void)didMakeMemberAsAdminWithGroupJid:(NSString * _Nonnull)groupJid newAdminMemberJid:(NSString * _Nonnull)newAdminMemberJid madeByMemberJid:(NSString * _Nonnull)madeByMemberJid;
 /// Called whenever if a member removed from admin
-- (void)didRemoveMemberFromAdminWithGroupJid:(NSString * _Nonnull)groupJid removedAdminMemberJid:(NSString * _Nonnull)removedAdminMemberJid removedByMemberJid:(NSString * _Nonnull)removedByMemberJid;
+- (void)didRevokedAdminAccessWithGroupJid:(NSString * _Nonnull)groupJid revokedAdminMemberJid:(NSString * _Nonnull)revokedAdminMemberJid revokedByMemberJid:(NSString * _Nonnull)revokedByMemberJid;
 /// called   Whenever participant deleted from  the group
 - (void)didDeleteGroupLocallyWithGroupJid:(NSString * _Nonnull)groupJid;
 /// called  Whenever participant removed from  the group
@@ -436,7 +437,7 @@ SWIFT_PROTOCOL("_TtP12MirrorFlySDK19GroupEventsDelegate_")
 - (void)didFetchGroupProfileWithGroupJid:(NSString * _Nonnull)groupJid;
 - (void)didUpdateGroupProfileWithGroupJid:(NSString * _Nonnull)groupJid;
 - (void)didMakeMemberAsAdminWithGroupJid:(NSString * _Nonnull)groupJid newAdminMemberJid:(NSString * _Nonnull)newAdminMemberJid madeByMemberJid:(NSString * _Nonnull)madeByMemberJid;
-- (void)didRemoveMemberFromAdminWithGroupJid:(NSString * _Nonnull)groupJid removedAdminMemberJid:(NSString * _Nonnull)removedAdminMemberJid removedByMemberJid:(NSString * _Nonnull)removedByMemberJid;
+- (void)didRevokedAdminAccessWithGroupJid:(NSString * _Nonnull)groupJid revokedAdminMemberJid:(NSString * _Nonnull)revokedAdminMemberJid revokedByMemberJid:(NSString * _Nonnull)revokedByMemberJid;
 - (void)didDeleteGroupLocallyWithGroupJid:(NSString * _Nonnull)groupJid;
 - (void)didLeftFromGroupWithGroupJid:(NSString * _Nonnull)groupJid leftUserJid:(NSString * _Nonnull)leftUserJid;
 - (void)didCreateGroupWithGroupJid:(NSString * _Nonnull)groupJid;
@@ -582,9 +583,11 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) FlyMessenger
 @interface FlyMessenger (SWIFT_EXTENSION(MirrorFlySDK))
 - (void)uploadingProgressWithPercent:(float)percent message:(ChatMessage * _Nonnull)message;
 - (void)uploadSucceededWithMessage:(ChatMessage * _Nonnull)message response:(NSDictionary<NSString *, id> * _Nonnull)response;
+- (void)uploadSucceededV2WithMessage:(ChatMessage * _Nonnull)message;
 - (void)uploadWithErrorWithError:(NSString * _Nonnull)error messageId:(NSString * _Nonnull)messageId;
 - (void)downloadingProgressWithPercent:(float)percent message:(ChatMessage * _Nonnull)message;
 - (void)downloadSucceededWithMessage:(ChatMessage * _Nonnull)message fileLocalPath:(NSString * _Nonnull)fileLocalPath fileName:(NSString * _Nonnull)fileName;
+- (void)downloadSucceededV2WithMessage:(ChatMessage * _Nonnull)message fileLocalPath:(NSString * _Nonnull)fileLocalPath fileName:(NSString * _Nonnull)fileName;
 - (void)downloadWithErrorWithError:(NSString * _Nonnull)error messageId:(NSString * _Nonnull)messageId errorCode:(NSInteger)errorCode;
 @end
 
@@ -946,11 +949,13 @@ SWIFT_CLASS("_TtC12MirrorFlySDK16SocketConnection")
 @end
 
 
+
 SWIFT_CLASS("_TtC12MirrorFlySDK20TopicChatListBuilder")
 @interface TopicChatListBuilder : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
+
 
 
 

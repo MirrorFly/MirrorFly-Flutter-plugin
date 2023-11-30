@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "MirrorFlySDK"
-  s.version      = "5.13.1"
+  s.version      = "5.13.3"
   s.summary      = "MirrorFlySDK Summary"
   s.description  = "MirrorFlySDK Description"
   s.authors      = "Vishvanath Eshwer"
@@ -29,5 +29,6 @@ Pod::Spec.new do |s|
   s.dependency 'Starscream', '4.0.4'
   s.dependency 'RealmSwift', '10.20.1'
   s.dependency 'GoogleWebRTC', '1.1.31999'
+  s.dependency 'IDZSwiftCommonCrypto', '~> 0.16'
 
 end

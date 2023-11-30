@@ -226,7 +226,9 @@ import MirrorFlySDK
         };
     }
     func switchCamera(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        CallManager.switchCamera()
+        CallManager.switchCamera {
+            
+        }
     }
     func isCallOnHold(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
@@ -404,12 +406,18 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let pageNumber = args["currentPage"] as? Int ?? 1
         let callLogList = CallLogManager().getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
-//            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: callLogList.toJson()))")
+//            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: callLogList))")
             
             if isSuccess{
 //                result(callLogList.)
+                if let callLogs = data["data"] as? [String : Any]{
+                    
+                }else{
+                    
+                }
             }else{
-//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: data.getMessage()))
+                var flyData = data
+                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
             }
         }
         

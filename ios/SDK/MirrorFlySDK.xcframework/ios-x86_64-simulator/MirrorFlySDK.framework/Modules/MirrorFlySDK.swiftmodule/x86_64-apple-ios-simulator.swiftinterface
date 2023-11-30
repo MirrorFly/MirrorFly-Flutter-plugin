@@ -11,6 +11,7 @@ import CommonCrypto
 import Contacts
 import CoreAudioTypes
 import Foundation
+import IDZSwiftCommonCrypto
 @_exported import MirrorFlySDK
 import MobileCoreServices
 import Network
@@ -101,6 +102,7 @@ public struct MediaBody : Swift.Codable {
   public var androidWidth: Swift.Int?
   public var androidHeight: Swift.Int?
   public var audioType: Swift.String?
+  public var isLargeFile: Swift.Bool?
   public init()
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
@@ -135,6 +137,81 @@ public struct CountryInfo : Swift.Codable {
   public var code: Swift.String?
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
+}
+public protocol UploadDelegate : ObjectiveC.NSObjectProtocol {
+  func uploadPartCompleted(message: MirrorFlySDK.ChatMessage, part: Swift.Int, url: Swift.String, fileId: Swift.String)
+  func uploadPartError(messageId: Swift.String, part: Swift.Int, url: Swift.String, fileId: Swift.String)
+  func uploadSuccess(message: MirrorFlySDK.ChatMessage)
+  func linksExpired(message: MirrorFlySDK.ChatMessage, fileId: Swift.String)
+}
+public enum MediaType {
+  case image
+  case video
+  case audio
+  case document
+  public static func == (a: MirrorFlySDK.MediaType, b: MirrorFlySDK.MediaType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum MediaQuality {
+  case best
+  case high
+  case medium
+  case low
+  case uncompressed
+  public static func == (a: MirrorFlySDK.MediaQuality, b: MirrorFlySDK.MediaQuality) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
+  case processing
+  case success
+  case failed
+  public var description: Swift.String {
+    get
+  }
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers public class MediaUtils {
+  public static func checkFileExtension(pathExension: Swift.String) -> Swift.Bool
+  public static func getPHAssetFileName(asset: Photos.PHAsset) -> Swift.String?
+  public static func processVideo(phAsset: Photos.PHAsset, completion: @escaping (_ phasset: Photos.PHAsset, _ status: MirrorFlySDK.MediaStatus, _ url: Foundation.URL?, Swift.Bool) -> Swift.Void)
+  public static func getAssetsImageInfo(asset: Photos.PHAsset) -> (Swift.String, Foundation.Data, Swift.Double, UIKit.UIImage, UIKit.UIImage, Swift.Bool)?
+  public static func getAssetsImageInfo(url: Foundation.URL) -> (Swift.String, Foundation.Data, Swift.Double, UIKit.UIImage, UIKit.UIImage, Swift.Bool)?
+  public static func checkMediaFileFormat(format: Swift.String) -> Swift.Bool
+  public static func compressVideoV2(videoURL: Foundation.URL, mediaQuality: MirrorFlySDK.MediaQuality = .high, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.String, Swift.String, Swift.Double, Swift.Double, Swift.String?) -> Swift.Void)
+  public static func compressVideo(videoURL: Foundation.URL, mediaQuality: MirrorFlySDK.MediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.String, Swift.String, Swift.Double, Swift.Double) -> Swift.Void)
+  public static func convertVideoToData(phAsset: Photos.PHAsset, completion: @escaping (Foundation.Data?) -> ())
+  public static func convertFileToDataFor(url: Foundation.URL?, completion: @escaping (Foundation.Data?) -> ())
+  public static func isVideoAsset(asset: Photos.PHAsset) -> Swift.Bool
+  public static func isImageAsset(asset: Photos.PHAsset) -> Swift.Bool
+  public static func base64ToImage(_ base64String: Swift.String) -> UIKit.UIImage?
+  public static func convertImageToBase64(img: UIKit.UIImage) -> Swift.String
+  public static func convertImageToBase64String(img: UIKit.UIImage) -> Swift.String
+  public static func compressCapturedImage(_ image: UIKit.UIImage?, andWidth width: CoreFoundation.CGFloat, andHeight height: CoreFoundation.CGFloat) -> UIKit.UIImage?
+  public static func encryptFileV2(localParentPath: Foundation.URL, fileName: Swift.String, messageType: MirrorFlySDK.MessageType, streamingCompletion: @escaping (Swift.Bool, Swift.String?) -> Swift.Void)
+  public static func encryptFile(localParentPath: Foundation.URL, fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> (Foundation.URL, Swift.String)?
+  public static func getMediaPathFor(fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> Foundation.URL?
+  public static func attachmentsDocumentDirectory(messageType: MirrorFlySDK.MessageType) -> Foundation.URL?
+  public static func transferDocumentDirectoryFiles()
+  public static func compressImageV2(imageData: Foundation.Data, mediaQuality: MirrorFlySDK.MediaQuality = .high, onComplete: @escaping (Swift.Bool, Foundation.Data?, Swift.String, Foundation.URL?, Swift.String, Swift.Double, Swift.String?) -> Swift.Void)
+  public static func compressImage(imageData: Foundation.Data, mediaQuality: MirrorFlySDK.MediaQuality = .medium) -> (Foundation.Data, Swift.String, Foundation.URL, Swift.String, Swift.Double)?
+  public static func processAudioV2(url: Foundation.URL, maxSizeInMB: Swift.Double = 2048.0, onComplete: @escaping (Swift.Bool, Swift.String, Foundation.URL?, Swift.Double, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
+  public static func processAudio(url: Foundation.URL, maxSizeInMB: Swift.Double = 30.0, onComplete: @escaping (Swift.Bool, Swift.String, Foundation.URL?, Swift.Double, Swift.Double, Swift.String) -> Swift.Void)
+  public static func processDocumentV2(url: Foundation.URL, maxSizeInMB: Swift.Double = 2048.0, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.Double, Swift.String, Swift.String, Swift.String) -> Swift.Void)
+  public static func processDocument(url: Foundation.URL, maxSizeInMB: Swift.Double = 20.0, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
+  public static func getMediaDuration(url: Foundation.URL) -> Swift.Double
+  public static func isVideoLimit(asset: Photos.PHAsset, videoLimit: Swift.Int64) -> Swift.Bool
+  public static func resizeImage(image: UIKit.UIImage) -> UIKit.UIImage
+  @objc deinit
 }
 public enum CallAction : Swift.String {
   case ACTION_INVITE_USERS
@@ -363,7 +440,7 @@ extension MirrorFlySDK.ChatManager : MirrorFlySDK.GroupEventsDelegate {
   @objc dynamic public func didFetchGroupProfile(groupJid: Swift.String)
   @objc dynamic public func didUpdateGroupProfile(groupJid: Swift.String)
   @objc dynamic public func didMakeMemberAsAdmin(groupJid: Swift.String, newAdminMemberJid: Swift.String, madeByMemberJid: Swift.String)
-  @objc dynamic public func didRemoveMemberFromAdmin(groupJid: Swift.String, removedAdminMemberJid: Swift.String, removedByMemberJid: Swift.String)
+  @objc dynamic public func didRevokedAdminAccess(groupJid: Swift.String, revokedAdminMemberJid: Swift.String, revokedByMemberJid: Swift.String)
   @objc dynamic public func didDeleteGroupLocally(groupJid: Swift.String)
   @objc dynamic public func didLeftFromGroup(groupJid: Swift.String, leftUserJid: Swift.String)
   @objc dynamic public func didCreateGroup(groupJid: Swift.String)
@@ -604,6 +681,7 @@ public protocol XMPPGroupDelegate : ObjectiveC.NSObjectProtocol {
   func didMakeAdmin(message: Swift.String)
   func didGroupInfoUpdatedMessage(groupDetail: MirrorFlySDK.ParticipantDetails)
   func didMakeAdminMessage(participantDetail: MirrorFlySDK.ParticipantDetails)
+  func didRemoveAdminMessage(participantDetail: MirrorFlySDK.ParticipantDetails)
   func didExitFromGroup(message: Swift.String)
   func didDeleteFromGroup(message: Swift.String)
   func didReceiveGroupDeleteMessage(groupJid: Swift.String, messageFrom: Swift.String)
@@ -736,69 +814,6 @@ public struct DeliveryReceipt : Swift.Codable {
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
-public enum MediaType {
-  case image
-  case video
-  case audio
-  case document
-  public static func == (a: MirrorFlySDK.MediaType, b: MirrorFlySDK.MediaType) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-public enum MediaQuality {
-  case best
-  case high
-  case medium
-  case low
-  case uncompressed
-  public static func == (a: MirrorFlySDK.MediaQuality, b: MirrorFlySDK.MediaQuality) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
-  case processing
-  case success
-  case failed
-  public var description: Swift.String {
-    get
-  }
-  public init?(rawValue: Swift.String)
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
-@_hasMissingDesignatedInitializers public class MediaUtils {
-  public static func checkFileExtension(pathExension: Swift.String) -> Swift.Bool
-  public static func getPHAssetFileName(asset: Photos.PHAsset) -> Swift.String?
-  public static func processVideo(phAsset: Photos.PHAsset, completion: @escaping (_ phasset: Photos.PHAsset, _ status: MirrorFlySDK.MediaStatus, _ url: Foundation.URL?, Swift.Bool) -> Swift.Void)
-  public static func getAssetsImageInfo(asset: Photos.PHAsset) -> (Swift.String, Foundation.Data, Swift.Double, UIKit.UIImage, UIKit.UIImage, Swift.Bool)?
-  public static func getAssetsImageInfo(url: Foundation.URL) -> (Swift.String, Foundation.Data, Swift.Double, UIKit.UIImage, UIKit.UIImage, Swift.Bool)?
-  public static func checkMediaFileFormat(format: Swift.String) -> Swift.Bool
-  public static func compressVideo(videoURL: Foundation.URL, mediaQuality: MirrorFlySDK.MediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.String, Swift.String, Swift.Double, Swift.Double) -> Swift.Void)
-  public static func convertVideoToData(phAsset: Photos.PHAsset, completion: @escaping (Foundation.Data?) -> ())
-  public static func convertFileToDataFor(url: Foundation.URL?, completion: @escaping (Foundation.Data?) -> ())
-  public static func isVideoAsset(asset: Photos.PHAsset) -> Swift.Bool
-  public static func isImageAsset(asset: Photos.PHAsset) -> Swift.Bool
-  public static func base64ToImage(_ base64String: Swift.String) -> UIKit.UIImage?
-  public static func convertImageToBase64(img: UIKit.UIImage) -> Swift.String
-  public static func convertImageToBase64String(img: UIKit.UIImage) -> Swift.String
-  public static func compressCapturedImage(_ image: UIKit.UIImage?, andWidth width: CoreFoundation.CGFloat, andHeight height: CoreFoundation.CGFloat) -> UIKit.UIImage?
-  public static func encryptFile(localParentPath: Foundation.URL, fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> (Foundation.URL, Swift.String)?
-  public static func getMediaPathFor(fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> Foundation.URL?
-  public static func attachmentsDocumentDirectory(messageType: MirrorFlySDK.MessageType) -> Foundation.URL?
-  public static func transferDocumentDirectoryFiles()
-  public static func compressImage(imageData: Foundation.Data, mediaQuality: MirrorFlySDK.MediaQuality = .medium) -> (Foundation.Data, Swift.String, Foundation.URL, Swift.String, Swift.Double)?
-  public static func processAudio(url: Foundation.URL, maxSizeInMB: Swift.Double = 30.0, onComplete: @escaping (Swift.Bool, Swift.String, Foundation.URL?, Swift.Double, Swift.Double, Swift.String) -> Swift.Void)
-  public static func processDocument(url: Foundation.URL, maxSizeInMB: Swift.Double = 20.0, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
-  public static func getMediaDuration(url: Foundation.URL) -> Swift.Double
-  public static func isVideoLimit(asset: Photos.PHAsset, videoLimit: Swift.Int64) -> Swift.Bool
-  @objc deinit
-}
 public protocol JoinCallDelegate {
   func onSubscribeSuccess()
   func onUsersUpdated(usersList: [Swift.String])
@@ -888,7 +903,7 @@ public protocol CallStatusContactDelegate {
   func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: Swift.String)
 }
 public protocol CallManagerDelegate {
-  func getDisplayName(IncomingUser: [Swift.String])
+  func getDisplayName(IncomingUser: [Swift.String], incomingUserName: Swift.String)
   func getGroupName(_ groupId: Swift.String)
   func socketConnectionEstablished()
   func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: Swift.String)
@@ -931,7 +946,7 @@ public protocol MissedCallNotificationDelegate {
   public class func getViewControllerThatPresented() -> UIKit.UIViewController?
   public class func isRemoteAudioMuted(_ userId: Swift.String) -> Swift.Bool
   public class func isRemoteVideoMuted(_ userId: Swift.String) -> Swift.Bool
-  public class func switchCamera()
+  public class func switchCamera(completion: @escaping () -> Swift.Void)
   public class func requestVideoCallSwitch(onCompletion: @escaping (Swift.Bool) -> Swift.Void)
   public class func checkIsUserCanceled() -> Swift.Bool
   public class func cancelVideoCallSwitch()
@@ -976,8 +991,10 @@ public protocol MissedCallNotificationDelegate {
   public class func isAudioCallPermissionsGranted() -> Swift.Bool
   public class func isVideoCallPermissionsGranted() -> Swift.Bool
   public class func getInvitedUsersList() -> [Swift.String]
-  public class func initiateRingingTimer()
+  public class func initiateRingingTimer(userID: Swift.String)
+  public class func initiateCallingTimer()
   public func initiateReconnectingTimer()
+  @objc public class func receiverSeemsToBeOffline(_ timer: Foundation.Timer)
   @objc public class func callRingingStatusWaiting(_ timer: Foundation.Timer)
   @objc deinit
 }
@@ -998,6 +1015,10 @@ extension MirrorFlySDK.CallManager {
   public class func getRemoteVideoTrack(jid: Swift.String) -> WebRTC.RTCVideoTrack?
   @objc dynamic public class func isOngoingCall() -> Swift.Bool
   @objc dynamic public class func checkForActiveCall() -> Swift.Bool
+}
+extension MirrorFlySDK.CallManager {
+  public class func checkAudioPermission()
+  public class func checkVideoPermission()
 }
 extension MirrorFlySDK.CallManager {
   public class func setupJoinCallViaLink()
@@ -1075,6 +1096,12 @@ public protocol FlyTranslationManagerDelegate : ObjectiveC.NSObjectProtocol {
   @objc override dynamic public init()
   @objc deinit
 }
+public protocol DownloadDelegate : ObjectiveC.NSObjectProtocol {
+  func downloadPartCompleted(message: MirrorFlySDK.ChatMessage, bytesDownloaded: Swift.Int)
+  func downloadError(messageId: Swift.String, errorMessage: Swift.String)
+  func downloadSuccess(message: MirrorFlySDK.ChatMessage, fileURL: Foundation.URL)
+  func fileDecrypted(message: MirrorFlySDK.ChatMessage, fileURL: Foundation.URL)
+}
 @_hasMissingDesignatedInitializers public class FlyLog {
   public class func DLog(param1: Swift.String?, param2: Any?)
   @objc deinit
@@ -1108,6 +1135,8 @@ public protocol FlyMediaDelegate : ObjectiveC.NSObjectProtocol {
   func downloadingProgress(percent: Swift.Float, message: MirrorFlySDK.ChatMessage)
   func downloadSucceeded(message: MirrorFlySDK.ChatMessage, fileLocalPath: Swift.String, fileName: Swift.String)
   func downloadWithError(error: Swift.String, messageId: Swift.String, errorCode: Swift.Int)
+  func downloadSucceededV2(message: MirrorFlySDK.ChatMessage, fileLocalPath: Swift.String, fileName: Swift.String)
+  func uploadSucceededV2(message: MirrorFlySDK.ChatMessage)
 }
 public enum MediaUploadStatus : Swift.Int, Swift.CustomStringConvertible, Swift.Codable {
   case not_uploaded
@@ -1224,6 +1253,46 @@ public protocol XMPPLogoutDelegate : ObjectiveC.NSObjectProtocol {
   }
   final public func stopMonitoring()
 }
+@objc @_inheritsConvenienceInitializers public class MediaManager : ObjectiveC.NSObject, MirrorFlySDK.UploadDelegate, MirrorFlySDK.DownloadDelegate {
+  public static let shared: MirrorFlySDK.MediaManager
+  public var flyMediaDelegate: (any MirrorFlySDK.FlyMediaDelegate)?
+  @objc override dynamic public init()
+  public func uploadFile(message: MirrorFlySDK.ChatMessage)
+  public func cancelUploadTask(message: MirrorFlySDK.ChatMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool) -> Swift.Void)
+  public func downloadFile(message: MirrorFlySDK.ChatMessage, completionHandler: ((Swift.Bool) -> ())? = nil, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
+  public func refreshToken(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
+  public func cancelDownloadTask(message: MirrorFlySDK.ChatMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool) -> Swift.Void)
+  public func cancelAllTask()
+  public func processNextUpload(messageId: Swift.String)
+  public func validateAndAppendMedia(message: MirrorFlySDK.ChatMessage)
+  public func upload(message: MirrorFlySDK.ChatMessage)
+  public func uploadFileV2(message: MirrorFlySDK.ChatMessage)
+  public func validateAndAppendMediaV2(message: MirrorFlySDK.ChatMessage)
+  public func processNextUploadV2(messageId: Swift.String)
+  public func downloadFileV2(message: MirrorFlySDK.ChatMessage)
+  public func uploadV2(messageId: Swift.String)
+  public func getUploadURLs(message: MirrorFlySDK.ChatMessage, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
+  public func uploadPartCompleted(message: MirrorFlySDK.ChatMessage, part: Swift.Int, url: Swift.String, fileId: Swift.String)
+  public func uploadPartError(messageId: Swift.String, part: Swift.Int, url: Swift.String, fileId: Swift.String)
+  public func uploadSuccess(message: MirrorFlySDK.ChatMessage)
+  public func linksExpired(message: MirrorFlySDK.ChatMessage, fileId: Swift.String)
+  public func pauseUpload(messageId: Swift.String)
+  public func resumeUpload(messageId: Swift.String, totalChunk: Swift.Int, uploadedChunk: Swift.Int)
+  public func stopUploads()
+  public func resumeUploads()
+  public func cancelDownload(messageId: Swift.String)
+  public func downloadPartCompleted(message: MirrorFlySDK.ChatMessage, bytesDownloaded: Swift.Int)
+  public func downloadError(messageId: Swift.String, errorMessage: Swift.String)
+  public func downloadSuccess(message: MirrorFlySDK.ChatMessage, fileURL: Foundation.URL)
+  public func fileDecrypted(message: MirrorFlySDK.ChatMessage, fileURL: Foundation.URL)
+  public func getSavedFile(message: MirrorFlySDK.ChatMessage) -> (Foundation.URL, Swift.Int)
+  public func stopDownloads()
+  public func resumeDownloads()
+  public func stopMedia()
+  public func resumeMedia()
+  public func isSpaceAvailableToProcess(fileSize: Swift.Int64) -> Swift.Bool
+  @objc deinit
+}
 @objc @_hasMissingDesignatedInitializers public class PeerConnectionClient : ObjectiveC.NSObject {
   @objc deinit
 }
@@ -1276,6 +1345,7 @@ extension MirrorFlySDK.GroupManager {
   public func updateGroupProfileImage(groupJid: Swift.String, groupProfileImageUrl: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func updateGroupName(groupJid: Swift.String, groupName: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func makeAdmin(groupJid: Swift.String, userJid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
+  public func revokeAdmin(groupJid: Swift.String, revokeAdminJid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func deleteGroup(groupJid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func leaveFromGroup(groupJid: Swift.String, userJid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func getMessageDeliveredListBy(messageId: Swift.String, groupId: Swift.String) -> (deliveredParticipantList: [MirrorFlySDK.MessageReceipt], deliveredCount: Swift.Int, totalParticipatCount: Swift.Int)
@@ -1311,6 +1381,7 @@ extension MirrorFlySDK.GroupManager : MirrorFlySDK.XMPPGroupDelegate {
   public func didGroupInfoUpdatedMessage(groupDetail: MirrorFlySDK.ParticipantDetails)
   public func didReceiveGroupDeleteMessage(groupJid: Swift.String, messageFrom: Swift.String)
   public func didMakeAdminMessage(participantDetail: MirrorFlySDK.ParticipantDetails)
+  public func didRemoveAdminMessage(participantDetail: MirrorFlySDK.ParticipantDetails)
   public func didReceiveParticipantMessage(participantDetails: [MirrorFlySDK.ProfileDetails], groupDetails: MirrorFlySDK.GroupModel)
 }
 public struct QrCodeInfo : Swift.Codable {
@@ -1619,14 +1690,17 @@ public typealias FlySendMessageListener = (_ isSuccess: Swift.Bool, _ error: Mir
   public static func sendAudioMessage(toJid: Swift.String, mediaData: MirrorFlySDK.MediaData, replyMessageId: Swift.String? = nil, isRecorded: Swift.Bool, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
   @objc public static func saveUnsentMessage(id: Swift.String, message: Swift.String, mentionedUsers: [Swift.String]? = [], mentionSearch: [Swift.String]? = [], mentionLocation: [Swift.Int]? = [], mentionLength: [Swift.Int]? = [])
   public static func getUnsentMessageOf(id: Swift.String) -> MirrorFlySDK.UnsentMessage
+  public static func sendLargeFileMessage(messageParams: MirrorFlySDK.FileMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
   @objc deinit
 }
 extension MirrorFlySDK.FlyMessenger {
   @objc dynamic public func uploadingProgress(percent: Swift.Float, message: MirrorFlySDK.ChatMessage)
   @objc dynamic public func uploadSucceeded(message: MirrorFlySDK.ChatMessage, response: [Swift.String : Any])
+  @objc dynamic public func uploadSucceededV2(message: MirrorFlySDK.ChatMessage)
   @objc dynamic public func uploadWithError(error: Swift.String, messageId: Swift.String)
   @objc dynamic public func downloadingProgress(percent: Swift.Float, message: MirrorFlySDK.ChatMessage)
   @objc dynamic public func downloadSucceeded(message: MirrorFlySDK.ChatMessage, fileLocalPath: Swift.String, fileName: Swift.String)
+  @objc dynamic public func downloadSucceededV2(message: MirrorFlySDK.ChatMessage, fileLocalPath: Swift.String, fileName: Swift.String)
   @objc dynamic public func downloadWithError(error: Swift.String, messageId: Swift.String, errorCode: Swift.Int)
 }
 extension MirrorFlySDK.FlyMessenger {
@@ -1827,6 +1901,7 @@ public struct MediaData {
   public var caption: Swift.String
   public var mentionedUsers: [Swift.String]
   public var metaData: [Swift.String]
+  public var fileId: Swift.String
 }
 public struct BackupRestoreModels : Swift.Codable {
   public var messages: [MirrorFlySDK.BackupMessage]
@@ -1950,21 +2025,6 @@ public struct BackupRecentChat : Swift.Codable {
 public protocol VideoWidthHeightAdjuster {
   func getVideoHeightConstraint(usersCount: Swift.Int) -> Swift.Int
   func getVideoWidthConstraint(usersCount: Swift.Int) -> Swift.Int
-}
-@objc @_inheritsConvenienceInitializers public class MediaManager : ObjectiveC.NSObject {
-  public static let shared: MirrorFlySDK.MediaManager
-  public var flyMediaDelegate: (any MirrorFlySDK.FlyMediaDelegate)?
-  @objc override dynamic public init()
-  public func uploadFile(message: MirrorFlySDK.ChatMessage)
-  public func cancelUploadTask(message: MirrorFlySDK.ChatMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool) -> Swift.Void)
-  public func downloadFile(message: MirrorFlySDK.ChatMessage, completionHandler: ((Swift.Bool) -> ())? = nil, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  public func refreshToken(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  public func cancelDownloadTask(message: MirrorFlySDK.ChatMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool) -> Swift.Void)
-  public func cancelAllTask()
-  public func processNextUpload(messageId: Swift.String)
-  public func validateAndAppendMedia(message: MirrorFlySDK.ChatMessage)
-  public func upload(message: MirrorFlySDK.ChatMessage)
-  @objc deinit
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class WebLoginsManager : ObjectiveC.NSObject {
   public static let shared: MirrorFlySDK.WebLoginsManager
@@ -2156,6 +2216,21 @@ extension Swift.Dictionary where Key == Swift.String, Value == Any {
 extension Swift.Dictionary where Key == Swift.String, Value == Any {
   public mutating func addData(data: Any)
   public mutating func getData() -> Any
+}
+public typealias FlyStreamDelegate = (_ isSuccess: MirrorFlySDK.FlyProgress, _ error: MirrorFlySDK.FlyError?, _ data: (Swift.Int, Foundation.URL)) -> Swift.Void
+public enum FlyProgress : Swift.String {
+  case inprogress
+  case success
+  case failed
+  public var rawValue: Swift.String {
+    get
+  }
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+}
+public struct UploadInfo : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
 }
 public class CommonDefaults {
   public init()
@@ -2420,7 +2495,9 @@ public struct FlyConstants {
   public static let groupImageUpdated: Swift.String
   public static let groupImageRemoved: Swift.String
   public static let asAdmin: Swift.String
+  public static let fromAdmin: Swift.String
   public static let made: Swift.String
+  public static let removed: Swift.String
   public static let admin_exit_group: Swift.String
   public static let user_exit_group: Swift.String
   public static let deleteMultipleConversation: Swift.String
@@ -2550,6 +2627,7 @@ public struct FlyConstants {
     public static let notMemberOfTheGroup: Swift.String
     public static let onlyAdminPerformAction: Swift.String
     public static let alreadyAdminMessage: Swift.String
+    public static let alreadyNotAdminMessage: Swift.String
     public static let leaveThenDelete: Swift.String
     public static let emptyFileUrl: Swift.String
     public static let invalidMessageId: Swift.String
@@ -2596,6 +2674,8 @@ public struct FlyConstants {
     public static let invalidTopicID: Swift.String
     public static let meetLinkError: Swift.String
     public static let scheduledDateTimeError: Swift.String
+    public static let storageNotAvaialbe: Swift.String
+    public static let compressionFailed: Swift.String
   }
   public struct SuccessMessage {
     public static let profileFetch: Swift.String
@@ -2726,6 +2806,7 @@ public enum CallMode : Swift.String {
   @objc deinit
 }
 public struct FlyUtils {
+  public static let bufferSize: Swift.Int
   public static let replyMessageId: Swift.String
   public static let downloadedVideoAlbum: Swift.String
   public static let uploadedImageVideoAlbum: Swift.String
@@ -2772,7 +2853,7 @@ public struct FlyUtils {
   public static func generateUniqueId() -> Swift.String
   public static func openURL(_ urlString: Swift.String) -> Swift.Bool
   public static func getFileName(forJID: Swift.String?, uniqueString: Swift.String?, uploadExtension: Swift.String?) -> Swift.String?
-  public static func saveInDirectory(with data: Foundation.Data, fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> (Swift.String?, Swift.String?)?
+  public static func saveInDirectory(with mediaURL: Foundation.URL, fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> (Swift.String?, Swift.String?)?
   public static func attachmentsDocumentDirectory(messageType: MirrorFlySDK.MessageType) -> Foundation.URL
   public static func getFilePathInDocuments(forFile fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> Swift.String
   public static func saveImagesInGallery(localPath: Swift.String)
@@ -2830,6 +2911,15 @@ extension Foundation.URL {
 extension MirrorFlySDK.FlyUtils {
   public static func getDeviceID() -> Swift.String
   public static func deleteDownloadedImageFromAlbum(customFolder: Swift.String, imageName: Swift.String, completion: @escaping (Swift.Bool) -> Swift.Void)
+  public static func secondsToDurationInString(seconds: Swift.Double) -> Swift.String
+}
+extension Foundation.Thread {
+  public var threadName: Swift.String {
+    get
+  }
+  public var queueName: Swift.String {
+    get
+  }
 }
 public protocol FlyCommonControllerDelegate : ObjectiveC.NSObjectProtocol {
 }
@@ -3233,7 +3323,8 @@ public struct Media : Swift.Codable {
   public var androidWidth: Swift.Int?
   public var androidHeight: Swift.Int?
   public var audioType: Swift.String?
-  public init(mid: Swift.String, duration: Swift.Int32, file_size: Swift.Int32, file_key: Swift.String, file_type: Swift.String, file_url: Swift.String, thumb_image: Swift.String, caption: Swift.String, fileName: Swift.String, local_path: Swift.String, mediaDownloadStatus: Swift.Int, mediaUploadStatus: Swift.Int, progressStatus: Swift.Int, is_uploading: Swift.Int, is_downloaded: Swift.Int, webWidth: Swift.Int, webHeight: Swift.Int, androidWidth: Swift.Int, androidHeight: Swift.Int, audioType: Swift.String)
+  public var isLargeFile: Swift.Bool?
+  public init(mid: Swift.String, duration: Swift.Int32, file_size: Swift.Int32, file_key: Swift.String, file_type: Swift.String, file_url: Swift.String, thumb_image: Swift.String, caption: Swift.String, fileName: Swift.String, local_path: Swift.String, mediaDownloadStatus: Swift.Int, mediaUploadStatus: Swift.Int, progressStatus: Swift.Int, is_uploading: Swift.Int, is_downloaded: Swift.Int, webWidth: Swift.Int, webHeight: Swift.Int, androidWidth: Swift.Int, androidHeight: Swift.Int, audioType: Swift.String, isLargeFile: Swift.Bool = false)
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
 }
@@ -3293,7 +3384,7 @@ public enum MessageNotificationStatus : Swift.Int, Swift.Codable {
   @objc func didFetchGroupProfile(groupJid: Swift.String)
   @objc func didUpdateGroupProfile(groupJid: Swift.String)
   @objc func didMakeMemberAsAdmin(groupJid: Swift.String, newAdminMemberJid: Swift.String, madeByMemberJid: Swift.String)
-  @objc func didRemoveMemberFromAdmin(groupJid: Swift.String, removedAdminMemberJid: Swift.String, removedByMemberJid: Swift.String)
+  @objc func didRevokedAdminAccess(groupJid: Swift.String, revokedAdminMemberJid: Swift.String, revokedByMemberJid: Swift.String)
   @objc func didDeleteGroupLocally(groupJid: Swift.String)
   @objc func didLeftFromGroup(groupJid: Swift.String, leftUserJid: Swift.String)
   @objc func didCreateGroup(groupJid: Swift.String)
@@ -3301,6 +3392,13 @@ public enum MessageNotificationStatus : Swift.Int, Swift.Codable {
   @objc func didFetchGroupMembers(groupJid: Swift.String)
   @objc func didReceiveGroupNotificationMessage(message: MirrorFlySDK.ChatMessage)
 }
+extension MirrorFlySDK.MediaType : Swift.Equatable {}
+extension MirrorFlySDK.MediaType : Swift.Hashable {}
+extension MirrorFlySDK.MediaQuality : Swift.Equatable {}
+extension MirrorFlySDK.MediaQuality : Swift.Hashable {}
+extension MirrorFlySDK.MediaStatus : Swift.Equatable {}
+extension MirrorFlySDK.MediaStatus : Swift.Hashable {}
+extension MirrorFlySDK.MediaStatus : Swift.RawRepresentable {}
 extension MirrorFlySDK.CallAction : Swift.Equatable {}
 extension MirrorFlySDK.CallAction : Swift.Hashable {}
 extension MirrorFlySDK.CallAction : Swift.RawRepresentable {}
@@ -3321,13 +3419,6 @@ extension MirrorFlySDK.ContactType : Swift.RawRepresentable {}
 extension MirrorFlySDK.DeliveryStatus : Swift.Equatable {}
 extension MirrorFlySDK.DeliveryStatus : Swift.Hashable {}
 extension MirrorFlySDK.DeliveryStatus : Swift.RawRepresentable {}
-extension MirrorFlySDK.MediaType : Swift.Equatable {}
-extension MirrorFlySDK.MediaType : Swift.Hashable {}
-extension MirrorFlySDK.MediaQuality : Swift.Equatable {}
-extension MirrorFlySDK.MediaQuality : Swift.Hashable {}
-extension MirrorFlySDK.MediaStatus : Swift.Equatable {}
-extension MirrorFlySDK.MediaStatus : Swift.Hashable {}
-extension MirrorFlySDK.MediaStatus : Swift.RawRepresentable {}
 extension MirrorFlySDK.MuteEvent : Swift.Equatable {}
 extension MirrorFlySDK.MuteEvent : Swift.Hashable {}
 extension MirrorFlySDK.CALLSTATUS : Swift.Equatable {}
@@ -3370,6 +3461,9 @@ extension MirrorFlySDK.OutputType : Swift.Hashable {}
 extension MirrorFlySDK.TypingStatus : Swift.Equatable {}
 extension MirrorFlySDK.TypingStatus : Swift.Hashable {}
 extension MirrorFlySDK.TypingStatus : Swift.RawRepresentable {}
+extension MirrorFlySDK.FlyProgress : Swift.Equatable {}
+extension MirrorFlySDK.FlyProgress : Swift.Hashable {}
+extension MirrorFlySDK.FlyProgress : Swift.RawRepresentable {}
 extension MirrorFlySDK.NotificationSoundKeys : Swift.Equatable {}
 extension MirrorFlySDK.NotificationSoundKeys : Swift.Hashable {}
 extension MirrorFlySDK.NotificationSoundKeys : Swift.RawRepresentable {}
