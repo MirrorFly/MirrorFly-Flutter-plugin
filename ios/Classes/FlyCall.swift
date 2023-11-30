@@ -220,9 +220,9 @@ import PushKit
             AudioManager.shared().audioManagerDelegate = self
         }
         
-        if userId == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED) {
-                        return
-                    }
+//        if userId == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED) {
+//                        return
+//                    }
 
         var userJID = userId
 //        if userJID == AppUtils.getMyJid() && callStatus == .DISCONNECTED{
