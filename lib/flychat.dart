@@ -458,9 +458,9 @@ class Mirrorfly {
         .getCallLogsList(currentPage);
   }
 
-  static filteredCallLog() {
+  static getLocalCallLogs() {
     return FlyChatFlutterPlatform.instance
-        .filteredCallLog();
+        .getLocalCallLogs();
   }
 
   static Stream<dynamic> get onMessageReceived =>

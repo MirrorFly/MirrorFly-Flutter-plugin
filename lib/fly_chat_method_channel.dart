@@ -1890,7 +1890,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<dynamic> getCallLogsList(int currentPage) async {
     dynamic re;
     try {
-      re = await mirrorFlyMethodChannel.invokeMethod("get_call_logs", {"currentPage": currentPage});
+      re = await mirrorFlyCallMethodChannel.invokeMethod("getCallLogsList", {"currentPage": currentPage});
       LogMessage.d('RESULT ', '$re');
       return re;
     } on PlatformException catch (e) {
@@ -1900,10 +1900,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> filteredCallLog() async {
+  Future<dynamic> getLocalCallLogs() async {
     dynamic re;
     try {
-      re = await mirrorFlyMethodChannel.invokeMethod("get_filtered_call_logs", {});
+      re = await mirrorFlyCallMethodChannel.invokeMethod("getLocalCallLogs", {});
       LogMessage.d('RESULT ', '$re');
       return re;
     } on PlatformException catch (e) {

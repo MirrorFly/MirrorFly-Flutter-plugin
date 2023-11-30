@@ -392,7 +392,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  filteredCallLog(){
+  getLocalCallLogs(){
     throw UnimplementedError('has not been implemented.');
   }
 

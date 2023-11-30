@@ -1189,13 +1189,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 getTopics(call,result)
             }
 
-            call.method.equals("get_call_logs") -> {
+            /*call.method.equals("get_call_logs") -> {
                 getCallLogsList(call, result)
             }
 
             call.method.equals("get_filtered_call_logs") -> {
                 filteredCallLog(call, result)
-            }
+            }*/
 
             else -> {
                 result.notImplemented()
@@ -4493,26 +4493,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         return ContactManager.getProfileDetails(jid)?.name ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
     }
 
-    private fun getCallLogsList(call: MethodCall, result: MethodChannel.Result) {
 
-        if (AppUtils.isNetConnected(mContext)) {
-
-            val currentPage = call.argument("currentPage") ?: 1
-
-            CallManager.getCallLogs(currentPage) { isSuccess, throwable, data ->
-                if (isSuccess) {
-                    LogMessage.d("callLogsList Normal: ", data.toJsonString())
-                    result.success(data.toJsonString())
-                } else {
-                    println("call logs error : " + throwable.toString())
-                    result.error("400", throwable!!.message.toString(), "")
-                }
-            }
-
-        } else {
-            Toast.makeText(mContext, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
-        }
-    }
 
     override fun onCallLogsDeleted(isClearAll: Boolean, callIdList: ArrayList<String>) {
         LogMessage.d("onCallLogs ", "Deleted Called")
@@ -4523,14 +4504,5 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         onCallLogsUpdatedStreamHandler.onCallLogsUpdated?.success(true)
     }
 
-    private fun filteredCallLog(call: MethodCall, result: MethodChannel.Result){
-        val callLogsList = CallLogManager.getCallLogs()
-        if (callLogsList != null){
-            LogMessage.d("callLogsList Search: ", callLogsList.toJsonString())
-            result.success(callLogsList.toJsonString())
-        }else{
-            result.error("400", "filteredCallLog error", "")
-        }
 
-    }
 }

@@ -400,6 +400,23 @@ import MirrorFlySDK
         result(invitedUserList.toJson())
     }
     
+    func getCallLogsList(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        let args = call.arguments as! Dictionary<String, Any>
+        let pageNumber = args["currentPage"] as? Int ?? 1
+        let callLogList = CallLogManager().getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
+//            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: callLogList.toJson()))")
+            
+            if isSuccess{
+//                result(callLogList.)
+            }else{
+//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: data.getMessage()))
+            }
+        }
+        
+        
+        
+    }
+    
 //    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
 //        let args = call.arguments as! Dictionary<String, Any>
 //        let callType = args["callType"] as? String ?? ""

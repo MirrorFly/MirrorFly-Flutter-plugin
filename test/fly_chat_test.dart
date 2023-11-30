@@ -1619,7 +1619,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  filteredCallLog() {
+  getLocalCallLogs() {
     // TODO: implement filteredCallLog
     throw UnimplementedError();
   }
