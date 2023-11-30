@@ -219,6 +219,10 @@ import PushKit
             NSLog("\(Constants.callTag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
             AudioManager.shared().audioManagerDelegate = self
         }
+        
+        if userId == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED) {
+                        return
+                    }
 
         var userJID = userId
 //        if userJID == AppUtils.getMyJid() && callStatus == .DISCONNECTED{
