@@ -451,8 +451,8 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
 
     fun deleteCallLog(call: MethodCall, result: MethodChannel.Result){
         val jidList = call.argument<List<String>>("jidList") ?: arrayListOf()
-        ChatManager.deleteCallLog(false, jidList, object :
-            ChatActionListener {
+        val isClearAll = call.argument<Boolean>("isClearAll") ?: false
+        ChatManager.deleteCallLog(isClearAll, jidList, object : ChatActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d("deleteCallLog : ", "Response $isSuccess")
                 if (isSuccess){

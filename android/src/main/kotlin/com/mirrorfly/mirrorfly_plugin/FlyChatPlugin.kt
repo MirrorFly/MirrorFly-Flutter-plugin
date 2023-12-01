@@ -348,6 +348,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             EventChannel(binaryMessenger, Constants.onCallLogsUpdatedChannel).setStreamHandler(
                 onCallLogsUpdatedStreamHandler
             )
+            EventChannel(binaryMessenger, Constants.onCallLogsDeletedChannel).setStreamHandler(
+                onCallLogsDeletedStreamHandler
+            )
         }
     }
 
@@ -4500,6 +4503,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onCallLogsDeleted(isClearAll: Boolean, callIdList: ArrayList<String>) {
         LogMessage.d("deleteCallLog ", "onCallLogsDeleted Called")
+        val map = JSONObject()
+        map.put("callIdList", callIdList)
+        map.put("isClearAll", isClearAll)
+        onCallLogsDeletedStreamHandler.onCallLogsDeleted?.success(map.toString())
     }
 
     override fun onCallLogsUpdated() {
