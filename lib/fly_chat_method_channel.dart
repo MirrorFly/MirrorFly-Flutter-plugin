@@ -15,254 +15,255 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
   final mirrorFlyMethodChannel =
-      const MethodChannel('contus.mirrorfly/flyChat');
+  const MethodChannel('contus.mirrorfly/flyChat');
   @visibleForTesting
   final mirrorFlyCallMethodChannel =
-      const MethodChannel('contus.mirrorfly/flyCall');
+  const MethodChannel('contus.mirrorfly/flyCall');
 
   //Event Channels
   @visibleForTesting
   final messageOnReceivedChannel =
-      const EventChannel('contus.mirrorfly/onMessageReceived');
+  const EventChannel('contus.mirrorfly/onMessageReceived');
   final StreamController<dynamic> _messageOnReceivedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final messageStatusUpdatedChanel =
-      const EventChannel('contus.mirrorfly/onMessageStatusUpdated');
+  const EventChannel('contus.mirrorfly/onMessageStatusUpdated');
   final StreamController<dynamic> messageStatusUpdateStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final mediaStatusUpdatedChannel =
-      const EventChannel('contus.mirrorfly/onMediaStatusUpdated');
+  const EventChannel('contus.mirrorfly/onMediaStatusUpdated');
   final StreamController<dynamic> mediaStatusUpdatedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final uploadDownloadProgressChangedChannel =
-      const EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
+  const EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
   final StreamController<dynamic>
-      uploadDownloadProgressChangedStreamController =
-      StreamController<dynamic>.broadcast();
+  uploadDownloadProgressChangedStreamController =
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final showUpdateCancelNotificationChannel =
-      const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
+  const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
   final StreamController<dynamic> showUpdateCancelNotificationStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupProfileFetchedChannel =
-      const EventChannel('contus.mirrorfly/onGroupProfileFetched');
+  const EventChannel('contus.mirrorfly/onGroupProfileFetched');
   final StreamController<dynamic> onGroupProfileFetchedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onNewGroupCreatedChannel =
-      const EventChannel('contus.mirrorfly/onNewGroupCreated');
+  const EventChannel('contus.mirrorfly/onNewGroupCreated');
   final StreamController<dynamic> onNewGroupCreatedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupProfileUpdatedChannel =
-      const EventChannel('contus.mirrorfly/onGroupProfileUpdated');
+  const EventChannel('contus.mirrorfly/onGroupProfileUpdated');
   final StreamController<dynamic> onGroupProfileUpdatedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onNewMemberAddedToGroupChannel =
-      const EventChannel('contus.mirrorfly/onNewMemberAddedToGroup');
+  const EventChannel('contus.mirrorfly/onNewMemberAddedToGroup');
   final StreamController<dynamic> onNewMemberAddedToGroupStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onMemberRemovedFromGroupChannel =
-      const EventChannel('contus.mirrorfly/onMemberRemovedFromGroup');
+  const EventChannel('contus.mirrorfly/onMemberRemovedFromGroup');
   final StreamController<dynamic> onMemberRemovedFromGroupStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onFetchingGroupMembersCompletedChannel =
-      const EventChannel('contus.mirrorfly/onFetchingGroupMembersCompleted');
+  const EventChannel('contus.mirrorfly/onFetchingGroupMembersCompleted');
   final StreamController<dynamic>
-      onFetchingGroupMembersCompletedStreamController =
-      StreamController<dynamic>.broadcast();
+  onFetchingGroupMembersCompletedStreamController =
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onDeleteGroupChannel =
-      const EventChannel('contus.mirrorfly/onDeleteGroup');
+  const EventChannel('contus.mirrorfly/onDeleteGroup');
   final StreamController<dynamic> onDeleteGroupStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onFetchingGroupListCompletedChannel =
-      const EventChannel('contus.mirrorfly/onFetchingGroupListCompleted');
+  const EventChannel('contus.mirrorfly/onFetchingGroupListCompleted');
   final StreamController<dynamic> onFetchingGroupListCompletedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onMemberMadeAsAdminChannel =
-      const EventChannel('contus.mirrorfly/onMemberMadeAsAdmin');
+  const EventChannel('contus.mirrorfly/onMemberMadeAsAdmin');
   final StreamController<dynamic> onMemberMadeAsAdminStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onMemberRemovedAsAdminChannel =
-      const EventChannel('contus.mirrorfly/onMemberRemovedAsAdmin');
+  const EventChannel('contus.mirrorfly/onMemberRemovedAsAdmin');
   final StreamController<dynamic> onMemberRemovedAsAdminStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onLeftFromGroupChannel =
-      const EventChannel('contus.mirrorfly/onLeftFromGroup');
+  const EventChannel('contus.mirrorfly/onLeftFromGroup');
   final StreamController<dynamic> onLeftFromGroupStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupNotificationMessageChannel =
-      const EventChannel('contus.mirrorfly/onGroupNotificationMessage');
+  const EventChannel('contus.mirrorfly/onGroupNotificationMessage');
   final StreamController<dynamic> onGroupNotificationMessageStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final showOrUpdateOrCancelNotificationChannel =
-      const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
+  const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
   final StreamController<dynamic> showOrUpdateOrCancelNotificationStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupDeletedLocallyChannel =
-      const EventChannel('contus.mirrorfly/onGroupDeletedLocally');
+  const EventChannel('contus.mirrorfly/onGroupDeletedLocally');
   final StreamController<dynamic> onGroupDeletedLocallyStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final blockedThisUserChannel =
-      const EventChannel('contus.mirrorfly/blockedThisUser');
+  const EventChannel('contus.mirrorfly/blockedThisUser');
   final StreamController<dynamic> blockedThisUserStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final myProfileUpdatedChannel =
-      const EventChannel('contus.mirrorfly/myProfileUpdated');
+  const EventChannel('contus.mirrorfly/myProfileUpdated');
   final StreamController<dynamic> myProfileUpdatedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onAdminBlockedOtherUserChannel =
-      const EventChannel('contus.mirrorfly/onAdminBlockedOtherUser');
+  const EventChannel('contus.mirrorfly/onAdminBlockedOtherUser');
   final StreamController<dynamic> onAdminBlockedOtherUserStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onAdminBlockedUserChannel =
-      const EventChannel('contus.mirrorfly/onAdminBlockedUser');
+  const EventChannel('contus.mirrorfly/onAdminBlockedUser');
   final StreamController<dynamic> onAdminBlockedUserStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onContactSyncCompleteChannel =
-      const EventChannel('contus.mirrorfly/onContactSyncComplete');
+  const EventChannel('contus.mirrorfly/onContactSyncComplete');
   final StreamController<dynamic> onContactSyncCompleteStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onLoggedOutChannel = const EventChannel('contus.mirrorfly/onLoggedOut');
   final StreamController<dynamic> onLoggedOutStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final unblockedThisUserChannel =
-      const EventChannel('contus.mirrorfly/unblockedThisUser');
+  const EventChannel('contus.mirrorfly/unblockedThisUser');
   final StreamController<dynamic> unblockedThisUserStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userBlockedMeChannel =
-      const EventChannel('contus.mirrorfly/userBlockedMe');
+  const EventChannel('contus.mirrorfly/userBlockedMe');
   final StreamController<dynamic> userBlockedMeStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userCameOnlineChannel =
-      const EventChannel('contus.mirrorfly/userCameOnline');
+  const EventChannel('contus.mirrorfly/userCameOnline');
   final StreamController<dynamic> userCameOnlineStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userDeletedHisProfileChannel =
-      const EventChannel('contus.mirrorfly/userDeletedHisProfile');
+  const EventChannel('contus.mirrorfly/userDeletedHisProfile');
   final StreamController<dynamic> userDeletedHisProfileStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userProfileFetchedChannel =
-      const EventChannel('contus.mirrorfly/userProfileFetched');
+  const EventChannel('contus.mirrorfly/userProfileFetched');
   final StreamController<dynamic> userProfileFetchedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userUnBlockedMeChannel =
-      const EventChannel('contus.mirrorfly/userUnBlockedMe');
+  const EventChannel('contus.mirrorfly/userUnBlockedMe');
   final StreamController<dynamic> userUnBlockedMeStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userUpdatedHisProfileChannel =
-      const EventChannel('contus.mirrorfly/userUpdatedHisProfile');
+  const EventChannel('contus.mirrorfly/userUpdatedHisProfile');
   final StreamController<dynamic> userUpdatedHisProfileStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final userWentOfflineChannel =
-      const EventChannel('contus.mirrorfly/userWentOffline');
+  const EventChannel('contus.mirrorfly/userWentOffline');
   final StreamController<dynamic> userWentOfflineStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final usersIBlockedListFetchedChannel =
-      const EventChannel('contus.mirrorfly/usersIBlockedListFetched');
+  const EventChannel('contus.mirrorfly/usersIBlockedListFetched');
   final StreamController<dynamic> usersIBlockedListFetchedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final usersProfilesFetchedChannel =
-      const EventChannel('contus.mirrorfly/usersProfilesFetched');
+  const EventChannel('contus.mirrorfly/usersProfilesFetched');
   final StreamController<dynamic> usersProfilesFetchedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final usersWhoBlockedMeListFetchedChannel =
-      const EventChannel('contus.mirrorfly/usersWhoBlockedMeListFetched');
+  const EventChannel('contus.mirrorfly/usersWhoBlockedMeListFetched');
   final StreamController<dynamic> usersWhoBlockedMeListFetchedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onConnectedChannel = const EventChannel('contus.mirrorfly/onConnected');
   final StreamController<dynamic> onConnectedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onDisconnectedChannel =
-      const EventChannel('contus.mirrorfly/onDisconnected');
+  const EventChannel('contus.mirrorfly/onDisconnected');
   final StreamController<dynamic> onDisconnectedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
+
   /*@visibleForTesting
   final onConnectionNotAuthorizedChannel =
       const EventChannel('contus.mirrorfly/onConnectionNotAuthorized');*/
   @visibleForTesting
   final onConnectionFailedChannel =
-      const EventChannel('contus.mirrorfly/onConnectionFailed');
+  const EventChannel('contus.mirrorfly/onConnectionFailed');
   final StreamController<dynamic> onConnectionFailedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final connectionFailedChannel =
-      const EventChannel('contus.mirrorfly/connectionFailed');
+  const EventChannel('contus.mirrorfly/connectionFailed');
   final StreamController<dynamic> connectionFailedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final connectionSuccessChannel =
-      const EventChannel('contus.mirrorfly/connectionSuccess');
+  const EventChannel('contus.mirrorfly/connectionSuccess');
   final StreamController<dynamic> connectionSuccessStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onWebChatPasswordChangedChannel =
-      const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
+  const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
   final StreamController<dynamic> onWebChatPasswordChangedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final setTypingStatusChannel =
-      const EventChannel('contus.mirrorfly/setTypingStatus');
+  const EventChannel('contus.mirrorfly/setTypingStatus');
   final StreamController<dynamic> setTypingStatusStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onChatTypingStatusChannel =
-      const EventChannel('contus.mirrorfly/onChatTypingStatus');
+  const EventChannel('contus.mirrorfly/onChatTypingStatus');
   final StreamController<dynamic> onChatTypingStatusStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupTypingStatusChannel =
-      const EventChannel('contus.mirrorfly/onGroupTypingStatus');
+  const EventChannel('contus.mirrorfly/onGroupTypingStatus');
   final StreamController<dynamic> onGroupTypingStatusStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
   final StreamController<dynamic> onFailureStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onProgressChangedChannel =
-      const EventChannel('contus.mirrorfly/onProgressChanged');
+  const EventChannel('contus.mirrorfly/onProgressChanged');
   final StreamController<dynamic> onProgressChangedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
   final StreamController<dynamic> onSuccessStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   //Need to add stream controller here
   // @visibleForTesting
@@ -271,63 +272,63 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @visibleForTesting
   final onLocalVideoTrackAddedChannel =
-      const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
+  const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
   final StreamController<dynamic> onLocalVideoTrackAddedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onRemoteVideoTrackAddedChannel =
-      const EventChannel('contus.mirrorfly/onRemoteVideoTrackAdded');
+  const EventChannel('contus.mirrorfly/onRemoteVideoTrackAdded');
   final StreamController<dynamic> onRemoteVideoTrackAddedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onTrackAddedChannel =
-      const EventChannel('contus.mirrorfly/onTrackAdded');
+  const EventChannel('contus.mirrorfly/onTrackAdded');
   final StreamController<dynamic> onTrackAddedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onCallStatusUpdatedChannel =
-      const EventChannel('contus.mirrorfly/onCallStatusUpdated');
+  const EventChannel('contus.mirrorfly/onCallStatusUpdated');
   final StreamController<dynamic> onCallStatusUpdatedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onCallActionChannel =
-      const EventChannel('contus.mirrorfly/onCallAction');
+  const EventChannel('contus.mirrorfly/onCallAction');
   final StreamController<dynamic> onCallActionStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onMuteStatusUpdatedChannel =
-      const EventChannel('contus.mirrorfly/onMuteStatusUpdated');
+  const EventChannel('contus.mirrorfly/onMuteStatusUpdated');
   final StreamController<dynamic> onMuteStatusUpdatedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onUserSpeakingChannel =
-      const EventChannel('contus.mirrorfly/onUserSpeaking');
+  const EventChannel('contus.mirrorfly/onUserSpeaking');
   final StreamController<dynamic> onUserSpeakingStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onUserStoppedSpeakingChannel =
-      const EventChannel('contus.mirrorfly/onUserStoppedSpeaking');
+  const EventChannel('contus.mirrorfly/onUserStoppedSpeaking');
   final StreamController<dynamic> onUserStoppedSpeakingStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onMissedCallChannel =
-      const EventChannel('contus.mirrorfly/onMissedCall');
+  const EventChannel('contus.mirrorfly/onMissedCall');
   final StreamController<dynamic> onMissedCallStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onAvailableFeaturesUpdatedChannel =
-      const EventChannel('contus.mirrorfly/onAvailableFeaturesUpdated');
+  const EventChannel('contus.mirrorfly/onAvailableFeaturesUpdated');
   final StreamController<dynamic> onAvailableFeaturesUpdatedStreamController =
-      StreamController<dynamic>.broadcast();
+  StreamController<dynamic>.broadcast();
 
   @visibleForTesting
   final onCallLogsUpdatedChannel =
@@ -514,7 +515,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     bool response = false;
     try {
       response = await mirrorFlyMethodChannel
-              .invokeMethod<bool>('contactSyncStateValue') ??
+          .invokeMethod<bool>('contactSyncStateValue') ??
           false;
       LogMessage.d("contactSyncStateValue Result ", " $response");
       return response;
@@ -581,7 +582,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response = "";
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod('getUnKnownUserProfiles');
+      await mirrorFlyMethodChannel.invokeMethod('getUnKnownUserProfiles');
       LogMessage.d("getUnKnownUserProfiles Result ", " $response");
       return response;
     } on PlatformException catch (e) {
@@ -598,7 +599,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response = "";
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod('getMyProfileStatus');
+      await mirrorFlyMethodChannel.invokeMethod('getMyProfileStatus');
       LogMessage.d("getMyProfileStatus Result ", " $response");
       return response;
     } on PlatformException catch (e) {
@@ -741,8 +742,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool?> deleteProfileStatus(
-      String id, String status, bool isCurrentStatus) async {
+  Future<bool?> deleteProfileStatus(String id, String status, bool isCurrentStatus) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel
@@ -762,12 +762,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool?> deleteBusyStatus(
-      String id, String status, bool isCurrentStatus) async {
+  Future<bool?> deleteBusyStatus(String id, String status, bool isCurrentStatus) async {
     bool? res;
     try {
       res =
-          await mirrorFlyMethodChannel.invokeMethod<bool>('deleteBusyStatus', {
+      await mirrorFlyMethodChannel.invokeMethod<bool>('deleteBusyStatus', {
         "id": id,
         "status": status,
         "isCurrentStatus": isCurrentStatus,
@@ -787,7 +786,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     String? response;
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod<String>('media_endpoint');
+      await mirrorFlyMethodChannel.invokeMethod<String>('media_endpoint');
       LogMessage.d("media_endpoint Result ", " $response");
       return response;
     } on PlatformException catch (e) {
@@ -880,8 +879,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool?> doesFetchingMembersListFromServedRequired(
-      String groupJid) async {
+  Future<bool?> doesFetchingMembersListFromServedRequired(String groupJid) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod<bool>(
@@ -1678,7 +1676,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     String? registerResponse = "";
     try {
       registerResponse =
-          await mirrorFlyMethodChannel.invokeMethod<String>('authtoken');
+      await mirrorFlyMethodChannel.invokeMethod<String>('authtoken');
       LogMessage.d("authToken Result ", " $registerResponse");
 
       return registerResponse;
@@ -1746,8 +1744,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendTextMessage(
-      String message, String jid, String replyMessageId,
+  Future<dynamic> sendTextMessage(String message, String jid, String replyMessageId,
       {String? topicId}) async {
     dynamic messageResp;
     try {
@@ -1769,14 +1766,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendLocationMessage(
-      String jid, double latitude, double longitude, String replyMessageId,
+  Future<dynamic> sendLocationMessage(String jid, double latitude, double longitude, String replyMessageId,
       {String? topicId}) async {
     //sentLocationMessage
     dynamic messageResp;
     try {
       messageResp =
-          await mirrorFlyMethodChannel.invokeMethod('sendLocationMessage', {
+      await mirrorFlyMethodChannel.invokeMethod('sendLocationMessage', {
         "jid": jid,
         "latitude": latitude,
         "longitude": longitude,
@@ -1795,13 +1791,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendImageMessage(
-      String jid, String filePath, String? caption, String? replyMessageID,
+  Future<dynamic> sendImageMessage(String jid, String filePath, String? caption, String? replyMessageID,
       {String? imageFileUrl, String? topicId}) async {
     dynamic messageResp;
     try {
       messageResp =
-          await mirrorFlyMethodChannel.invokeMethod('send_image_message', {
+      await mirrorFlyMethodChannel.invokeMethod('send_image_message', {
         "jid": jid,
         "filePath": filePath,
         "caption": caption?.trim(),
@@ -1821,20 +1816,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendVideoMessage(
-      //sendMediaMessage
+  Future<dynamic> sendVideoMessage( //sendMediaMessage
       String jid,
       String filePath,
       String? caption,
       String? replyMessageID,
       {String? videoFileUrl,
-      num? videoDuration,
-      String? thumbImageBase64,
-      String? topicId}) async {
+        num? videoDuration,
+        String? thumbImageBase64,
+        String? topicId}) async {
     dynamic messageResp;
     try {
       messageResp =
-          await mirrorFlyMethodChannel.invokeMethod('send_video_message', {
+      await mirrorFlyMethodChannel.invokeMethod('send_video_message', {
         "jid": jid,
         "filePath": filePath,
         "caption": caption?.trim(),
@@ -1904,6 +1898,20 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic re;
     try {
       re = await mirrorFlyCallMethodChannel.invokeMethod("getLocalCallLogs", {});
+      LogMessage.d('RESULT ', '$re');
+      return re;
+    } on PlatformException catch (e) {
+      LogMessage.d("er", "$e");
+      return re;
+    }
+  }
+
+  @override
+  Future<dynamic> deleteCallLog(List<String> jidlist) async {
+    LogMessage.d('deleteCallLog ', '${jidlist.length}');
+    dynamic re;
+    try {
+      re = await mirrorFlyCallMethodChannel.invokeMethod("deleteCallLog", {"jidList": jidlist});
       LogMessage.d('RESULT ', '$re');
       return re;
     } on PlatformException catch (e) {
@@ -2199,7 +2207,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic recentResponse;
     try {
       recentResponse =
-          await mirrorFlyMethodChannel.invokeMethod('getRecentChatList');
+      await mirrorFlyMethodChannel.invokeMethod('getRecentChatList');
       LogMessage.d("recent Result ", " $recentResponse");
       return recentResponse;
     } on PlatformException catch (e) {
@@ -2212,8 +2220,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getRecentChatListHistory(
-      {required bool firstSet, int limit = 15}) async {
+  Future<dynamic> getRecentChatListHistory({required bool firstSet, int limit = 15}) async {
     //getRecentChats
     dynamic recentResponse;
     try {
@@ -2232,19 +2239,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool> initializeMessageList(
-      {required String userJid,
-      String? messageId,
-      String? chatId,
-      double? messageTime,
-      bool? exclude,
-      int limit = 25,
-      String? topicId,
-      bool ascendingOrder = true}) async {
+  Future<bool> initializeMessageList({required String userJid,
+    String? messageId,
+    String? chatId,
+    double? messageTime,
+    bool? exclude,
+    int limit = 25,
+    String? topicId,
+    bool ascendingOrder = true}) async {
     bool initializeResponse;
     try {
       initializeResponse =
-          await mirrorFlyMethodChannel.invokeMethod('initializeMessageList', {
+      await mirrorFlyMethodChannel.invokeMethod('initializeMessageList', {
         "userJid": userJid,
         "messageId": messageId,
         "messageTime": messageTime,
@@ -2269,7 +2275,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic initialMessageResponse;
     try {
       initialMessageResponse =
-          await mirrorFlyMethodChannel.invokeMethod('loadMessages');
+      await mirrorFlyMethodChannel.invokeMethod('loadMessages');
       LogMessage.d("loadMessages", "$initialMessageResponse");
       return initialMessageResponse;
     } on PlatformException catch (e) {
@@ -2286,7 +2292,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic previousMessageResponse;
     try {
       previousMessageResponse =
-          await mirrorFlyMethodChannel.invokeMethod('loadPreviousMessages');
+      await mirrorFlyMethodChannel.invokeMethod('loadPreviousMessages');
       LogMessage.d("previousMessageResponse", "$previousMessageResponse");
       return previousMessageResponse;
     } on PlatformException catch (e) {
@@ -2303,7 +2309,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic nextMessageResponse;
     try {
       nextMessageResponse =
-          await mirrorFlyMethodChannel.invokeMethod('loadNextMessages');
+      await mirrorFlyMethodChannel.invokeMethod('loadNextMessages');
       LogMessage.d("nextMessageResponse", "$nextMessageResponse");
       return nextMessageResponse;
     } on PlatformException catch (e) {
@@ -2321,7 +2327,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic statusResponse;
     try {
       statusResponse =
-          await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList');
+      await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList');
       LogMessage.d("getProfileStatusList", "$statusResponse");
       return statusResponse;
     } on PlatformException catch (e) {
@@ -2532,7 +2538,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     bool? profileResponse;
     try {
       profileResponse =
-          await mirrorFlyMethodChannel.invokeMethod<bool>('removeProfileImage');
+      await mirrorFlyMethodChannel.invokeMethod<bool>('removeProfileImage');
       LogMessage.d("removeProfileImage Result ", " $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
@@ -2566,7 +2572,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     String? tokenResponse;
     try {
       tokenResponse =
-          await mirrorFlyMethodChannel.invokeMethod<String>('refreshAuthToken');
+      await mirrorFlyMethodChannel.invokeMethod<String>('refreshAuthToken');
       LogMessage.d("refreshAuthToken Result ", " $tokenResponse");
       return tokenResponse;
     } on PlatformException catch (e) {
@@ -2677,7 +2683,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic contactResponse;
     try {
       contactResponse =
-          await mirrorFlyMethodChannel.invokeMethod('sendContactMessage', {
+      await mirrorFlyMethodChannel.invokeMethod('sendContactMessage', {
         "contact_list": contactList,
         "jid": jid,
         "contact_name": contactName,
@@ -2701,7 +2707,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic logoutResponse;
     try {
       logoutResponse =
-          await mirrorFlyMethodChannel.invokeMethod('logoutOfChatSDK');
+      await mirrorFlyMethodChannel.invokeMethod('logoutOfChatSDK');
       LogMessage.d("logoutResponse ", " $logoutResponse");
       return logoutResponse;
     } on PlatformException catch (e) {
@@ -2744,13 +2750,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendDocumentMessage(
-      String jid, String documentPath, String replyMessageId,
+  Future<dynamic> sendDocumentMessage(String jid, String documentPath, String replyMessageId,
       {String? fileUrl, String? topicId}) async {
     dynamic documentResponse;
     try {
       documentResponse =
-          await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage', {
+      await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage', {
         "file": documentPath,
         "jid": jid,
         "replyMessageId": replyMessageId,
@@ -2793,7 +2798,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic audioResponse;
     try {
       audioResponse =
-          await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage', {
+      await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage', {
         "filePath": filePath,
         "jid": jid,
         "isRecorded": isRecorded,
@@ -2840,7 +2845,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response;
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod('searchConversation', {
+      await mirrorFlyMethodChannel.invokeMethod('searchConversation', {
         "searchKey": searchKey,
         "jidForSearch": jidForSearch,
         "globalSearch": globalSearch
@@ -2909,8 +2914,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> clearChat(
-      String jid, String chatType, bool clearExceptStarred) async {
+  Future<dynamic> clearChat(String jid, String chatType, bool clearExceptStarred) async {
     dynamic clearChatResponse;
     try {
       clearChatResponse = await mirrorFlyMethodChannel.invokeMethod(
@@ -2973,7 +2977,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic messageDeleteResponse;
     try {
       messageDeleteResponse =
-          await mirrorFlyMethodChannel.invokeMethod('deleteMessagesForMe', {
+      await mirrorFlyMethodChannel.invokeMethod('deleteMessagesForMe', {
         "jid": jid,
         "chat_type": chatType,
         "isMediaDelete": isMediaDelete,
@@ -3015,12 +3019,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> deleteMessages(
-      String jid, List<String> messageIds, bool isDeleteForEveryOne) async {
+  Future<dynamic> deleteMessages(String jid, List<String> messageIds, bool isDeleteForEveryOne) async {
     dynamic messageDeleteResponse;
     try {
       messageDeleteResponse =
-          await mirrorFlyMethodChannel.invokeMethod('delete_messages', {
+      await mirrorFlyMethodChannel.invokeMethod('delete_messages', {
         "jid": jid,
         "chat_type": "chat",
         "message_ids": messageIds,
@@ -3038,8 +3041,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getGroupMessageDeliveredToList(
-      String messageId, String jid) async {
+  Future<dynamic> getGroupMessageDeliveredToList(String messageId, String jid) async {
     dynamic messageDeleteResponse;
     try {
       messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod(
@@ -3058,8 +3060,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getGroupMessageReadByList(
-      String messageId, String jid) async {
+  Future<dynamic> getGroupMessageReadByList(String messageId, String jid) async {
     dynamic messageDeleteResponse;
     try {
       messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod(
@@ -3134,7 +3135,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     String? response;
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod<String>('showCustomTones');
+      await mirrorFlyMethodChannel.invokeMethod<String>('showCustomTones');
       LogMessage.d("showCustomTones Response ", " $response");
       return response;
     } on PlatformException catch (e) {
@@ -3151,7 +3152,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     String? response;
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod<String>('getRingtoneName');
+      await mirrorFlyMethodChannel.invokeMethod<String>('getRingtoneName');
       LogMessage.d("getRingtoneName Response ", " $response");
       return response;
     } on PlatformException catch (e) {
@@ -3236,7 +3237,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response;
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod('getWebLoginDetails');
+      await mirrorFlyMethodChannel.invokeMethod('getWebLoginDetails');
       LogMessage.d("getWebLoginDetails Response ", " $response");
       return response;
     } on PlatformException catch (e) {
@@ -3255,7 +3256,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic favResponse;
     try {
       favResponse =
-          await mirrorFlyMethodChannel.invokeMethod('updateFavouriteStatus', {
+      await mirrorFlyMethodChannel.invokeMethod('updateFavouriteStatus', {
         "messageID": messageID,
         "chatUserJID": chatUserJID,
         "isFavourite": isFavourite,
@@ -3273,8 +3274,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> forwardMessagesToMultipleUsers(
-      List<String> messageIds, List<String> userList) async {
+  Future<dynamic> forwardMessagesToMultipleUsers(List<String> messageIds, List<String> userList) async {
     //forwardMessage
     dynamic forwardMessageResponse;
     try {
@@ -3293,8 +3293,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> forwardMessages(
-      List<String> messageIds, String tojid, String chattype) async {
+  Future<dynamic> forwardMessages(List<String> messageIds, String tojid, String chattype) async {
     //forwardMessage
     dynamic forwardMessageResponse;
     try {
@@ -3313,8 +3312,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> createGroup(
-      String groupName, List<String> userJidList, String imageFilePath) async {
+  Future<dynamic> createGroup(String groupName, List<String> userJidList, String imageFilePath) async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('createGroup', {
@@ -3356,7 +3354,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic response;
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod('getGroupMembersList', {
+      await mirrorFlyMethodChannel.invokeMethod('getGroupMembersList', {
         "jid": jid,
         "server": server,
       });
@@ -3461,8 +3459,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool?> reportUserOrMessages(
-      String jid, String type, String? messageId) async {
+  Future<bool?> reportUserOrMessages(String jid, String type, String? messageId) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>(
@@ -3681,7 +3678,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic favResponse;
     try {
       favResponse =
-          await mirrorFlyMethodChannel.invokeMethod('get_favourite_messages');
+      await mirrorFlyMethodChannel.invokeMethod('get_favourite_messages');
       LogMessage.d("fav response ", " $favResponse");
       return favResponse;
     } on PlatformException catch (e) {
@@ -3758,7 +3755,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     bool? isEnabled = false;
     try {
       isEnabled =
-          await mirrorFlyMethodChannel.invokeMethod('getNotificationSound');
+      await mirrorFlyMethodChannel.invokeMethod('getNotificationSound');
       return isEnabled;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
@@ -3878,8 +3875,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String?> getJidFromPhoneNumber(
-      String mobileNumber, String countryCode) async {
+  Future<String?> getJidFromPhoneNumber(String mobileNumber, String countryCode) async {
     String? jid = "";
     try {
       jid = await mirrorFlyMethodChannel.invokeMethod<String?>(
@@ -3900,7 +3896,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     bool? val = true;
     try {
       val =
-          await mirrorFlyMethodChannel.invokeMethod<bool?>('IS_TRIAL_LICENSE');
+      await mirrorFlyMethodChannel.invokeMethod<bool?>('IS_TRIAL_LICENSE');
       LogMessage.d('isTrailLicence', '$val');
       return val;
     } on PlatformException catch (e) {
@@ -3961,8 +3957,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String> getValueFromManifestOrInfoPlist(
-      {String? androidManifestKey, String? iOSPlistKey}) async {
+  Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) async {
     String? val = "";
     try {
       if (Platform.isAndroid) {
@@ -3988,12 +3983,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String?> createTopic(
-      {required String topicName,
-      List<TopicMetaData> metaData = const []}) async {
+  Future<String?> createTopic({required String topicName,
+    List<TopicMetaData> metaData = const []}) async {
     String? val = "";
     List<Map<String, dynamic>>? topic =
-        metaData.map((topic) => topic.toMap()).toList();
+    metaData.map((topic) => topic.toMap()).toList();
     LogMessage.d("createTopic", topic);
     //if (metaData.length <= 3) {
     try {
@@ -4031,8 +4025,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getRecentChatListHistoryByTopic(
-      {String? topicId, required bool firstSet, int limit = 15}) async {
+  Future<dynamic> getRecentChatListHistoryByTopic({String? topicId, required bool firstSet, int limit = 15}) async {
     //getRecentChats
     dynamic recentResponse;
     try {
@@ -4086,12 +4079,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool> makeGroupVoiceCall(String groupJid,List<String>? jidList) async {
+  Future<bool> makeGroupVoiceCall(String groupJid, List<String>? jidList) async {
     bool val;
     try {
       LogMessage.d('makeGroupVoiceCall :', "groupJid : $groupJid, jidList : $jidList");
       val = await mirrorFlyCallMethodChannel
-          .invokeMethod('makeGroupVoiceCall', {"groupJid": groupJid,"jidList": jidList});
+          .invokeMethod('makeGroupVoiceCall', {"groupJid": groupJid, "jidList": jidList});
       return val;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
@@ -4103,12 +4096,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool> makeGroupVideoCall(String groupJid,List<String>? jidList) async {
+  Future<bool> makeGroupVideoCall(String groupJid, List<String>? jidList) async {
     bool val;
     try {
       LogMessage.d('makeGroupVideoCall :', "groupJid : $groupJid, jidList : $jidList");
       val = await mirrorFlyCallMethodChannel
-          .invokeMethod('makeGroupVideoCall', {"groupJid": groupJid,"jidList": jidList});
+          .invokeMethod('makeGroupVideoCall', {"groupJid": groupJid, "jidList": jidList});
       return val;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
@@ -4124,7 +4117,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic callList;
     try {
       callList =
-          await mirrorFlyCallMethodChannel.invokeMethod('getCallUsersList');
+      await mirrorFlyCallMethodChannel.invokeMethod('getCallUsersList');
       LogMessage.d('getCallUsers :', '$callList');
       return callList;
     } on PlatformException catch (e) {
@@ -4174,7 +4167,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       LogMessage.d('getCallDirection :', '');
       callDirection =
-          await mirrorFlyCallMethodChannel.invokeMethod('getCallDirection');
+      await mirrorFlyCallMethodChannel.invokeMethod('getCallDirection');
       return callDirection;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
@@ -4320,7 +4313,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     String? res;
     try {
       res =
-          await mirrorFlyCallMethodChannel.invokeMethod('selectedAudioDevice');
+      await mirrorFlyCallMethodChannel.invokeMethod('selectedAudioDevice');
       LogMessage.d('selectedAudioDevice', '$res');
       return res;
     } on PlatformException catch (e) {
@@ -4516,7 +4509,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       var users = await mirrorFlyCallMethodChannel
           .invokeMethod('getInvitedUsersList');
       LogMessage.d('getInvitedUsersList :', " jidList : $users");
-      return List<String>.from(json.decode(users).map((x) => x.toString()));//json.decode(users) as List<String>;
+      return List<String>.from(json.decode(users).map((x) => x.toString())); //json.decode(users) as List<String>;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -4525,7 +4518,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
-  /*@override
+/*@override
   Future<bool?> changeCallType({required String switchType}) async {
     bool? res;
     try {

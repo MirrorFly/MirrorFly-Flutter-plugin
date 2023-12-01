@@ -1624,6 +1624,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  deleteCallLog(List<String> jidlist) {
+    // TODO: implement deleteCallLog
+    throw UnimplementedError();
+  }
+
   /*@override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType

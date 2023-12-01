@@ -84,6 +84,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
+
 /** FlyChatPlugin */
 class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
@@ -1196,6 +1197,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("get_filtered_call_logs") -> {
                 filteredCallLog(call, result)
             }*/
+
+//            call.method.equals("deleteCallLog") -> {
+//                deleteCallLog(call, result)
+//            }
 
             else -> {
                 result.notImplemented()
@@ -4493,10 +4498,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         return ContactManager.getProfileDetails(jid)?.name ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
     }
 
-
-
     override fun onCallLogsDeleted(isClearAll: Boolean, callIdList: ArrayList<String>) {
-        LogMessage.d("onCallLogs ", "Deleted Called")
+        LogMessage.d("deleteCallLog ", "onCallLogsDeleted Called")
     }
 
     override fun onCallLogsUpdated() {

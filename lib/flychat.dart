@@ -463,6 +463,11 @@ class Mirrorfly {
         .getLocalCallLogs();
   }
 
+  static deleteCallLog(List<String> jidlist) {
+    return FlyChatFlutterPlatform.instance
+        .deleteCallLog(jidlist);
+  }
+
   static Stream<dynamic> get onMessageReceived =>
       FlyChatFlutterPlatform.instance.onMessageReceived;
 

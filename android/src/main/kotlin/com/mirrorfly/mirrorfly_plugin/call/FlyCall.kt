@@ -191,6 +191,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "getLocalCallLogs" -> {
                 sdk.getLocalCallLogs(call,result)
             }
+            "deleteCallLog" -> {
+                sdk.deleteCallLog(call,result)
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }
