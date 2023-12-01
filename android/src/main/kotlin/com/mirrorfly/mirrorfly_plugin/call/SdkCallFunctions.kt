@@ -4,6 +4,7 @@ package com.mirrorfly.mirrorfly_plugin.call
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.toJsonString
@@ -24,6 +25,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
 import org.json.JSONObject
+import com.mirrorflysdk.api.ChatActionListener
 
 class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificationHelper {
     val tag = "#FlutterCall"
@@ -414,5 +416,55 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
 //        AudioManager.shared().autoReRoute()
 
     }*/
+
+    fun getCallLogsList(call: MethodCall, result: MethodChannel.Result) {
+
+        /*if (AppUtils.isNetConnected(mContext)) {
+*/
+        val currentPage = call.argument("currentPage") ?: 1
+
+        CallManager.getCallLogs(currentPage) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                LogMessage.d("callLogsList Normal: ", data.toJsonString())
+                result.success(data.toJsonString())
+            } else {
+                println("call logs error : " + throwable.toString())
+                result.error("400", throwable!!.message.toString(), "")
+            }
+        }
+
+        /*} else {
+            Toast.makeText(mContext, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
+        }*/
+    }
+
+    fun getLocalCallLogs(call: MethodCall, result: MethodChannel.Result){
+        val callLogsList = CallLogManager.getCallLogs()
+        if (callLogsList != null){
+            LogMessage.d("callLogsList Search: ", callLogsList.toJsonString())
+            result.success(callLogsList.toJsonString())
+        }else{
+            result.error("400", "getLocalCallLogs error", "")
+        }
+
+    }
+
+    fun deleteCallLog(call: MethodCall, result: MethodChannel.Result){
+        val jidList = call.argument<List<String>>("jidList") ?: arrayListOf()
+        val isClearAll = call.argument<Boolean>("isClearAll") ?: false
+        ChatManager.deleteCallLog(isClearAll, jidList, object : ChatActionListener {
+            override fun onResponse(isSuccess: Boolean, message: String) {
+                LogMessage.d("deleteCallLog : ", "Response $isSuccess")
+                if (isSuccess){
+                    result.success(isSuccess)
+                }else{
+                    result.error("400", "deleteCallLog error", "$message")
+                }
+                /*
+                * No Implementation needed
+                */
+            }
+        })
+    }
 
 }

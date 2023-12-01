@@ -1,4 +1,5 @@
 
+
 import 'package:mirrorfly_plugin/builder.dart';
 
 import 'fly_chat_platform_interface.dart';
@@ -458,9 +459,14 @@ class Mirrorfly {
         .getCallLogsList(currentPage);
   }
 
-  static filteredCallLog() {
+  static getLocalCallLogs() {
     return FlyChatFlutterPlatform.instance
-        .filteredCallLog();
+        .getLocalCallLogs();
+  }
+
+  static deleteCallLog(List<String> jidlist,bool isClearAll) {
+    return FlyChatFlutterPlatform.instance
+        .deleteCallLog(jidlist, isClearAll);
   }
 
   static Stream<dynamic> get onMessageReceived =>
@@ -644,6 +650,9 @@ class Mirrorfly {
 
   static Stream<dynamic> get onCallLogsUpdated =>
       FlyChatFlutterPlatform.instance.onCallLogsUpdated;
+
+  static Stream<dynamic> get onCallLogsDeleted =>
+      FlyChatFlutterPlatform.instance.onCallLogsDeleted;
 
   static Future<String?> imagePath(String imgurl) {
     return FlyChatFlutterPlatform.instance.imagePath(imgurl);

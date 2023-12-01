@@ -1372,8 +1372,12 @@ class MockFlyChatFlutterPlatform
   Stream get onAvailableFeaturesUpdated => throw UnimplementedError();
 
   @override
-  // implement onAvailableFeaturesUpdated
+  // implement onCallLogsUpdated
   Stream get onCallLogsUpdated => throw UnimplementedError();
+
+  @override
+  // implement onCallLogsDeleted
+  Stream get onCallLogsDeleted => throw UnimplementedError();
 
   @override
   Future getCallUsersList() {
@@ -1619,8 +1623,14 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  filteredCallLog() {
+  getLocalCallLogs() {
     // TODO: implement filteredCallLog
+    throw UnimplementedError();
+  }
+
+  @override
+  deleteCallLog(List<String> jidlist, bool isClearAll) {
+    // TODO: implement deleteCallLog
     throw UnimplementedError();
   }
 

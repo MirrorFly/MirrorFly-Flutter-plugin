@@ -700,3 +700,16 @@ object onCallLogsUpdatedStreamHandler : EventChannel.StreamHandler {
         onCallLogsUpdated = null
     }
 }
+
+object onCallLogsDeletedStreamHandler : EventChannel.StreamHandler {
+
+    var onCallLogsDeleted: EventChannel.EventSink? = null
+
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        onCallLogsDeleted = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        onCallLogsDeleted = null
+    }
+}
