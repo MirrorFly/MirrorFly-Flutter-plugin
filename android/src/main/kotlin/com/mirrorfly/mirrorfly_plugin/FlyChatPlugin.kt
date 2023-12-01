@@ -3822,15 +3822,15 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         onMemberMadeAsAdminStreamHandler.onMemberMadeAsAdmin?.success(map.toString())
     }
 
-    override fun onMemberRemovedAsAdmin(
+    override fun onRevokedAdminAccess(
         groupJid: String,
-        removedAdminMemberJid: String,
-        removedByMemberJid: String
-    ) {
+        revokedAdminMemberJid: String,
+        revokedByMemberJid: String
+    )  {
         val map = JSONObject()
         map.put("groupJid", groupJid)
-        map.put("removedAdminMemberJid", removedAdminMemberJid)
-        map.put("removedByMemberJid", removedByMemberJid)
+        map.put("removedAdminMemberJid", revokedAdminMemberJid)
+        map.put("removedByMemberJid", revokedByMemberJid)
         onMemberRemovedAsAdminStreamHandler.onMemberRemovedAsAdmin?.success(map.toString())
     }
 
