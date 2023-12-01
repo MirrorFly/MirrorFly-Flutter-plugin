@@ -921,6 +921,8 @@ import UIKit
         let image = args["image"] as? String ?? nil
         let userJid = AppUtils.getMyJid()
         
+        NSLog("update my profile image path --> \(image)")
+        
         if (nickName.isEmpty && mobile.isEmpty && email.isEmpty) {
             result(FlutterError(code: "400", message: "Fill All details", details: nil))
         }
@@ -1023,7 +1025,7 @@ import UIKit
 //        let fileName = (profileImage as NSString).lastPathComponent
 //        print("file name" + fileName)
 
-        NSLog("iOS updateMyProfileImage Called", profileImage)
+        NSLog("iOS updateMyProfileImage Called \(profileImage)")
         ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
                 if isSuccess {
                     // Profile Image updated successfully update the UI

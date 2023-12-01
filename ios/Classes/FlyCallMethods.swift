@@ -62,11 +62,18 @@ import MirrorFlySDK
     func muteVideo(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let muteStatus = args["muteVideo"] as? Bool ?? false
+        NSLog("\(Constants.callTag) muteVideo Method MuteStatus \(muteStatus)")
         CallManager.muteVideo(muteStatus)
+        
+        if !CallManager.isOneToOneCall() && !muteStatus{
+            CallManager.enableVideo()
+        }else if !CallManager.isOneToOneCall() && muteStatus{
+            CallManager.disableVideo()
+        }
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: AppUtils.getMyJid()) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+                mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.LOCAL_VIDEO_MUTE : MuteEvent.LOCAL_VIDEO_UNMUTE)
             } else {
                 NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
             }
@@ -316,7 +323,7 @@ import MirrorFlySDK
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: jid.isEmpty ? AppUtils.getMyJid() : jid) {
                     if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                        mirrorflyView.updateVideoTrack(userJid: jid.isEmpty ? AppUtils.getMyJid() : jid, updateType: status ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+                        mirrorflyView.updateVideoTrack(userJid: jid.isEmpty ? AppUtils.getMyJid() : jid, updateType: status ? MuteEvent.REMOTE_VIDEO_MUTE : MuteEvent.REMOTE_VIDEO_UN_MUTE)
                     } else {
                         NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
                     }
@@ -391,6 +398,23 @@ import MirrorFlySDK
         let invitedUserList = CallManager.getInvitedUsersList()
         NSLog("\(Constants.callTag) getInvitedUsersList \(String(describing: invitedUserList.toJson()))")
         result(invitedUserList.toJson())
+    }
+    
+    func getCallLogsList(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        let args = call.arguments as! Dictionary<String, Any>
+        let pageNumber = args["currentPage"] as? Int ?? 1
+        let callLogList = CallLogManager().getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
+//            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: callLogList.toJson()))")
+            
+            if isSuccess{
+//                result(callLogList.)
+            }else{
+//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: data.getMessage()))
+            }
+        }
+        
+        
+        
     }
     
 //    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){

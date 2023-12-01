@@ -185,6 +185,15 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "isOnTelephonyCall" -> {
                 result.success(CallManager.isOnTelephonyCall(context))
             }
+            "getCallLogsList" -> {
+                sdk.getCallLogsList(call,result)
+            }
+            "getLocalCallLogs" -> {
+                sdk.getLocalCallLogs(call,result)
+            }
+            "deleteCallLog" -> {
+                sdk.deleteCallLog(call,result)
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }
