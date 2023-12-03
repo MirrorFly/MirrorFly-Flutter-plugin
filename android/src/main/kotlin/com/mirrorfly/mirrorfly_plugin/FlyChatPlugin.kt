@@ -84,6 +84,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
+
 /** FlyChatPlugin */
 class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsListener,
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
@@ -346,6 +347,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             )
             EventChannel(binaryMessenger, Constants.onCallLogsUpdatedChannel).setStreamHandler(
                 onCallLogsUpdatedStreamHandler
+            )
+            EventChannel(binaryMessenger, Constants.onCallLogsDeletedChannel).setStreamHandler(
+                onCallLogsDeletedStreamHandler
             )
         }
     }
@@ -1196,6 +1200,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("get_filtered_call_logs") -> {
                 filteredCallLog(call, result)
             }*/
+
+//            call.method.equals("deleteCallLog") -> {
+//                deleteCallLog(call, result)
+//            }
 
             else -> {
                 result.notImplemented()
@@ -3814,15 +3822,15 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         onMemberMadeAsAdminStreamHandler.onMemberMadeAsAdmin?.success(map.toString())
     }
 
-    override fun onMemberRemovedAsAdmin(
+    override fun onRevokedAdminAccess(
         groupJid: String,
-        removedAdminMemberJid: String,
-        removedByMemberJid: String
-    ) {
+        revokedAdminMemberJid: String,
+        revokedByMemberJid: String
+    )  {
         val map = JSONObject()
         map.put("groupJid", groupJid)
-        map.put("removedAdminMemberJid", removedAdminMemberJid)
-        map.put("removedByMemberJid", removedByMemberJid)
+        map.put("removedAdminMemberJid", revokedAdminMemberJid)
+        map.put("removedByMemberJid", revokedByMemberJid)
         onMemberRemovedAsAdminStreamHandler.onMemberRemovedAsAdmin?.success(map.toString())
     }
 
@@ -4493,10 +4501,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         return ContactManager.getProfileDetails(jid)?.name ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
     }
 
-
-
     override fun onCallLogsDeleted(isClearAll: Boolean, callIdList: ArrayList<String>) {
-        LogMessage.d("onCallLogs ", "Deleted Called")
+        LogMessage.d("deleteCallLog ", "onCallLogsDeleted Called")
+        val map = JSONObject()
+        map.put("callIdList", callIdList)
+        map.put("isClearAll", isClearAll)
+        onCallLogsDeletedStreamHandler.onCallLogsDeleted?.success(map.toString())
     }
 
     override fun onCallLogsUpdated() {

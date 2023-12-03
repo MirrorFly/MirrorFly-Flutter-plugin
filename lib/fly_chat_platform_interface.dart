@@ -396,6 +396,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  deleteCallLog(List<String> jidlist,bool isClearAll){
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Stream<dynamic> get onMessageReceived =>
       throw UnimplementedError('has not been implemented.');
 
@@ -577,6 +581,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get onCallLogsUpdated => throw UnimplementedError(
       'onCallLogsUpdated has not been implemented.');
+
+  Stream<dynamic> get onCallLogsDeleted => throw UnimplementedError(
+      'onCallLogsDeleted has not been implemented.');
 
   Future<String?> imagePath(String imgurl) {
     throw UnimplementedError('has not been implemented.');

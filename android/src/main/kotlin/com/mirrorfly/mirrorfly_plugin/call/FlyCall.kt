@@ -191,6 +191,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "getLocalCallLogs" -> {
                 sdk.getLocalCallLogs(call,result)
             }
+            "deleteCallLog" -> {
+                sdk.deleteCallLog(call,result)
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }
@@ -254,7 +257,8 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             CallStatus.RECONNECTING ->{}
             CallStatus.RECONNECTED ->{
                 val userJid = json.getString("userJid")
-                LogMessage.d(tag,"CallManager.isCallConversionRequestAvailable()"+CallManager.isCallConversionRequestAvailable())
+                val isVideoMuted = if(CallManager.getCurrentUserId()!= userJid) CallManager.isRemoteVideoMuted(userJid) else CallManager.isVideoMuted()
+                LogMessage.d(tag,"${CallStatus.RECONNECTED} CallManager.isCallConversionRequestAvailable() "+CallManager.isCallConversionRequestAvailable()+" Reconnected isVideoMuted $isVideoMuted userJid : $userJid")
                 if(CallManager.getCurrentUserId()!=userJid && CallManager.isRemoteVideoMuted(userJid)) {
                     if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
                         MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)

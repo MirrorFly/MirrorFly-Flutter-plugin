@@ -25,6 +25,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
 import org.json.JSONObject
+import com.mirrorflysdk.api.ChatActionListener
 
 class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificationHelper {
     val tag = "#FlutterCall"
@@ -446,6 +447,24 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
             result.error("400", "getLocalCallLogs error", "")
         }
 
+    }
+
+    fun deleteCallLog(call: MethodCall, result: MethodChannel.Result){
+        val jidList = call.argument<List<String>>("jidList") ?: arrayListOf()
+        val isClearAll = call.argument<Boolean>("isClearAll") ?: false
+        ChatManager.deleteCallLog(isClearAll, jidList, object : ChatActionListener {
+            override fun onResponse(isSuccess: Boolean, message: String) {
+                LogMessage.d("deleteCallLog : ", "Response $isSuccess")
+                if (isSuccess){
+                    result.success(isSuccess)
+                }else{
+                    result.error("400", "deleteCallLog error", "$message")
+                }
+                /*
+                * No Implementation needed
+                */
+            }
+        })
     }
 
 }
