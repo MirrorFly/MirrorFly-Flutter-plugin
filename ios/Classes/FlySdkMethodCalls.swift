@@ -2723,6 +2723,12 @@ import UIKit
             }
         }
     }
+    
+    static func setRegionCode(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let regionCode = args["regionCode"] as? String ?? "IN"
+//        ChatManager.setUserCountryISOCode(regionCode)
+    }
 }
 
 

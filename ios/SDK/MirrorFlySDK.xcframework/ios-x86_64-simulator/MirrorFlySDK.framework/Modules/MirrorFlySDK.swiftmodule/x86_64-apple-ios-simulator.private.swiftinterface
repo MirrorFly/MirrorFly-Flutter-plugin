@@ -187,7 +187,7 @@ public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
   public static func getAssetsImageInfo(asset: Photos.PHAsset) -> (Swift.String, Foundation.Data, Swift.Double, UIKit.UIImage, UIKit.UIImage, Swift.Bool)?
   public static func getAssetsImageInfo(url: Foundation.URL) -> (Swift.String, Foundation.Data, Swift.Double, UIKit.UIImage, UIKit.UIImage, Swift.Bool)?
   public static func checkMediaFileFormat(format: Swift.String) -> Swift.Bool
-  public static func compressVideoV2(videoURL: Foundation.URL, mediaQuality: MirrorFlySDK.MediaQuality = .high, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.String, Swift.String, Swift.Double, Swift.Double, Swift.String?) -> Swift.Void)
+  public static func compressVideoV2(videoURL: Foundation.URL, mediaQuality: MirrorFlySDK.MediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.String, Swift.String, Swift.Double, Swift.Double, Swift.String?) -> Swift.Void)
   public static func compressVideo(videoURL: Foundation.URL, mediaQuality: MirrorFlySDK.MediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.String, Swift.String, Swift.Double, Swift.Double) -> Swift.Void)
   public static func convertVideoToData(phAsset: Photos.PHAsset, completion: @escaping (Foundation.Data?) -> ())
   public static func convertFileToDataFor(url: Foundation.URL?, completion: @escaping (Foundation.Data?) -> ())
@@ -202,11 +202,11 @@ public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
   public static func getMediaPathFor(fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> Foundation.URL?
   public static func attachmentsDocumentDirectory(messageType: MirrorFlySDK.MessageType) -> Foundation.URL?
   public static func transferDocumentDirectoryFiles()
-  public static func compressImageV2(imageData: Foundation.Data, mediaQuality: MirrorFlySDK.MediaQuality = .high, onComplete: @escaping (Swift.Bool, Foundation.Data?, Swift.String, Foundation.URL?, Swift.String, Swift.Double, Swift.String?) -> Swift.Void)
+  public static func compressImageV2(imageData: Foundation.Data, mediaQuality: MirrorFlySDK.MediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.Data?, Swift.String, Foundation.URL?, Swift.String, Swift.Double, Swift.String?) -> Swift.Void)
   public static func compressImage(imageData: Foundation.Data, mediaQuality: MirrorFlySDK.MediaQuality = .medium) -> (Foundation.Data, Swift.String, Foundation.URL, Swift.String, Swift.Double)?
   public static func processAudioV2(url: Foundation.URL, maxSizeInMB: Swift.Double = 2048.0, onComplete: @escaping (Swift.Bool, Swift.String, Foundation.URL?, Swift.Double, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
   public static func processAudio(url: Foundation.URL, maxSizeInMB: Swift.Double = 30.0, onComplete: @escaping (Swift.Bool, Swift.String, Foundation.URL?, Swift.Double, Swift.Double, Swift.String) -> Swift.Void)
-  public static func processDocumentV2(url: Foundation.URL, maxSizeInMB: Swift.Double = 2048.0, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.Double, Swift.String, Swift.String, Swift.String) -> Swift.Void)
+  public static func processDocumentV2(url: Foundation.URL, maxSizeInMB: Swift.Double = 2048.0, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
   public static func processDocument(url: Foundation.URL, maxSizeInMB: Swift.Double = 20.0, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
   public static func getMediaDuration(url: Foundation.URL) -> Swift.Double
   public static func isVideoLimit(asset: Photos.PHAsset, videoLimit: Swift.Int64) -> Swift.Bool
@@ -863,6 +863,8 @@ public enum MuteEvent {
   case ACTION_REMOTE_AUDIO_UN_MUTE
   case ACTION_LOCAL_AUDIO_MUTE
   case ACTION_LOCAL_AUDIO_UN_MUTE
+  case ACTION_LOCAL_VIDEO_MUTE
+  case ACTION_LOCAL_VIDEO_UN_MUTE
   public static func == (a: MirrorFlySDK.MuteEvent, b: MirrorFlySDK.MuteEvent) -> Swift.Bool
   public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {
@@ -1253,7 +1255,7 @@ public protocol XMPPLogoutDelegate : ObjectiveC.NSObjectProtocol {
   }
   final public func stopMonitoring()
 }
-@objc @_inheritsConvenienceInitializers public class MediaManager : ObjectiveC.NSObject, MirrorFlySDK.UploadDelegate, MirrorFlySDK.DownloadDelegate {
+@objc @_inheritsConvenienceInitializers public class MediaManager : ObjectiveC.NSObject, MirrorFlySDK.UploadDelegate, MirrorFlySDK.DownloadDelegate, MirrorFlySDK.MediaStreamDelegate {
   public static let shared: MirrorFlySDK.MediaManager
   public var flyMediaDelegate: (any MirrorFlySDK.FlyMediaDelegate)?
   @objc override dynamic public init()
@@ -1291,7 +1293,15 @@ public protocol XMPPLogoutDelegate : ObjectiveC.NSObjectProtocol {
   public func stopMedia()
   public func resumeMedia()
   public func isSpaceAvailableToProcess(fileSize: Swift.Int64) -> Swift.Bool
+  public func streamingCancelled(message: MirrorFlySDK.ChatMessage)
+  public func streamingSuccess(message: MirrorFlySDK.ChatMessage, key: Swift.String?)
+  public func streamingFailed(message: MirrorFlySDK.ChatMessage)
   @objc deinit
+}
+public protocol MediaStreamDelegate : ObjectiveC.NSObjectProtocol {
+  func streamingCancelled(message: MirrorFlySDK.ChatMessage)
+  func streamingSuccess(message: MirrorFlySDK.ChatMessage, key: Swift.String?)
+  func streamingFailed(message: MirrorFlySDK.ChatMessage)
 }
 @objc @_hasMissingDesignatedInitializers public class PeerConnectionClient : ObjectiveC.NSObject {
   @objc deinit
@@ -2217,11 +2227,12 @@ extension Swift.Dictionary where Key == Swift.String, Value == Any {
   public mutating func addData(data: Any)
   public mutating func getData() -> Any
 }
-public typealias FlyStreamDelegate = (_ isSuccess: MirrorFlySDK.FlyProgress, _ error: MirrorFlySDK.FlyError?, _ data: (Swift.Int, Foundation.URL)) -> Swift.Void
+public typealias FlyStreamDelegate = (_ isSuccess: MirrorFlySDK.FlyProgress, _ error: MirrorFlySDK.FlyError?, _ data: (Swift.Int, Foundation.URL?)) -> Swift.Void
 public enum FlyProgress : Swift.String {
   case inprogress
   case success
   case failed
+  case cancel
   public var rawValue: Swift.String {
     get
   }

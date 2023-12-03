@@ -823,6 +823,9 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getAvailableFeatures(call:methodCall, result: result)
         case "appLaunchedFromMissedCall":
             result(false)
+            
+        case "setRegionCode":
+            FlySdkMethodCalls.setRegionCode(call:methodCall, result: result)
 
         default:
             result(FlutterMethodNotImplemented)
