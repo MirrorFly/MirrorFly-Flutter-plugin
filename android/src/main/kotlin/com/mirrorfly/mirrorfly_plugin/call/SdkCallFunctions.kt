@@ -65,7 +65,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
                 return ContactManager.getDisplayName(jid)
             }
         })
-        CallManager.keepConnectionInForeground(true)
+//        CallManager.keepConnectionInForeground(false)
     }
 
     fun routeTo(call: MethodCall,result: MethodChannel.Result){
