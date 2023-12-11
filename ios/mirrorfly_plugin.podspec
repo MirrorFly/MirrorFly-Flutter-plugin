@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
   s.dependency 'Socket.IO-Client-Swift', '16.0.1'
   s.dependency 'Starscream', '4.0.4'
   s.dependency 'XMPPFramework/Swift'
-  s.dependency 'RealmSwift' , '10.20.1'
+  s.dependency 'RealmSwift' , '10.43.0'
   s.dependency 'GoogleWebRTC'
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16'
