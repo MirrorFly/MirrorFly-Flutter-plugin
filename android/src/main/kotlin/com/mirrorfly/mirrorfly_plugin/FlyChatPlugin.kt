@@ -1395,13 +1395,15 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         } else {
             val userIdentifier: String? = call.argument("userIdentifier")
             val token: String = call.argument("token") ?: ""
+            val isForceRegister: Boolean = call.argument("isForceRegister") ?: true
+            LogMessage.d("isForceRegister", isForceRegister.toString())
             if (userIdentifier != null) {
                 //LogMessage.d(TAG, userIdentifier.toString())
 
 //                try {
                     FlyCore.registerUser(
                         userIdentifier,
-                        token
+                        token,isForceRegister
                     ) { isSuccess: Boolean, throwable: Throwable?, data: HashMap<String?, Any?> ->
                         if (isSuccess) {
 
@@ -1480,6 +1482,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         } else {
                             if (data["http_status_code"] == 403) {
                                 result.error("403", throwable?.message.toString(), null)
+                            } else if (data["http_status_code"] == 405) {
+                                result.error("405", data["message"].toString(), null)
                             } else {
                                 result.error("500", data["message"].toString(), null)
                             }

@@ -859,7 +859,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future registerUser(String userIdentifier, {String fcmToken = ""}) {
+  Future registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
     // registerUser
     throw UnimplementedError();
   }
