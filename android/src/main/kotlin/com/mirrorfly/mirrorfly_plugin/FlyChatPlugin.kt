@@ -1395,7 +1395,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         } else {
             val userIdentifier: String? = call.argument("userIdentifier")
             val token: String = call.argument("token") ?: ""
-            val isForceRegister: Boolean = call.argument("isForceRegister") ?: false
+            val isForceRegister: Boolean = call.argument("isForceRegister") ?: true
             LogMessage.d("isForceRegister", isForceRegister.toString())
             if (userIdentifier != null) {
                 //LogMessage.d(TAG, userIdentifier.toString())
