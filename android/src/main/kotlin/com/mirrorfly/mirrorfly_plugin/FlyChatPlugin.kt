@@ -1406,6 +1406,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         if (isSuccess) {
 
                             val response = JSONObject(data).toString()
+                            val datum = data["data"] as JSONObject
+                            val username: String = datum.getString(com.mirrorflysdk.flycommons.Constants.USERNAME)
+                            CallManager.setCurrentUserId(FlyUtils.getJid(username))
                             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                             LogMessage.d("FlyCore.registerUser", data.toJsonString())
                             if (token.isNotEmpty()) {
