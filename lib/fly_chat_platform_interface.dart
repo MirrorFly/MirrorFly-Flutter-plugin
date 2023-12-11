@@ -342,7 +342,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> registerUser(String userIdentifier, {String fcmToken = ""}) {
+  Future<dynamic> registerUser(String userIdentifier,bool isForceRegister, {String fcmToken = ""}) {
     throw UnimplementedError('has not been implemented.');
   }
 
