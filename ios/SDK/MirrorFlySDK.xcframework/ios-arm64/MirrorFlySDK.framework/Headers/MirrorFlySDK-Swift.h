@@ -374,7 +374,9 @@ SWIFT_CLASS("_TtC12MirrorFlySDK11ChatManager")
 @interface ChatManager : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+- (void)initDelegates SWIFT_METHOD_FAMILY(none);
 @end
+
 
 
 

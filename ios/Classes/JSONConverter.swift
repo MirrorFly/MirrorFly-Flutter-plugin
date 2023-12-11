@@ -188,6 +188,66 @@ func fileExists(atPath filePath: String) -> Bool {
     return fileManager.fileExists(atPath: filePath)
 }
 
+func getCallLogs(flyData: [String: Any]) -> [String: Any]{
+
+    
+    guard let data = flyData["data"] as? [String: Any] else {
+        print("Error: Unable to extract 'data' from originalData.")
+        return [:]
+    }
+
+    guard let callList = data["callList"] as? [Any] else {
+        print("Error: Unable to extract 'callList' from 'data'.")
+        print("Error: data: \(data)")
+        return [:]
+    }
+
+
+    let callListData: [[String: Any]] = callList.compactMap { callLogObject in
+        let callLog = callLogObject as? MirrorFlySDK.CallLog
+        let roomId = callLog?.callLogId ?? ""
+        let fromUser = callLog?.fromUserId ?? ""
+        let toUser = callLog?.toUserId ?? ""
+        let callType = callLog?.callType.rawValue ?? ""
+        let callTime = callLog?.callReceivedTime ?? 0.0
+        let endTime = callLog?.callEndedTime ?? 0.0
+        let callState = callLog?.callState.rawValue ?? ""
+        let callMode = callLog?.callMode.rawValue ?? ""
+        let userList = callLog?.userList ?? []
+        let groupId = callLog?.groupId ?? ""
+        let isSync = callLog?.isLogSynced ?? false
+        let startTime = callLog?.callAttendedTime ?? 0.0
+//        let displayName = callLog?.displayName
+            return [
+                "callMode": callMode,
+                "callState": callState,
+                "callTime": callTime,
+                "callType": callType,
+                "callerDevice": "",
+                "endTime": endTime,
+                "fromUser": fromUser,
+                "groupId": groupId,
+                "inviteUserList": [] as [String],
+                "isCarbonAnswered": false,
+                "isDeleted": false,
+                "isDisplay": true,
+                "isSync": isSync,
+                "roomId": roomId,
+                "rowId": 0,
+                "sessionStatus": "",
+                "startTime": startTime,
+                "toUser": toUser,
+                "userList": userList
+            ]
+        }
+
+    let result: [String: Any] = [
+            "data": callListData,
+            "total_pages": data["totalPages"] ?? 0
+        ]
+        return result
+//    return callListData
+}
 
 //extension String {
 //    func extractJSONObject() -> Any? {

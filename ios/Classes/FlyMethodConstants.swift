@@ -53,6 +53,7 @@ class FlyMethodConstants {
             "getMaxCallUsersCount": flyCallMethods.getMaxCallUsersCount,
             "getInvitedUsersList": flyCallMethods.getInvitedUsersList,
             "getCallLogsList": flyCallMethods.getCallLogsList,
+            "deleteCallLog": flyCallMethods.deleteCallLog,
 //            "changeCallType": flyCallMethods.changeCallType,
 //            "reRouteAudio": flyCallMethods.reRouteAudio,
             

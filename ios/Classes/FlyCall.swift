@@ -10,10 +10,8 @@ import MirrorFlySDK
 import Flutter
 import PushKit
 
-@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate {
-    func userProfileDidChange(for jid: String, profileDetails: MirrorFlySDK.ProfileDetails) {
-        NSLog("\(Constants.callTag) Fly Call userProfileDidChange")
-    }
+@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate, CallLogDelegate {
+    
     
     
     var selectedAudioRouteDevice : String = "receiver"
@@ -74,6 +72,7 @@ import PushKit
         CallManager.setCallEventsDelegate(delegate: self)
         AudioManager.shared().audioManagerDelegate = self
         CallManager.missedCallNotificationDelegate = self
+        CallManager.callLogDelegate = self
         
 //        AudioManager.sharedInstance.audioManagerDelegate = self
         NSLog("\(Constants.callTag) audioManagerDelegate")
@@ -579,6 +578,23 @@ import PushKit
         
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMissedCallChannel, value: onMissedCallJson)
     }
+    
+    func clearAllCallLog() {
+        NSLog("\(Constants.callTag) clearAllCallLog")
+    }
+    
+    func deleteCallLogs(callLogId: String) {
+        NSLog("\(Constants.callTag) deleteCallLogs")
+    }
+    
+    func callLogUpdate(calllogId: String) {
+        NSLog("\(Constants.callTag) callLogUpdate")
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
+    }
+    
+    func userProfileDidChange(for jid: String, profileDetails: MirrorFlySDK.ProfileDetails) {
+        NSLog("\(Constants.callTag) Fly Call userProfileDidChange")
+    }
 
 }
 
@@ -656,3 +672,5 @@ private func getMuteEvent(muteName : CallAction) -> MuteEvent{
         return muteEvent
     
 }
+
+

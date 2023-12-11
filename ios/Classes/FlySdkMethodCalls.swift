@@ -189,6 +189,14 @@ import UIKit
                     "message" : "Register Trial API Success"
                 ] as [String : Any]
                 
+                if  data["newLogin"] as? Bool ?? false{
+                    NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
+                    CallLogManager().deleteCallLogs()
+//                    ChatManager.deleteAllChatTags()
+//                    iCloudmanager().deleteLoaclBackup()
+                    
+                }
+                
                 ChatManager.updateAppLoggedIn(isLoggedin: true)
 //                FlyDefaults.myXmppPassword = data["password"] as! String
 //                FlyDefaults.myXmppUsername = data["username"] as! String
@@ -1133,8 +1141,11 @@ import UIKit
             
             if isSuccess {
                 let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
+                let blockedProfileJson = blockedprofileDetailsArray.toJson()
+                result(blockedProfileJson)
             } else{
-                print(flyError!.localizedDescription)
+                print("\(Constants.tag) getUsersWhoBlockedMe Error: \(flyError!.localizedDescription)")
+                result(FlutterError(code: "500", message: "Failed to Encode Chat Messages", details: flyError!.localizedDescription))
             }
         }
     }
@@ -1157,8 +1168,13 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let userStatus = args["status"] as? String ?? ""
         
-        ChatManager.shared.setMyBusyStatus(userStatus)
-        result(true)
+        ChatManager.shared.setMyBusyStatus(userStatus) { isSuccess, error, data in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: "500", message: "Set MyBusy Status Error", details: error?.localizedDescription))
+            }
+        }
     }
     static func enableDisableBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
@@ -1166,9 +1182,13 @@ import UIKit
         
         let busyStatusVal = args["enable"] as? Bool ?? false
         
-        ChatManager.shared.enableDisableBusyStatus(busyStatusVal)
-        
-        result(true)
+        ChatManager.shared.enableDisableBusyStatus(busyStatusVal){ isSuccess, error, data in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: "500", message: "Enable Disable BusyStatus Status Error", details: error?.localizedDescription))
+            }
+        }
         
     }
     
@@ -1176,8 +1196,13 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let busyStatus = args["busy_status"] as? String ?? ""
         print("setting busy status\(busyStatus)")
-        ChatManager.shared.setMyBusyStatus(busyStatus)
-        result(true)
+        ChatManager.shared.setMyBusyStatus(busyStatus){ isSuccess, error, data in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: "500", message: "Set MyBusy Status Error", details: error?.localizedDescription))
+            }
+        }
     }
     
     static func getBusyStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
