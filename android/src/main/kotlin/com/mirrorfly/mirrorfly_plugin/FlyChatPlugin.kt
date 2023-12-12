@@ -1406,9 +1406,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         if (isSuccess) {
 
                             val response = JSONObject(data).toString()
-                            val datum = data["data"] as JSONObject
-                            val username: String = datum.getString(com.mirrorflysdk.flycommons.Constants.USERNAME)
-                            CallManager.setCurrentUserId(FlyUtils.getJid(username))
+//                            val datum = data["data"] as JSONObject
+//                            val username: String = datum.getString(com.mirrorflysdk.flycommons.Constants.USERNAME)
+//                            CallManager.setCurrentUserId(FlyUtils.getJid(username))
                             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                             LogMessage.d("FlyCore.registerUser", data.toJsonString())
                             if (token.isNotEmpty()) {
@@ -2623,8 +2623,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     //DebugUtilis.v("getUserList", data.tojsonString())
                     result.success(data.toJsonString())
                 } else {
-                    println("friends error : " + throwable.toString())
-                    result.error("400", throwable!!.message.toString(), "")
+                    println("getUserList error : " + throwable.toString())
+                    result.error("400", throwable?.message.toString(), "")
                 }
 
             }
@@ -3343,13 +3343,15 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     private fun getRegisteredUsers(call: MethodCall, result: MethodChannel.Result) {
         val server = call.argument<Boolean>("server") ?: false
-        FlyCore.getRegisteredUsers(server) { isSuccess, _, data ->
+        FlyCore.getRegisteredUsers(server) { isSuccess, throwable, data ->
             if (isSuccess) {
                 val profileDetails = data["data"] as MutableList<ProfileDetails>
                 LogMessage.d("profileDetails", profileDetails.toString())
                 //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyCore.getRegisteredUsers", data.tojsonString())
                 result.success(data.toJsonString())
+            }else{
+                result.error("400", throwable?.message.toString(), "")
             }
         }
     }
