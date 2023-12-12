@@ -124,9 +124,9 @@ class CallLogData {
 
   int getCallState({required String stateValue}) {
     switch(stateValue){
-      case "MissedCall": return 2;
+      case "MissedCall": return 0;
       case "OutgoingCall": return 1;
-      case "IncomingCall": return 0;
+      case "IncomingCall": return 2;
       default: return 1;
     }
   }
