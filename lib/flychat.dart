@@ -394,9 +394,9 @@ class Mirrorfly {
   }
 
   static Future<dynamic> registerUser(String userIdentifier,
-      {String fcmToken = ""}) {
+      {String fcmToken = "", bool isForceRegister = true} ) {
     return FlyChatFlutterPlatform.instance
-        .registerUser(userIdentifier, fcmToken: fcmToken);
+        .registerUser(userIdentifier, fcmToken: fcmToken, isForceRegister : isForceRegister);
   }
 
   static Future<String?> verifyToken(String userName, String token) {
