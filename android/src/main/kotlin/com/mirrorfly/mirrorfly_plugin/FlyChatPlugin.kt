@@ -1405,7 +1405,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 result.success(true)
             } else {
                 LogMessage.d(TAG, "initializeSDK failed with error message " + data["message"])
-                result.error("500",data["message"].toString(), throwable);
+                result.error("500","SDK failed to Initialize", throwable);
             }
         }
     }
