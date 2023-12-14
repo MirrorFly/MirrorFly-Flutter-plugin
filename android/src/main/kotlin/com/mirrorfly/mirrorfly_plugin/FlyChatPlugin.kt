@@ -387,7 +387,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
 
             call.method == "initializeSDK" -> {
-                buildInitializeSDK(call)
+                buildInitializeSDK(call,result)
             }
 
             call.method == "appLaunchedFromMissedCall" -> {
@@ -1380,7 +1380,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
       SdkCallFunctions(mContext).initCall()
     }
 
-    private fun buildInitializeSDK(call: MethodCall){
+    private fun buildInitializeSDK(call: MethodCall,result: MethodChannel.Result){
 
         val licenseKey: String? = call.argument("licenseKey")
         val chatHistoryEnable: Boolean = call.argument("chatHistoryEnable") ?: false
@@ -1399,11 +1399,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
         ChatManager.enableChatHistory(chatHistoryEnable)
 
-        ChatManager.initializeSDK(licenseKey!!){ isSuccess, _, data ->
+        ChatManager.initializeSDK(licenseKey!!){ isSuccess, throwable, data ->
             if (isSuccess) {
-                LogMessage.d(TAG, "buildInitializeSDK success")
+                LogMessage.d(TAG, "initializeSDK success")
+                result.success(true)
             } else {
-                LogMessage.d(TAG, "buildInitializeSDK failed with error message " + data["message"])
+                LogMessage.d(TAG, "initializeSDK failed with error message " + data["message"])
+                result.error("500",data["message"].toString(), throwable);
             }
         }
     }

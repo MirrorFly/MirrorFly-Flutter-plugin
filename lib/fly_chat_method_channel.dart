@@ -241,12 +241,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
   @override
-  initializeSDK(InitializeSDKBuilder builder) async {
+  Future<bool?> initializeSDK(InitializeSDKBuilder builder) async {
+    bool? res;
     enableDebugLog = builder.enableDebugLog;
     if (!_messageOnReceivedStreamController.hasListener) {
       addStreamsAllToStreamController();
     }
-    await mirrorFlyMethodChannel.invokeMethod('initializeSDK', builder.build());
+    try {
+      res = await await mirrorFlyMethodChannel.invokeMethod('initializeSDK', builder.build());;
+      LogMessage.d("syncContacts", res);
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
   }
 
   ///Using [addStreamsAllToStreamController] to add all streams to stream controller

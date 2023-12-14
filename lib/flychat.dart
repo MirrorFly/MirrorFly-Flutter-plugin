@@ -47,22 +47,22 @@ class Mirrorfly {
     FlyChatFlutterPlatform.instance.init(builder);
   }
 
-  static initializeSDK(
+  static Future<bool?> initializeSDK(
       {required String licenseKey,
       required String iOSContainerID,
       String? storageFolderName,
-      bool enableMobileNumberLogin = true,
       bool chatHistoryEnable = false,
+      bool enableMobileNumberLogin = true,
       bool enableDebugLog = false}) {
     var builder = InitializeSDKBuilder(
         iOSContainerID: iOSContainerID,
         licenseKey: licenseKey,
         storageFolderName: storageFolderName,
-        enableMobileNumberLogin: enableMobileNumberLogin,
         chatHistoryEnable: chatHistoryEnable,
+        enableMobileNumberLogin: enableMobileNumberLogin,
         enableDebugLog: enableDebugLog);
     isChatHistoryEnabled = chatHistoryEnable;
-    FlyChatFlutterPlatform.instance.initializeSDK(builder);
+    return FlyChatFlutterPlatform.instance.initializeSDK(builder);
   }
 
   /*static Future<String?> getPlatformVersion() {
