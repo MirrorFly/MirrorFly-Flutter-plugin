@@ -1,5 +1,4 @@
 import 'package:mirrorfly_plugin/builder.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 
 import 'fly_chat_platform_interface.dart';
 import 'model/topic_metadata.dart';
