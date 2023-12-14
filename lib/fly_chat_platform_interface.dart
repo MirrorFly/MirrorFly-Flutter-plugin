@@ -1,5 +1,6 @@
 
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 
@@ -27,6 +28,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   init(ChatBuilder builder) {
+    throw UnimplementedError('build() has not been implemented.');
+  }
+
+  initializeSDK(InitializeSDKBuilder builder) {
     throw UnimplementedError('build() has not been implemented.');
   }
 

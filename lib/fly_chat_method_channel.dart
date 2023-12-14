@@ -239,6 +239,16 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     await mirrorFlyMethodChannel.invokeMethod('init', builder.build());
   }
 
+
+  @override
+  initializeSDK(InitializeSDKBuilder builder) async {
+    enableDebugLog = builder.enableDebugLog;
+    if (!_messageOnReceivedStreamController.hasListener) {
+      addStreamsAllToStreamController();
+    }
+    await mirrorFlyMethodChannel.invokeMethod('initializeSDK', builder.build());
+  }
+
   ///Using [addStreamsAllToStreamController] to add all streams to stream controller
   ///benefit to use stream controller we can call multiple listeners to listen.
   addStreamsAllToStreamController() {

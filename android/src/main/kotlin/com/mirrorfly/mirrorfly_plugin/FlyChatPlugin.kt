@@ -386,6 +386,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 buildChatSDK(call)
             }
 
+            call.method == "initializeSDK" -> {
+                buildInitializeSDK(call)
+            }
+
             call.method == "appLaunchedFromMissedCall" -> {
                 val fromCall = instance.fromCallNotification
                 instance.fromCallNotification=false
@@ -1370,6 +1374,34 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         })
         Logger.enableDebugLogging(enableSDKLog);
       SdkCallFunctions(mContext).initCall()
+    }
+
+    private fun buildInitializeSDK(call: MethodCall){
+
+        val licenseKey: String? = call.argument("licenseKey")
+        val chatHistoryEnable: Boolean = call.argument("chatHistoryEnable") ?: false
+        val storageFolderName: String? = call.argument("storageFolderName")
+        val enableMobileNumberLogin: Boolean? = call.argument("enableMobileNumberLogin")
+        val enableSDKLog: Boolean = call.argument("enableDebugLog") ?: false
+
+        LogMessage.enableDebugLogging(enableSDKLog)
+
+        if (storageFolderName != null) {
+            ChatManager.setMediaFolderName(storageFolderName)
+        }
+        if (enableMobileNumberLogin != null) {
+            ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
+        }
+
+        ChatManager.enableChatHistory(chatHistoryEnable)
+
+        ChatManager.initializeSDK(licenseKey!!){ isSuccess, _, data ->
+            if (isSuccess) {
+                LogMessage.d(TAG, "buildInitializeSDK success")
+            } else {
+                LogMessage.d(TAG, "buildInitializeSDK failed with error message " + data["message"])
+            }
+        }
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {

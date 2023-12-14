@@ -1634,6 +1634,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  initializeSDK(InitializeSDKBuilder builder) {
+    // TODO: implement initSDK
+    throw UnimplementedError();
+  }
+
   /*@override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType
