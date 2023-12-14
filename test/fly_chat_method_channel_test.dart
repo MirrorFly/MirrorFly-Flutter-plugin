@@ -34,9 +34,4 @@ void main() {
         iOSContainerID: ''));
   });
 
-  test('initializeSDK', () async {
-    await platform.initializeSDK(InitializeSDKBuilder(
-        licenseKey: 'licenseKey',
-        iOSContainerID: ''));
-  });
 }
