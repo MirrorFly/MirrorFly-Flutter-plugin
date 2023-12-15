@@ -1399,6 +1399,15 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
         ChatManager.enableChatHistory(chatHistoryEnable)
 
+        //Set Name based on the Profile data
+        ChatManager.setNameHelper(object  : NameHelper {
+            override fun getDisplayName(jid: String): String {
+                return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(
+                    jid
+                )!!.getDisplayName() else com.mirrorflysdk.flycommons.Constants.EMPTY_STRING
+            }
+        })
+
         ChatManager.initializeSDK(licenseKey!!){ isSuccess, throwable, data ->
             if (isSuccess) {
                 LogMessage.d(TAG, "initializeSDK success")
@@ -1467,61 +1476,75 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                                         }
                                     })
                             }
-//              result.success(response)
-                        //ChatManager.disconnect()
-                        ChatEventsManager.setupMessageEventListener(this)
-                        ChatEventsManager.attachProfileEventsListener(this)
-                        ChatEventsManager.attachGroupEventsListener(this)
-                        ChatEventsManager.attachLoginEventsListener(this)
-                        ChatEventsManager.attachTypingEventListener(this)
-                        CallLogManager.setCallLogsListener(this)
-                        ChatManager.setAvailableFeaturesCallback(this)
-                        CallManager.setMissedCallListener(this)
-                        SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
-                        LogMessage.d(TAG, "Chat Manager Connect able ${ChatManager.connect()}")
-//                        if (ChatManager.connect()) {
-//                            LogMessage.d(TAG, "Chat Manager Connecting...")
-//                            ChatManager.connect(object : ChatConnectionListener {
-//                                override fun onConnected() {
-//                                    LogMessage.d(TAG, "onConnected")
-//                                    Handler(Looper.getMainLooper()).postDelayed({
-//                                        result.success(response)
-//                                    }, 500)
-//
-//                                }
-//
-//                                override fun onConnectionFailed(e: FlyException) {
-//                                    LogMessage.d(TAG, "Chat Manager onConnectionFailed")
-//                                    result.error(
-//                                        "500",
-//                                        e.message,
-//                                        null
-//                                    )
-//                                }
-//
-//                                override fun onDisconnected() {
-//                                    LogMessage.d(TAG, "Chat Manager Disconnected")
-//                                }
-//
-//                                override fun onReconnecting() {
-//                                    LogMessage.d(TAG, "Chat Manager onReconnecting")
-//                                }
-//
-//                                    /*override fun onConnectionNotAuthorized() {
-//                  result.error(
-//                    "500",
-//                    "Chat Manager Connection Not Authorized",
-//                    null
-//                  )
-//                }*/
-//                                })
-//                            }else{
-//                                LogMessage.d(TAG, "Chat Manager Already Connected")
-//                                result.success(response)
-//                            }
-                            Handler(Looper.getMainLooper()).postDelayed({
+                            ChatEventsManager.setupMessageEventListener(this)
+                            ChatEventsManager.attachProfileEventsListener(this)
+                            ChatEventsManager.attachGroupEventsListener(this)
+                            ChatEventsManager.attachLoginEventsListener(this)
+                            ChatEventsManager.attachTypingEventListener(this)
+                            CallLogManager.setCallLogsListener(this)
+                            ChatManager.setAvailableFeaturesCallback(this)
+                            CallManager.setMissedCallListener(this)
+                            SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
+                            ChatManager.setConnectionListener(object : ChatConnectionListener{
+                                override fun onConnected() {
+                                    LogMessage.d(TAG, "onConnected")
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        result.success(response)
+                                    }, 500)
+
+                                }
+
+                                override fun onConnectionFailed(e: FlyException) {
+                                    LogMessage.d(TAG, "Chat Manager onConnectionFailed")
+                                    result.error(
+                                        "500",
+                                        e.message,
+                                        null
+                                    )
+                                }
+
+                                override fun onDisconnected() {
+                                    LogMessage.d(TAG, "Chat Manager Disconnected")
+                                }
+
+                                override fun onReconnecting() {
+                                    LogMessage.d(TAG, "Chat Manager onReconnecting")
+                                }
+
+                            })
+                            /*LogMessage.d(TAG, "Chat Manager Connect able ${ChatManager.connect()}")
+                            if (ChatManager.connect()) {
+                                LogMessage.d(TAG, "Chat Manager Connecting...")
+                                ChatManager.connect(object : ChatConnectionListener {
+                                    override fun onConnected() {
+                                        LogMessage.d(TAG, "onConnected")
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            result.success(response)
+                                        }, 500)
+
+                                    }
+
+                                    override fun onConnectionFailed(e: FlyException) {
+                                        LogMessage.d(TAG, "Chat Manager onConnectionFailed")
+                                        result.error(
+                                            "500",
+                                            e.message,
+                                            null
+                                        )
+                                    }
+
+                                    override fun onDisconnected() {
+                                        LogMessage.d(TAG, "Chat Manager Disconnected")
+                                    }
+
+                                    override fun onReconnecting() {
+                                        LogMessage.d(TAG, "Chat Manager onReconnecting")
+                                    }
+                                })
+                            }else{
+                                LogMessage.d(TAG, "Chat Manager Already Connected")
                                 result.success(response)
-                            }, 500)
+                            }*/
                         } else {
                             if (data["http_status_code"] == 403) {
                                 result.error("403", throwable?.message.toString(), null)
