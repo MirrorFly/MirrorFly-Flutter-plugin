@@ -18,6 +18,7 @@ class Mirrorfly {
   /// @property [isTrialLicenceKey] to provide trial/live register and contact sync
   /// @property [storageFolderName] provides the Local Storage Folder Name
   /// @property [enableDebugLog] provides the Debug Log.
+  @Deprecated('Instead of use initializeSDK')
   static init(
       {required String baseUrl,
       required String licenseKey,
@@ -47,22 +48,22 @@ class Mirrorfly {
     FlyChatFlutterPlatform.instance.init(builder);
   }
 
-  static initializeSDK(
+  static Future<bool?> initializeSDK(
       {required String licenseKey,
       required String iOSContainerID,
       String? storageFolderName,
-      bool enableMobileNumberLogin = true,
       bool chatHistoryEnable = false,
+      bool enableMobileNumberLogin = true,
       bool enableDebugLog = false}) {
     var builder = InitializeSDKBuilder(
         iOSContainerID: iOSContainerID,
         licenseKey: licenseKey,
         storageFolderName: storageFolderName,
-        enableMobileNumberLogin: enableMobileNumberLogin,
         chatHistoryEnable: chatHistoryEnable,
+        enableMobileNumberLogin: enableMobileNumberLogin,
         enableDebugLog: enableDebugLog);
     isChatHistoryEnabled = chatHistoryEnable;
-    FlyChatFlutterPlatform.instance.initializeSDK(builder);
+    return FlyChatFlutterPlatform.instance.initializeSDK(builder);
   }
 
   /*static Future<String?> getPlatformVersion() {
@@ -377,7 +378,6 @@ class Mirrorfly {
   }
 
   @Deprecated('Instead of use refreshAndGetAuthToken')
-
   /// This [authToken] is used to get refreshed Auth Token.
   static Future<String?> authToken() {
     return FlyChatFlutterPlatform.instance.authToken();

@@ -1635,7 +1635,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  initializeSDK(InitializeSDKBuilder builder) {
+  Future<bool?> initializeSDK(InitializeSDKBuilder builder) {
     // TODO: implement initSDK
     throw UnimplementedError();
   }

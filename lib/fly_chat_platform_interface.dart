@@ -30,7 +30,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('build() has not been implemented.');
   }
 
-  initializeSDK(InitializeSDKBuilder builder) {
+  Future<bool?> initializeSDK(InitializeSDKBuilder builder) {
     throw UnimplementedError('build() has not been implemented.');
   }
 
