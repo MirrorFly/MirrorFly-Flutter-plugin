@@ -121,6 +121,31 @@ import UIKit
 
     }
     
+    static func initializeSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+
+        let licenseKey = args["licenseKey"] as? String ?? ""
+        chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
+        let containerID = args["iOSContainerID"] as? String ?? ""
+        let enableSDKLog = args["enableSDKLog"] as? Bool ?? false
+        
+        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
+        ChatManager.setAppGroupContainerId(id: containerID)
+        ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
+            if isSuccess {
+                NSLog("SDK INITIALISED")
+                result(true)
+                return
+            }else{
+                NSLog("SDK FAILED TO INITIALISE \(flyError)")
+                result(FlutterError(code: "500",
+                                    message: "SDK failed to Initialize",
+                                    details: nil))
+                return
+            }
+        }
+    }
+    
     static func getPlistValue(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         

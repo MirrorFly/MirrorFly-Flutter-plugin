@@ -386,6 +386,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 buildChatSDK(call)
             }
 
+            call.method == "initializeSDK" -> {
+                buildInitializeSDK(call,result)
+            }
+
             call.method == "appLaunchedFromMissedCall" -> {
                 val fromCall = instance.fromCallNotification
                 instance.fromCallNotification=false
@@ -1376,6 +1380,38 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
       SdkCallFunctions(mContext).initCall()
     }
 
+    private fun buildInitializeSDK(call: MethodCall,result: MethodChannel.Result){
+
+        val licenseKey: String? = call.argument("licenseKey")
+        val chatHistoryEnable: Boolean = call.argument("chatHistoryEnable") ?: false
+        val storageFolderName: String? = call.argument("storageFolderName")
+        val enableMobileNumberLogin: Boolean? = call.argument("enableMobileNumberLogin")
+        val enableSDKLog: Boolean = call.argument("enableDebugLog") ?: false
+
+        LogMessage.enableDebugLogging(enableSDKLog)
+
+        if (storageFolderName != null) {
+            ChatManager.setMediaFolderName(storageFolderName)
+        }
+        if (enableMobileNumberLogin != null) {
+            ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
+        }
+
+        ChatManager.enableChatHistory(chatHistoryEnable)
+
+        SdkCallFunctions(mContext).initCall()
+
+        ChatManager.initializeSDK(licenseKey!!){ isSuccess, throwable, data ->
+            if (isSuccess) {
+                LogMessage.d(TAG, "initializeSDK success")
+                result.success(true)
+            } else {
+                LogMessage.d(TAG, "initializeSDK failed with error message " + data["message"])
+                result.error("500","SDK failed to Initialize", throwable);
+            }
+        }
+    }
+
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         methodChannels.remove(binding.binaryMessenger)?.setMethodCallHandler(null)
 //        channel.setMethodCallHandler(null)
@@ -1433,21 +1469,16 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                                         }
                                     })
                             }
-//              result.success(response)
-                        //ChatManager.disconnect()
-                        ChatEventsManager.setupMessageEventListener(this)
-                        ChatEventsManager.attachProfileEventsListener(this)
-                        ChatEventsManager.attachGroupEventsListener(this)
-                        ChatEventsManager.attachLoginEventsListener(this)
-                        ChatEventsManager.attachTypingEventListener(this)
-                        CallLogManager.setCallLogsListener(this)
-                        ChatManager.setAvailableFeaturesCallback(this)
-                        CallManager.setMissedCallListener(this)
-                        SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
-                        LogMessage.d(TAG, "Chat Manager Connect able ${ChatManager.connect()}")
-                        if (ChatManager.connect()) {
-                            LogMessage.d(TAG, "Chat Manager Connecting...")
-                            ChatManager.connect(object : ChatConnectionListener {
+                            ChatEventsManager.setupMessageEventListener(this)
+                            ChatEventsManager.attachProfileEventsListener(this)
+                            ChatEventsManager.attachGroupEventsListener(this)
+                            ChatEventsManager.attachLoginEventsListener(this)
+                            ChatEventsManager.attachTypingEventListener(this)
+                            CallLogManager.setCallLogsListener(this)
+                            ChatManager.setAvailableFeaturesCallback(this)
+                            CallManager.setMissedCallListener(this)
+                            SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
+                            ChatManager.setConnectionListener(object : ChatConnectionListener{
                                 override fun onConnected() {
                                     LogMessage.d(TAG, "onConnected")
                                     Handler(Looper.getMainLooper()).postDelayed({
@@ -1473,19 +1504,40 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                                     LogMessage.d(TAG, "Chat Manager onReconnecting")
                                 }
 
-                                    /*override fun onConnectionNotAuthorized() {
-                  result.error(
-                    "500",
-                    "Chat Manager Connection Not Authorized",
-                    null
-                  )
-                }*/
+                            })
+                            /*LogMessage.d(TAG, "Chat Manager Connect able ${ChatManager.connect()}")
+                            if (ChatManager.connect()) {
+                                LogMessage.d(TAG, "Chat Manager Connecting...")
+                                ChatManager.connect(object : ChatConnectionListener {
+                                    override fun onConnected() {
+                                        LogMessage.d(TAG, "onConnected")
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            result.success(response)
+                                        }, 500)
+
+                                    }
+
+                                    override fun onConnectionFailed(e: FlyException) {
+                                        LogMessage.d(TAG, "Chat Manager onConnectionFailed")
+                                        result.error(
+                                            "500",
+                                            e.message,
+                                            null
+                                        )
+                                    }
+
+                                    override fun onDisconnected() {
+                                        LogMessage.d(TAG, "Chat Manager Disconnected")
+                                    }
+
+                                    override fun onReconnecting() {
+                                        LogMessage.d(TAG, "Chat Manager onReconnecting")
+                                    }
                                 })
                             }else{
                                 LogMessage.d(TAG, "Chat Manager Already Connected")
                                 result.success(response)
-                            }
-
+                            }*/
                         } else {
                             if (data["http_status_code"] == 403) {
                                 result.error("403", throwable?.message.toString(), null)

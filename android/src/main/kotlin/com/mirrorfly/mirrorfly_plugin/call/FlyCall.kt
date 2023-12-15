@@ -230,6 +230,10 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             //FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
             handleCallStatusMessages(callStatus, json)
         }
+        if(userJID!=CallManager.getCurrentUserId() && (callStatus == CallStatus.CONNECTED || callStatus == CallStatus.RECONNECTED)){
+            Log.d(tag,"Connected and Not Me userJid $userJID video ${CallManager.getRemoteProxyVideoSink(userJID)} video mute ${CallManager.isRemoteVideoMuted(userJID)} video paused ${CallManager.isRemoteVideoPaused(userJID)}")
+
+        }
     }
     private fun handleCallStatusMessages(@CallStatus callEvent: String, json: JSONObject){
         LogMessage.d(tag,"callEvent : $callEvent json : $json")
@@ -365,7 +369,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
     }
 
     override fun onVideoTrackAdded(userJid: String) {
-        Log.d(tag,"#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid)} isCallConversionRequestAvailable : ${CallManager.isCallConversionRequestAvailable()}")
+        Log.d(tag,"#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid)} isCallConversionRequestAvailable : ${CallManager.isCallConversionRequestAvailable()} video ${CallManager.getRemoteProxyVideoSink(userJid)}")
         if(!CallManager.isCallConversionRequestAvailable()) {
             val json = JSONObject()
             json.put("userJid", userJid)
