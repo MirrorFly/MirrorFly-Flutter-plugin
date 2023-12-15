@@ -49,10 +49,17 @@ class Mirrorfly {
     FlyChatFlutterPlatform.instance.init(builder);
   }
 
+  ///Used as a initializeSDK class for [Mirrorfly]
+  ///
+  /// * @property [licenseKey] provides the License Key
+  /// @property [iOSContainerID] provides the App Group of the iOS Project
+  /// @property [chatHistoryEnable] set true to enable chat History.
+  /// @property [storageFolderName] provides the Local Storage Folder Name dafault is "Mirrorfly"
+  /// @property [enableDebugLog] provides the Debug Log.
   static Future<bool?> initializeSDK(
       {required String licenseKey,
       required String iOSContainerID,
-      String? storageFolderName,
+      String? storageFolderName = "Mirrorfly",
       bool chatHistoryEnable = false,
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false}) {
