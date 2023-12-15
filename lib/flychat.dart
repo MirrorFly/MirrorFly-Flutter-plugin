@@ -6,6 +6,7 @@ import 'model/topic_metadata.dart';
 class Mirrorfly {
   Mirrorfly._();
 
+  @Deprecated('')
   static var isTrialLicence = true;
   static var isChatHistoryEnabled = false;
 
@@ -982,6 +983,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.insertBusyStatus(busyStatus);
   }
 
+  @Deprecated('')
   static Future<bool?> isTrailLicence() async {
     return FlyChatFlutterPlatform.instance.isTrailLicence();
   }
