@@ -12,13 +12,11 @@ import PushKit
 
 @objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate, CallLogDelegate {
     
-    
-    
     var selectedAudioRouteDevice : String = "receiver"
     var isAudioRouteMethodCall : Bool = false
     
     func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
-        NSLog("#MirrorflyCall triggerDelegateForOutputs \(audioDeviceType)")
+        NSLog("#MirrorflyCall Events: Audio Delegate triggerDelegateForOutputs \(audioDeviceType)")
         
         switch (audioDeviceType) {
         case .bluetooth:
@@ -211,7 +209,7 @@ import PushKit
     
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
-        NSLog("#MirrorflyCall Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
+        NSLog("#MirrorflyCall Events: Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
         NSLog("#MirrorflyCall Call Status Updated calling--> \(CALLSTATUS.CALLING.rawValue)")
 
         if AudioManager.shared().audioManagerDelegate == nil  && callStatus != .DISCONNECTED{
@@ -258,10 +256,6 @@ import PushKit
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         if (callStatus.rawValue == "CALL TIME OUTt"){
             jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
-            //Below is a work around for user left delegate not received
-            //Commented as the User left is handled in SDK latest release
-//        }else if ((!CallManager.isOneToOneCall() || CallManager.isOngoingCall()) && callStatus == .DISCONNECTED){
-//            jsonObject.setValue("User_Left", forKey: "callStatus")
         }else{
             jsonObject.setValue(callStatus.rawValue, forKey: "callStatus")
         }
@@ -272,20 +266,22 @@ import PushKit
         }else{
             jsonObject.setValue("onetomany", forKey: "callMode")
         }
+
+        if CallManager.getCallType() == .Audio {
+            jsonObject.setValue("audio", forKey: "callType")
+        } else {
+            jsonObject.setValue("video", forKey: "callType")
+        }
+
         
-//        if(callStatus.rawValue == "Attended"){
-            
-//            NSLog("#MirrorflyCall Call Status Updated Attended")
-//            AudioManager.shared().audioManagerDelegate = self
-            
-            if CallManager.getCallType() == .Audio {
-                jsonObject.setValue("audio", forKey: "callType")
-            } else {
-                jsonObject.setValue("video", forKey: "callType")
-            }
+        //This below Code is written for https://ctproduct.atlassian.net/browse/FLUTTER-1077 workaround
+        //This is open in iOS SDK. so commenting for now and planning as a feature in future.
+        
+//        if (callStatus == .RECONNECTED || callStatus == .CONNECTED) && CallManager.getCallType() == .Video {
+//            let VideoStatus = CallManager.isRemoteVideoMuted(userId)
+//            NSLog("\(Constants.callTag) Events: Call Status Updated Reconnected Checking Video Mute --> \(VideoStatus)")
+//
 //        }
-        
-        
         
         let callStatusUpdateJson = pluginDictToJson(dictionary: jsonObject)
             self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallStatusUpdateChannel, value: callStatusUpdateJson)
@@ -293,7 +289,7 @@ import PushKit
     }
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
-        NSLog("#MirrorflyCall Event oncalll Action --> \(callAction.rawValue) userID \(userId)")
+        NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
         
@@ -319,7 +315,7 @@ import PushKit
             
             if (callAction == .CHANGE_TO_AUDIO_CALL){
                 CallManager.setCallType(callType: .Audio)
-                //            CallManager.muteVideo(true)
+                CallManager.muteVideo(true)
                 CallManager.disableVideo()
                 AudioManager.shared().autoReRoute()
             }
@@ -349,40 +345,18 @@ import PushKit
     }
     
     func onMuteStatusUpdated(muteEvent: MirrorFlySDK.MuteEvent, userId: String) {
-        NSLog("#MirrorflyCall Event onmute status updated --> \(muteEvent) userID \(userId)")
+        NSLog("#MirrorflyCall Events: onmute status updated --> \(muteEvent) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
         switch(muteEvent){
         case .ACTION_LOCAL_AUDIO_MUTE:
-//            jsonObject.setValue("local_audio_mute", forKey: "muteEvent")
+            jsonObject.setValue("LOCAL_AUDIO_MUTE", forKey: "muteEvent")
             break;
         case .ACTION_REMOTE_VIDEO_MUTE:
             jsonObject.setValue("REMOTE_VIDEO_MUTE", forKey: "muteEvent")
-//            if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
-//                if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-//                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: muteEvent)
-//                } else {
-//                    // Handle case when view is not found
-//                    NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> View is not Found")
-//                }
-//            } else {
-//                // Handle case when unique ID is not found
-//                NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> Unique ID is not Found")
-//            }
             break;
         case .ACTION_REMOTE_VIDEO_UN_MUTE:
             jsonObject.setValue("REMOTE_VIDEO_UN_MUTE", forKey: "muteEvent")
-//            if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
-//                if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-//                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.REMOTE_VIDEO_UN_MUTE)
-//                } else {
-//                    // Handle case when view is not found
-//                    NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_UN_MUTE --> View is not Found")
-//                }
-//            } else {
-//                // Handle case when unique ID is not found
-//                NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_UN_MUTE --> Unique ID is not Found")
-//            }
             break;
         case .ACTION_REMOTE_AUDIO_MUTE:
             jsonObject.setValue("REMOTE_AUDIO_MUTE", forKey: "muteEvent")
@@ -391,10 +365,10 @@ import PushKit
             jsonObject.setValue("REMOTE_AUDIO_UN_MUTE", forKey: "muteEvent")
             break;
         case .ACTION_LOCAL_AUDIO_UN_MUTE:
-//            jsonObject.setValue("local_audio_unmute", forKey: "muteEvent")
+            jsonObject.setValue("LOCAL_AUDIO_UN_MUTE", forKey: "muteEvent")
             break;
         @unknown default:
-//            jsonObject.setValue("unknown", forKey: "muteEvent")
+            jsonObject.setValue("unknown", forKey: "muteEvent")
             break;
         }
         
@@ -416,7 +390,6 @@ import PushKit
     }
     
     func onUserSpeaking(userId: String, audioLevel: Int) {
-//        NSLog("#MirrorflyCall user speaking --> \(userId) audioLevel \(audioLevel)")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
@@ -466,13 +439,6 @@ import PushKit
         jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
         let jidJson = pluginDictToJson(dictionary: jsonObject)
         
-//        if let mirrorflyView = MirrorflyViewFactory.mirrorflyViews[viewId] {
-//                            mirrorflyView.updateVideoTrack(userJid: userJid)
-//                            result(nil)
-//                        } else {
-//                            result(FlutterError(code: "INVALID_VIEW_ID", message: "Invalid view identifier", details: nil))
-//                        }
-        
         let videoTrack = CallManager.getRemoteVideoTrack(jid: userId)
         NSLog("\(Constants.callTag) delegate videoTrack--> \(String(describing: videoTrack))")
         
@@ -510,26 +476,6 @@ import PushKit
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
     
-//    func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
-//        NSLog("#audiomanager audioRoutedTo  CallViewController \(deviceName) \(audioDeviceType)")
-//        switch audioDeviceType {
-//        case .receiver:
-//            currentOutputDevice = .receiver
-////            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOff" ), for: .normal)
-//        case .speaker:
-//            currentOutputDevice = .speaker
-////            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOn" ), for: .normal)
-//        case .headset:
-//            currentOutputDevice = .headset
-////            outgoingCallView?.speakerButton.setImage(UIImage(named: "headset" ), for: .normal)
-//        case .bluetooth:
-//            currentOutputDevice = .bluetooth
-////            outgoingCallView?.speakerButton.setImage(UIImage(named: "bluetooth_headset" ), for: .normal)
-//        @unknown default:
-//            currentOutputDevice = .receiver
-////            outgoingCallView?.speakerButton.setImage(UIImage(named: "IconSpeakerOff" ), for: .normal)
-//        }
-//    }
     
     func registerForVOIPNotifications() {
         NSLog("\(Constants.callTag) Registering Voip Notification")
@@ -576,7 +522,8 @@ import PushKit
     }
     
     func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String]) {
-        NSLog("\(Constants.callTag) onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(String(describing: groupId)) callType: \(callType) userList: \(userList)")
+        NSLog("\(Constants.callTag) Events: onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(String(describing: groupId)) callType: \(callType) userList: \(userList)")
+        NSLog("\(Constants.callTag) Events: FlyConstants.isLoaclNotificationEnabled \(FlyConstants.isLoaclNotificationEnabled)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userJid, forKey: "userJid")
         jsonObject.setValue(isOneToOneCall, forKey: "isOneToOneCall")
@@ -598,8 +545,9 @@ import PushKit
     func deleteCallLogs(callLogId: String) {
         NSLog("\(Constants.callTag) deleteCallLogs")
     }
+
     
-    func callLogUpdate(calllogId: String) {
+    func onCallLogsUpdated() {
         NSLog("\(Constants.callTag) callLogUpdate")
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
     }

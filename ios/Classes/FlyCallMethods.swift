@@ -64,6 +64,7 @@ import MirrorFlySDK
         let muteStatus = args["muteVideo"] as? Bool ?? false
         NSLog("\(Constants.callTag) muteVideo Method MuteStatus \(muteStatus)")
         CallManager.muteVideo(muteStatus)
+        AudioManager.shared().autoReRoute()
         
         if !CallManager.isOneToOneCall() && !muteStatus{
             CallManager.enableVideo()
@@ -73,7 +74,7 @@ import MirrorFlySDK
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: AppUtils.getMyJid()) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.LOCAL_VIDEO_MUTE : MuteEvent.LOCAL_VIDEO_UNMUTE)
+                mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.ACTION_LOCAL_VIDEO_MUTE : MuteEvent.ACTION_LOCAL_VIDEO_UN_MUTE)
             } else {
                 NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
             }
@@ -227,7 +228,7 @@ import MirrorFlySDK
     }
     func switchCamera(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         CallManager.switchCamera {
-            
+            result(true)
         }
     }
     func isCallOnHold(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
@@ -323,15 +324,15 @@ import MirrorFlySDK
        
         let status = (jid == AppUtils.getMyJid() || jid.isEmpty) ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(jid)
         
-        if let mirrorFlyViewId = factory?.getUniqueID(forString: jid.isEmpty ? AppUtils.getMyJid() : jid) {
-                    if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                        mirrorflyView.updateVideoTrack(userJid: jid.isEmpty ? AppUtils.getMyJid() : jid, updateType: status ? MuteEvent.REMOTE_VIDEO_MUTE : MuteEvent.REMOTE_VIDEO_UN_MUTE)
-                    } else {
-                        NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
-                    }
-                } else {
-                    NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
-                }
+//        if let mirrorFlyViewId = factory?.getUniqueID(forString: jid.isEmpty ? AppUtils.getMyJid() : jid) {
+//                    if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+//                        mirrorflyView.updateVideoTrack(userJid: jid.isEmpty ? AppUtils.getMyJid() : jid, updateType: status ? MuteEvent.REMOTE_VIDEO_MUTE : MuteEvent.REMOTE_VIDEO_UN_MUTE)
+//                    } else {
+//                        NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
+//                    }
+//                } else {
+//                    NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
+//                }
         
         NSLog("isUserVideoMuted \(jid == AppUtils.getMyJid() || jid.isEmpty)")
         NSLog("isUserVideoMuted status \(status)")
@@ -340,8 +341,9 @@ import MirrorFlySDK
     }
     
     func isOnGoingCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-        //Method Needed for Android inorder to Launch Ongoing Call Screen
-        result(false)
+//        //Method Needed for Android inorder to Launch Ongoing Call Screen
+//        result(false)
+        result(CallManager.isOngoingCall())
     }
     
 //    func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){

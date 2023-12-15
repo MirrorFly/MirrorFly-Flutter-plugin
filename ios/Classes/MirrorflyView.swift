@@ -396,7 +396,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     }
     
     func updateVideoTrack(userJid: String, updateType: MuteEvent) {
-        NSLog("\(Constants.callTag) Update Video Track viewId\(viewId) userJid\(userJid)")
+        NSLog("\(Constants.callTag) Update Video Track viewId\(viewId) userJid\(userJid) updateType\(updateType)")
         
         if(updateType == .ACTION_REMOTE_VIDEO_UN_MUTE || updateType == .ACTION_LOCAL_VIDEO_UN_MUTE){
             NSLog("\(Constants.callTag) Removing Existing video track for \(userJid)")

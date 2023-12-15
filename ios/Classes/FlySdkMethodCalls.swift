@@ -277,13 +277,14 @@ import UIKit
         let receiverJID = args["JID"] as? String ?? nil
         let replyMessageID = args["replyMessageId"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
+        let editMessageId = args["editMessageId"] as? String ?? ""
 
         if(txtMessage == nil || receiverJID == nil){
             result(FlutterError(code: "500", message: "Parameters Missing", details: nil))
             return
         }
         
-        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId) { isSuccess,error,chatMessage in
+        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId, editMessageId: editMessageId) { isSuccess,error,chatMessage in
             if isSuccess {
                 print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
                 let textMsgResponse = chatMessage.toJson()

@@ -139,9 +139,10 @@ public struct CountryInfo : Swift.Codable {
   public func encode(to encoder: any Swift.Encoder) throws
 }
 public protocol UploadDelegate : ObjectiveC.NSObjectProtocol {
-  func uploadPartCompleted(message: MirrorFlySDK.ChatMessage, part: Swift.Int, url: Swift.String, fileId: Swift.String)
+  func uploadPartCompleted(message: MirrorFlySDK.ChatMessage, part: Swift.Int, url: Swift.String, fileId: Swift.String, eTag: Swift.String)
   func uploadPartError(messageId: Swift.String, part: Swift.Int, url: Swift.String, fileId: Swift.String)
   func uploadSuccess(message: MirrorFlySDK.ChatMessage)
+  func shouldCommitAWSFiles(messageId: Swift.String)
   func linksExpired(message: MirrorFlySDK.ChatMessage, fileId: Swift.String)
 }
 public enum MediaType {
@@ -291,7 +292,7 @@ public enum CallState : Swift.String, Swift.Codable {
   public static func disconnectXMPPConnection()
   public static func disconnect()
   public static func resetXmppResource()
-  public func clearAllTablesInDB()
+  public func clearAllTablesInDB(except types: [RealmSwift.Object.Type]? = nil)
   public static func sendPendingReceiptMessages()
   public static func setMediaEncryption(isEnable: Swift.Bool)
   public func resetFlyDefaults()
@@ -575,6 +576,10 @@ extension MirrorFlySDK.ChatManager {
   public static func getPrivateChatList(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public static func getUnreadPrivateChatMessageAndChatCount() -> (Swift.Int, Swift.Int)
 }
+extension MirrorFlySDK.ChatManager {
+  public func didReceivedEditedMessage(messageId: Swift.String, editMessageId: Swift.String, body: Swift.String, from: Swift.String, time: Swift.String, groupJid: Swift.String)
+  public static func isMessageEditable(messageId: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
+}
 public enum MessageExtension : Swift.String, Swift.CustomStringConvertible {
   case image
   case video
@@ -626,6 +631,7 @@ public enum ContactType : Swift.String, Swift.CustomStringConvertible, Swift.Cod
 public protocol XMPPMessageDelegate : ObjectiveC.NSObjectProtocol {
   func didReciveSingleChatCorbonMessage(messageId: Swift.String, from: Swift.String, to: Swift.String, body: Swift.String, time: Swift.String, metaData: Swift.String, topicID: Swift.String, messageType: Swift.String) -> Swift.String
   func didReceivedSingleChatMessage(messageId: Swift.String, from: Swift.String, body: Swift.String, time: Swift.String, groupJid: Swift.String, metaData: Swift.String, topicID: Swift.String, messageType: Swift.String) -> Swift.String
+  func didReceivedEditedMessage(messageId: Swift.String, editMessageId: Swift.String, body: Swift.String, from: Swift.String, time: Swift.String, groupJid: Swift.String)
   func didReceiveGroupChatMessage(messageId: Swift.String, from: Swift.String, groupJid: Swift.String, body: Swift.String, time: Swift.String)
   func onSentMessageStatusUpdated(from: Swift.String, messageId: Swift.String, updateType: MirrorFlySDK.MessageStatus, time: Swift.String?)
   func onReceivedMessageStatusUpdated(toJid: Swift.String, messageId: Swift.String, updateType: MirrorFlySDK.MessageStatus, fromJid: Swift.String)
@@ -759,8 +765,9 @@ public struct TextMessage : Swift.Codable {
   public var mentionedUsersIds: [Swift.String]?
   public var metaData: [MirrorFlySDK.MessageMetaData]?
   public var topicID: Swift.String?
+  public var editMessageId: Swift.String
   public init()
-  public init(toId: Swift.String, messageText: Swift.String, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String]? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "")
+  public init(toId: Swift.String, messageText: Swift.String, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String]? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", editMessageId: Swift.String = emptyString())
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -788,8 +795,9 @@ public struct FileMessage : Swift.Codable {
   public var locationMessage: MirrorFlySDK.LocationMessageParams?
   public var contactMessage: MirrorFlySDK.ContactMessageParams?
   public var fileMessage: MirrorFlySDK.FileMessageParams?
+  public var editMessageId: Swift.String
   public init()
-  public init(toId: Swift.String, messageType: MirrorFlySDK.MessageType, locationMessage: MirrorFlySDK.LocationMessageParams? = nil, contactMessage: MirrorFlySDK.ContactMessageParams? = nil, fileMessage: MirrorFlySDK.FileMessageParams? = nil, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String]? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "")
+  public init(toId: Swift.String, messageType: MirrorFlySDK.MessageType, locationMessage: MirrorFlySDK.LocationMessageParams? = nil, contactMessage: MirrorFlySDK.ContactMessageParams? = nil, fileMessage: MirrorFlySDK.FileMessageParams? = nil, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String]? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", editMessageId: Swift.String = emptyString())
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -1045,7 +1053,7 @@ extension MirrorFlySDK.CallManager {
 public protocol CallLogDelegate : ObjectiveC.NSObjectProtocol {
   func clearAllCallLog()
   func deleteCallLogs(callLogId: Swift.String)
-  func callLogUpdate(calllogId: Swift.String)
+  func onCallLogsUpdated()
 }
 public protocol CallUIDelegate : ObjectiveC.NSObjectProtocol {
   func uiPresented()
@@ -1106,6 +1114,7 @@ public protocol FlyTranslationManagerDelegate : ObjectiveC.NSObjectProtocol {
   @objc deinit
 }
 public protocol DownloadDelegate : ObjectiveC.NSObjectProtocol {
+  func updateDownloadURL(messageId: Swift.String, url: Swift.String)
   func downloadPartCompleted(message: MirrorFlySDK.ChatMessage, bytesDownloaded: Swift.Int)
   func downloadError(messageId: Swift.String, errorMessage: Swift.String)
   func downloadSuccess(message: MirrorFlySDK.ChatMessage, fileURL: Foundation.URL)
@@ -1279,11 +1288,13 @@ public protocol XMPPLogoutDelegate : ObjectiveC.NSObjectProtocol {
   public func validateAndAppendMediaV2(message: MirrorFlySDK.ChatMessage)
   public func processNextUploadV2(messageId: Swift.String)
   public func downloadFileV2(message: MirrorFlySDK.ChatMessage)
+  public func startDownload(message: MirrorFlySDK.ChatMessage)
   public func uploadV2(messageId: Swift.String)
   public func getUploadURLs(message: MirrorFlySDK.ChatMessage, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  public func uploadPartCompleted(message: MirrorFlySDK.ChatMessage, part: Swift.Int, url: Swift.String, fileId: Swift.String)
+  public func uploadPartCompleted(message: MirrorFlySDK.ChatMessage, part: Swift.Int, url: Swift.String, fileId: Swift.String, eTag: Swift.String)
   public func uploadPartError(messageId: Swift.String, part: Swift.Int, url: Swift.String, fileId: Swift.String)
   public func uploadSuccess(message: MirrorFlySDK.ChatMessage)
+  public func shouldCommitAWSFiles(messageId: Swift.String)
   public func linksExpired(message: MirrorFlySDK.ChatMessage, fileId: Swift.String)
   public func pauseUpload(messageId: Swift.String)
   public func resumeUpload(messageId: Swift.String, totalChunk: Swift.Int, uploadedChunk: Swift.Int)
@@ -1303,6 +1314,7 @@ public protocol XMPPLogoutDelegate : ObjectiveC.NSObjectProtocol {
   public func streamingCancelled(message: MirrorFlySDK.ChatMessage)
   public func streamingSuccess(message: MirrorFlySDK.ChatMessage, key: Swift.String?)
   public func streamingFailed(message: MirrorFlySDK.ChatMessage)
+  public func updateDownloadURL(messageId: Swift.String, url: Swift.String)
   @objc deinit
 }
 public protocol MediaStreamDelegate : ObjectiveC.NSObjectProtocol {
@@ -1543,6 +1555,7 @@ public struct ErrorCode {
 @objc @_inheritsConvenienceInitializers public class ChatMessage : ObjectiveC.NSObject, Swift.Codable {
   public var messageId: Swift.String
   public var messageTextContent: Swift.String
+  public var editedTextContent: Swift.String
   public var messageSentTime: Swift.Double
   public var senderUserName: Swift.String
   public var senderNickName: Swift.String
@@ -1677,7 +1690,7 @@ public typealias FlySendMessageListener = (_ isSuccess: Swift.Bool, _ error: Mir
   public static func sendFileMessage(messageParams: MirrorFlySDK.FileMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
   public static func sendMeetMessage(messageParams: MirrorFlySDK.MeetMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
   @available(*, deprecated, message: "Use the ChatManager.sendTextMessage(messageParams: TextMessageParams) instead.")
-  public static func sendTextMessage(toJid: Swift.String, message: Swift.String, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String], metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", messageType: MirrorFlySDK.MessageType = .text, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
+  public static func sendTextMessage(toJid: Swift.String, message: Swift.String, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String], metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", editMessageId: Swift.String, messageType: MirrorFlySDK.MessageType = .text, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
   @available(*, deprecated, message: "Use ChatManager.sendFileMessage(messageParams: FileMessage) method instead.")
   public static func sendLocationMessage(toJid: Swift.String, latitude: Swift.Double, longitude: Swift.Double, replyMessageId: Swift.String? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
   @available(*, deprecated, message: "Use ChatManager.sendFileMessage(messageParams: FileMessage) method instead.")
@@ -1787,6 +1800,7 @@ public struct MessageReceipt : Swift.Codable {
   @objc public var mediaLocalStoragePath: Swift.String
   @objc public var mediaThumbImage: Swift.String
   @objc public var mediaCaptionText: Swift.String
+  @objc public var mediaCaptionEditedText: Swift.String
   @objc public var mediaProgressStatus: Swift.Int
   public var mediaUploadStatus: MirrorFlySDK.MediaUploadStatus
   public var mediaDownloadStatus: MirrorFlySDK.MediaDownloadStatus
@@ -1969,7 +1983,8 @@ public struct BackupMessage : Swift.Codable {
 }
 public struct TextModel : Swift.Codable {
   public var text: Swift.String
-  public init(text: Swift.String)
+  public var editedText: Swift.String
+  public init(text: Swift.String, editedText: Swift.String)
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -2698,6 +2713,9 @@ public struct FlyConstants {
     public static let scheduledDateTimeError: Swift.String
     public static let storageNotAvaialbe: Swift.String
     public static let compressionFailed: Swift.String
+    public static let editMessageInvalid: Swift.String
+    public static let editMessageIdInvalid: Swift.String
+    public static let editMessageIdTime: Swift.String
   }
   public struct SuccessMessage {
     public static let profileFetch: Swift.String
@@ -2750,7 +2768,7 @@ public struct FlyConstants {
 public protocol FlyDatabaseControllerDelegate : ObjectiveC.NSObjectProtocol {
   func mentionUsersaveContact(userID: Swift.String)
 }
-public func hardDeleteAllTable()
+public func hardDeleteAllTable(except types: [RealmSwift.Object.Type]? = nil)
 extension RealmSwift.Realm {
   public func safeWrite(_ block: (() throws -> Swift.Void)) throws
 }
@@ -2935,6 +2953,7 @@ extension MirrorFlySDK.FlyUtils {
   public static func getDeviceID() -> Swift.String
   public static func deleteDownloadedImageFromAlbum(customFolder: Swift.String, imageName: Swift.String, completion: @escaping (Swift.Bool) -> Swift.Void)
   public static func secondsToDurationInString(seconds: Swift.Double) -> Swift.String
+  public static func getBufferSize(storageType: Swift.String) -> Swift.Int
 }
 extension Foundation.Thread {
   public var threadName: Swift.String {
@@ -3028,7 +3047,7 @@ public struct ProfileStatus : Swift.Codable {
   public init(from decoder: any Swift.Decoder) throws
 }
 public protocol UserBusyStatusDelegate : AnyObject {
-  func didStatusUpdated(status: Swift.Bool, message: Swift.String)
+  func didUpdateBusyStatus(status: Swift.Bool, message: Swift.String)
 }
 public struct CallLog : Swift.Codable {
   public let callLogId: Swift.String
@@ -3227,6 +3246,7 @@ public protocol AdminBlockDelegate : ObjectiveC.NSObjectProtocol {
   @objc func setOrUpdateFavourite(messageId: Swift.String, favourite: Swift.Bool, removeAllFavourite: Swift.Bool)
   @objc func onMessageTranslated(message: MirrorFlySDK.ChatMessage, jid: Swift.String)
   @objc func clearAllConversationForSyncedDevice()
+  @objc func onMessageEdited(message: MirrorFlySDK.ChatMessage, chatJid: Swift.String)
 }
 public struct ChatDataModel {
   public init()
