@@ -19,7 +19,7 @@ class Mirrorfly {
   /// @property [isTrialLicenceKey] to provide trial/live register and contact sync
   /// @property [storageFolderName] provides the Local Storage Folder Name
   /// @property [enableDebugLog] provides the Debug Log.
-  @Deprecated('Instead of use initializeSDK')
+  @Deprecated('Instead of use Mirrorfly.initializeSDK()')
   static init(
       {required String baseUrl,
       required String licenseKey,
