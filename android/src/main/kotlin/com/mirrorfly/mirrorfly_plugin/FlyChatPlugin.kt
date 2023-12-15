@@ -1408,7 +1408,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
         })
 
-        ChatManager.initializeSDK(licenseKey!!){ isSuccess, throwable, data ->
+        SdkCallFunctions(mContext).initCall()
+
+        ChatManager.initializeSDK(licenseKey!!){ isSuccess, _, data ->
             if (isSuccess) {
                 LogMessage.d(TAG, "initializeSDK success")
                 result.success(true)
