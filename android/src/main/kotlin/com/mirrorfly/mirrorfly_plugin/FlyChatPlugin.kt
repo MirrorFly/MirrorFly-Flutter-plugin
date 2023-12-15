@@ -1399,6 +1399,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
         ChatManager.enableChatHistory(chatHistoryEnable)
 
+        //Set Name based on the Profile data
+        ChatManager.setNameHelper(object  : NameHelper {
+            override fun getDisplayName(jid: String): String {
+                return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(
+                    jid
+                )!!.getDisplayName() else com.mirrorflysdk.flycommons.Constants.EMPTY_STRING
+            }
+        })
+
+        SdkCallFunctions(mContext).initCall()
+
         ChatManager.initializeSDK(licenseKey!!){ isSuccess, _, data ->
             if (isSuccess) {
                 LogMessage.d(TAG, "buildInitializeSDK success")
