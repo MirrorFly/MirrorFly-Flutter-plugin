@@ -248,7 +248,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       addStreamsAllToStreamController();
     }
     try {
-      res = await await mirrorFlyMethodChannel.invokeMethod('initializeSDK', builder.build());;
+      res = await mirrorFlyMethodChannel.invokeMethod<bool>('initializeSDK', builder.build());
       LogMessage.d("syncContacts", res);
       return res;
     } on PlatformException catch (e) {
