@@ -528,6 +528,12 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
             CallAction.ACTION_REMOTE_OTHER_BUSY->{
                 updateUsersProfile()
             }
+            CallStatus.USER_LEFT ->{
+                updateUsersProfile()
+                if (userJid!=null && userJid.isNotEmpty()) {
+                    Toast.makeText(this, ContactManager.getDisplayName(userJid)+" Left",Toast.LENGTH_SHORT).show()
+                }
+            }
             CallAction.ACTION_REMOTE_BUSY->{
                 updateUsersProfile()
                 if (userJid!=null && userJid.isNotEmpty()) {

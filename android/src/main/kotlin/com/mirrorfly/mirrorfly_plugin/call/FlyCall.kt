@@ -246,7 +246,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             CallStatus.ON_HOLD ->{}
             CallStatus.ON_RESUME ->{}
             CallStatus.USER_JOINED ->{}
-            CallStatus.USER_LEFT ->{}
+            CallStatus.USER_LEFT ->{
+                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.USER_LEFT,json.getString("userJid"))
+            }
             CallStatus.INVITE_CALL_TIME_OUT ->{}
             CallStatus.OUTGOING_CALL_TIME_OUT ->{
                 json.put("callStatus","CALL TIME OUT")
