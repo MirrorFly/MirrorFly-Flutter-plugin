@@ -315,8 +315,8 @@ import PushKit
             
             if (callAction == .CHANGE_TO_AUDIO_CALL){
                 CallManager.setCallType(callType: .Audio)
-                CallManager.muteVideo(true)
-                CallManager.disableVideo()
+//                CallManager.muteVideo(true)
+//                CallManager.disableVideo()
                 AudioManager.shared().autoReRoute()
             }
             
@@ -548,8 +548,8 @@ import PushKit
 
     
     func onCallLogsUpdated() {
-        NSLog("\(Constants.callTag) callLogUpdate")
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
+        NSLog("\(Constants.callTag) Events: callLogUpdate")
+//        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
     }
     
     func userProfileDidChange(for jid: String, profileDetails: MirrorFlySDK.ProfileDetails) {

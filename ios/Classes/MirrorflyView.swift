@@ -103,7 +103,9 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         
         createVideoView(argument: argument)
         
-        if(videoTrack == nil || CallManager.getCallType() == .Audio || muteStatus){
+        NSLog("\(Constants.callTag) getCallType \(CallManager.getCallType())")
+        
+        if(videoTrack == nil || muteStatus){
             
 //                showAudioView(argument: argument, userName: userName)
 //                DispatchQueue.main.async {
