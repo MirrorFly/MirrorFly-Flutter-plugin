@@ -1630,11 +1630,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic re;
     try {
       re = await mirrorFlyMethodChannel.invokeMethod("get_user_list", {"page": page, "search": search, "perPageResultSize": perPageResultSize});
-      LogMessage.d('RESULT ', '$re');
+      LogMessage.d('getUserList ', '$re');
       return re;
     } on PlatformException catch (e) {
-      LogMessage.d("er", "$e");
-      return re;
+      LogMessage.d("getUserList", "$e");
+      rethrow;
     }
   }
 
@@ -1647,7 +1647,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return re;
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
-      return re;
+      rethrow;
     }
   }
 
@@ -1673,7 +1673,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return re;
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
-      return re;
+      rethrow;
     }
   }
 
@@ -1686,7 +1686,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return re;
     } on PlatformException catch (e) {
       LogMessage.d("getAvailableFeatures error", "$e");
-      return re;
+      rethrow;
     }
   }
 
@@ -1884,7 +1884,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return result;
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
-      return re;
+      rethrow;
     }
   }
 
@@ -1900,7 +1900,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return result;
     } on PlatformException catch (e) {
       LogMessage.d("er ", "$e");
-      return result;
+      rethrow;
     }
   }
 
@@ -1913,7 +1913,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return result;
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
-      return re;
+      rethrow;
     }
   }
 
