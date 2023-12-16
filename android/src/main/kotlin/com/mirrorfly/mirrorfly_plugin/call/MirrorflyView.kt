@@ -82,8 +82,8 @@ class MirrorflyView(
     }
 
     fun setLocalTarget(){
-        if(!CallManager.isVideoMuted()) {
-            LogMessage.d(tag, "Target set $id $jid")
+        LogMessage.d(tag,"Local set $id $jid ${CallManager.getLocalProxyVideoSink()} ${CallManager.isVideoMuted()} ${getTextureViewByTag(jid)}")
+        if(!CallManager.isVideoMuted() && CallManager.getLocalProxyVideoSink()!=null) {
             getTextureViewByTag(jid)?.visibility = View.VISIBLE
             getImageViewByTag(jid)?.visibility = View.GONE
             CallManager.getLocalProxyVideoSink()?.setTarget(getTextureViewByTag(jid))
@@ -99,7 +99,7 @@ class MirrorflyView(
     }
 
     fun setRemoteTarget(userJid:String){
-        LogMessage.d(tag,"Remote set $id $userJid ${CallManager.getRemoteProxyVideoSink(userJid)} ${CallManager.isRemoteVideoMuted(userJid)} ${getTextureViewByTag(jid)} ${getTextureViewByTag(userJid)?.context}")
+        LogMessage.d(tag,"Remote set $id $userJid video : ${CallManager.getRemoteProxyVideoSink(userJid)} muted : ${CallManager.isRemoteVideoMuted(userJid)} paused : ${CallManager.isRemoteVideoPaused(userJid)} ${getTextureViewByTag(jid)} ${getTextureViewByTag(userJid)?.context}")
         if(CallManager.getRemoteProxyVideoSink(userJid)!=null && !CallManager.isRemoteVideoMuted(userJid)) {
             getTextureViewByTag(userJid)?.visibility=View.VISIBLE
             getImageViewByTag(jid)?.visibility=View.GONE
@@ -117,7 +117,7 @@ class MirrorflyView(
     fun setProfileView(userJid: String){
         LogMessage.d(tag,"ProfileView set $id $userJid ${CallManager.isRemoteVideoMuted(userJid)}")
         val profile = ContactManager.getProfileDetails(userJid)
-        val name = if(!profile?.name.isNullOrEmpty()) profile?.name ?: "" else profile?.nickName ?: ""
+        val name = profile.getDisplayName() ?: "Guest User"
         val imageUrl = profile?.image ?: ""
         getTextureViewByTag(userJid)?.visibility=View.GONE
         getImageViewByTag(jid)?.visibility=if(viewAble()) View.VISIBLE else View.GONE

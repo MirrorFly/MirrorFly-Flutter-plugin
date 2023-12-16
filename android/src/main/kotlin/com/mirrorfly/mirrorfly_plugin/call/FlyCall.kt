@@ -296,11 +296,6 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("userJid",userJid)
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
-        if(userJid==ChatManager.getCurrentUserJid() && callAction==CallAction.ACTION_REMOTE_HANGUP){
-            sendCallStatusForLocalJidInRemoteHangUP(callAction, userJid)
-        }else {
-            onCallActionStreamHandler.onCallAction?.success(json.toString())
-        }
         FlutterCall.callUiListener?.onShowCallUiFlutter(callAction,userJid)
         if(callAction == CallAction.ACTION_REMOTE_VIDEO_STATUS){
             if (CallManager.isRemoteVideoPaused(userJid)){
@@ -331,6 +326,11 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             //CallAudioManager.getInstance(context).stopIncomingRequestTone()
         }
         //sendCallStatusUpdate(callAction,userJid)
+        if(userJid==ChatManager.getCurrentUserJid() && callAction==CallAction.ACTION_REMOTE_HANGUP){
+            sendCallStatusForLocalJidInRemoteHangUP(callAction, userJid)
+        }else {
+            onCallActionStreamHandler.onCallAction?.success(json.toString())
+        }
     }
     private fun sendCallStatusForLocalJidInRemoteHangUP(callAction: String, userJid: String){
         Log.d(tag,"#onCallAction sendCallStatusForLocalJidInRemoteHangUP $callAction userJid $userJid")

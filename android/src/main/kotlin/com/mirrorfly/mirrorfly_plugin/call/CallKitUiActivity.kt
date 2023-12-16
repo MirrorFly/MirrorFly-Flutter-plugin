@@ -136,10 +136,10 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 Utils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
                 userName.visibility = View.VISIBLE
                 userImage.visibility = View.VISIBLE
-                val name = ContactManager.getDisplayName(CallManager.getEndCallerJid())
-                userName.text = name
                 val profile = ContactManager.getProfileDetails(CallManager.getEndCallerJid())
-                Utils.loadGlideImage(this, userImage, name, profile?.image ?: "",false)
+                val name = ContactManager.getDisplayName(CallManager.getEndCallerJid())
+                userName.text = profile.getDisplayName()
+                Utils.loadGlideImage(this, userImage, profile.getDisplayName(), profile?.image ?: "",false)
             }
         }else{
             finish()
