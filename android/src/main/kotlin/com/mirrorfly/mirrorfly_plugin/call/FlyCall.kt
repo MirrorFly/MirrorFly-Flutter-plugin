@@ -436,7 +436,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
 
     override fun getCallAttendedPendingIntent(): PendingIntent {
         val intent: Intent? = AppUtils.getAppIntent(context)
-        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
+//        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
         return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
     }
 

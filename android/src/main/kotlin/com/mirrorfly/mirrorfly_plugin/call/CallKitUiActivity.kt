@@ -113,10 +113,10 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     Utils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
                     userImage.visibility = View.VISIBLE
                     userName.visibility = View.VISIBLE
-                    val name = ContactManager.getDisplayName(CallManager.getGroupID())
-                    userName.text = name
                     val profile = ContactManager.getProfileDetails(CallManager.getGroupID())
-                    Utils.loadGlideImage(this, userImage, name, profile?.image ?: "",true)
+                    val name = ContactManager.getDisplayName(CallManager.getGroupID())
+                    userName.text = profile.getDisplayName()
+                    Utils.loadGlideImage(this, userImage, profile.getDisplayName(), profile?.image ?: "",true)
                 }else {
                     userImage.visibility = View.GONE
                     participants.visibility = View.GONE
@@ -531,19 +531,22 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
             CallStatus.USER_LEFT ->{
                 updateUsersProfile()
                 if (userJid!=null && userJid.isNotEmpty()) {
-                    Toast.makeText(this, ContactManager.getDisplayName(userJid)+" Left",Toast.LENGTH_SHORT).show()
+                    val name = ContactManager.getProfileDetails(CallManager.getGroupID()).getDisplayName()
+                    Toast.makeText(this, "$name Left",Toast.LENGTH_SHORT).show()
                 }
             }
             CallAction.ACTION_REMOTE_BUSY->{
                 updateUsersProfile()
                 if (userJid!=null && userJid.isNotEmpty()) {
-                    Toast.makeText(this, ContactManager.getDisplayName(userJid)+" is Busy",Toast.LENGTH_SHORT).show()
+                    val name = ContactManager.getProfileDetails(CallManager.getGroupID()).getDisplayName()
+                    Toast.makeText(this, "$name is Busy",Toast.LENGTH_SHORT).show()
                 }
             }
             CallAction.ACTION_REMOTE_ENGAGED->{
                 updateUsersProfile()
                 if (userJid!=null && userJid.isNotEmpty()) {
-                    Toast.makeText(this, ContactManager.getDisplayName(userJid)+" is on another call",Toast.LENGTH_SHORT).show()
+                    val name = ContactManager.getProfileDetails(CallManager.getGroupID()).getDisplayName()
+                    Toast.makeText(this, "$name is on another call",Toast.LENGTH_SHORT).show()
                 }
             }
             CallAction.ACTION_CALL_AGAIN->{}

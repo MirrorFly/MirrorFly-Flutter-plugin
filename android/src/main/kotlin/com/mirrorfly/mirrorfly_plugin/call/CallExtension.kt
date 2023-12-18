@@ -139,13 +139,17 @@ fun ProfileDetails?.getDisplayName() : String {
         return "Guest User"
     }
     else {
-        if (!name.isNullOrEmpty()) {
+        /*if (!name.isNullOrEmpty()) {
             return name
         } else if (!nickName.isNullOrEmpty()) {
             return nickName
         } else {
             return ChatUtils.getUserFromJid(jid)
-        }
+        }*/
+        return if ((name ?: jid).isNotBlank())
+            name ?: ChatUtils.getUserFromJid(jid)
+        else
+            ChatUtils.getUserFromJid(jid)
     }
     /*return if ((name ?: jid).isNotBlank())
         name ?: ChatUtils.getUserFromJid(jid)
