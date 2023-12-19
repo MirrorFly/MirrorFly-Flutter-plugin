@@ -549,7 +549,7 @@ import PushKit
     
     func onCallLogsUpdated() {
         NSLog("\(Constants.callTag) Events: callLogUpdate")
-//        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
     }
     
     func userProfileDidChange(for jid: String, profileDetails: MirrorFlySDK.ProfileDetails) {
