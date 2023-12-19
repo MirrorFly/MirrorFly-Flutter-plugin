@@ -1877,7 +1877,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<String?> imagePath(String imgurl) async {
-    var re = "";
     try {
       final result = await mirrorFlyMethodChannel.invokeMethod<String>("get_image_path", {"image": imgurl});
       LogMessage.d('RESULT ', '$result');
@@ -1906,7 +1905,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<dynamic> sentFileMessage(String? file, String jid) async {
-    var re = "";
     try {
       final result = await mirrorFlyMethodChannel.invokeMethod("sent file", {"file": file, "jid": jid, "message": ""});
       LogMessage.d('RESULT', '$result');
