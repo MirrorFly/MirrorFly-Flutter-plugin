@@ -204,34 +204,42 @@ class Utils {
             makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
             var membersName = StringBuilder("")
             var isMaxMemberNameNotReached = true
+            var spaceAvailable = true;
             for (i in callUsers.indices) {
                 val pair = getNameAndProfileDetails(callUsers[i])
                 LogMessage.d("pair",pair.first+" : "+pair.second?.toJsonString())
-                if(i == 1){
+                /*if(i == 1){
                     imageCallMember2.show()
                     loadUserProfilePic(context, imageCallMember2, pair)
                 }else if(i == 2){
                     imageCallMember3.show()
                     loadUserProfilePic(context, imageCallMember3, pair)
-                }
+                }*/
                 if (i == 0) {
                     val actualMemberName = getActualMemberName(StringBuilder(pair.first))
                     LogMessage.d("actualMemberName$i",actualMemberName.first.toString()+" : "+actualMemberName.second)
                     membersName = actualMemberName.first
                     isMaxMemberNameNotReached = actualMemberName.second
+                    spaceAvailable = membersName.length < Constants.MAX_NAME_LENGTH;
                     imageCallMember1.show()
                     loadUserProfilePic(context, imageCallMember1, pair)
-                } else if (isMaxMemberNameNotReached && i == 1) {
+                } else if (spaceAvailable && isMaxMemberNameNotReached && i == 1) {
                     membersName.append(", ").append(pair.first)
                     val actualMemberName = getActualMemberName(membersName)
                     LogMessage.d("actualMemberName$i",actualMemberName.first.toString()+" : "+actualMemberName.second)
                     membersName = actualMemberName.first
                     isMaxMemberNameNotReached = actualMemberName.second
-                } else if (isMaxMemberNameNotReached && i == 2) {
+                    spaceAvailable = membersName.length < Constants.MAX_NAME_LENGTH;
+                    imageCallMember2.show()
+                    loadUserProfilePic(context, imageCallMember2, pair)
+                } else if (spaceAvailable && isMaxMemberNameNotReached && i == 2) {
                     membersName.append(", ").append(pair.first)
                     val actualMemberName = getActualMemberName(membersName)
                     LogMessage.d("actualMemberName$i",actualMemberName.first.toString()+" : "+actualMemberName.second)
                     membersName = actualMemberName.first
+                    spaceAvailable = membersName.length < Constants.MAX_NAME_LENGTH;
+                    imageCallMember3.show()
+                    loadUserProfilePic(context, imageCallMember3, pair)
                 } else {
                     membersName.append(" (+").append(callUsers.size - i).append(")")
                     LogMessage.d("actualMemberName$i",membersName.toString())
