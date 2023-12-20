@@ -1641,7 +1641,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future markAllUnreadMissedCallsAsRead() {
+  Future<bool?> markAllUnreadMissedCallsAsRead() {
     // TODO: implement markAllUnreadMissedCallsAsRead
     throw UnimplementedError();
   }

@@ -1230,7 +1230,7 @@ class Mirrorfly {
 
 
   ///Used to get [markAllUnreadMissedCallsAsRead]
-  static Future<dynamic> markAllUnreadMissedCallsAsRead() async {
+  static Future<bool?> markAllUnreadMissedCallsAsRead() async {
     return FlyChatFlutterPlatform.instance.markAllUnreadMissedCallsAsRead();
   }
 
