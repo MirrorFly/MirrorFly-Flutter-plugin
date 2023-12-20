@@ -56,13 +56,13 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         })
         ChatManager.setNameHelper(object : NameHelper {
             override fun getDisplayName(jid: String): String {
-                return ContactManager.getDisplayName(jid)
+                return  ContactManager.getProfileDetails(jid).getDisplayName()//ContactManager.getDisplayName(jid)
             }
 
         })
         CallManager.setCallNameHelper(object : CallNameHelper {
             override fun getDisplayName(jid: String): String {
-                return ContactManager.getDisplayName(jid)
+                return  ContactManager.getProfileDetails(jid).getDisplayName()//ContactManager.getDisplayName(jid)
             }
         })
 //        CallManager.keepConnectionInForeground(false)

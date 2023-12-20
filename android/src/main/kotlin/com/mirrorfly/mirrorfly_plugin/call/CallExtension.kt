@@ -134,11 +134,27 @@ fun String.isNotNumber(): Boolean {
     }
 }
 
-fun ProfileDetails.getDisplayName() : String {
-    return if ((name ?: jid).isNotBlank())
+fun ProfileDetails?.getDisplayName() : String {
+    if(this==null) {
+        return "Guest User"
+    }
+    else {
+        /*if (!name.isNullOrEmpty()) {
+            return name
+        } else if (!nickName.isNullOrEmpty()) {
+            return nickName
+        } else {
+            return ChatUtils.getUserFromJid(jid)
+        }*/
+        return if ((name ?: jid).isNotBlank())
+            name ?: ChatUtils.getUserFromJid(jid)
+        else
+            ChatUtils.getUserFromJid(jid)
+    }
+    /*return if ((name ?: jid).isNotBlank())
         name ?: ChatUtils.getUserFromJid(jid)
     else
-        ChatUtils.getUserFromJid(jid)
+        ChatUtils.getUserFromJid(jid)*/
 }
 
 fun ProfileDetails.isDeletedContact() = contactType == ContactType.DELETED_CONTACT
