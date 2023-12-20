@@ -4104,4 +4104,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }*/
+
+  @override
+  Future<dynamic> markAllUnreadMissedCallsAsRead() async {
+    dynamic res;
+    try {
+      res = await mirrorFlyCallMethodChannel.invokeMethod('markAllUnreadMissedCallsAsRead');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
 }

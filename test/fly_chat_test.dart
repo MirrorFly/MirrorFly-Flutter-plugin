@@ -1640,6 +1640,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future markAllUnreadMissedCallsAsRead() {
+    // TODO: implement markAllUnreadMissedCallsAsRead
+    throw UnimplementedError();
+  }
+
   /*@override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType

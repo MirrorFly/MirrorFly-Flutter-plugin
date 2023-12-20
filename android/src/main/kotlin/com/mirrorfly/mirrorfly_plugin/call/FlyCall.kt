@@ -194,6 +194,12 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "deleteCallLog" -> {
                 sdk.deleteCallLog(call,result)
             }
+            "markAllUnreadMissedCallsAsRead" -> {
+                CallLogManager.markAllUnreadMissedCallsAsRead()
+                result.success(true)
+                LogMessage.d("markAllUnreadMissedCallsAsRead","called")
+               // result.success(CallLogManager.markAllUnreadMissedCallsAsRead())
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }

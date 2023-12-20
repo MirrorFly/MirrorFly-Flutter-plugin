@@ -1161,6 +1161,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getInvitedUsersList has not been implemented.');
   }
 
+  Future<dynamic> markAllUnreadMissedCallsAsRead() {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   /*Future<dynamic> changeCallType({required String switchType}) async {
     throw UnimplementedError('changeCallType has not been implemented.');
   }
