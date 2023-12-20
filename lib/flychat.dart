@@ -1228,6 +1228,12 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getInvitedUsersList();
   }
 
+
+  ///Used to get [markAllUnreadMissedCallsAsRead]
+  static Future<bool?> markAllUnreadMissedCallsAsRead() async {
+    return FlyChatFlutterPlatform.instance.markAllUnreadMissedCallsAsRead();
+  }
+
 /* /// [changeCallType] Used to Change the Call Type
   /// audio for Switching to Audio Call
   /// video for Switching to Video Call
