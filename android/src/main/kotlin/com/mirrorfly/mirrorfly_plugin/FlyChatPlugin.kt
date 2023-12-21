@@ -1428,6 +1428,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
 
         LogMessage.enableDebugLogging(enableSDKLog)
+        Logger.enableDebugLogging(enableSDKLog)
+        CallManager.enableCallLogExport(enableSDKLog)
         ChatManager.enableChatHistory(chatHistoryEnable)
 
         SdkCallFunctions(mContext).initCall()
