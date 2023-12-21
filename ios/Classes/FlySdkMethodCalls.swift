@@ -199,6 +199,7 @@ import UIKit
         
         var userIdentifier = args["userIdentifier"] as? String ?? ""
         let deviceToken = args["token"] as? String ?? ""
+        let isForceRegister = args["isForceRegister"] as? Bool ?? true
         
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
         
@@ -217,7 +218,7 @@ import UIKit
         NSLog("\(Constants.tag) Register Device Token \(deviceToken)")
         NSLog("\(Constants.tag) ISEXPORT \(ISEXPORT)")
 
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,userType: "d", pushServerType: .firebase) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: "d", pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
@@ -260,10 +261,13 @@ import UIKit
 
                 }
             }else{
-                let error = data.getMessage()
-                result(FlutterError(code: "500",
+//                let error = data.getMessage()
+                let err = flyError?.description ?? ""
+                let error = err.contains("405") ? err : data.getMessage()
+                err.contains("405") ? result(FlutterError(code: "405",
                                     message: error as? String,
-                                    details: nil))
+                                                          details: nil)) :
+                result(FlutterError(code: "500",message: error as? String,details: nil))
                 print("#chatSDK \(error)")
             }
         }
