@@ -859,7 +859,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future registerUser(String userIdentifier, {String fcmToken = ""}) {
+  Future registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
     // registerUser
     throw UnimplementedError();
   }
@@ -1631,6 +1631,18 @@ class MockFlyChatFlutterPlatform
   @override
   deleteCallLog(List<String> jidlist, bool isClearAll) {
     // TODO: implement deleteCallLog
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> initializeSDK(InitializeSDKBuilder builder) {
+    // TODO: implement initSDK
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> markAllUnreadMissedCallsAsRead() {
+    // TODO: implement markAllUnreadMissedCallsAsRead
     throw UnimplementedError();
   }
 

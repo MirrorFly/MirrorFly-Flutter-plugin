@@ -79,3 +79,34 @@ extension GroupConfigParsing on GroupConfig? {
     }
   }
 }
+
+class InitializeSDKBuilder {
+  InitializeSDKBuilder(
+      {
+        this.storageFolderName,
+        required this.iOSContainerID,
+        required this.licenseKey,
+        this.enableMobileNumberLogin = false,
+        this.chatHistoryEnable,
+        this.enableDebugLog = false});
+
+  String? storageFolderName;
+  String iOSContainerID;
+  String licenseKey;
+  bool enableMobileNumberLogin;
+  bool? chatHistoryEnable;
+  bool enableDebugLog;
+}
+
+extension InitializeSDKBuilderParsing on InitializeSDKBuilder {
+  Map build() {
+    return {
+      "storageFolderName": storageFolderName,
+      "iOSContainerID": iOSContainerID,
+      "licenseKey": licenseKey,
+      "enableMobileNumberLogin": enableMobileNumberLogin,
+      "chatHistoryEnable": chatHistoryEnable,
+      "enableDebugLog": enableDebugLog,
+    };
+  }
+}

@@ -96,3 +96,9 @@ class AudioDeviceType {
   static const String headset = "headset";
   static const String bluetooth = "bluetooth";
 }
+
+class CallState {
+  static const int missedCall = 0;
+  static const int outgoingCall = 1;
+  static const int incomingCall = 2;
+}

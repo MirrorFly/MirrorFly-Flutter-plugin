@@ -121,6 +121,46 @@ import UIKit
 
     }
     
+    static func initializeSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+
+        let licenseKey = args["licenseKey"] as? String ?? ""
+        chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
+        let containerID = args["iOSContainerID"] as? String ?? ""
+        let enableSDKLog = args["enableSDKLog"] as? Bool ?? false
+        
+        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
+        ChatManager.setAppGroupContainerId(id: containerID)
+        Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
+        Utility.saveInPreference(key: Constants.containerID, value: containerID)
+        ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
+            if isSuccess {
+                NSLog("SDK INITIALISED")
+                result(true)
+                return
+            }else{
+                NSLog("SDK FAILED TO INITIALISE \(flyError)")
+                result(FlutterError(code: "500",
+                                    message: "SDK failed to Initialize",
+                                    details: nil))
+                return
+            }
+        }
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+
+            DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+                
+                do {
+                    try CallManager.initCallSDK()
+                    //                    FlyDefaults.chatHistoryEnabled = true
+                } catch (let error ){
+                    print("#FlyCall Exception : \(error.localizedDescription)")
+                }
+            }
+        }
+
+    }
+    
     static func getPlistValue(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -159,6 +199,7 @@ import UIKit
         
         var userIdentifier = args["userIdentifier"] as? String ?? ""
         let deviceToken = args["token"] as? String ?? ""
+        let isForceRegister = args["isForceRegister"] as? Bool ?? true
         
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
         
@@ -177,7 +218,7 @@ import UIKit
         NSLog("\(Constants.tag) Register Device Token \(deviceToken)")
         NSLog("\(Constants.tag) ISEXPORT \(ISEXPORT)")
 
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,userType: "d", pushServerType: .firebase) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: "d", pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
@@ -228,10 +269,16 @@ import UIKit
 
                 }
             }else{
-                let error = data.getMessage()
-                result(FlutterError(code: "500",
-                                    message: error as? String,
-                                    details: nil))
+//                let error = data.getMessage()
+                let err = flyError?.description ?? ""
+                let error = err.contains("405") ? err : data.getMessage()
+                if(err.contains("405")){
+                    result(FlutterError(code: "405",message: "You have reached the maximum device limit, If you want to continue one of your device will logged out . Do you want to continue?",details: nil))
+                }else if(err.contains("403")){
+                    result(FlutterError(code: "403",message: error as? String,details: nil))
+                }else {
+                    result(FlutterError(code: "500",message: error as? String,details: nil))
+                }
                 print("#chatSDK \(error)")
             }
         }

@@ -239,6 +239,27 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     await mirrorFlyMethodChannel.invokeMethod('init', builder.build());
   }
 
+
+  @override
+  Future<bool?> initializeSDK(InitializeSDKBuilder builder) async {
+    bool? res;
+    enableDebugLog = builder.enableDebugLog;
+    if (!_messageOnReceivedStreamController.hasListener) {
+      addStreamsAllToStreamController();
+    }
+    try {
+      res = await mirrorFlyMethodChannel.invokeMethod<bool>('initializeSDK', builder.build());
+      LogMessage.d("syncContacts", res);
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
   ///Using [addStreamsAllToStreamController] to add all streams to stream controller
   ///benefit to use stream controller we can call multiple listeners to listen.
   addStreamsAllToStreamController() {
@@ -1446,10 +1467,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> registerUser(String userIdentifier, {String fcmToken = ""}) async {
+  Future<dynamic> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) async {
     dynamic registerResponse;
     try {
-      registerResponse = await mirrorFlyMethodChannel.invokeMethod('register_user', {"userIdentifier": userIdentifier, "token": fcmToken});
+      registerResponse = await mirrorFlyMethodChannel.invokeMethod('register_user', {"userIdentifier": userIdentifier, "token": fcmToken, "isForceRegister": isForceRegister});
       LogMessage.d("Register Result ", " $registerResponse");
       return registerResponse;
     } on PlatformException catch (e) {
@@ -1609,11 +1630,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic re;
     try {
       re = await mirrorFlyMethodChannel.invokeMethod("get_user_list", {"page": page, "search": search, "perPageResultSize": perPageResultSize});
-      LogMessage.d('RESULT ', '$re');
+      LogMessage.d('getUserList ', '$re');
       return re;
     } on PlatformException catch (e) {
-      LogMessage.d("er", "$e");
-      return re;
+      LogMessage.d("getUserList", "$e");
+      rethrow;
     }
   }
 
@@ -1626,7 +1647,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return re;
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
-      return re;
+      rethrow;
     }
   }
 
@@ -1652,7 +1673,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return re;
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
-      return re;
+      rethrow;
     }
   }
 
@@ -1665,7 +1686,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return re;
     } on PlatformException catch (e) {
       LogMessage.d("getAvailableFeatures error", "$e");
-      return re;
+      rethrow;
     }
   }
 
@@ -1856,14 +1877,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<String?> imagePath(String imgurl) async {
-    var re = "";
     try {
       final result = await mirrorFlyMethodChannel.invokeMethod<String>("get_image_path", {"image": imgurl});
       LogMessage.d('RESULT ', '$result');
       return result;
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
-      return re;
+      rethrow;
     }
   }
 
@@ -1879,20 +1899,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return result;
     } on PlatformException catch (e) {
       LogMessage.d("er ", "$e");
-      return result;
+      rethrow;
     }
   }
 
   @override
   Future<dynamic> sentFileMessage(String? file, String jid) async {
-    var re = "";
     try {
       final result = await mirrorFlyMethodChannel.invokeMethod("sent file", {"file": file, "jid": jid, "message": ""});
       LogMessage.d('RESULT', '$result');
       return result;
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
-      return re;
+      rethrow;
     }
   }
 
@@ -4083,4 +4102,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }*/
+
+  @override
+  Future<bool?> markAllUnreadMissedCallsAsRead() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel.invokeMethod<bool>('markAllUnreadMissedCallsAsRead');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
 }

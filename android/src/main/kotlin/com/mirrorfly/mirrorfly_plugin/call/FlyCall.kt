@@ -194,6 +194,11 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "deleteCallLog" -> {
                 sdk.deleteCallLog(call,result)
             }
+            "markAllUnreadMissedCallsAsRead" -> {
+                CallLogManager.markAllUnreadMissedCallsAsRead()
+                result.success(true)
+                LogMessage.d("markAllUnreadMissedCallsAsRead","called")
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }
@@ -230,6 +235,10 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             //FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
             handleCallStatusMessages(callStatus, json)
         }
+        if(userJID!=CallManager.getCurrentUserId() && (callStatus == CallStatus.CONNECTED || callStatus == CallStatus.RECONNECTED)){
+            Log.d(tag,"Connected and Not Me userJid $userJID video ${CallManager.getRemoteProxyVideoSink(userJID)} video mute ${CallManager.isRemoteVideoMuted(userJID)} video paused ${CallManager.isRemoteVideoPaused(userJID)}")
+
+        }
     }
     private fun handleCallStatusMessages(@CallStatus callEvent: String, json: JSONObject){
         LogMessage.d(tag,"callEvent : $callEvent json : $json")
@@ -242,7 +251,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             CallStatus.ON_HOLD ->{}
             CallStatus.ON_RESUME ->{}
             CallStatus.USER_JOINED ->{}
-            CallStatus.USER_LEFT ->{}
+            CallStatus.USER_LEFT ->{
+                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.USER_LEFT,json.getString("userJid"))
+            }
             CallStatus.INVITE_CALL_TIME_OUT ->{}
             CallStatus.OUTGOING_CALL_TIME_OUT ->{
                 json.put("callStatus","CALL TIME OUT")
@@ -292,7 +303,6 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
         json.put("userJid",userJid)
         json.put("callType",CallManager.getCallType())
         json.put("callMode",CallManager.getCallMode())
-        onCallActionStreamHandler.onCallAction?.success(json.toString())
         FlutterCall.callUiListener?.onShowCallUiFlutter(callAction,userJid)
         if(callAction == CallAction.ACTION_REMOTE_VIDEO_STATUS){
             if (CallManager.isRemoteVideoPaused(userJid)){
@@ -323,6 +333,24 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             //CallAudioManager.getInstance(context).stopIncomingRequestTone()
         }
         //sendCallStatusUpdate(callAction,userJid)
+        if(userJid==ChatManager.getCurrentUserJid() && callAction==CallAction.ACTION_REMOTE_HANGUP){
+            sendCallStatusForLocalJidInRemoteHangUP(callAction, userJid)
+        }else {
+            onCallActionStreamHandler.onCallAction?.success(json.toString())
+        }
+    }
+    private fun sendCallStatusForLocalJidInRemoteHangUP(callAction: String, userJid: String){
+        Log.d(tag,"#onCallAction sendCallStatusForLocalJidInRemoteHangUP $callAction userJid $userJid")
+        if(userJid==ChatManager.getCurrentUserJid() && callAction==CallAction.ACTION_REMOTE_HANGUP){
+            if(!CallManager.isCallConnected()){
+                val json = JSONObject()
+                json.put("userJid",userJid)
+                json.put("callType",CallManager.getCallType())
+                json.put("callMode",CallManager.getCallMode())
+                json.put("callStatus", CallStatus.DISCONNECTED)
+                onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+            }
+        }
     }
 
     private fun sendCallStatusUpdate(status: String,userJid: String){
@@ -348,7 +376,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
     }
 
     override fun onVideoTrackAdded(userJid: String) {
-        Log.d(tag,"#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid)} isCallConversionRequestAvailable : ${CallManager.isCallConversionRequestAvailable()}")
+        Log.d(tag,"#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid)} isCallConversionRequestAvailable : ${CallManager.isCallConversionRequestAvailable()} video ${CallManager.getRemoteProxyVideoSink(userJid)}")
         if(!CallManager.isCallConversionRequestAvailable()) {
             val json = JSONObject()
             json.put("userJid", userJid)
@@ -413,7 +441,7 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
 
     override fun getCallAttendedPendingIntent(): PendingIntent {
         val intent: Intent? = AppUtils.getAppIntent(context)
-        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
+//        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
         return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
     }
 

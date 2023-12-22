@@ -30,6 +30,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('build() has not been implemented.');
   }
 
+  Future<bool?> initializeSDK(InitializeSDKBuilder builder) {
+    throw UnimplementedError('build() has not been implemented.');
+  }
+
   /*Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }*/
@@ -342,7 +346,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> registerUser(String userIdentifier, {String fcmToken = ""}) {
+  Future<dynamic> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -1155,6 +1159,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<List<String>> getInvitedUsersList() async {
     throw UnimplementedError('getInvitedUsersList has not been implemented.');
+  }
+
+  Future<bool?> markAllUnreadMissedCallsAsRead() {
+    throw UnimplementedError('has not been implemented.');
   }
 
   /*Future<dynamic> changeCallType({required String switchType}) async {

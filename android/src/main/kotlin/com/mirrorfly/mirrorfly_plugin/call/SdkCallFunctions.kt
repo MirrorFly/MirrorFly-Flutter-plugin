@@ -56,16 +56,16 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         })
         ChatManager.setNameHelper(object : NameHelper {
             override fun getDisplayName(jid: String): String {
-                return ContactManager.getDisplayName(jid)
+                return  ContactManager.getProfileDetails(jid).getDisplayName()//ContactManager.getDisplayName(jid)
             }
 
         })
         CallManager.setCallNameHelper(object : CallNameHelper {
             override fun getDisplayName(jid: String): String {
-                return ContactManager.getDisplayName(jid)
+                return  ContactManager.getProfileDetails(jid).getDisplayName()//ContactManager.getDisplayName(jid)
             }
         })
-        CallManager.keepConnectionInForeground(true)
+//        CallManager.keepConnectionInForeground(false)
     }
 
     fun routeTo(call: MethodCall,result: MethodChannel.Result){
@@ -144,7 +144,11 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         CallManager.answerCall(object : CallActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d("answerCall","success $isSuccess message $message")
-                result.success(isSuccess)
+                if(isSuccess) {
+                    result.success(isSuccess)
+                }else{
+                    result.error("500", message, "")
+                }
             }
 
         })
@@ -191,7 +195,11 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
                             ?.setLocalTarget()
                     }
                 }
-                result.success(isSuccess)
+                if(isSuccess) {
+                    result.success(isSuccess)
+                }else{
+                    result.error("500", message, "")
+                }
             }
 
         })
@@ -204,7 +212,11 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
             CallManager.makeGroupVoiceCall(jidList as ArrayList<String>, groupJid, object : CallActionListener {
                 override fun onResponse(isSuccess: Boolean, message: String) {
                     LogMessage.d("makeGroupVoiceCall", "success $isSuccess message $message")
-                    result.success(isSuccess)
+                    if(isSuccess) {
+                        result.success(isSuccess)
+                    }else{
+                        result.error("500", message, "")
+                    }
                 }
             })
         }
@@ -216,7 +228,11 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         CallManager.makeGroupVideoCall(jidList as ArrayList<String>,groupJid,object: CallActionListener{
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d("makeGroupVideoCall", "success $isSuccess message $message")
-                result.success(isSuccess)
+                if(isSuccess) {
+                    result.success(isSuccess)
+                }else{
+                    result.error("500", message, "")
+                }
             }
 
         })
@@ -429,7 +445,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
                 result.success(data.toJsonString())
             } else {
                 println("call logs error : " + throwable.toString())
-                result.error("400", throwable!!.message.toString(), "")
+                result.error("400", throwable?.message.toString(), "")
             }
         }
 
