@@ -443,8 +443,15 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("insertBusyStatus") -> {
                 val busyStatus = call.argument<String>("busy_status") ?: ""
                 FlyCore.insertMyBusyStatus(busyStatus)
-                FlyCore.setMyBusyStatus(busyStatus)
-                result.success(true)
+                FlyCore.setMyBusyStatus(busyStatus
+                ) { isSuccess, throwable, p2 ->
+                    if (isSuccess) {
+                        result.success(isSuccess)
+                    } else {
+                        result.error("500", throwable?.message.toString(), throwable)
+                    }
+                }
+                //result.success(true)
             }
             call.method.equals("getMyBusyStatus") -> {//{"id": null, "status": "", "isCurrentStatus": false}
                 val myBusyStatus: BusyStatus? = FlyCore.getMyBusyStatus()
@@ -464,20 +471,45 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         }
                     }
                     if (FlyCore.getMyBusyStatus() == null || FlyCore.getMyBusyStatus()!!.status.isEmpty()) {
-                        FlyCore.setMyBusyStatus("I am busy")
+                        FlyCore.setMyBusyStatus("I am busy") { isSuccess, throwable, p2 -> };
                     }
                     result.success(FlyCore.getMyBusyStatus()!!.toJsonString())
                 }
             }
             call.method.equals("setMyBusyStatus") -> {
                 val busyStatus = call.argument<String>("status") ?: ""
-                FlyCore.setMyBusyStatus(busyStatus)
+                FlyCore.setMyBusyStatus(busyStatus,object: FlyCallback{
+                    override fun flyResponse(
+                        isSuccess: Boolean,
+                        throwable: Throwable?,
+                        p2: HashMap<String, Any>
+                    ) {
+                        if(isSuccess) {
+                            result.success(isSuccess)
+                        }else{
+                            result.error("500", throwable?.message.toString(), throwable)
+                        }
+                    }
+
+                })
                 result.success(true)
             }
             call.method.equals("enableDisableBusyStatus") -> {
                 val busyStatusEnable = call.argument<Boolean>("enable") ?: false
-                FlyCore.enableDisableBusyStatus(busyStatusEnable)
-                result.success(true)
+                FlyCore.enableDisableBusyStatus(busyStatusEnable,object: FlyCallback{
+                    override fun flyResponse(
+                        isSuccess: Boolean,
+                        throwable: Throwable?,
+                        p2: HashMap<String, Any>
+                    ) {
+                        if(isSuccess) {
+                            result.success(isSuccess)
+                        }else{
+                            result.error("500", throwable?.message.toString(), throwable)
+                        }
+                    }
+
+                })
             }
             call.method.equals("getBusyStatusList") -> {
                 val myBusyStatusList: List<BusyStatus> = FlyCore.getBusyStatusList()
@@ -1395,6 +1427,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
         }
 
+        LogMessage.enableDebugLogging(enableSDKLog)
+        Logger.enableDebugLogging(enableSDKLog)
+        CallManager.enableCallLogExport(enableSDKLog)
         ChatManager.enableChatHistory(chatHistoryEnable)
 
         SdkCallFunctions(mContext).initCall()
@@ -1402,7 +1437,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         ChatManager.initializeSDK(licenseKey!!){ isSuccess, throwable, data ->
             if (isSuccess) {
                 LogMessage.d(TAG, "initializeSDK success")
-                LogMessage.enableDebugLogging(true)
                 result.success(true)
             } else {
                 LogMessage.d(TAG, "initializeSDK failed with error message " + data["message"])
@@ -3898,6 +3932,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun onMessagesClearedOrDeleted(messageIds: ArrayList<String>, jid: String) {
         LogMessage.d(TAG, "onMessagesClearedOrDeleted : messageIds $messageIds jid $jid")
         //LogMessage.d("MirrorFly", "onMessagesClearedOrDeleted Status Updated")
+    }
+
+    override fun onUpdateBusyStatus(status: Boolean, message: String?) {
+        LogMessage.d(TAG, "onUpdateBusyStatus : status $status message $message")
     }
 
     override fun showOrUpdateOrCancelNotification(jid: String, chatMessage: ChatMessage?) {
