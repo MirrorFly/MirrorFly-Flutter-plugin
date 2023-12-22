@@ -264,10 +264,13 @@ import UIKit
 //                let error = data.getMessage()
                 let err = flyError?.description ?? ""
                 let error = err.contains("405") ? err : data.getMessage()
-                err.contains("405") ? result(FlutterError(code: "405",
-                                    message: error as? String,
-                                                          details: nil)) :
-                result(FlutterError(code: "500",message: error as? String,details: nil))
+                if(err.contains("405")){
+                    result(FlutterError(code: "405",message: "You have reached the maximum device limit, If you want to continue one of your device will logged out . Do you want to continue?",details: nil))
+                }else if(err.contains("403")){
+                    result(FlutterError(code: "403",message: error as? String,details: nil))
+                }else {
+                    result(FlutterError(code: "500",message: error as? String,details: nil))
+                }
                 print("#chatSDK \(error)")
             }
         }
