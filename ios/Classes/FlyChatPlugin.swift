@@ -869,10 +869,10 @@ extension FlyChatPlugin : LocalNotificationDelegate {
 }
 
 extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate, BackupEventDelegate, RestoreEventDelegate {
-    
-    public func onMessageEdited(message: MirrorFlySDK.ChatMessage, chatJid: String) {
+    public func onMessageEdited(message: MirrorFlySDK.ChatMessage, chatJid: String, editedMessageId: String) {
         
     }
+    
     
     public func didRevokedAdminAccess(groupJid: String, revokedAdminMemberJid: String, revokedByMemberJid: String) {
         NSLog("GroupEventsDelegate didRevokedAdminAccess Delegate Triggered")

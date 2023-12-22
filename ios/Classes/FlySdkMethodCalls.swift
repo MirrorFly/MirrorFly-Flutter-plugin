@@ -274,31 +274,34 @@ import UIKit
     static func sendTextMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let txtMessage = args["message"] as? String ?? nil
-        let receiverJID = args["JID"] as? String ?? nil
+        let receiverJID = args["JID"] as? String ?? ""
         let replyMessageID = args["replyMessageId"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
         let editMessageId = args["editMessageId"] as? String ?? ""
 
-        if(txtMessage == nil || receiverJID == nil){
+        if(txtMessage == nil || receiverJID == ""){
             result(FlutterError(code: "500", message: "Parameters Missing", details: nil))
             return
         }
+        let messageParams = TextMessage(toId:  receiverJID, messageText: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [])
         
-        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId, editMessageId: editMessageId) { isSuccess,error,chatMessage in
+        FlyMessenger.sendTextMessage(messageParams: messageParams){ isSuccess, error, chatMessage in
             if isSuccess {
-                print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
-                let textMsgResponse = chatMessage.toJson()
-                if(textMsgResponse != nil){
-                    print("FlyMessenger.sendTextMessage==**==\(String(describing: textMsgResponse))")
-                    result(textMsgResponse)
-                } else {
-                    result(FlutterError(code: "500", message: "Failed to Send Text Message", details: nil))
+                //        FlyMessenger.sendTextMessage(toJid: receiverJID, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId, editMessageId: editMessageId) { isSuccess,error,chatMessage in
+                if isSuccess {
+                    print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
+                    let textMsgResponse = chatMessage.toJson()
+                    if(textMsgResponse != nil){
+                        print("FlyMessenger.sendTextMessage==**==\(String(describing: textMsgResponse))")
+                        result(textMsgResponse)
+                    } else {
+                        result(FlutterError(code: "500", message: "Failed to Send Text Message", details: nil))
+                    }
+                }else{
+                    result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
                 }
-                
-                
-            }else{
-                result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
             }
+            
         }
         
     }
