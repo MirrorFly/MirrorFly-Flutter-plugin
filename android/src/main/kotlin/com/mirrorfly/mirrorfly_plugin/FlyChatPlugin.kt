@@ -2879,14 +2879,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //if (AppUtils.isNetConnected(mContext)) {
         val status = call.argument<String>("status") ?: ""
         if (status.isNotEmpty()) {
-            FlyCore.setMyProfileStatus(status) { isSuccess, _, data ->
+            FlyCore.setMyProfileStatus(status) { isSuccess, error, data ->
                 data["status"] = isSuccess
                 //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyCore.setMyProfileStatus", data.tojsonString())
                 if (isSuccess) {
-                    insertDefaultStatus(call, null)
+                    //insertDefaultStatus(call, null)
+                    result.success(data.toJsonString())
+                }else{
+                    result.error("500",error?.message.toString(),error)
                 }
-                result.success(data.toJsonString())
+
             }
         }
         /*} else {
@@ -2899,13 +2902,15 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         // Same Function as "setMyProfileStatus", writing as seperate new function inorder to match the iOS Functionality
         val status = call.argument<String>("status") ?: ""
         if (status.isNotEmpty()) {
-            FlyCore.setMyProfileStatus(status) { isSuccess, _, data ->
+            FlyCore.setMyProfileStatus(status) { isSuccess, error, data ->
                 data["status"] = isSuccess
 
                 if (isSuccess) {
-                    insertDefaultStatus(call, null)
+                    //insertDefaultStatus(call, null)
+                    result.success(data.toJsonString())
+                }else{
+                    result.error("500",error?.message.toString(),error)
                 }
-                result.success(data.toJsonString())
             }
         }
 
@@ -3368,14 +3373,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     private fun insertDefaultStatus(call: MethodCall, result: MethodChannel.Result?) {
-        if (AppUtils.isNetConnected(mContext)) {
-            val status = call.argument<String>("status") ?: ""
-            if (status.isNotEmpty()) {
-                FlyCore.insertDefaultStatus(status)
-            }
+        val status = call.argument<String>("status") ?: ""
+        if (status.isNotEmpty()) {
+            FlyCore.insertDefaultStatus(status)
             result?.success(true)
-        } else {
-            result?.error("500", "Please Check Your Internet connection", null)
         }
     }
 
@@ -4094,7 +4095,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun onLoggedOut() {
         LogMessage.d(TAG, "onLoggedOut")
         instance.mainActivity?.runOnUiThread {
-                onLoggedOutStreamHandler.onLoggedOut?.success(true)
+            onLoggedOutStreamHandler.onLoggedOut?.success(true)
         }
     }
 
