@@ -105,13 +105,13 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getUsersWhoBlockedMe();
   }
 
-  static Future<dynamic> getUnKnownUserProfiles() {
+  /*static Future<dynamic> getUnKnownUserProfiles() {
     return FlyChatFlutterPlatform.instance.getUnKnownUserProfiles();
-  }
+  }*/
 
-  static Future<dynamic> getMyProfileStatus() {
+  /*static Future<dynamic> getMyProfileStatus() {
     return FlyChatFlutterPlatform.instance.getMyProfileStatus();
-  }
+  }*/
 
   static Future<dynamic> getMyBusyStatus() {
     return FlyChatFlutterPlatform.instance.getMyBusyStatus();

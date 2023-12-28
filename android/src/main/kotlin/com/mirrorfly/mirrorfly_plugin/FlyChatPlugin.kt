@@ -2876,36 +2876,33 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     private fun setMyProfileStatus(call: MethodCall, result: MethodChannel.Result) {
-        //if (AppUtils.isNetConnected(mContext)) {
         val status = call.argument<String>("status") ?: ""
         if (status.isNotEmpty()) {
-            FlyCore.setMyProfileStatus(status) { isSuccess, _, data ->
+            FlyCore.setMyProfileStatus(status) { isSuccess, error, data ->
                 data["status"] = isSuccess
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("FlyCore.setMyProfileStatus", data.tojsonString())
                 if (isSuccess) {
-                    insertDefaultStatus(call, null)
+                    result.success(data.toJsonString())
+                }else{
+                    result.error("500",error?.message.toString(),error)
                 }
-                result.success(data.toJsonString())
+
             }
         }
-        /*} else {
-        result.error("500", "Please Check Your Internet connection", null)
-    }*/
     }
 
     private fun insertNewProfileStatus(call: MethodCall, result: MethodChannel.Result) {
 
-        // Same Function as "setMyProfileStatus", writing as seperate new function inorder to match the iOS Functionality
+        // Same Function as "setMyProfileStatus", writing as separate new function inorder to match the iOS Functionality
         val status = call.argument<String>("status") ?: ""
         if (status.isNotEmpty()) {
-            FlyCore.setMyProfileStatus(status) { isSuccess, _, data ->
+            FlyCore.setMyProfileStatus(status) { isSuccess, error, data ->
                 data["status"] = isSuccess
 
                 if (isSuccess) {
-                    insertDefaultStatus(call, null)
+                    result.success(data.toJsonString())
+                }else{
+                    result.error("500",error?.message.toString(),error)
                 }
-                result.success(data.toJsonString())
             }
         }
 
@@ -3368,15 +3365,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     private fun insertDefaultStatus(call: MethodCall, result: MethodChannel.Result?) {
-        if (AppUtils.isNetConnected(mContext)) {
-            val status = call.argument<String>("status") ?: ""
-            if (status.isNotEmpty()) {
-                FlyCore.insertDefaultStatus(status)
-            }
-            result?.success(true)
-        } else {
-            result?.error("500", "Please Check Your Internet connection", null)
+        val status = call.argument<String>("status") ?: ""
+        if (status.isNotEmpty()) {
+            FlyCore.insertDefaultStatus(status)
         }
+        result?.success(true)
     }
 
     @SuppressLint("IntentReset")

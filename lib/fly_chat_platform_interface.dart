@@ -62,13 +62,13 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getUnKnownUserProfiles() {
+  /*Future<dynamic> getUnKnownUserProfiles() {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
-  Future<dynamic> getMyProfileStatus() {
+  /*Future<dynamic> getMyProfileStatus() {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
   Future<dynamic> getMyBusyStatus() {
     throw UnimplementedError('has not been implemented.');

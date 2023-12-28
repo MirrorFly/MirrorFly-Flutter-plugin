@@ -422,7 +422,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<dynamic> getUnKnownUserProfiles() async {
     dynamic response = "";
     try {
@@ -436,9 +436,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
-  @override
+  /*@override
   Future<dynamic> getMyProfileStatus() async {
     dynamic response = "";
     try {
@@ -452,7 +452,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
   Future<dynamic> getMyBusyStatus() async {

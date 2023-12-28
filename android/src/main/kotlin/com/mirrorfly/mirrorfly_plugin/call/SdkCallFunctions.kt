@@ -483,4 +483,9 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         })
     }
 
+    fun syncCallLogs (call: MethodCall, result: MethodChannel.Result){
+        CallLogManager.uploadUnSyncedCallLogs()
+        result.success(true)
+    }
+
 }

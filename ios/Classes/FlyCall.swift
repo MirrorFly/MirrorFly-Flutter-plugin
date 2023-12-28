@@ -459,13 +459,14 @@ import PushKit
     
     func onRemoteVideoTrackAdded(userId: String, track: RTCVideoTrack) {
         NSLog("\(Constants.callTag) onRemote video Track --> \(userId)")
+        NSLog("\(Constants.callTag) isRemoteVideoMuted \(CallManager.isRemoteVideoMuted(userId))")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
         let jidJson = pluginDictToJson(dictionary: jsonObject)
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: userId, updateType: MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+                mirrorflyView.updateVideoTrack(userJid: userId, updateType: CallManager.isRemoteVideoMuted(userId) ? MuteEvent.ACTION_REMOTE_VIDEO_MUTE : MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
             } else {
                 // Handle case when view is not found
             }

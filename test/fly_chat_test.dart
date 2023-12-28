@@ -407,11 +407,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future getMyProfileStatus() {
     // getMyProfileStatus
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future getNUnreadMessagesOfEachUsers(int messagesCount) {
@@ -491,11 +491,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future getUnKnownUserProfiles() {
     // getUnKnownUserProfiles
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<int?> getUnreadMessageCountExceptMutedChat() {

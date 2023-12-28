@@ -213,7 +213,7 @@ func getCallLogs(flyData: [String: Any]) -> [String: Any]{
         let endTime = callLog?.callEndedTime ?? 0.0
         let callState = callLog?.callState.rawValue ?? ""
         let callMode = callLog?.callMode.rawValue ?? ""
-        let userList = callLog?.userList ?? []
+        var userList = callLog?.userList ?? []
         let groupId = callLog?.groupId ?? ""
         let isSync = callLog?.isLogSynced ?? false
         let startTime = callLog?.callAttendedTime ?? 0.0
@@ -237,7 +237,7 @@ func getCallLogs(flyData: [String: Any]) -> [String: Any]{
                 "sessionStatus": "",
                 "startTime": startTime,
                 "toUser": toUser,
-                "userList": userList
+                "userList": userList.filter { $0 != AppUtils.getMyJid() }
             ]
         }
 

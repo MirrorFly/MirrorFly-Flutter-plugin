@@ -199,6 +199,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 result.success(true)
                 LogMessage.d("markAllUnreadMissedCallsAsRead","called")
             }
+            "syncCallLogs" -> {
+                sdk.syncCallLogs(call, result)
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }
