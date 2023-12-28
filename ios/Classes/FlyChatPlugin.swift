@@ -1438,7 +1438,9 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
         if(onLoggedOutStreamHandler?.onLoggedOut != nil){
             print("\(Constants.tag) didReceiveLogout Delegate Method")
-            onLoggedOutStreamHandler?.onLoggedOut?(true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.onLoggedOutStreamHandler?.onLoggedOut?(true)
+            }
         }else{
             print("logout Stream Handler is Nil")
         }

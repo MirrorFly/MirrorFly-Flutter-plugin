@@ -1418,10 +1418,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String?> getGroupJid(String jid) async {
+  Future<String?> getGroupJid(String groupId) async {
     String? response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod<String>('getGroupJid', {"jid": jid});
+      response = await mirrorFlyMethodChannel.invokeMethod<String>('getGroupJid', {"groupId": groupId});
       LogMessage.d("getGroupJid Result ", " $response");
       return response;
     } on PlatformException catch (e) {
@@ -1643,7 +1643,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic re;
     try {
       re = await mirrorFlyCallMethodChannel.invokeMethod("getCallLogsList", {"currentPage": currentPage});
-      LogMessage.d('RESULT ', '$re');
+      LogMessage.d('getCallLogsList RESULT ', '$re');
       return re;
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");

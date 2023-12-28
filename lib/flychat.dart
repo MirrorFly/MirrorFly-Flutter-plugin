@@ -377,8 +377,9 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.deleteAllMessages();
   }
 
-  static Future<String?> getGroupJid(String jid) {
-    return FlyChatFlutterPlatform.instance.getGroupJid(jid);
+  /// This [getGroupJid] is used to get Group Jid from group ID.
+  static Future<String?> getGroupJid(String groupId) {
+    return FlyChatFlutterPlatform.instance.getGroupJid(groupId);
   }
 
   static Future<String?> getUserLastSeenTime(String jid) {

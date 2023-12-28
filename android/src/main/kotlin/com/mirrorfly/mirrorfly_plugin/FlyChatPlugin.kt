@@ -3368,8 +3368,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val status = call.argument<String>("status") ?: ""
         if (status.isNotEmpty()) {
             FlyCore.insertDefaultStatus(status)
+            result?.success(true)
         }
-        result?.success(true)
     }
 
     @SuppressLint("IntentReset")
@@ -4087,7 +4087,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun onLoggedOut() {
         LogMessage.d(TAG, "onLoggedOut")
         instance.mainActivity?.runOnUiThread {
-                onLoggedOutStreamHandler.onLoggedOut?.success(true)
+            onLoggedOutStreamHandler.onLoggedOut?.success(true)
         }
     }
 

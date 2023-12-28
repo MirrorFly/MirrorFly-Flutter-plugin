@@ -129,35 +129,34 @@ import UIKit
         let containerID = args["iOSContainerID"] as? String ?? ""
         let enableSDKLog = args["enableSDKLog"] as? Bool ?? false
         
-        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
+        
         ChatManager.setAppGroupContainerId(id: containerID)
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
                 NSLog("SDK INITIALISED")
+                if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+
+                    DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+                        
+                        do {
+                            try CallManager.initCallSDK()
+                            //                    FlyDefaults.chatHistoryEnabled = true
+                        } catch (let error ){
+                            print("#FlyCall Exception : \(error.localizedDescription)")
+                        }
+                    }
+                }
                 result(true)
-                return
             }else{
                 NSLog("SDK FAILED TO INITIALISE \(flyError)")
                 result(FlutterError(code: "500",
                                     message: "SDK failed to Initialize",
                                     details: nil))
-                return
             }
         }
-        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
-
-            DispatchQueue.main.asyncAfter(deadline: .now()+2) {
-                
-                do {
-                    try CallManager.initCallSDK()
-                    //                    FlyDefaults.chatHistoryEnabled = true
-                } catch (let error ){
-                    print("#FlyCall Exception : \(error.localizedDescription)")
-                }
-            }
-        }
+        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
 
     }
     
