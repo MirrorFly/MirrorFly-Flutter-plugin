@@ -334,7 +334,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String?> getGroupJid(String jid) {
+  Future<String?> getGroupJid(String groupId) {
     throw UnimplementedError('has not been implemented.');
   }
 
