@@ -457,8 +457,10 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     fun getLocalCallLogs(call: MethodCall, result: MethodChannel.Result){
         val callLogsList = CallLogManager.getCallLogs()
         if (callLogsList != null){
-            LogMessage.d("callLogsList Search: ", callLogsList.toJsonString())
-            result.success(callLogsList.toJsonString())
+            LogMessage.d("getLocalCallLogs: ", callLogsList.toJsonString())
+            val map = HashMap<String,Any>()
+            map["data"] = callLogsList
+            result.success(map.toJsonString())
         }else{
             result.error("400", "getLocalCallLogs error", "")
         }

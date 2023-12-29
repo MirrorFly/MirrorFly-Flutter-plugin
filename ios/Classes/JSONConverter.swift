@@ -226,7 +226,7 @@ func getCallLogs(callList: [Any], totalPages: Any?) -> [String: Any]{
                 "startTime": startTime,
                 "toUser": toUser,
                 "nickName": displayName,
-                "userList": userList.filter { $0 != AppUtils.getMyJid() }
+                "userList": userList.filter { $0 != AppUtils.getMyJid() && !$0.isEmpty }
             ]
         }
 
