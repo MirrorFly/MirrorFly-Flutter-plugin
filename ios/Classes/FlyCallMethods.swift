@@ -13,6 +13,7 @@ import MirrorFlySDK
 @objc class FlyCallMethods : NSObject{
     
     let tag = "#MirrorFlyCall"
+    let callLogManager = CallLogManager()
     
     func getCallUsersList(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
@@ -408,22 +409,35 @@ import MirrorFlySDK
         let pageNumber = args["currentPage"] as? Int ?? 1
         
         NSLog("\(Constants.callTag) getCallLogsList pageNumber \(pageNumber)");
-        CallLogManager().getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
+        callLogManager.getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
             
             var flyData = data
 //            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
-            print("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
+            print("\(Constants.callTag) getCallLogsList plugin \(String(describing: flyData))")
            
     
             
             if isSuccess{
 //                result(callLogList.)
                 if flyData["data"] is [String : Any]{
+                    
+                    guard let data = flyData["data"] as? [String: Any] else {
+                        print("Error: Unable to extract 'data' from originalData.")
+//                        result "{\"data\" : [], \"total_pages\" : 0}";
+                        return
+                    }
+
+                    guard let callList = data["callList"] as? [Any] else {
+                        print("Error: Unable to extract 'callList' from 'data'.")
+                        print("Error: data: \(data)")
+//                        return [:]
+                        return
+                    }
                    
-                    let callListConverted = getCallLogs(flyData: flyData)
-                    print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
+                    let callListConverted = getCallLogs(callList: callList, totalPages: data["totalPages"])
+//                    print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
                     let callListJson = callListConverted.dictToJson()
-                    print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
+//                    print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
                     result(callListJson)
                     
                 }else{
@@ -433,6 +447,59 @@ import MirrorFlySDK
                 result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
             }
         }
+    }
+    
+    func getLocalCallLogs(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        var callLogArray = CallLogManager.getAllCallLogs()
+        print("\(Constants.callTag) getLocalCallLogs \(String(describing: callLogArray))")
+        if callLogArray.isEmpty{
+            result(FlutterError(code: "500", message: "Call Log Filter List Fetch Failed", details: nil))
+        }else{
+            
+            let callListConverted = getCallLogs(callList: callLogArray, totalPages: 0)
+            print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
+            let callListJson = callListConverted.dictToJson()
+            print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
+            result(callListJson)
+//            if callLogArray["data"] is [String : Any]{
+//               
+//                let callListConverted = getCallLogs(flyData: callLogArray)
+//                print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
+//                let callListJson = callListConverted.dictToJson()
+//                print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
+//                result(callListJson)
+//                
+//            }else{
+//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
+//            }
+        }
+        
+        
+//        CallLogManager().getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
+//            
+//            var flyData = data
+////            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
+//            print("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
+//           
+//    
+//            
+//            if isSuccess{
+////                result(callLogList.)
+//                if flyData["data"] is [String : Any]{
+//                   
+//                    let callListConverted = getCallLogs(flyData: flyData)
+//                    print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
+//                    let callListJson = callListConverted.dictToJson()
+//                    print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
+//                    result(callListJson)
+//                    
+//                }else{
+//                    result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
+//                }
+//            }else{
+//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
+//            }
+//        }
     }
     
     func deleteCallLog(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){

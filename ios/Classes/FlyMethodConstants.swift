@@ -56,6 +56,7 @@ class FlyMethodConstants {
             "deleteCallLog": flyCallMethods.deleteCallLog,
             "syncCallLogs": flyCallMethods.syncCallLogs,
             "isCallConversionRequestAvailable": flyCallMethods.isCallConversionRequestAvailable,
+            "getLocalCallLogs": flyCallMethods.getLocalCallLogs,
 //            "changeCallType": flyCallMethods.changeCallType,
 //            "reRouteAudio": flyCallMethods.reRouteAudio,
             

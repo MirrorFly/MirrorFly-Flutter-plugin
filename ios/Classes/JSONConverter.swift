@@ -188,19 +188,7 @@ func fileExists(atPath filePath: String) -> Bool {
     return fileManager.fileExists(atPath: filePath)
 }
 
-func getCallLogs(flyData: [String: Any]) -> [String: Any]{
-
-    
-    guard let data = flyData["data"] as? [String: Any] else {
-        print("Error: Unable to extract 'data' from originalData.")
-        return [:]
-    }
-
-    guard let callList = data["callList"] as? [Any] else {
-        print("Error: Unable to extract 'callList' from 'data'.")
-        print("Error: data: \(data)")
-        return [:]
-    }
+func getCallLogs(callList: [Any], totalPages: Any?) -> [String: Any]{
 
 
     let callListData: [[String: Any]] = callList.compactMap { callLogObject in
@@ -217,7 +205,7 @@ func getCallLogs(flyData: [String: Any]) -> [String: Any]{
         let groupId = callLog?.groupId ?? ""
         let isSync = callLog?.isLogSynced ?? false
         let startTime = callLog?.callAttendedTime ?? 0.0
-//        let displayName = callLog?.displayName
+        let displayName = callLog?.displayName ?? ""
             return [
                 "callMode": callMode,
                 "callState": callState,
@@ -237,13 +225,14 @@ func getCallLogs(flyData: [String: Any]) -> [String: Any]{
                 "sessionStatus": "",
                 "startTime": startTime,
                 "toUser": toUser,
+                "nickName": displayName,
                 "userList": userList.filter { $0 != AppUtils.getMyJid() }
             ]
         }
 
     let result: [String: Any] = [
             "data": callListData,
-            "total_pages": data["totalPages"] ?? 0
+            "total_pages": totalPages ?? 0
         ]
         return result
 //    return callListData
