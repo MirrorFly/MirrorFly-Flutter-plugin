@@ -28,9 +28,9 @@ Pod::Spec.new do |s|
   s.dependency 'GoogleWebRTC'
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16'
-  #s.dependency 'MirrorFlySDK', '5.13.3'
+  s.dependency 'MirrorFlySDK', '5.14.4'
 
-  s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+  #s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
 
 

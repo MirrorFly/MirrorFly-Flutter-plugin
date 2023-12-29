@@ -1235,6 +1235,11 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.markAllUnreadMissedCallsAsRead();
   }
 
+  /// [isCallConversionRequestAvailable] Used to check whether the Audio to Video Call Conversion is available or not.
+  static Future<bool?> isCallConversionRequestAvailable() async {
+    return FlyChatFlutterPlatform.instance.isCallConversionRequestAvailable();
+  }
+
 /* /// [changeCallType] Used to Change the Call Type
   /// audio for Switching to Audio Call
   /// video for Switching to Video Call

@@ -202,6 +202,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             "syncCallLogs" -> {
                 sdk.syncCallLogs(call, result)
             }
+            "isCallConversionRequestAvailable" -> {
+                result.success(CallManager.isCallConversionRequestAvailable())
+            }
             /*"changeCallType" -> {
                 sdk.changeCallType(call, result)
             }

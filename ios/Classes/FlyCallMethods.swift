@@ -528,7 +528,8 @@ import MirrorFlySDK
         ChatManager.deleteCallLog(isClearAll: isClearAll, callLogIds: jidList) { isSuccess, error, data in
             var flyData = data
             if isSuccess {
-                _ = flyData.getMessage() as? String
+                let deleteMessage = flyData.getMessage() as? String
+                print("deleteMessage response \(deleteMessage)")
                 result(isSuccess)
             }else{
                 result(FlutterError(code: "500", message: "Call Log Delete Failed", details: flyData.getMessage()))
@@ -549,8 +550,7 @@ import MirrorFlySDK
         }
     }
     func isCallConversionRequestAvailable(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-        
-        
+        result(CallManager.isCallConversionRequestAvailable())
     }
 //    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
 //        let args = call.arguments as! Dictionary<String, Any>
