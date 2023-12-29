@@ -1652,6 +1652,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future<bool?> syncCallLogs() {
+    //  implement syncCallLogs
+    throw UnimplementedError();
+  }
+
   /*@override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType

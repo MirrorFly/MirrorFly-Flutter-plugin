@@ -1240,6 +1240,11 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.isCallConversionRequestAvailable();
   }
 
+  /// [syncCallLogs] Used to sync the Call logs from server to local DB.
+  static Future<bool?> syncCallLogs() async {
+    return FlyChatFlutterPlatform.instance.syncCallLogs();
+  }
+
 /* /// [changeCallType] Used to Change the Call Type
   /// audio for Switching to Audio Call
   /// video for Switching to Video Call

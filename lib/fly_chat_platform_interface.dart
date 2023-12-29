@@ -1169,6 +1169,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('isCallConversionRequestAvailable has not been implemented.');
   }
 
+  Future<bool?> syncCallLogs() {
+    throw UnimplementedError('syncCallLogs has not been implemented.');
+  }
+
   /*Future<dynamic> changeCallType({required String switchType}) async {
     throw UnimplementedError('changeCallType has not been implemented.');
   }

@@ -549,8 +549,13 @@ import MirrorFlySDK
             result(isSuccess)
         }
     }
+    
     func isCallConversionRequestAvailable(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
         result(CallManager.isCallConversionRequestAvailable())
+    }
+    
+    func markAllUnreadMissedCallsAsRead(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        result(true)
     }
 //    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
 //        let args = call.arguments as! Dictionary<String, Any>

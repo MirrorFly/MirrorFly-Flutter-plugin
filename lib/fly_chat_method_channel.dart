@@ -4132,4 +4132,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
+
+  @override
+  Future<bool?> syncCallLogs() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel.invokeMethod<bool>('syncCallLogs');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
 }
