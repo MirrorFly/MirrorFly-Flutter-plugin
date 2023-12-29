@@ -2581,6 +2581,11 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
+        
+        if(userJid.isEmpty){
+            result(FlutterError(code: "500", message: "user jid cannot be empty", details: nil))
+            return
+        }
 
         let userProfile = ChatManager.profileDetaisFor(jid: userJid)
         print("userProfile*** \(userProfile)")
