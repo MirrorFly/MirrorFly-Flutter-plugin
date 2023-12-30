@@ -232,6 +232,8 @@ import PushKit
 //        if userJID == ""{
 //            userJID = AppUtils.getMyJid()
 //        }
+        NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
         
         if(userJID != "" && callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
@@ -529,7 +531,14 @@ import PushKit
         jsonObject.setValue(userJid, forKey: "userJid")
         jsonObject.setValue(isOneToOneCall, forKey: "isOneToOneCall")
         jsonObject.setValue(groupId, forKey: "groupId")
-        jsonObject.setValue(callType, forKey: "callType")
+        if callType == "audio call"{
+            jsonObject.setValue("audio", forKey: "callType")
+        }else if callType == "video call"{
+            jsonObject.setValue("video", forKey: "callType")
+        }else{
+            jsonObject.setValue("", forKey: "callType")
+        }
+        
         jsonObject.setValue(userList.joined(separator: ","), forKey: "userList")
         
         let onMissedCallJson = pluginDictToJson(dictionary: jsonObject)

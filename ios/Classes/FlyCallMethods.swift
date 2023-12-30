@@ -524,10 +524,14 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let isClearAll = args["isClearAll"] as? Bool ?? false
         let jidList = args["jidList"] as? [String] ?? []
-        
+        NSLog("\(Constants.tag) deleteCallLog isClearAll \(isClearAll)")
+
         ChatManager.deleteCallLog(isClearAll: isClearAll, callLogIds: jidList) { isSuccess, error, data in
             var flyData = data
             if isSuccess {
+                if isClearAll{
+                    CallLogManager().deleteCallLogs()
+                }
                 let deleteMessage = flyData.getMessage() as? String
                 print("deleteMessage response \(deleteMessage)")
                 result(isSuccess)
