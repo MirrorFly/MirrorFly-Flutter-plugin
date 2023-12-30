@@ -555,6 +555,7 @@ import MirrorFlySDK
     }
     
     func markAllUnreadMissedCallsAsRead(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallLogManager.resetUnreadMissedCallCount()
         result(true)
     }
 //    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
