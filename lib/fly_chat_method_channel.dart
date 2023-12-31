@@ -422,7 +422,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<dynamic> getUnKnownUserProfiles() async {
     dynamic response = "";
     try {
@@ -436,9 +436,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
-  @override
+  /*@override
   Future<dynamic> getMyProfileStatus() async {
     dynamic response = "";
     try {
@@ -452,7 +452,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
   Future<dynamic> getMyBusyStatus() async {
@@ -3712,10 +3712,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String> getGroupId() async {
+  Future<String> getCallGroupJid() async {
     String getGroupId;
     try {
-      LogMessage.d('getGroupId :', '');
+      LogMessage.d('getCallGroupJid :', '');
       getGroupId = await mirrorFlyCallMethodChannel.invokeMethod('getGroupID');
       return getGroupId;
     } on PlatformException catch (e) {
@@ -4108,6 +4108,36 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     bool? res;
     try {
       res = await mirrorFlyCallMethodChannel.invokeMethod<bool>('markAllUnreadMissedCallsAsRead');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> isCallConversionRequestAvailable() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel.invokeMethod<bool>('isCallConversionRequestAvailable');
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool?> syncCallLogs() async {
+    bool? res;
+    try {
+      res = await mirrorFlyCallMethodChannel.invokeMethod<bool>('syncCallLogs');
       return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");

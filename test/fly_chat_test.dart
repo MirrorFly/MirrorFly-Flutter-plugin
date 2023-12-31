@@ -407,11 +407,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future getMyProfileStatus() {
     // getMyProfileStatus
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future getNUnreadMessagesOfEachUsers(int messagesCount) {
@@ -491,11 +491,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future getUnKnownUserProfiles() {
     // getUnKnownUserProfiles
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<int?> getUnreadMessageCountExceptMutedChat() {
@@ -1398,8 +1398,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String> getGroupId() {
-    // implement getGroupId
+  Future<String> getCallGroupJid() {
+    // implement getCallGroupJid
     throw UnimplementedError();
   }
 
@@ -1606,43 +1606,55 @@ class MockFlyChatFlutterPlatform
 
   @override
   getCallLogsList(int currentPage) {
-    // TODO: implement getCallLogsList
+    //  implement getCallLogsList
     throw UnimplementedError();
   }
 
   @override
   inviteUsersToOngoingCall(List<String> jidList) {
-    // TODO: implement inviteUsersToOngoingCall
+    //  implement inviteUsersToOngoingCall
     throw UnimplementedError();
   }
 
   @override
   Future<List<String>> getInvitedUsersList() {
-    // TODO: implement getInvitedUsersList
+    //  implement getInvitedUsersList
     throw UnimplementedError();
   }
 
   @override
   getLocalCallLogs() {
-    // TODO: implement filteredCallLog
+    //  implement filteredCallLog
     throw UnimplementedError();
   }
 
   @override
   deleteCallLog(List<String> jidlist, bool isClearAll) {
-    // TODO: implement deleteCallLog
+    // implement deleteCallLog
     throw UnimplementedError();
   }
 
   @override
   Future<bool?> initializeSDK(InitializeSDKBuilder builder) {
-    // TODO: implement initSDK
+    // implement initSDK
     throw UnimplementedError();
   }
 
   @override
   Future<bool?> markAllUnreadMissedCallsAsRead() {
-    // TODO: implement markAllUnreadMissedCallsAsRead
+    // implement markAllUnreadMissedCallsAsRead
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isCallConversionRequestAvailable() {
+    //  implement isCallConversionRequestAvailable
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> syncCallLogs() {
+    //  implement syncCallLogs
     throw UnimplementedError();
   }
 

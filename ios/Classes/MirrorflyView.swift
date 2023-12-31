@@ -103,7 +103,9 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         
         createVideoView(argument: argument)
         
-        if(videoTrack == nil || CallManager.getCallType() == .Audio || muteStatus){
+        NSLog("\(Constants.callTag) getCallType \(CallManager.getCallType())")
+        
+        if(videoTrack == nil || muteStatus){
             
 //                showAudioView(argument: argument, userName: userName)
 //                DispatchQueue.main.async {
@@ -384,7 +386,6 @@ class MirrorflyView: NSObject, FlutterPlatformView {
 
     
     private func randomColor() -> UIColor {
-        // Generate random RGB values for the background color
         let red = CGFloat.random(in: 0...1)
         let green = CGFloat.random(in: 0...1)
         let blue = CGFloat.random(in: 0...1)
@@ -397,15 +398,15 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     }
     
     func updateVideoTrack(userJid: String, updateType: MuteEvent) {
-        NSLog("\(Constants.callTag) Update Video Track viewId\(viewId) userJid\(userJid)")
+        NSLog("\(Constants.callTag) Update Video Track viewId\(viewId) userJid\(userJid) updateType\(updateType)")
         
-        if(updateType == .REMOTE_VIDEO_UN_MUTE || updateType == .LOCAL_VIDEO_UNMUTE){
-            NSLog("\(Constants.callTag) Removing video track")
+        if(updateType == .ACTION_REMOTE_VIDEO_UN_MUTE || updateType == .ACTION_LOCAL_VIDEO_UN_MUTE){
+            NSLog("\(Constants.callTag) Removing Existing video track for \(userJid)")
             videoTrack?.remove(videoView as! RTCVideoRenderer)
             videoTrack = CallManager.getRemoteVideoTrack(jid: userJid)
             
             if let track = videoTrack {
-                NSLog("\(Constants.callTag) get remote track \(track)")
+                NSLog("\(Constants.callTag) get remote track for \(userJid) : \(track)")
                 if videoView == nil{
                     videoView = getVideoView()
                 }
@@ -413,7 +414,6 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                 track.add(videoView as! RTCVideoRenderer)
                 DispatchQueue.main.async {
                     self._baseView.addSubview(self.videoView!)
-//                }
                 
                 
                 NSLayoutConstraint.activate([
@@ -422,19 +422,18 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                     self.videoView!.topAnchor.constraint(equalTo: self._baseView.topAnchor),
                     self.videoView!.bottomAnchor.constraint(equalTo: self._baseView.bottomAnchor)
                 ])
-//                DispatchQueue.main.async {
+
                     self.audioView?.removeFromSuperview()
                 }
             }else{
-                NSLog("\(Constants.callTag) video track is null")
+                NSLog("\(Constants.callTag) video track is null for \(userJid)")
                 
             }
-        }else{
-            NSLog("\(Constants.callTag) show Audio View")
+        }else if (updateType == .ACTION_REMOTE_VIDEO_MUTE || updateType == .ACTION_LOCAL_VIDEO_MUTE){
+            NSLog("\(Constants.callTag) show Audio View for \(userJid)")
             DispatchQueue.main.async {
                 self.videoView?.removeFromSuperview()
                 self._baseView.addSubview(self.audioView!)
-                //            }
                 
                 NSLayoutConstraint.activate([
                     self.audioView!.centerXAnchor.constraint(equalTo: self._baseView.centerXAnchor),
@@ -443,6 +442,8 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                     self.audioView!.bottomAnchor.constraint(equalTo: self._baseView.bottomAnchor)
                 ])
             }
+        }else{
+            NSLog("\(Constants.callTag) Received Update Mirrorfly View Event is \(updateType) for jid \(userJid). No update is done in Mirrorfly View. Listener has been forwarded to flutter View.")
         }
     }
     

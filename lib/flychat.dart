@@ -105,13 +105,13 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getUsersWhoBlockedMe();
   }
 
-  static Future<dynamic> getUnKnownUserProfiles() {
+  /*static Future<dynamic> getUnKnownUserProfiles() {
     return FlyChatFlutterPlatform.instance.getUnKnownUserProfiles();
-  }
+  }*/
 
-  static Future<dynamic> getMyProfileStatus() {
+  /*static Future<dynamic> getMyProfileStatus() {
     return FlyChatFlutterPlatform.instance.getMyProfileStatus();
-  }
+  }*/
 
   static Future<dynamic> getMyBusyStatus() {
     return FlyChatFlutterPlatform.instance.getMyBusyStatus();
@@ -426,19 +426,19 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getRegisteredUserList(server: fetchFromServer);
   }
 
-  static getUserList(int page, String search, [int perPageResultSize = 20]) {
+  static Future<dynamic> getUserList(int page, String search, [int perPageResultSize = 20]) {
     return FlyChatFlutterPlatform.instance.getUserList(page, search, perPageResultSize);
   }
 
-  static getCallLogsList(int currentPage) {
+  static Future<dynamic> getCallLogsList(int currentPage) {
     return FlyChatFlutterPlatform.instance.getCallLogsList(currentPage);
   }
 
-  static getLocalCallLogs() {
+  static Future<dynamic> getLocalCallLogs() {
     return FlyChatFlutterPlatform.instance.getLocalCallLogs();
   }
 
-  static deleteCallLog(List<String> jidlist, bool isClearAll) {
+  static Future<dynamic> deleteCallLog(List<String> jidlist, bool isClearAll) {
     return FlyChatFlutterPlatform.instance.deleteCallLog(jidlist, isClearAll);
   }
 
@@ -1084,10 +1084,10 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getCallType();
   }
 
-  ///Used as a [getGroupId] class for [Mirrorfly]
+  ///Used as a [getCallGroupJid] class for [Mirrorfly]
   ///used to get type of the current call, audio or video
-  static Future<String> getGroupId() async {
-    return FlyChatFlutterPlatform.instance.getGroupId();
+  static Future<String> getCallGroupJid() async {
+    return FlyChatFlutterPlatform.instance.getCallGroupJid();
   }
 
   ///Used as a [getCallDirection] class for [Mirrorfly]
@@ -1233,6 +1233,16 @@ class Mirrorfly {
   ///Used to get [markAllUnreadMissedCallsAsRead]
   static Future<bool?> markAllUnreadMissedCallsAsRead() async {
     return FlyChatFlutterPlatform.instance.markAllUnreadMissedCallsAsRead();
+  }
+
+  /// [isCallConversionRequestAvailable] Used to check whether the Audio to Video Call Conversion is available or not.
+  static Future<bool?> isCallConversionRequestAvailable() async {
+    return FlyChatFlutterPlatform.instance.isCallConversionRequestAvailable();
+  }
+
+  /// [syncCallLogs] Used to sync the Call logs from server to local DB.
+  static Future<bool?> syncCallLogs() async {
+    return FlyChatFlutterPlatform.instance.syncCallLogs();
   }
 
 /* /// [changeCallType] Used to Change the Call Type

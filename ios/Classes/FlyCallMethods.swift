@@ -13,6 +13,8 @@ import MirrorFlySDK
 @objc class FlyCallMethods : NSObject{
     
     let tag = "#MirrorFlyCall"
+    let callLogManager = CallLogManager()
+    var callLogArray = [CallLog]()
     
     func getCallUsersList(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
@@ -22,9 +24,6 @@ import MirrorFlySDK
         NSLog("userListStatus \(userListStatus)")
         NSLog("userlist \(String(describing: userList))")
         
-//        let userListStatusJson = userListStatus.dictToJson()
-        
-//        ["917010279986@xmpp-uikit-qa.contus.us": MirrorFlySDK.CALLSTATUS.CONNECTED]
         
         var jsonArray: [[String: Any]] = []
         
@@ -39,7 +38,7 @@ import MirrorFlySDK
                 "isVideoMuted" : CallManager.isRemoteVideoMuted(memberJid)
 //                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid)
             ]
-            NSLog("Appending CallUsersList \(jsonObject)")
+            NSLog("#MirrorflyCall Call Status Updated--> Appending CallUsersList \(jsonObject)")
             jsonArray.append(jsonObject)
         }
         
@@ -65,22 +64,25 @@ import MirrorFlySDK
         NSLog("\(Constants.callTag) muteVideo Method MuteStatus \(muteStatus)")
         CallManager.muteVideo(muteStatus)
         
+        
         if !CallManager.isOneToOneCall() && !muteStatus{
+            CallManager.setCallType(callType: .Video)
             CallManager.enableVideo()
         }else if !CallManager.isOneToOneCall() && muteStatus{
+            CallManager.setCallType(callType: .Audio)
             CallManager.disableVideo()
         }
         
         if let mirrorFlyViewId = factory?.getUniqueID(forString: AppUtils.getMyJid()) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.LOCAL_VIDEO_MUTE : MuteEvent.LOCAL_VIDEO_UNMUTE)
+                mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.ACTION_LOCAL_VIDEO_MUTE : MuteEvent.ACTION_LOCAL_VIDEO_UN_MUTE)
             } else {
                 NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
             }
         } else {
             NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
         }
-        
+        AudioManager.shared().autoReRoute()
         result(true)
     }
     
@@ -111,11 +113,11 @@ import MirrorFlySDK
                    NSLog("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
                }else{
                    NSLog("MirrorflyCall Success -->")
-//                   result(isSuccess)
+                   result(isSuccess)
                }
             }
          }
-        result(true)
+//        result(true)
     }
     func makeVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
@@ -137,10 +139,10 @@ import MirrorFlySDK
             NSLog("call result --> \(isSuccess) messsage --> \(message)")
             if (isSuccess){
                 NSLog("MirrorflyCall Success")
-//                result(isSuccess)
+                result(isSuccess)
             }
         }
-        result(true)
+//        result(true)
     }
     func answerCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
@@ -226,20 +228,22 @@ import MirrorFlySDK
         };
     }
     func switchCamera(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        CallManager.switchCamera()
+        CallManager.switchCamera {
+            result(true)
+        }
     }
     func isCallOnHold(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
     }
     func isOneToOneCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        
+        result(CallManager.isOneToOneCall())
     }
     func getCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         result(CallManager.getCallType().rawValue)
     }
     func getGroupID(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let groupID = CallManager.getGroupID()
-        print("getGroupID \(groupID)")
+        print("getGroupID \(String(describing: groupID))")
         result(groupID ?? "")
     }
     func getCallDirection(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
@@ -294,7 +298,7 @@ import MirrorFlySDK
         result(true)
     }
     func isCallConnected(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        
+        result(CallManager.isCallConnected())
     }
     func isVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
@@ -321,15 +325,15 @@ import MirrorFlySDK
        
         let status = (jid == AppUtils.getMyJid() || jid.isEmpty) ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(jid)
         
-        if let mirrorFlyViewId = factory?.getUniqueID(forString: jid.isEmpty ? AppUtils.getMyJid() : jid) {
-                    if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                        mirrorflyView.updateVideoTrack(userJid: jid.isEmpty ? AppUtils.getMyJid() : jid, updateType: status ? MuteEvent.REMOTE_VIDEO_MUTE : MuteEvent.REMOTE_VIDEO_UN_MUTE)
-                    } else {
-                        NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
-                    }
-                } else {
-                    NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
-                }
+//        if let mirrorFlyViewId = factory?.getUniqueID(forString: jid.isEmpty ? AppUtils.getMyJid() : jid) {
+//                    if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+//                        mirrorflyView.updateVideoTrack(userJid: jid.isEmpty ? AppUtils.getMyJid() : jid, updateType: status ? MuteEvent.REMOTE_VIDEO_MUTE : MuteEvent.REMOTE_VIDEO_UN_MUTE)
+//                    } else {
+//                        NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
+//                    }
+//                } else {
+//                    NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
+//                }
         
         NSLog("isUserVideoMuted \(jid == AppUtils.getMyJid() || jid.isEmpty)")
         NSLog("isUserVideoMuted status \(status)")
@@ -338,8 +342,9 @@ import MirrorFlySDK
     }
     
     func isOnGoingCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-        //Method Needed for Android inorder to Launch Ongoing Call Screen
-        result(false)
+//        //Method Needed for Android inorder to Launch Ongoing Call Screen
+//        result(false)
+        result(CallManager.isOngoingCall())
     }
     
 //    func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
@@ -403,20 +408,160 @@ import MirrorFlySDK
     func getCallLogsList(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
         let args = call.arguments as! Dictionary<String, Any>
         let pageNumber = args["currentPage"] as? Int ?? 1
-        let callLogList = CallLogManager().getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
-//            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: callLogList.toJson()))")
+        
+        NSLog("\(Constants.callTag) getCallLogsList fetchCallLogList pageNumber \(pageNumber)");
+        callLogManager.getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
+            
+            var flyData = data
+//            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
+            print("\(Constants.callTag) getCallLogsList plugin \(String(describing: flyData))")
+           
+    
             
             if isSuccess{
 //                result(callLogList.)
+                if flyData["data"] is [String : Any]{
+                    
+                    guard let data = flyData["data"] as? [String: Any] else {
+                        print("Error: Unable to extract 'data' from originalData.")
+//                        result "{\"data\" : [], \"total_pages\" : 0}";
+                        return
+                    }
+
+                    guard let callList = data["callList"] as? [CallLog] else {
+                        print("Error: Unable to extract 'callList' from 'data'.")
+                        print("Error: data: \(data)")
+//                        return [:]
+                        return
+                    }
+                    var callListConverted: [String: Any]?
+                    var callListJson: String?
+                    
+                    if pageNumber == 1 {
+                        self.callLogArray.removeAll()
+                        self.callLogArray.append(contentsOf: callList)
+                        
+                        callListConverted = getCallLogs(callList: callList, totalPages: data["totalPages"])
+                        callListJson = callListConverted?.dictToJson()
+                    }else{
+                        let filteredNewCallLogs = callList.filter { newValue in
+                            return !self.callLogArray.contains { existingValue in
+                                return existingValue.callLogId == newValue.callLogId
+                            }
+                        }
+                        self.callLogArray.append(contentsOf: filteredNewCallLogs)
+                        
+                        callListConverted = getCallLogs(callList: filteredNewCallLogs, totalPages: data["totalPages"])
+                        callListJson = callListConverted?.dictToJson()
+                    }
+                    
+                    print("Returning getCallLogsList fetchCallLogList \(String(describing: callListJson))")
+                    result(callListJson)
+                    
+                }else{
+                    result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
+                }
             }else{
-//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: data.getMessage()))
+                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
             }
+        }
+    }
+    
+    func getLocalCallLogs(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        let callLogArray = CallLogManager.getAllCallLogs()
+        print("\(Constants.callTag) getLocalCallLogs \(String(describing: callLogArray))")
+        if callLogArray.isEmpty{
+            result(FlutterError(code: "500", message: "Call Log Filter List Fetch Failed", details: nil))
+        }else{
+            
+            let callListConverted = getCallLogs(callList: callLogArray, totalPages: 0)
+            print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
+            let callListJson = callListConverted.dictToJson()
+            print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
+            result(callListJson)
+//            if callLogArray["data"] is [String : Any]{
+//               
+//                let callListConverted = getCallLogs(flyData: callLogArray)
+//                print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
+//                let callListJson = callListConverted.dictToJson()
+//                print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
+//                result(callListJson)
+//                
+//            }else{
+//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
+//            }
         }
         
         
-        
+//        CallLogManager().getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
+//            
+//            var flyData = data
+////            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
+//            print("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
+//           
+//    
+//            
+//            if isSuccess{
+////                result(callLogList.)
+//                if flyData["data"] is [String : Any]{
+//                   
+//                    let callListConverted = getCallLogs(flyData: flyData)
+//                    print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
+//                    let callListJson = callListConverted.dictToJson()
+//                    print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
+//                    result(callListJson)
+//                    
+//                }else{
+//                    result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
+//                }
+//            }else{
+//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
+//            }
+//        }
     }
     
+    func deleteCallLog(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        let args = call.arguments as! Dictionary<String, Any>
+        let isClearAll = args["isClearAll"] as? Bool ?? false
+        let jidList = args["jidList"] as? [String] ?? []
+        NSLog("\(Constants.tag) deleteCallLog isClearAll \(isClearAll)")
+
+        ChatManager.deleteCallLog(isClearAll: isClearAll, callLogIds: jidList) { isSuccess, error, data in
+            var flyData = data
+            if isSuccess {
+                if isClearAll{
+                    CallLogManager().deleteCallLogs()
+                }
+                let deleteMessage = flyData.getMessage() as? String
+                print("deleteMessage response \(deleteMessage)")
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: "500", message: "Call Log Delete Failed", details: flyData.getMessage()))
+            }
+        }
+    }
+    
+    func syncCallLogs(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallLogManager().syncCallLogs { isSuccess, error, data in
+            
+            if isSuccess {
+                  var flyData = data
+                _ = flyData.getMessage() as? String
+                _ = flyData.getData() as? [CallLog]
+            }
+            
+            result(isSuccess)
+        }
+    }
+    
+    func isCallConversionRequestAvailable(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        result(CallManager.isCallConversionRequestAvailable())
+    }
+    
+    func markAllUnreadMissedCallsAsRead(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallLogManager.resetUnreadMissedCallCount()
+        result(true)
+    }
 //    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
 //        let args = call.arguments as! Dictionary<String, Any>
 //        let callType = args["callType"] as? String ?? ""

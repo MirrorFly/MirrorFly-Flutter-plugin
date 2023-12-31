@@ -62,13 +62,13 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getUnKnownUserProfiles() {
+  /*Future<dynamic> getUnKnownUserProfiles() {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
-  Future<dynamic> getMyProfileStatus() {
+  /*Future<dynamic> getMyProfileStatus() {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
   Future<dynamic> getMyBusyStatus() {
     throw UnimplementedError('has not been implemented.');
@@ -388,19 +388,19 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  getUserList(int page, String search, [int perPageResultSize = 20]) {
+  Future<dynamic> getUserList(int page, String search, [int perPageResultSize = 20]) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  getCallLogsList(int currentPage){
+  Future<dynamic> getCallLogsList(int currentPage){
     throw UnimplementedError('has not been implemented.');
   }
 
-  getLocalCallLogs(){
+  Future<dynamic> getLocalCallLogs(){
     throw UnimplementedError('has not been implemented.');
   }
 
-  deleteCallLog(List<String> jidlist,bool isClearAll){
+  Future<dynamic> deleteCallLog(List<String> jidlist,bool isClearAll){
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -1064,8 +1064,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getCallType has not been implemented.');
   }
 
-  Future<String> getGroupId() async {
-    throw UnimplementedError('getGroupId has not been implemented.');
+  Future<String> getCallGroupJid() async {
+    throw UnimplementedError('getCallGroupJid has not been implemented.');
   }
 
   Future<String> getCallDirection() async {
@@ -1163,6 +1163,14 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<bool?> markAllUnreadMissedCallsAsRead() {
     throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<bool?> isCallConversionRequestAvailable() {
+    throw UnimplementedError('isCallConversionRequestAvailable has not been implemented.');
+  }
+
+  Future<bool?> syncCallLogs() {
+    throw UnimplementedError('syncCallLogs has not been implemented.');
   }
 
   /*Future<dynamic> changeCallType({required String switchType}) async {

@@ -229,6 +229,14 @@ import UIKit
                     "message" : "Register Trial API Success"
                 ] as [String : Any]
                 
+                if  data["newLogin"] as? Bool ?? false{
+                    NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
+                    CallLogManager().deleteCallLogs()
+//                    ChatManager.deleteAllChatTags()
+//                    iCloudmanager().deleteLoaclBackup()
+                    
+                }
+                
                 ChatManager.updateAppLoggedIn(isLoggedin: true)
 //                FlyDefaults.myXmppPassword = data["password"] as! String
 //                FlyDefaults.myXmppUsername = data["username"] as! String
@@ -312,30 +320,34 @@ import UIKit
     static func sendTextMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let txtMessage = args["message"] as? String ?? nil
-        let receiverJID = args["JID"] as? String ?? nil
+        let receiverJID = args["JID"] as? String ?? ""
         let replyMessageID = args["replyMessageId"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
+        let editMessageId = args["editMessageId"] as? String ?? ""
 
-        if(txtMessage == nil || receiverJID == nil){
+        if(txtMessage == nil || receiverJID == ""){
             result(FlutterError(code: "500", message: "Parameters Missing", details: nil))
             return
         }
+        let messageParams = TextMessage(toId:  receiverJID, messageText: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [])
         
-        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId) { isSuccess,error,chatMessage in
+        FlyMessenger.sendTextMessage(messageParams: messageParams){ isSuccess, error, chatMessage in
             if isSuccess {
-                print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
-                let textMsgResponse = chatMessage.toJson()
-                if(textMsgResponse != nil){
-                    print("FlyMessenger.sendTextMessage==**==\(String(describing: textMsgResponse))")
-                    result(textMsgResponse)
-                } else {
-                    result(FlutterError(code: "500", message: "Failed to Send Text Message", details: nil))
+                //        FlyMessenger.sendTextMessage(toJid: receiverJID, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId, editMessageId: editMessageId) { isSuccess,error,chatMessage in
+                if isSuccess {
+                    print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
+                    let textMsgResponse = chatMessage.toJson()
+                    if(textMsgResponse != nil){
+                        print("FlyMessenger.sendTextMessage==**==\(String(describing: textMsgResponse))")
+                        result(textMsgResponse)
+                    } else {
+                        result(FlutterError(code: "500", message: "Failed to Send Text Message", details: nil))
+                    }
+                }else{
+                    result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
                 }
-                
-                
-            }else{
-                result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
             }
+            
         }
         
     }
@@ -1179,8 +1191,11 @@ import UIKit
             
             if isSuccess {
                 let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
+                let blockedProfileJson = blockedprofileDetailsArray.toJson()
+                result(blockedProfileJson)
             } else{
-                print(flyError!.localizedDescription)
+                print("\(Constants.tag) getUsersWhoBlockedMe Error: \(flyError!.localizedDescription)")
+                result(FlutterError(code: "500", message: "Failed to Encode Chat Messages", details: flyError!.localizedDescription))
             }
         }
     }
@@ -1203,8 +1218,13 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let userStatus = args["status"] as? String ?? ""
         
-        ChatManager.shared.setMyBusyStatus(userStatus)
-        result(true)
+        ChatManager.shared.setMyBusyStatus(userStatus) { isSuccess, error, data in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: "500", message: "Set MyBusy Status Error", details: error?.localizedDescription))
+            }
+        }
     }
     static func enableDisableBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
@@ -1212,9 +1232,13 @@ import UIKit
         
         let busyStatusVal = args["enable"] as? Bool ?? false
         
-        ChatManager.shared.enableDisableBusyStatus(busyStatusVal)
-        
-        result(true)
+        ChatManager.shared.enableDisableBusyStatus(busyStatusVal){ isSuccess, error, data in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: "500", message: "Enable Disable BusyStatus Status Error", details: error?.localizedDescription))
+            }
+        }
         
     }
     
@@ -1222,8 +1246,13 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let busyStatus = args["busy_status"] as? String ?? ""
         print("setting busy status\(busyStatus)")
-        ChatManager.shared.setMyBusyStatus(busyStatus)
-        result(true)
+        ChatManager.shared.setMyBusyStatus(busyStatus){ isSuccess, error, data in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: "500", message: "Set MyBusy Status Error", details: error?.localizedDescription))
+            }
+        }
     }
     
     static func getBusyStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -2552,6 +2581,11 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
+        
+        if(userJid.isEmpty){
+            result(FlutterError(code: "500", message: "user jid cannot be empty", details: nil))
+            return
+        }
 
         let userProfile = ChatManager.profileDetaisFor(jid: userJid)
         print("userProfile*** \(userProfile)")
@@ -2768,6 +2802,12 @@ import UIKit
                 result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
             }
         }
+    }
+    
+    static func setRegionCode(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let regionCode = args["regionCode"] as? String ?? "IN"
+//        ChatManager.setUserCountryISOCode(regionCode)
     }
 }
 

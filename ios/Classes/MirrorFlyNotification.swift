@@ -40,7 +40,7 @@ import MirrorFlySDK
         if payloadType == "adminblock" {
             NSLog("#Mirrorfly Admin Block")
             ChatSDK.Builder.initializeDelegate()
-            NotificationMessageSupport.shared.handleAdminBlockNotification(notificationRequest.content.mutableCopy() as? UNMutableNotificationContent) {  bestAttemptContent in
+            NotificationMessageSupport.shared.handleAdminBlockNotification(notificationRequest.content.mutableCopy() as? UNMutableNotificationContent) {  bestAttemptContent, chatMessage  in
                 contentHandler(bestAttemptContent!)
 //                return bestAttemptContent
 //                self.bestAttemptContent = bestAttemptContent
@@ -51,7 +51,7 @@ import MirrorFlySDK
 
             /// Handle Push messages
             ChatSDK.Builder.initializeDelegate()
-            NotificationMessageSupport.shared.didReceiveNotificationRequest(notificationRequest.content.mutableCopy() as? UNMutableNotificationContent, appName: APP_NAME, onCompletion: { [self] bestAttemptContents in
+            NotificationMessageSupport.shared.didReceiveNotificationRequest(notificationRequest.content.mutableCopy() as? UNMutableNotificationContent, appName: APP_NAME, onCompletion: { [self] bestAttemptContents, chatMessage in
 //                FlyLog.DLog(param1: "#notification request ID", param2: "\(request.identifier)")
                 _ = UNUserNotificationCenter.current()
                 let (messageCount, chatCount) = ChatManager.getUnreadMessageAndChatCountForUnmutedUsers()

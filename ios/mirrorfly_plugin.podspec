@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'mirrorfly_plugin'
-  s.version          = '0.0.9'
+  s.version          = '0.0.13'
   s.summary          = 'A Mirrorfly Flutter Plugin'
   s.description      = 'A Mirrorfly Flutter plugin to Experience an outstanding real time messaging solution. The powerful communication that adds an extra mileage to build your chat app.'
 
@@ -24,12 +24,13 @@ Pod::Spec.new do |s|
   s.dependency 'Socket.IO-Client-Swift', '16.0.1'
   s.dependency 'Starscream', '4.0.4'
   s.dependency 'XMPPFramework/Swift'
-  s.dependency 'RealmSwift' , '10.20.1'
+  s.dependency 'RealmSwift' , '10.43.0'
   s.dependency 'GoogleWebRTC'
   s.dependency 'SDWebImage'
-#  s.dependency 'MirrorFlySDK', '5.13.3'
+  s.dependency 'IDZSwiftCommonCrypto', '~> 0.16'
+  s.dependency 'MirrorFlySDK', '5.14.5'
 
-  s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+  #s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
 
 

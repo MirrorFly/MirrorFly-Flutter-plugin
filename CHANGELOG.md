@@ -1,3 +1,11 @@
+## [0.0.13] Group Call Feature
+* Group Call Feature is Available now
+* You can Invite Participant during the call
+* Optimisation in Plugin Initialisation
+* Call Logs feature is Available now
+* One to One Call Bug Fixes
+* Plugin supports multi-device login, allowing up to 4 devices.
+
 ## [0.0.12] One to One Call Feature
 * Enable VOIP in iOS Capability Background Modes to get the VOIP token to register for Call Feature in iOS.
 * Enable FCM Notification for Call Feature in Android.

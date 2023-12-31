@@ -486,6 +486,7 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         BackupManager.shared.backupDelegate = self
         BackupManager.shared.restoreDelegate = self
         ChatManager.shared.localNotificationDelegate = self
+        ChatManager.isTrialLicense()
     }
     
     func prepareMethodHandler(methodCall: FlutterMethodCall, result: @escaping FlutterResult){
@@ -826,6 +827,9 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getAvailableFeatures(call:methodCall, result: result)
         case "appLaunchedFromMissedCall":
             result(false)
+            
+        case "setRegionCode":
+            FlySdkMethodCalls.setRegionCode(call:methodCall, result: result)
 
         default:
             result(FlutterMethodNotImplemented)
@@ -868,6 +872,11 @@ extension FlyChatPlugin : LocalNotificationDelegate {
 }
 
 extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate, BackupEventDelegate, RestoreEventDelegate {
+    public func onMessageEdited(message: MirrorFlySDK.ChatMessage, chatJid: String, editedMessageId: String) {
+        
+    }
+    
+    
     public func didRevokedAdminAccess(groupJid: String, revokedAdminMemberJid: String, revokedByMemberJid: String) {
         NSLog("GroupEventsDelegate didRevokedAdminAccess Delegate Triggered")
     }
