@@ -1,4 +1,4 @@
-/// A MirrorFly Plugin to Experience an outstanding real time messaging solution.
+/// @nodoc
 library mirrorfly_plugin;
 
 export 'fly_chat_method_channel.dart';
@@ -22,3 +22,4 @@ export 'model/topic_list.dart';
 export 'model/available_features.dart';
 export 'builder.dart';
 export 'flychat.dart';
+export 'logmessage.dart';
