@@ -161,11 +161,11 @@ class ChatMessageModel {
         "senderUserJid": senderUserJid,
         "senderUserName": senderUserName,
         "contactChatMessage":
-            contactChatMessage == null ? null : contactChatMessage!.toJson(),
+            contactChatMessage ?? contactChatMessage?.toJson(),
         "mediaChatMessage":
-            mediaChatMessage == null ? null : mediaChatMessage!.toJson(),
+            mediaChatMessage ?? mediaChatMessage?.toJson(),
         "locationChatMessage":
-            locationChatMessage == null ? null : locationChatMessage!.toJson(),
+            locationChatMessage ?? locationChatMessage?.toJson(),
         "topicId": topicId
       };
 }
