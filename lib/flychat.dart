@@ -426,19 +426,19 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getRegisteredUserList(server: fetchFromServer);
   }
 
-  static getUserList(int page, String search, [int perPageResultSize = 20]) {
+  static Future<dynamic> getUserList(int page, String search, [int perPageResultSize = 20]) {
     return FlyChatFlutterPlatform.instance.getUserList(page, search, perPageResultSize);
   }
 
-  static getCallLogsList(int currentPage) {
+  static Future<dynamic> getCallLogsList(int currentPage) {
     return FlyChatFlutterPlatform.instance.getCallLogsList(currentPage);
   }
 
-  static getLocalCallLogs() {
+  static Future<dynamic> getLocalCallLogs() {
     return FlyChatFlutterPlatform.instance.getLocalCallLogs();
   }
 
-  static deleteCallLog(List<String> jidlist, bool isClearAll) {
+  static Future<dynamic> deleteCallLog(List<String> jidlist, bool isClearAll) {
     return FlyChatFlutterPlatform.instance.deleteCallLog(jidlist, isClearAll);
   }
 
@@ -1084,10 +1084,10 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getCallType();
   }
 
-  ///Used as a [getGroupId] class for [Mirrorfly]
+  ///Used as a [getCallGroupJid] class for [Mirrorfly]
   ///used to get type of the current call, audio or video
-  static Future<String> getGroupId() async {
-    return FlyChatFlutterPlatform.instance.getGroupId();
+  static Future<String> getCallGroupJid() async {
+    return FlyChatFlutterPlatform.instance.getCallGroupJid();
   }
 
   ///Used as a [getCallDirection] class for [Mirrorfly]

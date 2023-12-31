@@ -232,6 +232,8 @@ import PushKit
 //        if userJID == ""{
 //            userJID = AppUtils.getMyJid()
 //        }
+        
+        //Added to Sync the Call log in Call Status update
         NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
         
@@ -368,6 +370,10 @@ import PushKit
             break;
         case .ACTION_LOCAL_AUDIO_UN_MUTE:
             jsonObject.setValue("LOCAL_AUDIO_UN_MUTE", forKey: "muteEvent")
+            break;
+        case .ACTION_LOCAL_VIDEO_MUTE:
+            break;
+        case .ACTION_LOCAL_VIDEO_UN_MUTE:
             break;
         @unknown default:
             jsonObject.setValue("unknown", forKey: "muteEvent")
@@ -543,7 +549,9 @@ import PushKit
         
         let onMissedCallJson = pluginDictToJson(dictionary: jsonObject)
         
-        
+        //Added to Sync the Call log in Missed call Event
+        NSLog("\(Constants.callTag) Events: callLogUpdate in onMissedCall")
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
         
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMissedCallChannel, value: onMissedCallJson)
     }

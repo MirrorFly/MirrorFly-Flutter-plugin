@@ -3712,10 +3712,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String> getGroupId() async {
+  Future<String> getCallGroupJid() async {
     String getGroupId;
     try {
-      LogMessage.d('getGroupId :', '');
+      LogMessage.d('getCallGroupJid :', '');
       getGroupId = await mirrorFlyCallMethodChannel.invokeMethod('getGroupID');
       return getGroupId;
     } on PlatformException catch (e) {

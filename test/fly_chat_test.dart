@@ -1398,8 +1398,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String> getGroupId() {
-    // implement getGroupId
+  Future<String> getCallGroupJid() {
+    // implement getCallGroupJid
     throw UnimplementedError();
   }
 
