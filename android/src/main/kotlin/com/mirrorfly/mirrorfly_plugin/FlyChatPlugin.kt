@@ -886,7 +886,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 if(messageListQuery!=null) {
                     result.success(messageListQuery?.hasPreviousMessages())
                 }else{
-                    result.error("500","Message List not Initialized call before initializeMessageListParams",null)
+                    result.error("500","Message List not Initialized. Initialize using  initializeMessageList() method",null)
                 }
             }
             call.method.equals("loadNextMessages") -> {
@@ -896,7 +896,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 if(messageListQuery!=null) {
                     result.success(messageListQuery?.hasNextMessages())
                 }else{
-                    result.error("500","Message List not Initialized call before initializeMessageListParams",null)
+                    result.error("500","Message List not Initialized. Initialize using  initializeMessageList() method",null)
                 }
             }
             call.method.equals("markAsReadDeleteUnreadSeparator") -> {

@@ -2828,6 +2828,22 @@ import UIKit
         let regionCode = args["regionCode"] as? String ?? "IN"
 //        ChatManager.setUserCountryISOCode(regionCode)
     }
+    
+    static func hasPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        if messageListQuery != nil {
+            result(messageListQuery?.hasPreviousMessages())
+        }else{
+            result(FlutterError(code: "500",message: "Message List not Initialized. Initialize using  initializeMessageList() method", details: nil))
+        }
+    }
+    
+    static func hasNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        if messageListQuery != nil {
+            result(messageListQuery?.hasNextMessages())
+        }else{
+            result(FlutterError(code: "500",message: "Message List not Initialized. Initialize using  initializeMessageList() method", details: nil))
+        }
+    }
 }
 
 
