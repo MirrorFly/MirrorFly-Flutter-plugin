@@ -1,46 +1,38 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
-import android.Manifest
+//import com.mirrorflysdk.api.CallMessenger
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.mirrorfly.mirrorfly_plugin.AppUtils
-import com.mirrorfly.mirrorfly_plugin.toJson
-import com.mirrorflysdk.api.CallMessenger
+import com.mirrorfly.mirrorfly_plugin.toJsonString
 import com.mirrorflysdk.api.ChatManager
-import com.mirrorflysdk.api.GroupManager
 import com.mirrorflysdk.api.MediaNotificationHelper
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.utils.NameHelper
 import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
 import com.mirrorflysdk.flycall.webrtc.AudioDevice
-import com.mirrorflysdk.flycall.webrtc.CallDirection
+import com.mirrorflysdk.flycall.webrtc.CallStatus
 import com.mirrorflysdk.flycall.webrtc.CallType
-import com.mirrorflysdk.flycall.webrtc.GroupCallDetails
-import com.mirrorflysdk.flycall.webrtc.Logger
-import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
-import com.mirrorflysdk.flycall.webrtc.api.CallHelper
-import com.mirrorflysdk.flycall.webrtc.api.CallManager
-import com.mirrorflysdk.flycall.webrtc.api.CallNameHelper
-import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
+import com.mirrorflysdk.flycall.webrtc.MuteEvent
+import com.mirrorflysdk.flycall.webrtc.api.*
 import com.mirrorflysdk.flycommons.Constants
 import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.flycommons.PendingIntentHelper
-import io.flutter.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
 import org.json.JSONObject
+import com.mirrorflysdk.api.ChatActionListener
 
 class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificationHelper {
     val tag = "#FlutterCall"
 
     fun initCall(){
         //CallManager.init(context)
-        CallManager.setMissedCallListener(this)
+//        CallManager.setMissedCallListener(this)
         ChatManager.setMediaNotificationHelper(this)
         CallManager.setCallHelper(object : CallHelper {
             override fun getNotificationContent(callDirection: String): String {
@@ -54,26 +46,26 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
                 return CallNotificationHelper.getNotificationMessage()
             }
 
-            override fun sendCallMessage(
+            /*override fun sendCallMessage(
                 details: GroupCallDetails,
                 users: List<String>,
                 invitedUsers: List<String>
             ) {
                 CallMessenger.sendCallMessage(details, users, invitedUsers)
-            }
+            }*/
         })
         ChatManager.setNameHelper(object : NameHelper {
             override fun getDisplayName(jid: String): String {
-                return ContactManager.getDisplayName(jid)
+                return  ContactManager.getProfileDetails(jid).getDisplayName()//ContactManager.getDisplayName(jid)
             }
 
         })
         CallManager.setCallNameHelper(object : CallNameHelper {
             override fun getDisplayName(jid: String): String {
-                return ContactManager.getDisplayName(jid)
+                return  ContactManager.getProfileDetails(jid).getDisplayName()//ContactManager.getDisplayName(jid)
             }
         })
-        CallManager.keepConnectionInForeground(true)
+//        CallManager.keepConnectionInForeground(false)
     }
 
     fun routeTo(call: MethodCall,result: MethodChannel.Result){
@@ -81,7 +73,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         LogMessage.d(tag,"routeType : $routeType")
         val selectedDevice = if(routeType=="receiver") AudioDevice.EARPIECE  else if(routeType=="speaker") AudioDevice.SPEAKER_PHONE else if(routeType=="bluetooth") AudioDevice.BLUETOOTH else if(routeType=="headset") AudioDevice.WIRED_HEADSET else AudioDevice.NONE
         //CallAudioManager.getInstance(context).selectAudioDevice(selectedDevice)
-        CallManager.setAudioDevice(selectedDevice);
+        CallManager.setAudioDevice(selectedDevice)
         LogMessage.d(tag,"selectedDevice : $selectedDevice")
         result.success(true)
     }
@@ -152,7 +144,11 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         CallManager.answerCall(object : CallActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d("answerCall","success $isSuccess message $message")
-                result.success(isSuccess)
+                if(isSuccess) {
+                    result.success(isSuccess)
+                }else{
+                    result.error("500", message, "")
+                }
             }
 
         })
@@ -189,6 +185,7 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         val muteVideo = call.argument<Boolean>("muteVideo") ?: false
         CallManager.muteVideo(muteVideo,object : CallActionListener{
             override fun onResponse(isSuccess: Boolean, message: String) {
+                LogMessage.d(tag,"$muteVideo ${CallManager.getCurrentUserId()} ${MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())}")
                 if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null && isSuccess) {
                     if (muteVideo) {
                         MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
@@ -198,7 +195,11 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
                             ?.setLocalTarget()
                     }
                 }
-                result.success(isSuccess)
+                if(isSuccess) {
+                    result.success(isSuccess)
+                }else{
+                    result.error("500", message, "")
+                }
             }
 
         })
@@ -207,11 +208,15 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     fun makeGroupVoiceCall(call: MethodCall,result: MethodChannel.Result){
         if (CallManager.isAudioCallPermissionsGranted(false)) {
             val groupJid = call.argument<String>("groupJid") ?: ""
-            val jidList = call.argument<String>("jidList") ?: ""
-            CallManager.makeGroupVoiceCall(jidList.split(",") as ArrayList<String>, groupJid, object : CallActionListener {
+            val jidList = call.argument<List<String>>("jidList")
+            CallManager.makeGroupVoiceCall(jidList as ArrayList<String>, groupJid, object : CallActionListener {
                 override fun onResponse(isSuccess: Boolean, message: String) {
                     LogMessage.d("makeGroupVoiceCall", "success $isSuccess message $message")
-                    result.success(isSuccess)
+                    if(isSuccess) {
+                        result.success(isSuccess)
+                    }else{
+                        result.error("500", message, "")
+                    }
                 }
             })
         }
@@ -219,11 +224,15 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     fun makeGroupVideoCall(call: MethodCall,result: MethodChannel.Result){
         LogMessage.d(tag,"muteVideo")
         val groupJid = call.argument<String>("groupJid") ?: ""
-        val jidList = call.argument<String>("jidList") ?: ""
-        CallManager.makeGroupVideoCall(jidList.split(",") as ArrayList<String>,groupJid,object: CallActionListener{
+        val jidList = call.argument<List<String>>("jidList")
+        CallManager.makeGroupVideoCall(jidList as ArrayList<String>,groupJid,object: CallActionListener{
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d("makeGroupVideoCall", "success $isSuccess message $message")
-                result.success(isSuccess)
+                if(isSuccess) {
+                    result.success(isSuccess)
+                }else{
+                    result.error("500", message, "")
+                }
             }
 
         })
@@ -245,20 +254,29 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
     }
 
     fun getCallUsersList(call: MethodCall,result: MethodChannel.Result) {
+        LogMessage.d(tag,"getCallUsersList : "+CallManager.getCallUsersList().toJsonString())
         val json = JSONArray()
         val users = CallManager.getCallUsersList()
-        if (!users.contains(CallManager.getCurrentUserId()) && CallManager.getCurrentUserId().isNotEmpty()){
-            val obj = JSONObject()
-            obj.put("userJid",CallManager.getCurrentUserId())
-            obj.put("callStatus",CallManager.getCallStatus(CallManager.getCurrentUserId()))
+        users.forEachIndexed { index, jid ->
+            var obj = JSONObject()
+            obj.put("userJid", jid)
+            //Calling status not in iOS so here we sent Trying to Connect status
+            obj.put("callStatus", if(CallManager.getCallStatus(jid)==CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(jid))
+            obj.put("isAudioMuted", CallManager.isRemoteAudioMuted(jid))
+            obj.put("isVideoMuted", CallManager.isRemoteVideoMuted(jid))
             json.put(obj)
+            if(index==users.lastIndex){
+                if (!users.contains(CallManager.getCurrentUserId()) && CallManager.getCurrentUserId().isNotEmpty()){
+                    obj = JSONObject()
+                    obj.put("userJid",CallManager.getCurrentUserId())
+                    obj.put("callStatus",if(CallManager.getCallStatus(CallManager.getCurrentUserId())==CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(CallManager.getCurrentUserId()))
+                    obj.put("isAudioMuted",CallManager.isAudioMuted())
+                    obj.put("isVideoMuted",CallManager.isVideoMuted())
+                    json.put(obj)
+                }
+            }
         }
-        users.forEach {jid->
-            val obj = JSONObject()
-            obj.put("userJid",jid)
-            obj.put("callStatus",CallManager.getCallStatus(jid))
-            json.put(obj)
-        }
+
         result.success(json.toString())
     }
 
@@ -270,16 +288,33 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
         userList: ArrayList<String>
     ) {
         val notificationContent = getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList)
+        LogMessage.d("onMissedCall",notificationContent.toString())
         /*CallNotificationUtils.createNotification(
             getContext(),
             notificationContent.first, //Title Missed call Notification
             notificationContent.second //Message Content Missed call from whom
         )*/
         val json = JSONObject()
-        json.put("title",notificationContent.first)
+        /*json.put("title",notificationContent.first)
         json.put("content",notificationContent.second)
         LogMessage.d("MissedCallNotification",json.toString())
-        onMissedCallNotificationStreamHandler.onMissedCall?.success(json)
+        onMissedCallNotificationStreamHandler.onMissedCall?.success(json)*/
+        json.put("isOneToOneCall",isOneToOneCall)
+        json.put("userJid",userJid)
+        json.put("groupId",groupId)
+        json.put("callType",callType)
+        json.put("userList",userList.joinToString(","))
+        /*
+
+        Instead of doing the string concatenation above, we can try this below
+
+        val json = JSONObject()
+
+        // Convert the array to a JSON array and add it to the JSON object
+        val jsonArray = JSONArray(userList)
+        json.put("userList", jsonArray)
+         */
+        onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
     }
 
     override fun setMediaNotificationIntentAction(
@@ -338,6 +373,121 @@ class SdkCallFunctions(var context: Context): MissedCallListener, MediaNotificat
 
     private fun getDisplayName(jid : String):String{
         return ContactManager.getProfileDetails(jid)?.name ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
+    }
+
+    fun requestVideoCallSwitch(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.requestVideoCallSwitch()
+        result.success(true)
+    }
+
+    fun cancelVideoCallSwitch(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.cancelVideoCallSwitchRequest()
+        result.success(true)
+    }
+    fun acceptVideoCallSwitchRequest(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.acceptVideoCallSwitchRequest()
+        result.success(true)
+        val json = JSONObject()
+        json.put("muteEvent",MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE)
+        json.put("userJid",CallManager.getEndCallerJid())
+        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
+    }
+    fun declineVideoCallSwitchRequest(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.declineVideoCallSwitchRequest()
+        result.success(true)
+    }
+
+    fun inviteUsersToOngoingCall(call: MethodCall, result: MethodChannel.Result) {
+        val jidList = call.argument<List<String>>("jidList") ?: arrayListOf()
+        CallManager.inviteUsersToOngoingCall(jidList as ArrayList<String>)
+    }
+
+    fun getInvitedUsersList(call: MethodCall,result: MethodChannel.Result){
+        result.success(CallManager.getInvitedUsersList().toJsonString())
+    }
+
+    /*fun changeCallType(call: MethodCall, result: MethodChannel.Result) {
+        val callType = call.argument<String>("callType") ?: ""
+        if (callType == "video"){
+
+            //in iOS there is a methods mentioned below 3 lines. need to do in Android
+//            CallManager.setCallType(callType: .Video)
+//            CallManager.enableVideo()
+//            AudioManager.shared().autoReRoute()
+            CallManager.muteVideo(false)
+
+        }else{
+//in iOS there is a methods mentioned below 3 lines. need to do in Android
+//            CallManager.setCallType(callType: .Audio)
+//            CallManager.disableVideo()
+//            AudioManager.shared().autoReRoute()
+            CallManager.muteVideo(true)
+        }
+        result.success(true)
+    }
+
+
+    fun reRouteAudio(call: MethodCall, result: MethodChannel.Result) {
+
+//        AudioManager.shared().autoReRoute()
+
+    }*/
+
+    fun getCallLogsList(call: MethodCall, result: MethodChannel.Result) {
+
+        /*if (AppUtils.isNetConnected(mContext)) {
+*/
+        val currentPage = call.argument("currentPage") ?: 1
+
+        CallManager.getCallLogs(currentPage) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                LogMessage.d("callLogsList Normal: ", data.toJsonString())
+                result.success(data.toJsonString())
+            } else {
+                println("call logs error : " + throwable.toString())
+                result.error("400", throwable?.message.toString(), "")
+            }
+        }
+
+        /*} else {
+            Toast.makeText(mContext, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
+        }*/
+    }
+
+    fun getLocalCallLogs(call: MethodCall, result: MethodChannel.Result){
+        val callLogsList = CallLogManager.getCallLogs()
+        if (callLogsList != null){
+            LogMessage.d("getLocalCallLogs: ", callLogsList.toJsonString())
+            val map = HashMap<String,Any>()
+            map["data"] = callLogsList
+            result.success(map.toJsonString())
+        }else{
+            result.error("400", "getLocalCallLogs error", "")
+        }
+
+    }
+
+    fun deleteCallLog(call: MethodCall, result: MethodChannel.Result){
+        val jidList = call.argument<List<String>>("jidList") ?: arrayListOf()
+        val isClearAll = call.argument<Boolean>("isClearAll") ?: false
+        ChatManager.deleteCallLog(isClearAll, jidList, object : ChatActionListener {
+            override fun onResponse(isSuccess: Boolean, message: String) {
+                LogMessage.d("deleteCallLog : ", "Response $isSuccess")
+                if (isSuccess){
+                    result.success(isSuccess)
+                }else{
+                    result.error("400", "deleteCallLog error", "$message")
+                }
+                /*
+                * No Implementation needed
+                */
+            }
+        })
+    }
+
+    fun syncCallLogs (call: MethodCall, result: MethodChannel.Result){
+        CallLogManager.uploadUnSyncedCallLogs()
+        result.success(true)
     }
 
 }

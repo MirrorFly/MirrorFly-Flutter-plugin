@@ -6,9 +6,18 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/><!--for use full screen intent-->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" /><!--for redmi device-->
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" /><!--Need for enable or disable Proximity sensor -->
+    <!-- Request legacy Bluetooth permissions on older devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <!-- Needed only if your app communicates with already-paired Bluetooth
+        devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /><!--AudioManager#startBluetoothSco() requires MODIFY_AUDIO_SETTINGS permission.-->
 
     <application>
         <activity
