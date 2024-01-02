@@ -11,7 +11,7 @@ import Flutter
 class FlyMethodConstants {
     
     static let flyCallMethods = FlyCallMethods()
-    static let callMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult) -> Void] = {
+    static let callMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult, MirrorflyViewFactory?) -> Void] = {
         return [
             "getCallUsersList": flyCallMethods.getCallUsersList,
             "getAudioDevices": flyCallMethods.getAudioDevices,
@@ -31,6 +31,7 @@ class FlyMethodConstants {
             "isCallOnHold": flyCallMethods.isCallOnHold,
             "isOneToOneCall": flyCallMethods.isOneToOneCall,
             "getCallType": flyCallMethods.getCallType,
+            "getGroupID": flyCallMethods.getGroupID,
             "isCallConnected": flyCallMethods.isCallConnected,
             "isVideoCall": flyCallMethods.isVideoCall,
             "isAudioCall": flyCallMethods.isAudioCall,
@@ -42,7 +43,22 @@ class FlyMethodConstants {
             "getAllAvailableAudioInput": flyCallMethods.getAllAvailableAudioInput,
             "routeAudioTo": flyCallMethods.routeAudioTo,
             "isOnGoingCall": flyCallMethods.isOnGoingCall,
-            "disconnectCall": flyCallMethods.disconnectCall,
+//            "disconnectCall": flyCallMethods.disconnectCall,
+            "muteVideo": flyCallMethods.muteVideo,
+            "getUnreadMissedCallCount": flyCallMethods.getUnreadMissedCallCount,
+            "requestVideoCallSwitch": flyCallMethods.requestVideoCallSwitch,
+            "cancelVideoCallSwitch": flyCallMethods.cancelVideoCallSwitch,
+            "acceptVideoCallSwitchRequest": flyCallMethods.acceptVideoCallSwitchRequest,
+            "declineVideoCallSwitchRequest": flyCallMethods.declineVideoCallSwitchRequest,
+            "getMaxCallUsersCount": flyCallMethods.getMaxCallUsersCount,
+            "getInvitedUsersList": flyCallMethods.getInvitedUsersList,
+            "getCallLogsList": flyCallMethods.getCallLogsList,
+            "deleteCallLog": flyCallMethods.deleteCallLog,
+            "syncCallLogs": flyCallMethods.syncCallLogs,
+            "isCallConversionRequestAvailable": flyCallMethods.isCallConversionRequestAvailable,
+            "getLocalCallLogs": flyCallMethods.getLocalCallLogs,
+            "markAllUnreadMissedCallsAsRead": flyCallMethods.markAllUnreadMissedCallsAsRead,
+//            "reRouteAudio": flyCallMethods.reRouteAudio,
             
         ]
     }()

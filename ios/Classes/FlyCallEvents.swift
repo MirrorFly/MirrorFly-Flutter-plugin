@@ -11,9 +11,9 @@ import Flutter
 
 public class EventStreamHandler: NSObject, FlutterStreamHandler, FlyEventSinkProvider {
     var eventSink: FlutterEventSink?
-    private var eventSinkValue: String?
+    private var eventSinkValue: Any?
     
-    func setEventSinkValue(_ value: String?) {
+    func setEventSinkValue(_ value: Any?) {
         self.eventSinkValue = value
         updateEventSinkValue()
     }
@@ -42,3 +42,5 @@ public class OnCallActionStreamHandler: EventStreamHandler { }
 public class OnMuteStatusUpdatedStreamHandler: EventStreamHandler { }
 public class OnUserSpeakingStreamHandler: EventStreamHandler { }
 public class OnUserStoppedSpeakingStreamHandler: EventStreamHandler { }
+public class OnMissedCallStreamHandler: EventStreamHandler { }
+public class OncallLogUpdateStreamHandler: EventStreamHandler { }

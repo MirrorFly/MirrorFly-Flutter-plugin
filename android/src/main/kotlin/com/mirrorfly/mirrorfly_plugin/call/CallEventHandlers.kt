@@ -111,11 +111,53 @@ object FlutterCall{
      * Listener for show call Ui
      */
     var callUiListener: CallUiFlutterListener? = null
-    fun setListener(listener: CallUiFlutterListener){
+    fun setListener(listener: CallUiFlutterListener?){
         callUiListener = listener
     }
 }
 interface CallUiFlutterListener {
-    fun onShowCallUiFlutter(callAction: String?)
+    fun onShowCallUiFlutter(callAction: String?,userJid: String?)
     fun onCallStatusUpdated(callStatus: String, userJid: String)
+}
+
+object FlutterChat{
+    var profileListener: FlutterProfileEventsListener? = null
+    fun setListener(listener: FlutterProfileEventsListener?){
+        profileListener = listener
+    }
+}
+interface FlutterProfileEventsListener {
+    fun blockedThisUser(jid: String)
+
+    fun myProfileUpdated(isSuccess: Boolean)
+
+    fun onAdminBlockedOtherUser(jid: String, type: String, status: Boolean)
+
+    fun onAdminBlockedUser(jid: String, status: Boolean)
+
+    fun onContactSyncComplete(isSuccess: Boolean)
+
+    fun onLoggedOut()
+
+    fun unblockedThisUser(jid: String)
+
+    fun userBlockedMe(jid: String)
+
+    fun userCameOnline(jid: String)
+
+    fun userDeletedHisProfile(jid: String)
+
+    fun userProfileFetched(jid: String, profileDetails: com.mirrorflysdk.api.contacts.ProfileDetails)
+
+    fun userUnBlockedMe(jid: String)
+
+    fun userUpdatedHisProfile(jid: String)
+
+    fun userWentOffline(jid: String)
+
+    fun usersIBlockedListFetched(jidList: List<String>)
+
+    fun usersProfilesFetched()
+
+    fun usersWhoBlockedMeListFetched(jidList: List<String>)
 }

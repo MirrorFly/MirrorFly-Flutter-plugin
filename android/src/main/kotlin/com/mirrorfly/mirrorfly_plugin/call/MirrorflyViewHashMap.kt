@@ -7,24 +7,32 @@ object MirrorflyViewHashMap {
     private val viewidsforJid = HashMap<String,Int>()
 
     fun saveMirrorflyView(key: Int,userJid:String, value: MirrorflyView) {
+        LogMessage.d("#MirrorflyView Lifecycle","save old ${getMirrorflyViewId(userJid)} new $key")
         mirrorflyViews[key] = value
         viewidsforJid[userJid] = key
-        LogMessage.d("#FlutterAndroidCall #Hash","key : $key userJid : $userJid")
+        LogMessage.d("#MirrorflyView #Hash","key : $key userJid : $userJid")
     }
 
     fun getMirrorflyView(userJid: String): MirrorflyView? {
-        LogMessage.d("#FlutterAndroidCall #Hash","userJid : $userJid view : ${mirrorflyViews[getMirrorflyViewId(userJid)]}")
+        LogMessage.d("#MirrorflyView #Hash","userJid : $userJid view : ${mirrorflyViews[getMirrorflyViewId(userJid)]}")
         return mirrorflyViews[viewidsforJid[userJid]]
     }
 
     fun getMirrorflyViewId(userJid:String):Int?{
-        LogMessage.d("#FlutterAndroidCall #Hash","userJid : $userJid viewId : ${viewidsforJid[userJid]}")
+        LogMessage.d("#MirrorflyView #Hash","userJid : $userJid viewId : ${viewidsforJid[userJid]}")
         return viewidsforJid[userJid]
+    }
+
+    fun remove(id:Int,userJid:String){
+        mirrorflyViews.remove(id)
+        viewidsforJid.remove(userJid)
+        LogMessage.d("#MirrorflyView #Hash","removed $mirrorflyViews $viewidsforJid")
     }
 
     fun clearAll(){
         mirrorflyViews.clear()
         viewidsforJid.clear()
+        LogMessage.d("#MirrorflyView #Hash","clearAll $mirrorflyViews $viewidsforJid")
     }
 
 }

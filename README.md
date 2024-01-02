@@ -91,7 +91,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.12
+  mirrorfly_plugin: ^0.0.13
 ```
 
 - Run `flutter pub get` command in your project directory.
@@ -121,8 +121,7 @@ To initialize the plugin, place the below code in your `main.dart` file inside `
 ```dart
  void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Mirrorfly.init(
-      baseUrl: 'https://api-preprod-sandbox.mirrorfly.com/api/v1/',
+  Mirrorfly.initializeSDK(
       licenseKey: 'your license key',
       iOSContainerID: 'your app group id');
   runApp(const MyApp());
@@ -152,8 +151,16 @@ Use the below method to send a text message to other user,
 
 > **Note**: To generate a unique user jid by `username`, you must call the below method
 
+## To get JID of User
+
 ```dart
 var userJid = await Mirrorfly.getJid(username);
+```
+
+## To get Group JID
+
+```dart
+var groupJid = await Mirrorfly.getGroupJid(groupID);
 ```
 
 ```dart
@@ -184,19 +191,35 @@ Mirrorfly.onMessageReceived.listen(result){
 ## To make a Video Call
 
 ```dart
-Mirrorfly.makeVideoCall(userJID).then((value) {
+Mirrorfly.makeVideoCall(userJID).then((isSuccess) {
   
-})
+});
 ```
 ## To make a Voice Call
 
 ```dart
-Mirrorfly.makeVoiceCall(userJID).then((value) {
+Mirrorfly.makeVoiceCall(userJID).then((isSuccess) {
   
-})
+});
 ```
 
 > **Note**: Provide Microphone and Camera permission and usage description in the iOS plist and Android Manifest file of your project.
+
+## To make a Group Voice Call
+
+```dart
+Mirrorfly.makeGroupVoiceCall(groupJid: GROUP_ID, jidList: USER_LIST).then((isSuccess) {
+                
+});
+```
+
+## To make a Group Video Call
+
+```dart
+Mirrorfly.makeGroupVideoCall(groupJid: GROUP_ID, jidList: USER_LIST).then((isSuccess) {
+                
+});
+```
 
 ### Try the sample app
 

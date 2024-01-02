@@ -14,11 +14,56 @@
         android:layout_weight="1"
         android:visibility="gone" />
 
+    <!--<com.mirrorfly.mirrorfly_plugin.call.widgets.RippleBackgroundView
+        android:id="@+id/speakingRipple"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:rb_color="#80FFFFFF"
+        app:rb_duration="2000"
+        app:rb_radius="50dp"
+        app:rb_rippleAmount="4"
+        app:rb_scale="1.5"
+        app:rb_strokeWidth="0dp"
+        app:rb_type="fillRipple"/>
+
     <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
         android:id="@+id/circleImageView"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:visibility="visible"
         app:is_circle="true"
-        app:srcCompat="@drawable/profile_img" />
+        app:srcCompat="@drawable/profile_img" />-->
+
+    <RelativeLayout
+        android:id="@+id/layout_profile"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="90dp">
+
+        <com.mirrorfly.mirrorfly_plugin.call.widgets.RippleBackgroundView
+            android:id="@+id/speakingRipple"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:rb_color="#80FFFFFF"
+            app:rb_duration="2000"
+            app:rb_radius="50dp"
+            app:rb_rippleAmount="4"
+            app:rb_scale="1.5"
+            app:rb_strokeWidth="0dp"
+            app:rb_type="fillRipple">
+
+            <com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
+                android:id="@+id/circleImageView"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:visibility="visible"
+                app:is_circle="true"
+                app:srcCompat="@drawable/profile_img" />
+
+        </com.mirrorfly.mirrorfly_plugin.call.widgets.RippleBackgroundView>
+
+    </RelativeLayout>
 </RelativeLayout>
