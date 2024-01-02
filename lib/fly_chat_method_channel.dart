@@ -1999,12 +1999,44 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<bool> hasPreviousMessages() async {
+    bool hasPreviousMessages;
+    try {
+      hasPreviousMessages = await mirrorFlyMethodChannel.invokeMethod('hasPreviousMessages');
+      LogMessage.d("hasPreviousMessages", "$hasPreviousMessages");
+      return hasPreviousMessages;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
   Future<dynamic> loadPreviousMessages() async {
     dynamic previousMessageResponse;
     try {
       previousMessageResponse = await mirrorFlyMethodChannel.invokeMethod('loadPreviousMessages');
       LogMessage.d("previousMessageResponse", "$previousMessageResponse");
       return previousMessageResponse;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> hasNextMessages() async {
+    bool hasNextMessages;
+    try {
+      hasNextMessages = await mirrorFlyMethodChannel.invokeMethod('hasNextMessages');
+      LogMessage.d("hasNextMessages", "$hasNextMessages");
+      return hasNextMessages;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;

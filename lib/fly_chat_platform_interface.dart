@@ -615,8 +615,16 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('loadMessages has not been implemented.');
   }
 
+  Future<bool> hasPreviousMessages() {
+    throw UnimplementedError('hasPreviousMessages has not been implemented.');
+  }
+
   Future<dynamic> loadPreviousMessages() {
     throw UnimplementedError('loadPreviousMessages has not been implemented.');
+  }
+
+  Future<bool> hasNextMessages() {
+    throw UnimplementedError('hasNextMessages has not been implemented.');
   }
 
   Future<dynamic> loadNextMessages() {
