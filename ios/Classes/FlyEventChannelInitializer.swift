@@ -21,6 +21,8 @@ class FlyEventChannelInitializer {
         (channelName: Constants.onMuteStatusUpdatedChannel, streamHandler: OnMuteStatusUpdatedStreamHandler()),
         (channelName: Constants.onUserSpeakingChannel, streamHandler: OnUserSpeakingStreamHandler()),
         (channelName: Constants.onUserStoppedSpeakingChannel, streamHandler: OnUserStoppedSpeakingStreamHandler()),
+        (channelName: Constants.onMissedCallChannel, streamHandler: OnMissedCallStreamHandler()),
+        (channelName: Constants.oncallLogUpdateChannel, streamHandler: OncallLogUpdateStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
     
@@ -32,7 +34,7 @@ class FlyEventChannelInitializer {
             }
         }
     
-    func updateSinkValue(forChannel channelName: String, value: String?) {
+    func updateSinkValue(forChannel channelName: String, value: Any?) {
         guard let streamHandler = FlyEventChannelInitializer.eventChannels.first(where: { $0.channelName == channelName })?.streamHandler else {
                 print("#MirrorflyCall else condition")
                return
@@ -45,6 +47,6 @@ class FlyEventChannelInitializer {
 }
 
 protocol FlyEventSinkProvider {
-    func setEventSinkValue(_ value: String?)
+    func setEventSinkValue(_ value: Any?)
 }
 

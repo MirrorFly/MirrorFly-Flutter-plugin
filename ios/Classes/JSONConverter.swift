@@ -77,6 +77,15 @@ extension Dictionary where Key == String, Value == Any {
 enum JSONParsingError: Error {
     case extractionError
 }
+func convertArrayToJSONString(array: [[String: Any]]) -> String? {
+    do {
+        let jsonData = try JSONSerialization.data(withJSONObject: array, options: [])
+        return String(data: jsonData, encoding: .utf8)
+    } catch {
+        print("Error converting array to JSON string: \(error)")
+        return nil
+    }
+}
 
 
 func extractData(from jsonString: String) -> [String: Any]? {
@@ -179,6 +188,55 @@ func fileExists(atPath filePath: String) -> Bool {
     return fileManager.fileExists(atPath: filePath)
 }
 
+func getCallLogs(callList: [Any], totalPages: Any?) -> [String: Any]{
+
+
+    let callListData: [[String: Any]] = callList.compactMap { callLogObject in
+        let callLog = callLogObject as? MirrorFlySDK.CallLog
+        let roomId = callLog?.callLogId ?? ""
+        let fromUser = callLog?.fromUserId ?? ""
+        let toUser = callLog?.toUserId ?? ""
+        let callType = callLog?.callType.rawValue ?? ""
+        let callTime = callLog?.callReceivedTime ?? 0.0
+        let endTime = callLog?.callEndedTime ?? 0.0
+        let callState = callLog?.callState.rawValue ?? ""
+        let callMode = callLog?.callMode.rawValue ?? ""
+        var userList = callLog?.userList ?? []
+        let groupId = callLog?.groupId ?? ""
+        let isSync = callLog?.isLogSynced ?? false
+        let startTime = callLog?.callAttendedTime ?? 0.0
+        let displayName = callLog?.displayName ?? ""
+            return [
+                "callMode": callMode,
+                "callState": callState,
+                "callTime": callTime,
+                "callType": callType,
+                "callerDevice": "",
+                "endTime": endTime,
+                "fromUser": fromUser,
+                "groupId": groupId,
+                "inviteUserList": [] as [String],
+                "isCarbonAnswered": false,
+                "isDeleted": false,
+                "isDisplay": true,
+                "isSync": isSync,
+                "roomId": roomId,
+                "rowId": 0,
+                "sessionStatus": "",
+                "startTime": startTime,
+                "toUser": toUser,
+                "nickName": displayName,
+                "userList": userList.filter { $0 != AppUtils.getMyJid() && !$0.isEmpty }
+            ]
+        }
+
+    let result: [String: Any] = [
+            "data": callListData,
+            "total_pages": totalPages ?? 0
+        ]
+        return result
+//    return callListData
+}
 
 //extension String {
 //    func extractJSONObject() -> Any? {

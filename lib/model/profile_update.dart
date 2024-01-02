@@ -23,7 +23,7 @@ class ProfileUpdate {
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data == null ? null : data!.toJson(),
+        "data": data ?? data?.toJson(),
         "message": message,
         "status": status,
       };

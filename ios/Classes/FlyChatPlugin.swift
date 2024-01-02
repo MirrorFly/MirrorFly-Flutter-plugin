@@ -128,7 +128,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
     
     var onGetAvailableFeaturesStreamHandler: OnGetAvailableFeaturesStreamHandler?
 
-
+    var flyChatUserDelegate : FlyChatUserDelegate? = nil
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: mirrorflyMethodChannel, binaryMessenger: registrar.messenger())
         
@@ -484,6 +485,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         ChatManager.shared.availableFeaturesDelegate = self
         BackupManager.shared.backupDelegate = self
         BackupManager.shared.restoreDelegate = self
+        ChatManager.shared.localNotificationDelegate = self
+        ChatManager.isTrialLicense()
     }
     
     func prepareMethodHandler(methodCall: FlutterMethodCall, result: @escaping FlutterResult){
@@ -491,6 +494,9 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         switch methodCall.method {
         case "init":
             FlySdkMethodCalls.buildChatSDK(call: methodCall)
+            initializeEventListeners()
+        case "initializeSDK":
+            FlySdkMethodCalls.initializeSDK(call: methodCall,result: result)
             initializeEventListeners()
         case "getPlistValue":
             FlySdkMethodCalls.getPlistValue(call: methodCall,result: result)
@@ -819,6 +825,17 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.getTopics(call:methodCall, result: result)
         case "getAvailableFeatures":
             FlySdkMethodCalls.getAvailableFeatures(call:methodCall, result: result)
+        case "appLaunchedFromMissedCall":
+            result(false)
+            
+        case "setRegionCode":
+            FlySdkMethodCalls.setRegionCode(call:methodCall, result: result)
+            
+        case "hasPreviousMessages":
+            FlySdkMethodCalls.hasPreviousMessages(call:methodCall, result: result)
+            
+        case "hasNextMessages":
+            FlySdkMethodCalls.hasNextMessages(call:methodCall, result: result)
 
         default:
             result(FlutterMethodNotImplemented)
@@ -841,7 +858,35 @@ extension FlyChatPlugin : AvailableFeaturesDelegate {
 
 }
 
+extension FlyChatPlugin : LocalNotificationDelegate {
+    
+    public func showOrUpdateOrCancelNotification(jid: String, chatMessage: MirrorFlySDK.ChatMessage, groupId: String) {
+        
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        jsonObject.setValue(chatMessage.toJson(), forKey: "chatMessage")
+        let jsonString = pluginDictToJson(dictionary: jsonObject)
+        
+        if(showOrUpdateOrCancelNotificationStreamHandler?.showOrUpdateOrCancelNotification != nil){
+            print("showOrUpdateOrCancelNotification event\(String(describing: jsonString))")
+            showOrUpdateOrCancelNotificationStreamHandler?.showOrUpdateOrCancelNotification?(jsonString)
+        }else{
+            print("showOrUpdateOrCancelNotification Stream Handler is Nil")
+        }
+    }
+    
+}
+
 extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate, BackupEventDelegate, RestoreEventDelegate {
+    public func onMessageEdited(message: MirrorFlySDK.ChatMessage, chatJid: String, editedMessageId: String) {
+        
+    }
+    
+    
+    public func didRevokedAdminAccess(groupJid: String, revokedAdminMemberJid: String, revokedByMemberJid: String) {
+        NSLog("GroupEventsDelegate didRevokedAdminAccess Delegate Triggered")
+    }
+    
     public func onMediaStatusFailed(error: String, messageId: String, errorCode: Int) {
         let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
         
@@ -1019,6 +1064,8 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         }else{
             print("userUpdatedTheirProfile Stream Handler is Nil")
         }
+        
+        flyChatUserDelegate?.userProfileDidChange(for: jid, profileDetails: profileDetails)
         
     }
     
@@ -1397,7 +1444,9 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
         if(onLoggedOutStreamHandler?.onLoggedOut != nil){
             print("\(Constants.tag) didReceiveLogout Delegate Method")
-            onLoggedOutStreamHandler?.onLoggedOut?(true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.onLoggedOutStreamHandler?.onLoggedOut?(true)
+            }
         }else{
             print("logout Stream Handler is Nil")
         }

@@ -294,7 +294,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String?> getGroupJid(String jid) {
+  Future<String?> getGroupJid(String groupId) {
     // getGroupJid
     throw UnimplementedError();
   }
@@ -407,11 +407,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future getMyProfileStatus() {
     // getMyProfileStatus
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future getNUnreadMessagesOfEachUsers(int messagesCount) {
@@ -491,11 +491,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future getUnKnownUserProfiles() {
     // getUnKnownUserProfiles
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<int?> getUnreadMessageCountExceptMutedChat() {
@@ -763,6 +763,10 @@ class MockFlyChatFlutterPlatform
   Stream get onGroupNotificationMessage => throw UnimplementedError();
 
   @override
+  // onShowOrUpdateOrCancelNotification
+  Stream get showOrUpdateOrCancelNotification => throw UnimplementedError();
+
+  @override
   // onGroupProfileFetched
   Stream get onGroupProfileFetched => throw UnimplementedError();
 
@@ -855,7 +859,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future registerUser(String userIdentifier, {String fcmToken = ""}) {
+  Future registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
     // registerUser
     throw UnimplementedError();
   }
@@ -1360,8 +1364,20 @@ class MockFlyChatFlutterPlatform
   Stream get onUserStoppedSpeaking => throw UnimplementedError();
 
   @override
+  // implement onMissedCall
+  Stream get onMissedCall => throw UnimplementedError();
+
+  @override
   // implement onAvailableFeaturesUpdated
   Stream get onAvailableFeaturesUpdated => throw UnimplementedError();
+
+  @override
+  // implement onCallLogsUpdated
+  Stream get onCallLogsUpdated => throw UnimplementedError();
+
+  @override
+  // implement onCallLogsDeleted
+  Stream get onCallLogsDeleted => throw UnimplementedError();
 
   @override
   Future getCallUsersList() {
@@ -1376,8 +1392,14 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future getCallType() {
-    // implement getCallType
+  Future<String> getCallType() {
+    // implement getCallTypeonAvailable
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getCallGroupJid() {
+    // implement getCallGroupJid
     throw UnimplementedError();
   }
 
@@ -1394,7 +1416,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future declineCall() {
+  Future<bool?> declineCall() {
     // implement declineCall
     throw UnimplementedError();
   }
@@ -1432,7 +1454,19 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future getCallDirection() {
+  Future<bool> makeGroupVoiceCall(String groupJid,List<String>? jidList) {
+    // implement makeGroupVoiceCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> makeGroupVideoCall(String groupJid,List<String>? jidList) {
+    // implement makeGroupVideoCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getCallDirection() {
     // implement getCallDirection
     throw UnimplementedError();
   }
@@ -1463,8 +1497,20 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<bool> hasNextMessages() {
+    // implement hasNextMessages
+    throw UnimplementedError();
+  }
+
+  @override
   Future loadNextMessages() {
     // implement loadNextMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> hasPreviousMessages() {
+    // implement hasPreviousMessages
     throw UnimplementedError();
   }
 
@@ -1517,6 +1563,18 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<int?> getUnreadMissedCallCount() {
+    // getUnreadMissedCallCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> appLaunchedFromMissedCall() {
+    // getUnreadMissedCallCount
+    throw UnimplementedError();
+  }
+
+  @override
   Future<String?> openAudioFilePicker() {
     // implement isUserVideoMuted
     throw UnimplementedError();
@@ -1527,6 +1585,102 @@ class MockFlyChatFlutterPlatform
     // implement getAvailableFeatures
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool?> requestVideoCallSwitch() {
+    // implement requestVideoCallSwitch
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> cancelVideoCallSwitch() {
+    // implement cancelVideoCallSwitch
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> acceptVideoCallSwitchRequest() {
+    // implement acceptVideoCallSwitchRequest
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> declineVideoCallSwitchRequest() {
+    // implement declineVideoCallSwitchRequest
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> getMaxCallUsersCount() {
+    // implement getMaxCallUsersCount
+    throw UnimplementedError();
+  }
+
+  @override
+  getCallLogsList(int currentPage) {
+    //  implement getCallLogsList
+    throw UnimplementedError();
+  }
+
+  @override
+  inviteUsersToOngoingCall(List<String> jidList) {
+    //  implement inviteUsersToOngoingCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<String>> getInvitedUsersList() {
+    //  implement getInvitedUsersList
+    throw UnimplementedError();
+  }
+
+  @override
+  getLocalCallLogs() {
+    //  implement filteredCallLog
+    throw UnimplementedError();
+  }
+
+  @override
+  deleteCallLog(List<String> jidlist, bool isClearAll) {
+    // implement deleteCallLog
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> initializeSDK(InitializeSDKBuilder builder) {
+    // implement initSDK
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> markAllUnreadMissedCallsAsRead() {
+    // implement markAllUnreadMissedCallsAsRead
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isCallConversionRequestAvailable() {
+    //  implement isCallConversionRequestAvailable
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> syncCallLogs() {
+    //  implement syncCallLogs
+    throw UnimplementedError();
+  }
+
+  /*@override
+  Future<bool?> changeCallType({required String switchType}) {
+    // implement changeCallType
+    throw UnimplementedError();
+  }
+
+  @override
+  Future reRouteAudio() {
+    // implement reRouteAudio
+    throw UnimplementedError();
+  }*/
 }
 
 void main() {

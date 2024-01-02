@@ -107,7 +107,7 @@ import UIKit
         }
 
         
-        ChatManager.disableLocalNotification()
+//        ChatManager.disableLocalNotification()
         
         ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
         
@@ -118,6 +118,45 @@ import UIKit
         ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
         
 //        ChatManager.setRegisterDeviceType(deviceType: "android")
+
+    }
+    
+    static func initializeSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+
+        let licenseKey = args["licenseKey"] as? String ?? ""
+        chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
+        let containerID = args["iOSContainerID"] as? String ?? ""
+        let enableSDKLog = args["enableSDKLog"] as? Bool ?? false
+        
+        
+        ChatManager.setAppGroupContainerId(id: containerID)
+        Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
+        Utility.saveInPreference(key: Constants.containerID, value: containerID)
+        ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
+            if isSuccess {
+                NSLog("SDK INITIALISED")
+                if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+
+                    DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+                        
+                        do {
+                            try CallManager.initCallSDK()
+                            //                    FlyDefaults.chatHistoryEnabled = true
+                        } catch (let error ){
+                            print("#FlyCall Exception : \(error.localizedDescription)")
+                        }
+                    }
+                }
+                result(true)
+            }else{
+                NSLog("SDK FAILED TO INITIALISE \(flyError)")
+                result(FlutterError(code: "500",
+                                    message: "SDK failed to Initialize",
+                                    details: nil))
+            }
+        }
+        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
 
     }
     
@@ -159,6 +198,7 @@ import UIKit
         
         var userIdentifier = args["userIdentifier"] as? String ?? ""
         let deviceToken = args["token"] as? String ?? ""
+        let isForceRegister = args["isForceRegister"] as? Bool ?? true
         
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
         
@@ -175,8 +215,9 @@ import UIKit
         NSLog("\(Constants.tag) voipToken.isEmpty \(voipToken.isEmpty)")
         
         NSLog("\(Constants.tag) Register Device Token \(deviceToken)")
+        NSLog("\(Constants.tag) ISEXPORT \(ISEXPORT)")
 
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT, pushServerType: .firebase) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: "d", pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
@@ -187,6 +228,14 @@ import UIKit
                     "is_new_user": data["newLogin"] as Any,
                     "message" : "Register Trial API Success"
                 ] as [String : Any]
+                
+                if  data["newLogin"] as? Bool ?? false{
+                    NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
+                    CallLogManager().deleteCallLogs()
+//                    ChatManager.deleteAllChatTags()
+//                    iCloudmanager().deleteLoaclBackup()
+                    
+                }
                 
                 ChatManager.updateAppLoggedIn(isLoggedin: true)
 //                FlyDefaults.myXmppPassword = data["password"] as! String
@@ -219,10 +268,16 @@ import UIKit
 
                 }
             }else{
-                let error = data.getMessage()
-                result(FlutterError(code: "500",
-                                    message: error as? String,
-                                    details: nil))
+//                let error = data.getMessage()
+                let err = flyError?.description ?? ""
+                let error = err.contains("405") ? err : data.getMessage()
+                if(err.contains("405")){
+                    result(FlutterError(code: "405",message: "You have reached the maximum device limit, If you want to continue one of your device will logged out . Do you want to continue?",details: nil))
+                }else if(err.contains("403")){
+                    result(FlutterError(code: "403",message: error as? String,details: nil))
+                }else {
+                    result(FlutterError(code: "500",message: error as? String,details: nil))
+                }
                 print("#chatSDK \(error)")
             }
         }
@@ -265,30 +320,34 @@ import UIKit
     static func sendTextMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let txtMessage = args["message"] as? String ?? nil
-        let receiverJID = args["JID"] as? String ?? nil
+        let receiverJID = args["JID"] as? String ?? ""
         let replyMessageID = args["replyMessageId"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
+        let editMessageId = args["editMessageId"] as? String ?? ""
 
-        if(txtMessage == nil || receiverJID == nil){
+        if(txtMessage == nil || receiverJID == ""){
             result(FlutterError(code: "500", message: "Parameters Missing", details: nil))
             return
         }
+        let messageParams = TextMessage(toId:  receiverJID, messageText: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [])
         
-        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId) { isSuccess,error,chatMessage in
+        FlyMessenger.sendTextMessage(messageParams: messageParams){ isSuccess, error, chatMessage in
             if isSuccess {
-                print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
-                let textMsgResponse = chatMessage.toJson()
-                if(textMsgResponse != nil){
-                    print("FlyMessenger.sendTextMessage==**==\(String(describing: textMsgResponse))")
-                    result(textMsgResponse)
-                } else {
-                    result(FlutterError(code: "500", message: "Failed to Send Text Message", details: nil))
+                //        FlyMessenger.sendTextMessage(toJid: receiverJID, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId, editMessageId: editMessageId) { isSuccess,error,chatMessage in
+                if isSuccess {
+                    print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
+                    let textMsgResponse = chatMessage.toJson()
+                    if(textMsgResponse != nil){
+                        print("FlyMessenger.sendTextMessage==**==\(String(describing: textMsgResponse))")
+                        result(textMsgResponse)
+                    } else {
+                        result(FlutterError(code: "500", message: "Failed to Send Text Message", details: nil))
+                    }
+                }else{
+                    result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
                 }
-                
-                
-            }else{
-                result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
             }
+            
         }
         
     }
@@ -920,6 +979,8 @@ import UIKit
         let image = args["image"] as? String ?? nil
         let userJid = AppUtils.getMyJid()
         
+        NSLog("update my profile image path --> \(image)")
+        
         if (nickName.isEmpty && mobile.isEmpty && email.isEmpty) {
             result(FlutterError(code: "400", message: "Fill All details", details: nil))
         }
@@ -955,7 +1016,7 @@ import UIKit
 
                 var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
 
-                saveMyProfileDataToUserDefaults(profile: myProfile)
+//                saveMyProfileDataToUserDefaults(profile: myProfile)
                 print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
                 result(profileResponseJson)
             } else{
@@ -1022,70 +1083,90 @@ import UIKit
 //        let fileName = (profileImage as NSString).lastPathComponent
 //        print("file name" + fileName)
 
-        ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
-                if isSuccess {
-                    // Profile Image updated successfully update the UI
-                    print("updateMyProfileImage success response\(flyData)")
-                } else{
-                    print("updateMyProfileImage Error\(flyError!.localizedDescription)")
-                }
-        }
-        
-//        do {
+        NSLog("iOS updateMyProfileImage Called \(profileImage)")
+//        ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
+//                if isSuccess {
+//                    var data = flyData
+//                    // Profile Image updated successfully update the UI
+//                    NSLog("updateMyProfileImage success response\(data)")
+//                    let message = data.getMessage()
+//                    var profileUpdateResponse = data.getData() as? FlyProfile
+//                    let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
 //
-//            if (profileImage != ""){
+//                    if let fileName = fileArray?.last {
+//                        profileUpdateResponse?.image = fileName
+//                        NSLog("updateMyProfileImage success fileName\(fileName)")
+//                    }
+//
+//                    let profileDataJson = profileUpdateResponse?.toJson()
+//                    print("***profile Data json \(profileDataJson)")
+//                    var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+//                    result(profileResponseJson)
+//                } else{
+//                    NSLog("updateMyProfileImage Error\(flyError!.localizedDescription)")
+//                    result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+//                }
+//        }
+        
+        do {
+
+            if (profileImage != ""){
 //                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
-//                    print("File saved at: \(fileUrl)")
+                    print("File saved at: \(profileImage)")
 //                    localFileUrl = fileUrl
 //                    FlyDefaults.myImageToken = fileUrl
-//
-//                    let userJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
-//
-//
-//                    var myProfile = FlyProfile(jid: userJid)
-//                    myProfile.image = localFileUrl
-//
-//                    ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
-//                        if isSuccess {
-//                            var data = flyData
-//
-//                            let message = data.getMessage()
-//                            print("***profile Data\(data.getData() as? FlyProfile)")
-//                            var profileUpdateResponse = data.getData() as? FlyProfile
-//                            let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
-//
-//                            if let fileName = fileArray?.last {
-//                                profileUpdateResponse?.image = fileName
-//                                    }
-//
-//                            let profileDataJson = profileUpdateResponse?.toJson()
-//                            print("***profile Data json \(profileDataJson)")
-//
+
+                    let userJid = AppUtils.getMyJid()
+
+                let userProfile = ChatManager.profileDetaisFor(jid: userJid)
+                    var myProfile = FlyProfile(jid: userJid)
+                    myProfile.name = userProfile?.name ?? ""
+                    myProfile.nickName = userProfile?.nickName ?? ""
+                    myProfile.mobileNumber = userProfile?.mobileNumber ?? ""
+                    myProfile.email = userProfile?.email ?? ""
+                    myProfile.image = profileImage
+
+                    ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
+                        if isSuccess {
+                            var data = flyData
+
+                            let message = data.getMessage()
+                            print("***profile Data\(data.getData() as? FlyProfile)")
+                            var profileUpdateResponse = data.getData() as? FlyProfile
+                            let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
+
+                            if let fileName = fileArray?.last {
+                                profileUpdateResponse?.image = fileName
+                                    }
+
+                            let profileDataJson = profileUpdateResponse?.toJson()
+                            print("***profile Data json \(profileDataJson)")
+
 //                            Utility.saveInPreference(key: Constants.isProfileSaved, value: true)
-//
-//
-//                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
-//
+
+
+                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+
 //                            saveMyProfileDataToUserDefaults(profile: myProfile)
-//                            print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
-//                            result(profileResponseJson)
-//                        } else{
-//                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
-//
-//                        }
-//                    }
+                            print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
+                            result(profileResponseJson)
+                        } else{
+                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+
+                        }
+                    }
 //                } else {
 //                    print("Failed to save the file.")
-//
+
 //                }
-//            }else{
-//                result(FlutterError(code: "400", message: "Image not available to update profile", details: nil))
-//            }
-//
-//        } catch {
-//            // Error handling
-//            print("Error reading file: \(error.localizedDescription)")
-//        }
+            }else{
+                result(FlutterError(code: "400", message: "Image not available to update profile", details: nil))
+            }
+
+        } catch {
+            // Error handling
+            print("Error reading file: \(error.localizedDescription)")
+        }
 
     }
     
@@ -1129,8 +1210,11 @@ import UIKit
             
             if isSuccess {
                 let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
+                let blockedProfileJson = blockedprofileDetailsArray.toJson()
+                result(blockedProfileJson)
             } else{
-                print(flyError!.localizedDescription)
+                print("\(Constants.tag) getUsersWhoBlockedMe Error: \(flyError!.localizedDescription)")
+                result(FlutterError(code: "500", message: "Failed to Encode Chat Messages", details: flyError!.localizedDescription))
             }
         }
     }
@@ -1153,8 +1237,13 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let userStatus = args["status"] as? String ?? ""
         
-        ChatManager.shared.setMyBusyStatus(userStatus)
-        result(true)
+        ChatManager.shared.setMyBusyStatus(userStatus) { isSuccess, error, data in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: "500", message: "Set MyBusy Status Error", details: error?.localizedDescription))
+            }
+        }
     }
     static func enableDisableBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
@@ -1162,9 +1251,13 @@ import UIKit
         
         let busyStatusVal = args["enable"] as? Bool ?? false
         
-        ChatManager.shared.enableDisableBusyStatus(busyStatusVal)
-        
-        result(true)
+        ChatManager.shared.enableDisableBusyStatus(busyStatusVal){ isSuccess, error, data in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: "500", message: "Enable Disable BusyStatus Status Error", details: error?.localizedDescription))
+            }
+        }
         
     }
     
@@ -1172,8 +1265,13 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let busyStatus = args["busy_status"] as? String ?? ""
         print("setting busy status\(busyStatus)")
-        ChatManager.shared.setMyBusyStatus(busyStatus)
-        result(true)
+        ChatManager.shared.setMyBusyStatus(busyStatus){ isSuccess, error, data in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: "500", message: "Set MyBusy Status Error", details: error?.localizedDescription))
+            }
+        }
     }
     
     static func getBusyStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1770,8 +1868,10 @@ import UIKit
                 if (isSuccess) {
                     let recentChatArray  = data.getData() as? [RecentChat] ?? []
                     if(recentChatArray.isEmpty){
+                        print("recentChatList is Empty")
                         result("{\"data\": [] }")
                     }else{
+                        print("recentChatList count \(recentChatArray.count)")
                         if let recentChatJson = recentChatArray.toJson() {
                             let recentChatListJson = "{\"data\":" + recentChatJson + "}"
                             print("ChatManager.getRecentChatList==**==\(recentChatListJson)")
@@ -2444,7 +2544,7 @@ import UIKit
                 //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
                 ChatManager.disconnect()
                 ChatManager.shared.resetFlyDefaults()
-                Utility.clearUserDefaults()
+                //Utility.clearUserDefaults()
                 Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
                 result(isSuccess)
@@ -2500,6 +2600,11 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
+        
+        if(userJid.isEmpty){
+            result(FlutterError(code: "500", message: "user jid cannot be empty", details: nil))
+            return
+        }
 
         let userProfile = ChatManager.profileDetaisFor(jid: userJid)
         print("userProfile*** \(userProfile)")
@@ -2715,6 +2820,28 @@ import UIKit
                 print("getTopics error \(error?.localizedDescription)")
                 result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
             }
+        }
+    }
+    
+    static func setRegionCode(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let regionCode = args["regionCode"] as? String ?? "IN"
+//        ChatManager.setUserCountryISOCode(regionCode)
+    }
+    
+    static func hasPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        if messageListQuery != nil {
+            result(messageListQuery?.hasPreviousMessages())
+        }else{
+            result(FlutterError(code: "500",message: "Message List not Initialized. Initialize using  initializeMessageList() method", details: nil))
+        }
+    }
+    
+    static func hasNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        if messageListQuery != nil {
+            result(messageListQuery?.hasNextMessages())
+        }else{
+            result(FlutterError(code: "500",message: "Message List not Initialized. Initialize using  initializeMessageList() method", details: nil))
         }
     }
 }
