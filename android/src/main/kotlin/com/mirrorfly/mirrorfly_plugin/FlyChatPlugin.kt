@@ -882,8 +882,22 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("loadPreviousMessages") -> {
                 loadPreviousMessages(result)
             }
+            call.method.equals("hasPreviousMessages") -> {
+                if(messageListQuery!=null) {
+                    result.success(messageListQuery?.hasPreviousMessages())
+                }else{
+                    result.error("500","Message List not Initialized call before initializeMessageListParams",null)
+                }
+            }
             call.method.equals("loadNextMessages") -> {
                 loadNextMessages(result)
+            }
+            call.method.equals("hasNextMessages") -> {
+                if(messageListQuery!=null) {
+                    result.success(messageListQuery?.hasNextMessages())
+                }else{
+                    result.error("500","Message List not Initialized call before initializeMessageListParams",null)
+                }
             }
             call.method.equals("markAsReadDeleteUnreadSeparator") -> {
                 markAsReadDeleteUnreadSeparator(call, result)

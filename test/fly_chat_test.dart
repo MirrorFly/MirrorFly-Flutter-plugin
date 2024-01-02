@@ -1497,8 +1497,20 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<bool> hasNextMessages() {
+    // implement hasNextMessages
+    throw UnimplementedError();
+  }
+
+  @override
   Future loadNextMessages() {
     // implement loadNextMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> hasPreviousMessages() {
+    // implement hasPreviousMessages
     throw UnimplementedError();
   }
 

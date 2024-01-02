@@ -628,10 +628,20 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.loadMessages();
   }
 
+  /// This [hasPreviousMessages] is used to find it has any Previous messages
+  static Future<bool> hasPreviousMessages() {
+    return FlyChatFlutterPlatform.instance.hasPreviousMessages();
+  }
+
   /// This [loadPreviousMessages] is used to fetch previous set of conversations between you and a single chat user or group.
   /// This set contains the limit/length set in initializeMessageList method
   static Future<dynamic> loadPreviousMessages() {
     return FlyChatFlutterPlatform.instance.loadPreviousMessages();
+  }
+
+  /// This [hasNextMessages] is used to find it has any Previous messages
+  static Future<bool> hasNextMessages() {
+    return FlyChatFlutterPlatform.instance.hasNextMessages();
   }
 
   /// This [loadNextMessages] is used to fetch next set of conversations between you and a single chat user or group.
