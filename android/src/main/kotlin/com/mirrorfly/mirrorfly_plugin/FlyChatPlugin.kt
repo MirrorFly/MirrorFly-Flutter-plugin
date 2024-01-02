@@ -2,7 +2,6 @@ package com.mirrorfly.mirrorfly_plugin
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -18,7 +17,6 @@ import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.util.Base64
 import android.webkit.MimeTypeMap
-import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -26,7 +24,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.google.gson.Gson
 import com.mirrorfly.mirrorfly_plugin.call.*
-import com.mirrorflysdk.AppUtils
 import com.mirrorflysdk.ChatSDK
 import com.mirrorflysdk.GroupConfig
 import com.mirrorflysdk.api.*
@@ -42,11 +39,8 @@ import com.mirrorflysdk.backup.BackupListener
 import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
-import com.mirrorflysdk.flycall.call.database.model.CallLog
-import com.mirrorflysdk.flycall.call.utils.CallTimeFormatter
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
-import com.mirrorflysdk.flycall.webrtc.api.CallLogListener
 import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
@@ -2661,9 +2655,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
         messageListQuery!!.loadMessages { isSuccess, throwable, data ->
             if (isSuccess) {
-                val messages = data["data"] as ArrayList<ChatMessage>
-                result.success(messages.toJsonString())
-                LogMessage.d("loadMessages Android", "$isSuccess : ${messages.toJsonString()}")
+                val messageList = data["data"] as ArrayList<ChatMessage>
+                var messages = arrayListOf<ChatMessage>()
+                if (messageList.size==1){
+                    if(messageList[0].messageType == MessageType.NOTIFICATION){
+                        result.success(messages.toJsonString())
+                    }
+                }else{
+                    messages = messageList
+                    result.success(messages.toJsonString())
+                }
+                LogMessage.d("loadMessages", "$isSuccess : ${messages.toJsonString()}")
             } else {
                 LogMessage.d("loadMessages", "$isSuccess : $throwable")
                 // Fetch messages failed print throwable to find the exception details.
@@ -2795,20 +2797,16 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val nickName = call.argument("nickName") ?: ""
         val mobile = call.argument("mobile") ?: ""
         val email = call.argument("email") ?: ""
+        val image = call.argument("image") ?: ""
         val status = call.argument("status") ?: "I'm Mirrorfly user"
-        if (name.isNotEmpty() && mobile.isNotEmpty() && email.isNotEmpty()) {
+//        if (name.isNotEmpty() && mobile.isNotEmpty() && email.isNotEmpty()) {
             val profileObj = Profile()
             profileObj.name = name
             profileObj.nickName = name
             profileObj.mobileNumber = mobile
             profileObj.email = email
             profileObj.status = status
-            if (call.hasArgument("image") && call.argument<String>("image") != null) {
-//                if (call.argument<String>("image") != null) {
-                profileObj.image = call.argument("image")
-//                }
-            }
-
+            profileObj.image = image
             ContactManager.updateMyProfile(profileObj) { isSuccess, throwable, data ->
                 //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("ContactManager.updateMyProfile", data.tojsonString())
@@ -2819,29 +2817,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     result.error("500",throwable?.message,throwable)
                 }
             }
-        } else {
-            result.error(
-                "400",
-                "Fill All details",
-                null
-            )
-        }
+//        } else {
+//            result.error(
+//                "400",
+//                "Fill All details",
+//                null
+//            )
+//        }
     }
 
     private fun updateMyProfileImage(call: MethodCall, result: MethodChannel.Result) {
-        if(call.hasArgument("imageUrl")){
-            val imageUrl = call.argument<String>("imageUrl") ?: ""
-            if(imageUrl.isNotEmpty()) {
-                /*ContactManager.updateMyProfileImage(File(""), imageUrl = imageUrl,
-                    flyCallback = { isSuccess, p1, data -> //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                        //DebugUtilis.v("ContactManager.updateMyProfileImage", data.tojsonString())
-                        data["status"] = isSuccess
-                        result.success(data.toJsonString())
-                    })*/
-            }else{
-                result.error("500", "Image url is Empty", null)
-            }
-        }else if (call.hasArgument("image")) {
+        if (call.hasArgument("image")) {
             val image = call.argument<String>("image")
             if (image != null) {
                 val imagefile = File(image)
