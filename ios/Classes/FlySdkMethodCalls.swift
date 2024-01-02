@@ -1016,7 +1016,7 @@ import UIKit
 
                 var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
 
-                saveMyProfileDataToUserDefaults(profile: myProfile)
+//                saveMyProfileDataToUserDefaults(profile: myProfile)
                 print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
                 result(profileResponseJson)
             } else{
@@ -1084,70 +1084,89 @@ import UIKit
 //        print("file name" + fileName)
 
         NSLog("iOS updateMyProfileImage Called \(profileImage)")
-        ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
-                if isSuccess {
-                    // Profile Image updated successfully update the UI
-                    NSLog("updateMyProfileImage success response\(flyData)")
-                } else{
-                    NSLog("updateMyProfileImage Error\(flyError!.localizedDescription)")
-                }
-        }
-        
-//        do {
+//        ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
+//                if isSuccess {
+//                    var data = flyData
+//                    // Profile Image updated successfully update the UI
+//                    NSLog("updateMyProfileImage success response\(data)")
+//                    let message = data.getMessage()
+//                    var profileUpdateResponse = data.getData() as? FlyProfile
+//                    let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
 //
-//            if (profileImage != ""){
+//                    if let fileName = fileArray?.last {
+//                        profileUpdateResponse?.image = fileName
+//                        NSLog("updateMyProfileImage success fileName\(fileName)")
+//                    }
+//
+//                    let profileDataJson = profileUpdateResponse?.toJson()
+//                    print("***profile Data json \(profileDataJson)")
+//                    var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+//                    result(profileResponseJson)
+//                } else{
+//                    NSLog("updateMyProfileImage Error\(flyError!.localizedDescription)")
+//                    result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+//                }
+//        }
+        
+        do {
+
+            if (profileImage != ""){
 //                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
-//                    print("File saved at: \(fileUrl)")
+                    print("File saved at: \(profileImage)")
 //                    localFileUrl = fileUrl
 //                    FlyDefaults.myImageToken = fileUrl
-//
-//                    let userJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
-//
-//
-//                    var myProfile = FlyProfile(jid: userJid)
-//                    myProfile.image = localFileUrl
-//
-//                    ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
-//                        if isSuccess {
-//                            var data = flyData
-//
-//                            let message = data.getMessage()
-//                            print("***profile Data\(data.getData() as? FlyProfile)")
-//                            var profileUpdateResponse = data.getData() as? FlyProfile
-//                            let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
-//
-//                            if let fileName = fileArray?.last {
-//                                profileUpdateResponse?.image = fileName
-//                                    }
-//
-//                            let profileDataJson = profileUpdateResponse?.toJson()
-//                            print("***profile Data json \(profileDataJson)")
-//
+
+                    let userJid = AppUtils.getMyJid()
+
+                let userProfile = ChatManager.profileDetaisFor(jid: userJid)
+                    var myProfile = FlyProfile(jid: userJid)
+                    myProfile.name = userProfile?.name ?? ""
+                    myProfile.nickName = userProfile?.nickName ?? ""
+                    myProfile.mobileNumber = userProfile?.mobileNumber ?? ""
+                    myProfile.email = userProfile?.email ?? ""
+                    myProfile.image = profileImage
+
+                    ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
+                        if isSuccess {
+                            var data = flyData
+
+                            let message = data.getMessage()
+                            print("***profile Data\(data.getData() as? FlyProfile)")
+                            var profileUpdateResponse = data.getData() as? FlyProfile
+                            let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
+
+                            if let fileName = fileArray?.last {
+                                profileUpdateResponse?.image = fileName
+                                    }
+
+                            let profileDataJson = profileUpdateResponse?.toJson()
+                            print("***profile Data json \(profileDataJson)")
+
 //                            Utility.saveInPreference(key: Constants.isProfileSaved, value: true)
-//
-//
-//                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
-//
+
+
+                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+
 //                            saveMyProfileDataToUserDefaults(profile: myProfile)
-//                            print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
-//                            result(profileResponseJson)
-//                        } else{
-//                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
-//
-//                        }
-//                    }
+                            print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
+                            result(profileResponseJson)
+                        } else{
+                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+
+                        }
+                    }
 //                } else {
 //                    print("Failed to save the file.")
-//
+
 //                }
-//            }else{
-//                result(FlutterError(code: "400", message: "Image not available to update profile", details: nil))
-//            }
-//
-//        } catch {
-//            // Error handling
-//            print("Error reading file: \(error.localizedDescription)")
-//        }
+            }else{
+                result(FlutterError(code: "400", message: "Image not available to update profile", details: nil))
+            }
+
+        } catch {
+            // Error handling
+            print("Error reading file: \(error.localizedDescription)")
+        }
 
     }
     
