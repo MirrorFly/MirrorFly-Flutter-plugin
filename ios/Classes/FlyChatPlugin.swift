@@ -830,6 +830,12 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             
         case "setRegionCode":
             FlySdkMethodCalls.setRegionCode(call:methodCall, result: result)
+            
+        case "hasPreviousMessages":
+            FlySdkMethodCalls.hasPreviousMessages(call:methodCall, result: result)
+            
+        case "hasNextMessages":
+            FlySdkMethodCalls.hasNextMessages(call:methodCall, result: result)
 
         default:
             result(FlutterMethodNotImplemented)
