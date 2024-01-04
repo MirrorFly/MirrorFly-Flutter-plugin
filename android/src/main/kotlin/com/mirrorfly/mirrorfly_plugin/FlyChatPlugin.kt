@@ -995,6 +995,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("refreshAuthToken") -> {
                 refreshAndGetAuthToken(result)
             }
+            call.method.equals("getCurrentAuthToken") -> {
+                result.success(FlyUtils.decodedToken())
+            }
             call.method.equals("clear_chat") -> {
                 clearChat(call, result)
             }

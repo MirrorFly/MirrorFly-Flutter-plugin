@@ -699,6 +699,11 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.refreshAndGetAuthToken();
   }
 
+  /// This [getCurrentAuthToken] is used to get current Auth Token.
+  static Future<String> getCurrentAuthToken() {
+    return FlyChatFlutterPlatform.instance.getCurrentAuthToken();
+  }
+
   static Future<dynamic> getMessagesOfJid(String jid) {
     return FlyChatFlutterPlatform.instance.getMessagesOfJid(jid);
   }

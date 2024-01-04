@@ -301,6 +301,30 @@ import UIKit
         }
     }
     
+    static func getCurrentAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let imageUrl = ChatManager.getImageUrl(imageName: "getAuthToken")
+        print("getCurrentAuthToken==**==imageUrl \(imageUrl)")
+        let components = imageUrl.components(separatedBy: "?mf=")
+        
+        guard components.count > 1 else {
+            result(nil)
+            return
+        }
+        
+//        let queryString = components[1]
+        
+//        let queryStringComponents = queryString.components(separatedBy: "=")
+        
+//        guard queryStringComponents.count > 1 else {
+//            result(nil)
+//            return
+//        }
+        
+        let authToken = components[1]
+        print("getCurrentAuthToken==**==\(authToken)")
+        result(authToken)
+    }
+    
     static func getJid(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userName = args["username"] as? String
