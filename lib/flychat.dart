@@ -22,16 +22,16 @@ class Mirrorfly {
   @Deprecated('Instead of use Mirrorfly.initializeSDK()')
   static init(
       {required String baseUrl,
-      required String licenseKey,
-      required String iOSContainerID,
-      String? storageFolderName,
-      bool enableMobileNumberLogin = true,
-      bool isTrialLicenceKey = true,
-      bool chatHistoryEnable = false,
-      // int? maximumRecentChatPin,
-      // GroupConfig? groupConfig,
-      // String? ivKey,
-      bool enableDebugLog = false}) {
+        required String licenseKey,
+        required String iOSContainerID,
+        String? storageFolderName,
+        bool enableMobileNumberLogin = true,
+        bool isTrialLicenceKey = true,
+        bool chatHistoryEnable = false,
+        // int? maximumRecentChatPin,
+        // GroupConfig? groupConfig,
+        // String? ivKey,
+        bool enableDebugLog = false}) {
     var builder = ChatBuilder(
         domainBaseUrl: baseUrl,
         iOSContainerID: iOSContainerID,
@@ -58,11 +58,11 @@ class Mirrorfly {
   /// @property [enableDebugLog] provides the Debug Log.
   static Future<bool?> initializeSDK(
       {required String licenseKey,
-      required String iOSContainerID,
-      String? storageFolderName = "Mirrorfly",
-      bool chatHistoryEnable = false,
-      bool enableMobileNumberLogin = true,
-      bool enableDebugLog = false}) {
+        required String iOSContainerID,
+        String? storageFolderName = "Mirrorfly",
+        bool chatHistoryEnable = false,
+        bool enableMobileNumberLogin = true,
+        bool enableDebugLog = false}) {
     var builder = InitializeSDKBuilder(
         iOSContainerID: iOSContainerID,
         licenseKey: licenseKey,
@@ -392,7 +392,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.authToken();
   }
 
-  static Future<String?> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
+  static Future<dynamic> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
     return FlyChatFlutterPlatform.instance.registerUser(userIdentifier, fcmToken: fcmToken, isForceRegister: isForceRegister);
   }
 
@@ -606,12 +606,12 @@ class Mirrorfly {
   /// * @property [ascendingOrder] - If true message list will be returned ascendingOrder by message time default false
   static Future<dynamic> initializeMessageList(
       {required String userJid,
-      String? messageId,
-      double? messageTime,
-      bool exclude = true,
-      bool ascendingOrder = false,
-      String? topicId,
-      int limit = 25}) {
+        String? messageId,
+        double? messageTime,
+        bool exclude = true,
+        bool ascendingOrder = false,
+        String? topicId,
+        int limit = 25}) {
     return FlyChatFlutterPlatform.instance.initializeMessageList(
         userJid: userJid,
         messageId: messageId,

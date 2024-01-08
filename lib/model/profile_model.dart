@@ -9,7 +9,6 @@ ProfileModel profileDataFromJson(String str) =>
     ProfileModel.fromJson(json.decode(str));
 
 String profileDataToJson(ProfileModel data) => json.encode(data.toJson());
-String? convertProfileJsonFromString(String str) => str.isEmpty ? null : json.encode(profileDataFromJson(str).toJson());
 
 class ProfileModel {
   ProfileModel({
@@ -21,14 +20,14 @@ class ProfileModel {
   bool? status;
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) => ProfileModel(
-        data: json["data"] == null ? null : ProfileData.fromJson(json["data"]),
-        status: json["status"],
-      );
+    data: json["data"] == null ? null : ProfileData.fromJson(json["data"]),
+    status: json["status"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "data": data ?? data?.toJson(),
-        "status": status,
-      };
+    "data": data ?? data?.toJson(),
+    "status": status,
+  };
 }
 
 class ProfileData {
@@ -49,7 +48,6 @@ class ProfileData {
     this.name,
     this.nickName,
     this.status,
-    this.thumbImage,
   });
 
   String? email;
@@ -68,49 +66,46 @@ class ProfileData {
   String? name;
   String? nickName;
   String? status;
-  String? thumbImage;
 
   factory ProfileData.fromJson(Map<String, dynamic> json) => ProfileData(
-        email: json["email"],
-        image: json["image"],
-        isAdminBlocked: Platform.isAndroid ? json["isAdminBlocked"] : json["isBlockedByAdmin"],
-        isBlocked: json["isBlocked"],
-        isBlockedMe: json["isBlockedMe"],
-        isGroupAdmin: json["isGroupAdmin"],
-        isGroupInOfflineMode: json["isGroupInOfflineMode"],
-        isGroupProfile: Platform.isAndroid
-            ? json["isGroupProfile"]
-            : json["profileChatType"].toString().toLowerCase() == "singlechat"
-                ? false
-                : true,
-        isItSavedContact: json["isItSavedContact"],
-        isMuted: json["isMuted"],
-        isSelected: json["isSelected"],
-        jid: json["jid"],
-        mobileNumber: json["mobileNumber"],
-        name: json["name"],
-        nickName: json["nickName"],
-        status: json["status"],
-        thumbImage: json["thumbImage"],
-      );
+    email: json["email"],
+    image: json["image"],
+    isAdminBlocked: json["isAdminBlocked"],
+    isBlocked: json["isBlocked"],
+    isBlockedMe: json["isBlockedMe"],
+    isGroupAdmin: json["isGroupAdmin"],
+    isGroupInOfflineMode: json["isGroupInOfflineMode"],
+    isGroupProfile: Platform.isAndroid
+        ? json["isGroupProfile"]
+        : json["profileChatType"].toString().toLowerCase() == "singlechat"
+        ? false
+        : true,
+    isItSavedContact: json["isItSavedContact"],
+    isMuted: json["isMuted"],
+    isSelected: json["isSelected"],
+    jid: json["jid"],
+    mobileNumber: json["mobileNumber"],
+    name: json["name"],
+    nickName: json["nickName"],
+    status: json["status"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "email": email,
-        "image": image,
-        "isAdminBlocked": isAdminBlocked,
-        "isBlocked": isBlocked,
-        "isBlockedMe": isBlockedMe,
-        "isGroupAdmin": isGroupAdmin,
-        "isGroupInOfflineMode": isGroupInOfflineMode,
-        "isGroupProfile": isGroupProfile,
-        "isItSavedContact": isItSavedContact,
-        "isMuted": isMuted,
-        "isSelected": isSelected,
-        "jid": jid,
-        "mobileNumber": mobileNumber,
-        "name": name,
-        "nickName": nickName,
-        "status": status,
-        "thumbImage": thumbImage,
-      };
+    "email": email,
+    "image": image,
+    "isAdminBlocked": isAdminBlocked,
+    "isBlocked": isBlocked,
+    "isBlockedMe": isBlockedMe,
+    "isGroupAdmin": isGroupAdmin,
+    "isGroupInOfflineMode": isGroupInOfflineMode,
+    "isGroupProfile": isGroupProfile,
+    "isItSavedContact": isItSavedContact,
+    "isMuted": isMuted,
+    "isSelected": isSelected,
+    "jid": jid,
+    "mobileNumber": mobileNumber,
+    "name": name,
+    "nickName": nickName,
+    "status": status,
+  };
 }

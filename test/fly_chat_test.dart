@@ -865,7 +865,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String?> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
+  Future registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
     // registerUser
     throw UnimplementedError();
   }
@@ -1001,9 +1001,9 @@ class MockFlyChatFlutterPlatform
   sendVideoMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
       {String? videoFileUrl,
-      num? videoDuration,
-      String? thumbImageBase64,
-      String? topicId}) {
+        num? videoDuration,
+        String? thumbImageBase64,
+        String? topicId}) {
     // sendVideoMessage
     throw UnimplementedError();
   }
@@ -1486,12 +1486,12 @@ class MockFlyChatFlutterPlatform
   @override
   Future initializeMessageList(
       {required String userJid,
-      String? messageId,
-      double? messageTime,
-      bool? exclude,
-      bool ascendingOrder = true,
-      String? topicId,
-      int limit = 25}) {
+        String? messageId,
+        double? messageTime,
+        bool? exclude,
+        bool ascendingOrder = true,
+        String? topicId,
+        int limit = 25}) {
     // implement initializeMessageList
     throw UnimplementedError();
   }
@@ -1676,7 +1676,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  /*@override
+/*@override
   Future<bool?> changeCallType({required String switchType}) {
     // implement changeCallType
     throw UnimplementedError();

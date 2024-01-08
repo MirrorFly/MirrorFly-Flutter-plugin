@@ -346,7 +346,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String?> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
+  Future<dynamic> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -378,9 +378,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   sendVideoMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
       {String? videoFileUrl,
-      num? videoDuration,
-      String? thumbImageBase64,
-      String? topicId}) {
+        num? videoDuration,
+        String? thumbImageBase64,
+        String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -633,12 +633,12 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<dynamic> initializeMessageList(
       {required String userJid,
-      String? messageId,
-      double? messageTime,
-      bool? exclude,
-      int limit = 25,
-      String? topicId,
-      bool ascendingOrder = true}) {
+        String? messageId,
+        double? messageTime,
+        bool? exclude,
+        int limit = 25,
+        String? topicId,
+        bool ascendingOrder = true}) {
     throw UnimplementedError('initializeMessageList has not been implemented.');
   }
 
@@ -1038,7 +1038,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<String?> createTopic(
       {required String topicName,
-      List<TopicMetaData> metaData = const []}) async {
+        List<TopicMetaData> metaData = const []}) async {
     throw UnimplementedError('createTopic has not been implemented.');
   }
 
@@ -1185,7 +1185,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('syncCallLogs has not been implemented.');
   }
 
-  /*Future<dynamic> changeCallType({required String switchType}) async {
+/*Future<dynamic> changeCallType({required String switchType}) async {
     throw UnimplementedError('changeCallType has not been implemented.');
   }
 

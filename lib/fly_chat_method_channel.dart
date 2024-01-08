@@ -9,7 +9,6 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
-import 'mirrorflychat.dart';
 
 /// An implementation of UikitFlutterPlatform that uses method channels.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
@@ -1468,13 +1467,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String?> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) async {
-    String registerResponse;
+  Future<dynamic> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) async {
+    dynamic registerResponse;
     try {
       registerResponse = await mirrorFlyMethodChannel.invokeMethod('register_user', {"userIdentifier": userIdentifier, "token": fcmToken, "isForceRegister": isForceRegister});
-      var response = convertJsonFromString(registerResponse);
-      LogMessage.d("Register Result ", " $response");
-      return response;
+      LogMessage.d("Register Result ", " $registerResponse");
+      return registerResponse;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1584,9 +1582,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       String? caption,
       String? replyMessageID,
       {String? videoFileUrl,
-      num? videoDuration,
-      String? thumbImageBase64,
-      String? topicId}) async {
+        num? videoDuration,
+        String? thumbImageBase64,
+        String? topicId}) async {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('send_video_message', {
@@ -1955,13 +1953,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Future<bool> initializeMessageList(
       {required String userJid,
-      String? messageId,
-      String? chatId,
-      double? messageTime,
-      bool? exclude,
-      int limit = 25,
-      String? topicId,
-      bool ascendingOrder = true}) async {
+        String? messageId,
+        String? chatId,
+        double? messageTime,
+        bool? exclude,
+        int limit = 25,
+        String? topicId,
+        bool ascendingOrder = true}) async {
     bool initializeResponse;
     try {
       initializeResponse = await mirrorFlyMethodChannel.invokeMethod('initializeMessageList', {
@@ -2625,7 +2623,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic clearChatResponse;
     try {
       clearChatResponse =
-          await mirrorFlyMethodChannel.invokeMethod('clear_chat', {"jid": jid, "chat_type": chatType, "clear_except_starred": clearExceptStarred});
+      await mirrorFlyMethodChannel.invokeMethod('clear_chat', {"jid": jid, "chat_type": chatType, "clear_except_starred": clearExceptStarred});
       LogMessage.d("clear chat Response ", " $clearChatResponse");
       return clearChatResponse;
     } on PlatformException catch (e) {
@@ -2946,7 +2944,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic forwardMessageResponse;
     try {
       forwardMessageResponse =
-          await mirrorFlyMethodChannel.invokeMethod('forwardMessagesToMultipleUsers', {"message_ids": messageIds, "userList": userList});
+      await mirrorFlyMethodChannel.invokeMethod('forwardMessagesToMultipleUsers', {"message_ids": messageIds, "userList": userList});
       LogMessage.d("Forward Msg Response ", " $forwardMessageResponse");
       return forwardMessageResponse;
     } on PlatformException catch (e) {
@@ -2964,7 +2962,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     dynamic forwardMessageResponse;
     try {
       forwardMessageResponse =
-          await mirrorFlyMethodChannel.invokeMethod('forwardMessages', {"message_ids": messageIds, "to_jid": tojid, "chat_type": chattype});
+      await mirrorFlyMethodChannel.invokeMethod('forwardMessages', {"message_ids": messageIds, "to_jid": tojid, "chat_type": chattype});
       LogMessage.d("forwardMessages Response ", " $forwardMessageResponse");
       return forwardMessageResponse;
     } on PlatformException catch (e) {
@@ -3125,7 +3123,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     bool? response;
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod<bool>('reportUserOrMessages', {"jid": jid, "chat_type": type, "selectedMessageID": messageId});
+      await mirrorFlyMethodChannel.invokeMethod<bool>('reportUserOrMessages', {"jid": jid, "chat_type": type, "selectedMessageID": messageId});
       LogMessage.d("report Result ", " $response");
       return response;
     } on PlatformException catch (e) {
@@ -3653,7 +3651,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       LogMessage.d("getRecentChatListHistoryByTopic", "firstSet $firstSet");
       recentResponse =
-          await mirrorFlyMethodChannel.invokeMethod('getRecentChatListHistoryByTopic', {"topicId": topicId, "firstSet": firstSet, "limit": limit});
+      await mirrorFlyMethodChannel.invokeMethod('getRecentChatListHistoryByTopic', {"topicId": topicId, "firstSet": firstSet, "limit": limit});
       LogMessage.d("getRecentChatListHistoryByTopic", "$recentResponse");
       return recentResponse;
     } on PlatformException catch (e) {
