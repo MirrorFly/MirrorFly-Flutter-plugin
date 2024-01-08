@@ -9,6 +9,7 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
+import 'mirrorflychat.dart';
 
 /// An implementation of UikitFlutterPlatform that uses method channels.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
@@ -1467,12 +1468,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) async {
-    dynamic registerResponse;
+  Future<String?> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) async {
+    String registerResponse;
     try {
       registerResponse = await mirrorFlyMethodChannel.invokeMethod('register_user', {"userIdentifier": userIdentifier, "token": fcmToken, "isForceRegister": isForceRegister});
-      LogMessage.d("Register Result ", " $registerResponse");
-      return registerResponse;
+      var response = convertJsonFromString(registerResponse);
+      LogMessage.d("Register Result ", " $response");
+      return response;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;

@@ -11,6 +11,8 @@ List<Member> memberFromJson(String str) =>
 String memberToJson(List<Member> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
+String? convertGroupMembersJsonFromString(String str) => str.isEmpty ? null : memberToJson(memberFromJson(str));
+
 class Member {
   Member({
     this.contactType,
@@ -34,13 +36,14 @@ class Member {
     this.name,
     this.nickName,
     this.status,
+    this.thumbImage,
   });
 
   String? contactType;
   String? email;
   String? groupCreatedTime;
   String? image;
-  dynamic imagePrivacyFlag;
+  String? imagePrivacyFlag;
   bool? isAdminBlocked;
   bool? isBlocked;
   bool? isBlockedMe;
@@ -51,12 +54,13 @@ class Member {
   bool? isMuted;
   bool? isSelected;
   String? jid;
-  dynamic lastSeenPrivacyFlag;
-  dynamic mobileNUmberPrivacyFlag;
+  String? lastSeenPrivacyFlag;
+  String? mobileNUmberPrivacyFlag;
   String? mobileNumber;
   String? name;
   String? nickName;
   String? status;
+  String? thumbImage;
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
         contactType: json["contactType"] == "unknown"
@@ -93,6 +97,7 @@ class Member {
         name: json["name"],
         nickName: json["nickName"],
         status: json["status"],
+        thumbImage: json["thumbImage"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -117,5 +122,6 @@ class Member {
         "name": name,
         "nickName": nickName,
         "status": status,
+        "thumbImage": thumbImage,
       };
 }

@@ -11,6 +11,7 @@ RecentChatData recentChatDataFromJson(String str) =>
     RecentChatData.fromJson(json.decode(str));
 
 String recentChatToJson(RecentChat data) => json.encode(data.toJson());
+String? convertRecentChatJsonFromString(String str) => str.isEmpty ? null : json.encode(recentChatFromJson(str).toJson());
 
 class RecentChat {
   RecentChat({
@@ -41,6 +42,7 @@ class RecentChatData {
     this.isBlockedMe,
     this.isBroadCast,
     this.isChatArchived,
+    this.isPrivateChat,
     this.isChatPinned,
     this.isConversationUnRead, //// need to check
     this.isGroup,
@@ -69,6 +71,7 @@ class RecentChatData {
   bool? isBlockedMe;
   bool? isBroadCast;
   bool? isChatArchived;
+  bool? isPrivateChat;
   bool? isChatPinned;
   bool? isConversationUnRead;
   bool? isGroup;
@@ -91,26 +94,13 @@ class RecentChatData {
   String? topicId;
 
   factory RecentChatData.fromJson(Map<String, dynamic> json) => RecentChatData(
-        contactType: Platform.isAndroid
-            ? json["contactType"] == "unknown"
-                ? "unknown_contact"
-                : json["contactType"] == "live"
-                    ? "live_contact"
-                    : json["contactType"] == "local"
-                        ? "local_contact"
-                        : json["contactType"] == "deleted"
-                            ? "deleted_contact"
-                            : json["contactType"]
-            : json["isItSavedContact"] == true
-                ? "live_contact"
-                : json["isDeletedUser"] == true
-                    ? "deleted_contact"
-                    : "unknown_contact",
-        isAdminBlocked: json["isAdminBlocked"],
+        contactType: getContactType(json),
+        isAdminBlocked: Platform.isAndroid ? json["isAdminBlocked"] : json["isBlockedByAdmin"] ,
         isBlocked: json["isBlocked"],
         isBlockedMe: json["isBlockedMe"],
         isBroadCast: json["isBroadCast"],
         isChatArchived: json["isChatArchived"],
+        isPrivateChat: Platform.isAndroid ? json["isChatLocked"] : json["isPrivateChat"],
         isChatPinned: json["isChatPinned"],
         isConversationUnRead: json["isConversationUnRead"],
         isGroup: json["isGroup"],
@@ -123,18 +113,7 @@ class RecentChatData {
         jid: json["jid"],
         lastMessageContent: json["lastMessageContent"],
         lastMessageId: json["lastMessageId"],
-        lastMessageStatus: Platform.isAndroid
-            ? json["lastMessageStatus"]
-            : json["lastMessageStatus"] == 2 //acknowledge
-                ? "A"
-                : json["lastMessageStatus"] == 3 //delivered
-                    ? "D"
-                    : json["lastMessageStatus"] == 4 //seen
-                        ? "S"
-                        : json["lastMessageStatus"] == 5 //received
-                            ? "R"
-                            : "N", //"N" for "notAcknowledged" in iOS,
-        // lastMessageTime: Platform.isAndroid ? json["lastMessageTime"] : json["isGroup"] ? json["lastMessageTime"] * 1000 : json["lastMessageTime"],
+        lastMessageStatus: getLastMessageStatus(json["lastMessageStatus"]),
         lastMessageTime: json["lastMessageTime"].toInt().toString().length == 13
             ? json["lastMessageTime"] * 1000
             : json["lastMessageTime"],
@@ -153,6 +132,7 @@ class RecentChatData {
         "isBlockedMe": isBlockedMe,
         "isBroadCast": isBroadCast,
         "isChatArchived": isChatArchived,
+        "isPrivateChat": isPrivateChat,
         "isChatPinned": isChatPinned,
         "isConversationUnRead": isConversationUnRead,
         "isGroup": isGroup,
@@ -174,4 +154,45 @@ class RecentChatData {
         "unreadMessageCount": unreadMessageCount,
         "topicId": topicId,
       };
+}
+
+String getContactType(Map<String, dynamic> json){
+  if(Platform.isAndroid){
+    switch(json["contactType"]){
+      case "unknown" : return "unknown_contact";
+      case "live" : return "live_contact";
+      case "local" : return "local_contact";
+      case "deleted" : return "deleted_contact";
+      default : return json["contactType"];
+    }
+  }else{
+    if(json["isItSavedContact"]==true){
+      return "live_contact";
+    }else if(json["isDeletedUser"]){
+      return "deleted_contact";
+    }else if(json["isGroup"]==false){
+      return "unknown_contact";
+    }else{
+      return "";
+    }
+  }
+}
+
+String? getLastMessageStatus(dynamic status){
+  if(Platform.isAndroid) {
+    return status;
+  }else {
+    switch (status) {
+      case 2 :
+        return "A"; //acknowledge
+      case 3 :
+        return "D"; //delivered
+      case 4 :
+        return "S"; //seen
+      case 5 :
+        return "R"; //received
+      default :
+        return "N"; //"N" for "notAcknowledged" in iOS,
+    }
+  }
 }
