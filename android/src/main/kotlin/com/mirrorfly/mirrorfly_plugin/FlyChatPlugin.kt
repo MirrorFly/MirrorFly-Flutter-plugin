@@ -2677,6 +2677,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 if (messageList.size==1){
                     if(messageList[0].messageType == MessageType.NOTIFICATION){
                         result.success(messages.toJsonString())
+                    }else{
+                        messages = messageList
+                        result.success(messages.toJsonString())
                     }
                 }else{
                     messages = messageList
