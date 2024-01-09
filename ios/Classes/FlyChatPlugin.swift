@@ -645,6 +645,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             FlySdkMethodCalls.refreshAndGetAuthToken(call: methodCall,  result: result)
         case "refreshAuthToken":
             FlySdkMethodCalls.refreshAndGetAuthToken(call: methodCall,  result: result)
+        case "getCurrentAuthToken":
+            FlySdkMethodCalls.getCurrentAuthToken(call: methodCall,  result: result)
         case "verifyToken":
             FlySdkMethodCalls.verifyToken(call: methodCall,  result: result)
         case "get_jid":

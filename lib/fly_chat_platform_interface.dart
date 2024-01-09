@@ -692,6 +692,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  Future<String> getCurrentAuthToken() {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Future<dynamic> getMessagesOfJid(String jid) {
     throw UnimplementedError('has not been implemented.');
   }

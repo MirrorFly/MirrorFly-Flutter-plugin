@@ -2306,6 +2306,22 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<String> getCurrentAuthToken() async {
+    String? tokenResponse;
+    try {
+      tokenResponse = await mirrorFlyMethodChannel.invokeMethod<String>('getCurrentAuthToken');
+      LogMessage.d("getCurrentAuthToken Result ", " $tokenResponse");
+      return tokenResponse ?? "";
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
   Future<dynamic> getMessagesOfJid(String jid) async {
     //getChatHistory
     dynamic chatResponse;
