@@ -5,10 +5,24 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
+import 'package:mirrorfly_plugin/internal_models/audio_devices_model.dart';
+import 'package:mirrorfly_plugin/internal_models/available_features_model.dart';
+import 'package:mirrorfly_plugin/internal_models/call_logs_model.dart';
+import 'package:mirrorfly_plugin/internal_models/chat_messages_model.dart';
+import 'package:mirrorfly_plugin/internal_models/export_chat_model.dart';
+import 'package:mirrorfly_plugin/internal_models/get_user_profile_model.dart';
+import 'package:mirrorfly_plugin/internal_models/internal_status_model.dart';
+import 'package:mirrorfly_plugin/internal_models/message_delivered_status_model.dart';
+import 'package:mirrorfly_plugin/internal_models/profile_detail_model.dart';
+import 'package:mirrorfly_plugin/internal_models/recent_chat_model.dart';
+import 'package:mirrorfly_plugin/internal_models/register_user_model.dart';
+import 'package:mirrorfly_plugin/internal_models/user_profile_update.dart';
+import 'package:mirrorfly_plugin/internal_models/users_list_model.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
+import 'internal_models/callback.dart';
 
 /// An implementation of UikitFlutterPlatform that uses method channels.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
@@ -21,7 +35,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   //Event Channels
   @visibleForTesting
   final messageOnReceivedChannel = const EventChannel('contus.mirrorfly/onMessageReceived');
-  final StreamController<dynamic> _messageOnReceivedStreamController = StreamController<dynamic>.broadcast();
+  final StreamController<String> _messageOnReceivedStreamController = StreamController<String>.broadcast();
   @visibleForTesting
   final messageStatusUpdatedChanel = const EventChannel('contus.mirrorfly/onMessageStatusUpdated');
   final StreamController<dynamic> messageStatusUpdateStreamController = StreamController<dynamic>.broadcast();
@@ -241,7 +255,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
   @override
-  Future<bool?> initializeSDK(InitializeSDKBuilder builder) async {
+  Future<void> initializeSDK(InitializeSDKBuilder builder,Callback callback ) async {
+
     bool? res;
     enableDebugLog = builder.enableDebugLog;
     if (!_messageOnReceivedStreamController.hasListener) {
@@ -250,22 +265,42 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       res = await mirrorFlyMethodChannel.invokeMethod<bool>('initializeSDK', builder.build());
       LogMessage.d("syncContacts", res);
-      return res;
+      callback.onSuccessful(FlyResponse(true,"","initializeSDK Successfully"));
+      // return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      rethrow;
-    } on Exception catch (error) {
-      LogMessage.d("Exception ", " $error");
-      rethrow;
+      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+      // return res;
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.onSuccessful(FlyResponse(false, "","",FlyException("FL-401","Un handle Exception",e)));
+      // return res;
     }
   }
 
   ///Using [addStreamsAllToStreamController] to add all streams to stream controller
   ///benefit to use stream controller we can call multiple listeners to listen.
   addStreamsAllToStreamController() {
-    _messageOnReceivedStreamController.addStream(messageOnReceivedChannel.receiveBroadcastStream());
-    messageStatusUpdateStreamController.addStream(messageStatusUpdatedChanel.receiveBroadcastStream());
-    mediaStatusUpdatedStreamController.addStream(mediaStatusUpdatedChannel.receiveBroadcastStream());
+    messageOnReceivedChannel.receiveBroadcastStream().listen((event) {
+      LogMessage.d("messageOnReceivedChannel",event);
+      _messageOnReceivedStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
+    });
+    messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
+      messageStatusUpdateStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
+    });
+    mediaStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
+      mediaStatusUpdatedStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
+    });
+    onGroupNotificationMessageChannel.receiveBroadcastStream().listen((event) {
+      onGroupNotificationMessageStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
+    });
+    showOrUpdateOrCancelNotificationChannel.receiveBroadcastStream().listen((event){
+      var data  = json.decode(event.toString());
+      var jid = data["jid"];
+      var chatMessage = convertChatMessageJsonFromString(data["chatMessage"]);
+      var map = {"jid":jid,"chatMessage":chatMessage};
+      showOrUpdateOrCancelNotificationStreamController.addStream(Stream.value( json.encode(map)));
+    });
     uploadDownloadProgressChangedStreamController.addStream(uploadDownloadProgressChangedChannel.receiveBroadcastStream());
     showUpdateCancelNotificationStreamController.addStream(showUpdateCancelNotificationChannel.receiveBroadcastStream());
     onGroupProfileFetchedStreamController.addStream(onGroupProfileFetchedChannel.receiveBroadcastStream() /*as Stream<String>*/);
@@ -279,8 +314,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     onMemberMadeAsAdminStreamController.addStream(onMemberMadeAsAdminChannel.receiveBroadcastStream());
     onMemberRemovedAsAdminStreamController.addStream(onMemberRemovedAsAdminChannel.receiveBroadcastStream());
     onLeftFromGroupStreamController.addStream(onLeftFromGroupChannel.receiveBroadcastStream());
-    onGroupNotificationMessageStreamController.addStream(onGroupNotificationMessageChannel.receiveBroadcastStream());
-    showOrUpdateOrCancelNotificationStreamController.addStream(showOrUpdateOrCancelNotificationChannel.receiveBroadcastStream());
+
+
     onGroupDeletedLocallyStreamController.addStream(onGroupDeletedLocallyChannel.receiveBroadcastStream() /*as Stream<String>*/);
     blockedThisUserStreamController.addStream(blockedThisUserChannel.receiveBroadcastStream());
     myProfileUpdatedStreamController.addStream(myProfileUpdatedChannel.receiveBroadcastStream() /*as Stream<bool>*/);
@@ -374,7 +409,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<dynamic> contactSyncState() async {
     dynamic response = "";
     try {
@@ -388,7 +423,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
   Future<dynamic> revokeContactSync() async {
@@ -455,12 +490,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }*/
 
   @override
-  Future<dynamic> getMyBusyStatus() async {
-    dynamic response = "";
+  Future<String> getMyBusyStatus() async {
+    String? response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getMyBusyStatus');
-      LogMessage.d("getMyBusyStatus Result ", " $response");
-      return response;
+      return convertStatusFromJson(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -471,12 +505,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getBusyStatusList() async {
-    dynamic response = "";
+  Future<String?> getBusyStatusList() async {
+    String? response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getBusyStatusList');
-      LogMessage.d("getBusyStatusList Result ", " $response");
-      return response;
+      return convertStatusListFromJson(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -487,12 +520,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getRecalledMessagesOfAConversation(String jid) async {
-    dynamic response = "";
+  Future<String?> getRecalledMessagesOfAConversation(String jid) async {
+    String? response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getRecalledMessagesOfAConversation', {"jid": jid});
-      LogMessage.d("getRecalledMessagesOfAConversation Result ", " $response");
-      return response;
+      return convertChatMessagesJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1080,11 +1112,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> handleReceivedMessage(Map notificationData) async {
-    dynamic res;
+  Future<String?> handleReceivedMessage(Map notificationData) async {
+    String? res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod('handleReceivedMessage', {"notificationdata": notificationData});
-      return res;
+      return convertChatMessageJsonFromString(res);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1095,11 +1127,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getLastNUnreadMessages(int messagesCount) async {
-    dynamic res;
+  Future<String?> getLastNUnreadMessages(int messagesCount) async {
+    String? res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod('getLastNUnreadMessages', {"messagecount": messagesCount});
-      return res;
+      return convertChatMessagesJsonFromString(res);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1109,7 +1141,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<dynamic> getNUnreadMessagesOfEachUsers(int messagesCount) async {
     dynamic res;
     try {
@@ -1122,7 +1154,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
   Future<bool?> isArchivedSettingsEnabled() async {
@@ -1244,12 +1276,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
-  Future<dynamic> getUsersListToAddMembersInOldGroup(String groupJid) async {
-    dynamic res;
+  /*@override
+  Future<String?> getUsersListToAddMembersInOldGroup(String groupJid) async {
+    String? res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod('getUsersListToAddMembersInOldGroup', {"groupJid": groupJid});
-      return res;
+      return convertProfileDetailsJsonFromString(res);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1257,9 +1289,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
-  @override
+  /*@override
   Future<dynamic> prepareChatConversationToExport(String jid) async {
     dynamic res;
     try {
@@ -1272,14 +1304,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
-  Future<dynamic> getArchivedChatList() async {
-    dynamic res;
+  Future<String?> getArchivedChatList() async {
+    String? res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod('getArchivedChatList');
-      return res;
+      return convertRecentChatDataJsonFromString(res);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1289,7 +1321,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<dynamic> getMessageActions(List<String> messageidlist) async {
     dynamic res;
     try {
@@ -1302,14 +1334,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
-  @override
-  Future<dynamic> getUsersListToAddMembersInNewGroup() async {
-    dynamic res;
+  /*@override
+  Future<String?> getUsersListToAddMembersInNewGroup() async {
+    String? res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod('getUsersListToAddMembersInNewGroup');
-      return res;
+      return convertProfileDetailsJsonFromString(res);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1317,7 +1349,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
   Future<bool?> createOfflineGroupInOnline(String groupId) async {
@@ -1335,11 +1367,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getGroupProfile(String groupJid, bool server) async {
-    dynamic res;
+  Future<String?> getGroupProfile(String groupJid, bool server) async {
+    String? res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod('getGroupProfile', {"groupJid": groupJid, "server": server});
-      return res;
+      return convertProfileDetailJsonFromString(res);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1467,12 +1499,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) async {
-    dynamic registerResponse;
+  Future<String?> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) async {
+    String? registerResponse;
     try {
       registerResponse = await mirrorFlyMethodChannel.invokeMethod('register_user', {"userIdentifier": userIdentifier, "token": fcmToken, "isForceRegister": isForceRegister});
-      LogMessage.d("Register Result ", " $registerResponse");
-      return registerResponse;
+      return convertRegisterUserJsonFromString(registerResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1516,13 +1547,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendTextMessage(String message, String jid, String replyMessageId, {String? topicId}) async {
-    dynamic messageResp;
+  Future<String> sendTextMessage(String message, String jid, String replyMessageId, {String? topicId}) async {
+    String? messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel
           .invokeMethod('send_text_msg', {"message": message, "JID": jid, "replyMessageId": replyMessageId, "topicId": topicId});
-      LogMessage.d("Text Message Result ", " $messageResp");
-      return messageResp;
+      return convertChatMessageJsonFromString(messageResp);
     } on PlatformException catch (e) {
       LogMessage.d("Flutter Exception =", " $e");
       rethrow;
@@ -1533,14 +1563,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendLocationMessage(String jid, double latitude, double longitude, String replyMessageId, {String? topicId}) async {
+  Future<String> sendLocationMessage(String jid, double latitude, double longitude, String replyMessageId, {String? topicId}) async {
     //sentLocationMessage
-    dynamic messageResp;
+    String? messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod(
           'sendLocationMessage', {"jid": jid, "latitude": latitude, "longitude": longitude, "replyMessageId": replyMessageId, "topicId": topicId});
-      LogMessage.d("Location Message Result ", " $messageResp");
-      return messageResp;
+      return convertChatMessageJsonFromString(messageResp);
     } on PlatformException catch (e) {
       LogMessage.d("Flutter Exception =", " $e");
       rethrow;
@@ -1551,9 +1580,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendImageMessage(String jid, String filePath, String? caption, String? replyMessageID,
+  Future<String> sendImageMessage(String jid, String filePath, String? caption, String? replyMessageID,
       {String? imageFileUrl, String? topicId}) async {
-    dynamic messageResp;
+    String? messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('send_image_message', {
         "jid": jid,
@@ -1563,8 +1592,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "imageFileUrl": imageFileUrl,
         "topicId": topicId
       });
-      LogMessage.d("Image Message Result ", " $messageResp");
-      return messageResp;
+      return convertChatMessageJsonFromString(messageResp);
     } on PlatformException catch (e) {
       LogMessage.d("Image Message Exception =", " $e");
       rethrow;
@@ -1575,7 +1603,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendVideoMessage(
+  Future<String> sendVideoMessage(
       //sendMediaMessage
       String jid,
       String filePath,
@@ -1585,7 +1613,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         num? videoDuration,
         String? thumbImageBase64,
         String? topicId}) async {
-    dynamic messageResp;
+    String? messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('send_video_message', {
         "jid": jid,
@@ -1597,8 +1625,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "thumbImageBase64": thumbImageBase64,
         "topicId": topicId
       });
-      LogMessage.d("Video Message Result ", " $messageResp");
-      return messageResp;
+      return convertChatMessageJsonFromString(messageResp);
     } on PlatformException catch (e) {
       LogMessage.d("Video Message Exception =", " $e");
       rethrow;
@@ -1609,13 +1636,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getRegisteredUserList({required bool server}) async {
+  Future<String> getRegisteredUserList({required bool server}) async {
     //getRegisteredUserList
-    dynamic messageResp;
+    String? messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('getRegisteredUsers', {'server': server});
-      LogMessage.d("User list Result ", " $messageResp");
-      return messageResp;
+      return convertUsersDataJsonFromString(messageResp);
     } on PlatformException catch (e) {
       LogMessage.d("User list Exception =", " $e");
       rethrow;
@@ -1626,12 +1652,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getUserList(int page, String search, [int perPageResultSize = 20]) async {
-    dynamic re;
+  Future<String> getUserList(int page, String search, [int perPageResultSize = 20]) async {
+    String? re;
     try {
       re = await mirrorFlyMethodChannel.invokeMethod("get_user_list", {"page": page, "search": search, "perPageResultSize": perPageResultSize});
-      LogMessage.d('getUserList ', '$re');
-      return re;
+      return convertUsersDataJsonFromString(re);
     } on PlatformException catch (e) {
       LogMessage.d("getUserList", "$e");
       rethrow;
@@ -1639,12 +1664,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getCallLogsList(int currentPage) async {
-    dynamic re;
+  Future<String> getCallLogsList(int currentPage) async {
+    String? re;
     try {
       re = await mirrorFlyCallMethodChannel.invokeMethod("getCallLogsList", {"currentPage": currentPage});
-      LogMessage.d('getCallLogsList RESULT ', '$re');
-      return re;
+      return convertCallLogsToJson(re);
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
       rethrow;
@@ -1652,25 +1676,24 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getLocalCallLogs() async {
-    dynamic re;
+  Future<String> getLocalCallLogs() async {
+    String? re;
     try {
       re = await mirrorFlyCallMethodChannel.invokeMethod("getLocalCallLogs", {});
-      LogMessage.d('RESULT ', '$re');
-      return re;
+      return convertCallLogsToJson(re);
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
-      return re;
+      return convertCallLogsToJson(re);
     }
   }
 
   @override
-  Future<dynamic> deleteCallLog(List<String> jidlist, bool isClearAll) async {
-    dynamic re;
+  Future<bool> deleteCallLog(List<String> jidlist, bool isClearAll) async {
+    bool? re;
     try {
-      re = await mirrorFlyCallMethodChannel.invokeMethod("deleteCallLog", {"jidList": jidlist, "isClearAll": isClearAll});
-      LogMessage.d('RESULT ', '$re');
-      return re;
+      re = await mirrorFlyCallMethodChannel.invokeMethod<bool>("deleteCallLog", {"jidList": jidlist, "isClearAll": isClearAll});
+      LogMessage.d('deleteCallLog ', '$re');
+      return re ?? false;
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
       rethrow;
@@ -1678,12 +1701,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getAvailableFeatures() async {
-    dynamic re;
+  Future<String> getAvailableFeatures() async {
+    String? re;
     try {
       re = await mirrorFlyMethodChannel.invokeMethod("getAvailableFeatures");
-      LogMessage.d('getAvailableFeatures RESULT ', '$re');
-      return re;
+      return convertAvailableFeaturesToJson(re);
     } on PlatformException catch (e) {
       LogMessage.d("getAvailableFeatures error", "$e");
       rethrow;
@@ -1887,7 +1909,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<dynamic> saveProfile(String name, String email) async {
     dynamic result;
     try {
@@ -1901,28 +1923,27 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("er ", "$e");
       rethrow;
     }
-  }
+  }*/
 
   @override
-  Future<dynamic> sentFileMessage(String? file, String jid) async {
+  Future<String> sentFileMessage(String? file, String jid) async {
+    String? res;
     try {
-      final result = await mirrorFlyMethodChannel.invokeMethod("sent file", {"file": file, "jid": jid, "message": ""});
-      LogMessage.d('RESULT', '$result');
-      return result;
+      res = await mirrorFlyMethodChannel.invokeMethod("sent file", {"file": file, "jid": jid, "message": ""});
+      return convertChatMessageJsonFromString(res);
     } on PlatformException catch (e) {
       LogMessage.d("er", "$e");
-      rethrow;
+      return convertChatMessageJsonFromString(res);
     }
   }
 
   @override
-  Future<dynamic> getRecentChatList() async {
+  Future<String> getRecentChatList() async {
     //getRecentChats
-    dynamic recentResponse;
+    String? recentResponse;
     try {
       recentResponse = await mirrorFlyMethodChannel.invokeMethod('getRecentChatList');
-      LogMessage.d("recent Result ", " $recentResponse");
-      return recentResponse;
+      return convertRecentChatDataJsonFromString(recentResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1933,14 +1954,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getRecentChatListHistory({required bool firstSet, int limit = 15}) async {
+  Future<String> getRecentChatListHistory({required bool firstSet, int limit = 15}) async {
     //getRecentChats
-    dynamic recentResponse;
+    String? recentResponse;
     try {
-      LogMessage.d("getRecentChatListHistory", "firstSet $firstSet");
       recentResponse = await mirrorFlyMethodChannel.invokeMethod('getRecentChatListHistory', {"firstSet": firstSet, "limit": limit});
-      LogMessage.d("getRecentChatListHistory", "$recentResponse");
-      return recentResponse;
+      return convertRecentChatDataJsonFromString(recentResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -1983,12 +2002,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> loadMessages() async {
-    dynamic initialMessageResponse;
+  Future<String> loadMessages() async {
+    String? initialMessageResponse;
     try {
       initialMessageResponse = await mirrorFlyMethodChannel.invokeMethod('loadMessages');
-      LogMessage.d("loadMessages", "$initialMessageResponse");
-      return initialMessageResponse;
+      var res = convertChatMessagesJsonFromString(initialMessageResponse);
+      return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2015,12 +2034,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> loadPreviousMessages() async {
-    dynamic previousMessageResponse;
+  Future<String> loadPreviousMessages() async {
+    String? previousMessageResponse;
     try {
       previousMessageResponse = await mirrorFlyMethodChannel.invokeMethod('loadPreviousMessages');
-      LogMessage.d("previousMessageResponse", "$previousMessageResponse");
-      return previousMessageResponse;
+      return convertChatMessagesJsonFromString(previousMessageResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2047,12 +2065,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> loadNextMessages() async {
-    dynamic nextMessageResponse;
+  Future<String> loadNextMessages() async {
+    String? nextMessageResponse;
     try {
       nextMessageResponse = await mirrorFlyMethodChannel.invokeMethod('loadNextMessages');
-      LogMessage.d("nextMessageResponse", "$nextMessageResponse");
-      return nextMessageResponse;
+      return convertChatMessagesJsonFromString(nextMessageResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2063,13 +2080,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getProfileStatusList() async {
+  Future<String> getProfileStatusList() async {
     //getStatusList
-    dynamic statusResponse;
+    String? statusResponse;
     try {
       statusResponse = await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList');
-      LogMessage.d("getProfileStatusList", "$statusResponse");
-      return statusResponse;
+      return convertStatusListFromJson(statusResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2080,9 +2096,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> insertDefaultStatus(String status) async {
+  Future<bool?> insertDefaultStatus(String status) async {
+    bool? res;
     try {
-      await mirrorFlyMethodChannel.invokeMethod('insertDefaultStatus', {"status": status});
+      res = await mirrorFlyMethodChannel.invokeMethod<bool>('insertDefaultStatus', {"status": status});
+      return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2092,62 +2110,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  /*
-@override
- void insertDefaultStatusToUser() async{
-    try {
-      await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList').then((value) {
-        mirrorFlyLog("status list", "$value");
-        if (value != null) {
-          var profileStatus = statusDataFromJson(value);
-          if (profileStatus.isNotEmpty) {
-            var defaultStatus = Constants.defaultStatusList;
-            for (var statusValue in defaultStatus) {
-              var isStatusNotExist = true;
-              for (var flyStatus in profileStatus) {
-                if (flyStatus.status == (statusValue)) {
-                  isStatusNotExist = false;
-                }
-              }
-              if (isStatusNotExist) {
-                FlyChat.insertDefaultStatus(statusValue);
-              }
-            }
-            SessionManagement.vibrationType("0");
-            FlyChat.getRingtoneName(null).then((value) {
-              if (value != null) {
-                SessionManagement.setNotificationUri(value);
-              }
-            });
-            SessionManagement.convSound(true);
-            SessionManagement.muteAll( false);
-          }else{
-            var defaultStatus = Constants.defaultStatusList;
-            for (var statusValue in defaultStatus) {
-              FlyChat.insertDefaultStatus(statusValue);
-            }
-            FlyChat.getRingtoneName(null).then((value) {
-              if (value != null) {
-                SessionManagement.setNotificationUri(value);
-              }
-            });
-          }
-        }
-      });
-    } on Exception catch(er){
-      LogMessage.d("Exception "," $er");
-    }
-  }*/
-
   @override
-  Future<dynamic> updateMyProfile(String name, String email, String mobile, String status, String? image) async {
+  Future<String> updateMyProfile(String name, String email, String mobile, String status, String? image) async {
     //updateProfile
-    dynamic profileResponse;
+    String? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel
           .invokeMethod('updateMyProfile', {"name": name, "email": email, "mobile": mobile, "status": status, "image": image});
-      LogMessage.d("updateMyProfile Result ", " $profileResponse");
-      return profileResponse;
+      return convertProfileUpdateJsonFromString(profileResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2158,14 +2128,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getUserProfile(String jid, [bool fromserver = false, bool saveasfriend = false]) async {
-    //getProfile
-    dynamic profileResponse;
+  Future<String> getUserProfile(String jid, [bool fromserver = false, bool saveasfriend = false]) async {
+    String? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile', {"jid": jid, "server": fromserver, "saveasfriend": saveasfriend});
-      LogMessage.d("getUserProfile Result ", " $profileResponse");
-      //insertDefaultStatusToUser();
-      return profileResponse;
+      return convertProfileJsonFromString(profileResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2176,12 +2143,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getProfileDetails(String jid) async {
-    dynamic profileResponse;
+  Future<String> getProfileDetails(String jid) async {
+    String? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfileDetails', {"jid": jid});
-      LogMessage.d("getProfileDetails Result ", " $profileResponse");
-      return profileResponse;
+      LogMessage.d("getProfileDetails", profileResponse);
+      return convertProfileDetailJsonFromString(profileResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2191,7 +2158,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<dynamic> getProfileLocal(String jid, bool server) async {
     dynamic profileResponse;
     try {
@@ -2205,7 +2172,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
   Future<dynamic> setMyProfileStatus(String status, String statusId) async {
@@ -2225,10 +2192,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> insertNewProfileStatus(String status) async {
-    dynamic profileResponse;
+  Future<bool?> insertNewProfileStatus(String status) async {
+    bool? profileResponse;
     try {
-      profileResponse = await mirrorFlyMethodChannel.invokeMethod('insertNewProfileStatus', {"status": status});
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('insertNewProfileStatus', {"status": status});
       LogMessage.d("insertNewProfileStatus Result ", " $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
@@ -2241,13 +2208,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> updateMyProfileImage(String image) async {
+  Future<String> updateMyProfileImage(String image) async {
     //updateProfileImage
-    dynamic profileResponse;
+    String? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('updateMyProfileImage', {"image": image});
-      LogMessage.d("updateMyProfileImage Result ", " $profileResponse");
-      return profileResponse;
+      return convertProfileUpdateJsonFromString(profileResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2322,15 +2288,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getMessagesOfJid(String jid) async {
+  Future<String> getMessagesOfJid(String jid) async {
     //getChatHistory
-    dynamic chatResponse;
+    String? chatResponse;
     try {
       chatResponse = await mirrorFlyMethodChannel.invokeMethod('getMessagesOfJid', {"JID": jid});
-      LogMessage.d("user Chat Result ", " $chatResponse");
-      // List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(chatResponse);
-      // return chatMessageModel;
-      return chatResponse;
+      return convertChatMessagesJsonFromString(chatResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2394,12 +2357,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   // }
 
   @override
-  Future<dynamic> markAsReadDeleteUnreadSeparator(String jid) async {
+  Future<bool?> markAsReadDeleteUnreadSeparator(String jid) async {
     //sendReadReceipts
     //Handled Both Functions ChatManager.markAsRead and FlyMessenger.deleteUnreadMessageSeparatorOfAConversation in this same Function
-    dynamic readReceiptResponse;
+    bool? readReceiptResponse;
     try {
-      readReceiptResponse = await mirrorFlyMethodChannel.invokeMethod('markAsReadDeleteUnreadSeparator', {"jid": jid});
+      readReceiptResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('markAsReadDeleteUnreadSeparator', {"jid": jid});
       // LogMessage.d("mediaResponse "," $readReceiptResponse");
       return readReceiptResponse;
     } on PlatformException catch (e) {
@@ -2412,13 +2375,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendContactMessage(List<String> contactList, String jid, String contactName, String replyMessageId, {String? topicId}) async {
-    dynamic contactResponse;
+  Future<String> sendContactMessage(List<String> contactList, String jid, String contactName, String replyMessageId, {String? topicId}) async {
+    String? contactResponse;
     try {
       contactResponse = await mirrorFlyMethodChannel.invokeMethod('sendContactMessage',
           {"contact_list": contactList, "jid": jid, "contact_name": contactName, "replyMessageId": replyMessageId, "topicId": topicId});
-      // LogMessage.d("mediaResponse "," $readReceiptResponse");
-      return contactResponse;
+      return convertChatMessageJsonFromString(contactResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2429,13 +2391,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> logoutOfChatSDK() async {
+  Future<bool> logoutOfChatSDK() async {
     //logout
-    dynamic logoutResponse;
+    bool? logoutResponse;
     try {
-      logoutResponse = await mirrorFlyMethodChannel.invokeMethod('logoutOfChatSDK');
+      logoutResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('logoutOfChatSDK');
       LogMessage.d("logoutResponse ", " $logoutResponse");
-      return logoutResponse;
+      return logoutResponse ?? false;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2474,13 +2436,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> sendDocumentMessage(String jid, String documentPath, String replyMessageId, {String? fileUrl, String? topicId}) async {
-    dynamic documentResponse;
+  Future<String> sendDocumentMessage(String jid, String documentPath, String replyMessageId, {String? fileUrl, String? topicId}) async {
+    String? documentResponse;
     try {
       documentResponse = await mirrorFlyMethodChannel.invokeMethod(
           'sendDocumentMessage', {"file": documentPath, "jid": jid, "replyMessageId": replyMessageId, "file_url": fileUrl, "topicId": topicId});
-      LogMessage.d("documentResponse ", " $documentResponse");
-      return documentResponse;
+      return convertChatMessageJsonFromString(documentResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2490,7 +2451,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<dynamic> openFile(String filePath) async {
     dynamic documentResponse;
     try {
@@ -2504,13 +2465,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
-  Future<dynamic> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
+  Future<String> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
       {String? audioFileUrl, String? topicId}) async {
     //sendAudio
-    dynamic audioResponse;
+    String? audioResponse;
     try {
       audioResponse = await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage', {
         "filePath": filePath,
@@ -2521,8 +2482,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "audiofileUrl": audioFileUrl,
         "topicId": topicId
       });
-      LogMessage.d("audioResponse ", " $audioResponse");
-      return audioResponse;
+      return convertChatMessageJsonFromString(audioResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2535,13 +2495,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   //Recent Chat Search
 
   @override
-  Future<dynamic> getRecentChatListIncludingArchived() async {
+  Future<String> getRecentChatListIncludingArchived() async {
     //filteredRecentChatList
-    dynamic response;
+    String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getRecentChatListIncludingArchived');
-      LogMessage.d("getRecentChatListIncludingArchived ", " $response");
-      return response;
+      return convertRecentChatListFromJson(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2552,14 +2511,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> searchConversation(String searchKey, [String? jidForSearch, bool globalSearch = true]) async {
+  Future<String> searchConversation(String searchKey, [String? jidForSearch, bool globalSearch = true]) async {
     //filteredMessageList
-    dynamic response;
+    String? response;
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('searchConversation', {"searchKey": searchKey, "jidForSearch": jidForSearch, "globalSearch": globalSearch});
-      LogMessage.d("searchConversation ", " $response");
-      return response;
+      return convertChatMessagesJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2570,13 +2528,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getRegisteredUsers(bool server) async {
+  Future<String> getRegisteredUsers(bool server) async {
     //filteredContactList
-    dynamic response;
+    String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getRegisteredUsers', {"server": server});
-      LogMessage.d("getRegisteredUsers $server ", " $response");
-      return response;
+      return convertUsersDataJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2587,12 +2544,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getMessageOfId(String mid) async {
-    dynamic response;
+  Future<String> getMessageOfId(String mid) async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getMessageOfId', {"mid": mid});
-      // LogMessage.d("response "," $response");
-      return response;
+      return convertChatMessageJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2603,12 +2559,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getRecentChatOf(String jid) async {
-    dynamic response;
+  Future<String> getRecentChatOf(String jid) async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getRecentChatOf', {"jid": jid});
-      LogMessage.d("getRecentChatOf response ", " $response");
-      return response;
+      return convertRecentChatFromJson(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2619,13 +2574,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> clearChat(String jid, String chatType, bool clearExceptStarred) async {
-    dynamic clearChatResponse;
+  Future<bool> clearChat(String jid, String chatType, bool clearExceptStarred) async {
+    bool? clearChatResponse;
     try {
       clearChatResponse =
-      await mirrorFlyMethodChannel.invokeMethod('clear_chat', {"jid": jid, "chat_type": chatType, "clear_except_starred": clearExceptStarred});
-      LogMessage.d("clear chat Response ", " $clearChatResponse");
-      return clearChatResponse;
+      await mirrorFlyMethodChannel.invokeMethod<bool>('clear_chat', {"jid": jid, "chat_type": chatType, "clear_except_starred": clearExceptStarred});
+      LogMessage.d("clearChat ", " $clearChatResponse");
+      return clearChatResponse ?? false;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2654,12 +2609,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }*/
 
   @override
-  Future<dynamic> getMessagesUsingIds(List<String> messageIds) async {
-    dynamic messageListResponse;
+  Future<String> getMessagesUsingIds(List<String> messageIds) async {
+    String? messageListResponse;
     try {
       messageListResponse = await mirrorFlyMethodChannel.invokeMethod('getMessagesUsingIds', {"MessageIds": messageIds});
-      LogMessage.d("getMessagesUsingIds Response ", " $messageListResponse");
-      return messageListResponse;
+      return convertChatMessagesJsonFromString(messageListResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2672,11 +2626,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   //Handled deleteMessagesForEveryone and deleteMessagesForMe in same function. so Named Commonly
 
   @override
-  Future<dynamic> deleteMessagesForMe(String jid, String chatType, List<String> messageIds, bool? isMediaDelete) async {
-    dynamic messageDeleteResponse;
+  Future<bool?> deleteMessagesForMe(String jid, String chatType, List<String> messageIds, bool? isMediaDelete) async {
+    bool? messageDeleteResponse;
     try {
       messageDeleteResponse = await mirrorFlyMethodChannel
-          .invokeMethod('deleteMessagesForMe', {"jid": jid, "chat_type": chatType, "isMediaDelete": isMediaDelete, "message_ids": messageIds});
+          .invokeMethod<bool>('deleteMessagesForMe', {"jid": jid, "chat_type": chatType, "isMediaDelete": isMediaDelete, "message_ids": messageIds});
       LogMessage.d("deleteMessagesForMe Response ", " $messageDeleteResponse");
       return messageDeleteResponse;
     } on PlatformException catch (e) {
@@ -2689,13 +2643,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> deleteMessagesForEveryone(String jid, String chatType, List<String> messageIds, bool? isMediaDelete) async {
-    dynamic messageDeleteResponse;
+  Future<bool> deleteMessagesForEveryone(String jid, String chatType, List<String> messageIds, bool? isMediaDelete) async {
+    bool? messageDeleteResponse;
     try {
       messageDeleteResponse = await mirrorFlyMethodChannel
-          .invokeMethod('deleteMessagesForEveryone', {"jid": jid, "chat_type": chatType, "isMediaDelete": isMediaDelete, "message_ids": messageIds});
+          .invokeMethod<bool>('deleteMessagesForEveryone', {"jid": jid, "chat_type": chatType, "isMediaDelete": isMediaDelete, "message_ids": messageIds});
       LogMessage.d("deleteMessagesForEveryone Response ", " $messageDeleteResponse");
-      return messageDeleteResponse;
+      return messageDeleteResponse ?? false;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2705,7 +2659,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<dynamic> deleteMessages(String jid, List<String> messageIds, bool isDeleteForEveryOne) async {
     dynamic messageDeleteResponse;
     try {
@@ -2720,15 +2674,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
-  Future<dynamic> getGroupMessageDeliveredToList(String messageId, String jid) async {
-    dynamic messageDeleteResponse;
+  Future<String> getGroupMessageDeliveredToList(String messageId, String jid) async {
+    String? response;
     try {
-      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('getGroupMessageDeliveredToList', {"messageId": messageId, "jid": jid});
-      LogMessage.d("getGroupMessageDeliveredToList Response ", " $messageDeleteResponse");
-      return messageDeleteResponse;
+      response = await mirrorFlyMethodChannel.invokeMethod('getGroupMessageDeliveredToList', {"messageId": messageId, "jid": jid});
+      return convertMessageDeliveredStatusToJson(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2739,12 +2692,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getGroupMessageReadByList(String messageId, String jid) async {
-    dynamic messageDeleteResponse;
+  Future<String> getGroupMessageReadByList(String messageId, String jid) async {
+    String? response;
     try {
-      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('getGroupMessageReadByList', {"messageId": messageId, "jid": jid});
-      LogMessage.d("getGroupMessageReadByList Response ", " $messageDeleteResponse");
-      return messageDeleteResponse;
+      response = await mirrorFlyMethodChannel.invokeMethod('getGroupMessageReadByList', {"messageId": messageId, "jid": jid});
+      return convertMessageDeliveredStatusToJson(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -2772,11 +2724,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> blockUser(String userJID) async {
-    dynamic userBlockResponse;
+  Future<bool?> blockUser(String userJID) async {
+    bool? userBlockResponse;
     try {
-      userBlockResponse = await mirrorFlyMethodChannel.invokeMethod('block_user', {"userJID": userJID});
-      LogMessage.d("Blocked Response ", " $userBlockResponse");
+      userBlockResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('block_user', {"userJID": userJID});
+      LogMessage.d("blockUser Response ", " $userBlockResponse");
       return userBlockResponse;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
@@ -2793,7 +2745,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     bool? userBlockResponse;
     try {
       userBlockResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('un_block_user', {"userJID": userJID});
-      LogMessage.d("Un-Blocked Response ", " $userBlockResponse");
+      LogMessage.d("unblockUser Response ", " $userBlockResponse");
       return userBlockResponse;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
@@ -2917,11 +2869,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> updateFavouriteStatus(String messageID, String chatUserJID, bool isFavourite, String chatType) async {
+  Future<bool?> updateFavouriteStatus(String messageID, String chatUserJID, bool isFavourite, String chatType) async {
     //favouriteMessage
-    dynamic favResponse;
+    bool? favResponse;
     try {
-      favResponse = await mirrorFlyMethodChannel.invokeMethod('updateFavouriteStatus', {
+      favResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('updateFavouriteStatus', {
         "messageID": messageID,
         "chatUserJID": chatUserJID,
         "isFavourite": isFavourite,
@@ -2939,12 +2891,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> forwardMessagesToMultipleUsers(List<String> messageIds, List<String> userList) async {
+  Future<bool?> forwardMessagesToMultipleUsers(List<String> messageIds, List<String> userList) async {
     //forwardMessage
-    dynamic forwardMessageResponse;
+    bool? forwardMessageResponse;
     try {
       forwardMessageResponse =
-      await mirrorFlyMethodChannel.invokeMethod('forwardMessagesToMultipleUsers', {"message_ids": messageIds, "userList": userList});
+      await mirrorFlyMethodChannel.invokeMethod<bool>('forwardMessagesToMultipleUsers', {"message_ids": messageIds, "userList": userList});
       LogMessage.d("Forward Msg Response ", " $forwardMessageResponse");
       return forwardMessageResponse;
     } on PlatformException catch (e) {
@@ -2956,7 +2908,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<dynamic> forwardMessages(List<String> messageIds, String tojid, String chattype) async {
     //forwardMessage
     dynamic forwardMessageResponse;
@@ -2972,13 +2924,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
-  Future<dynamic> createGroup(String groupName, List<String> userJidList, String imageFilePath) async {
-    dynamic response;
+  Future<bool?> createGroup(String groupName, List<String> userJidList, String imageFilePath) async {
+    bool? response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod('createGroup', {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('createGroup', {
         "group_name": groupName,
         "members": userJidList,
         "file": imageFilePath,
@@ -3011,16 +2963,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getGroupMembersList(String jid, bool? server) async {
+  Future<String> getGroupMembersList(String jid, bool? server) async {
     //getGroupMembers
-    dynamic response;
+    String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getGroupMembersList', {
         "jid": jid,
         "server": server,
       });
-      LogMessage.d("getGroupMembersList Response ", " $response");
-      return response;
+      return convertProfileDetailsJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -3031,14 +2982,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getUsersIBlocked(bool? server) async {
-    dynamic response;
+  Future<String> getUsersIBlocked(bool? server) async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getUsersIBlocked', {
         "serverCall": server,
       });
-      LogMessage.d("getUsersIBlocked Response ", " $response");
-      return response;
+      return convertProfileDetailsJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -3049,14 +2999,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getMediaMessages(String jid) async {
-    dynamic response;
+  Future<String> getMediaMessages(String jid) async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getMediaMessages', {
         "jid": jid,
       });
-      LogMessage.d("getMediaMessages Response ", " $response");
-      return response;
+      return convertChatMessagesJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -3067,14 +3016,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getDocsMessages(String jid) async {
-    dynamic response;
+  Future<String> getDocsMessages(String jid) async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getDocsMessages', {
         "jid": jid,
       });
-      LogMessage.d("getDocsMessages Response ", " $response");
-      return response;
+      return convertChatMessagesJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -3085,14 +3033,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getLinkMessages(String jid) async {
-    dynamic response;
+  Future<String> getLinkMessages(String jid) async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getLinkMessages', {
         "jid": jid,
       });
-      LogMessage.d("getLinkMessages Response ", " $response");
-      return response;
+      return convertChatMessagesJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -3103,12 +3050,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> exportChatConversationToEmail(String jid) async {
-    dynamic res;
+  Future<String> exportChatConversationToEmail(String jid) async {
+    String? res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod('exportChatConversationToEmail', {"jid": jid});
-      LogMessage.d("exportChatConversationToEmail Response ", " $res");
-      return res;
+      return convertExportJsonFromString(res);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -3306,10 +3252,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> deleteAccount(String reason, String? feedback) async {
-    dynamic response;
+  Future<bool?> deleteAccount(String reason, String? feedback) async {
+    bool? response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod('delete_account', {"delete_reason": reason, "delete_feedback": feedback});
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('delete_account', {"delete_reason": reason, "delete_feedback": feedback});
       return response;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
@@ -3321,12 +3267,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getFavouriteMessages() async {
-    dynamic favResponse;
+  Future<String> getFavouriteMessages() async {
+    String? favResponse;
     try {
       favResponse = await mirrorFlyMethodChannel.invokeMethod('get_favourite_messages');
-      LogMessage.d("fav response ", " $favResponse");
-      return favResponse;
+      return convertChatMessagesJsonFromString(favResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -3337,12 +3282,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getAllGroups([bool? server]) async {
-    dynamic response;
+  Future<String> getAllGroups([bool? server]) async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getAllGroups', {"server": server});
-      LogMessage.d("getAllGroups response ", " $response");
-      return response;
+      return convertProfileDetailsJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -3537,12 +3481,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getNonChatUsers() async {
-    dynamic val;
+  Future<String> getNonChatUsers() async {
+    String? res;
     try {
-      val = await mirrorFlyMethodChannel.invokeMethod('getNonChatUsers');
-      LogMessage.d('getNonChatUsers', '$val');
-      return val;
+      res = await mirrorFlyMethodChannel.invokeMethod('getNonChatUsers');
+      return convertProfileDetailsJsonFromString(res);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -3645,15 +3588,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getRecentChatListHistoryByTopic({String? topicId, required bool firstSet, int limit = 15}) async {
+  Future<String> getRecentChatListHistoryByTopic({String? topicId, required bool firstSet, int limit = 15}) async {
     //getRecentChats
-    dynamic recentResponse;
+    String? recentResponse;
     try {
       LogMessage.d("getRecentChatListHistoryByTopic", "firstSet $firstSet");
       recentResponse =
       await mirrorFlyMethodChannel.invokeMethod('getRecentChatListHistoryByTopic', {"topicId": topicId, "firstSet": firstSet, "limit": limit});
-      LogMessage.d("getRecentChatListHistoryByTopic", "$recentResponse");
-      return recentResponse;
+      return convertRecentChatDataJsonFromString(recentResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -3792,12 +3734,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getAllAvailableAudioInput() async {
-    dynamic audioInput;
+  Future<String> getAllAvailableAudioInput() async {
+    String? audioInput;
     try {
-      LogMessage.d('getAllAvailableAudioInput :', '');
       audioInput = await mirrorFlyCallMethodChannel.invokeMethod('getAllAvailableAudioInput');
-      return audioInput;
+      return convertAudioDevicesToJson(audioInput);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception ===>", "$e");
       rethrow;

@@ -780,8 +780,8 @@ import UIKit
         if(!isAlreadyExists){
             ChatManager.saveProfileStatus(statusText: newStatus, currentStatus: true)
         }
-        result("{\"status\" : true }")
-        
+//        result("{\"status\" : true }")
+        result(true)
     }
     static func isTrailLicence(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(isTrialLicenceKey)
@@ -844,7 +844,7 @@ import UIKit
         
         FlyMessenger.composeForwardMessage(messageIds: messageIDList, toJidList: userList, completionHandler: { isSuccess, flyError, flyData in
             if isSuccess{
-                result("Message Forward Success")
+                result(true)
             }
         })
         
@@ -875,10 +875,10 @@ import UIKit
         
         groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != AppUtils.getMyJid()})
         let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == AppUtils.getMyJid()})
-        if(myJid.count > 0){
-            myJid[0].profileDetail?.nickName = "You"
-            myJid[0].profileDetail?.name = "You"
-        }
+//        if(myJid.count > 0){
+//            myJid[0].profileDetail?.nickName = "You"
+//            myJid[0].profileDetail?.name = "You"
+//        }
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
         if(myJid.count > 0){
             groupMembers.append(contentsOf: myJid)
@@ -1712,9 +1712,12 @@ import UIKit
         
         var seenResponse = String(format: "%.0f",seenReceipt?.time ?? "")
         var deliveredResponse = String(format: "%.0f",deliverReceipt?.time ?? "")
+        var acknowledgeResponse = String(format: "%.0f",acknowledgeReceipt?.time ?? "")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(seenResponse == "0" ? "" : seenResponse, forKey: "seenTime")
         jsonObject.setValue(deliveredResponse == "0" ? "" : deliveredResponse, forKey: "deliveredTime")
+        jsonObject.setValue(acknowledgeResponse == "0" ? "" : acknowledgeResponse, forKey: "sentTime")
+        jsonObject.setValue(messageID, forKey: "messageId")
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         result(jsonString)
     }
@@ -2225,7 +2228,8 @@ import UIKit
                 if isSuccess {
                     let blockUserResponseJson = flyData.dictToJson()
                     print("ContactManager.shared.blockUser==**==\(String(describing: blockUserResponseJson))")
-                    result(blockUserResponseJson)
+//                    result(blockUserResponseJson)
+                    result(true)
                 } else{
                     result(FlutterError(code: "500", message: "Unable to Block User", details: flyError?.localizedDescription))
                 }
@@ -2283,7 +2287,8 @@ import UIKit
                     
                     let groupProfileDataJson = groupProfileData?.toJson()
                     print("GroupManager.shared.createGroup==**==\(String(describing: groupProfileDataJson))")
-                    result(groupProfileDataJson)
+//                    result(groupProfileDataJson)
+                    result(true)
                 } else{
                     result(FlutterError(code: "500", message: "Unable to Create Group", details: flyError?.localizedDescription))
                 }
@@ -2671,7 +2676,8 @@ import UIKit
                 Utility.clearUserDefaults()
                 let deleteResponseJson = data.dictToJson()
                 print("ContactManager.shared.deleteMyAccountRequest==**==\(String(describing: deleteResponseJson))")
-                result(deleteResponseJson)
+//                result(deleteResponseJson)
+                result(true)
             } else{
                 result(FlutterError(code: "500", message: "Unable to Delete Account", details: flyError?.localizedDescription))
             }
@@ -2689,7 +2695,7 @@ import UIKit
         
         let groupMessageDeliveredListJson = groupMessageDeliveredList.deliveredParticipantList.toJson() ?? "[]"
         
-        let deliveredListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"deliveredParticipantList\" : " + groupMessageDeliveredListJson + "}"
+        let deliveredListJson = "{\"count\": \"\(String(deliveredCount))\",\"totalParticipantCount\" : \(String(totalParticipatCount)),\"participantList\" : " + groupMessageDeliveredListJson + "}"
         
 
         print("getGroupMessageDeliveredToList==**==\(String(describing: deliveredListJson))")
@@ -2708,7 +2714,7 @@ import UIKit
         var totalParticipatCount = groupMessageReadList.totalParticipatCount
         let groupMessageReadListJson = groupMessageReadList.seenParticipantList.toJson() ?? "[]"
         
-        let readListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"seenParticipantList\" : " + groupMessageReadListJson + "}"
+        let readListJson = "{\"count\": \"\(String(deliveredCount))\",\"totalParticipantCount\" : \(String(totalParticipatCount)),\"participantList\" : " + groupMessageReadListJson + "}"
         
         
         print("getGroupMessageReadByList==**==\(String(describing: readListJson))")

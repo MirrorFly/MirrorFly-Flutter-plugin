@@ -1549,39 +1549,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                                 }
 
                             })
-                            /*LogMessage.d(TAG, "Chat Manager Connect able ${ChatManager.connect()}")
-                            if (ChatManager.connect()) {
-                                LogMessage.d(TAG, "Chat Manager Connecting...")
-                                ChatManager.connect(object : ChatConnectionListener {
-                                    override fun onConnected() {
-                                        LogMessage.d(TAG, "onConnected")
-                                        Handler(Looper.getMainLooper()).postDelayed({
-                                            result.success(response)
-                                        }, 500)
-
-                                    }
-
-                                    override fun onConnectionFailed(e: FlyException) {
-                                        LogMessage.d(TAG, "Chat Manager onConnectionFailed")
-                                        result.error(
-                                            "500",
-                                            e.message,
-                                            null
-                                        )
-                                    }
-
-                                    override fun onDisconnected() {
-                                        LogMessage.d(TAG, "Chat Manager Disconnected")
-                                    }
-
-                                    override fun onReconnecting() {
-                                        LogMessage.d(TAG, "Chat Manager onReconnecting")
-                                    }
-                                })
-                            }else{
-                                LogMessage.d(TAG, "Chat Manager Already Connected")
-                                result.success(response)
-                            }*/
                         } else {
                             if (data["http_status_code"] == 403) {
                                 result.error("403", throwable?.message.toString(), null)
@@ -1975,16 +1942,16 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     data["data"] as List<MessageStatusDetail>
                 val groupMessageDeliveredJsonObject = JSONObject()
                 groupMessageDeliveredJsonObject.put(
-                    "deliveredCount",
+                    "count",
                     messageStatusList.size.toString()
                 )
                 groupMessageDeliveredJsonObject.put(
-                    "totalParticipatCount",
+                    "totalParticipantCount",
                     FlyMessenger.getGroupMessageStatusCount(messageId)
                 )
                 val jsArray = JSONArray(messageStatusList.toJson())
-                groupMessageDeliveredJsonObject.put("deliveredParticipantList", jsArray)
-                LogMessage.d("getGroupMessageDeliveredToList",data["data"].toString())
+                groupMessageDeliveredJsonObject.put("participantList", jsArray)
+                LogMessage.d("getGroupMessageDeliveredToList",data["data"]?.toJsonString())
                 result.success(groupMessageDeliveredJsonObject.toString())
             } else {
                 result.error("500", throwable?.message, throwable)
@@ -2000,14 +1967,14 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     data["data"] as List<MessageStatusDetail>
 
                 val groupMessageReadJsonObject = JSONObject()
-                groupMessageReadJsonObject.put("deliveredCount", messageStatusList.size.toString())
+                groupMessageReadJsonObject.put("count", messageStatusList.size.toString())
                 groupMessageReadJsonObject.put(
-                    "totalParticipatCount",
+                    "totalParticipantCount",
                     FlyMessenger.getGroupMessageStatusCount(messageId)
                 )
                 val jsArray = JSONArray(messageStatusList.toJson())
-                groupMessageReadJsonObject.put("seenParticipantList", jsArray)
-                LogMessage.d("getGroupMessageReadByList",data["data"].toString())
+                groupMessageReadJsonObject.put("participantList", jsArray)
+                LogMessage.d("getGroupMessageReadByList",data["data"]?.toJsonString())
                 result.success(groupMessageReadJsonObject.toString())
             } else {
                 result.error("500", throwable?.message, throwable)
@@ -2160,7 +2127,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (isSuccess) {
                 //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyCore.deleteAccount", data.tojsonString())
-                result.success(data.toJsonString())
+//                result.success(data.toJsonString())
+                result.success(true)
             } else {
                 result.error("500", throwable?.message, throwable)
             }
@@ -2181,7 +2149,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     override fun onResponse(isSuccess: Boolean, message: String) {
                         if (isSuccess) {
                             //LogMessage.d("ChatManager.forwardMessagesToMultipleUsers", message)
-                            result.success(message)
+                            result.success(true)
                         } else {
                             result.error("500", message, message)
                         }
@@ -2224,7 +2192,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     override fun onResponse(isSuccess: Boolean, message: String) {
                         if (isSuccess) {
                             //LogMessage.d("ChatManager.updateFavouriteStatus", message)
-                            result.success(message)
+                            result.success(true)
                         } else {
                             result.error("500", "Unable to Favourite the Message", message)
                         }
@@ -2644,6 +2612,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: true
         val limit: Int = call.argument("limit") ?: 50
         val topicId: String = call.argument("topicId") ?: ""
+        LogMessage.d("initializeMessageList","${call.arguments}")
         if(ContactManager.isValidJid(chatJid)) {
             val messageListParams = FetchMessageListParams()
             messageListParams.chatJid = chatJid
@@ -2855,8 +2824,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     ContactManager.updateMyProfileImage(imagefile, flyCallback =  { isSuccess, _, data ->
                         //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                         //DebugUtilis.v("ContactManager.updateMyProfileImage", data.tojsonString())
-                        data["status"] = isSuccess
-                        result.success(data.toJsonString())
+                        if(isSuccess){
+                            data["status"] = isSuccess
+                            result.success(data.toJsonString())
+                        }else{
+                            result.error("500", "update profile image failure", null)
+                        }
                     })
                 } else {
                     result.error("500", "Image File Not Exist", null)
@@ -2888,6 +2861,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 data["status"] = isSuccess
                 if (isSuccess) {
                     result.success(data.toJsonString())
+//                    result.success(true)
                 }else{
                     result.error("500",error?.message.toString(),error)
                 }
@@ -2905,7 +2879,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 data["status"] = isSuccess
 
                 if (isSuccess) {
-                    result.success(data.toJsonString())
+//                    result.success(data.toJsonString())
+                    result.success(true)
                 }else{
                     result.error("500",error?.message.toString(),error)
                 }
@@ -2989,6 +2964,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 ChatManager.markAsRead(receiverJID)
                 //To Remove the Unread Notification Separator in Chat List
                 FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(receiverJID)
+                result.success(true)
             } else {
                 result.error("500", "JID is Empty", null)
             }
@@ -3514,7 +3490,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (isSuccess) {
                 //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyCore.blockUser", data.tojsonString())
-                result.success(data.toJsonString())
+//                result.success(data.toJsonString())
+                result.success(true)
             } else {
                 result.error("500", "Unable to Block User", throwable?.toJsonString())
             }
@@ -3548,7 +3525,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("GroupManager.createGroup", hashmap.tojsonString())
                     val groupData = hashmap["data"] as CreateGroupModel
-                    result.success(groupData.toJsonString())
+//                    result.success(groupData.toJsonString())
+                    result.success(true)
                 } else {
                     result.error("500", "Unable to Create Group", throwable.toString())
                 }
@@ -3644,7 +3622,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 //DebugUtilis.v("GroupManager.getGroupMembersList", data.tojsonString())
                 val groupMembers: MutableList<ProfileDetails> =
                     data["data"] as ArrayList<ProfileDetails>
-                val myProfileIndex =
+                /*val myProfileIndex =
                     groupMembers.indexOfFirst { pd -> pd.jid == SharedPreferenceManager.instance.currentUserJid }
                 if (myProfileIndex >= 0) {
                     val myProfile = groupMembers[myProfileIndex]
@@ -3652,7 +3630,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     myProfile.nickName = com.mirrorflysdk.flycommons.Constants.YOU
                     myProfile.name = com.mirrorflysdk.flycommons.Constants.YOU
                     groupMembers.add(myProfile)
-                }
+                }*/
                 result.success(groupMembers.toJsonString())
             } else {
                 result.error("404", "fetching group members", throwable.toString())

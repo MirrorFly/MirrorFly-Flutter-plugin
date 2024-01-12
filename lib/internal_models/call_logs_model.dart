@@ -3,13 +3,17 @@
 //     final callLogModel = callLogModelFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:io';
 
 CallLogModel callLogListFromJson(String str) => CallLogModel.fromJson(json.decode(str));
 
 String callLogListToJson(CallLogModel data) => json.encode(data.toJson());
 
+String convertCallLogsToJson(String? str) => (str == null || str.isEmpty) ? "" : callLogListToJson(callLogListFromJson(str));
+
+
 class CallLogModel {
-  List<CallLogData>? data;
+  List<CallLog>? data;
   int? totalPages;
 
   CallLogModel({
@@ -18,7 +22,7 @@ class CallLogModel {
   });
 
   factory CallLogModel.fromJson(Map<String, dynamic> json) => CallLogModel(
-    data: json["data"] == null ? [] : List<CallLogData>.from(json["data"]!.map((x) => CallLogData.fromJson(x))),
+    data: json["data"] == null ? [] : List<CallLog>.from(json["data"]!.map((x) => CallLog.fromJson(x))),
     totalPages: json["total_pages"],
   );
 
@@ -28,7 +32,7 @@ class CallLogModel {
   };
 }
 
-class CallLogData {
+class CallLog {
   String? callMode;
   int? callState;
   int? callTime;
@@ -50,7 +54,7 @@ class CallLogData {
   List<String>? userList;
   String? nickName;
 
-  CallLogData({
+  CallLog({
     this.callMode,
     this.callState,
     this.callTime,
@@ -73,9 +77,9 @@ class CallLogData {
     this.nickName
   });
 
-  factory CallLogData.fromJson(Map<String, dynamic> json) => CallLogData(
+  factory CallLog.fromJson(Map<String, dynamic> json) => CallLog(
     callMode: json["callMode"],
-    callState: json['callState'],
+    callState: Platform.isAndroid ? json['callState'] : getCallState(stateValue: json['callState']),
     callTime: json["callTime"],
     callType: json["callType"],
     callerDevice: json["callerDevice"],
@@ -119,3 +123,13 @@ class CallLogData {
     "nickName": nickName
   };
 }
+
+
+int getCallState({required String stateValue}) {
+    switch(stateValue){
+      case "MissedCall": return 0;
+      case "OutgoingCall": return 1;
+      case "IncomingCall": return 2;
+      default: return 1;
+    }
+  }

@@ -3,7 +3,6 @@
 //     final recentChat = recentChatFromJson(jsonString);
 
 import 'dart:convert';
-import 'dart:io';
 
 RecentChat recentChatFromJson(String str) =>
     RecentChat.fromJson(json.decode(str));
@@ -13,27 +12,50 @@ RecentChatData recentChatDataFromJson(String str) =>
 String recentChatToJson(RecentChat data) => json.encode(data.toJson());
 
 class RecentChat {
+  List<RecentChatData>? data;
+
   RecentChat({
     this.data,
   });
 
-  List<RecentChatData>? data;
-
   factory RecentChat.fromJson(Map<String, dynamic> json) => RecentChat(
-    data: json["data"] == null
-        ? null
-        : List<RecentChatData>.from(
-        json["data"].map((x) => RecentChatData.fromJson(x))),
+    data: json["data"] == null ? [] : List<RecentChatData>.from(json["data"]!.map((x) => RecentChatData.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
-    "data": data == null
-        ? null
-        : List<dynamic>.from(data!.map((x) => x.toJson())),
+    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
   };
 }
 
 class RecentChatData {
+  String? contactType;
+  bool? isAdminBlocked;
+  bool? isBlocked;
+  bool? isBlockedMe;
+  bool? isBroadCast;
+  bool? isChatArchived;
+  bool? isPrivateChat;
+  bool? isChatPinned;
+  bool? isConversationUnRead;
+  bool? isGroup;
+  bool? isGroupInOfflineMode;
+  bool? isItSavedContact;
+  bool? isLastMessageRecalledByUser;
+  bool? isLastMessageSentByMe;
+  bool? isMuted;
+  bool? isSelected;
+  String? jid;
+  String? lastMessageContent;
+  String? lastMessageId;
+  String? lastMessageStatus;
+  int? lastMessageTime;
+  String? lastMessageType;
+  String? nickName;
+  String? profileImage;
+  String? profileName;
+  int? unreadMessageCount;
+  String? topicId;
+
   RecentChatData({
     this.contactType,
     this.isAdminBlocked,
@@ -41,8 +63,9 @@ class RecentChatData {
     this.isBlockedMe,
     this.isBroadCast,
     this.isChatArchived,
+    this.isPrivateChat,
     this.isChatPinned,
-    this.isConversationUnRead, //// need to check
+    this.isConversationUnRead,
     this.isGroup,
     this.isGroupInOfflineMode,
     this.isItSavedContact,
@@ -63,54 +86,14 @@ class RecentChatData {
     this.topicId,
   });
 
-  String? contactType;
-  bool? isAdminBlocked;
-  bool? isBlocked;
-  bool? isBlockedMe;
-  bool? isBroadCast;
-  bool? isChatArchived;
-  bool? isChatPinned;
-  bool? isConversationUnRead;
-  bool? isGroup;
-  bool? isGroupInOfflineMode;
-  bool? isItSavedContact;
-  bool? isLastMessageRecalledByUser;
-  bool? isLastMessageSentByMe;
-  bool? isMuted;
-  bool? isSelected;
-  String? jid;
-  String? lastMessageContent;
-  String? lastMessageId;
-  String? lastMessageStatus;
-  dynamic lastMessageTime;
-  String? lastMessageType;
-  String? nickName;
-  String? profileImage;
-  String? profileName;
-  dynamic unreadMessageCount;
-  String? topicId;
-
   factory RecentChatData.fromJson(Map<String, dynamic> json) => RecentChatData(
-    contactType: Platform.isAndroid
-        ? json["contactType"] == "unknown"
-        ? "unknown_contact"
-        : json["contactType"] == "live"
-        ? "live_contact"
-        : json["contactType"] == "local"
-        ? "local_contact"
-        : json["contactType"] == "deleted"
-        ? "deleted_contact"
-        : json["contactType"]
-        : json["isItSavedContact"] == true
-        ? "live_contact"
-        : json["isDeletedUser"] == true
-        ? "deleted_contact"
-        : "unknown_contact",
+    contactType: json["contactType"],
     isAdminBlocked: json["isAdminBlocked"],
     isBlocked: json["isBlocked"],
     isBlockedMe: json["isBlockedMe"],
     isBroadCast: json["isBroadCast"],
     isChatArchived: json["isChatArchived"],
+    isPrivateChat: json["isPrivateChat"],
     isChatPinned: json["isChatPinned"],
     isConversationUnRead: json["isConversationUnRead"],
     isGroup: json["isGroup"],
@@ -123,27 +106,14 @@ class RecentChatData {
     jid: json["jid"],
     lastMessageContent: json["lastMessageContent"],
     lastMessageId: json["lastMessageId"],
-    lastMessageStatus: Platform.isAndroid
-        ? json["lastMessageStatus"]
-        : json["lastMessageStatus"] == 2 //acknowledge
-        ? "A"
-        : json["lastMessageStatus"] == 3 //delivered
-        ? "D"
-        : json["lastMessageStatus"] == 4 //seen
-        ? "S"
-        : json["lastMessageStatus"] == 5 //received
-        ? "R"
-        : "N", //"N" for "notAcknowledged" in iOS,
-    // lastMessageTime: Platform.isAndroid ? json["lastMessageTime"] : json["isGroup"] ? json["lastMessageTime"] * 1000 : json["lastMessageTime"],
-    lastMessageTime: json["lastMessageTime"].toInt().toString().length == 13
-        ? json["lastMessageTime"] * 1000
-        : json["lastMessageTime"],
+    lastMessageStatus: json["lastMessageStatus"],
+    lastMessageTime: json["lastMessageTime"],
     lastMessageType: json["lastMessageType"],
     nickName: json["nickName"],
     profileImage: json["profileImage"],
     profileName: json["profileName"],
     unreadMessageCount: json["unreadMessageCount"],
-    topicId: Platform.isAndroid ? json["topicId"] : json["topicID"],
+    topicId: json["topicId"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -153,6 +123,7 @@ class RecentChatData {
     "isBlockedMe": isBlockedMe,
     "isBroadCast": isBroadCast,
     "isChatArchived": isChatArchived,
+    "isPrivateChat": isPrivateChat,
     "isChatPinned": isChatPinned,
     "isConversationUnRead": isConversationUnRead,
     "isGroup": isGroup,

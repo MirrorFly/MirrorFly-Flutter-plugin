@@ -3,6 +3,7 @@ import 'package:mirrorfly_plugin/builder.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 
+import 'internal_models/callback.dart';
 import 'model/topic_metadata.dart';
 
 abstract class FlyChatFlutterPlatform extends PlatformInterface {
@@ -30,7 +31,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('build() has not been implemented.');
   }
 
-  Future<bool?> initializeSDK(InitializeSDKBuilder builder) {
+  Future<void> initializeSDK(InitializeSDKBuilder builder,Callback callback) {
     throw UnimplementedError('build() has not been implemented.');
   }
 
@@ -50,9 +51,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> contactSyncState() {
+  /*Future<dynamic> contactSyncState() {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
   Future<dynamic> revokeContactSync() {
     throw UnimplementedError('has not been implemented.');
@@ -70,15 +71,15 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }*/
 
-  Future<dynamic> getMyBusyStatus() {
+  Future<String> getMyBusyStatus() {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getBusyStatusList() {
+  Future<String?> getBusyStatusList() {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getRecalledMessagesOfAConversation(String jid) {
+  Future<String?> getRecalledMessagesOfAConversation(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -240,17 +241,17 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> handleReceivedMessage(Map notificationData) {
+  Future<String?> handleReceivedMessage(Map notificationData) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getLastNUnreadMessages(int messagesCount) {
+  Future<String?> getLastNUnreadMessages(int messagesCount) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getNUnreadMessagesOfEachUsers(int messagesCount) {
+  /*Future<dynamic> getNUnreadMessagesOfEachUsers(int messagesCount) {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
   Future<bool?> isArchivedSettingsEnabled() {
     throw UnimplementedError('has not been implemented.');
@@ -284,31 +285,31 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getUsersListToAddMembersInOldGroup(String groupJid) {
+  /*Future<String?> getUsersListToAddMembersInOldGroup(String groupJid) {
+    throw UnimplementedError('has not been implemented.');
+  }*/
+
+  /*Future<dynamic> prepareChatConversationToExport(String jid) {
+    throw UnimplementedError('has not been implemented.');
+  }*/
+
+  Future<String?> getArchivedChatList() {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> prepareChatConversationToExport(String jid) {
+  /*Future<dynamic> getMessageActions(List<String> messageidlist) {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
-  Future<dynamic> getArchivedChatList() {
+  /*Future<String?> getUsersListToAddMembersInNewGroup() {
     throw UnimplementedError('has not been implemented.');
-  }
-
-  Future<dynamic> getMessageActions(List<String> messageidlist) {
-    throw UnimplementedError('has not been implemented.');
-  }
-
-  Future<dynamic> getUsersListToAddMembersInNewGroup() {
-    throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
   Future<bool?> createOfflineGroupInOnline(String groupId) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getGroupProfile(String groupJid, bool server) {
+  Future<String?> getGroupProfile(String groupJid, bool server) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -346,7 +347,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
+  Future<String?> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -358,24 +359,24 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  sendTextMessage(String message, String jid, String replyMessageId,
+  Future<String> sendTextMessage(String message, String jid, String replyMessageId,
       {String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  sendLocationMessage(
+  Future<String> sendLocationMessage(
       String jid, double latitude, double longitude, String replyMessageId,
       {String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  sendImageMessage(
+  Future<String> sendImageMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
       {String? imageFileUrl, String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  sendVideoMessage(
+  Future<String> sendVideoMessage(
       String jid, String filePath, String? caption, String? replyMessageID,
       {String? videoFileUrl,
         num? videoDuration,
@@ -384,23 +385,23 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getRegisteredUserList({required bool server}) {
+  Future<String?> getRegisteredUserList({required bool server}) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getUserList(int page, String search, [int perPageResultSize = 20]) {
+  Future<String> getUserList(int page, String search, [int perPageResultSize = 20]) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getCallLogsList(int currentPage){
+  Future<String?> getCallLogsList(int currentPage){
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getLocalCallLogs(){
+  Future<String> getLocalCallLogs(){
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> deleteCallLog(List<String> jidlist,bool isClearAll){
+  Future<bool> deleteCallLog(List<String> jidlist,bool isClearAll){
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -593,25 +594,25 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> saveProfile(String name, String email) {
+  /*Future<dynamic> saveProfile(String name, String email) {
+    throw UnimplementedError('has not been implemented.');
+  }*/
+
+  Future<String?> sentFileMessage(String? file, String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> sentFileMessage(String? file, String jid) {
+  Future<String> getRecentChatList() {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getRecentChatList() {
-    throw UnimplementedError('has not been implemented.');
-  }
-
-  Future<dynamic> getRecentChatListHistory(
+  Future<String> getRecentChatListHistory(
       {required bool firstSet, int limit = 15}) {
     throw UnimplementedError(
         'getRecentChatListHistory has not been implemented.');
   }
 
-  Future<dynamic> loadMessages() {
+  Future<String?> loadMessages() {
     throw UnimplementedError('loadMessages has not been implemented.');
   }
 
@@ -619,7 +620,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('hasPreviousMessages has not been implemented.');
   }
 
-  Future<dynamic> loadPreviousMessages() {
+  Future<String?> loadPreviousMessages() {
     throw UnimplementedError('loadPreviousMessages has not been implemented.');
   }
 
@@ -627,7 +628,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('hasNextMessages has not been implemented.');
   }
 
-  Future<dynamic> loadNextMessages() {
+  Future<String?> loadNextMessages() {
     throw UnimplementedError('loadNextMessages has not been implemented.');
   }
 
@@ -642,37 +643,37 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('initializeMessageList has not been implemented.');
   }
 
-  Future<dynamic> getProfileStatusList() {
+  Future<String?> getProfileStatusList() {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> insertDefaultStatus(String status) {
+  Future<bool?> insertDefaultStatus(String status) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  updateMyProfile(
+  Future<String?> updateMyProfile(
       String name, String email, String mobile, String status, String? image) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  getUserProfile(String jid,
+  Future<String?> getUserProfile(String jid,
       [bool fromserver = false, bool saveasfriend = false]) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  getProfileDetails(String jid) {
+  Future<String?> getProfileDetails(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getProfileLocal(String jid, bool server) {
+  /*Future<dynamic> getProfileLocal(String jid, bool server) {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
   Future<dynamic> setMyProfileStatus(String status, String statusId) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> insertNewProfileStatus(String status) {
+  Future<bool?> insertNewProfileStatus(String status) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -696,7 +697,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getMessagesOfJid(String jid) {
+  Future<String?> getMessagesOfJid(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -712,17 +713,17 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> markAsReadDeleteUnreadSeparator(String jid) {
+  Future<bool?> markAsReadDeleteUnreadSeparator(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> sendContactMessage(List<String> contactList, String jid,
+  Future<String> sendContactMessage(List<String> contactList, String jid,
       String contactName, String replyMessageId,
       {String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> logoutOfChatSDK() {
+  Future<bool> logoutOfChatSDK() {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -734,17 +735,17 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> sendDocumentMessage(
+  Future<String> sendDocumentMessage(
       String jid, String documentPath, String replyMessageId,
       {String? fileUrl, String? topicId}) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> openFile(String filePath) {
+  /*Future<dynamic> openFile(String filePath) {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
-  Future<dynamic> sendAudioMessage(String jid, String filePath, bool isRecorded,
+  Future<String> sendAudioMessage(String jid, String filePath, bool isRecorded,
       String duration, String replyMessageId,
       {String? audioFileUrl, String? topicId}) {
     throw UnimplementedError('has not been implemented.');
@@ -754,24 +755,24 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> searchConversation(String searchKey,
+  Future<String> searchConversation(String searchKey,
       [String? jidForSearch, bool globalSearch = true]) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getRegisteredUsers(bool server) {
+  Future<String> getRegisteredUsers(bool server) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getMessageOfId(String mid) {
+  Future<String?> getMessageOfId(String mid) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getRecentChatOf(String jid) {
+  Future<String> getRecentChatOf(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> clearChat(
+  Future<bool> clearChat(
       String jid, String chatType, bool clearExceptStarred) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -781,16 +782,16 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getMessagesUsingIds(List<String> messageIds) {
+  Future<String?> getMessagesUsingIds(List<String> messageIds) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> deleteMessagesForMe(String jid, String chatType,
+  Future<bool?> deleteMessagesForMe(String jid, String chatType,
       List<String> messageIds, bool? isMediaDelete) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> deleteMessagesForEveryone(String jid, String chatType,
+  Future<bool> deleteMessagesForEveryone(String jid, String chatType,
       List<String> messageIds, bool? isMediaDelete) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -804,7 +805,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getGroupMessageReadByList(String messageId, String jid) {
+  Future<String> getGroupMessageReadByList(String messageId, String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -812,7 +813,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> blockUser(String userJID) {
+  Future<bool?> blockUser(String userJID) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -848,22 +849,22 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> updateFavouriteStatus(
+  Future<bool?> updateFavouriteStatus(
       String messageID, String chatUserJID, bool isFavourite, String chatType) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> forwardMessagesToMultipleUsers(
+  Future<bool?> forwardMessagesToMultipleUsers(
       List<String> messageIds, List<String> userList) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> forwardMessages(
+  /*Future<dynamic> forwardMessages(
       List<String> messageIds, String tojid, String chattype) {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
-  Future<dynamic> createGroup(
+  Future<bool?> createGroup(
       String groupName, List<String> userJidList, String imageFilePath) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -872,7 +873,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getGroupMembersList(String jid, bool? server) {
+  Future<String> getGroupMembersList(String jid, bool? server) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -880,19 +881,19 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getMediaMessages(String jid) {
+  Future<String?> getMediaMessages(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getDocsMessages(String jid) {
+  Future<String?> getDocsMessages(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getLinkMessages(String jid) {
+  Future<String?> getLinkMessages(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> exportChatConversationToEmail(String jid) {
+  Future<String> exportChatConversationToEmail(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -945,15 +946,15 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> deleteAccount(String reason, String? feedback) {
+  Future<bool?> deleteAccount(String reason, String? feedback) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getFavouriteMessages() {
+  Future<String> getFavouriteMessages() {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getAllGroups([bool? server]) {
+  Future<String?> getAllGroups([bool? server]) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -1019,7 +1020,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getNonChatUsers() async {
+  Future<String?> getNonChatUsers() async {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -1046,7 +1047,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getTopics has not been implemented.');
   }
 
-  Future<dynamic> getRecentChatListHistoryByTopic(
+  Future<String> getRecentChatListHistoryByTopic(
       {String? topicId, required bool firstSet, int limit = 15}) async {
     throw UnimplementedError(
         'getRecentChatListHistoryByTopic has not been implemented.');
@@ -1084,7 +1085,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getCallDirection has not been implemented.');
   }
 
-  Future<dynamic> getAllAvailableAudioInput() async {
+  Future<String> getAllAvailableAudioInput() async {
     throw UnimplementedError(
         'getAllAvailableAudioInput has not been implemented.');
   }
@@ -1141,7 +1142,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('openAudioFilePicker has not been implemented.');
   }
 
-  Future<dynamic> getAvailableFeatures() async {
+  Future<String> getAvailableFeatures() async {
     throw UnimplementedError('getAvailableFeatures has not been implemented.');
   }
 

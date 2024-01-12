@@ -3,7 +3,6 @@
 //     final profileData = profileDataFromJson(jsonString);
 
 import 'dart:convert';
-import 'dart:io';
 
 ProfileModel profileDataFromJson(String str) =>
     ProfileModel.fromJson(json.decode(str));
@@ -48,6 +47,7 @@ class ProfileData {
     this.name,
     this.nickName,
     this.status,
+    this.thumbImage,
   });
 
   String? email;
@@ -66,6 +66,7 @@ class ProfileData {
   String? name;
   String? nickName;
   String? status;
+  String? thumbImage;
 
   factory ProfileData.fromJson(Map<String, dynamic> json) => ProfileData(
     email: json["email"],
@@ -75,11 +76,7 @@ class ProfileData {
     isBlockedMe: json["isBlockedMe"],
     isGroupAdmin: json["isGroupAdmin"],
     isGroupInOfflineMode: json["isGroupInOfflineMode"],
-    isGroupProfile: Platform.isAndroid
-        ? json["isGroupProfile"]
-        : json["profileChatType"].toString().toLowerCase() == "singlechat"
-        ? false
-        : true,
+    isGroupProfile: json["isGroupProfile"],
     isItSavedContact: json["isItSavedContact"],
     isMuted: json["isMuted"],
     isSelected: json["isSelected"],
@@ -88,6 +85,7 @@ class ProfileData {
     name: json["name"],
     nickName: json["nickName"],
     status: json["status"],
+    thumbImage: json["thumbImage"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -107,5 +105,6 @@ class ProfileData {
     "name": name,
     "nickName": nickName,
     "status": status,
+    "thumbImage": thumbImage,
   };
 }
