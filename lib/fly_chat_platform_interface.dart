@@ -31,7 +31,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('build() has not been implemented.');
   }
 
-  Future<void> initializeSDK(InitializeSDKBuilder builder,Callback callback) {
+  Future<void> initializeSDK(InitializeSDKBuilder builder,FlyCallback callback) {
     throw UnimplementedError('build() has not been implemented.');
   }
 
@@ -347,7 +347,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String?> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true}) {
+  Future<void> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true,required FlyCallback callback}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -606,13 +606,13 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String> getRecentChatListHistory(
-      {required bool firstSet, int limit = 15}) {
+  Future<void> getRecentChatListHistory(
+      {required bool firstSet, int limit = 15,required FlyCallback callback}) {
     throw UnimplementedError(
         'getRecentChatListHistory has not been implemented.');
   }
 
-  Future<String?> loadMessages() {
+  Future<void> loadMessages(FlyCallback callback) {
     throw UnimplementedError('loadMessages has not been implemented.');
   }
 
@@ -620,7 +620,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('hasPreviousMessages has not been implemented.');
   }
 
-  Future<String?> loadPreviousMessages() {
+  Future<void> loadPreviousMessages(FlyCallback callback) {
     throw UnimplementedError('loadPreviousMessages has not been implemented.');
   }
 
@@ -628,7 +628,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('hasNextMessages has not been implemented.');
   }
 
-  Future<String?> loadNextMessages() {
+  Future<void> loadNextMessages(FlyCallback callback) {
     throw UnimplementedError('loadNextMessages has not been implemented.');
   }
 
@@ -1047,8 +1047,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getTopics has not been implemented.');
   }
 
-  Future<String> getRecentChatListHistoryByTopic(
-      {String? topicId, required bool firstSet, int limit = 15}) async {
+  Future<void> getRecentChatListHistoryByTopic(
+      {String? topicId, required bool firstSet, int limit = 15,required FlyCallback callback}) async {
     throw UnimplementedError(
         'getRecentChatListHistoryByTopic has not been implemented.');
   }
