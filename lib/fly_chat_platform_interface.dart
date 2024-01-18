@@ -651,13 +651,12 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String?> updateMyProfile(
-      String name, String email, String mobile, String status, String? image) {
+  Future<void> updateMyProfile(
+      String name, String email, String mobile, String status, String? image,FlyCallback callback) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String?> getUserProfile(String jid,
-      [bool fromserver = false, bool saveasfriend = false]) {
+  Future<void> getUserProfile(String jid,FlyCallback callback,[bool fromserver = false, bool saveasfriend = false]) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -677,7 +676,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> updateMyProfileImage(String image) {
+  Future<void> updateMyProfileImage(String image,FlyCallback callback) {
     throw UnimplementedError('has not been implemented.');
   }
 

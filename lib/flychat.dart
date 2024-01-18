@@ -663,12 +663,12 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.insertDefaultStatus(status);
   }
 
-  static Future<String?> updateMyProfile(String name, String email, String mobile, String status, String? image) {
-    return FlyChatFlutterPlatform.instance.updateMyProfile(name, email, mobile, status, image);
+  static Future<void> updateMyProfile(String name, String email, String mobile, String status, String? image,FlyCallback callback) {
+    return FlyChatFlutterPlatform.instance.updateMyProfile(name, email, mobile, status, image,callback);
   }
 
-  static Future<String?> getUserProfile(String jid, [bool fetchFromServer = false, bool saveasfriend = false]) {
-    return FlyChatFlutterPlatform.instance.getUserProfile(jid, fetchFromServer, saveasfriend);
+  static Future<void> getUserProfile(String jid,{bool fetchFromServer = false, bool saveasfriend = false,required FlyCallback callback,}) {
+    return FlyChatFlutterPlatform.instance.getUserProfile(jid,callback, fetchFromServer, saveasfriend);
   }
 
   static Future<String?> getProfileDetails(String jid) {
@@ -687,8 +687,8 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.insertNewProfileStatus(status);
   }
 
-  static Future<dynamic> updateMyProfileImage(String image) {
-    return FlyChatFlutterPlatform.instance.updateMyProfileImage(image);
+  static Future<void> updateMyProfileImage(String image,FlyCallback callback) {
+    return FlyChatFlutterPlatform.instance.updateMyProfileImage(image,callback);
   }
 
   static Future<bool?> removeProfileImage() {

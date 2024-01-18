@@ -2122,34 +2122,36 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String> updateMyProfile(String name, String email, String mobile, String status, String? image) async {
+  Future<void> updateMyProfile(String name, String email, String mobile, String status, String? image,FlyCallback callback) async {
     //updateProfile
     String? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel
           .invokeMethod('updateMyProfile', {"name": name, "email": email, "mobile": mobile, "status": status, "image": image});
-      return convertProfileUpdateJsonFromString(profileResponse);
+      var res = convertProfileUpdateJsonFromString(profileResponse);
+      callback.onSuccessful(FlyResponse(true, res, "user profile updated"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      rethrow;
-    } on Exception catch (error) {
-      LogMessage.d("Exception ", " $error");
-      rethrow;
+      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
   @override
-  Future<String> getUserProfile(String jid, [bool fromserver = false, bool saveasfriend = false]) async {
+  Future<void> getUserProfile(String jid,FlyCallback callback,[bool fromserver = false, bool saveasfriend = false]) async {
     String? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile', {"jid": jid, "server": fromserver, "saveasfriend": saveasfriend});
-      return convertProfileJsonFromString(profileResponse);
+      var res = convertProfileJsonFromString(profileResponse);
+      callback.onSuccessful(FlyResponse(true, res, "user profile fetched"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      rethrow;
-    } on Exception catch (error) {
-      LogMessage.d("Exception ", " $error");
-      rethrow;
+      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
@@ -2219,18 +2221,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String> updateMyProfileImage(String image) async {
+  Future<void> updateMyProfileImage(String image,FlyCallback callback) async {
     //updateProfileImage
     String? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('updateMyProfileImage', {"image": image});
-      return convertProfileUpdateJsonFromString(profileResponse);
+      var res = convertProfileUpdateJsonFromString(profileResponse);
+      callback.onSuccessful(FlyResponse(true, res, "user profile image updated"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      rethrow;
-    } on Exception catch (error) {
-      LogMessage.d("Exception ", " $error");
-      rethrow;
+      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 

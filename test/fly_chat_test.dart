@@ -529,8 +529,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  getUserProfile(String jid,
-      [bool fromserver = false, bool saveasfriend = false]) {
+  Future<void> getUserProfile(String jid,FlyCallback callback,[bool fromserver = false, bool saveasfriend = false]) {
     // getUserProfile
     throw UnimplementedError();
   }
@@ -1165,14 +1164,13 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  updateMyProfile(
-      String name, String email, String mobile, String status, String? image) {
+  Future<void> updateMyProfile(String name, String email, String mobile, String status, String? image,FlyCallback callback) {
     // updateMyProfile
     throw UnimplementedError();
   }
 
   @override
-  Future updateMyProfileImage(String image) {
+  Future<void> updateMyProfileImage(String image,FlyCallback callback) {
     // updateMyProfileImage
     throw UnimplementedError();
   }
