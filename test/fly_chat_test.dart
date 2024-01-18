@@ -51,11 +51,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   cancelNotifications() {
     // cancelNotifications
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   cancelRestore() {
@@ -469,7 +469,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String> getRegisteredUsers(bool server) {
+  Future<void> getRegisteredUsers(bool server,Function(FlyResponse response) callback) {
     // getRegisteredUsers
     throw UnimplementedError();
   }
@@ -523,13 +523,13 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<String> getUserList(int page, String search, [int perPageResultSize = 20]) {
+  Future<void> getUserList(int page, String search,Function(FlyResponse response) callback,{int perPageResultSize = 20}) {
     // getUserList
     throw UnimplementedError();
   }
 
   @override
-  Future<void> getUserProfile(String jid,FlyCallback callback,[bool fromserver = false, bool saveasfriend = false]) {
+  Future<void> getUserProfile(String jid,Function(FlyResponse response) callback,[bool fromserver = false, bool saveasfriend = false]) {
     // getUserProfile
     throw UnimplementedError();
   }
@@ -865,7 +865,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true,required Callback callback}) {
+  Future<void> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true,required Function(FlyResponse response) callback}) {
     // registerUser
     throw UnimplementedError();
   }
@@ -1164,13 +1164,13 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> updateMyProfile(String name, String email, String mobile, String status, String? image,FlyCallback callback) {
+  Future<void> updateMyProfile(String name, String email, String mobile, String status, String? image,Function(FlyResponse response) callback) {
     // updateMyProfile
     throw UnimplementedError();
   }
 
   @override
-  Future<void> updateMyProfileImage(String image,FlyCallback callback) {
+  Future<void> updateMyProfileImage(String image,Function(FlyResponse response) callback) {
     // updateMyProfileImage
     throw UnimplementedError();
   }
@@ -1441,7 +1441,7 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<void> getRecentChatListHistoryByTopic(
-      {String? topicId, required bool firstSet, int limit = 15,required Callback callback}) {
+      {String? topicId, required bool firstSet, int limit = 15,required Function(FlyResponse response) callback}) {
     //  implement getRecentChatListHistoryByTopic
     throw UnimplementedError();
   }
@@ -1477,7 +1477,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> getRecentChatListHistory({required bool firstSet, int limit = 15,required Callback callback}) {
+  Future<void> getRecentChatListHistory({required bool firstSet, int limit = 15,required Function(FlyResponse response) callback}) {
     // implement getRecentChatListHistory
     throw UnimplementedError();
   }
@@ -1496,7 +1496,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> loadMessages(FlyCallback callback) {
+  Future<void> loadMessages(Function(FlyResponse response) callback) {
     // implement loadMessages
     throw UnimplementedError();
   }
@@ -1508,7 +1508,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> loadNextMessages(FlyCallback callback) {
+  Future<void> loadNextMessages(Function(FlyResponse response) callback) {
     // implement loadNextMessages
     throw UnimplementedError();
   }
@@ -1520,7 +1520,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> loadPreviousMessages(FlyCallback callback) {
+  Future<void> loadPreviousMessages(Function(FlyResponse response) callback) {
     // implement loadPreviousMessages
     throw UnimplementedError();
   }
@@ -1652,7 +1652,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> initializeSDK(InitializeSDKBuilder builder,FlyCallback callback) {
+  Future<void> initializeSDK(InitializeSDKBuilder builder,Function(FlyResponse response) callback) {
     // implement initSDK
     throw UnimplementedError();
   }

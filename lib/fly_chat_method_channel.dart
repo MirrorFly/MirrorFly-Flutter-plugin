@@ -262,7 +262,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
 
   @override
-  Future<void> initializeSDK(InitializeSDKBuilder builder,FlyCallback callback ) async {
+  Future<void> initializeSDK(InitializeSDKBuilder builder,Function(FlyResponse response) callback ) async {
 
     bool? res;
     enableDebugLog = builder.enableDebugLog;
@@ -272,15 +272,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       res = await mirrorFlyMethodChannel.invokeMethod<bool>('initializeSDK', builder.build());
       LogMessage.d("syncContacts", res);
-      callback.onSuccessful(FlyResponse(true,"","initializeSDK Successfully"));
+      callback.call(FlyResponse(true,"","initializeSDK Successfully"));
       // return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
       // return res;
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
       // return res;
     }
   }
@@ -1506,18 +1506,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true,required FlyCallback callback}) async {
+  Future<void> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true,required Function(FlyResponse response) callback}) async {
     String? registerResponse;
     try {
       registerResponse = await mirrorFlyMethodChannel.invokeMethod('register_user', {"userIdentifier": userIdentifier, "token": fcmToken, "isForceRegister": isForceRegister});
       var res = convertRegisterUserJsonFromString(registerResponse);
-      callback.onSuccessful(FlyResponse(true, res, "Registered Successfully"));
+      callback.call(FlyResponse(true, res, "Registered Successfully"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback.onSuccessful(FlyResponse(false, "", "",FlyException(e.code, e.message, e.details)));
+      callback.call(FlyResponse(false, "", "",FlyException(e.code, e.message, e.details)));
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
@@ -1660,14 +1660,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String> getUserList(int page, String search, [int perPageResultSize = 20]) async {
+  Future<void> getUserList(int page, String search,Function(FlyResponse response) callback,{int perPageResultSize = 20}) async {
     String? re;
     try {
       re = await mirrorFlyMethodChannel.invokeMethod("get_user_list", {"page": page, "search": search, "perPageResultSize": perPageResultSize});
-      return convertUsersDataJsonFromString(re);
+      var res = convertUsersDataJsonFromString(re);
+      callback.call(FlyResponse(true, res, "users list fetched"));
     } on PlatformException catch (e) {
-      LogMessage.d("getUserList", "$e");
-      rethrow;
+      LogMessage.d("Platform Exception =", " $e");
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
@@ -1962,19 +1966,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> getRecentChatListHistory({required bool firstSet, int limit = 15,required FlyCallback callback}) async {
+  Future<void> getRecentChatListHistory({required bool firstSet, int limit = 15,required Function(FlyResponse response) callback}) async {
     //getRecentChats
     String? recentResponse;
     try {
       recentResponse = await mirrorFlyMethodChannel.invokeMethod('getRecentChatListHistory', {"firstSet": firstSet, "limit": limit});
       var res =  convertRecentChatDataJsonFromString(recentResponse);
-      callback.onSuccessful(FlyResponse(true, res, "recent chats fetched"));
+      callback.call(FlyResponse(true, res, "recent chats fetched"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
@@ -2011,18 +2015,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> loadMessages(FlyCallback callback) async {
+  Future<void> loadMessages(Function(FlyResponse response) callback) async {
     String? initialMessageResponse;
     try {
       initialMessageResponse = await mirrorFlyMethodChannel.invokeMethod('loadMessages');
       var res = convertChatMessagesJsonFromString(initialMessageResponse);
-      callback.onSuccessful(FlyResponse(true, res, "load message fetched"));
+      callback.call(FlyResponse(true, res, "load message fetched"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
@@ -2043,18 +2047,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> loadPreviousMessages(FlyCallback callback) async {
+  Future<void> loadPreviousMessages(Function(FlyResponse response) callback) async {
     String? previousMessageResponse;
     try {
       previousMessageResponse = await mirrorFlyMethodChannel.invokeMethod('loadPreviousMessages');
       var res = convertChatMessagesJsonFromString(previousMessageResponse);
-      callback.onSuccessful(FlyResponse(true, res, "load previous messages fetched"));
+      callback.call(FlyResponse(true, res, "load previous messages fetched"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
@@ -2075,18 +2079,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> loadNextMessages(FlyCallback callback) async {
+  Future<void> loadNextMessages(Function(FlyResponse response) callback) async {
     String? nextMessageResponse;
     try {
       nextMessageResponse = await mirrorFlyMethodChannel.invokeMethod('loadNextMessages');
       var res = convertChatMessagesJsonFromString(nextMessageResponse);
-      callback.onSuccessful(FlyResponse(true, res, "load Next messages fetched"));
+      callback.call(FlyResponse(true, res, "load Next messages fetched"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
@@ -2122,36 +2126,36 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> updateMyProfile(String name, String email, String mobile, String status, String? image,FlyCallback callback) async {
+  Future<void> updateMyProfile(String name, String email, String mobile, String status, String? image,Function(FlyResponse response) callback) async {
     //updateProfile
     String? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel
           .invokeMethod('updateMyProfile', {"name": name, "email": email, "mobile": mobile, "status": status, "image": image});
       var res = convertProfileUpdateJsonFromString(profileResponse);
-      callback.onSuccessful(FlyResponse(true, res, "user profile updated"));
+      callback.call(FlyResponse(true, res, "user profile updated"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
   @override
-  Future<void> getUserProfile(String jid,FlyCallback callback,[bool fromserver = false, bool saveasfriend = false]) async {
+  Future<void> getUserProfile(String jid,Function(FlyResponse response) callback,[bool fromserver = false, bool saveasfriend = false]) async {
     String? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile', {"jid": jid, "server": fromserver, "saveasfriend": saveasfriend});
       var res = convertProfileJsonFromString(profileResponse);
-      callback.onSuccessful(FlyResponse(true, res, "user profile fetched"));
+      callback.call(FlyResponse(true, res, "user profile fetched"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
@@ -2221,19 +2225,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> updateMyProfileImage(String image,FlyCallback callback) async {
+  Future<void> updateMyProfileImage(String image,Function(FlyResponse response) callback) async {
     //updateProfileImage
     String? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('updateMyProfileImage', {"image": image});
       var res = convertProfileUpdateJsonFromString(profileResponse);
-      callback.onSuccessful(FlyResponse(true, res, "user profile image updated"));
+      callback.call(FlyResponse(true, res, "user profile image updated"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
@@ -2542,18 +2546,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String> getRegisteredUsers(bool server) async {
+  Future<void> getRegisteredUsers(bool server,Function(FlyResponse response) callback) async {
     //filteredContactList
     String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getRegisteredUsers', {"server": server});
-      return convertUsersDataJsonFromString(response);
+      var res =  convertUsersDataJsonFromString(response);
+      callback.call(FlyResponse(true, res, "users list fetched"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      rethrow;
-    } on Exception catch (error) {
-      LogMessage.d("Exception ", " $error");
-      rethrow;
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 
@@ -3392,7 +3397,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   cancelNotifications() async {
     try {
       await mirrorFlyMethodChannel.invokeMethod('cancelNotifications');
@@ -3403,7 +3408,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
   saveMediaSettings(bool photos, bool videos, bool audio, bool documents, int networkType) async {
@@ -3602,7 +3607,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> getRecentChatListHistoryByTopic({String? topicId, required bool firstSet, int limit = 15,required FlyCallback callback}) async {
+  Future<void> getRecentChatListHistoryByTopic({String? topicId, required bool firstSet, int limit = 15,required Function(FlyResponse response) callback}) async {
     //getRecentChats
     String? recentResponse;
     try {
@@ -3610,13 +3615,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       recentResponse =
       await mirrorFlyMethodChannel.invokeMethod('getRecentChatListHistoryByTopic', {"topicId": topicId, "firstSet": firstSet, "limit": limit});
       var res =  convertRecentChatDataJsonFromString(recentResponse);
-      callback.onSuccessful(FlyResponse(true, res, "recent chats by topic fetched"));
+      callback.call(FlyResponse(true, res, "recent chats by topic fetched"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
+      callback.call(FlyResponse(false, "","",FlyException(e.code,e.message,e.details)));
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
-      callback.onSuccessful(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
+      callback.call(FlyResponse(false, "","",FlyException(FlyErrorCode.unHandle,FlyErrorMessage.unHandle,e)));
     }
   }
 

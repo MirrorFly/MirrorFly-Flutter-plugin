@@ -31,7 +31,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('build() has not been implemented.');
   }
 
-  Future<void> initializeSDK(InitializeSDKBuilder builder,FlyCallback callback) {
+  Future<void> initializeSDK(InitializeSDKBuilder builder,Function(FlyResponse response) callback) {
     throw UnimplementedError('build() has not been implemented.');
   }
 
@@ -347,7 +347,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<void> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true,required FlyCallback callback}) {
+  Future<void> registerUser(String userIdentifier, {String fcmToken = "", bool isForceRegister = true,required Function(FlyResponse response) callback}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -389,7 +389,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String> getUserList(int page, String search, [int perPageResultSize = 20]) {
+  Future<void> getUserList(int page, String search,Function(FlyResponse response) callback,{int perPageResultSize = 20}) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -607,12 +607,12 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<void> getRecentChatListHistory(
-      {required bool firstSet, int limit = 15,required FlyCallback callback}) {
+      {required bool firstSet, int limit = 15,required Function(FlyResponse response) callback}) {
     throw UnimplementedError(
         'getRecentChatListHistory has not been implemented.');
   }
 
-  Future<void> loadMessages(FlyCallback callback) {
+  Future<void> loadMessages(Function(FlyResponse response) callback) {
     throw UnimplementedError('loadMessages has not been implemented.');
   }
 
@@ -620,7 +620,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('hasPreviousMessages has not been implemented.');
   }
 
-  Future<void> loadPreviousMessages(FlyCallback callback) {
+  Future<void> loadPreviousMessages(Function(FlyResponse response) callback) {
     throw UnimplementedError('loadPreviousMessages has not been implemented.');
   }
 
@@ -628,7 +628,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('hasNextMessages has not been implemented.');
   }
 
-  Future<void> loadNextMessages(FlyCallback callback) {
+  Future<void> loadNextMessages(Function(FlyResponse response) callback) {
     throw UnimplementedError('loadNextMessages has not been implemented.');
   }
 
@@ -652,11 +652,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<void> updateMyProfile(
-      String name, String email, String mobile, String status, String? image,FlyCallback callback) {
+      String name, String email, String mobile, String status, String? image,Function(FlyResponse response) callback) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<void> getUserProfile(String jid,FlyCallback callback,[bool fromserver = false, bool saveasfriend = false]) {
+  Future<void> getUserProfile(String jid,Function(FlyResponse response) callback,[bool fromserver = false, bool saveasfriend = false]) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -676,7 +676,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<void> updateMyProfileImage(String image,FlyCallback callback) {
+  Future<void> updateMyProfileImage(String image,Function(FlyResponse response) callback) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -759,7 +759,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String> getRegisteredUsers(bool server) {
+  Future<void> getRegisteredUsers(bool server,Function(FlyResponse response) callback) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -981,9 +981,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  cancelNotifications() {
+  /*cancelNotifications() {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
   saveMediaSettings(bool photos, bool videos, bool audio, bool documents,
       int networkType) async {
@@ -1047,7 +1047,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<void> getRecentChatListHistoryByTopic(
-      {String? topicId, required bool firstSet, int limit = 15,required FlyCallback callback}) async {
+      {String? topicId, required bool firstSet, int limit = 15,required Function(FlyResponse response) callback}) async {
     throw UnimplementedError(
         'getRecentChatListHistoryByTopic has not been implemented.');
   }
