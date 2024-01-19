@@ -10,7 +10,8 @@ UserList userListFromJson(String str) => UserList.fromJson(json.decode(str));
 
 String userListToJson(UserList data) => json.encode(data.toJson());
 
-String convertUsersDataJsonFromString(String? str) => (str == null || str.isEmpty) ? "" : userListToJson(userListFromJson(str));
+String convertUsersDataJsonFromString(String? str) =>
+    (str == null || str.isEmpty) ? "" : userListToJson(userListFromJson(str));
 
 class UserList {
   UserList({
@@ -32,9 +33,7 @@ class UserList {
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data == null
-            ? null
-            : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toJson())),
         "status": status,
       };
 }

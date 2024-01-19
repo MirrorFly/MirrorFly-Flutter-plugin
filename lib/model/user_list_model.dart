@@ -25,17 +25,15 @@ class UserList {
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data == null
-            ? null
-            : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toJson())),
         "status": status,
       };
 }
 
 List<ProfileDetails> profileFromJson(String str) =>
     List<ProfileDetails>.from(json.decode(str).map((x) => ProfileDetails.fromJson(x)));
-ProfileDetails profiledata(String str) =>
-    ProfileDetails.fromJson(json.decode(str.toString()));
+
+ProfileDetails profiledata(String str) => ProfileDetails.fromJson(json.decode(str.toString()));
 
 /*class Profile {
   Profile({
@@ -137,7 +135,6 @@ ProfileDetails profiledata(String str) =>
   };
 }*/
 
-
 class ProfileDetails {
   ProfileDetails({
     this.contactType,
@@ -188,52 +185,52 @@ class ProfileDetails {
   String? thumbImage;
 
   factory ProfileDetails.fromJson(Map<String, dynamic> json) => ProfileDetails(
-    contactType: json["contactType"],
-    email: json["email"],
-    groupCreatedTime: json["groupCreatedTime"],
-    image: json["image"],
-    imagePrivacyFlag: json["imagePrivacyFlag"],
-    isAdminBlocked: json["isAdminBlocked"],
-    isBlocked: json["isBlocked"],
-    isBlockedMe: json["isBlockedMe"],
-    isGroupAdmin: json["isGroupAdmin"],
-    isGroupInOfflineMode: json["isGroupInOfflineMode"],
-    isGroupProfile: json["isGroupProfile"],
-    isItSavedContact: json["isItSavedContact"],
-    isMuted: json["isMuted"],
-    isSelected: json["isSelected"],
-    jid: json["jid"],
-    lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"],
-    mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"],
-    mobileNumber: json["mobileNumber"],
-    name: json["name"],
-    nickName: json["nickName"],
-    status: json["status"],
-    thumbImage: json["thumbImage"],
-  );
+        contactType: json["contactType"],
+        email: json["email"],
+        groupCreatedTime: json["groupCreatedTime"],
+        image: json["image"],
+        imagePrivacyFlag: json["imagePrivacyFlag"],
+        isAdminBlocked: json["isAdminBlocked"],
+        isBlocked: json["isBlocked"],
+        isBlockedMe: json["isBlockedMe"],
+        isGroupAdmin: json["isGroupAdmin"],
+        isGroupInOfflineMode: json["isGroupInOfflineMode"],
+        isGroupProfile: json["isGroupProfile"],
+        isItSavedContact: json["isItSavedContact"],
+        isMuted: json["isMuted"],
+        isSelected: json["isSelected"],
+        jid: json["jid"],
+        lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"],
+        mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"],
+        mobileNumber: json["mobileNumber"],
+        name: json["name"],
+        nickName: json["nickName"],
+        status: json["status"],
+        thumbImage: json["thumbImage"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "contactType": contactType,
-    "email": email,
-    "groupCreatedTime": groupCreatedTime,
-    "image": image,
-    "imagePrivacyFlag": imagePrivacyFlag,
-    "isAdminBlocked": isAdminBlocked,
-    "isBlocked": isBlocked,
-    "isBlockedMe": isBlockedMe,
-    "isGroupAdmin": isGroupAdmin,
-    "isGroupInOfflineMode": isGroupInOfflineMode,
-    "isGroupProfile": isGroupProfile,
-    "isItSavedContact": isItSavedContact,
-    "isMuted": isMuted,
-    "isSelected": isSelected,
-    "jid": jid,
-    "lastSeenPrivacyFlag": lastSeenPrivacyFlag,
-    "mobileNUmberPrivacyFlag": mobileNUmberPrivacyFlag,
-    "mobileNumber": mobileNumber,
-    "name": name,
-    "nickName": nickName,
-    "status": status,
-    "thumbImage": thumbImage,
-  };
+        "contactType": contactType,
+        "email": email,
+        "groupCreatedTime": groupCreatedTime,
+        "image": image,
+        "imagePrivacyFlag": imagePrivacyFlag,
+        "isAdminBlocked": isAdminBlocked,
+        "isBlocked": isBlocked,
+        "isBlockedMe": isBlockedMe,
+        "isGroupAdmin": isGroupAdmin,
+        "isGroupInOfflineMode": isGroupInOfflineMode,
+        "isGroupProfile": isGroupProfile,
+        "isItSavedContact": isItSavedContact,
+        "isMuted": isMuted,
+        "isSelected": isSelected,
+        "jid": jid,
+        "lastSeenPrivacyFlag": lastSeenPrivacyFlag,
+        "mobileNUmberPrivacyFlag": mobileNUmberPrivacyFlag,
+        "mobileNumber": mobileNumber,
+        "name": name,
+        "nickName": nickName,
+        "status": status,
+        "thumbImage": thumbImage,
+      };
 }

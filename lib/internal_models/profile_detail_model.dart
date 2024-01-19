@@ -8,15 +8,17 @@ import 'dart:io';
 List<ProfileDetails> profileDetailsFromJson(String str) =>
     List<ProfileDetails>.from(json.decode(str).map((x) => ProfileDetails.fromJson(x)));
 
-String profileDetailsToJson(List<ProfileDetails> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-String convertProfileDetailsJsonFromString(String? str) => (str == null || str.isEmpty) ? "" : profileDetailsToJson(profileDetailsFromJson(str));
+String profileDetailsToJson(List<ProfileDetails> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-ProfileDetails profileDetailFromJson(String str) =>ProfileDetails.fromJson(json.decode(str));
+String convertProfileDetailsJsonFromString(String? str) =>
+    (str == null || str.isEmpty) ? "" : profileDetailsToJson(profileDetailsFromJson(str));
+
+ProfileDetails profileDetailFromJson(String str) => ProfileDetails.fromJson(json.decode(str));
 
 String profileDetailToJson(ProfileDetails data) => json.encode(data.toJson());
 
-String convertProfileDetailJsonFromString(String? str) => (str == null || str.isEmpty) ? "" : profileDetailToJson(profileDetailFromJson(str));
+String convertProfileDetailJsonFromString(String? str) =>
+    (str == null || str.isEmpty) ? "" : profileDetailToJson(profileDetailFromJson(str));
 
 class ProfileDetails {
   ProfileDetails({
@@ -81,8 +83,7 @@ class ProfileDetails {
         groupCreatedTime: json["groupCreatedTime"].toString(),
         image: json["image"],
         imagePrivacyFlag: json["imagePrivacyFlag"].toString(),
-        isAdminBlocked:
-            Platform.isIOS ? json["isBlockedByAdmin"] : json["isAdminBlocked"],
+        isAdminBlocked: Platform.isIOS ? json["isBlockedByAdmin"] : json["isAdminBlocked"],
         isBlocked: json["isBlocked"],
         isBlockedMe: json["isBlockedMe"],
         isGroupAdmin: json["isGroupAdmin"],

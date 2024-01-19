@@ -1,10 +1,11 @@
 import 'dart:convert';
 
-ProfileUpdate profileUpdateFromJson(String str) =>
-    ProfileUpdate.fromJson(json.decode(str));
+ProfileUpdate profileUpdateFromJson(String str) => ProfileUpdate.fromJson(json.decode(str));
 
 String profileUpdateToJson(ProfileUpdate data) => json.encode(data.toJson());
-String convertProfileUpdateJsonFromString(String? str) => (str == null || str.isEmpty) ? "" : profileUpdateToJson(profileUpdateFromJson(str));
+
+String convertProfileUpdateJsonFromString(String? str) =>
+    (str == null || str.isEmpty) ? "" : profileUpdateToJson(profileUpdateFromJson(str));
 
 class ProfileUpdate {
   ProfileUpdate({

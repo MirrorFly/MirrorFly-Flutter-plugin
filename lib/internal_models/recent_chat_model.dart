@@ -5,24 +5,27 @@
 import 'dart:convert';
 import 'dart:io';
 
-RecentChat recentChatFromJson(String str) =>
-    RecentChat.fromJson(json.decode(str));
+RecentChat recentChatFromJson(String str) => RecentChat.fromJson(json.decode(str));
+
 String recentChatToJson(RecentChat data) => json.encode(data.toJson());
-String convertRecentChatFromJson(String? str) => (str == null || str.isEmpty) ? "" : recentChatToJson(recentChatFromJson(str));
 
+String convertRecentChatFromJson(String? str) =>
+    (str == null || str.isEmpty) ? "" : recentChatToJson(recentChatFromJson(str));
 
-RecentChatData recentChatDataFromJson(String str) =>
-    RecentChatData.fromJson(json.decode(str));
+RecentChatData recentChatDataFromJson(String str) => RecentChatData.fromJson(json.decode(str));
 
-String recentChatDataToJson(RecentChatData str) =>json.encode(str.toJson());
+String recentChatDataToJson(RecentChatData str) => json.encode(str.toJson());
 
-List<RecentChat> recentChatListFromJson(String str) => List<RecentChat>.from(json.decode(str).map((x) => RecentChat.fromJson(x)));
+List<RecentChat> recentChatListFromJson(String str) =>
+    List<RecentChat>.from(json.decode(str).map((x) => RecentChat.fromJson(x)));
 
 String recentChatListToJson(List<RecentChat> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-String convertRecentChatListFromJson(String? str) => (str == null || str.isEmpty) ? "" : recentChatListToJson(recentChatListFromJson(str));
+String convertRecentChatListFromJson(String? str) =>
+    (str == null || str.isEmpty) ? "" : recentChatListToJson(recentChatListFromJson(str));
 
-String convertRecentChatDataJsonFromString(String? str) => (str == null || str.isEmpty) ? "" : recentChatDataToJson(recentChatDataFromJson(str));
+String convertRecentChatDataJsonFromString(String? str) =>
+    (str == null || str.isEmpty) ? "" : recentChatDataToJson(recentChatDataFromJson(str));
 
 class RecentChatData {
   RecentChatData({
@@ -32,16 +35,11 @@ class RecentChatData {
   List<RecentChat>? data;
 
   factory RecentChatData.fromJson(Map<String, dynamic> json) => RecentChatData(
-        data: json["data"] == null
-            ? null
-            : List<RecentChat>.from(
-                json["data"].map((x) => RecentChat.fromJson(x))),
+        data: json["data"] == null ? null : List<RecentChat>.from(json["data"].map((x) => RecentChat.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data == null
-            ? null
-            : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toJson())),
       };
 }
 
@@ -106,7 +104,7 @@ class RecentChat {
 
   factory RecentChat.fromJson(Map<String, dynamic> json) => RecentChat(
         contactType: getContactType(json),
-        isAdminBlocked: Platform.isAndroid ? json["isAdminBlocked"] : json["isBlockedByAdmin"] ,
+        isAdminBlocked: Platform.isAndroid ? json["isAdminBlocked"] : json["isBlockedByAdmin"],
         isBlocked: json["isBlocked"],
         isBlockedMe: json["isBlockedMe"],
         isBroadCast: json["isBroadCast"],
@@ -167,49 +165,52 @@ class RecentChat {
       };
 }
 
-String getContactType(Map<String, dynamic> json){
-  if(Platform.isAndroid){
-    switch(json["contactType"]){
-      case "unknown" : return "unknown_contact";
-      case "live" : return "live_contact";
-      case "local" : return "local_contact";
-      case "deleted" : return "deleted_contact";
-      default : return json["contactType"];
+String getContactType(Map<String, dynamic> json) {
+  if (Platform.isAndroid) {
+    switch (json["contactType"]) {
+      case "unknown":
+        return "unknown_contact";
+      case "live":
+        return "live_contact";
+      case "local":
+        return "local_contact";
+      case "deleted":
+        return "deleted_contact";
+      default:
+        return json["contactType"];
     }
-  }else{
-    if(json["isItSavedContact"]==true){
+  } else {
+    if (json["isItSavedContact"] == true) {
       return "live_contact";
-    }else if(json["isDeletedUser"]){
+    } else if (json["isDeletedUser"]) {
       return "deleted_contact";
-    }else if(json["isGroup"]==false){
+    } else if (json["isGroup"] == false) {
       return "unknown_contact";
-    }else{
+    } else {
       return "";
     }
   }
 }
 
-String? getLastMessageStatus(dynamic status){
-  if(Platform.isAndroid) {
+String? getLastMessageStatus(dynamic status) {
+  if (Platform.isAndroid) {
     return status;
-  }else {
+  } else {
     switch (status) {
-      case 2 :
+      case 2:
         return "A"; //acknowledge
-      case 3 :
+      case 3:
         return "D"; //delivered
-      case 4 :
+      case 4:
         return "S"; //seen
-      case 5 :
+      case 5:
         return "R"; //received
-      default :
+      default:
         return "N"; //"N" for "notAcknowledged" in iOS,
     }
   }
 }
 
-String getMessageType(dynamic type){
-  return type.toString().toUpperCase() == "FILE"
-      ? "DOCUMENT"
-      : type.toString().toUpperCase();
+String getMessageType(dynamic type) {
+  return type.toString().toUpperCase() == "FILE" ? "DOCUMENT" : type.toString().toUpperCase();
 }

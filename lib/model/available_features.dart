@@ -4,13 +4,11 @@
 
 import 'dart:convert';
 
-AvailableFeatures availableFeaturesFromJson(String str) =>
-    AvailableFeatures.fromJson(json.decode(str));
+AvailableFeatures availableFeaturesFromJson(String str) => AvailableFeatures.fromJson(json.decode(str));
 
-String availableFeaturesToJson(AvailableFeatures data) =>
-    json.encode(data.toJson());
-String availableFeaturesMapToJson(String str) =>
-    availableFeaturesToJson(AvailableFeatures.fromJson(json.decode(str)));
+String availableFeaturesToJson(AvailableFeatures data) => json.encode(data.toJson());
+
+String availableFeaturesMapToJson(String str) => availableFeaturesToJson(AvailableFeatures.fromJson(json.decode(str)));
 
 class AvailableFeatures {
   bool? isLocationAttachmentAvailable;
@@ -57,8 +55,7 @@ class AvailableFeatures {
     this.isChatHistoryAvailable,
   });
 
-  factory AvailableFeatures.fromJson(Map<String, dynamic> json) =>
-      AvailableFeatures(
+  factory AvailableFeatures.fromJson(Map<String, dynamic> json) => AvailableFeatures(
         isLocationAttachmentAvailable: json["isLocationAttachmentEnabled"],
         isClearChatAvailable: json["isClearChatEnabled"],
         isDeleteChatAvailable: json["isDeleteChatEnabled"],

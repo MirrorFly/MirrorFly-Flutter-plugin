@@ -91,7 +91,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^0.0.13
+  mirrorfly_plugin: ^1.0.0
 ```
 
 - Run `flutter pub get` command in your project directory.
@@ -123,7 +123,14 @@ To initialize the plugin, place the below code in your `main.dart` file inside `
   WidgetsFlutterBinding.ensureInitialized();
   Mirrorfly.initializeSDK(
       licenseKey: 'your license key',
-      iOSContainerID: 'your app group id');
+      iOSContainerID: 'your app group id',
+      flyCallback: (FlyResponse response){
+          if(response.isSuccess){
+            LogMessage.d("onSuccess", response.message);
+          }else{
+            LogMessage.d("onFailure", response.exception?.message.toString());
+          }
+    });
   runApp(const MyApp());
 }
 ```
@@ -137,14 +144,32 @@ Use the below method to register a user in sandbox Live mode.
 > **Note**: While registration, the below `registerUser` method will accept the `FCM_TOKEN` as an optional param and pass it across. `The connection will be established automatically upon completion of registration and not required for seperate login`.
 
 ```dart
-Mirrorfly.registerUser(userIdentifier).then((value) {
-  // you will get the user registration response
-  var userData = registerModelFromJson(value);
-}).catchError((error) {
-  // Register user failed print throwable to find the exception details.
-  debugPrint(error.message);
+Mirrorfly.registerUser(userIdentifier,flyCallback: (FlyResponse response) {
+    // you will get the user registration response
+    if (response.isSuccess) {
+        if (response.data.isNotEmpty) {
+        var userData = registerModelFromJson(response.data); //message
+        
+        }
+    } else {
+      // Register user failed print throwable to find the exception details.
+        if (response.exception?.code == "403") {
+          //admin blocked the user
+        } else if (response.exception?.code  == "405") {
+          //maximum device limit reached
+        }
+    }
 });
 ```
+
+> **Note**: After registering, make sure to update the profile of the registered user [Update Profile](https://www.mirrorfly.com/docs/chat/flutter-plugin/profile-module/#update-user-profile).
+
+> **Note**: You need to re-login when the [onLoggedOut](https://www.mirrorfly.com/docs/chat/flutter-plugin/callback-listeners/#logged-out) event is triggered.
+
+> **Note**: It is recommended to disallow users to backup an app if it contains sensitive data. Having access to backup files (i.e. when `android:allowBackup="true"`), it is possible to modify/read the content of an app even on a non-rooted device.
+
+> **Caution**: If FORCE_REGISTER is false and it reached the maximum no of multi-sessions then registration will not succeed it will throw a 405 exception, Either FORCE_REGISTER should be true or one of the existing session need to be logged out to continue registration.
+
 ## Send a One-to-One Message
 
 Use the below method to send a text message to other user,

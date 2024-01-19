@@ -7,16 +7,16 @@ import 'dart:io';
 
 import 'profile_detail_model.dart';
 
-MessageStatusDetail messageDeliveredStatusFromJson(String str) =>
-    MessageStatusDetail.fromJson(json.decode(str));
+MessageStatusDetail messageDeliveredStatusFromJson(String str) => MessageStatusDetail.fromJson(json.decode(str));
 
-String messageDeliveredStatusToJson(MessageStatusDetail data) =>json.encode(data);
+String messageDeliveredStatusToJson(MessageStatusDetail data) => json.encode(data);
 
 MessageStatusDetail messageReadStatusFromJson(String str) => MessageStatusDetail.fromJson(json.decode(str));
+
 MessageStatusDetail messageStatusDetailFromJson(String str) => MessageStatusDetail.fromJson(json.decode(str));
 
-String convertMessageDeliveredStatusToJson(String? str) => (str == null || str.isEmpty) ? "" : messageDeliveredStatusToJson(messageDeliveredStatusFromJson(str));
-
+String convertMessageDeliveredStatusToJson(String? str) =>
+    (str == null || str.isEmpty) ? "" : messageDeliveredStatusToJson(messageDeliveredStatusFromJson(str));
 
 class MessageStatusDetail {
   MessageStatusDetail({
@@ -32,8 +32,7 @@ class MessageStatusDetail {
   factory MessageStatusDetail.fromJson(Map<String, dynamic> json) => MessageStatusDetail(
         count: json["count"],
         totalParticipantCount: json["totalParticipantCount"],
-        participantList: List<ParticipantList>.from(
-                json["participantList"].map((x) => ParticipantList.fromJson(x))),
+        participantList: List<ParticipantList>.from(json["participantList"].map((x) => ParticipantList.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {

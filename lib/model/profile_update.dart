@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-ProfileUpdate profileUpdateFromJson(String str) =>
-    ProfileUpdate.fromJson(json.decode(str));
+ProfileUpdate profileUpdateFromJson(String str) => ProfileUpdate.fromJson(json.decode(str));
 
 String profileUpdateToJson(ProfileUpdate data) => json.encode(data.toJson());
 
@@ -17,16 +16,16 @@ class ProfileUpdate {
   bool? status;
 
   factory ProfileUpdate.fromJson(Map<String, dynamic> json) => ProfileUpdate(
-    data: json["data"] == null ? null : ProData.fromJson(json["data"]),
-    message: json["message"],
-    status: json["status"],
-  );
+        data: json["data"] == null ? null : ProData.fromJson(json["data"]),
+        message: json["message"],
+        status: json["status"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "data": data ?? data?.toJson(),
-    "message": message,
-    "status": status,
-  };
+        "data": data ?? data?.toJson(),
+        "message": message,
+        "status": status,
+      };
 }
 
 class ProData {
@@ -47,20 +46,20 @@ class ProData {
   String? status;
 
   factory ProData.fromJson(Map<String, dynamic> json) => ProData(
-    email: json["email"],
-    image: json["image"],
-    mobileNumber: json["mobileNumber"],
-    name: json["name"],
-    nickName: json["nickName"],
-    status: json["status"],
-  );
+        email: json["email"],
+        image: json["image"],
+        mobileNumber: json["mobileNumber"],
+        name: json["name"],
+        nickName: json["nickName"],
+        status: json["status"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "email": email,
-    "image": image,
-    "mobileNumber": mobileNumber,
-    "name": name,
-    "nickName": nickName,
-    "status": status,
-  };
+        "email": email,
+        "image": image,
+        "mobileNumber": mobileNumber,
+        "name": name,
+        "nickName": nickName,
+        "status": status,
+      };
 }

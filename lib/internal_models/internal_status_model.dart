@@ -10,13 +10,12 @@ String statusToJson(Status data) => json.encode(data.toJson());
 
 String convertStatusFromJson(String? str) => (str == null || str.isEmpty) ? "" : statusToJson(statusFromJson(str));
 
-List<Status> statusListFromJson(String str) =>
-    List<Status>.from(json.decode(str).map((x) => Status.fromJson(x)));
+List<Status> statusListFromJson(String str) => List<Status>.from(json.decode(str).map((x) => Status.fromJson(x)));
 
-String statusListToJson(List<Status> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String statusListToJson(List<Status> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-String convertStatusListFromJson(String? str) => (str == null || str.isEmpty) ? "" : statusListToJson(statusListFromJson(str));
+String convertStatusListFromJson(String? str) =>
+    (str == null || str.isEmpty) ? "" : statusListToJson(statusListFromJson(str));
 
 class Status {
   Status({
