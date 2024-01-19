@@ -9,6 +9,9 @@ List<AudioDevices> audioDevicesFromJson(String str) =>
 
 String audioDevicesToJson(List<AudioDevices> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
+String convertAudioDevicesToJson(String? str) =>
+    (str == null || str.isEmpty) ? "" : audioDevicesToJson(audioDevicesFromJson(str));
+
 class AudioDevices {
   String? id;
   String? type;

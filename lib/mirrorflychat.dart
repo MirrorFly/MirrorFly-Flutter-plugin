@@ -1,8 +1,6 @@
 /// @nodoc
 library mirrorfly_plugin;
 
-export 'fly_chat_method_channel.dart';
-export 'fly_chat_platform_interface.dart';
 export 'model/register_model.dart';
 export 'model/country_model.dart';
 export 'model/group_members_model.dart';
@@ -23,3 +21,4 @@ export 'model/available_features.dart';
 export 'builder.dart';
 export 'flychat.dart';
 export 'logmessage.dart';
+export 'model/callback.dart';

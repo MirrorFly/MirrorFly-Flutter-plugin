@@ -3,12 +3,16 @@
 //     final availableFeatures = availableFeaturesFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:io';
 
 AvailableFeatures availableFeaturesFromJson(String str) => AvailableFeatures.fromJson(json.decode(str));
 
 String availableFeaturesToJson(AvailableFeatures data) => json.encode(data.toJson());
 
 String availableFeaturesMapToJson(String str) => availableFeaturesToJson(AvailableFeatures.fromJson(json.decode(str)));
+
+String convertAvailableFeaturesToJson(String? str) =>
+    (str == null || str.isEmpty) ? "" : availableFeaturesToJson(availableFeaturesFromJson(str));
 
 class AvailableFeatures {
   bool? isLocationAttachmentAvailable;
@@ -56,26 +60,28 @@ class AvailableFeatures {
   });
 
   factory AvailableFeatures.fromJson(Map<String, dynamic> json) => AvailableFeatures(
-        isLocationAttachmentAvailable: json["isLocationAttachmentEnabled"],
-        isClearChatAvailable: json["isClearChatEnabled"],
-        isDeleteChatAvailable: json["isDeleteChatEnabled"],
-        isVideoAttachmentAvailable: json["isVideoAttachmentEnabled"],
-        isOneToOneCallAvailable: json["isOneToOneCallEnabled"],
-        isTranslationAvailable: json["isTranslationEnabled"],
-        isViewAllMediaAvailable: json["isViewAllMediaEnabled"],
-        isDocumentAttachmentAvailable: json["isDocumentAttachmentEnabled"],
-        isGroupCallAvailable: json["isGroupCallEnabled"],
-        isRecentChatSearchAvailable: json["isRecentChatSearchEnabled"],
-        isImageAttachmentAvailable: json["isImageAttachmentEnabled"],
-        isGroupChatAvailable: json["isGroupChatEnabled"],
-        isContactAttachmentAvailable: json["isContactAttachmentEnabled"],
-        isStarMessageAvailable: json["isStarMessageEnabled"],
-        isAttachmentAvailable: json["isAttachmentEnabled"],
-        isAudioAttachmentAvailable: json["isAudioAttachmentEnabled"],
-        isBlockAvailable: json["isBlockEnabled"],
-        isReportAvailable: json["isReportEnabled"],
-        isDeleteMessageAvailable: json["isDeleteMessageEnabled"],
-        isChatHistoryAvailable: json["isChatHistoryEnabled"],
+        isLocationAttachmentAvailable:
+            Platform.isIOS ? json["locationAttachment"] : json["isLocationAttachmentEnabled"],
+        isClearChatAvailable: Platform.isIOS ? json["clearChat"] : json["isClearChatEnabled"],
+        isDeleteChatAvailable: Platform.isIOS ? json["deleteChat"] : json["isDeleteChatEnabled"],
+        isVideoAttachmentAvailable: Platform.isIOS ? json["videoAttachment"] : json["isVideoAttachmentEnabled"],
+        isOneToOneCallAvailable: Platform.isIOS ? json["one2oneCall"] : json["isOneToOneCallEnabled"],
+        isTranslationAvailable: Platform.isIOS ? json["translation"] : json["isTranslationEnabled"],
+        isViewAllMediaAvailable: Platform.isIOS ? json["viewAllMedias"] : json["isViewAllMediaEnabled"],
+        isDocumentAttachmentAvailable:
+            Platform.isIOS ? json["documentAttachment"] : json["isDocumentAttachmentEnabled"],
+        isGroupCallAvailable: Platform.isIOS ? json["groupCall"] : json["isGroupCallEnabled"],
+        isRecentChatSearchAvailable: Platform.isIOS ? json["recentchatSearch"] : json["isRecentChatSearchEnabled"],
+        isImageAttachmentAvailable: Platform.isIOS ? json["imageAttachment"] : json["isImageAttachmentEnabled"],
+        isGroupChatAvailable: Platform.isIOS ? json["groupChat"] : json["isGroupChatEnabled"],
+        isContactAttachmentAvailable: Platform.isIOS ? json["contactAttachment"] : json["isContactAttachmentEnabled"],
+        isStarMessageAvailable: Platform.isIOS ? json["starMessage"] : json["isStarMessageEnabled"],
+        isAttachmentAvailable: Platform.isIOS ? json["attachment"] : json["isAttachmentEnabled"],
+        isAudioAttachmentAvailable: Platform.isIOS ? json["audioAttachment"] : json["isAudioAttachmentEnabled"],
+        isBlockAvailable: Platform.isIOS ? json["block"] : json["isBlockEnabled"],
+        isReportAvailable: Platform.isIOS ? json["report"] : json["isReportEnabled"],
+        isDeleteMessageAvailable: Platform.isIOS ? json["deleteMessage"] : json["isDeleteMessageEnabled"],
+        isChatHistoryAvailable: Platform.isIOS ? json["chatHistory"] : json["isChatHistoryEnabled"],
       );
 
   Map<String, dynamic> toJson() => {

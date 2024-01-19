@@ -35,13 +35,16 @@ class MirrorFlyView extends StatefulWidget {
       // this.profileview,
       this.profileSize = 80,
       this.hideProfileView = false,
-      required this.userJid, this.showSpeakingRipple = false, this.onClick})
+      required this.userJid,
+      this.showSpeakingRipple = false,
+      this.onClick})
       : super(key: key);
 
   final bool mirror;
   final ScalingType scalingType;
   final Color? viewBgColor;
   final bool? alignProfilePictureCenter;
+
   // final HorizontalGravity horizontalGravity;
   // final ProfileViewPositioned? profileview;
   final bool? hideProfileView;
@@ -58,6 +61,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   final int _viewId = _nextViewCreationId++;
   final nativeViewType = "mirrorfly_view";
   AndroidViewController? androidViewController;
+
   @override
   void initState() {
     super.initState();
@@ -73,7 +77,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   void dispose() {
     LogMessage.d("MirrorFlyView", "dispose");
     if (Platform.isAndroid) {
-      if(androidViewController!=null) {
+      if (androidViewController != null) {
         androidViewController?.dispose();
       }
     }
@@ -87,10 +91,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
       throw Exception("remoteUserJid must not be empty");
     }
     return Stack(
-      children: [
-        buildHybridCompositionView(),
-        InkWell(onTap: widget.onClick)
-      ],
+      children: [buildHybridCompositionView(), InkWell(onTap: widget.onClick)],
     );
   }
 
@@ -146,14 +147,12 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
         debugPrint("#Mirrorfly Call Android Platform");
         return PlatformViewLink(
           viewType: nativeViewType,
-          surfaceFactory:
-              (BuildContext context, PlatformViewController controller) {
+          surfaceFactory: (BuildContext context, PlatformViewController controller) {
             androidViewController = (controller as AndroidViewController);
             return AndroidViewSurface(
               key: widget.key,
               controller: androidViewController!,
-              gestureRecognizers: const <Factory<
-                  OneSequenceGestureRecognizer>>{},
+              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,
             );
           },
@@ -185,17 +184,17 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
     }
   }
 
-  // Widget buildVirtualDisplayView(Map<String, dynamic> creationParams) {
-  //   return AndroidView(
-  //     viewType: nativeViewType,
-  //     hitTestBehavior: PlatformViewHitTestBehavior.transparent,
-  //     creationParamsCodec: const StandardMessageCodec(),
-  //     creationParams: creationParams,
-  //     onPlatformViewCreated: (value) {
-  //       debugPrint("onPlatformViewCreated $value");
-  //     },
-  //   );
-  // }
+// Widget buildVirtualDisplayView(Map<String, dynamic> creationParams) {
+//   return AndroidView(
+//     viewType: nativeViewType,
+//     hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+//     creationParamsCodec: const StandardMessageCodec(),
+//     creationParams: creationParams,
+//     onPlatformViewCreated: (value) {
+//       debugPrint("onPlatformViewCreated $value");
+//     },
+//   );
+// }
 }
 
 extension ExtensionMirrorflyView on MirrorFlyView {
@@ -232,15 +231,8 @@ class ProfileViewPositioned {
   /// The child's height.
   final int? height;
 
-  ProfileViewPositioned(
-      {this.left, this.top, this.right, this.bottom, this.width, this.height});
+  ProfileViewPositioned({this.left, this.top, this.right, this.bottom, this.width, this.height});
 
-  Map<String, dynamic> toMap() => {
-        "left": left,
-        "top": top,
-        "right": right,
-        "bottom": bottom,
-        "width": width,
-        "height": height
-      };
+  Map<String, dynamic> toMap() =>
+      {"left": left, "top": top, "right": right, "bottom": bottom, "width": width, "height": height};
 }

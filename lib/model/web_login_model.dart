@@ -1,10 +1,8 @@
 import 'dart:convert';
 
-List<WebLogin> webLoginFromJson(String str) =>
-    List<WebLogin>.from(json.decode(str).map((x) => WebLogin.fromJson(x)));
+List<WebLogin> webLoginFromJson(String str) => List<WebLogin>.from(json.decode(str).map((x) => WebLogin.fromJson(x)));
 
-String webLoginToJson(List<WebLogin> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String webLoginToJson(List<WebLogin> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class WebLogin {
   WebLogin({

@@ -3,10 +3,14 @@
 //     final profileData = profileDataFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:io';
 
 ProfileModel profileDataFromJson(String str) => ProfileModel.fromJson(json.decode(str));
 
 String profileDataToJson(ProfileModel data) => json.encode(data.toJson());
+
+String convertProfileJsonFromString(String? str) =>
+    (str == null || str.isEmpty) ? "" : json.encode(profileDataFromJson(str).toJson());
 
 class ProfileModel {
   ProfileModel({
@@ -14,11 +18,11 @@ class ProfileModel {
     this.status,
   });
 
-  ProfileData? data;
+  Profile? data;
   bool? status;
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) => ProfileModel(
-        data: json["data"] == null ? null : ProfileData.fromJson(json["data"]),
+        data: json["data"] == null ? null : Profile.fromJson(json["data"]),
         status: json["status"],
       );
 
@@ -28,8 +32,8 @@ class ProfileModel {
       };
 }
 
-class ProfileData {
-  ProfileData({
+class Profile {
+  Profile({
     this.email,
     this.image,
     this.isAdminBlocked,
@@ -67,15 +71,19 @@ class ProfileData {
   String? status;
   String? thumbImage;
 
-  factory ProfileData.fromJson(Map<String, dynamic> json) => ProfileData(
+  factory Profile.fromJson(Map<String, dynamic> json) => Profile(
         email: json["email"],
         image: json["image"],
-        isAdminBlocked: json["isAdminBlocked"],
+        isAdminBlocked: Platform.isAndroid ? json["isAdminBlocked"] : json["isBlockedByAdmin"],
         isBlocked: json["isBlocked"],
         isBlockedMe: json["isBlockedMe"],
         isGroupAdmin: json["isGroupAdmin"],
         isGroupInOfflineMode: json["isGroupInOfflineMode"],
-        isGroupProfile: json["isGroupProfile"],
+        isGroupProfile: Platform.isAndroid
+            ? json["isGroupProfile"]
+            : json["profileChatType"].toString().toLowerCase() == "singlechat"
+                ? false
+                : true,
         isItSavedContact: json["isItSavedContact"],
         isMuted: json["isMuted"],
         isSelected: json["isSelected"],

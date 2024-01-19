@@ -3,11 +3,16 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Mirrorfly.init(
-      baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
+  Mirrorfly.initializeSDK(
       licenseKey: 'your license key',
-      iOSContainerID:
-          'your container id'); //Must be same as AppGroups given in Xcode Capability
+      iOSContainerID: 'your app group id',
+      flyCallback: (FlyResponse response){
+        if(response.isSuccess){
+          LogMessage.d("onSuccess", response.message);
+        }else{
+          LogMessage.d("onFailure", response.exception?.message.toString());
+        }
+      });//Must be same as AppGroups given in Xcode Capability
   runApp(const MyApp());
 }
 
@@ -36,9 +41,9 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // var appState = context.watch<MyAppState>();
 
-    return Scaffold(
+    return const Scaffold(
       body: Column(
-        children: const [
+        children: [
           Text('Welcome to Mirrorfly'),
         ],
       ),

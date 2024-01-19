@@ -4,6 +4,9 @@ ProfileUpdate profileUpdateFromJson(String str) => ProfileUpdate.fromJson(json.d
 
 String profileUpdateToJson(ProfileUpdate data) => json.encode(data.toJson());
 
+String convertProfileUpdateJsonFromString(String? str) =>
+    (str == null || str.isEmpty) ? "" : profileUpdateToJson(profileUpdateFromJson(str));
+
 class ProfileUpdate {
   ProfileUpdate({
     this.data,

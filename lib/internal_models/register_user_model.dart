@@ -3,10 +3,14 @@
 //     final registerModel = registerModelFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:io';
 
 RegisterModel registerModelFromJson(String str) => RegisterModel.fromJson(json.decode(str));
 
 String registerModelToJson(RegisterModel data) => json.encode(data.toJson());
+
+String convertRegisterUserJsonFromString(String? str) =>
+    (str == null || str.isEmpty) ? "" : json.encode(registerModelFromJson(str).toJson());
 
 class RegisterModel {
   String? userJid;
@@ -22,10 +26,10 @@ class RegisterModel {
   });
 
   factory RegisterModel.fromJson(Map<String, dynamic> json) => RegisterModel(
-        userJid: json["userJid"],
+        userJid: Platform.isAndroid ? json["userJid"] : json["data"]["userJid"],
         data: json["data"] == null ? null : Data.fromJson(json["data"]),
         isNewUser: json["is_new_user"],
-        message: json["message"],
+        message: Platform.isAndroid ? json["message"] : "Register Success",
       );
 
   Map<String, dynamic> toJson() => {

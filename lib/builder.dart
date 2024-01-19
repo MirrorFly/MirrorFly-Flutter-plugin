@@ -30,6 +30,7 @@ class ChatBuilder {
   bool enableMobileNumberLogin;
   bool isTrialLicenceKey;
   bool? chatHistoryEnable;
+
   // int? maximumRecentChatPin;
   // GroupConfig? groupConfig;
   // bool useProfileName = true;
@@ -38,10 +39,8 @@ class ChatBuilder {
 }
 
 class GroupConfig {
-  GroupConfig(
-      {required this.enableGroupCreation,
-      required this.maxMembersCount,
-      this.adminOnlyAddRemoveAccess = true});
+  GroupConfig({required this.enableGroupCreation, required this.maxMembersCount, this.adminOnlyAddRemoveAccess = true});
+
   bool enableGroupCreation;
   int maxMembersCount;
   bool adminOnlyAddRemoveAccess;
@@ -82,13 +81,12 @@ extension GroupConfigParsing on GroupConfig? {
 
 class InitializeSDKBuilder {
   InitializeSDKBuilder(
-      {
-        this.storageFolderName,
-        required this.iOSContainerID,
-        required this.licenseKey,
-        this.enableMobileNumberLogin = false,
-        this.chatHistoryEnable,
-        this.enableDebugLog = false});
+      {this.storageFolderName,
+      required this.iOSContainerID,
+      required this.licenseKey,
+      this.enableMobileNumberLogin = false,
+      this.chatHistoryEnable,
+      this.enableDebugLog = false});
 
   String? storageFolderName;
   String iOSContainerID;

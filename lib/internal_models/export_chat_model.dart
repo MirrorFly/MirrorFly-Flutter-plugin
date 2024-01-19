@@ -8,6 +8,9 @@ ExportModel exportModelFromJson(String str) => ExportModel.fromJson(json.decode(
 
 String exportModelToJson(ExportModel data) => json.encode(data.toJson());
 
+String convertExportJsonFromString(String? str) =>
+    (str == null || str.isEmpty) ? "" : exportModelToJson(exportModelFromJson(str));
+
 class ExportModel {
   String? subject;
   String? messageContent;

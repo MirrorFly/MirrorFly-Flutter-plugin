@@ -1,10 +1,28 @@
+## [1.0.0] Chat History Feature
+* Chat history feature is Available now
+* Profile model class changed as ProfileDetails
+* output response changed as json encoded String.
+* FlyCallback added for following methods 
+  1) initializeSDK, 
+  2) registerUser,
+  3) getRecentChatListHistory,
+  4) getRecentChatListHistoryByTopic,
+  5) loadMessages,loadNextMessages,
+  6) loadPreviousMessages,
+  7) getUserProfile,
+  8) updateMyProfile,
+  9) updateMyProfileImage,
+  10) getUserList
+  11) getRegisteredUsers
+* Error codes added.
+
 ## [0.0.13] Group Call Feature
 * Group Call Feature is Available now
 * You can Invite Participant during the call
 * Optimisation in Plugin Initialisation
 * Call Logs feature is Available now
 * One to One Call Bug Fixes
-* Plugin supports multi-device login, allowing up to 4 devices.
+* Plugin supports multi-device login.
 
 ## [0.0.12] One to One Call Feature
 * Enable VOIP in iOS Capability Background Modes to get the VOIP token to register for Call Feature in iOS.
