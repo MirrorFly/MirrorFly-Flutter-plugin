@@ -1264,9 +1264,14 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     private fun getAvailableFeatures(result: MethodChannel.Result){
-        val availableFeatures = ChatManager.getAvailableFeatures().toJsonString()
-        println("getAvailableFeatures : $availableFeatures")
-        result.success(availableFeatures)
+        try {
+            val availableFeatures = ChatManager.getAvailableFeatures().toJsonString()
+            LogMessage.d("getAvailableFeatures","$availableFeatures")
+            result.success(availableFeatures)
+        }catch (e:Exception){
+            result.error("500",e.message,e);
+        }
+
     }
 
     private fun createTopic(call: MethodCall,result: MethodChannel.Result){
