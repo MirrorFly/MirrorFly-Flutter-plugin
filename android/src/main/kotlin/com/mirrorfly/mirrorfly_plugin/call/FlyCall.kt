@@ -7,7 +7,6 @@ import android.os.Build
 import androidx.lifecycle.Lifecycle
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.Constants
-import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.*
@@ -159,7 +158,12 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 result.success(CallManager.getOnGoingCallStatus(context))
             }
             "getUnreadMissedCallCount" -> {
-                result.success(CallLogManager.getUnreadMissedCallCount())
+                if(!ChatManager.getBaseURL().isNullOrEmpty()){
+                    result.success(CallLogManager.getUnreadMissedCallCount())
+                }else{
+                    result.error("500","SDK not isInitialised",null)
+                }
+
             }
             "requestVideoCallSwitch" -> {
                 sdk.requestVideoCallSwitch(call, result)
@@ -195,9 +199,13 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 sdk.deleteCallLog(call,result)
             }
             "markAllUnreadMissedCallsAsRead" -> {
-                CallLogManager.markAllUnreadMissedCallsAsRead()
-                result.success(true)
-                LogMessage.d("markAllUnreadMissedCallsAsRead","called")
+                if(!ChatManager.getBaseURL().isNullOrEmpty()) {
+                    CallLogManager.markAllUnreadMissedCallsAsRead()
+                    LogMessage.d("markAllUnreadMissedCallsAsRead","called")
+                    result.success(true)
+                }else{
+                    result.error("500","SDK not isInitialised",null)
+                }
             }
             "syncCallLogs" -> {
                 sdk.syncCallLogs(call, result)
@@ -335,9 +343,9 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 }
             }
         }
-        if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_REJECTED || callAction == CallAction.ACTION_VIDEO_CALL_CANCEL_CONVERSION || callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
+//        if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_REJECTED || callAction == CallAction.ACTION_VIDEO_CALL_CANCEL_CONVERSION || callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
             //CallAudioManager.getInstance(context).stopIncomingRequestTone()
-        }
+//        }
         //sendCallStatusUpdate(callAction,userJid)
         if(userJid==ChatManager.getCurrentUserJid() && callAction==CallAction.ACTION_REMOTE_HANGUP){
             sendCallStatusForLocalJidInRemoteHangUP(callAction, userJid)
