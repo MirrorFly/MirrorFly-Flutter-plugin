@@ -1,4 +1,5 @@
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/message_params.dart';
 
 import 'fly_chat_platform_interface.dart';
 import 'model/callback.dart';
@@ -415,22 +416,53 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.sendTextMessage(message, jid, replyMessageId, topicId: topicId);
   }
 
+  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
   static Future<String> sendLocationMessage(String jid, double latitude, double longitude, String replyMessageId,
       {String? topicId}) {
     return FlyChatFlutterPlatform.instance
         .sendLocationMessage(jid, latitude, longitude, replyMessageId, topicId: topicId);
   }
 
+  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
   static Future<String> sendImageMessage(String jid, String filePath, String? caption, String? replyMessageID,
       {String? imageFileUrl, String? topicId}) {
     return FlyChatFlutterPlatform.instance
         .sendImageMessage(jid, filePath, caption, replyMessageID, imageFileUrl: imageFileUrl, topicId: topicId);
   }
 
+  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
   static Future<String> sendVideoMessage(String jid, String filePath, String? caption, String? replyMessageID,
       {String? videoFileUrl, num? videoDuration, String? thumbImageBase64, String? topicId}) {
     return FlyChatFlutterPlatform.instance.sendVideoMessage(jid, filePath, caption, replyMessageID,
         videoFileUrl: videoFileUrl, videoDuration: videoDuration, thumbImageBase64: thumbImageBase64, topicId: topicId);
+  }
+
+  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
+  static Future<String> sendDocumentMessage(String jid, String documentPath, String replyMessageId,
+      {String? fileUrl, String? topicId}) {
+    return FlyChatFlutterPlatform.instance
+        .sendDocumentMessage(jid, documentPath, replyMessageId, fileUrl: fileUrl, topicId: topicId);
+  }
+
+  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
+  static Future<String> sendAudioMessage(
+      String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
+      {String? audioFileUrl, String? topicId}) {
+    return FlyChatFlutterPlatform.instance.sendAudioMessage(jid, filePath, isRecorded, duration, replyMessageId,
+        audioFileUrl: audioFileUrl, topicId: topicId);
+  }
+
+  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
+  static Future<String> sendContactMessage(
+      List<String> contactList, String jid, String contactName, String replyMessageId,
+      {String? topicId}) {
+    return FlyChatFlutterPlatform.instance
+        .sendContactMessage(contactList, jid, contactName, replyMessageId, topicId: topicId);
+  }
+
+  static Future<void> sendMediaFileMessage(
+      {required FileMessage messageParams, required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.sendMediaFileMessage(messageParams: messageParams, flyCallback: flyCallback);
   }
 
   @Deprecated('Instead of use Mirrorfly.getRegisteredUsers()')
@@ -754,13 +786,6 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.markAsReadDeleteUnreadSeparator(jid);
   }
 
-  static Future<String> sendContactMessage(
-      List<String> contactList, String jid, String contactName, String replyMessageId,
-      {String? topicId}) {
-    return FlyChatFlutterPlatform.instance
-        .sendContactMessage(contactList, jid, contactName, replyMessageId, topicId: topicId);
-  }
-
   static Future<bool> logoutOfChatSDK() {
     return FlyChatFlutterPlatform.instance.logoutOfChatSDK();
   }
@@ -773,22 +798,9 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.downloadMedia(mid);
   }
 
-  static Future<String> sendDocumentMessage(String jid, String documentPath, String replyMessageId,
-      {String? fileUrl, String? topicId}) {
-    return FlyChatFlutterPlatform.instance
-        .sendDocumentMessage(jid, documentPath, replyMessageId, fileUrl: fileUrl, topicId: topicId);
-  }
-
   /*static Future<dynamic> openFile(String filePath) {
     return FlyChatFlutterPlatform.instance.openFile(filePath);
   }*/
-
-  static Future<String> sendAudioMessage(
-      String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
-      {String? audioFileUrl, String? topicId}) {
-    return FlyChatFlutterPlatform.instance.sendAudioMessage(jid, filePath, isRecorded, duration, replyMessageId,
-        audioFileUrl: audioFileUrl, topicId: topicId);
-  }
 
   static Future<dynamic> getRecentChatListIncludingArchived() {
     return FlyChatFlutterPlatform.instance.getRecentChatListIncludingArchived();

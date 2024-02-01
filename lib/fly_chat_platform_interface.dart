@@ -1,5 +1,6 @@
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
+import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'model/callback.dart';
@@ -374,6 +375,21 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  Future<String> sendDocumentMessage(String jid, String documentPath, String replyMessageId,
+      {String? fileUrl, String? topicId}) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<String> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
+      {String? audioFileUrl, String? topicId}) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<void> sendMediaFileMessage(
+      {required FileMessage messageParams, required Function(FlyResponse response) flyCallback}) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Future<String?> getRegisteredUserList({required bool server}) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -668,19 +684,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<String> sendDocumentMessage(String jid, String documentPath, String replyMessageId,
-      {String? fileUrl, String? topicId}) {
-    throw UnimplementedError('has not been implemented.');
-  }
-
   /*Future<dynamic> openFile(String filePath) {
     throw UnimplementedError('has not been implemented.');
   }*/
-
-  Future<String> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
-      {String? audioFileUrl, String? topicId}) {
-    throw UnimplementedError('has not been implemented.');
-  }
 
   Future<dynamic> getRecentChatListIncludingArchived() {
     throw UnimplementedError('has not been implemented.');
