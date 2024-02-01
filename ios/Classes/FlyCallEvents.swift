@@ -32,15 +32,3 @@ public class EventStreamHandler: NSObject, FlutterStreamHandler, FlyEventSinkPro
         return nil
     }
 }
-
-// public class OnCallReceivingStreamHandler: EventStreamHandler { }
-public class OnLocalVideoTrackAddedStreamHandler: EventStreamHandler { }
-public class OnRemoteVideoTrackAddedStreamHandler: EventStreamHandler { }
-public class OnTrackAddedStreamHandler: EventStreamHandler { }
-public class OnCallStatusUpdatedStreamHandler: EventStreamHandler { }
-public class OnCallActionStreamHandler: EventStreamHandler { }
-public class OnMuteStatusUpdatedStreamHandler: EventStreamHandler { }
-public class OnUserSpeakingStreamHandler: EventStreamHandler { }
-public class OnUserStoppedSpeakingStreamHandler: EventStreamHandler { }
-public class OnMissedCallStreamHandler: EventStreamHandler { }
-public class OncallLogUpdateStreamHandler: EventStreamHandler { }
