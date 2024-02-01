@@ -54,9 +54,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final uploadDownloadProgressChangedChannel = const EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
   final StreamController<dynamic> uploadDownloadProgressChangedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
-  final showUpdateCancelNotificationChannel = const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
-  final StreamController<dynamic> showUpdateCancelNotificationStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
   final onGroupProfileFetchedChannel = const EventChannel('contus.mirrorfly/onGroupProfileFetched');
   final StreamController<dynamic> onGroupProfileFetchedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
@@ -291,7 +288,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   ///benefit to use stream controller we can call multiple listeners to listen.
   addStreamsAllToStreamController() {
     messageOnReceivedChannel.receiveBroadcastStream().listen((event) {
-      LogMessage.d("messageOnReceivedChannel", event);
       _messageOnReceivedStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
     });
     messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
@@ -312,8 +308,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     });
     uploadDownloadProgressChangedStreamController
         .addStream(uploadDownloadProgressChangedChannel.receiveBroadcastStream());
-    showUpdateCancelNotificationStreamController
-        .addStream(showUpdateCancelNotificationChannel.receiveBroadcastStream());
     onGroupProfileFetchedStreamController
         .addStream(onGroupProfileFetchedChannel.receiveBroadcastStream() /*as Stream<String>*/);
     onNewGroupCreatedStreamController
