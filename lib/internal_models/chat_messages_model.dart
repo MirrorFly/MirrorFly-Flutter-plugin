@@ -405,6 +405,9 @@ String getMessageStatus(dynamic status) {
 }
 
 String getMessageType(dynamic type) {
+  if (type == null) {
+    return "";
+  }
   return type.toString().toUpperCase() == "FILE" ? "DOCUMENT" : type.toString().toUpperCase();
 }
 
