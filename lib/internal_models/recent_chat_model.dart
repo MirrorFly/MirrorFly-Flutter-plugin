@@ -211,6 +211,9 @@ String? getLastMessageStatus(dynamic status) {
   }
 }
 
-String getMessageType(dynamic type) {
+String? getMessageType(dynamic type) {
+  if (type == null) {
+    return null;
+  }
   return type.toString().toUpperCase() == "FILE" ? "DOCUMENT" : type.toString().toUpperCase();
 }
