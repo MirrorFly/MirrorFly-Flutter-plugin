@@ -54,7 +54,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final uploadDownloadProgressChangedChannel = const EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
   final StreamController<dynamic> uploadDownloadProgressChangedStreamController = StreamController<dynamic>.broadcast();
-
   @visibleForTesting
   final onGroupProfileFetchedChannel = const EventChannel('contus.mirrorfly/onGroupProfileFetched');
   final StreamController<dynamic> onGroupProfileFetchedStreamController = StreamController<dynamic>.broadcast();
@@ -293,7 +292,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   ///benefit to use stream controller we can call multiple listeners to listen.
   addStreamsAllToStreamController() {
     messageOnReceivedChannel.receiveBroadcastStream().listen((event) {
-      LogMessage.d("messageOnReceivedChannel", event);
       _messageOnReceivedStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
     });
     messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
@@ -314,7 +312,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     });
     uploadDownloadProgressChangedStreamController
         .addStream(uploadDownloadProgressChangedChannel.receiveBroadcastStream());
-
     onGroupProfileFetchedStreamController
         .addStream(onGroupProfileFetchedChannel.receiveBroadcastStream() /*as Stream<String>*/);
     onNewGroupCreatedStreamController
@@ -1870,7 +1867,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessageStreamController.stream;
 
   @override
-  Stream<String> get showOrUpdateOrCancelNotification => showOrUpdateOrCancelNotificationStreamController.stream;
+  Stream<dynamic> get showOrUpdateOrCancelNotification => showOrUpdateOrCancelNotificationStreamController.stream;
 
   @override
   Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocallyStreamController.stream;
