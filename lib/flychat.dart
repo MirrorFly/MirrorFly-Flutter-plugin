@@ -412,39 +412,40 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getJid(username);
   }
 
+  @Deprecated('Instead of use Mirrorfly.sendMessage()')
   static Future<String> sendTextMessage(String message, String jid, String replyMessageId, {String? topicId}) {
     return FlyChatFlutterPlatform.instance.sendTextMessage(message, jid, replyMessageId, topicId: topicId);
   }
 
-  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
+  @Deprecated('Instead of use Mirrorfly.sendMessage()')
   static Future<String> sendLocationMessage(String jid, double latitude, double longitude, String replyMessageId,
       {String? topicId}) {
     return FlyChatFlutterPlatform.instance
         .sendLocationMessage(jid, latitude, longitude, replyMessageId, topicId: topicId);
   }
 
-  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
+  @Deprecated('Instead of use Mirrorfly.sendMessage()')
   static Future<String> sendImageMessage(String jid, String filePath, String? caption, String? replyMessageID,
       {String? imageFileUrl, String? topicId}) {
     return FlyChatFlutterPlatform.instance
         .sendImageMessage(jid, filePath, caption, replyMessageID, imageFileUrl: imageFileUrl, topicId: topicId);
   }
 
-  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
+  @Deprecated('Instead of use Mirrorfly.sendMessage()')
   static Future<String> sendVideoMessage(String jid, String filePath, String? caption, String? replyMessageID,
       {String? videoFileUrl, num? videoDuration, String? thumbImageBase64, String? topicId}) {
     return FlyChatFlutterPlatform.instance.sendVideoMessage(jid, filePath, caption, replyMessageID,
         videoFileUrl: videoFileUrl, videoDuration: videoDuration, thumbImageBase64: thumbImageBase64, topicId: topicId);
   }
 
-  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
+  @Deprecated('Instead of use Mirrorfly.sendMessage()')
   static Future<String> sendDocumentMessage(String jid, String documentPath, String replyMessageId,
       {String? fileUrl, String? topicId}) {
     return FlyChatFlutterPlatform.instance
         .sendDocumentMessage(jid, documentPath, replyMessageId, fileUrl: fileUrl, topicId: topicId);
   }
 
-  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
+  @Deprecated('Instead of use Mirrorfly.sendMessage()')
   static Future<String> sendAudioMessage(
       String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
       {String? audioFileUrl, String? topicId}) {
@@ -452,7 +453,7 @@ class Mirrorfly {
         audioFileUrl: audioFileUrl, topicId: topicId);
   }
 
-  @Deprecated('Instead of use Mirrorfly.sendMediaFileMessage()')
+  @Deprecated('Instead of use Mirrorfly.sendMessage()')
   static Future<String> sendContactMessage(
       List<String> contactList, String jid, String contactName, String replyMessageId,
       {String? topicId}) {
@@ -463,6 +464,11 @@ class Mirrorfly {
   static Future<void> sendMediaFileMessage(
       {required FileMessage messageParams, required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.sendMediaFileMessage(messageParams: messageParams, flyCallback: flyCallback);
+  }
+
+  static Future<void> sendMessage(
+      {required MessageParams messageParams, required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.sendMessage(messageParams: messageParams, flyCallback: flyCallback);
   }
 
   @Deprecated('Instead of use Mirrorfly.getRegisteredUsers()')

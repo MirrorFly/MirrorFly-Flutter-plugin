@@ -1735,6 +1735,25 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<void> sendMessage(
+      {required MessageParams messageParams, required Function(FlyResponse response) flyCallback}) async {
+    LogMessage.d("sendMessage", messageParams.toMap());
+    //sendMessage
+    String? messageResponse;
+    try {
+      messageResponse = await mirrorFlyMethodChannel.invokeMethod('sendMessage', messageParams.toMap());
+      var res = convertChatMessageJsonFromString(messageResponse);
+      flyCallback.call(FlyResponse(true, res, "message send successfully"));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      flyCallback.call(FlyResponse(false, "", "", FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      flyCallback.call(FlyResponse(false, "", "", FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
   Future<String> getRegisteredUserList({required bool server}) async {
     //getRegisteredUserList
     String? messageResp;

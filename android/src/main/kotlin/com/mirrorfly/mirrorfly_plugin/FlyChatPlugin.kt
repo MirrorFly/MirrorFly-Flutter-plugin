@@ -985,6 +985,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             call.method.equals("sendMediaFileMessage") -> {
                 sendMediaFileMessage(call, result)
             }
+            call.method.equals("sendMessage") -> {
+                sendMessage(call, result)
+            }
             call.method.equals("open_file") -> {
                 openMediaFile(call, result)
             }
@@ -2612,6 +2615,50 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d("sendMediaFileMessage", messageParams.toString())
         val fileMessage = buildFileMessage(messageParams)
         LogMessage.d("fileMessage", fileMessage.toJsonString())
+        sendMediaFileMessage(fileMessage, result)
+    }
+
+    private fun sendMessage(call: MethodCall, result: MethodChannel.Result) {
+        val messageParams = call.arguments<HashMap<String, Any>>()
+        LogMessage.d("sendMessage", messageParams.toString())
+        val fileMessage = buildFileMessage(messageParams)
+        LogMessage.d("fileMessage", fileMessage.toJsonString())
+        if (fileMessage.messageType == MessageType.TEXT) {
+            sendTextMessage(buildTextMessage(messageParams), result)
+        } else {
+            sendMediaFileMessage(fileMessage, result)
+        }
+    }
+
+    private fun sendTextMessage(textMessage: TextMessage?, result: MethodChannel.Result) {
+        if (textMessage == null) {
+            result.error("500", "TextMessage params not be null for MessageType TEXT", null)
+            return
+        }
+        FlyMessenger.sendTextMessage(textMessage, object : SendMessageCallback {
+            override fun onResponse(
+                isSuccess: Boolean,
+                error: Throwable?,
+                chatMessage: ChatMessage?
+            ) {
+                if (isSuccess) {
+                    if (chatMessage != null) {
+                        result.success(chatMessage.toJsonString())
+                    } else {
+                        result.error("500", "message not available", error)
+                    }
+                } else {
+                    result.error("500", error?.message, error)
+                }
+            }
+        })
+    }
+
+    private fun sendMediaFileMessage(fileMessage: FileMessage?, result: MethodChannel.Result) {
+        if (fileMessage == null) {
+            result.error("500", "fileMessage params not be null for Media Messages", null)
+            return
+        }
         FlyMessenger.sendMediaFileMessage(fileMessage, object : SendMessageCallback {
             override fun onResponse(
                 isSuccess: Boolean,
@@ -2630,6 +2677,29 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
 
         })
+    }
+
+    private fun buildTextMessage(map: HashMap<String, Any>?): TextMessage? {
+        val textMessage = TextMessage()
+
+        if (map != null) {
+            if (map["textMessage"] != null) {
+                textMessage.apply {
+                    this.toId = map.getOrDefault("toJid", "") as String
+                    this.replyMessageId = map["replyMessageId"] as String?
+                    this.topicId = map.getOrDefault("topicId", "") as String
+                    this.metaData =
+                        if (map["metaData"] != null) map["metaData"] as List<MessageMetaData> else emptyList()
+                    this.mentionedUsersIds =
+                        if (map["mentionedUsersIds"] != null) map["mentionedUsersIds"] as List<String> else null
+                    val textMessageText = map["textMessage"] as HashMap<*, *>
+                    this.messageText = textMessageText.getOrDefault("messageText", "") as String
+                }
+            } else {
+                return null
+            }
+        }
+        return textMessage
     }
 
     private fun buildFileMessage(map: HashMap<String, Any>?): FileMessage {

@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
+import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:mirrorfly_plugin/model/callback.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
-import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 
 class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyChatFlutterPlatform {
   @override
@@ -977,6 +977,13 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   Future<void> sendMediaFileMessage(
       {required FileMessage messageParams, required Function(FlyResponse response) flyCallback}) {
     // TODO: implement sendMediaFileMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> sendMessage(
+      {required MessageParams messageParams, required Function(FlyResponse response) flyCallback}) {
+    // TODO: implement sendMessage
     throw UnimplementedError();
   }
 

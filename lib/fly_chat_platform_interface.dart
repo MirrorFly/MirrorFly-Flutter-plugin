@@ -390,6 +390,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  Future<void> sendMessage(
+      {required MessageParams messageParams, required Function(FlyResponse response) flyCallback}) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Future<String?> getRegisteredUserList({required bool server}) {
     throw UnimplementedError('has not been implemented.');
   }

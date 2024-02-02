@@ -1,30 +1,26 @@
 import 'dart:io';
 
-class TextMessage {
-  TextMessage({
-    required this.toJid,
+class TextMessageParams {
+  TextMessageParams({
     required this.messageText,
-    this.replyMessageId,
-    // this.mentionedUsersIds,
-    // this.metaData = const []
   });
 
-  String toJid;
+  // String toJid;
   String messageText;
-  String? replyMessageId;
-  List<String>? mentionedUsersIds;
-  List<MessageMetaData> metaData = [];
-  String topicId = "";
+// String? replyMessageId;
+// List<String>? mentionedUsersIds;
+// List<MessageMetaData> metaData = [];
+// String topicId = "";
 // String? editMessageId;
 }
 
-extension ExtractTextMessage on TextMessage {
+extension ExtractTextMessage on TextMessageParams {
   Map<String, dynamic> toMap() => {
-        'toJid': toJid,
+        // 'toJid': toJid,
         'messageText': messageText,
-        'replyMessageId': replyMessageId,
-        'mentionedUsersIds': mentionedUsersIds,
-        'metaData': List<dynamic>.from(metaData.map((x) => x.toMap())),
+        // 'replyMessageId': replyMessageId,
+        // 'mentionedUsersIds': mentionedUsersIds,
+        // 'metaData': List<dynamic>.from(metaData.map((x) => x.toMap())),
       };
 }
 
@@ -194,6 +190,47 @@ class EditMessage {
 extension ExtractEditMessage on EditMessage {
   Map<String, dynamic> toMap() =>
       {'messageId': messageId, 'editedTextContent': editedTextContent, 'mentionedUsersIds': mentionedUsersIds};
+}
+
+class MessageParams {
+  MessageParams(
+      {required this.toJid,
+      this.replyMessageId,
+      this.messageType,
+      // this.mentionedUsersIds,
+      // this.metaData = const [],
+      this.textMessage,
+      this.locationMessage,
+      this.contactMessage,
+      this.fileMessage,
+      this.topicId = ""});
+
+  String toJid;
+  String? replyMessageId;
+  MessageType? messageType;
+  List<String>? mentionedUsersIds;
+  List<MessageMetaData> metaData = [];
+  TextMessageParams? textMessage;
+  LocationMessageParams? locationMessage;
+  ContactMessageParams? contactMessage;
+  FileMessageParams? fileMessage;
+  String topicId = "";
+// String? editMessageId;
+}
+
+extension ExtractMessageParams on MessageParams {
+  Map<String, dynamic> toMap() => {
+        'toJid': toJid,
+        'replyMessageId': replyMessageId,
+        'messageType': messageType?.value,
+        'mentionedUsersIds': mentionedUsersIds,
+        'metaData': List<dynamic>.from(metaData.map((x) => x.toMap())),
+        'textMessage': textMessage?.toMap(),
+        'locationMessage': locationMessage?.toMap(),
+        'contactMessage': contactMessage?.toMap(),
+        'fileMessage': fileMessage?.toMap(),
+        'topicId': topicId,
+      };
 }
 
 enum MessageType {
