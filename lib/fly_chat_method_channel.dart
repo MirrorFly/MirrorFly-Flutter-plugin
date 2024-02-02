@@ -19,6 +19,7 @@ import 'package:mirrorfly_plugin/internal_models/register_user_model.dart';
 import 'package:mirrorfly_plugin/internal_models/user_profile_update.dart';
 import 'package:mirrorfly_plugin/internal_models/users_list_model.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
+import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
@@ -53,9 +54,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final uploadDownloadProgressChangedChannel = const EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
   final StreamController<dynamic> uploadDownloadProgressChangedStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final showUpdateCancelNotificationChannel = const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
-  final StreamController<dynamic> showUpdateCancelNotificationStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onGroupProfileFetchedChannel = const EventChannel('contus.mirrorfly/onGroupProfileFetched');
   final StreamController<dynamic> onGroupProfileFetchedStreamController = StreamController<dynamic>.broadcast();
@@ -96,8 +94,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final showOrUpdateOrCancelNotificationChannel =
       const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
-  final StreamController<dynamic> showOrUpdateOrCancelNotificationStreamController =
-      StreamController<dynamic>.broadcast();
+  final StreamController<String> showOrUpdateOrCancelNotificationStreamController =
+      StreamController<String>.broadcast();
   @visibleForTesting
   final onGroupDeletedLocallyChannel = const EventChannel('contus.mirrorfly/onGroupDeletedLocally');
   final StreamController<dynamic> onGroupDeletedLocallyStreamController = StreamController<dynamic>.broadcast();
@@ -276,14 +274,17 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("syncContacts", res);
       callback.call(FlyResponse(true, "", "initializeSDK Successfully"));
       // return res;
+      return;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       callback.call(FlyResponse(false, "", "", FlyException(e.code, e.message, e.details)));
       // return res;
+      return;
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
       callback.call(FlyResponse(false, "", "", FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
       // return res;
+      return;
     }
   }
 
@@ -291,7 +292,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   ///benefit to use stream controller we can call multiple listeners to listen.
   addStreamsAllToStreamController() {
     messageOnReceivedChannel.receiveBroadcastStream().listen((event) {
-      LogMessage.d("messageOnReceivedChannel", event);
       _messageOnReceivedStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
     });
     messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
@@ -312,8 +312,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     });
     uploadDownloadProgressChangedStreamController
         .addStream(uploadDownloadProgressChangedChannel.receiveBroadcastStream());
-    showUpdateCancelNotificationStreamController
-        .addStream(showUpdateCancelNotificationChannel.receiveBroadcastStream());
     onGroupProfileFetchedStreamController
         .addStream(onGroupProfileFetchedChannel.receiveBroadcastStream() /*as Stream<String>*/);
     onNewGroupCreatedStreamController
@@ -1646,16 +1644,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<String> sendVideoMessage(
-      //sendMediaMessage
-      String jid,
-      String filePath,
-      String? caption,
-      String? replyMessageID,
-      {String? videoFileUrl,
-      num? videoDuration,
-      String? thumbImageBase64,
-      String? topicId}) async {
+  Future<String> sendVideoMessage(String jid, String filePath, String? caption, String? replyMessageID,
+      {String? videoFileUrl, num? videoDuration, String? thumbImageBase64, String? topicId}) async {
     String? messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('send_video_message', {
@@ -1675,6 +1665,91 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     } on Exception catch (error) {
       LogMessage.d("Video Message Exception ", " $error");
       rethrow;
+    }
+  }
+
+  @override
+  Future<String> sendDocumentMessage(String jid, String documentPath, String replyMessageId,
+      {String? fileUrl, String? topicId}) async {
+    String? documentResponse;
+    try {
+      documentResponse = await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage', {
+        "file": documentPath,
+        "jid": jid,
+        "replyMessageId": replyMessageId,
+        "file_url": fileUrl,
+        "topicId": topicId
+      });
+      return convertChatMessageJsonFromString(documentResponse);
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
+      {String? audioFileUrl, String? topicId}) async {
+    //sendAudio
+    String? audioResponse;
+    try {
+      audioResponse = await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage', {
+        "filePath": filePath,
+        "jid": jid,
+        "isRecorded": isRecorded,
+        "duration": duration,
+        "replyMessageId": replyMessageId,
+        "audiofileUrl": audioFileUrl,
+        "topicId": topicId
+      });
+      return convertChatMessageJsonFromString(audioResponse);
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> sendMediaFileMessage(
+      {required FileMessage messageParams, required Function(FlyResponse response) flyCallback}) async {
+    LogMessage.d("sendMediaFileMessage", messageParams.toMap());
+    //sendMediaFileMessage
+    String? messageResponse;
+    try {
+      messageResponse = await mirrorFlyMethodChannel.invokeMethod('sendMediaFileMessage', messageParams.toMap());
+      var res = convertChatMessageJsonFromString(messageResponse);
+      flyCallback.call(FlyResponse(true, res, "message send successfully"));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      flyCallback.call(FlyResponse(false, "", "", FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      flyCallback.call(FlyResponse(false, "", "", FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<void> sendMessage(
+      {required MessageParams messageParams, required Function(FlyResponse response) flyCallback}) async {
+    LogMessage.d("sendMessage", messageParams.toMap());
+    //sendMessage
+    String? messageResponse;
+    try {
+      messageResponse = await mirrorFlyMethodChannel.invokeMethod('sendMessage', messageParams.toMap());
+      var res = convertChatMessageJsonFromString(messageResponse);
+      flyCallback.call(FlyResponse(true, res, "message send successfully"));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      flyCallback.call(FlyResponse(false, "", "", FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      flyCallback.call(FlyResponse(false, "", "", FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
     }
   }
 
@@ -2504,28 +2579,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
-  Future<String> sendDocumentMessage(String jid, String documentPath, String replyMessageId,
-      {String? fileUrl, String? topicId}) async {
-    String? documentResponse;
-    try {
-      documentResponse = await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage', {
-        "file": documentPath,
-        "jid": jid,
-        "replyMessageId": replyMessageId,
-        "file_url": fileUrl,
-        "topicId": topicId
-      });
-      return convertChatMessageJsonFromString(documentResponse);
-    } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception =", " $e");
-      rethrow;
-    } on Exception catch (error) {
-      LogMessage.d("Exception ", " $error");
-      rethrow;
-    }
-  }
-
   /*@override
   Future<dynamic> openFile(String filePath) async {
     dynamic documentResponse;
@@ -2541,31 +2594,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }*/
-
-  @override
-  Future<String> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
-      {String? audioFileUrl, String? topicId}) async {
-    //sendAudio
-    String? audioResponse;
-    try {
-      audioResponse = await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage', {
-        "filePath": filePath,
-        "jid": jid,
-        "isRecorded": isRecorded,
-        "duration": duration,
-        "replyMessageId": replyMessageId,
-        "audiofileUrl": audioFileUrl,
-        "topicId": topicId
-      });
-      return convertChatMessageJsonFromString(audioResponse);
-    } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception =", " $e");
-      rethrow;
-    } on Exception catch (error) {
-      LogMessage.d("Exception ", " $error");
-      rethrow;
-    }
-  }
 
   //Recent Chat Search
 
