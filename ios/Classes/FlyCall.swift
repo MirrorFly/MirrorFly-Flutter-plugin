@@ -197,21 +197,10 @@ import PushKit
             AudioManager.shared().audioManagerDelegate = self
         }
         
-//        if userId == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED) {
-//                        return
-//                    }
 
-        var userJID = userId
-//        if userJID == AppUtils.getMyJid() && callStatus == .DISCONNECTED{
-////            NSLog("\(Constants.callTag) SDK is empty so assigning self jid")
-//            NSLog("\(Constants.callTag) Disconnected is Called on Empty User ID so assuming self disconnect is called and not returning the Delegate")
-////            userJID = AppUtils.getMyJid()
-//            return
-//        }
 
-//        if userJID == ""{
-//            userJID = AppUtils.getMyJid()
-//        }
+        let userJID = userId
+
         
         //Added to Sync the Call log in Call Status update
         NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
@@ -219,20 +208,10 @@ import PushKit
         
         if(userJID != "" && callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 self.factory?.clearMirrorflyView(userJID: userJID)
-//            }
-            
         }
 
-        //Added this below condition based on the iOS Sample App.
-        //callStatus != .DISCONNECTED is added for flutter, bcz the network disconnection gives the own JID for disconnect.
-        //callStatus != .ON_HOLD && callStatus != .ON_RESUME for flutter to handle Call Hold and Resume
-//        if userJID == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED && callStatus != .DISCONNECTED && callStatus != .ON_HOLD && callStatus != .ON_RESUME) {
-//            NSLog("#Mirrorfly Call not updating the Call Status for my jid")
-//            return
-//        }
-        
+
         if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
             NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
             return
@@ -256,16 +235,6 @@ import PushKit
         } else {
             jsonObject.setValue("video", forKey: "callType")
         }
-
-        
-        //This below Code is written for https://ctproduct.atlassian.net/browse/FLUTTER-1077 workaround
-        //This is open in iOS SDK. so commenting for now and planning as a feature in future.
-        
-//        if (callStatus == .RECONNECTED || callStatus == .CONNECTED) && CallManager.getCallType() == .Video {
-//            let VideoStatus = CallManager.isRemoteVideoMuted(userId)
-//            NSLog("\(Constants.callTag) Events: Call Status Updated Reconnected Checking Video Mute --> \(VideoStatus)")
-//
-//        }
         
         let callStatusUpdateJson = pluginDictToJson(dictionary: jsonObject)
             self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallStatusUpdateChannel, value: callStatusUpdateJson)
@@ -276,31 +245,12 @@ import PushKit
         NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
-        
-//        if (callAction == CallAction.ACTION_LOCAL_AUDIO_MUTE || callAction == CallAction.ACTION_LOCAL_VIDEO_MUTE || callAction == CallAction.ACTION_LOCAL_AUDIO_UNMUTE || callAction == CallAction.ACTION_LOCAL_VIDEO_UNMUTE){
-//            if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
-//                if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-//                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: getMuteEvent(muteName: callAction))
-//                } else {
-//                    // Handle case when view is not found
-//                    NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> View is not Found")
-//                }
-//            } else {
-//                // Handle case when unique ID is not found
-//                NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> Unique ID is not Found")
-//            }
-//            jsonObject.setValue(callAction.rawValue, forKey: "muteEvent")
-//            let muteActionJson = pluginDictToJson(dictionary: jsonObject)
-//            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMuteStatusUpdatedChannel, value: muteActionJson)
-//        }else{
-            
+
             
             jsonObject.setValue(callAction.rawValue, forKey: "callAction")
             
             if (callAction == .CHANGE_TO_AUDIO_CALL){
                 CallManager.setCallType(callType: .Audio)
-//                CallManager.muteVideo(true)
-//                CallManager.disableVideo()
                 AudioManager.shared().autoReRoute()
             }
             
@@ -325,7 +275,7 @@ import PushKit
             let callActionJson = pluginDictToJson(dictionary: jsonObject)
             
             self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callActionJson)
-//        }
+
     }
     
     func onMuteStatusUpdated(muteEvent: MirrorFlySDK.MuteEvent, userId: String) {

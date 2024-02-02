@@ -201,7 +201,7 @@ func getCallLogs(callList: [Any], totalPages: Any?) -> [String: Any]{
         let endTime = callLog?.callEndedTime ?? 0.0
         let callState = callLog?.callState.rawValue ?? ""
         let callMode = callLog?.callMode.rawValue ?? ""
-        var userList = callLog?.userList ?? []
+        let userList = callLog?.userList ?? []
         let groupId = callLog?.groupId ?? ""
         let isSync = callLog?.isLogSynced ?? false
         let startTime = callLog?.callAttendedTime ?? 0.0

@@ -11,7 +11,7 @@ class FLErrorCode {
     
     /// 807, 1000, 1009
     ///  Called When the method Channel gives Fialure Response
-    public static let INVALID_DATA : String = "FL-422"
+    public static let INVALID_DATA : String = "500"//"FL-422"
     
     ///
     /// This Error Code will be used for the below scenerios in SDK

@@ -340,7 +340,7 @@ import UIKit
         let receiverJID = args["JID"] as? String ?? ""
         let replyMessageID = args["replyMessageId"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
-        let editMessageId = args["editMessageId"] as? String ?? ""
+        _ = args["editMessageId"] as? String ?? ""
 
         if(txtMessage == nil || receiverJID == ""){
             result(FlutterError(code: FLErrorCode.MISSING_PARAMS, message: FLErrorMessage.PARAMS_MISSING, details: nil))
@@ -681,7 +681,7 @@ import UIKit
                     result(userlistJson)
                 }
             }else{
-                if case let .unexpected(message, code) = flyError {
+                if case let .unexpected(message, _) = flyError {
 
                     result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
 
@@ -742,7 +742,7 @@ import UIKit
         let filePath = args["filePath"] as? String ?? ""
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
-        let topicId = args["topicId"] as? String ?? ""
+        _ = args["topicId"] as? String ?? ""
 
         let videoFileUrl = URL(fileURLWithPath: filePath)
         
@@ -937,7 +937,7 @@ import UIKit
     func getProfileStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let profileStatus = ChatManager.getAllStatus()
         if(profileStatus.isEmpty){
-            result(nil)
+            result([])
         }
         
         let profileStatusJson = profileStatus.toJson()
@@ -1016,6 +1016,8 @@ import UIKit
         
         let statusId = args["id"] as? String ?? ""
         let deleteStatusResponse = ChatManager.deleteStatus(statusId: statusId)
+        
+        print("\(Constants.tag) deleteStatusResponse \(deleteStatusResponse)")
         
         result(true)
         
@@ -1240,7 +1242,7 @@ import UIKit
         let image = args["image"] as? String ?? nil
         let userJid = AppUtils.getMyJid()
         
-        NSLog("update my profile image path --> \(image)")
+        NSLog("update my profile image path --> \(String(describing: image))")
         
         if (nickName.isEmpty && mobile.isEmpty && email.isEmpty) {
             result(FlutterError(code: "400", message: "Fill All details", details: nil))
@@ -1275,7 +1277,7 @@ import UIKit
                 let profileDataJson = profileUpdateResponse?.toJson()
                 print("***profile Data json \(String(describing: profileDataJson))")
 
-                var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+                let profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
 
 //                saveMyProfileDataToUserDefaults(profile: myProfile)
                 print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
@@ -1422,7 +1424,7 @@ import UIKit
 //                            Utility.saveInPreference(key: Constants.isProfileSaved, value: true)
 
 
-                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+                            let profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
 
 //                            saveMyProfileDataToUserDefaults(profile: myProfile)
                             print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
@@ -1827,6 +1829,7 @@ import UIKit
             result(groupIDResponse)
             
         }catch let sdkError{
+            print("\(Constants.tag) getGroupJid sdkError \(sdkError)")
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.GROUP_JID_FETCH_FAILED, details: nil))
         }
         
@@ -2114,7 +2117,7 @@ import UIKit
                         }else{
                             result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
                         }
-                    }else if case let .groupMembersValidationMessage(message, code) = flyError {
+                    }else if case let .groupMembersValidationMessage(message, _) = flyError {
                         result(FlutterError(code: FLErrorCode.ARGUMENTS_EMPTY_OR_NULL, message: FLErrorMessage.MISSING_ARGUMENTS, details: message))
                     }else{
                         result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
@@ -2154,7 +2157,7 @@ import UIKit
                         }else{
                             result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
                         }
-                    }else if case let .groupMembersValidationMessage(message, code) = flyError {
+                    }else if case let .groupMembersValidationMessage(message, _) = flyError {
                         result(FlutterError(code: FLErrorCode.ARGUMENTS_EMPTY_OR_NULL, message: FLErrorMessage.MISSING_ARGUMENTS, details: message))
                     }else{
                         result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
@@ -2257,7 +2260,7 @@ import UIKit
         let args = call.arguments as! Dictionary<String, Any>
         let searchKey = args["searchKey"] as? String ?? ""
         _ = args["jidForSearch"] as? String ?? ""
-        let globalSearch = args["globalSearch"] as? Bool ?? true
+        _ = args["globalSearch"] as? Bool ?? true
         
         let searchedMessages : [SearchMessage] = ChatManager.shared.searchMessage(text: searchKey)
         
@@ -3361,8 +3364,8 @@ import UIKit
         let groupMessageReadList = GroupManager.shared.getMessageSeenListBy(messageId: messageId, groupId: jid)
         print("groupMessageReadList=> \(groupMessageReadList)")
         
-        var deliveredCount = groupMessageReadList.seenCount
-        var totalParticipatCount = groupMessageReadList.totalParticipatCount
+        let deliveredCount = groupMessageReadList.seenCount
+        let totalParticipatCount = groupMessageReadList.totalParticipatCount
         let groupMessageReadListJson = groupMessageReadList.seenParticipantList.toJson() ?? "[]"
         
         let readListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"seenParticipantList\" : " + groupMessageReadListJson + "}"

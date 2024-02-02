@@ -389,6 +389,7 @@ import MirrorFlySDK
     func getErrorCodeWithMessage(message: String) -> (errorCode: String?, errorMessage: String) {
         let split = description.components(separatedBy: "ErrorCode")
         let errorMessage = split.isEmpty ? description : split.first
+        print("Error Code With Message \(String(describing: errorMessage))")
         let errorCode = split.count > 1 ? split[1].replacingOccurrences(of: " ", with: "").replacingOccurrences(of: ":", with: "") : nil
         return (errorCode, message)
     }
@@ -496,7 +497,7 @@ import MirrorFlySDK
 //                    result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
                 }
             }else{
-                if case let .unexpected(message, code) = error {
+                if case let .unexpected(message, _) = error {
                     //.unexpected handled here
                     result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
                     
@@ -582,11 +583,11 @@ import MirrorFlySDK
                     CallLogManager().deleteCallLogs()
                 }
                 let deleteMessage = flyData.getMessage() as? String
+                print("\(Constants.tag) deleteCallLog \(String(describing: deleteMessage))")
                 result(isSuccess)
             }else{
                 
                 result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error?.localizedDescription))
-//                result(FlutterError(code: "500", message: "Call Log Delete Failed", details: flyData.getMessage()))
             }
         }
     }
@@ -600,7 +601,7 @@ import MirrorFlySDK
                 _ = flyData.getData() as? [CallLog]
                 result(isSuccess)
             }else{
-                if case let .unexpected(message, code) = error {
+                if case let .unexpected(message, _) = error {
                     //.unexpected handled here
                     result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
                 }else if case let .xmpp_connection_not_available(message, code) = error {
