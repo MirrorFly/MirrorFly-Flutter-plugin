@@ -193,42 +193,172 @@ extension ExtractEditMessage on EditMessage {
 }
 
 class MessageParams {
-  MessageParams(
-      {required this.toJid,
-      this.replyMessageId,
-      this.messageType,
-      // this.mentionedUsersIds,
-      // this.metaData = const [],
-      this.textMessage,
-      this.locationMessage,
-      this.contactMessage,
-      this.fileMessage,
-      this.topicId = ""});
-
   String toJid;
   String? replyMessageId;
-  MessageType? messageType;
+  MessageType messageType;
   List<String>? mentionedUsersIds;
-  List<MessageMetaData> metaData = [];
-  TextMessageParams? textMessage;
-  LocationMessageParams? locationMessage;
-  ContactMessageParams? contactMessage;
-  FileMessageParams? fileMessage;
-  String topicId = "";
-// String? editMessageId;
+  List<MessageMetaData> metaData;
+  TextMessageParams? textMessageParams;
+  LocationMessageParams? locationMessageParams;
+  ContactMessageParams? contactMessageParams;
+  FileMessageParams? fileMessageParams;
+  String topicId;
+
+  MessageParams._({
+    required this.toJid,
+    this.replyMessageId,
+    required this.messageType,
+    this.mentionedUsersIds,
+    this.metaData = const [],
+    this.textMessageParams,
+    this.locationMessageParams,
+    this.contactMessageParams,
+    this.fileMessageParams,
+    this.topicId = "",
+  });
+
+  factory MessageParams.text({
+    required String toJid,
+    String? replyMessageId,
+    required TextMessageParams textMessageParams,
+    String topicId = "",
+  }) {
+    return MessageParams._(
+      toJid: toJid,
+      replyMessageId: replyMessageId,
+      messageType: MessageType.text,
+      textMessageParams: textMessageParams,
+      topicId: topicId,
+    );
+  }
+
+  factory MessageParams.location({
+    required String toJid,
+    String? replyMessageId,
+    required LocationMessageParams locationMessageParams,
+    String topicId = "",
+  }) {
+    return MessageParams._(
+      toJid: toJid,
+      replyMessageId: replyMessageId,
+      messageType: MessageType.location,
+      locationMessageParams: locationMessageParams,
+      topicId: topicId,
+    );
+  }
+
+  factory MessageParams.contact({
+    required String toJid,
+    String? replyMessageId,
+    required ContactMessageParams contactMessageParams,
+    String topicId = "",
+  }) {
+    return MessageParams._(
+      toJid: toJid,
+      replyMessageId: replyMessageId,
+      messageType: MessageType.contact,
+      contactMessageParams: contactMessageParams,
+      topicId: topicId,
+    );
+  }
+  factory MessageParams.image({
+    required String toJid,
+    String? replyMessageId,
+    required FileMessageParams fileMessageParams,
+    String topicId = "",
+  }) {
+    return MessageParams._(
+      toJid: toJid,
+      replyMessageId: replyMessageId,
+      messageType: MessageType.image,
+      fileMessageParams: fileMessageParams,
+      topicId: topicId,
+    );
+  }
+  factory MessageParams.audio({
+    required String toJid,
+    String? replyMessageId,
+    required FileMessageParams fileMessageParams,
+    bool isRecorded = false,
+    String topicId = "",
+  }) {
+    return MessageParams._(
+      toJid: toJid,
+      replyMessageId: replyMessageId,
+      messageType: isRecorded ? MessageType.audioRecorded : MessageType.audio,
+      fileMessageParams: fileMessageParams,
+      topicId: topicId,
+    );
+  }
+  factory MessageParams.video({
+    required String toJid,
+    String? replyMessageId,
+    required FileMessageParams fileMessageParams,
+    String topicId = "",
+  }) {
+    return MessageParams._(
+      toJid: toJid,
+      replyMessageId: replyMessageId,
+      messageType: MessageType.video,
+      fileMessageParams: fileMessageParams,
+      topicId: topicId,
+    );
+  }
+  factory MessageParams.document({
+    required String toJid,
+    String? replyMessageId,
+    required FileMessageParams fileMessageParams,
+    String topicId = "",
+  }) {
+    return MessageParams._(
+      toJid: toJid,
+      replyMessageId: replyMessageId,
+      messageType: MessageType.document,
+      fileMessageParams: fileMessageParams,
+      topicId: topicId,
+    );
+  }
 }
+
+
+//
+// class MessageParams {
+//   MessageParams(
+//       {required this.toJid,
+//       this.replyMessageId,
+//       this.messageType,
+//       // this.mentionedUsersIds,
+//       // this.metaData = const [],
+//       this.textMessage,
+//       this.locationMessage,
+//       this.contactMessage,
+//       this.fileMessage,
+//       this.topicId = ""});
+//
+//   String toJid;
+//   String? replyMessageId;
+//   MessageType? messageType;
+//   List<String>? mentionedUsersIds;
+//   List<MessageMetaData> metaData = [];
+//   TextMessageParams? textMessage;
+//   LocationMessageParams? locationMessage;
+//   ContactMessageParams? contactMessage;
+//   FileMessageParams? fileMessage;
+//   String topicId = "";
+// // String? editMessageId;
+// }
 
 extension ExtractMessageParams on MessageParams {
   Map<String, dynamic> toMap() => {
         'toJid': toJid,
         'replyMessageId': replyMessageId,
-        'messageType': messageType?.value,
+        'messageType': messageType.value,
         'mentionedUsersIds': mentionedUsersIds,
         'metaData': List<dynamic>.from(metaData.map((x) => x.toMap())),
-        'textMessage': textMessage?.toMap(),
-        'locationMessage': locationMessage?.toMap(),
-        'contactMessage': contactMessage?.toMap(),
-        'fileMessage': fileMessage?.toMap(),
+        'textMessage': textMessageParams?.toMap(),
+        'locationMessage': locationMessageParams?.toMap(),
+        'contactMessage': contactMessageParams?.toMap(),
+        'fileMessage': fileMessageParams?.toMap(),
         'topicId': topicId,
       };
 }
