@@ -27,6 +27,7 @@ import MirrorFlySDK
 extension Encodable {
     func toJson() -> String? {
         let jsonEncoder = JSONEncoder()
+        /// Enable this below line to debug in console window json beautifier
 //        jsonEncoder.outputFormatting = .prettyPrinted
         do {
             let jsonData = try jsonEncoder.encode(self)

@@ -193,6 +193,9 @@ String getContactType(Map<String, dynamic> json) {
 }
 
 String? getLastMessageStatus(dynamic status) {
+  if (status == null) {
+    return null;
+  }
   if (Platform.isAndroid) {
     return status;
   } else {

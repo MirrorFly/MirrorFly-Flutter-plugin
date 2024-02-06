@@ -320,6 +320,21 @@ import UIKit
         }
     }
     
+    func getCurrentAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
+            let imageUrl = ChatManager.getImageUrl(imageName: "getAuthToken")
+            print("getCurrentAuthToken==**==imageUrl \(imageUrl)")
+            let components = imageUrl.components(separatedBy: "?mf=")
+            
+            guard components.count > 1 else {
+                result("")
+                return
+            }
+            
+            let authToken = components[1]
+            print("getCurrentAuthToken==**==\(authToken)")
+            result(authToken)
+        }
+    
     func getJid(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userName = args["username"] as? String
@@ -3571,6 +3586,10 @@ import UIKit
     }
     func appLaunchedFromMissedCall(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(false)
+    }
+    
+    func sendMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
     }
 }
 

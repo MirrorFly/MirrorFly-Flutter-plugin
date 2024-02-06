@@ -94,9 +94,7 @@ import MirrorFlySDK
 //
 //        NSLog("selectedAudioDevice \(selectedAudioDevice)")
 //    }
-    func selectAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        
-    }
+   
     func makeCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["user_jid"] as? String ?? ""
