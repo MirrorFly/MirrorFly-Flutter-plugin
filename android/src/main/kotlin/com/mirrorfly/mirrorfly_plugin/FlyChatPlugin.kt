@@ -4,80 +4,39 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.RingtoneManager
-import android.media.ThumbnailUtils
-import android.net.Uri
 import android.os.*
-import android.provider.ContactsContract
-import android.provider.MediaStore
-import android.util.Base64
-import android.webkit.MimeTypeMap
 import androidx.annotation.NonNull
-import androidx.core.content.FileProvider
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.google.gson.Gson
 import com.mirrorfly.mirrorfly_plugin.call.*
-import com.mirrorflysdk.ChatSDK
-import com.mirrorflysdk.GroupConfig
 import com.mirrorflysdk.api.*
 import com.mirrorflysdk.api.chat.*
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
 import com.mirrorflysdk.api.models.*
-import com.mirrorflysdk.api.network.FlyNetwork
-import com.mirrorflysdk.api.notification.NotificationEventListener
-import com.mirrorflysdk.api.notification.PushNotificationManager
-import com.mirrorflysdk.api.utils.NameHelper
 import com.mirrorflysdk.backup.BackupListener
 import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
 import com.mirrorflysdk.flycall.webrtc.CallType
-import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
-import com.mirrorflysdk.flycommons.models.MessageMetaData
-import com.mirrorflysdk.flycommons.models.MessageType
-import com.mirrorflysdk.flycommons.models.MetaData
-import com.mirrorflysdk.flynetwork.model.verifyfcm.VerifyFcmResponse
-import com.mirrorflysdk.media.MediaUploadHelper
-import com.mirrorflysdk.models.MediaAutoDownloadOption
-import com.mirrorflysdk.models.RecentChatListParams
-import com.mirrorflysdk.models.TopicChatListParams
 import com.mirrorflysdk.utils.*
-import com.mirrorflysdk.utils.Utils
 import com.mirrorflysdk.xmpp.chat.listener.TypingStatusListener
-import com.mirrorflysdk.xmpp.chat.models.CreateGroupModel
-import com.mirrorflysdk.xmpp.chat.models.Profile
 import io.flutter.Log
-import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.json.JSONArray
 import org.json.JSONObject
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileWriter
-import java.io.IOException
-import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 /** FlyChatPlugin */
@@ -87,67 +46,81 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     PluginRegistry.NewIntentListener, PluginRegistry.ActivityResultListener,
     AvailableFeaturesCallback, MissedCallListener, CallLogManager.CallLogsListener {
 
+    //    var instance: FlyChatPlugin = FlyChatPlugin()
+    init {
+        Log.d("#FlyChatEvents", " FlyChatPlugin init")
+    }
+
     companion object {
         @SuppressLint("StaticFieldLeak")
         private lateinit var instance: FlyChatPlugin
 
-        public fun getInstance(): FlyChatPlugin {
+        /*public fun getInstance(): FlyChatPlugin {
             return instance
         }
 
         public fun hasInstance(): Boolean {
             return ::instance.isInitialized
-        }
+        }*/
 
         fun sharePluginWithRegister(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+            Log.d("#FlyChatEvents", "sharePluginWithRegister")
             val factory = MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
             flutterPluginBinding.platformViewRegistry.registerViewFactory(
-                "mirrorfly_view",
+                Constants.mirrorflyView,
                 factory
             )
+            MirrorFlyManager.init(flutterPluginBinding.applicationContext)
+            MirrorFlyManager.setPluginBinding(flutterPluginBinding)
             CallManager.init(flutterPluginBinding.applicationContext)
-            FlyCall(flutterPluginBinding.applicationContext, flutterPluginBinding)
             initSharedInstance(
                 flutterPluginBinding.applicationContext,
                 flutterPluginBinding.binaryMessenger
             )
-            Log.d("FlyChatPlugin", "sharePluginWithRegister")
         }
 
         private val methodChannels = mutableMapOf<BinaryMessenger, MethodChannel>()
-        private val eventChannels = mutableMapOf<BinaryMessenger, List<EventChannel>>()
-        private val eventHandlers = mutableListOf<WeakReference<EventCallbackHandler>>()
         private fun initSharedInstance(context: Context, binaryMessenger: BinaryMessenger) {
+            Log.d("#FlyChatEvents", "initSharedInstance")
             if (!::instance.isInitialized) {
+                Log.d("#FlyChatEvents", "!::instance.isInitialized " + (::instance.isInitialized))
                 instance = FlyChatPlugin()
                 instance.mContext = context
+                MirrorFlyManager.setFlyChatInstance(instance)
             }
             instance.mContext = context
+            initChannels(binaryMessenger)
+            FlyCallPlugin().init()
+            CallManager.setMissedCallListener(instance)
+            ChatEventsManager.setupMessageEventListener(instance)
+            ChatManager.setAvailableFeaturesCallback(instance)
+            SharedPreferenceManager().init(context)
+        }
+
+        private fun initChannels(binaryMessenger: BinaryMessenger) {
             val channel = MethodChannel(binaryMessenger, Constants.MirrorflyMethodChannel)
             methodChannels[binaryMessenger] = channel
-//            eventChannels[binaryMessenger] = events
             channel.setMethodCallHandler(instance)
-            CallManager.setMissedCallListener(instance)
-            SharedPreferenceManager().init(context)
             initMethodAndEvent(binaryMessenger)
-            Log.d("FlyChatPlugin", "initSharedInstance")
+            FlyCallPlugin().initChannels()
         }
 
         //        private val eventHandlers = mutableListOf<WeakReference<EventCallbackHandler>>()
         fun sendEvent(event: String, body: JSONObject) {
             Log.d("sendEvent", "event : $event body : $body")
             if (event == Constants.ACTION_CALL_ACCEPT) {
-                onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(body.toString())
+//                onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(body.toString())
+                FlyMethodConstants.updateCallSinkValue(
+                    Constants.onCallStatusUpdated,
+                    body.toString()
+                )
             }
-            /*eventHandlers.reapCollection().forEach {
-                it.get()?.send(event, body)
-            }*/
         }
 
         private fun initMethodAndEvent(binaryMessenger: BinaryMessenger) {
-            Log.d("FlyChatPlugin", "initMethodAndEvent")
-            val events = arrayListOf<EventChannel>()
-            EventChannel(
+            Log.d("#FlyChatEvents", "initMethodAndEvent")
+            FlyMethodConstants.initializeChatListeners(binaryMessenger)
+            /*EventChannel(
                 binaryMessenger,
                 Constants.onMessageReceivedChannel
             ).setStreamHandler(MessageReceivedStreamHandler)
@@ -301,10 +274,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 binaryMessenger,
                 Constants.onDisconnectedChannel
             ).setStreamHandler(onDisconnectedStreamHandler)
-            /*EventChannel(
-          binaryMessenger,
-          onConnectionNotAuthorized_channel
-        ).setStreamHandler(onConnectionNotAuthorizedStreamHandler)*/
+
             EventChannel(
                 binaryMessenger,
                 Constants.onConnectionFailedChannel
@@ -355,3699 +325,229 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             )
             EventChannel(binaryMessenger, Constants.onCallLogsDeletedChannel).setStreamHandler(
                 onCallLogsDeletedStreamHandler
-            )
+            )*/
         }
     }
 
-    val COUNTRY_CODE = "countryCode"
-    val FIRE_BASE_TOKEN = "firebase_token"
-    val MEDIA_AUTO_DOWNLOAD: String = "media_auto_download"
-    val NOTIFICATION_URI: String = "notification_uri"
-    val NOTIFICATION_SOUND: String = "notification_sound"
-    val NOTIFICATION_POPUP: String = "notification_popup"
-    val VIBRATION: String = "vibration"
-    val MUTE_NOTIFICATION: String = "mute_notification"
-    var isTrialLicenceKey = true
-    private val TAG = "MirrorFly"
+    private val TAG = "#FlyChatEvents"
 
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
     /// when the Flutter Engine is detached from the Activity
-//    private lateinit var channel: MethodChannel
     private lateinit var mContext: Context
-    private var FROM_GALLERY = 2
-    private lateinit var factory: MirrorflyViewFactory
     private lateinit var lifecycle: Lifecycle
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        Log.d("FlyChat", "onAttachedToEngine")
+        Log.d(TAG, "onAttachedToEngine")
         sharePluginWithRegister(flutterPluginBinding)
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
-        when {
-            call.method == "init" -> {
-                buildChatSDK(call)
-            }
+        Log.d(TAG, "onMethodCall")
+        if (call.method == "appLaunchedFromMissedCall") {
+            val fromCall = instance.fromCallNotification
+            instance.fromCallNotification = false
+            Log.d("appLaunchedFromMissedCall", fromCall.toString())
+            result.success(fromCall)
+        }
+        if (call.method == "init" || call.method == "initializeSDK") {
+            ChatEventsManager.attachProfileEventsListener(instance)
+            ChatEventsManager.attachGroupEventsListener(instance)
+            ChatEventsManager.attachLoginEventsListener(instance)
+            ChatEventsManager.attachTypingEventListener(instance)
+        }
+        FlyMethodConstants.chatMethodHandlers[call.method]?.let { methodHandler ->
+            Log.d(TAG, "Method call ${call.method}")
+            methodHandler.invoke(call, result)
+        }
 
-            call.method == "initializeSDK" -> {
-                buildInitializeSDK(call, result)
-            }
-
-            call.method == "appLaunchedFromMissedCall" -> {
-                val fromCall = instance.fromCallNotification
-                instance.fromCallNotification = false
-                Log.d("appLaunchedFromMissedCall", fromCall.toString())
-                result.success(fromCall)
-
-            }
-            call.method == "getPlatformVersion" -> {
-                result.success("Android ${Build.VERSION.RELEASE}")
-            }
-            call.method.equals("sendData") -> {
-                //result.success(jid)
-            }
-            call.method.equals("getNonChatUsers") -> {
-                val nonchatusers = FlyCore.getNonChatUsers()
-                result.success(nonchatusers.toJsonString())
-            }
-            call.method.equals("IS_TRIAL_LICENSE") -> {
-                result.success(isTrialLicenceKey)//(BuildConfig.IS_TRIAL_LICENSE)
-            }
-            call.method.equals("syncContacts") -> {
-                //setRegionCode(call)
-                val isFirsttime = call.argument<Boolean>("is_first_time") ?: false
-                FlyCore.syncContacts(isFirsttime) { b, _, data ->
-                    LogMessage.d(TAG, "Contacts Sync contactSyncSuccess:$b and data: ${data}")
-                    result.success(true)
+        if (FlyMethodConstants.chatMethodHandlers[call.method] == null) {
+            when {
+                call.method == "getPlatformVersion" -> {
+                    result.success("Android ${Build.VERSION.RELEASE}")
                 }
-            }
-            call.method.equals("contactSyncStateValue") -> {
-                val contactSyncStateResult: Result<Boolean>? = FlyCore.contactSyncState.value
-                val res = (contactSyncStateResult == Result.InProgress)
-                result.success(res)
-            }
-//      call.method.equals("contactSyncState") -> {
-//        contactSyncState(result)
-//      }
-            call.method.equals("revokeContactSync") -> {
-                revokeContactSync(result)
-            }
-            call.method.equals("getUsersWhoBlockedMe") -> {
-                getUsersWhoBlockedMe(call, result)
-            }
-            call.method.equals("getUnKnownUserProfiles") -> {
-                val unknownProfilesList: List<ProfileDetails> = FlyCore.getUnKnownUserProfiles()
-                result.success(unknownProfilesList.toJsonString())
-            }
-            call.method.equals("getMyProfileStatus") -> {
-                val myUserStatus: ProfileStatus = FlyCore.getMyProfileStatus()!!
-                result.success(myUserStatus.toJsonString())
-            }
-            call.method.equals("insertBusyStatus") -> {
-                val busyStatus = call.argument<String>("busy_status") ?: ""
-                FlyCore.insertMyBusyStatus(busyStatus)
-                FlyCore.setMyBusyStatus(
-                    busyStatus
-                ) { isSuccess, throwable, p2 ->
-                    if (isSuccess) {
-                        result.success(isSuccess)
-                    } else {
-                        result.error("500", throwable?.message.toString(), throwable)
-                    }
+                call.method.equals("getNonChatUsers") -> {
+                    val nonchatusers = FlyCore.getNonChatUsers()
+                    result.success(nonchatusers.toJsonString())
                 }
-                //result.success(true)
-            }
-            call.method.equals("getMyBusyStatus") -> {//{"id": null, "status": "", "isCurrentStatus": false}
-                val myBusyStatus: BusyStatus? = FlyCore.getMyBusyStatus()
-                if (myBusyStatus != null) {
-                    LogMessage.d("myBusyStatus", myBusyStatus.toJsonString())
-                    result.success(myBusyStatus.toJsonString())
-                } else {
-                    if (FlyCore.getBusyStatusList().isEmpty()) {
-                        val defaultStatus = arrayListOf<String>(
-                            "Driving car. Text you later",
-                            "Please call me if anything important",
-                            "Sleeping",
-                            "In meeting"
-                        )
-                        for (statusValue in defaultStatus) {
-                            FlyCore.insertMyBusyStatus(statusValue)
-                        }
-                    }
-                    if (FlyCore.getMyBusyStatus() == null || FlyCore.getMyBusyStatus()!!.status.isEmpty()) {
-                        FlyCore.setMyBusyStatus("I am busy") { isSuccess, throwable, p2 -> };
-                    }
-                    result.success(FlyCore.getMyBusyStatus()!!.toJsonString())
+
+                call.method.equals("doesFetchingMembersListFromServedRequired") -> {
+                    val groupJid = call.argument<String>("groupJid") ?: ""
+                    result.success(GroupManager.doesFetchingMembersListFromServedRequired(groupJid))
                 }
-            }
-            call.method.equals("setMyBusyStatus") -> {
-                val busyStatus = call.argument<String>("status") ?: ""
-                FlyCore.setMyBusyStatus(busyStatus, object : FlyCallback {
-                    override fun flyResponse(
-                        isSuccess: Boolean,
-                        throwable: Throwable?,
-                        p2: HashMap<String, Any>
-                    ) {
-                        if (isSuccess) {
-                            result.success(isSuccess)
-                        } else {
-                            result.error("500", throwable?.message.toString(), throwable)
-                        }
-                    }
+                call.method.equals("getMembersCountOfGroup") -> {
+                    val groupJid = call.argument<String>("groupJid") ?: ""
+                    result.success(GroupManager.getMembersCountOfGroup(groupJid))
+                }
+                call.method.equals("getUsersListToAddMembersInOldGroup") -> {
+                    val groupJid = call.argument<String>("groupJid") ?: ""
+                    result.success(GroupManager.getUsersListToAddMembersInOldGroup(groupJid))
+                }
+                call.method.equals("getUsersListToAddMembersInNewGroup") -> {
+                    result.success((GroupManager.getUsersListToAddMembersInNewGroup()).toJsonString())
+                }
+                call.method.equals("getGroupMessageStatusCount") -> {
+                    val messageid: String = call.argument("messageid") ?: ""
+                    result.success(FlyMessenger.getGroupMessageStatusCount(messageid))
+                }
+                call.method.equals("deleteOfflineGroup") -> {
+                    val groupJid = call.argument<String>("groupJid") ?: ""
+                    GroupManager.deleteOfflineGroup(groupJid)
+                }
 
-                })
-                result.success(true)
-            }
-            call.method.equals("enableDisableBusyStatus") -> {
-                val busyStatusEnable = call.argument<Boolean>("enable") ?: false
-                FlyCore.enableDisableBusyStatus(busyStatusEnable, object : FlyCallback {
-                    override fun flyResponse(
-                        isSuccess: Boolean,
-                        throwable: Throwable?,
-                        p2: HashMap<String, Any>
-                    ) {
-                        if (isSuccess) {
-                            result.success(isSuccess)
-                        } else {
-                            result.error("500", throwable?.message.toString(), throwable)
-                        }
-                    }
+                call.method.equals("getIsProfileBlockedByAdmin") -> {
+                    result.success(FlyCore.getIsProfileBlockedByAdmin())
+                }
 
-                })
-            }
-            call.method.equals("getBusyStatusList") -> {
-                val myBusyStatusList: List<BusyStatus> = FlyCore.getBusyStatusList()
-                result.success(myBusyStatusList.toJsonString())
-            }
-            call.method.equals("deleteProfileStatus") -> {
-                val id = call.argument<String>("id") ?: "0"
-                val status = call.argument<String>("status") ?: ""
-                val isCurrentStatus = call.argument<Boolean>("isCurrentStatus") ?: false
-                val profileStatus = ProfileStatus(id.toLong(), status, isCurrentStatus)
-                FlyCore.deleteProfileStatus(profileStatus)
-                result.success(true)
-            }
-            call.method.equals("deleteBusyStatus") -> {
-                val id = call.argument<String>("id") ?: "0"
-                val status = call.argument<String>("status") ?: ""
-                val isCurrentStatus = call.argument<Boolean>("isCurrentStatus") ?: false
-                val profileStatus = BusyStatus(id.toLong(), status, isCurrentStatus)
-                FlyCore.deleteBusyStatus(profileStatus)
-                result.success(true)
-            }
-            call.method.equals("enableDisableHideLastSeen") -> {
-                enableDisableHideLastSeen(call, result)
-            }
-            call.method.equals("isHideLastSeenEnabled") -> {
-                result.success(FlyCore.isHideLastSeenEnabled())
-            }
-            call.method.equals("deleteMessagesForMe") -> {
-                deleteMessagesForMe(call, result)
-            }
-            call.method.equals("deleteMessagesForEveryone") -> {
-                deleteMessagesForEveryone(call, result)
-            }
-            call.method.equals("markAsRead") -> {
-                val JID: String = call.argument("jid") ?: ""
-                ChatManager.markAsRead(JID)
-                result.success(true)
-            }
-            call.method.equals("deleteUnreadMessageSeparatorOfAConversation") -> {
-                val JID: String = call.argument("jid") ?: ""
-                FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(JID)
-                result.success(true)
-            }
-            call.method.equals("getRecalledMessagesOfAConversation") -> {
-                val JID: String = call.argument("jid") ?: ""
-                val recalledMessages: List<ChatMessage> =
-                    FlyMessenger.getRecalledMessagesOfAConversation(JID)
-                result.success(recalledMessages.toJsonString())
-            }
-            call.method.equals("uploadMedia") -> {
-                val messageid: String = call.argument("messageid") ?: ""
-                FlyMessenger.uploadMedia(messageid)
-                result.success(true)
-            }
-            call.method.equals("getMessagesUsingIds") -> {
-                getMessagesUsingIds(call, result)
-            }
-            call.method.equals("updateMediaDownloadStatus") -> {
-                updateMediaDownloadStatus(call)
-            }
-            call.method.equals("updateMediaUploadStatus") -> {
-                updateMediaUploadStatus(call)
-            }
-            call.method.equals("cancelMediaUploadOrDownload") -> {
-                cancelMediaUploadOrDownload(call)
-            }
-            call.method.equals("setMediaEncryption") -> {
-                val encryption = call.argument<Boolean>("encryption") ?: true
-                ChatManager.setMediaEncryption(encryption)
-            }
-            call.method.equals("deleteAllMessages") -> {
-                FlyMessenger.deleteAllMessages()
-            }
-            call.method.equals("getGroupJid") -> {
-                val groupID = call.argument<String>("groupId") ?: ""
-                result.success(FlyUtils.getGroupJid(groupID))
-            }
-            call.method.equals("createOfflineGroupInOnline") -> {
-                createOfflineGroupInOnline(call, result)
-            }
-            call.method.equals("getGroupProfile") -> {
-                getGroupProfile(call, result)
-            }
-            call.method.equals("doesFetchingMembersListFromServedRequired") -> {
-                val groupJid = call.argument<String>("groupJid") ?: ""
-                result.success(GroupManager.doesFetchingMembersListFromServedRequired(groupJid))
-            }
-            call.method.equals("getMembersCountOfGroup") -> {
-                val groupJid = call.argument<String>("groupJid") ?: ""
-                result.success(GroupManager.getMembersCountOfGroup(groupJid))
-            }
-            call.method.equals("getUsersListToAddMembersInOldGroup") -> {
-                val groupJid = call.argument<String>("groupJid") ?: ""
-                result.success(GroupManager.getUsersListToAddMembersInOldGroup(groupJid))
-            }
-            call.method.equals("getUsersListToAddMembersInNewGroup") -> {
-                result.success((GroupManager.getUsersListToAddMembersInNewGroup()).toJsonString())
-            }
-            call.method.equals("getGroupMessageStatusCount") -> {
-                val messageid: String = call.argument("messageid") ?: ""
-                result.success(FlyMessenger.getGroupMessageStatusCount(messageid))
-            }
-            call.method.equals("getGroupMessageDeliveredToList") -> {
-                getGroupMessageDeliveredToList(call, result)
-            }
-            call.method.equals("getGroupMessageReadByList") -> {
-                getGroupMessageReadByList(call, result)
-            }
-            call.method.equals("deleteOfflineGroup") -> {
-                val groupJid = call.argument<String>("groupJid") ?: ""
-                GroupManager.deleteOfflineGroup(groupJid)
-            }
-            call.method.equals("sendTypingStatus") -> {
-                val tojid = call.argument<String>("to_jid") ?: ""
-                val type = call.argument<String>("chattype") ?: ""
-                val chattype = getChatEnum(type)
-                ChatManager.sendTypingStatus(tojid, chattype)
-            }
-            call.method.equals("sendTypingGoneStatus") -> {
-                val tojid = call.argument<String>("to_jid") ?: ""
-                val type = call.argument<String>("chattype") ?: ""
-                val chattype = getChatEnum(type)
-                ChatManager.sendTypingGoneStatus(tojid, chattype)
-            }
-            call.method.equals("updateChatMuteStatus") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                val mute_status = call.argument<Boolean>("mute_status") ?: false
-                FlyCore.updateChatMuteStatus(jid, mute_status)
-            }
-            call.method.equals("updateRecentChatPinStatus") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                val pin_status = call.argument<Boolean>("pin_recent_chat") ?: false
-                FlyCore.updateRecentChatPinStatus(jid, pin_status)
-            }
-            call.method.equals("deleteRecentChat") -> {
-                val jid = call.argument<String>("jid") ?: ""
-//                FlyCore.deleteRecentChat(jid)// this method only deletes from local DB
-                ChatManager.deleteRecentChats(arrayListOf(jid), object : ChatActionListener {
-                    override fun onResponse(isSuccess: Boolean, message: String) {
-                        if (isSuccess) {
-                            result.success(isSuccess)
-                        } else {
-                            result.error("500", message, "")
-                        }
-                    }
-
-                })
-            }
-            call.method.equals("isUserUnArchived") -> {
-                result.success(FlyCore.isUserUnArchived(call.argument<String>("jid") ?: ""))
-            }
-            call.method.equals("getIsProfileBlockedByAdmin") -> {
-                result.success(FlyCore.getIsProfileBlockedByAdmin())
-            }
-            call.method.equals("recentChatPinnedCount") -> {
-                result.success(FlyCore.recentChatPinnedCount())
-            }
-            call.method.equals("deleteRecentChats") -> {
-                deleteRecentChats(call, result)
-            }
-            call.method.equals("markConversationAsRead") -> {
-                markConversationAsRead(call, result)
-            }
-            call.method.equals("markConversationAsUnread") -> {
-                markConversationAsUnread(call, result)
-            }
-            call.method.equals("clearAllConversation") -> {
-                clearAllConversation(result)
-            }
-            call.method.equals("enableDisableArchivedSettings") -> {
-                enableDisableArchivedSettings(call, result)
-            }
-            call.method.equals("updateArchiveUnArchiveChat") -> {
-                updateArchiveUnArchiveChat(call, result)
-            }
-            call.method.equals("getArchivedChatsFromServer") -> {
-                FlyCore.getArchivedChatsFromServer()
-            }
-            call.method.equals("getArchivedChatList") -> {
-                getArchivedChatList(result)
-            }
-            call.method.equals("prepareChatConversationToExport") -> {
-                prepareChatConversationToExport(call, result)
-            }
-            call.method.equals("isArchivedSettingsEnabled") -> {
-                result.success(FlyCore.isArchivedSettingsEnabled())
-            }
-            call.method.equals("isBusyStatusEnabled") -> {
-                result.success(FlyCore.isBusyStatusEnabled())
-            }
-            call.method.equals("getMessageActions") -> {
-                val messageIdlist = call.argument<List<String>>("messageidlist") ?: arrayListOf()
-                result.success(ChatManager.getMessageActions(messageIdlist).toJsonString())
-            }
-            call.method.equals("copyTextMessages") -> {
-                val messageIdlist = call.argument<List<String>>("messageidlist") ?: arrayListOf()
-                ChatManager.copyTextMessages(messageIdlist).toJsonString()
-            }
-            call.method.equals("setCustomValue") -> {
-                val mid = call.argument<String>("message_id") ?: ""
-                val key = call.argument<String>("key") ?: ""
-                val value = call.argument<String>("value") ?: ""
-                FlyMessenger.setCustomValue(mid, key, value)
-            }
-            call.method.equals("getCustomValue") -> {
-                val mid = call.argument<String>("message_id") ?: ""
-                val key = call.argument<String>("key") ?: ""
-                result.success(FlyMessenger.getCustomValue(mid, key))
-            }
-            call.method.equals("removeCustomValue") -> {
-                val mid = call.argument<String>("message_id") ?: ""
-                val key = call.argument<String>("key") ?: ""
-                FlyMessenger.removeCustomValue(mid, key)
-            }
-            call.method.equals("inviteUserViaSMS") -> {
-                val mobile_no = call.argument<String>("mobile_no") ?: ""
-                val message = call.argument<String>("message") ?: ""
-                ContactManager.inviteUserViaSMS(mobile_no, message)
-            }
-            call.method.equals("getUnsentMessageOfAJid") -> {
-                getUnsentMessageOfAJid(call, result)
-            }
-            call.method.equals("cancelBackup") -> {
-                BackupManager.cancelBackup()
-            }
-            call.method.equals("startBackup") -> {
-                BackupManager.startBackup(object : BackupListener {
-                    override fun onFailure(reason: String) {
-                        onFailureStreamHandler.onFailure?.success(reason)
-                    }
-
-                    override fun onProgressChanged(percentage: Int) {
-                        onProgressChangedStreamHandler.onProgressChanged?.success(percentage.toString())
-                    }
-
-                    override fun onSuccess(backUpFilePath: String) {
-                        onSuccessStreamHandler.onSuccess?.success(backUpFilePath)
-                    }
-                })
-            }
-//            call.method.equals("cancelRestore") -> {
-//                RestoreManager.cancelRestore()
-//            }
-            call.method.equals("cancelRestore") -> {
-                val filepath = call.argument<String>("file") ?: ""
-                val file = File(filepath)
-                if (file.exists()) {
-                    RestoreManager.restoreData(file, object : RestoreListener {
+                call.method.equals("getArchivedChatsFromServer") -> {
+                    FlyCore.getArchivedChatsFromServer()
+                }
+                call.method.equals("getMessageActions") -> {
+                    val messageIdlist =
+                        call.argument<List<String>>("messageidlist") ?: arrayListOf()
+                    result.success(ChatManager.getMessageActions(messageIdlist).toJsonString())
+                }
+                call.method.equals("copyTextMessages") -> {
+                    val messageIdlist =
+                        call.argument<List<String>>("messageidlist") ?: arrayListOf()
+                    ChatManager.copyTextMessages(messageIdlist).toJsonString()
+                }
+                call.method.equals("setCustomValue") -> {
+                    val mid = call.argument<String>("message_id") ?: ""
+                    val key = call.argument<String>("key") ?: ""
+                    val value = call.argument<String>("value") ?: ""
+                    FlyMessenger.setCustomValue(mid, key, value)
+                }
+                call.method.equals("getCustomValue") -> {
+                    val mid = call.argument<String>("message_id") ?: ""
+                    val key = call.argument<String>("key") ?: ""
+                    result.success(FlyMessenger.getCustomValue(mid, key))
+                }
+                call.method.equals("removeCustomValue") -> {
+                    val mid = call.argument<String>("message_id") ?: ""
+                    val key = call.argument<String>("key") ?: ""
+                    FlyMessenger.removeCustomValue(mid, key)
+                }
+                call.method.equals("inviteUserViaSMS") -> {
+                    val mobile_no = call.argument<String>("mobile_no") ?: ""
+                    val message = call.argument<String>("message") ?: ""
+                    ContactManager.inviteUserViaSMS(mobile_no, message)
+                }
+                call.method.equals("cancelBackup") -> {
+                    BackupManager.cancelBackup()
+                }
+                call.method.equals("startBackup") -> {
+                    BackupManager.startBackup(object : BackupListener {
                         override fun onFailure(reason: String) {
-                            onFailureStreamHandler.onFailure?.success(reason)
+//                            onFailureStreamHandler.onFailure?.success(reason)
+                            FlyMethodConstants.updateChatSinkValue(
+                                Constants.onFailureChannel,
+                                reason
+                            )
                         }
 
                         override fun onProgressChanged(percentage: Int) {
-                            onProgressChangedStreamHandler.onProgressChanged?.success(percentage)
+//                            onProgressChangedStreamHandler.onProgressChanged?.success(percentage.toString())
+                            FlyMethodConstants.updateChatSinkValue(
+                                Constants.onProgressChangedChannel,
+                                percentage
+                            )
                         }
 
-                        override fun onSuccess() {
-                            onSuccessStreamHandler.onSuccess?.success("")
-                        }
-                    })
-                }
-            }
-            call.method.equals("clearAllSDKData") -> {
-                FlyCore.clearAllSDKData()
-            }
-            call.method.equals("updateFcmToken") -> {
-                updateFcmToken(call, result)
-            }
-            call.method.equals("handleReceivedMessage") -> {
-                handleReceivedMessage(call, result)
-            }
-            call.method.equals("getLastNUnreadMessages") -> {
-                val messagescount = call.argument<Int>("messagesCount") ?: 0
-                result.success(FlyMessenger.getLastNUnreadMessages(messagescount).toJsonString())
-            }
-            call.method.equals("getNUnreadMessagesOfEachUsers") -> {
-                val messagescount = call.argument<Int>("messagesCount") ?: 0
-                val usersWithMessage: Map<String, List<ChatMessage>> =
-                    FlyMessenger.getNUnreadMessagesOfEachUsers(messagescount)
-                result.success(usersWithMessage.toJsonString())
-            }
-            call.method.equals("getUnreadMessageCountExceptMutedChat") -> {
-                result.success(FlyMessenger.getUnreadMessageCountExceptMutedChat())
-            }
-            call.method.equals("isMuted") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                result.success(ChatManager.isMuted(jid))
-            }
-            call.method.equals("media_endpoint") -> {
-                result.success(MediaUploadHelper.UPLOAD_ENDPOINT)
-            }
-            call.method.equals("register_user") -> {
-                registerUser(call, result)
-            }
-            call.method.equals("authtoken") -> {
-                refreshAndGetAuthToken(result)
-            }
-            call.method.equals("get_jid") -> {
-                getJid(call, result)
-            }
-            call.method.equals("send_text_msg") -> {
-                sendTextMessage(call, result)
-            }
-            call.method.equals("sendLocationMessage") -> {
-                sendLocationMessage(call, result)
-            }
-            call.method.equals("get_user_list") -> {
-                getUserList(call, result)
-            }
-            call.method.equals("get_image_path") -> {
-                getImagePath(call, result)
-            }
-            call.method.equals("getUserProfile") -> {
-                getUserProfile(call, result)
-            }
-            call.method.equals("getProfileStatusList") -> {
-                getProfileStatusList(result)
-            }
-            call.method.equals("insertDefaultStatus") -> {
-                insertDefaultStatus(call, result)
-            }
-            call.method.equals("updateMyProfile") -> {
-                updateMyProfile(call, result)
-            }
-            call.method.equals("updateMyProfileImage") -> {
-                updateMyProfileImage(call, result)
-            }
-            call.method.equals("removeProfileImage") -> {
-                removeProfileImage(result)
-            }
-            call.method.equals("setMyProfileStatus") -> {
-                setMyProfileStatus(call, result)
-            }
-            call.method.equals("insertNewProfileStatus") -> {
-                insertNewProfileStatus(call, result)
-            }
-            call.method.equals("getRecentChatList") -> {
-                getRecentChatList(result)
-            }
-            call.method.equals("getRecentChatListHistoryByTopic") -> {
-                runBlocking {
-                    // Launch a coroutine
-                    launch {
-                        // Call the suspend function within the coroutine
-                        getRecentChatListHistoryByTopic(call, result)
-                    }
-                }
-            }
-            call.method.equals("getRecentChatListHistory") -> {
-                runBlocking {
-                    // Launch a coroutine
-                    launch {
-                        // Call the suspend function within the coroutine
-                        getRecentChatListHistory(call, result)
-                    }
-                }
-                /*val coroutineScope = CoroutineScope(Dispatchers.Main)
-                coroutineScope.launch {
-                    withContext(Dispatchers.IO) {
-                        getRecentChatListHistory(call, result)
-                    }
-
-                }*/
-//                GlobalScope.launch (Dispatchers.Main) { getRecentChatListHistory(call, result)}
-
-            }
-            call.method.equals("getMessagesOfJid") -> {
-                getMessagesOfJid(call, result)
-            }
-            call.method.equals("initializeMessageList") -> {
-                initializeMessageListParams(call, result)
-            }
-            call.method.equals("loadMessages") -> {
-                loadMessages(result)
-            }
-            call.method.equals("loadPreviousMessages") -> {
-                loadPreviousMessages(result)
-            }
-            call.method.equals("hasPreviousMessages") -> {
-                if (messageListQuery != null) {
-                    result.success(messageListQuery?.hasPreviousMessages())
-                } else {
-                    result.error(
-                        "500",
-                        "Message List not Initialized. Initialize using  initializeMessageList() method",
-                        null
-                    )
-                }
-            }
-            call.method.equals("loadNextMessages") -> {
-                loadNextMessages(result)
-            }
-            call.method.equals("hasNextMessages") -> {
-                if (messageListQuery != null) {
-                    result.success(messageListQuery?.hasNextMessages())
-                } else {
-                    result.error(
-                        "500",
-                        "Message List not Initialized. Initialize using  initializeMessageList() method",
-                        null
-                    )
-                }
-            }
-            call.method.equals("markAsReadDeleteUnreadSeparator") -> {
-                markAsReadDeleteUnreadSeparator(call, result)
-            }
-//            call.method.equals("get_media") -> {
-//                getUserMedia(call, result)
-//            }
-//            call.method.equals("chat_listener") -> {
-//                listenChatMessage()
-//            }
-//            call.method.equals("groupchat_listener") -> {
-//                listenGroupChatMessage()
-//            }
-            call.method.equals("logoutOfChatSDK") -> {
-                logoutOfChatSDK(result)
-            }
-            call.method.equals("setOnGoingChatUser") -> {
-                val userJID =
-                    if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
-                        .toString()
-                LogMessage.d("setOnGoingChatUser", userJID);
-                ChatManager.setOnGoingChatUser(userJID)
-            }
-            call.method.equals("getUnreadMessagesCount") -> {//name changed from unread_count
-//                if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
-//                    .toString()
-                result.success(FlyMessenger.getUnreadMessagesCount())
-            }
-//            call.method.equals("get_recent_chat_of") -> {
-//                val userJID =
-//                    if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
-//                        .toString()
-//                val recent = FlyCore.getRecentChatOf(userJID)
-//                if (recent != null) {
-//                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-//                    //DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
-//                    result.success(recent.tojsonString())
-//                } else {
-//                    result.success(null)
-//                }
-//            }
-            call.method.equals("downloadMedia") -> {
-                val mediaId =
-                    if (call.argument<String>("mediaMessage_id") == null) "" else call.argument<String?>(
-                        "mediaMessage_id"
-                    )
-                        .toString()
-                FlyMessenger.downloadMedia(mediaId)
-            }
-            call.method.equals("sendContactMessage") -> {
-                sendContactMessage(call, result)
-            }
-            call.method.equals("sendDocumentMessage") -> {
-                sendDocumentMessage(call, result)
-            }
-            call.method.equals("sendAudioMessage") -> {
-                sendAudioMessage(call, result)
-            }
-            call.method.equals("send_image_message") -> {
-                sendImageMessage(call, result)
-            }
-            call.method.equals("send_video_message") -> {
-                sendVideoMessage(call, result)
-            }
-            call.method.equals("sendMediaFileMessage") -> {
-                sendMediaFileMessage(call, result)
-            }
-            call.method.equals("sendMessage") -> {
-                sendMessage(call, result)
-            }
-            call.method.equals("open_file") -> {
-                openMediaFile(call, result)
-            }
-            call.method.equals("getRecentChatListIncludingArchived") -> {
-                getRecentChatListIncludingArchived(result)
-            }
-            call.method.equals("searchConversation") -> {
-                searchConversation(call, result)
-            }
-            call.method.equals("getRegisteredUsers") -> {
-                getRegisteredUsers(call, result)
-            }
-            call.method.equals("getRecentChatOf") -> {
-                val userJID = call.argument<String>("jid") ?: ""
-                val recent = FlyCore.getRecentChatOf(userJID)
-                if (recent != null) {
-                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                    //DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
-                    result.success(recent.toJsonString())
-                }
-            }
-            call.method.equals("getMessageOfId") -> {
-                val mid = call.argument<String>("mid") ?: ""
-                val data = FlyMessenger.getMessageOfId(mid)
-                if (data != null) {
-                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                    //DebugUtilis.v("FlyMessenger.getMessageOfId", data.tojsonString())
-                    result.success(data.toJsonString())
-                }
-            }
-            call.method.equals("refreshAuthToken") -> {
-                refreshAndGetAuthToken(result)
-            }
-            call.method.equals("getCurrentAuthToken") -> {
-                result.success(FlyUtils.decodedToken())
-            }
-            call.method.equals("clear_chat") -> {
-                clearChat(call, result)
-            }
-            call.method.equals("reportUserOrMessages") -> {
-                reportUserOrMessages(call, result)
-            }
-            call.method.equals("delete_messages") -> {
-                deleteMessages(call, result)
-            }
-            call.method.equals("getMessageStatusOfASingleChatMessage") -> {
-                getMessageStatusOfASingleChatMessage(call, result)
-            }
-            call.method.equals("updateFavouriteStatus") -> {
-                updateFavouriteStatus(call, result)
-            }
-            call.method.equals("block_user") -> {
-                blockUser(call, result)
-            }
-            call.method.equals("un_block_user") -> {
-                unblockUser(call, result)
-            }
-            call.method.equals("forwardMessagesToMultipleUsers") -> {
-                forwardMessagesToMultipleUsers(call, result)
-            }
-            call.method.equals("forwardMessages") -> {
-                forwardMessages(call, result)
-            }
-            call.method.equals("exportChatConversationToEmail") -> {
-                val jid = call.argument<String?>("jid") ?: ""
-//        FlyCore.exportChatConversationToEmail(jid, emptyList())
-                prepareChatConversationToExport(call, result)
-            }
-            call.method.equals("get_message_using_ids") -> {
-//                getMessageUsingIds(call, result)
-            }
-            call.method.equals("verifyToken") -> {
-                verifyToken(call, result)
-            }
-            call.method.equals("createGroup") -> {
-                createGroup(call, result)
-            }
-            call.method.equals("addUsersToGroup") -> {
-                addUsersToGroup(call, result)
-            }
-            call.method.equals("makeAdmin") -> {
-                makeAdmin(call, result)
-            }
-            call.method.equals("removeMemberFromGroup") -> {
-                removeMemberFromGroup(call, result)
-            }
-            call.method.equals("getGroupMembersList") -> {
-                getGroupMembersList(call, result)
-            }
-            call.method.equals("isAdmin") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                val groupJid = call.argument<String>("group_jid") ?: ""
-                val isAdmin =
-                    GroupManager.isAdmin(groupJid, jid)
-                //DebugUtilis.v("GroupManager.isAdmin", isAdmin.toString())
-                result.success(isAdmin)
-            }
-            call.method.equals("isMemberOfGroup") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                val userjid = call.argument<String>("userjid")
-                    ?: SharedPreferenceManager.instance.currentUserJid
-                val isMemberGroup = GroupManager.isMemberOfGroup(jid, userjid)
-                //DebugUtilis.v("GroupManager.isMemberOfGroup", isMemberGroup.toString())
-                result.success(isMemberGroup)
-            }
-//            call.method.equals("reportUserOrMessages") -> {
-//                reportUserOrMessages(call, result)
-//            }
-            call.method.equals("leaveFromGroup") -> {
-                leaveFromGroup(call, result)
-            }
-            call.method.equals("deleteGroup") -> {
-                deleteGroup(call, result)
-            }
-            call.method.equals("removeGroupProfileImage") -> {
-                removeGroupProfileImage(call, result)
-            }
-            call.method.equals("updateGroupProfileImage") -> {
-                updateGroupProfileImage(call, result)
-            }
-            call.method.equals("updateGroupName") -> {
-                updateGroupName(call, result)
-            }
-            call.method.equals("getMediaMessages") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                val mediaMessage = ChatManager.getMediaMessages(jid)
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("ChatManager.getMediaMessages", mediaMessage.tojsonString())
-                result.success(mediaMessage.toJsonString())
-            }
-            call.method.equals("getDocsMessages") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                val docMessages = ChatManager.getDocsMessages(jid)
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("ChatManager.getDocsMessages", docMessages.tojsonString())
-                result.success(docMessages.toJsonString())
-            }
-            call.method.equals("getLinkMessages") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                val linkMessage = ChatManager.getLinkMessages(jid)
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("ChatManager.getLinkMessages", linkMessage.tojsonString())
-                result.success(linkMessage.toJsonString())
-            }
-            call.method.equals("getProfileDetails") -> {
-                val jid = call.argument("jid") ?: ""
-                val profileDetails = ContactManager.getProfileDetails(jid)
-                if (profileDetails != null) {
-                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                    //DebugUtilis.v("ContactManager.getProfileDetails", profileDetails.tojsonString())
-                    result.success(profileDetails.toJsonString())
-                } else {
-                    ContactManager.getUserProfile(jid, true, true, object : FlyCallback {
-                        override fun flyResponse(
-                            isSuccess: Boolean,
-                            throwable: Throwable?,
-                            data: HashMap<String, Any>
-                        ) {
-                            val profile = ContactManager.getProfileDetails(jid)
-                            if (profile != null) {
-                                result.success(profile.toJsonString())
-                            }
+                        override fun onSuccess(backUpFilePath: String) {
+//                            onSuccessStreamHandler.onSuccess?.success(backUpFilePath)
+                            FlyMethodConstants.updateChatSinkValue(
+                                Constants.onSuccessChannel,
+                                backUpFilePath
+                            )
                         }
                     })
                 }
-            }
-            call.method.equals("getUserLastSeenTime") -> {
-                getUserLastSeenTime(call, result)
-            }
-            call.method.equals("sendContactUsInfo") -> {
-                sendContactUsInfo(call, result)
-            }
-            call.method.equals("getUsersIBlocked") -> {
-                getUsersIBlocked(call, result)
-            }
-            call.method.equals("loginWebChatViaQRCode") -> {
-                loginWebChatViaQRCode(call, result)
-            }
-            call.method.equals("showCustomTones") -> {
-                showCustomTones(call, result)
-            }
-            call.method.equals("cancelNotifications") -> {
-                cancelNotifications()
-            }
-            call.method.equals("getDefaultNotificationUri") -> {
-                getDefaultNotificationUri(result)
-            }
-            /*call.method.equals("setNotificationUri") -> {
-          setNotificationUri(call)
-      }*/
-            call.method.equals("setNotificationSound") -> {
-                setNotificationSound(call)
-            }
-            call.method.equals("getNotificationSound") -> {
-                getNotificationSound(result)
-            }
-            call.method.equals("setDefaultNotificationSound") -> {
-                //setDefaultNotificationSound()
-            }
-            call.method.equals("setMuteNotification") -> {
-                setMuteNotification(call)
-            }
-            call.method.equals("setNotificationVibration") -> {
-                setNotificationVibration(call)
-            }
-            call.method.equals("getWebLoginDetails") -> {
-                val details = WebLoginDataManager.getWebLoginDetails()
-                result.success(details.toJsonString())
-            }
-            call.method.equals("webLoginDetailsCleared") -> {
-                WebLoginDataManager.webLoginDetailsCleared()
-                result.success(true)
-            }
-            call.method.equals("logoutWebUser") -> {
-                UpDateWebPassword().upDatePassword()
-                val listWebLogin = call.argument<List<String>>("listWebLogin")//qrUniqeToken list
-                if (listWebLogin != null && listWebLogin.isNotEmpty()) {
-                    for (it in listWebLogin) {
-                        ChatManager.logoutWebUser(it)
-                    }
-                }
-                result.success(true)
-            }
-            call.method.equals("getRingtoneName") -> {
-//                val uri = call.argument<String>("ringtone_uri")
-                result.success(getRingtoneName())
-            }
-            call.method.equals("delete_account") -> {
-                deleteAccount(call, result)
-            }
-            call.method.equals("get_favourite_messages") -> {
-                getFavouriteMessages(result)
-            }
-            call.method.equals("unFavouriteAllFavouriteMessages") -> {
-                unFavouriteAllFavouriteMessages(result)
-            }
-            call.method.equals("getAllGroups") -> {
-                getAllGroups(call, result)
-            }
-            call.method.equals("setMediaAutoDownload") -> {
-                setMediaAutoDownload(call)
-            }
-            call.method.equals("getMediaAutoDownload") -> {
-                getMediaAutoDownload(result)
-            }
-            call.method.equals("saveMediaSettings") -> {
-                saveMediaSettings(call)
-            }
-            call.method.equals("getMediaSetting") -> {
-                getMediaSetting(call, result)
-            }
-            call.method.equals("saveUnsentMessage") -> {
-                saveUnsentMessage(call)
-            }
-            call.method.equals("getUnsentMessageOfAJid") -> {
-                getUnsentMessageOfAJid(call, result)
-            }
-            call.method.equals("getJidFromPhoneNumber") -> {
-                getJidFromPhoneNumber(call, result)
-            }
-            call.method.equals("addContact") -> {
-                openCreateContact(call)
-            }
-            call.method.equals("setRegionCode") -> {
-                setRegionCode(call)
-            }
-            call.method.equals("getManifestValue") -> {
-                getManifestValue(call, result)
-            }
-            call.method.equals("openAudioFilePicker") -> {
-                selectAudioFileFromStorage(result)
-            }
-            call.method.equals("getAvailableFeatures") -> {
-                getAvailableFeatures(result)
-            }
-            call.method.equals("createTopic") -> {
-                createTopic(call, result)
-            }
-            call.method.equals("getTopics") -> {
-                getTopics(call, result)
-            }
-
-            /*call.method.equals("get_call_logs") -> {
-                getCallLogsList(call, result)
-            }
-
-            call.method.equals("get_filtered_call_logs") -> {
-                filteredCallLog(call, result)
-            }*/
-
-//            call.method.equals("deleteCallLog") -> {
-//                deleteCallLog(call, result)
-//            }
-
-            else -> {
-                result.notImplemented()
-            }
-
-        }
-    }
-
-    private fun getAvailableFeatures(result: MethodChannel.Result) {
-        try {
-            val availableFeatures = ChatManager.getAvailableFeatures().toJsonString()
-            LogMessage.d("getAvailableFeatures", "$availableFeatures")
-            result.success(availableFeatures)
-        } catch (e: Exception) {
-            result.error("500", e.message, e);
-        }
-
-    }
-
-    private fun createTopic(call: MethodCall, result: MethodChannel.Result) {
-        val topicName = call.argument<String>("topicName") ?: ""
-        val metaData = call.argument<List<Map<String, Any>>>("metaData") ?: arrayListOf()
-        LogMessage.d("createTopic", metaData.toString())
-        /*if(topicName.isNullOrEmpty()){
-            return
-        }
-        if(metaData.isNullOrEmpty()){
-            return
-        }*/
-        val meta = extractMetaData(metaData)
-
-        ChatManager.createTopic(topicName, meta) { isSuccess, throwable, data ->
-            LogMessage.d("createTopic", "$isSuccess : $data")
-            if (isSuccess) {
-                val topic = data["data"] as JSONObject
-                val topicId = topic.get("topicId")
-                LogMessage.d("topicId", "$topicId")
-                result.success(topicId)
-            } else {
-                result.error("807", throwable?.message, null)
-            }
-        }
-        //a00251d7-d388-4f47-8672-553f8afc7e11
-    }
-
-    private fun getTopics(call: MethodCall, result: MethodChannel.Result) {
-        val topicIds = call.argument<List<String>>("topicIds")
-        LogMessage.d("topicIds", topicIds.toString())
-        ChatManager.getTopics(topicIds as ArrayList<String>) { isSuccess, throwable, data ->
-            LogMessage.d("getTopics", "$isSuccess : $data")
-            //D/getTopics(22473): true : {data={"topics":[{"topicName":"New Topic saravanakumar","topicId":"a00251d7-d388-4f47-8672-553f8afc7e11","metaData":{"key1":"value1"}}]}, http_status_code=200, message=Data retrieved successfully}
-            if (isSuccess) {
-                val resultData = (data["data"] as JSONObject)
-                val topics = resultData.get("topics")
-                LogMessage.d("getTopics", topics.toString())
-                //handle success
-                result.success(topics.toString())
-            } else {
-                result.error("807", throwable?.message, null)
-                // print throwable to find the exception details.
-            }
-        }
-    }
-
-    private fun extractMetaData(data: List<Map<String, Any>>): List<MetaData> {
-        val extractedData = ArrayList<MetaData>()
-        data.forEach { it ->
-            extractedData.add(MetaData(it.get("key") as String, it.get("value") as String))
-        }
-        LogMessage.d("extractMetaData", "$data : ${extractedData.toJsonString()}")
-        return extractedData
-    }
-
-    private fun getManifestValue(call: MethodCall, result: MethodChannel.Result) {
-        val find = call.argument<String>("key")
-        if (find.isNullOrEmpty()) {
-            result.error("500", "key must not be null or Empty", "")
-        } else {
-            val ai: ApplicationInfo =
-                mContext.packageManager //ChatManager.applicationContext.packageManager
-                    .getApplicationInfo(
-                        mContext.packageName,
-                        PackageManager.GET_META_DATA
-                    )//ChatManager.applicationContext.packageName
-            val value = ai.metaData[find]//ai.metaData["com.google.android.geo.API_THUMP_KEY"]
-            val key = value
-            /*return ("https://maps.googleapis.com/maps/api/staticmap?center=" + latitude + "," + longitude
-                + "&zoom=13&size=300x200&markers=color:red|" + latitude + "," + longitude + "&key="
-                + key)*/
-            if (key != null) {
-                result.success(key.toString())
-            } else {
-//                result.success("")
-                result.error("500", "$find key not found in AndoidManifest file", "")
-            }
-        }
-    }
-
-    private fun buildChatSDK(call: MethodCall) {
-        val domainBaseUrl: String? = call.argument("domainBaseUrl")
-        val storageFolderName: String? = call.argument("storageFolderName")
-        val licenseKey: String? = call.argument("licenseKey")
-        val enableMobileNumberLogin: Boolean? = call.argument("enableMobileNumberLogin")
-        isTrialLicenceKey = call.argument("isTrialLicenceKey") ?: true
-        val maximumRecentChatPin: Int? = call.argument("maximumRecentChatPin")
-//    val enableGroup : Boolean = call.argument("enableGroup") ?: true
-        val groupConfig: HashMap<String, Any?>? = call.argument("groupConfig")
-//    val useProfileName : Boolean? = call.argument("useProfileName")
-        val ivKey: String? = call.argument("ivKey")
-        val enableSDKLog: Boolean = call.argument("enableDebugLog") ?: false
-        val chatHistoryEnable: Boolean = call.argument("chatHistoryEnable") ?: false
-        LogMessage.enableDebugLogging(enableSDKLog)
-        LogMessage.d("buildChatSDK", call.arguments.toString())
-        /*GroupManager.setNameHelper(object  : NameHelper {
-            override fun getDisplayName(jid: String): String {
-                return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(jid)!!.name else Constants.EMPTY_STRING
-            }
-        })*/
-        val buildSDK = ChatSDK.Builder()
-//    if(enableGroup){
-        val groupConfiguration = GroupConfig.Builder()
-            .enableGroupCreation(true)
-            .setMaximumMembersInAGroup(200)
-            .onlyAdminCanAddOrRemoveMembers(true)
-            .build()
-        buildSDK.setGroupConfiguration(groupConfiguration)
-//    }
-        if (groupConfig != null) {
-            val groupConfiguration = GroupConfig.Builder()
-                .enableGroupCreation(groupConfig.get("enableGroup") as Boolean)
-                .setMaximumMembersInAGroup(groupConfig.get("maxMembersCount") as Int)
-                .onlyAdminCanAddOrRemoveMembers(groupConfig.get("adminOnlyAddRemoveAccess") as Boolean)
-                .build()
-            buildSDK.setGroupConfiguration(groupConfiguration)
-        }
-        LogMessage.d("enable chat history", chatHistoryEnable.toString())
-        ChatManager.enableChatHistory(chatHistoryEnable)
-        if (storageFolderName != null) {
-            ChatManager.setMediaFolderName(storageFolderName)
-        }
-        if (enableMobileNumberLogin != null) {
-            ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
-        }
-        if (maximumRecentChatPin != null) {
-            buildSDK.setMaximumPinningForRecentChat(maximumRecentChatPin)
-        }
-        /*if(useProfileName!=null){
-      ChatSDK.Builder().useProfileName(useProfileName);
-    }*/
-        if (ivKey != null) {
-            ChatManager.setMessageIVKey(ivKey)
-        }
-
-        if (domainBaseUrl != null && licenseKey != null) {
-            buildSDK.setDomainBaseUrl(domainBaseUrl)
-                .setLicenseKey(licenseKey)
-                .setIsTrialLicenceKey(isTrialLicenceKey)
-        }
-        buildSDK.build()
-
-        //Set Name based on the Profile data
-        //if not set you will get error on email chat(export) and any group related actions
-        GroupManager.setNameHelper(object : NameHelper {
-            override fun getDisplayName(jid: String): String {
-                return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(
-                    jid
-                )!!.getDisplayName() else com.mirrorflysdk.flycommons.Constants.EMPTY_STRING
-            }
-        })
-        Logger.enableDebugLogging(enableSDKLog);
-        SdkCallFunctions(mContext).initCall()
-    }
-
-    private fun buildInitializeSDK(call: MethodCall, result: MethodChannel.Result) {
-
-        val licenseKey: String? = call.argument("licenseKey")
-        val chatHistoryEnable: Boolean = call.argument("chatHistoryEnable") ?: false
-        val storageFolderName: String? = call.argument("storageFolderName")
-        val enableMobileNumberLogin: Boolean? = call.argument("enableMobileNumberLogin")
-        val enableSDKLog: Boolean = call.argument("enableDebugLog") ?: false
-
-        if (storageFolderName != null) {
-            ChatManager.setMediaFolderName(storageFolderName)
-        }
-        if (enableMobileNumberLogin != null) {
-            ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
-        }
-
-        LogMessage.enableDebugLogging(enableSDKLog)
-        Logger.enableDebugLogging(enableSDKLog)
-        CallManager.enableCallLogExport(enableSDKLog)
-        ChatManager.enableChatHistory(chatHistoryEnable)
-
-        SdkCallFunctions(mContext).initCall()
-
-        ChatManager.initializeSDK(licenseKey!!) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                LogMessage.d(TAG, "initializeSDK success")
-                result.success(true)
-            } else {
-                LogMessage.d(TAG, "initializeSDK failed with error message " + data["message"])
-                result.error("500", "SDK failed to Initialize", throwable);
-            }
-        }
-    }
-
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        methodChannels.remove(binding.binaryMessenger)?.setMethodCallHandler(null)
-//        channel.setMethodCallHandler(null)
-    }
-
-    /// Get The Build Flavor config.
-    /*private fun getFlavor(result: Result) {
-    flutterActivity?.let {
-      val pack = it.localClassName.split(".").dropLast(1).joinToString(".")
-      val flavor =
-        Class.forName(pack.plus(".BuildConfig")).getField("FLAVOR").get(null) as String
-      result.success(flavor)
-    } ?: run {
-      result.success(null)
-    }
-  }*/
-
-    private fun registerUser(call: MethodCall, result: MethodChannel.Result) {
-        if (!call.hasArgument("userIdentifier")) {
-            result.error("404", "User Mobile Number Required", null)
-        } else {
-            val userIdentifier: String? = call.argument("userIdentifier")
-            val token: String = call.argument("token") ?: ""
-            val isForceRegister: Boolean = call.argument("isForceRegister") ?: true
-            LogMessage.d("isForceRegister", isForceRegister.toString())
-            if (userIdentifier != null) {
-                //LogMessage.d(TAG, userIdentifier.toString())
-
-//                try {
-                FlyCore.registerUser(
-                    userIdentifier,
-                    token, isForceRegister
-                ) { isSuccess: Boolean, throwable: Throwable?, data: HashMap<String?, Any?> ->
-                    if (isSuccess) {
-
-                        val response = JSONObject(data).toString()
-//                            val datum = data["data"] as JSONObject
-//                            val username: String = datum.getString(com.mirrorflysdk.flycommons.Constants.USERNAME)
-//                            CallManager.setCurrentUserId(FlyUtils.getJid(username))
-                        //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                        LogMessage.d("FlyCore.registerUser", data.toJsonString())
-                        if (token.isNotEmpty()) {
-                            PushNotificationManager.updateFcmToken(
-                                token,
-                                object : ChatActionListener {
-                                    override fun onResponse(
-                                        isSuccess: Boolean,
-                                        message: String
-                                    ) {
-                                        if (isSuccess) {
-                                            //LogMessage.d( "RESPONSE_CAPTURE","===========================")
-                                            //DebugUtilis.v("updateFcmToken", message)
-                                            LogMessage.e(TAG, "Token updated successfully")
-                                        }
-                                    }
-                                })
-                        }
-                        ChatEventsManager.setupMessageEventListener(this)
-                        ChatEventsManager.attachProfileEventsListener(this)
-                        ChatEventsManager.attachGroupEventsListener(this)
-                        ChatEventsManager.attachLoginEventsListener(this)
-                        ChatEventsManager.attachTypingEventListener(this)
-                        CallLogManager.setCallLogsListener(this)
-                        ChatManager.setAvailableFeaturesCallback(this)
-                        CallManager.setMissedCallListener(this)
-                        SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
-                        ChatManager.setConnectionListener(object : ChatConnectionListener {
-                            override fun onConnected() {
-                                LogMessage.d(TAG, "onConnected")
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    result.success(response)
-                                }, 500)
-
-                            }
-
-                            override fun onConnectionFailed(e: FlyException) {
-                                LogMessage.d(TAG, "Chat Manager onConnectionFailed")
-                                result.error(
-                                    "500",
-                                    e.message,
-                                    null
+                call.method.equals("cancelRestore") -> {
+                    val filepath = call.argument<String>("file") ?: ""
+                    val file = File(filepath)
+                    if (file.exists()) {
+                        RestoreManager.restoreData(file, object : RestoreListener {
+                            override fun onFailure(reason: String) {
+//                                onFailureStreamHandler.onFailure?.success(reason)
+                                FlyMethodConstants.updateChatSinkValue(
+                                    Constants.onFailureChannel,
+                                    reason
                                 )
                             }
 
-                            override fun onDisconnected() {
-                                LogMessage.d(TAG, "Chat Manager Disconnected")
+                            override fun onProgressChanged(percentage: Int) {
+//                                onProgressChangedStreamHandler.onProgressChanged?.success(percentage)
+                                FlyMethodConstants.updateChatSinkValue(
+                                    Constants.onProgressChangedChannel,
+                                    percentage
+                                )
                             }
 
-                            override fun onReconnecting() {
-                                LogMessage.d(TAG, "Chat Manager onReconnecting")
-                            }
-
-                        })
-                    } else {
-                        if (data["http_status_code"] == 403) {
-                            result.error("403", throwable?.message.toString(), null)
-                        } else if (data["http_status_code"] == 405) {
-                            result.error("405", data["message"].toString(), null)
-                        } else {
-                            result.error("500", data["message"].toString(), null)
-                        }
-                    }
-                }
-                /*} catch (e: Exception) {
-
-                    LogMessage.d("Register Exception", e.toString())
-
-//                    result.error("404", e.message.toString() , null)
-                    result.error("404", e.message, e)
-                }*/
-
-            } else {
-                //LogMessage.d("MIRROR_FLY", "user identifier is null")
-                //LogMessage.d("MIRROR_FLY", call.arguments.toString())
-                result.error("404", "User Identifier empty", "")
-            }
-        }
-    }
-
-
-    private fun setRegionCode(call: MethodCall) {
-        val regionCode = call.argument<String?>("regionCode") ?: "IN"
-        ChatManager.setUserCountryISOCode(regionCode)
-        SharedPreferenceManager.instance.storeString(
-            SharedPreferenceManager.COUNTRY_CODE,
-            regionCode
-        )
-        LogMessage.d("regionCode", ChatManager.getUserCountryISOCode())
-    }
-
-    private fun setDefaultNotificationSound() {
-        val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
-        setNotificationUri(default)
-    }
-
-    private fun getJidFromPhoneNumber(call: MethodCall, result: MethodChannel.Result) {
-        val mobileNumber = call.argument<String>("mobileNumber") ?: ""
-        val countryCode = call.argument<String>("countryCode") ?: ""
-        val userJID = Utils.getJidFromPhoneNumber(mContext, mobileNumber, countryCode)
-        result.success(userJID ?: "")
-    }
-
-    private fun getUnsentMessageOfAJid(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        val data = FlyMessenger.getUnsentMessageOfAJid(jid)
-        result.success(data)
-    }
-
-    private fun saveUnsentMessage(call: MethodCall) {
-        val jid = call.argument<String>("jid") ?: ""
-        val texMessage = call.argument<String>("texMessage") ?: ""
-        FlyMessenger.saveUnsentMessage(jid, texMessage)
-    }
-
-    private fun setMediaAutoDownload(call: MethodCall) {
-        val enable = call.argument<Boolean>("enable") ?: false
-        //Auto download settings changed this method is not working so i commented
-//    SharedPreferenceManager.instance.storeBoolean(SharedPreferenceManager.MEDIA_AUTO_DOWNLOAD,enable)
-        val mediaAutoDownlod = MediaAutoDownloadOption()
-        val autoDownloadSettings = FlyMessenger.getMediaAutoDownloadOptions()
-        mediaAutoDownlod.autoDownloadEnabled = enable
-        mediaAutoDownlod.downloadDocumentsOnMobileData =
-            autoDownloadSettings.downloadDocumentsOnMobileData
-        mediaAutoDownlod.downloadPhotosOnMobileData =
-            autoDownloadSettings.downloadPhotosOnMobileData
-        mediaAutoDownlod.downloadVideosOnMobileData =
-            autoDownloadSettings.downloadVideosOnMobileData
-        mediaAutoDownlod.downloadAudiosOnMobileData =
-            autoDownloadSettings.downloadAudiosOnMobileData
-        mediaAutoDownlod.downloadDocumentsOnWifiData =
-            autoDownloadSettings.downloadDocumentsOnWifiData
-        mediaAutoDownlod.downloadPhotosOnWifiData = autoDownloadSettings.downloadPhotosOnWifiData
-        mediaAutoDownlod.downloadVideosOnWifiData = autoDownloadSettings.downloadVideosOnWifiData
-        mediaAutoDownlod.downloadAudiosOnWifiData = autoDownloadSettings.downloadAudiosOnWifiData
-        FlyMessenger.setMediaAutoDownloadOptions(mediaAutoDownlod)
-    }
-
-    private fun getMediaAutoDownload(result: MethodChannel.Result) {
-        //Auto download settings changed this method is not working so i commented
-//      val enable = SharedPreferenceManager.instance.getBoolean(SharedPreferenceManager.MEDIA_AUTO_DOWNLOAD)
-        val enable = FlyMessenger.getMediaAutoDownloadOptions()
-        result.success(enable.autoDownloadEnabled)
-    }
-
-    private fun saveMediaSettings(call: MethodCall) {
-        val photos = call.argument<Boolean>("Photos") ?: false
-        val videos = call.argument<Boolean>("Videos") ?: false
-        val audio = call.argument<Boolean>("Audio") ?: false
-        val documents = call.argument<Boolean>("Documents") ?: false
-        val networkType = call.argument<Int>("NetworkType") ?: 0
-        //Auto download settings changed this method is not working so i commented
-        /*val settingsUtil = SettingsUtil()
-    val mobileDataSettingsModel = MediaDownloadSettingsModel()
-    mobileDataSettingsModel.isShouldAutoDownloadPhotos = Photos
-    mobileDataSettingsModel.isShouldAutoDownloadVideos = Videos
-    mobileDataSettingsModel.isShouldAutoDownloadAudios = Audio
-    mobileDataSettingsModel.isShouldAutoDownloadDocuments = Documents
-    mobileDataSettingsModel.dataConnectionNetworkType = NetworkType // 0 is TYPE_MOBILE , 1 is TYPE_WIFI
-    println("call ${call.arguments}")
-    settingsUtil.saveMediaSettings(mobileDataSettingsModel)*/
-        val autoDownloadSettings = FlyMessenger.getMediaAutoDownloadOptions()
-        val mediaAutoDownlod = MediaAutoDownloadOption()
-        mediaAutoDownlod.autoDownloadEnabled = true
-        mediaAutoDownlod.downloadDocumentsOnMobileData =
-            if (networkType == 0) documents else autoDownloadSettings.downloadDocumentsOnMobileData
-        mediaAutoDownlod.downloadPhotosOnMobileData =
-            if (networkType == 0) photos else autoDownloadSettings.downloadPhotosOnMobileData
-        mediaAutoDownlod.downloadVideosOnMobileData =
-            if (networkType == 0) videos else autoDownloadSettings.downloadVideosOnMobileData
-        mediaAutoDownlod.downloadAudiosOnMobileData =
-            if (networkType == 0) audio else autoDownloadSettings.downloadAudiosOnMobileData
-        mediaAutoDownlod.downloadDocumentsOnWifiData =
-            if (networkType == 1) documents else autoDownloadSettings.downloadDocumentsOnWifiData
-        mediaAutoDownlod.downloadPhotosOnWifiData =
-            if (networkType == 1) photos else autoDownloadSettings.downloadPhotosOnWifiData
-        mediaAutoDownlod.downloadVideosOnWifiData =
-            if (networkType == 1) videos else autoDownloadSettings.downloadVideosOnWifiData
-        mediaAutoDownlod.downloadAudiosOnWifiData =
-            if (networkType == 1) audio else autoDownloadSettings.downloadAudiosOnWifiData
-        FlyMessenger.setMediaAutoDownloadOptions(mediaAutoDownlod)
-    }
-
-    private fun getMediaSetting(call: MethodCall, result: MethodChannel.Result) {
-        val networkType = call.argument<Int>("NetworkType") ?: 0
-        val type = call.argument<String>("type") ?: ""
-        //Auto download settings changed this method is not working so i commented
-        /*val settingsUtil = SettingsUtil()
-    val net = if (NetworkType==0) SharedPreferenceManager.CONNECTION_TYPE_MOBILE else SharedPreferenceManager.CONNECTION_TYPE_WIFI
-    when(type){
-      "Photos" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadPhotos)
-      "Videos" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadVideos)
-      "Audio" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadAudios)
-      "Documents" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadDocuments)
-      "" -> result.success(false)
-    }*/
-        val option = FlyMessenger.getMediaAutoDownloadOptions()
-        when (type) {
-            "Photos" -> result.success(if (networkType == 0) option.downloadPhotosOnMobileData else option.downloadPhotosOnWifiData)
-            "Videos" -> result.success(if (networkType == 0) option.downloadVideosOnMobileData else option.downloadVideosOnWifiData)
-            "Audio" -> result.success(if (networkType == 0) option.downloadAudiosOnMobileData else option.downloadAudiosOnWifiData)
-            "Documents" -> result.success(if (networkType == 0) option.downloadDocumentsOnMobileData else option.downloadDocumentsOnWifiData)
-            "" -> result.success(false)
-        }
-
-    }
-
-    private fun updateMediaDownloadStatus(call: MethodCall) {
-        val mediaMessageId = call.argument<String>("mediaMessageId") ?: ""
-        val progress = call.argument<Int>("progress") ?: 0
-        val downloadStatus = call.argument<Int>("downloadStatus") ?: 0
-        val dataTransferred = call.argument<Long>("dataTransferred") ?: 0L
-        FlyMessenger.updateMediaDownloadStatus(
-            mediaMessageId,
-            progress,
-            dataTransferred,
-            downloadStatus
-        )
-    }
-
-    private fun updateMediaUploadStatus(call: MethodCall) {
-        val mediaMessageId = call.argument<String>("mediaMessageId") ?: ""
-        val progress = call.argument<Int>("progress") ?: 0
-        val uploadStatus = call.argument<Int>("uploadStatus") ?: 0
-        val dataTransferred = call.argument<Long>("dataTransferred") ?: 0L
-        FlyMessenger.updateMediaUploadStatus(
-            mediaMessageId,
-            progress,
-            dataTransferred,
-            uploadStatus
-        )
-    }
-
-    private fun cancelMediaUploadOrDownload(call: MethodCall) {
-        val messageId = call.argument<String>("messageId") ?: ""
-        FlyMessenger.cancelMediaUploadOrDownload(messageId)
-    }
-
-    private fun createOfflineGroupInOnline(call: MethodCall, result: MethodChannel.Result) {
-        val groupId = call.argument<String>("groupId") ?: ""
-        GroupManager.createOfflineGroupInOnline(groupId) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                result.success(isSuccess)
-            } else {
-                result.error("500", throwable?.message, "")
-            }
-            /*if (isSuccess) {
-          // Group created in server update the UI
-      } else {
-          // Group creation failed print throwable to find the exception details.
-          result.error("500", throwable!!.message, throwable)
-      }*/
-        }
-    }
-
-    private fun updateFcmToken(call: MethodCall, result: MethodChannel.Result) {
-        val token = call.argument<String>("token") ?: ""
-        PushNotificationManager.updateFcmToken(token, object : ChatActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                if (isSuccess) {
-                    result.success(isSuccess)
-                } else {
-                    result.error("500", message, "")
-                }
-            }
-        })
-    }
-
-    private fun handleReceivedMessage(call: MethodCall, result: MethodChannel.Result) {
-        val notificationdata = call.argument<Map<String, String>>("notificationdata") ?: mapOf()
-        //LogMessage.d("===notificationdata===",notificationdata.toString())
-        PushNotificationManager.handleReceivedMessage(notificationdata, object :
-            NotificationEventListener {
-            override fun onMessageReceived(chatMessage: ChatMessage) {
-                LogMessage.d("push onMessageReceived", chatMessage.toJsonString())
-                //Here you need to fetch recent unread messages to build up notification content
-                //LogMessage.d("notificationdata",chatMessage.tojsonString())
-                /*val jsonObject = JSONObject()
-                jsonObject.put("groupJid", "")
-                jsonObject.put("titleContent", "")
-                jsonObject.put("chatMessage", JSONObject(chatMessage.toJson()))
-                jsonObject.put("cancel", false)
-                result.success(jsonObject.toString())*/
-                result.success(chatMessage.toJsonString())
-            }
-
-            override fun onGroupNotification(
-                groupJid: String,
-                titleContent: String,
-                chatMessage: ChatMessage
-            ) {
-                LogMessage.d(
-                    "push onGroupNotification",
-                    "groupJid $groupJid titleContent $titleContent chatMessage ${chatMessage.toJsonString()}"
-                )
-                /* Create the notification for group creation with paramter values */
-                //LogMessage.d("notificationdata group",chatMessage.tojsonString())
-                /*val jsonObject = JSONObject()
-                jsonObject.put("groupJid", groupJid)
-                jsonObject.put("titleContent", titleContent)
-                jsonObject.put("chatMessage", JSONObject(chatMessage.toJson()))
-                jsonObject.put("cancel", false)
-                result.success(jsonObject.toString())*/
-                result.success(chatMessage.toJsonString())
-            }
-
-            override fun onCancelNotification() {
-                // here you have to cancel notification
-                //LogMessage.d("notificationdata","cancel")
-                /*val jsonObject = JSONObject()
-                jsonObject.put("groupJid", "")
-                jsonObject.put("titleContent", "")
-                jsonObject.put("chatMessage", "")
-                jsonObject.put("cancel", true)
-                result.success(jsonObject.toString())*/
-            }
-
-        })
-    }
-
-    private fun prepareChatConversationToExport(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        FlyCore.prepareChatConversationToExport(jid) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val json = JSONObject()
-                val res: ChatDataModel = data["data"] as ChatDataModel
-                val mediaAttachmentUri = JSONArray()
-                if (res.mediaAttachmentsUri.isNotEmpty()) {
-                    res.mediaAttachmentsUri.forEach { item ->
-//            mediaAttachmentUri.put("/storage/emulated/0/"+item.path!!.replace("external/","/storage/emulated/0/"))
-                        val file = File(item.path)
-                        mediaAttachmentUri.put(convertToAbsolutePath(file.path))//(file.path.toString().replace("external_files/","/storage/emulated/0/"))
-                    }
-                    json.put("subject", res.subject)
-                    json.put("messageContent", res.messageContent)
-                    json.put("mediaAttachmentsUrl", mediaAttachmentUri)
-                    result.success(json.toString())
-                } else {
-                    result.success(json.toString());
-                }
-                // ChatDataModel has the every data to export the chat
-            } else {
-                //Exporting chat data failed print throwable to find the exception details.
-                result.error("500", throwable?.message, throwable)
-            }
-        }
-    }
-
-    private fun convertToAbsolutePath(relativeFilePath: String): String {
-        val externalStorageDirectoryPath = Environment.getExternalStorageDirectory().absolutePath
-        return externalStorageDirectoryPath + relativeFilePath.replaceFirst(
-            "/external_files".toRegex(),
-            ""
-        )
-    }
-
-    private fun getArchivedChatList(result: MethodChannel.Result) {
-        FlyCore.getArchivedChatList { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val res: ArrayList<RecentChat> = data["data"] as ArrayList<RecentChat>
-                result.success(data.toJsonString())
-            } else {
-                //Getting users blocked me list failed print throwable to find the exception details.
-                result.error("500", throwable?.message, throwable)
-            }
-        }
-    }
-
-    private fun enableDisableArchivedSettings(call: MethodCall, result: MethodChannel.Result) {
-        val enable = call.argument<Boolean>("enable") ?: false
-        FlyCore.enableDisableArchivedSettings(enable, FlyCallback { isSuccess, throwable, data ->
-            if (isSuccess) {
-                result.success(isSuccess)
-            } else {
-                result.error("500", throwable?.message, "")
-            }
-        })
-    }
-
-    private fun updateArchiveUnArchiveChat(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        val enabled = call.argument<Boolean>("isArchived") ?: false
-        FlyCore.updateArchiveUnArchiveChat(jid, enabled, FlyCallback { isSuccess, throwable, data ->
-            if (isSuccess) {
-                result.success(isSuccess)
-            } else {
-                result.error("500", throwable?.message, "")
-            }
-        })
-    }
-
-    private fun deleteRecentChats(call: MethodCall, result: MethodChannel.Result) {
-        val jidlist = call.argument<List<String>>("jidlist") ?: arrayListOf()
-        ChatManager.deleteRecentChats(jidlist, object : ChatActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                if (isSuccess) {
-                    result.success(isSuccess)
-                } else {
-                    result.error("500", message, "")
-                }
-            }
-
-        })
-    }
-
-    private fun markConversationAsRead(call: MethodCall, result: MethodChannel.Result) {
-        val jidlist = call.argument<List<String>>("jidlist") ?: arrayListOf()
-        FlyCore.markConversationAsRead(jidlist)
-    }
-
-    private fun markConversationAsUnread(call: MethodCall, result: MethodChannel.Result) {
-        val jidlist = call.argument<List<String>>("jidlist") ?: arrayListOf()
-        FlyCore.markConversationAsUnread(jidlist)
-    }
-
-    private fun clearAllConversation(result: MethodChannel.Result) {
-        ChatManager.clearAllConversation(object : ChatActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                if (isSuccess) {
-                    result.success(isSuccess)
-                } else {
-                    result.error("500", message, "")
-                }
-            }
-
-        })
-    }
-
-    private fun getGroupProfile(call: MethodCall, result: MethodChannel.Result) {
-        val groupJid = call.argument<String>("groupJid") ?: ""
-        val server = call.argument<Boolean>("server") ?: false
-        GroupManager.getGroupProfile(groupJid, server) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val groupProfileDetails: ProfileDetails = data["data"] as ProfileDetails
-                result.success(groupProfileDetails.toJsonString())
-            } else {
-                // Group creation failed print throwable to find the exception details.
-                result.error("500", throwable?.message, throwable)
-            }
-        }
-    }
-
-    private fun getGroupMessageDeliveredToList(call: MethodCall, result: MethodChannel.Result) {
-        val messageId = call.argument<String>("messageId") ?: ""
-        GroupManager.getGroupMessageDeliveredToList(messageId) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val messageStatusList: List<MessageStatusDetail> =
-                    data["data"] as List<MessageStatusDetail>
-                val groupMessageDeliveredJsonObject = JSONObject()
-                groupMessageDeliveredJsonObject.put(
-                    "count",
-                    messageStatusList.size.toString()
-                )
-                groupMessageDeliveredJsonObject.put(
-                    "totalParticipantCount",
-                    FlyMessenger.getGroupMessageStatusCount(messageId)
-                )
-                val jsArray = JSONArray(messageStatusList.toJson())
-                groupMessageDeliveredJsonObject.put("participantList", jsArray)
-                LogMessage.d("getGroupMessageDeliveredToList", data["data"]?.toJsonString())
-                result.success(groupMessageDeliveredJsonObject.toString())
-            } else {
-                result.error("500", throwable?.message, throwable)
-            }
-        }
-    }
-
-    private fun getGroupMessageReadByList(call: MethodCall, result: MethodChannel.Result) {
-        val messageId = call.argument<String>("messageId") ?: ""
-        GroupManager.getGroupMessageReadByList(messageId) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val messageStatusList: List<MessageStatusDetail> =
-                    data["data"] as List<MessageStatusDetail>
-
-                val groupMessageReadJsonObject = JSONObject()
-                groupMessageReadJsonObject.put("count", messageStatusList.size.toString())
-                groupMessageReadJsonObject.put(
-                    "totalParticipantCount",
-                    FlyMessenger.getGroupMessageStatusCount(messageId)
-                )
-                val jsArray = JSONArray(messageStatusList.toJson())
-                groupMessageReadJsonObject.put("participantList", jsArray)
-                LogMessage.d("getGroupMessageReadByList", data["data"]?.toJsonString())
-                result.success(groupMessageReadJsonObject.toString())
-            } else {
-                result.error("500", throwable?.message, throwable)
-            }
-        }
-    }
-
-    private fun contactSyncState(result: MethodChannel.Result) {
-        /*FlyCore.contactSyncState.observe(mContext) {
-      when (it) {
-        is com.contus.flycommons.Result.Error -> {
-          result.error("500", it.exception.message, it.exception)
-        }
-        is com.contus.flycommons.Result.InProgress -> {
-          result.success("InProgress")
-        }
-        is com.contus.flycommons.Result.Success -> {
-          result.success("Success")
-        }
-      }
-
-    };*/
-    }
-
-    private fun revokeContactSync(result: MethodChannel.Result) {
-        FlyCore.revokeContactSync { isSuccess, throwable, data ->
-            if (isSuccess) {
-                result.success(data.toJsonString())
-            } else {
-                result.error("500", throwable?.message, throwable)
-            }
-        }
-    }
-
-    private fun getUsersWhoBlockedMe(call: MethodCall, result: MethodChannel.Result) {
-        val server = call.argument<Boolean>("server") ?: false
-        FlyCore.getUsersWhoBlockedMe(server) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                result.success(data.toJsonString())
-            } else {
-                result.error("500", throwable?.message, throwable)
-            }
-        }
-    }
-
-    private fun enableDisableHideLastSeen(call: MethodCall, result: MethodChannel.Result) {
-        val enable = call.argument<Boolean>("enable") ?: false
-        FlyCore.enableDisableHideLastSeen(enable) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                result.success(isSuccess)
-            } else {
-                result.error("500", throwable?.message, "")
-            }
-            /*if (isSuccess) {
-      } else {
-          result.error("500", throwable!!.message, throwable)
-      }*/
-        }
-    }
-
-    private fun deleteMessagesForMe(call: MethodCall, result: MethodChannel.Result) {
-        val userJID = call.argument<String>("jid")
-        val chatType = call.argument<String>("chat_type")
-        val isMediaDelete = call.argument<Boolean>("isMediaDelete") ?: false
-        val messageIDList = call.argument<List<String>>("message_ids")
-        if (userJID != null && messageIDList != null && chatType != null) {
-            ChatManager.deleteMessagesForMe(
-                userJID,
-                messageIDList,
-                getDeleteChatEnum(chatType),
-                isMediaDelete,
-                object : ChatActionListener {
-                    override fun onResponse(isSuccess: Boolean, message: String) {
-                        if (isSuccess) {
-                            result.success(isSuccess)
-                        } else {
-                            result.error("500", message, "")
-                        }
-                    }
-
-                })
-        }
-    }
-
-    private fun deleteMessagesForEveryone(call: MethodCall, result: MethodChannel.Result) {
-        val userJID = call.argument<String>("jid")
-        val chatType = call.argument<String>("chat_type")
-        val isMediaDelete = call.argument<Boolean>("isMediaDelete") ?: false
-        val messageIDList = call.argument<List<String>>("message_ids")
-        if (userJID != null && messageIDList != null && chatType != null) {
-            ChatManager.deleteMessagesForEveryone(
-                userJID,
-                messageIDList,
-                getDeleteChatEnum(chatType),
-                isMediaDelete,
-                object : ChatActionListener {
-                    override fun onResponse(isSuccess: Boolean, message: String) {
-                        if (isSuccess) {
-                            result.success(isSuccess)
-                        } else {
-                            result.error("500", message, "")
-                        }
-                    }
-                })
-        }
-    }
-
-    private fun getAllGroups(call: MethodCall, result: MethodChannel.Result) {
-        val server = call.argument<Boolean>("server") ?: false
-        GroupManager.getAllGroups(server) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val profilesList = data["data"] as ArrayList<ProfileDetails>
-                profilesList.let {
-                    it.sortedBy { profileDetails -> profileDetails.name?.toLowerCase() }
-                }
-                //DebugUtilis.v("GroupManager.getAllGroups", data.tojsonString())
-                result.success(profilesList.toJsonString())
-            } else {
-                result.error("500", throwable?.message, throwable)
-            }
-        }
-    }
-
-    private fun getFavouriteMessages(result: MethodChannel.Result) {
-        val favouriteMessages: List<ChatMessage> = FlyMessenger.getFavouriteMessages()
-        //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-        //DebugUtilis.v("FlyMessenger.getFavouriteMessages", favouriteMessages.tojsonString())
-        result.success(favouriteMessages.toJsonString())
-    }
-
-
-    private fun unFavouriteAllFavouriteMessages(result: MethodChannel.Result) {
-        ChatManager.unFavouriteAllFavouriteMessages(object : ChatActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                if (isSuccess) {
-                    result.success(isSuccess)
-                } else {
-                    result.error("500", message, "")
-                }
-            }
-        })
-
-    }
-
-
-    private fun deleteAccount(call: MethodCall, result: MethodChannel.Result) {
-        val deleteReason = call.argument("delete_reason") ?: ""
-        val deleteFeedback = call.argument("delete_feedback") ?: ""
-        FlyCore.deleteAccount(deleteReason, deleteFeedback) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("FlyCore.deleteAccount", data.tojsonString())
-//                result.success(data.toJsonString())
-                result.success(true)
-            } else {
-                result.error("500", throwable?.message, throwable)
-            }
-
-        }
-    }
-
-    private fun forwardMessagesToMultipleUsers(call: MethodCall, result: MethodChannel.Result) {
-
-        val messageIDList = call.argument<List<String>>("message_ids")
-        val userList = call.argument<List<String>>("userList")
-
-        if (messageIDList != null && userList != null) {
-            ChatManager.forwardMessagesToMultipleUsers(
-                messageIDList,
-                userList,
-                object : ChatActionListener {
-                    override fun onResponse(isSuccess: Boolean, message: String) {
-                        if (isSuccess) {
-                            //LogMessage.d("ChatManager.forwardMessagesToMultipleUsers", message)
-                            result.success(true)
-                        } else {
-                            result.error("500", message, message)
-                        }
-
-                    }
-                })
-        }
-    }
-
-    private fun forwardMessages(call: MethodCall, result: MethodChannel.Result) {
-        val messageIDList = call.argument<List<String>>("message_ids")
-        val tojid = call.argument<String>("to_jid")
-        val type = call.argument<String>("chat_type")
-
-        if (messageIDList != null && tojid != null && type != null) {
-            val chatType = getChatEnum(type)
-            ChatManager.forwardMessages(
-                messageIDList,
-                tojid,
-                chatType,
-                object : ChatActionListener {
-                    override fun onResponse(isSuccess: Boolean, message: String) {
-                        result.success(isSuccess)
-                    }
-                })
-        }
-    }
-
-    private fun updateFavouriteStatus(call: MethodCall, result: MethodChannel.Result) {
-        val messageID = call.argument<String>("messageID")
-        val chatUserJID = call.argument<String>("chatUserJID")
-        val isFavourite = call.argument<Boolean>("isFavourite")
-
-        if (messageID != null && chatUserJID != null && isFavourite != null) {
-            ChatManager.updateFavouriteStatus(
-                messageID,
-                chatUserJID,
-                isFavourite,
-                object : ChatActionListener {
-                    override fun onResponse(isSuccess: Boolean, message: String) {
-                        if (isSuccess) {
-                            //LogMessage.d("ChatManager.updateFavouriteStatus", message)
-                            result.success(true)
-                        } else {
-                            result.error("500", "Unable to Favourite the Message", message)
-                        }
-                    }
-                })
-        }
-    }
-
-    private fun getMessageStatusOfASingleChatMessage(
-        call: MethodCall,
-        result: MethodChannel.Result
-    ) {
-        val messageID = call.argument<String>("messageID")
-        val messageStatus: ChatMessageStatusDetail? = messageID?.let {
-            FlyMessenger.getMessageStatusOfASingleChatMessage(
-                it
-            )
-        }
-        if (messageStatus != null) {
-            //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-            //DebugUtilis.v( "FlyMessenger.getMessageStatusOfASingleChatMessage", messageStatus.tojsonString() )
-            result.success(messageStatus.toJsonString())
-        } else {
-            //LogMessage.d(TAG, "Message Info Error")
-        }
-    }
-
-    private fun deleteMessages(call: MethodCall, result: MethodChannel.Result) {
-
-        val isDeleteForEveryOne = call.argument<Boolean>("is_delete_for_everyone")
-        val userJID = call.argument<String>("jid")
-        val chatType = call.argument<String>("chat_type")
-        val messageIDList = call.argument<List<String>>("message_ids")
-        if (userJID != null && messageIDList != null && chatType != null) {
-            if (isDeleteForEveryOne!!) {
-                //LogMessage.d(TAG, "Delete For EveryOne")
-                ChatManager.deleteMessagesForEveryone(
-                    userJID,
-                    messageIDList,
-                    getDeleteChatEnum(chatType),
-                    false,
-                    object : ChatActionListener {
-                        override fun onResponse(isSuccess: Boolean, message: String) {
-                            if (isSuccess) {
-                                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                                //DebugUtilis.v("ChatManager.deleteMessagesForEveryone", message)
-                                result.success(message)
-                            } else {
-                                result.error("500", "Unable to Delete the Chat", message)
-                            }
-                        }
-
-                    })
-            } else {
-
-                //LogMessage.d(TAG, "Delete For Me")
-                ChatManager.deleteMessagesForMe(
-                    userJID,
-                    messageIDList,
-                    getDeleteChatEnum(chatType),
-                    false,
-                    object : ChatActionListener {
-                        override fun onResponse(isSuccess: Boolean, message: String) {
-                            if (isSuccess) {
-                                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                                //DebugUtilis.v("ChatManager.deleteMessagesForMe", message)
-                                result.success(message)
-                            } else {
-                                result.error("500", "Unable to Delete the Chat", message)
-                            }
-                        }
-
-                    })
-            }
-        }
-    }
-
-    private fun getMessagesUsingIds(call: MethodCall, result: MethodChannel.Result) {
-        val messageIDList = call.argument<List<String>>("MessageIds") ?: arrayListOf()
-        val messages = FlyMessenger.getMessagesUsingIds(messageIDList)
-        result.success(messages)
-    }
-
-    private fun reportUserOrMessages(call: MethodCall, result: MethodChannel.Result) {
-        val userJID = call.argument<String>("jid")
-        val chatType = call.argument<String>("chat_type")
-        val selectedMessageID = call.argument<String>("selectedMessageID") ?: ""
-        if (chatType != null && userJID != null) {
-            FlyCore.reportUserOrMessages(
-                userJID,
-                chatType,
-                selectedMessageID
-            ) { isSuccess, throwable, data ->
-                if (isSuccess) {
-                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                    //DebugUtilis.v("FlyCore.reportUserOrMessages", data.tojsonString())
-                    result.success(isSuccess)
-                } else {
-                    result.error("500", "Unable to report the User/Chat", throwable?.message)
-                }
-            }
-        } else {
-            result.error("500", "Parameters Missing", null)
-        }
-    }
-
-    private fun clearChat(call: MethodCall, result: MethodChannel.Result) {
-        val userJID = call.argument<String>("jid")
-        val chatType = call.argument<String>("chat_type")
-        val clearExceptStarred = call.argument<Boolean>("clear_except_starred")
-        if (userJID != null && chatType != null && clearExceptStarred != null) {
-            ChatManager.clearChat(
-                userJID,
-                getChatEnum(chatType),
-                clearExceptStarred,
-                object : ChatActionListener {
-                    override fun onResponse(isSuccess: Boolean, message: String) {
-                        if (isSuccess) {
-                            result.success(isSuccess)
-                        } else {
-                            result.error("500", message, "")
-                        }
-                    }
-                })
-        } else {
-            result.error("500", "Parameters Missing", null)
-        }
-    }
-
-    private fun getChatEnum(chatType: String): ChatTypeEnum {
-        return when (chatType) {
-            ChatType.TYPE_CHAT -> ChatTypeEnum.chat
-            ChatType.TYPE_GROUP_CHAT -> ChatTypeEnum.groupchat
-            else -> ChatTypeEnum.broadcast
-        }
-    }
-
-    private fun getDeleteChatEnum(chatType: String): DeleteChatType {
-        return when (chatType) {
-            ChatType.TYPE_CHAT -> DeleteChatType.chat
-            ChatType.TYPE_GROUP_CHAT -> DeleteChatType.groupchat
-            else -> DeleteChatType.chat
-        }
-    }
-
-    private fun sendAudioMessage(call: MethodCall, result: MethodChannel.Result) {
-        val userJID = call.argument<String>("jid")
-        val audiofileUrl = call.argument<String>("audiofileUrl") ?: ""
-        val filePath = call.argument<String>("filePath") ?: ""
-        val audioFile = File(filePath)
-        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
-        val isRecorded = call.argument<Boolean>("isRecorded")
-        val duration = call.argument<String>("duration")?.toLong()
-        val topicId = call.argument("topicId") ?: ""
-        LogMessage.d("isRecorded", isRecorded.toString())
-        val listener = object : SendMessageCallback {
-            override fun onResponse(
-                isSuccess: Boolean,
-                error: Throwable?,
-                chatMessage: ChatMessage?
-            ) {
-                if (chatMessage != null) {
-                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                    //DebugUtilis.v("FlyMessenger.sendAudioMessage", chatMessage.tojsonString())
-                    result.success(chatMessage.toJsonString())
-                } else {
-                    result.error("500", error?.message, error)
-                }
-            }
-        }
-        if (audioFile.exists()) {
-            if (userJID != null && duration != null && isRecorded != null) {
-                if (audiofileUrl.isNotEmpty()) {
-                    val sendMessageParams = FileMessage().apply {
-                        toId = userJID
-                        this.topicId = topicId
-                        messageType =
-                            if (isRecorded) MessageType.AUDIO_RECORDED else MessageType.AUDIO
-                        replyMessageId = replyMessageID //Optional
-                        fileMessage = FileMessageParams().apply {
-                            fileUrl = audiofileUrl
-                            fileName = audioFile.name
-                            this.duration = duration
-                            this.localFilePath = filePath
-                            this.fileSize = audioFile.length()
-                        }
-                    }
-                    FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
-                    /*FlyMessenger.sendAudioMessage(
-                        userJID,
-                        MediaData(
-                            audioFile.name,
-                            audioFile.length(),
-                            audiofileUrl,
-                            filePath,
-                            duration = duration
-                        ),
-                        isRecorded,
-                        replyMessageID,
-                        listener
-                    )*/
-                    /*FlyMessenger.sendAudioMessage(
-              userJID, audioFile.length(), audiofileUrl, filePath, duration, isRecorded,
-              replyMessageID, listener
-          )*/
-                } else {
-                    val sendMessageParams = FileMessage().apply {
-                        toId = userJID
-                        this.topicId = topicId
-                        messageType =
-                            if (isRecorded) MessageType.AUDIO_RECORDED else MessageType.AUDIO
-                        this.replyMessageId = replyMessageID
-                        fileMessage = FileMessageParams().apply {
-                            file = audioFile
-                        }
-                    }
-                    FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
-                    /*FlyMessenger.sendAudioMessage(
-                        userJID,
-                        audioFile,
-                        duration,
-                        isRecorded,
-                        replyMessageID,
-                        listener
-                    )*/
-                }
-            } else {
-                result.error("500", "File Not Exists", "")
-            }
-        } else {
-            result.error("500", "File Not Exists", "")
-        }
-    }
-
-    private fun sendContactMessage(call: MethodCall, result: MethodChannel.Result) {
-        val contactList = call.argument<List<String>>("contact_list")
-        val userJID = call.argument<String>("jid")
-        val contactName = call.argument<String>("contact_name")
-        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
-        val topicId = call.argument("topicId") ?: ""
-        if (userJID != null && contactList != null && contactName != null) {
-            val sendMessageParams = FileMessage().apply {
-                toId = userJID
-                this.topicId = topicId
-                messageType = MessageType.CONTACT
-                replyMessageId = replyMessageID //Optional
-                contactMessage = ContactMessageParams().apply {
-                    this.name = contactName
-                    this.numbers = contactList
-                }
-            }
-            FlyMessenger.sendFileMessage(
-                sendMessageParams,
-                listener = object : SendMessageCallback {
-                    override fun onResponse(
-                        isSuccess: Boolean,
-                        error: Throwable?,
-                        chatMessage: ChatMessage?
-                    ) {
-                        if (isSuccess && chatMessage != null) {
-                            //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                            //DebugUtilis.v("FlyMessenger.sendContactMessage",chatMessage.tojsonString())
-                            result.success(chatMessage.toJsonString())
-                        } else {
-                            result.error("500", error?.message, error)
-                        }
-                    }
-
-                })
-            /* FlyMessenger.sendContactMessage(
-                 userJID,
-                 contactName,
-                 contactList,
-                 replyMessageID,
-                 object : SendMessageListener {
-                     override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
-                         if (chatMessage != null) {
-                             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                             //DebugUtilis.v("FlyMessenger.sendContactMessage",chatMessage.tojsonString())
-                             result.success(chatMessage.toJsonString())
-                         } else {
-                             result.error("500", "Unable to Send Contact Message", null)
-                         }
-                     }
-
-                 })*/
-        }
-    }
-
-    private fun sendVideoMessage(call: MethodCall, result: MethodChannel.Result) {
-        val userJid = call.argument<String>("jid") ?: ""
-        val localFilePath = call.argument<String>("filePath") ?: ""
-        val topicId = call.argument("topicId") ?: ""
-        val videoFile = File(localFilePath)
-
-        val videoCaption = call.argument<String>("caption") ?: ""
-        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
-        val videoFileUrl = call.argument<String>("videoFileUrl") ?: ""
-        val videoDuration = call.argument<Long>("videoDuration") ?: 0L
-        val thumbImageBase64 = call.argument<String>("thumbImageBase64") ?: ""
-
-        val listener = object : SendMessageCallback {
-            override fun onResponse(
-                isSuccess: Boolean,
-                error: Throwable?,
-                chatMessage: ChatMessage?
-            ) {
-                if (chatMessage != null) {
-                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                    //DebugUtilis.v("FlyMessenger.sendVideoMessage", chatMessage.tojsonString())
-                    result.success(chatMessage.toJsonString())
-                } else {
-                    result.error("500", error?.message, error)
-                }
-            }
-        }
-        if (videoFile.exists()) {
-            if (videoFileUrl.isNotEmpty() && thumbImageBase64.isNotEmpty() && videoDuration != 0L) {
-                val sendMessageParams = FileMessage().apply {
-                    toId = userJid
-                    this.topicId = topicId
-                    messageType = MessageType.VIDEO
-                    replyMessageId = replyMessageID //Optional
-                    fileMessage = FileMessageParams().apply {
-                        fileUrl = videoFileUrl
-                        fileName = videoFile.name
-                        this.duration = videoDuration
-                        this.localFilePath = localFilePath
-                        this.fileSize = videoFile.length()
-                        this.caption = videoCaption
-                        this.thumbImage = thumbImageBase64
-                    }
-                }
-                FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
-                /*FlyMessenger.sendVideoMessage(
-                    toJid = userJid,
-                    MediaData(
-                        fileName = videoFile.name,
-                        fileSize = videoFile.length(),
-                        fileUrl = videoFileUrl,
-                        base64Thumbnail = thumbImageBase64,
-                        fileLocalPath = localFilePath,
-                        caption = videoCaption,
-                        duration = videoDuration
-                    ), isRecorded = false, replyMessageID, listener
-                )*/
-                /*FlyMessenger.sendVideoMessage(
-            toJid = userJid,
-            videoFile.name,
-            videoFileUrl,
-            videoFile.length(),
-            videoDuration,
-            thumbImageBase64,
-            localFilePath,
-            videoCaption,
-            replyMessageID,
-            listener
-        )*/
-            } else {
-                val sendMessageParams = FileMessage().apply {
-                    toId = userJid
-                    this.topicId = topicId
-                    messageType = MessageType.VIDEO
-                    replyMessageId = replyMessageID //Optional
-                    fileMessage = FileMessageParams().apply {
-                        file = videoFile
-                        this.caption = videoCaption
-                    }
-                }
-                FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
-                /*FlyMessenger.sendVideoMessage(
-                    toJid = userJid,
-                    file = videoFile,
-                    caption = videoCaption,
-                    replyMessageId = replyMessageID,
-                    listener = listener
-                )*/
-            }
-        } else {
-            result.error("500", "File Not Exists", "")
-        }
-    }
-
-    private fun sendMediaFileMessage(call: MethodCall, result: MethodChannel.Result) {
-        val messageParams = call.arguments<HashMap<String, Any>>()
-        LogMessage.d("sendMediaFileMessage", messageParams.toString())
-        val fileMessage = buildFileMessage(messageParams)
-        LogMessage.d("fileMessage", fileMessage.toJsonString())
-        sendMediaFileMessage(fileMessage, result)
-    }
-
-    private fun sendMessage(call: MethodCall, result: MethodChannel.Result) {
-        val messageParams = call.arguments<HashMap<String, Any>>()
-        LogMessage.d("sendMessage", messageParams.toString())
-        val fileMessage = buildFileMessage(messageParams)
-        LogMessage.d("fileMessage", fileMessage.toJsonString())
-        if (fileMessage.messageType == MessageType.TEXT) {
-            sendTextMessage(buildTextMessage(messageParams), result)
-        } else {
-            sendMediaFileMessage(fileMessage, result)
-        }
-    }
-
-    private fun sendTextMessage(textMessage: TextMessage?, result: MethodChannel.Result) {
-        if (textMessage == null) {
-            result.error("500", "TextMessage params not be null for MessageType TEXT", null)
-            return
-        }
-        FlyMessenger.sendTextMessage(textMessage, object : SendMessageCallback {
-            override fun onResponse(
-                isSuccess: Boolean,
-                error: Throwable?,
-                chatMessage: ChatMessage?
-            ) {
-                if (isSuccess) {
-                    if (chatMessage != null) {
-                        result.success(chatMessage.toJsonString())
-                    } else {
-                        result.error("500", "message not available", error)
-                    }
-                } else {
-                    result.error("500", error?.message, error)
-                }
-            }
-        })
-    }
-
-    private fun sendMediaFileMessage(fileMessage: FileMessage?, result: MethodChannel.Result) {
-        if (fileMessage == null) {
-            result.error("500", "fileMessage params not be null for Media Messages", null)
-            return
-        }
-        FlyMessenger.sendMediaFileMessage(fileMessage, object : SendMessageCallback {
-            override fun onResponse(
-                isSuccess: Boolean,
-                error: Throwable?,
-                chatMessage: ChatMessage?
-            ) {
-                if (isSuccess) {
-                    if (chatMessage != null) {
-                        result.success(chatMessage.toJsonString())
-                    } else {
-                        result.error("500", "message not available", error)
-                    }
-                } else {
-                    result.error("500", error?.message, error)
-                }
-            }
-
-        })
-    }
-
-    private fun buildTextMessage(map: HashMap<String, Any>?): TextMessage? {
-        val textMessage = TextMessage()
-
-        if (map != null) {
-            if (map["textMessage"] != null) {
-                textMessage.apply {
-                    this.toId = map.getOrDefault("toJid", "") as String
-                    this.replyMessageId = map["replyMessageId"] as String?
-                    this.topicId = map.getOrDefault("topicId", "") as String
-                    this.metaData =
-                        if (map["metaData"] != null) map["metaData"] as List<MessageMetaData> else emptyList()
-                    this.mentionedUsersIds =
-                        if (map["mentionedUsersIds"] != null) map["mentionedUsersIds"] as List<String> else null
-                    val textMessageText = map["textMessage"] as HashMap<*, *>
-                    this.messageText = textMessageText.getOrDefault("messageText", "") as String
-                }
-            } else {
-                return null
-            }
-        }
-        return textMessage
-    }
-
-    private fun buildFileMessage(map: HashMap<String, Any>?): FileMessage {
-        val fileMessage = FileMessage()
-
-        if (map != null) {
-            fileMessage.apply {
-                this.toId = map.getOrDefault("toJid", "") as String
-                this.replyMessageId = map["replyMessageId"] as String?
-                this.topicId = map.getOrDefault("topicId", "") as String
-                this.metaData =
-                    if (map["metaData"] != null) map["metaData"] as List<MessageMetaData> else emptyList()
-                this.messageType = (map["messageType"] as String?)?.let { MessageType.valueOf(it) }
-                this.mentionedUsersIds =
-                    if (map["mentionedUsersIds"] != null) map["mentionedUsersIds"] as List<String> else null
-                this.locationMessage =
-                    if (map["locationMessage"] != null) LocationMessageParams().apply {
-                        val location = map["locationMessage"] as HashMap<*, *>
-                        this.latitude = location["latitude"] as Double?
-                        this.longitude = location["longitude"] as Double?
-                    } else null
-                this.contactMessage =
-                    if (map["contactMessage"] != null) ContactMessageParams().apply {
-                        val contact = map["contactMessage"] as HashMap<*, *>
-                        this.name = contact.getOrDefault("name", "") as String?
-                        this.numbers = contact["numbers"] as List<String>?
-                    } else null
-                this.fileMessage = if (map["fileMessage"] != null) FileMessageParams().apply {
-                    val file_Message = map["fileMessage"] as HashMap<*, *>
-                    this.file = (file_Message["file"] as String?)?.let { File(it) }
-                    this.duration = (file_Message["duration"] as Int?)?.toLong()
-                    this.thumbImage = file_Message["thumbImage"] as String?
-                    this.fileName = file_Message["fileName"] as String?
-                    this.fileSize = (file_Message["fileSize"] as Int?)?.toLong()
-                    this.caption = file_Message["caption"] as String
-                } else null
-
-            }
-        }
-        return fileMessage
-    }
-
-    private fun logoutOfChatSDK(result: MethodChannel.Result) {
-
-        try {
-            FlyCore.logoutOfChatSDK { isSuccess, throwable, _ ->
-                if (isSuccess) {
-//                    SharedPreferenceManager.instance.clearAllPreference()
-                    result.success(true)
-                } else {
-                    result.error("400", throwable?.message.toString(), "")
-                }
-            }
-        } catch (e: Exception) {
-            //LogMessage.d(TAG, e.message.toString())
-            result.error("400", e.message.toString(), "")
-        }
-
-    }
-
-//    private fun getUserMedia(call: MethodCall, result: MethodChannel.Result) {
-//        val messageID: String? = call.argument("message_id")
-//        val message = FlyMessenger.getMessageOfId(messageID!!)
-//        if (message != null) {
-//            //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-//            //DebugUtilis.v("FlyMessenger.getMessageOfId", message.tojsonString())
-//            result.success(message.tojsonString())
-//        } else {
-//            result.error("500", "Media Details Not Found", null)
-//        }
-//
-//    }
-
-    private var messageListQuery: FetchMessageListQuery? = null
-    private fun initializeMessageListParams(call: MethodCall, result: MethodChannel.Result) {
-        val chatJid: String = call.argument("userJid") ?: ""
-        val messageId: String = call.argument("messageId") ?: ""
-        val messageTime: String = call.argument("messageTime") ?: ""
-        val inclusive: Boolean = call.argument("exclude") ?: false
-        val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: true
-        val limit: Int = call.argument("limit") ?: 50
-        val topicId: String = call.argument("topicId") ?: ""
-        LogMessage.d("initializeMessageList", "${call.arguments}")
-        if (ContactManager.isValidJid(chatJid)) {
-            val messageListParams = FetchMessageListParams()
-            messageListParams.chatJid = chatJid
-            if (messageId.isNotEmpty()) messageListParams.messageId = messageId
-            if (messageTime.isNotEmpty()) messageListParams.messageTime = messageTime
-            messageListParams.inclusive =
-                !inclusive// for iOS using exclude , so we using NOT to match the Android and iOS
-            messageListParams.ascendingOrder = ascendingOrder
-            messageListParams.topicId = topicId
-            messageListParams.limit = limit
-//            messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
-//            messageListParams.direction = "backward" // forward or backward
-            messageListQuery = FetchMessageListQuery(messageListParams)
-            result.success(true)
-        } else {
-            result.error("500", "jid is not Valid", "")
-        }
-    }
-
-    private fun loadMessages(result: MethodChannel.Result) {
-        if (messageListQuery == null) {
-            result.error("500", "Message List not Initialized", "")
-            return
-        }
-        if (messageListQuery!!.isFetchingInProgress()) {
-            result.error("500", "Already Message Fetching is In Progress", "")
-            return
-        }
-        messageListQuery!!.loadMessages { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val messageList = data["data"] as ArrayList<ChatMessage>
-                var messages = arrayListOf<ChatMessage>()
-                if (messageList.size == 1) {
-                    if (messageList[0].messageType == MessageType.NOTIFICATION) {
-                        result.success(messages.toJsonString())
-                    } else {
-                        messages = messageList
-                        result.success(messages.toJsonString())
-                    }
-                } else {
-                    messages = messageList
-                    result.success(messages.toJsonString())
-                }
-                LogMessage.d("loadMessages", "$isSuccess : ${messages.toJsonString()}")
-            } else {
-                LogMessage.d("loadMessages", "$isSuccess : $throwable")
-                // Fetch messages failed print throwable to find the exception details.
-                result.error("500", "Failed to Load Initial Messages ", "$throwable")
-            }
-        }
-    }
-
-    private fun loadPreviousMessages(result: MethodChannel.Result) {
-        if (messageListQuery == null) {
-            result.error("500", "Message List not Initialized", "")
-            return
-        }
-        /*if (!messageListQuery!!.hasPreviousMessages()) {
-            result.success(arrayListOf<ChatMessage>().toJsonString())
-//            result.error("500", "There is no Previous Messages", "")
-            return
-        }*/
-        if (messageListQuery!!.isFetchingInProgress()) {
-            result.error("500", "Already Message Fetching is In Progress", "")
-            return
-        }
-        messageListQuery!!.loadPreviousMessages { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val messages = data["data"] as ArrayList<ChatMessage>
-                result.success(messages.toJsonString())
-                LogMessage.d("loadPreviousMessages", "$isSuccess : ${data["data"]}")
-            } else {
-                LogMessage.d("loadPreviousMessages", "$isSuccess : $throwable")
-                // Fetch messages failed print throwable to find the exception details.
-                result.error("500", "Failed to Load Previous Messages ", "$throwable")
-            }
-        }
-    }
-
-    private fun loadNextMessages(result: MethodChannel.Result) {
-        if (messageListQuery == null) {
-            result.error("500", "Message List not Initialized", "")
-            return
-        }
-        /*if (!messageListQuery!!.hasNextMessages()) {
-            result.success(arrayListOf<ChatMessage>().toJsonString())
-//            result.error("500", "There is no Next Messages", "")
-            return
-        }*/
-        if (messageListQuery!!.isFetchingInProgress()) {
-            result.error("500", "Already Message Fetching is In Progress", "")
-            return
-        }
-        messageListQuery!!.loadNextMessages { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val messages = data["data"] as ArrayList<ChatMessage>
-                result.success(messages.toJsonString())
-                LogMessage.d("loadNextMessages", "$isSuccess : ${data["data"]}")
-            } else {
-                LogMessage.d("loadNextMessages", "$isSuccess : $throwable")
-                // Fetch messages failed print throwable to find the exception details.
-                result.error("500", "Failed to Load Next Messages ", "$throwable")
-            }
-        }
-    }
-
-    private fun getMessagesOfJid(call: MethodCall, result: MethodChannel.Result) {
-        //if (AppUtils.isNetConnected(mContext)) {
-        if (!call.hasArgument("JID")) {
-            result.error("404", "User JID Required", null)
-        } else {
-            val userJID: String? = call.argument("JID")
-            if (userJID != null) {
-                val messages: List<ChatMessage> = FlyMessenger.getMessagesOfJid(userJID)
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("FlyMessenger.getMessagesOfJid", messages.tojsonString())
-
-                result.success(messages.toJsonString())
-            } else {
-                result.error("500", "User JID is Empty", null)
-            }
-        }
-
-        //}
-    }
-
-    private fun getUserList(call: MethodCall, result: MethodChannel.Result) {
-        //if (AppUtils.isNetConnected(mContext)) {
-        val page = call.argument("page") ?: 1
-        val perPageResultSize = call.argument("perPageResultSize") ?: 20
-        val search = call.argument("search") ?: ""
-        FlyCore.getUserList(page, perPageResultSize, search) { isSuccess, throwable, data ->
-            data["status"] = isSuccess
-            LogMessage.d("registered", "$isSuccess : $data : $throwable")
-            if (isSuccess) {
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("getUserList", data.tojsonString())
-                result.success(data.toJsonString())
-            } else {
-                println("getUserList error : " + throwable.toString())
-                result.error("400", throwable?.message.toString(), "")
-            }
-
-        }
-        //} else {
-        /*Toast.makeText(mContext, "Please Check Your Internet connection", Toast.LENGTH_SHORT)
-            .show()*/
-        //}
-    }
-
-    private fun getJid(call: MethodCall, result: MethodChannel.Result) {
-        if (!call.hasArgument("username")) {
-            result.error("404", "User Name Required", null)
-        } else {
-            val userName: String? = call.argument("username")
-            if (userName != null) {
-                result.success(FlyUtils.getJid(userName))
-            } else {
-                result.error("500", "User Name is Empty", null)
-            }
-        }
-
-    }
-
-    private fun getImagePath(call: MethodCall, result: MethodChannel.Result) {
-        val imageUrl = call.argument<String>("image")
-        val path = Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon()
-            .appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
-        LogMessage.d("path : ", path)
-        result.success(path)
-    }
-
-    private fun updateMyProfile(call: MethodCall, result: MethodChannel.Result) {
-        val name = call.argument("name") ?: ""
-        val nickName = call.argument("nickName") ?: ""
-        val mobile = call.argument("mobile") ?: ""
-        val email = call.argument("email") ?: ""
-        val image = call.argument("image") ?: ""
-        val status = call.argument("status") ?: "I'm Mirrorfly user"
-//        if (name.isNotEmpty() && mobile.isNotEmpty() && email.isNotEmpty()) {
-        val profileObj = Profile()
-        profileObj.name = name
-        profileObj.nickName = name
-        profileObj.mobileNumber = mobile
-        profileObj.email = email
-        profileObj.status = status
-        profileObj.image = image
-        ContactManager.updateMyProfile(profileObj) { isSuccess, throwable, data ->
-            //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-            //DebugUtilis.v("ContactManager.updateMyProfile", data.tojsonString())
-            if (isSuccess) {
-                data["status"] = isSuccess
-                result.success(data.toJsonString())
-            } else {
-                result.error("500", throwable?.message, throwable)
-            }
-        }
-//        } else {
-//            result.error(
-//                "400",
-//                "Fill All details",
-//                null
-//            )
-//        }
-    }
-
-    private fun updateMyProfileImage(call: MethodCall, result: MethodChannel.Result) {
-        if (call.hasArgument("image")) {
-            val image = call.argument<String>("image")
-            if (image != null) {
-                val imagefile = File(image)
-                if (imagefile.exists()) {
-                    ContactManager.updateMyProfileImage(
-                        imagefile,
-                        flyCallback = { isSuccess, _, data ->
-                            //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                            //DebugUtilis.v("ContactManager.updateMyProfileImage", data.tojsonString())
-                            if (isSuccess) {
-                                data["status"] = isSuccess
-                                result.success(data.toJsonString())
-                            } else {
-                                result.error("500", "update profile image failure", null)
+                            override fun onSuccess() {
+//                                onSuccessStreamHandler.onSuccess?.success("")
+                                FlyMethodConstants.updateChatSinkValue(
+                                    Constants.onSuccessChannel,
+                                    ""
+                                )
                             }
                         })
-                } else {
-                    result.error("500", "Image File Not Exist", null)
-                    return
-                }
-            } else {
-                result.error("500", "Image not available to update profile", null)
-                return
-            }
-        } else {
-            result.error("500", "Select Image file", null)
-            return
-        }
-    }
-
-    private fun removeProfileImage(result: MethodChannel.Result) {
-        ContactManager.removeProfileImage { isSuccess, _, data ->
-            //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-            //DebugUtilis.v("ContactManager.removeProfileImage", data.tojsonString())
-            data["status"] = isSuccess
-            result.success(isSuccess)
-        }
-    }
-
-    private fun setMyProfileStatus(call: MethodCall, result: MethodChannel.Result) {
-        val status = call.argument<String>("status") ?: ""
-        if (status.isNotEmpty()) {
-            FlyCore.setMyProfileStatus(status) { isSuccess, error, data ->
-                data["status"] = isSuccess
-                if (isSuccess) {
-                    result.success(data.toJsonString())
-//                    result.success(true)
-                } else {
-                    result.error("500", error?.message.toString(), error)
-                }
-
-            }
-        }
-    }
-
-    private fun insertNewProfileStatus(call: MethodCall, result: MethodChannel.Result) {
-
-        // Same Function as "setMyProfileStatus", writing as separate new function inorder to match the iOS Functionality
-        val status = call.argument<String>("status") ?: ""
-        if (status.isNotEmpty()) {
-            FlyCore.setMyProfileStatus(status) { isSuccess, error, data ->
-                data["status"] = isSuccess
-
-                if (isSuccess) {
-//                    result.success(data.toJsonString())
-                    result.success(true)
-                } else {
-                    result.error("500", error?.message.toString(), error)
-                }
-            }
-        }
-
-    }
-
-    private fun getUserProfile(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument("jid") ?: ""
-        val server = call.argument<Boolean>("server") ?: false
-        val saveasfriend = call.argument<Boolean>("saveasfriend") ?: false
-        LogMessage.d(TAG, "JID==> $jid")
-        ContactManager.getUserProfile(jid, server, saveasfriend, object : FlyCallback {
-            //ContactManager.shared.getUserProfileDetails
-            override fun flyResponse(
-                isSuccess: Boolean,
-                throwable: Throwable?,
-                data: HashMap<String, Any>
-            ) {
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("getUserProfile", data.tojsonString())
-                data["status"] = isSuccess
-                LogMessage.d(TAG, "getProfile => " + data.toJsonString())
-                result.success(data.toJsonString())
-            }
-        })
-    }
-
-    private fun sendTextMessage(call: MethodCall, result: MethodChannel.Result) {
-        if (!call.hasArgument("message") && !call.hasArgument("JID")) {
-            result.error("404", "Message/JID Required", null)
-        } else {
-            val topicId = call.argument("topicId") ?: ""
-            val txtMessage: String? = call.argument("message")
-            val receiverJID: String? = call.argument("JID")
-            val replyMessageID = call.argument("replyMessageId") ?: ""
-            if (txtMessage != null && receiverJID != null) {
-                val textMessage = TextMessage()
-                textMessage.toId = receiverJID
-                textMessage.messageText = txtMessage
-                textMessage.replyMessageId = replyMessageID // Optional
-//                textMessage.metaData = META_DATA //Optional
-                textMessage.topicId = topicId //Optional
-                FlyMessenger.sendTextMessage(textMessage,
-                    listener = object : SendMessageCallback {
-                        override fun onResponse(
-                            isSuccess: Boolean,
-                            error: Throwable?,
-                            chatMessage: ChatMessage?
-                        ) {
-                            // you will get the message sent success response
-                            if (isSuccess) {
-                                LogMessage.d("sendTextMessage", chatMessage?.toJsonString())
-                                if (chatMessage != null) {
-                                    result.success(chatMessage.toJsonString())
-                                }
-                            } else {
-                                //LogMessage.d(TAG, "Message sent Failed")
-                                LogMessage.e("sendTextMessage", error?.message)
-                                result.error("500", error?.message, error)
-                            }
-                        }
-                    })
-
-            } else {
-                result.error("500", "User Name is Empty", null)
-            }
-        }
-
-    }
-
-    private fun markAsReadDeleteUnreadSeparator(call: MethodCall, result: MethodChannel.Result) {
-        if (!call.hasArgument("jid")) {
-            result.error("404", "JID Required", null)
-        } else {
-            val receiverJID: String? = call.argument("jid")
-            if (receiverJID != null) {
-                LogMessage.d(TAG, "Read Receipt of JID $receiverJID")
-                //Notify the message is read by user
-                ChatManager.markAsRead(receiverJID)
-                //To Remove the Unread Notification Separator in Chat List
-                FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(receiverJID)
-                result.success(true)
-            } else {
-                result.error("500", "JID is Empty", null)
-            }
-        }
-
-    }
-
-    private fun sendDocumentMessage(call: MethodCall, result: MethodChannel.Result) {
-        if (!call.hasArgument("message") && !call.hasArgument("jid")) {
-            result.error("404", "Message/JID Required", null)
-        } else {
-            val replyMessageId: String = call.argument("replyMessageId") ?: ""
-            val receiverJID: String = call.argument("jid") ?: ""
-            val file: String = call.argument("file") ?: ""
-            val fileUrl: String = call.argument("file_url") ?: ""
-            val topicId = call.argument("topicId") ?: ""
-            val listener = object : SendMessageCallback {
-                override fun onResponse(
-                    isSuccess: Boolean, error: Throwable?, chatMessage: ChatMessage?
-                ) {
-                    // you will get the message sent success response
-                    if (isSuccess && chatMessage != null) {
-                        //DebugUtilis.v( "FlyMessenger.sendDocumentMessage",chatMessage.tojsonString())
-                        LogMessage.d(TAG, chatMessage.toJsonString())
-                        result.success(chatMessage.toJsonString())
-                    } else {
-                        //LogMessage.d(TAG, "File Message sent Failed")
-                        result.error("500", "File Message sent Failed", null)
                     }
                 }
-            }
-            if (File(file).exists()) {
-                if (fileUrl.isNotEmpty()) {
-                    val sendMessageParams = FileMessage().apply {
-                        toId = receiverJID
-                        this.topicId = topicId
-                        messageType = MessageType.DOCUMENT
-                        this.replyMessageId = replyMessageId //Optional
-                        fileMessage = FileMessageParams().apply {
-                            this.fileUrl = fileUrl
-                            fileName = File(file).name
-                            this.localFilePath = file
-                            this.fileSize = File(file).length()
-                        }
-                    }
-                    FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
-                    /*FlyMessenger.sendDocumentMessage(
-                        receiverJID,
-                        File(file).name,
-                        File(file).length(),
-                        fileUrl,
-                        file,
-                        replyMessageId,
-                        listener
-                    )*/
-                } else {
-                    val sendMessageParams = FileMessage().apply {
-                        toId = receiverJID
-                        this.topicId = topicId
-                        messageType = MessageType.DOCUMENT
-                        this.replyMessageId = replyMessageId //Optional
-                        fileMessage = FileMessageParams().apply {
-                            this.file = File(file)
-                        }
-                    }
-                    FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
-                    /*FlyMessenger.sendDocumentMessage(
-                        receiverJID,
-                        File(file),
-                        File(file).name,
-                        replyMessageId,
-                        listener
-                    )*/
+                call.method.equals("clearAllSDKData") -> {
+                    FlyCore.clearAllSDKData()
                 }
-            } else {
-                result.error("500", "File not Exists", "")
-            }
-        }
-
-    }
-
-    private fun sendLocationMessage(call: MethodCall, result: MethodChannel.Result) {
-        val userJid = call.argument<String>("jid") ?: ""
-        val latitude = call.argument<Double>("latitude") ?: 00.0
-        val longitude = call.argument<Double>("longitude") ?: 00.0
-        val replyMessageId: String? = call.argument("replyMessageId")
-        val topicId = call.argument("topicId") ?: ""
-        if (userJid.isNotEmpty() && latitude != 00.0 && longitude != 00.0 && replyMessageId != null) {
-            val sendMessageParams = FileMessage().apply {
-                toId = userJid
-                this.topicId = topicId
-                messageType = MessageType.LOCATION
-                this.replyMessageId = replyMessageId //Optional
-                locationMessage = LocationMessageParams().apply {
-                    this.latitude = latitude
-                    this.longitude = longitude
-                }
-            }
-            FlyMessenger.sendFileMessage(
-                sendMessageParams,
-                listener = object : SendMessageCallback {
-                    override fun onResponse(
-                        isSuccess: Boolean,
-                        error: Throwable?,
-                        chatMessage: ChatMessage?
-                    ) {
-                        if (isSuccess && chatMessage != null) {
-                            //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                            //DebugUtilis.v("sendLocationMessage", chatMessage.tojsonString())
-                            result.success(chatMessage.toJsonString())
-                        } else {
-                            result.error("500", error?.message, error)
-                        }
-                    }
-                })
-            /*FlyMessenger.sendLocationMessage(
-                userJid,
-                latitude,
-                longitude,
-                replyMessageId,
-                object : SendMessageListener {
-                    override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
-                        if (chatMessage != null) {
-                            //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                            //DebugUtilis.v("sendLocationMessage", chatMessage.tojsonString())
-                            result.success(chatMessage.toJsonString())
-                        } else {
-                            result.error("500", error?.message, error)
-                        }
-                    }
-                })*/
-        } else {
-            if (userJid.isEmpty())
-                result.error("500", "User Jid is Empty", null)
-            else if (latitude != 00.0 || longitude != 00.0)
-                result.error("500", "Location is Empty", null)
-        }
-    }
-
-    private fun sendImageMessage(call: MethodCall, result: MethodChannel.Result) {
-        val userJid = call.argument<String>("jid") ?: ""
-        val filePath = call.argument<String>("filePath") ?: ""
-        //createDotNoMediaFile()
-
-        val imageFile = File(filePath)
-
-        val caption = call.argument<String>("caption") ?: ""
-        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
-        val imageFileUrl = call.argument<String>("imageFileUrl") ?: ""
-        val topicId = call.argument("topicId") ?: ""
-
-        val thumbnailBase64 = getImageThumbImage(filePath)
-
-        //LogMessage.d("FILEPATH", filePath)
-        LogMessage.d(TAG, filePath)
-        LogMessage.d(TAG, thumbnailBase64)
-        val listener = object : SendMessageCallback {
-            override fun onResponse(
-                isSuccess: Boolean,
-                error: Throwable?,
-                chatMessage: ChatMessage?
-            ) {
-                if (isSuccess && chatMessage != null) {
-                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                    //DebugUtilis.v("FlyMessenger.sendImageMessage", chatMessage.tojsonString())
-                    result.success(Gson().toJson(chatMessage))
-                } else {
-                    result.error("500", error?.message, error)
-                }
-            }
-        }
-        if (imageFileUrl.isNotEmpty()) {
-            val sendMessageParams = FileMessage().apply {
-                toId = userJid
-                this.topicId = topicId
-                messageType = MessageType.IMAGE
-                replyMessageId = replyMessageID //Optional
-                fileMessage = FileMessageParams().apply {
-                    fileUrl = imageFileUrl
-                    fileName = imageFile.name
-                    this.localFilePath = filePath
-                    this.fileSize = imageFile.length()
-                    this.caption = caption
-                    this.thumbImage = thumbnailBase64
-                }
-            }
-            FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
-            /*FlyMessenger.sendImageMessage(
-                toJid = userJid,
-                MediaData(
-                    fileName = imageFile.name,
-                    fileSize = imageFile.length(),
-                    fileUrl = imageFileUrl,
-                    fileLocalPath = filePath,
-                    base64Thumbnail = thumbnailBase64,
-                    caption
-                ), replyMessageID, listener
-            )*/
-            /*FlyMessenger.sendImageMessage(
-          userJid,
-          imageFile.name,
-          imageFile.length().toString(),
-          imageFileUrl,
-          filePath,
-          thumbnailBase64,
-          caption,
-          replyMessageID,
-          listener
-      )*/
-        } else {
-            val sendMessageParams = FileMessage().apply {
-                toId = userJid
-                this.topicId = topicId
-                messageType = MessageType.IMAGE
-                replyMessageId = replyMessageID //Optional
-                fileMessage = FileMessageParams().apply {
-                    file = imageFile
-                    this.caption = caption
-                }
-            }
-            FlyMessenger.sendFileMessage(sendMessageParams, listener = listener)
-            /*FlyMessenger.sendImageMessage(
-                userJid,
-                imageFile,
-                thumbnailBase64,
-                caption,
-                replyMessageID,
-                listener
-            )*/
-        }
-    }
-
-    private fun getRecentChatList(result: MethodChannel.Result) {
-        println("recent here")
-        //if (AppUtils.isNetConnected(mContext)) {
-        //progress.show()
-        FlyCore.getRecentChatList { isSuccess, throwable, data ->
-            //progress.dismiss()
-            if (isSuccess) {
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("FlyCore.getRecentChatList", data.tojsonString())
-                result.success(Gson().toJson(data).toString())
-            } else {
-                result.error("500", throwable?.message, null)
-            }
-            LogMessage.d("Recent ==>", data.toString())
-        }
-        /*} else {
-        //Toast.makeText(this, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
-        result.error("500", "Please Check Your Internet connection", null)
-    }*/
-    }
-
-    private suspend fun getRecentChatListHistoryByTopic(
-        call: MethodCall,
-        result: MethodChannel.Result
-    ) {
-        val firstSet = call.argument<Boolean>("firstSet") ?: true
-        val limit = call.argument("limit") ?: 15
-        val topicId = call.argument("topicId") ?: ""
-        LogMessage.d("topic chat history firstSet", firstSet.toString());
-        val topicChatListParams = TopicChatListParams().apply {
-            this.topicId = topicId
-            this.limit = limit
-        }
-        val topicChatListBuilder = TopicChatListBuilder(topicChatListParams)
-        if (firstSet) {
-            LogMessage.d(
-                "topic chat history ",
-                "first page ${topicChatListParams.topicId} ${topicChatListParams.limit}"
-            )
-            topicChatListBuilder.loadTopicBasedChatList { isSuccess, throwable, data ->
-                if (isSuccess) {
-                    val recentChatList = data["data"] as ArrayList<RecentChat>
-                    LogMessage.d("topic chat history item count", recentChatList.size.toString())
-                    result.success(data.toJsonString())
-                } else {
-                    result.error("500", throwable?.message, null)
-                }
-
-            }
-        } else {
-            topicChatListBuilder.nextSetOfTopicBasedChatList { isSuccess, throwable, data ->
-                if (isSuccess) {
-                    val recentChatList = data["data"] as ArrayList<RecentChat>
-                    LogMessage.d("topic chat history item count", recentChatList.size.toString())
-                    result.success(data.toJsonString())
-                } else {
-                    result.error("500", throwable?.message, null)
-                }
-
-            }
-        }
-    }
-
-    private suspend fun getRecentChatListHistory(call: MethodCall, result: MethodChannel.Result) {
-
-        val firstSet = call.argument<Boolean>("firstSet") ?: true
-        val limit = call.argument("limit") ?: 15
-        LogMessage.d("chat history firstSet", firstSet.toString());
-
-        val recentChatListParams = RecentChatListParams().apply { this.limit = limit }
-        val recentChatListBuilder = RecentChatListBuilder(recentChatListParams)
-        if (firstSet) {
-            LogMessage.d("chat history ", "first page")
-            recentChatListBuilder.loadRecentChatList { isSuccess, throwable, data ->
-                if (isSuccess) {
-                    val recentChatList = data["data"] as ArrayList<RecentChat>
-                    LogMessage.d("chat history item count", recentChatList.size.toString())
-                    result.success(data.toJsonString())
-                } else {
-                    result.error("500", throwable?.message, null)
-                }
-
-            }
-        } else {
-            LogMessage.d("chat history next set data", "firstSet $firstSet")
-            recentChatListBuilder.nextSetOfData { isSuccess, throwable, data ->
-                if (isSuccess) {
-//                    val recentChatList = data["data"] as ArrayList<RecentChat>
-                    result.success(data.toJsonString())
-                } else {
-                    // Fetch recent chat list failed print throwable to find the exception details.
-                    result.error("500", throwable?.message, null)
-                }
-            }
-        }
-    }
-
-    private fun getImageThumbImage(imagePath: String?): String {
-        return if (imagePath != null) {
-            val thumb = ThumbnailUtils.extractThumbnail(
-                BitmapFactory.decodeFile(imagePath),
-                ThumbSize.THUMB_100,
-                ThumbSize.THUMB_100
-            )
-            if (thumb != null) {
-                val byteArray = getCompressedBitmapData(thumb)
-                LogMessage.v(
-                    "getVideoThumbImage",
-                    "final video thumbnail size: " + byteArray.size
-                )
-                thumb.recycle()
-                Base64.encodeToString(byteArray, 0)
-            } else ""
-        } else ""
-    }
-
-    private fun getCompressedBitmapData(
-        bitmap: Bitmap
-    ): ByteArray {
-        val resizedBitmap: Bitmap =
-            if (bitmap.width > 48 || bitmap.height > 48) {
-                getResizedBitmap(bitmap)
-            } else {
-                bitmap
-            }
-        var bitmapData = getByteArray(resizedBitmap)
-        while (bitmapData.size > 2048) {
-            bitmapData = getByteArray(resizedBitmap)
-        }
-        return bitmapData
-    }
-
-    private fun getResizedBitmap(image: Bitmap): Bitmap {
-        var width = image.width
-        var height = image.height
-        val bitmapRatio = width.toFloat() / height.toFloat()
-        if (bitmapRatio > 1) {
-            width = 48
-            height = (width / bitmapRatio).toInt()
-        } else {
-            height = 48
-            width = (height * bitmapRatio).toInt()
-        }
-        return Bitmap.createScaledBitmap(image, width, height, true)
-    }
-
-    private fun getByteArray(bitmap: Bitmap): ByteArray {
-        val bos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bos)
-        return bos.toByteArray()
-    }
-
-    private fun getProfileStatusList(result: MethodChannel.Result) {
-        val status =
-            FlyCore.getProfileStatusList()//[{"id":1,"isCurrentStatus":true,"status":"I am in Mirror Fly"}]
-        result.success(status.toJsonString())
-    }
-
-    private fun insertDefaultStatus(call: MethodCall, result: MethodChannel.Result?) {
-        val status = call.argument<String>("status") ?: ""
-        if (status.isNotEmpty()) {
-            FlyCore.insertDefaultStatus(status)
-            result?.success(true)
-        }
-    }
-
-    @SuppressLint("IntentReset")
-    private fun openMediaFile(call: MethodCall, result: MethodChannel.Result) {
-
-        val filePath = call.argument<String>("filePath")
-
-        try {
-            val file = filePath?.let { File(it) }
-            val extension = MimeTypeMap.getFileExtensionFromUrl(filePath)
-            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            val fileUri = file?.let {
-                FileProvider.getUriForFile(
-                    mContext, ChatManager.fileProviderAuthority,
-                    it
-                )
-            }
-            intent.setDataAndType(fileUri, mimeType)
-            val mediaListIntent = Intent(Intent.ACTION_VIEW, fileUri)
-            mediaListIntent.type = mimeType
-            val mediaViewerApps: List<ResolveInfo> =
-                mContext.packageManager.queryIntentActivities(mediaListIntent, 0)
-            try {
-                when {
-                    intent.resolveActivity(mContext.packageManager) != null -> mContext.startActivity(
-                        intent
-                    )
-                    mediaViewerApps.isNotEmpty() -> mContext.startActivity(intent)
-                    else -> result.error("500", "Unable to Open the File", null)
-//                Toast.makeText(context, R.string.content_not_found, Toast.LENGTH_LONG).show()
-                }
-            } catch (e: Exception) {
-                result.error("500", "Unable to Open the File", null)
-            }
-        } catch (e: Exception) {
-            result.error("500", "File Not Found", null)
-        }
-    }
-
-    private fun createDotNoMediaFile() {
-//        FilePathUtils.getExternalStorage()
-
-        val mediaPath =
-            VideoRecUtils.getSentParentPath(com.mirrorflysdk.flycommons.Constants.MSG_TYPE_IMAGE)
-
-        //LogMessage.d("FIle Upload root path", mediaPath)
-
-        val sentMedia = File(mediaPath)
-        if (!sentMedia.exists()) {
-            //LogMessage.d(TAG, "sent Media Not exists")
-            sentMedia.mkdirs()
-        } else {
-            //LogMessage.d(TAG, "Sent Media Already Exists")
-        }
-        val noMediaFile = File(sentMedia, ".nomedia")
-        if (!noMediaFile.exists()) {
-            //LogMessage.d(TAG, "NoMediaFile not exists")
-            try {
-                FileWriter(noMediaFile).use { writer ->
-                    LogMessage.d(
-                        TAG,
-                        "createNoMedia: $writer"
+                call.method.equals("getLastNUnreadMessages") -> {
+                    val messagescount = call.argument<Int>("messagesCount") ?: 0
+                    result.success(
+                        FlyMessenger.getLastNUnreadMessages(messagescount).toJsonString()
                     )
                 }
-            } catch (e: IOException) {
-                //LogMessage.d("File Upload Exception", e.message.toString())
-                LogMessage.e(e)
-            }
-        } else {
-            //LogMessage.d("File Upload", "No Media Already Exists")
-        }
-    }
-
-
-    private fun getRecentChatListIncludingArchived(result: MethodChannel.Result) {
-
-        val recentChatListWithArchived = FlyCore.getRecentChatListIncludingArchived()
-        //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-        //DebugUtilis.v( "FlyCore.getRecentChatListIncludingArchived",recentChatListWithArchived.tojsonString())
-        result.success(recentChatListWithArchived.toJsonString())
-
-    }
-
-    private fun searchConversation(call: MethodCall, result: MethodChannel.Result) {
-        val searchKey = call.argument<String>("searchKey") ?: ""
-        val jidForSearch = call.argument<String>("jidForSearch") ?: ""
-        val globalSearch = call.argument<Boolean>("globalSearch") ?: true
-        FlyCore.searchConversation(
-            searchKey,
-            jidForSearch,
-            globalSearch
-        ) { isSuccess, _, data ->
-            if (isSuccess) {
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("FlyCore.searchConversation", data.tojsonString())
-                val filterMessageList = data["data"] as MutableList<*>
-                LogMessage.d("searchConversation", filterMessageList.toJsonString())
-                result.success(filterMessageList.toJsonString())
-            }
-        }
-    }
-
-    private fun getRegisteredUsers(call: MethodCall, result: MethodChannel.Result) {
-        val server = call.argument<Boolean>("server") ?: false
-        FlyCore.getRegisteredUsers(server) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val profileDetails = data["data"] as MutableList<ProfileDetails>
-                LogMessage.d("profileDetails", profileDetails.toString())
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("FlyCore.getRegisteredUsers", data.tojsonString())
-                result.success(data.toJsonString())
-            } else {
-                result.error("400", throwable?.message.toString(), "")
-            }
-        }
-    }
-
-    private fun refreshAndGetAuthToken(result: MethodChannel.Result) {
-        FlyCore.refreshAndGetAuthToken { isSuccess, _, data ->
-            if (isSuccess) {
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("FlyCore.refreshAndGetAuthToken", data.tojsonString())
-                LogMessage.d(TAG, "Token Refresh success: ${data["data"]}")
-                result.success(data["data"].toString())
-            } else {
-                LogMessage.d(TAG, "Token Refresh failure")
-                result.success(FlyUtils.decodedToken().trim())
-            }
-        }
-    }
-
-    private fun blockUser(call: MethodCall, result: MethodChannel.Result) {
-        val userJid = call.argument<String>("userJID") ?: ""
-        FlyCore.blockUser(userJid) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("FlyCore.blockUser", data.tojsonString())
-//                result.success(data.toJsonString())
-                result.success(true)
-            } else {
-                result.error("500", "Unable to Block User", throwable?.toJsonString())
-            }
-
-        }
-    }
-
-    private fun unblockUser(call: MethodCall, result: MethodChannel.Result) {
-        val userJid = call.argument<String>("userJID") ?: ""
-
-        FlyCore.unblockUser(userJid) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                //DebugUtilis.v("FlyCore.unblockUser", data.tojsonString())
-                result.success(true)
-            } else {
-                result.error("500", "Unable to Unblock User", throwable?.toJsonString())
-
-            }
-
-        }
-    }
-
-    private fun createGroup(call: MethodCall, result: MethodChannel.Result) {
-        val groupName = call.argument<String>("group_name") ?: ""
-        val members = call.argument<List<String>>("members") ?: arrayListOf()
-        val fileTemp = call.argument<String>("file") ?: ""
-        val file = if (fileTemp.trim().isNotEmpty()) File(fileTemp) else null
-        GroupManager.createGroup(groupName, members,
-            file, { isSuccess, throwable, hashmap ->
-                if (isSuccess) {
-                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                    //DebugUtilis.v("GroupManager.createGroup", hashmap.tojsonString())
-                    val groupData = hashmap["data"] as CreateGroupModel
-//                    result.success(groupData.toJsonString())
+                call.method.equals("getNUnreadMessagesOfEachUsers") -> {
+                    val messagescount = call.argument<Int>("messagesCount") ?: 0
+                    val usersWithMessage: Map<String, List<ChatMessage>> =
+                        FlyMessenger.getNUnreadMessagesOfEachUsers(messagescount)
+                    result.success(usersWithMessage.toJsonString())
+                }
+                call.method.equals("getUnreadMessagesCount") -> {
+                    result.success(FlyMessenger.getUnreadMessagesCount())
+                }
+                call.method.equals("get_message_using_ids") -> {
+//                getMessageUsingIds(call, result)
+                }
+                call.method.equals("getWebLoginDetails") -> {
+                    val details = WebLoginDataManager.getWebLoginDetails()
+                    result.success(details.toJsonString())
+                }
+                call.method.equals("webLoginDetailsCleared") -> {
+                    WebLoginDataManager.webLoginDetailsCleared()
                     result.success(true)
-                } else {
-                    result.error("500", "Unable to Create Group", throwable.toString())
                 }
-            })
-    }
-
-    private fun updateGroupProfileImage(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        val fileTemp = call.argument<String>("file") ?: ""
-        if (fileTemp.isNotEmpty()) {
-            GroupManager.updateGroupProfileImage(jid, File(fileTemp), object : ChatActionListener {
-                override fun onResponse(isSuccess: Boolean, message: String) {
-                    if (isSuccess) {
-                        result.success(isSuccess)
-                    } else {
-                        result.error("500", message, "")
+                call.method.equals("logoutWebUser") -> {
+                    UpDateWebPassword().upDatePassword()
+                    val listWebLogin =
+                        call.argument<List<String>>("listWebLogin")//qrUniqeToken list
+                    if (listWebLogin != null && listWebLogin.isNotEmpty()) {
+                        for (it in listWebLogin) {
+                            ChatManager.logoutWebUser(it)
+                        }
                     }
-                }
-
-            })
-        }
-
-    }
-
-    private fun addUsersToGroup(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        val members = call.argument<List<String>>("members") ?: arrayListOf()
-        GroupManager.addUsersToGroup(jid, members) { isSuccess, throwable, _ ->
-            if (isSuccess) {
-                result.success(isSuccess)
-            } else {
-                result.error("500", throwable?.message, "")
-            }
-        }
-    }
-
-    private fun makeAdmin(call: MethodCall, result: MethodChannel.Result) {
-        val groupjid = call.argument<String>("jid") ?: ""
-        val userjid = call.argument<String>("userjid") ?: ""
-        GroupManager.makeAdmin(groupjid, userjid, object :
-            ChatActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                //LogMessage.d("GroupManager.makeAdmin", message)
-                if (isSuccess) {
-                    result.success(isSuccess)
-                } else {
-                    result.error("500", message, "")
-                }
-            }
-        })
-    }
-
-    private fun removeMemberFromGroup(call: MethodCall, result: MethodChannel.Result) {
-        val groupjid = call.argument<String>("jid") ?: ""
-        val userjid = call.argument<String>("userjid") ?: ""
-        GroupManager.removeMemberFromGroup(groupjid, userjid) { isSuccess, throwable, _ ->
-            if (isSuccess) {
-                result.success(isSuccess)
-            } else {
-                result.error("500", throwable?.message, "")
-            }
-        }
-    }
-
-    private fun verifyToken(call: MethodCall, results: MethodChannel.Result) {
-        try {
-            val userName = call.argument<String>("userName") ?: ""
-            val googleToken = call.argument<String>("googleToken") ?: ""
-            FlyNetwork.verifyToken(userName, googleToken) { isSuccess, throwable, data ->
-                LogMessage.d(TAG, data["data"].toString())
-                if (isSuccess) {
-                    //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                    //DebugUtilis.v("FlyNetwork.verifyToken", data.tojsonString())
-                    val fcmData = data["data"] as VerifyFcmResponse
-                    results.success(fcmData.data!!.deviceToken.toString())
-                } else {
-                    results.error("400", throwable?.message, "")
-                }
-            }
-        } catch (e: Exception) {
-            LogMessage.d("verifyToken", e.toString())
-            results.error("400", "Server Error, Please try After sometime", "")
-        }
-    }
-
-    private fun getGroupMembersList(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        val fromServer = call.argument<Boolean>("server")
-            ?: GroupManager.doesFetchingMembersListFromServedRequired(jid)
-        GroupManager.getGroupMembersList(fromServer, jid) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("GroupManager.getGroupMembersList", data.tojsonString())
-                val groupMembers: MutableList<ProfileDetails> =
-                    data["data"] as ArrayList<ProfileDetails>
-                /*val myProfileIndex =
-                    groupMembers.indexOfFirst { pd -> pd.jid == SharedPreferenceManager.instance.currentUserJid }
-                if (myProfileIndex >= 0) {
-                    val myProfile = groupMembers[myProfileIndex]
-                    groupMembers.removeAt(myProfileIndex)
-                    myProfile.nickName = com.mirrorflysdk.flycommons.Constants.YOU
-                    myProfile.name = com.mirrorflysdk.flycommons.Constants.YOU
-                    groupMembers.add(myProfile)
-                }*/
-                result.success(groupMembers.toJsonString())
-            } else {
-                result.error("404", "fetching group members", throwable.toString())
-            }
-        }
-    }
-
-//    private fun reportUserOrMessages(call: MethodCall, result: MethodChannel.Result) {
-//        val jid = call.argument<String>("jid") ?: ""
-//        val type = call.argument<String>("type") ?: ChatType.TYPE_CHAT
-//        FlyCore.reportUserOrMessages(jid, type) { isSuccess, _, _ ->
-//            if (isSuccess) {
-//                result.success(true)
-//            } else {
-//                result.success(false)
-//            }
-//        }
-//    }
-
-    private fun leaveFromGroup(call: MethodCall, result: MethodChannel.Result) {
-        val groupJid = call.argument<String>("groupJid") ?: ""
-        GroupManager.leaveFromGroup(groupJid) { isSuccess, throwable, _ ->
-            if (isSuccess) {
-                result.success(true)
-            } else {
-                result.error("500", throwable?.message.toString(), "")
-            }
-        }
-    }
-
-    private fun deleteGroup(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        GroupManager.deleteGroup(jid) { isSuccess, throwable, _ ->
-            if (isSuccess) {
-                result.success(true)
-            } else {
-                result.error("500", throwable?.message.toString(), "")
-            }
-        }
-    }
-
-    private fun removeGroupProfileImage(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        GroupManager.removeGroupProfileImage(jid, object : ChatActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                if (isSuccess) {
                     result.success(true)
-                } else {
-                    result.error("500", message, "")
                 }
-            }
-        })
-    }
 
-    private fun updateGroupName(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        val name = call.argument<String>("name") ?: ""
-        GroupManager.updateGroupName(jid, name, object : ChatActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                if (isSuccess) {
-                    result.success(isSuccess)
-                } else {
-                    result.error("500", message, "")
+                else -> {
+                    result.notImplemented()
                 }
-            }
-        })
-    }
 
-    private fun getUserLastSeenTime(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        ContactManager.getRegisteredUserLastSeenTime(jid, object : ContactManager.LastSeenListener {
-            override fun onFailure(message: String) {
-                /* No Implementation Needed */
-                result.success("")
-            }
-
-            override fun onSuccess(lastSeenTime: String) {
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("ContactManager.getUserLastSeenTime", lastSeenTime)
-                result.success(lastSeenTime)
-            }
-        })
-    }
-
-    private fun sendContactUsInfo(call: MethodCall, result: MethodChannel.Result) {
-        val title = call.argument<String>("title") ?: ""
-        val description = call.argument<String>("description") ?: ""
-        ContactManager.sendContactUsInfo(title, description) { isSuccess, throwable, _ ->
-            if (isSuccess) {
-                result.success(isSuccess)
-            } else {
-                result.error("500", throwable?.message, "")
             }
         }
     }
 
-    private fun getUsersIBlocked(call: MethodCall, result: MethodChannel.Result) {
-        val serverCall = call.argument<Boolean>("serverCall") ?: false
-        FlyCore.getUsersIBlocked(serverCall) { isSuccess: Boolean, throwable: Throwable?, data: HashMap<String, Any> ->
-            if (isSuccess) {
-                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-                //DebugUtilis.v("FlyCore.getUsersIBlocked", data.tojsonString())
-                val profilesList = data["data"] as ArrayList<ProfileDetails>
-                result.success(profilesList.toJsonString())
-            } else {
-                result.error("500", throwable?.message.toString(), "")
-            }
-        }
-    }
 
-    private fun loginWebChatViaQRCode(call: MethodCall, result: MethodChannel.Result) {
-        val barcode = call.argument<String>("barcode") ?: ""
-        try {
-            FlyCore.loginWebChatViaQRCode(barcode) { isSuccess, throwable, _ ->
-                result.success(isSuccess)
-                if (isSuccess) {
-                    val vibrator =
-                        mContext.getSystemService(FlutterActivity.VIBRATOR_SERVICE) as Vibrator
-                    if (vibrator.hasVibrator()) {
-                        vibrator.vibrate(50)
-                    }
-                } else {
-                    result.error("500", throwable?.message.toString(), "")
-                }
-            }
-        } catch (e: java.lang.Exception) {
-            //LogMessage.d("qr", e.toString())
-        }
-    }
-
-    private lateinit var ringToneResult: MethodChannel.Result
-    private var existingCustomTone = "None"
-    private fun showCustomTones(call: MethodCall, result: MethodChannel.Result) {
-        ringToneResult = result
-//        existingCustomTone = call.argument<String>("ringtone_uri") ?: "None"
-        val existingCustomTone =
-            Uri.parse(SharedPreferenceManager.instance.getString("notification_uri"))
-        val customToneUri = existingCustomTone.toString()
-        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
-        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Notification")
-        if (customToneUri != "None")
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, existingCustomTone)
-        mainActivity?.startActivityForResult(
-            intent,
-            com.mirrorflysdk.flycommons.Constants.ACTIVITY_REQ_CODE
-        )
-        /* setting isActivityStartedForResult to true to avoid xmpp disconnection */
-        ChatManager.isActivityStartedForResult = true
-    }
-
-    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) : Boolean{
-        *//* setting isActivityStartedForResult to false for xmpp disconnection *//*
-        Log.d("onActivityResult", "onActivity Result")
-        ChatManager.isActivityStartedForResult = false
-        //try {
-            if(resultCode == Activity.RESULT_OK && requestCode == Constants.FROM_GALLERY) {
-                data?.let { handleAudioVideoIntentFromGalleryMenu(data) }
-            }else if(resultCode == Activity.RESULT_CANCELED && requestCode == Constants.FROM_GALLERY){
-                audioFileResult?.error("500","audio file picker cancelled","")
-            }else {
-                if (resultCode == Activity.RESULT_OK && requestCode == com.mirrorflysdk.flycommons.Constants.ACTIVITY_REQ_CODE &&
-                    data?.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) != null
-                ) {
-
-
-                    val selectedToneUri =
-                        (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
-                            .toString())
-                    LogMessage.d("Android Notification", selectedToneUri)
-                    //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, data.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString())
-                    //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
-                    setNotificationUri(selectedToneUri)
-                    ringToneResult.success(selectedToneUri)
-                    return true
-                }
-
-                if (data == null) {
-                    LogMessage.d("Android Notification", "data is null")
-                    setNotificationUri(existingCustomTone)
-                    ringToneResult.success(existingCustomTone)
-
-                    //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI))
-                    //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
-                    return false
-                } else if (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) == null) {
-                    LogMessage.d("Android Notification", "ringtone is null")
-                    setNotificationUri(null)
-                    ringToneResult.success("None")
-
-                    //SharedPreferenceManager.instance.storeString(com.contusfly.utils.Constants.NOTIFICATION_URI, "None")
-                    //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.instance.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
-                    return true
-                }
-            }
-            return false
-//        } catch (exception: Exception) {
-//            LogMessage.e(exception)
-//            return false
-//        }
-
-    }*/
-
-
-    private fun getRingtoneName(): String {
-//        val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
-        val storedNotification = SharedPreferenceManager.instance.getString("notification_uri")
-        LogMessage.d("stored notification", storedNotification)
-
-        val ringtoneJSONObject = JSONObject()
-
-        if (storedNotification == "") {
-            ringtoneJSONObject.put(
-                "name",
-                SharedPreferenceManager.instance.getString("notification_uri")
-            )
-            ringtoneJSONObject.put(
-                "tone_uri",
-                SharedPreferenceManager.instance.getString("notification_uri")
-            )
-            return ringtoneJSONObject.toString()
-        }
-//        if(storedNotification == ""){
-//            return RingtoneManager.getRingtone(mContext, Uri.parse(default)).getTitle(mContext)
-//        }
-        val ringtone = RingtoneManager.getRingtone(mContext, Uri.parse(storedNotification))
-        ringtoneJSONObject.put("name", ringtone.getTitle(mContext))
-        ringtoneJSONObject.put("tone_uri", storedNotification)
-
-        return ringtoneJSONObject.toString()
-
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        Log.d(TAG, "onDetachedFromEngine")
+        methodChannels.remove(binding.binaryMessenger)?.setMethodCallHandler(null)
     }
 
     private inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
@@ -4060,7 +560,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "onMessageReceived ${message.toJsonString()}")
         //called when the new message is received
         //LogMessage.d(TAG, "Message Received ${message.tojsonString()}")
-        MessageReceivedStreamHandler.onMessageReceived?.success(message.toJsonString())
+//        MessageReceivedStreamHandler.onMessageReceived?.success(message.toJsonString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onMessageReceivedChannel,
+            message.toJsonString()
+        )
 
     }
 
@@ -4072,13 +576,21 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //LogMessage.d(TAG, "Message Status Updated ==> $messageId")
         val message = FlyMessenger.getMessageOfId(messageId)
         if (message != null) {
-            MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.toJsonString())
+//            MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.toJsonString())
+            FlyMethodConstants.updateChatSinkValue(
+                Constants.onMessageStatusUpdatedChannel,
+                message.toJsonString()
+            )
         }
     }
 
     override fun onMediaStatusUpdated(message: ChatMessage) {
         LogMessage.d(TAG, "onMediaStatusUpdated ${message.toJsonString()}")
-        MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.toJsonString())
+//        MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.toJsonString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onMediaStatusUpdatedChannel,
+            message.toJsonString()
+        )
     }
 
     override fun onUploadDownloadProgressChanged(
@@ -4090,7 +602,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val js = JSONObject()
         js.put("message_id", messageId)
         js.put("progress_percentage", progressPercentage)
-        UploadDownloadProgressChangedStreamHandler.onUploadDownloadProgressChanged?.success(
+//        UploadDownloadProgressChangedStreamHandler.onUploadDownloadProgressChanged?.success(
+//            js.toString()
+//        )
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onUploadDownloadProgressChangedChannel,
             js.toString()
         )
     }
@@ -4114,7 +630,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             val json = JSONObject()
             json.put("jid", jid)
             json.put("chatMessage", chat)
-            ShowOrUpdateOrCancelNotificationStreamHandler.showOrUpdateOrCancelNotification?.success(
+//            ShowOrUpdateOrCancelNotificationStreamHandler.showOrUpdateOrCancelNotification?.success(
+//                json.toString()
+//            )
+            FlyMethodConstants.updateChatSinkValue(
+                Constants.showUpdateCancelNotificationChannel,
                 json.toString()
             )
         } else {
@@ -4127,43 +647,71 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onDeleteGroup(groupJid: String) {
         LogMessage.d(TAG, "onDeleteGroup : groupJid $groupJid")
-        onDeleteGroupStreamHandler.onDeleteGroup?.success(groupJid)
+//        onDeleteGroupStreamHandler.onDeleteGroup?.success(groupJid)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onDeleteGroupChannel,
+            groupJid
+        )
     }
 
     override fun onFetchingGroupListCompleted(noOfGroups: Int) {
         LogMessage.d(TAG, "onFetchingGroupListCompleted : noOfGroups : $noOfGroups")
-        onFetchingGroupListCompletedStreamHandler.onFetchingGroupListCompleted?.success(
+//        onFetchingGroupListCompletedStreamHandler.onFetchingGroupListCompleted?.success(
+//            noOfGroups
+//        )
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onFetchingGroupListCompletedChannel,
             noOfGroups
         )
     }
 
     override fun onFetchingGroupMembersCompleted(groupJid: String) {
         LogMessage.d(TAG, "onFetchingGroupMembersCompleted : $groupJid")
-        onFetchingGroupMembersCompletedStreamHandler.onFetchingGroupMembersCompleted?.success(
+//        onFetchingGroupMembersCompletedStreamHandler.onFetchingGroupMembersCompleted?.success(
+//            groupJid
+//        )
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onFetchingGroupMembersCompletedChannel,
             groupJid
         )
     }
 
     override fun onGroupDeletedLocally(groupJid: String) {
         LogMessage.d(TAG, "onGroupDeletedLocally : $groupJid")
-        onGroupDeletedLocallyStreamHandler.onGroupDeletedLocally?.success(groupJid)
+//        onGroupDeletedLocallyStreamHandler.onGroupDeletedLocally?.success(groupJid)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onGroupDeletedLocallyChannel,
+            groupJid
+        )
     }
 
 
     override fun onGroupNotificationMessage(message: ChatMessage) {
         LogMessage.d(TAG, "onGroupNotificationMessage : ${message.toJsonString()}")
-        onGroupNotificationMessageStreamHandler.onGroupNotificationMessage?.success(message.toJsonString())
+//        onGroupNotificationMessageStreamHandler.onGroupNotificationMessage?.success(message.toJsonString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onGroupNotificationMessageChannel,
+            message.toJsonString()
+        )
     }
 
     override fun onGroupProfileFetched(groupJid: String) {
         LogMessage.d(TAG, "onGroupProfileFetched : $groupJid")
-        onGroupProfileFetchedStreamHandler.onGroupProfileFetched?.success(groupJid)
+//        onGroupProfileFetchedStreamHandler.onGroupProfileFetched?.success(groupJid)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onGroupProfileFetchedChannel,
+            groupJid
+        )
     }
 
     override fun onGroupProfileUpdated(groupJid: String) {
         LogMessage.d(TAG, "onGroupProfileUpdated : $groupJid")
         //LogMessage.d("our GroupProfileUpdated", groupJid)
-        onGroupProfileUpdatedStreamHandler.onGroupProfileUpdated?.success(groupJid)
+//        onGroupProfileUpdatedStreamHandler.onGroupProfileUpdated?.success(groupJid)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onGroupProfileUpdatedChannel,
+            groupJid
+        )
     }
 
     override fun onLeftFromGroup(groupJid: String, leftUserJid: String) {
@@ -4171,7 +719,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val map = JSONObject()
         map.put("groupJid", groupJid)
         map.put("leftUserJid", leftUserJid)
-        onLeftFromGroupStreamHandler.onLeftFromGroup?.success(map.toString())
+//        onLeftFromGroupStreamHandler.onLeftFromGroup?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onLeftFromGroupChannel,
+            map.toString()
+        )
     }
 
     override fun onMemberMadeAsAdmin(
@@ -4187,7 +739,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("groupJid", groupJid)
         map.put("newAdminMemberJid", newAdminMemberJid)
         map.put("madeByMemberJid", madeByMemberJid)
-        onMemberMadeAsAdminStreamHandler.onMemberMadeAsAdmin?.success(map.toString())
+//        onMemberMadeAsAdminStreamHandler.onMemberMadeAsAdmin?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onMemberMadeAsAdminChannel,
+            map.toString()
+        )
     }
 
     override fun onRevokedAdminAccess(
@@ -4203,7 +759,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("groupJid", groupJid)
         map.put("removedAdminMemberJid", revokedAdminMemberJid)
         map.put("removedByMemberJid", revokedByMemberJid)
-        onMemberRemovedAsAdminStreamHandler.onMemberRemovedAsAdmin?.success(map.toString())
+//        onMemberRemovedAsAdminStreamHandler.onMemberRemovedAsAdmin?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onMemberRemovedAsAdminChannel,
+            map.toString()
+        )
     }
 
     override fun onMemberRemovedFromGroup(
@@ -4219,12 +779,20 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("groupJid", groupJid)
         map.put("removedMemberJid", removedMemberJid)
         map.put("removedByMemberJid", removedByMemberJid)
-        onMemberRemovedFromGroupStreamHandler.onMemberRemovedFromGroup?.success(map.toString())
+//        onMemberRemovedFromGroupStreamHandler.onMemberRemovedFromGroup?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onMemberRemovedFromGroupChannel,
+            map.toString()
+        )
     }
 
     override fun onNewGroupCreated(groupJid: String) {
         LogMessage.d(TAG, "onNewGroupCreated : $groupJid")
-        onNewGroupCreatedStreamHandler.onNewGroupCreated?.success(groupJid)
+//        onNewGroupCreatedStreamHandler.onNewGroupCreated?.success(groupJid)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onNewGroupCreatedChannel,
+            groupJid
+        )
     }
 
     override fun onNewMemberAddedToGroup(
@@ -4240,19 +808,31 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("groupJid", groupJid)
         map.put("newMemberJid", newMemberJid)
         map.put("addedByMemberJid", addedByMemberJid)
-        onNewMemberAddedToGroupStreamHandler.onNewMemberAddedToGroup?.success(map.toString())
+//        onNewMemberAddedToGroupStreamHandler.onNewMemberAddedToGroup?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onNewMemberAddedToGroupChannel,
+            map.toString()
+        )
     }
 
     override fun blockedThisUser(jid: String) {
         LogMessage.d(TAG, "blockedThisUser : $jid")
         val map = JSONObject()
         map.put("jid", jid)
-        blockedThisUserStreamHandler.blockedThisUser?.success(map.toString())
+//        blockedThisUserStreamHandler.blockedThisUser?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.blockedThisUserChannel,
+            map.toString()
+        )
     }
 
     override fun myProfileUpdated(isSuccess: Boolean) {
         LogMessage.d(TAG, "myProfileUpdated isSuccess : $isSuccess")
-        myProfileUpdatedStreamHandler.myProfileUpdated?.success(isSuccess)
+//        myProfileUpdatedStreamHandler.myProfileUpdated?.success(isSuccess)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.myProfileUpdatedChannel,
+            isSuccess
+        )
     }
 
     override fun onAdminBlockedOtherUser(jid: String, type: String, status: Boolean) {
@@ -4261,7 +841,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("jid", jid)
         map.put("type", type)
         map.put("status", status)
-        onAdminBlockedOtherUserStreamHandler.onAdminBlockedOtherUser?.success(map.toString())
+//        onAdminBlockedOtherUserStreamHandler.onAdminBlockedOtherUser?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onAdminBlockedOtherUserChannel,
+            map.toString()
+        )
     }
 
     override fun onAdminBlockedUser(jid: String, status: Boolean) {
@@ -4269,20 +853,32 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val map = JSONObject()
         map.put("jid", jid)
         map.put("status", status)
-        onAdminBlockedUserStreamHandler.onAdminBlockedUser?.success(map.toString())
+//        onAdminBlockedUserStreamHandler.onAdminBlockedUser?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onAdminBlockedUserChannel,
+            map.toString()
+        )
     }
 
     override fun onContactSyncComplete(isSuccess: Boolean) {
         LogMessage.d("onContactSyncComplete", isSuccess.toString())
         FlyCore.getRegisteredUsers(true) { success, _, data ->
-            onContactSyncCompleteStreamHandler.onContactSyncComplete?.success(isSuccess)
+//            onContactSyncCompleteStreamHandler.onContactSyncComplete?.success(isSuccess)
+            FlyMethodConstants.updateChatSinkValue(
+                Constants.onContactSyncCompleteChannel,
+                isSuccess
+            )
         }
     }
 
     override fun onLoggedOut() {
         LogMessage.d(TAG, "onLoggedOut")
-        instance.mainActivity?.runOnUiThread {
-            onLoggedOutStreamHandler.onLoggedOut?.success(true)
+        MirrorFlyManager.getActivity()?.runOnUiThread {
+//            onLoggedOutStreamHandler.onLoggedOut?.success(true)
+            FlyMethodConstants.updateChatSinkValue(
+                Constants.onLoggedOutChannel,
+                true
+            )
         }
     }
 
@@ -4290,28 +886,44 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "unblockedThisUser : $jid")
         val map = JSONObject()
         map.put("jid", jid)
-        unblockedThisUserStreamHandler.unblockedThisUser?.success(map.toString())
+//        unblockedThisUserStreamHandler.unblockedThisUser?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.unblockedThisUserChannel,
+            map.toString()
+        )
     }
 
     override fun userBlockedMe(jid: String) {
         LogMessage.d(TAG, "userBlockedMe : $jid")
         val map = JSONObject()
         map.put("jid", jid)
-        userBlockedMeStreamHandler.userBlockedMe?.success(map.toString())
+//        userBlockedMeStreamHandler.userBlockedMe?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.userBlockedMeChannel,
+            map.toString()
+        )
     }
 
     override fun userCameOnline(jid: String) {
         LogMessage.d(TAG, "userCameOnline : $jid")
         val map = JSONObject()
         map.put("jid", jid)
-        userCameOnlineStreamHandler.userCameOnline?.success(map.toString())
+//        userCameOnlineStreamHandler.userCameOnline?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.userCameOnlineChannel,
+            map.toString()
+        )
     }
 
     override fun userDeletedHisProfile(jid: String) {
         LogMessage.d(TAG, "userDeletedHisProfile : $jid")
         val map = JSONObject()
         map.put("jid", jid)
-        userDeletedHisProfileStreamHandler.userDeletedHisProfile?.success(map.toString())
+//        userDeletedHisProfileStreamHandler.userDeletedHisProfile?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.userDeletedHisProfileChannel,
+            map.toString()
+        )
     }
 
     override fun userProfileFetched(jid: String, profileDetails: ProfileDetails) {
@@ -4322,63 +934,103 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val map = JSONObject()
         map.put("jid", jid)
         map.put("profileDetails", profileDetails.toJsonString())
-        userProfileFetchedStreamHandler.userProfileFetched?.success(map.toString())
+//        userProfileFetchedStreamHandler.userProfileFetched?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.userProfileFetchedChannel,
+            map.toString()
+        )
     }
 
     override fun userUnBlockedMe(jid: String) {
         LogMessage.d(TAG, "userUnBlockedMe : $jid")
         val map = JSONObject()
         map.put("jid", jid)
-        userUnBlockedMeStreamHandler.userUnBlockedMe?.success(map.toString())
+//        userUnBlockedMeStreamHandler.userUnBlockedMe?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.userUnBlockedMeChannel,
+            map.toString()
+        )
     }
 
     override fun userUpdatedHisProfile(jid: String) {
         LogMessage.d(TAG, "userUpdatedHisProfile : $jid")
         val map = JSONObject()
         map.put("jid", jid)
-        userUpdatedHisProfileStreamHandler.userUpdatedHisProfile?.success(map.toString())
-        FlutterChat.profileListener?.userUpdatedHisProfile(jid);
+//        userUpdatedHisProfileStreamHandler.userUpdatedHisProfile?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.userUpdatedHisProfileChannel,
+            map.toString()
+        )
+        FlutterChat.profileListener?.userUpdatedHisProfile(jid)
     }
 
     override fun userWentOffline(jid: String) {
         LogMessage.d(TAG, "userWentOffline : $jid")
         val map = JSONObject()
         map.put("jid", jid)
-        userWentOfflineStreamHandler.userWentOffline?.success(map.toString())
+//        userWentOfflineStreamHandler.userWentOffline?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.userWentOfflineChannel,
+            map.toString()
+        )
     }
 
     override fun usersIBlockedListFetched(jidList: List<String>) {
         val map = JSONObject()
         map.put("jidlist", jidList)
-        usersIBlockedListFetchedStreamHandler.usersIBlockedListFetched?.success(map.toString())
+//        usersIBlockedListFetchedStreamHandler.usersIBlockedListFetched?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.usersIBlockedListFetchedChannel,
+            map.toString()
+        )
     }
 
     override fun usersProfilesFetched() {
-        usersProfilesFetchedStreamHandler.usersProfilesFetched?.success(true)
+//        usersProfilesFetchedStreamHandler.usersProfilesFetched?.success(true)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.userProfileFetchedChannel,
+            true
+        )
     }
 
     override fun usersWhoBlockedMeListFetched(jidList: List<String>) {
         val map = JSONObject()
         map.put("jidlist", jidList)
-        usersWhoBlockedMeListFetchedStreamHandler.usersWhoBlockedMeListFetched?.success(map.toString())
+//        usersWhoBlockedMeListFetchedStreamHandler.usersWhoBlockedMeListFetched?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.usersWhoBlockedMeListFetchedChannel,
+            map.toString()
+        )
     }
 
     override fun onConnected() {
         LogMessage.d(TAG, "Chat Manager connected")
-        onConnectedStreamHandler.onConnected?.success(true)
+//        onConnectedStreamHandler.onConnected?.success(true)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onConnectedChannel,
+            true
+        )
     }
 
     override fun onConnectionFailed(e: FlyException) {
-        onConnectionFailedStreamHandler.onConnectionFailed?.success(e.message)
+//        onConnectionFailedStreamHandler.onConnectionFailed?.success(e.message)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onConnectionFailedChannel,
+            e.message
+        )
     }
 
     override fun onDisconnected() {
         LogMessage.d(TAG, "Chat Manager Disconnected")
-        onDisconnectedStreamHandler.onDisconnected?.success(true)
+//        onDisconnectedStreamHandler.onDisconnected?.success(true)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onDisconnectedChannel,
+            true
+        )
     }
 
     override fun onReconnecting() {
-        TODO("Not yet implemented")
+        //onReconnecting
     }
 
     /*override fun onConnectionNotAuthorized() {
@@ -4388,17 +1040,29 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun connectionFailed(message: String) {
         LogMessage.d(TAG, "connectionFailed : $message")
-        connectionFailedStreamHandler.connectionFailed?.success(message)
+//        connectionFailedStreamHandler.connectionFailed?.success(message)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.connectionFailedChannel,
+            message
+        )
     }
 
     override fun connectionSuccess() {
         LogMessage.d(TAG, "connection Success")
-        connectionSuccessStreamHandler.connectionSuccess?.success(true)
+//        connectionSuccessStreamHandler.connectionSuccess?.success(true)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.connectionSuccessChannel,
+            true
+        )
     }
 
     override fun onWebChatPasswordChanged(isError: Boolean) {
         LogMessage.d(TAG, "web chat password changed error $isError")
-        onWebChatPasswordChangedStreamHandler.onWebChatPasswordChanged?.success(isError)
+//        onWebChatPasswordChangedStreamHandler.onWebChatPasswordChanged?.success(isError)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onWebChatPasswordChangedChannel,
+            isError
+        )
     }
 
     override fun setTypingStatus(singleOrGroupJid: String, userId: String, composing: String) {
@@ -4406,7 +1070,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("singleOrgroupJid", singleOrGroupJid)
         map.put("userJid", userId)
         map.put("status", composing)
-        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
+//        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.setTypingStatusChannel,
+            map.toString()
+        )
     }
 
     override fun onChatTypingStatus(fromUserJid: String, status: TypingStatus) {
@@ -4417,7 +1085,23 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //    map.put("singleOrgroupJid", fromUserJid)
         map.put("userJid", fromUserJid)
         map.put("status", getTypingStatus(status))
-        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
+//        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.setTypingStatusChannel,
+            map.toString()
+        )
+    }
+
+    override fun onGroupTypingStatus(groupJid: String, groupUserJid: String, status: TypingStatus) {
+        val map = JSONObject()
+        map.put("groupJid", groupJid)
+        map.put("groupUserJid", groupUserJid)
+        map.put("status", getTypingStatus(status))
+//        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.setTypingStatusChannel,
+            map.toString()
+        )
     }
 
     private fun getTypingStatus(status: TypingStatus): String {
@@ -4428,97 +1112,48 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
     }
 
-    override fun onGroupTypingStatus(groupJid: String, groupUserJid: String, status: TypingStatus) {
-        val map = JSONObject()
-//        map.put("groupJid", groupJid)
-//        map.put("groupUserJid", groupUserJid)
-//        map.put("status", status)
-//        onGroupTypingStatusStreamHandler.onGroupTypingStatus?.success(map.toString())
-        map.put("groupJid", groupJid)
-        map.put("groupUserJid", groupUserJid)
-        map.put("status", getTypingStatus(status))
-        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
-    }
-
-    private fun getDefaultNotificationUri(result: MethodChannel.Result) {
-        val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
-        setNotificationUri(default)
-        result.success(default)
-    }
-
-    private fun setNotificationUri(uri: String?) {
-        LogMessage.d("Android Notification set", uri.toString())
-        SharedPreferenceManager.instance.storeString(SharedPreferenceManager.NOTIFICATION_URI, uri)
-    }
-
-    /*private fun setNotificationUri(call: MethodCall){
-      val uri = call.argument<String>("uri") ?: ""
-      SharedPreferenceManager.instance.storeString("notification_uri",uri)
-  }*/
-    private fun setNotificationSound(call: MethodCall) {
-        val enable = call.argument("enable") ?: false
-        SharedPreferenceManager.instance.storeBoolean(
-            SharedPreferenceManager.NOTIFICATION_SOUND,
-            enable
-        )
-    }
-
-    private fun getNotificationSound(result: MethodChannel.Result) {
-        result.success(SharedPreferenceManager.instance.getBoolean(SharedPreferenceManager.NOTIFICATION_SOUND))
-    }
-
-    private fun setMuteNotification(call: MethodCall) {
-        val enable = call.argument("enable") ?: false
-        SharedPreferenceManager.instance.storeBoolean(
-            SharedPreferenceManager.MUTE_NOTIFICATION,
-            enable
-        )
-    }
-
-    private fun setNotificationVibration(call: MethodCall) {
-        val enable = call.argument("enable") ?: false
-        SharedPreferenceManager.instance.storeBoolean(SharedPreferenceManager.VIBRATION, enable)
-    }
-
-    private fun cancelNotifications() {
-        //AppNotificationManager.cancelNotifications(mContext)
-    }
-
+    private var fromCallNotification: Boolean = false
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        instance.activityBinding = binding
-        instance.mainActivity = binding.activity
+        Log.d(TAG, "onAttachedToActivity")
+        MirrorFlyManager.setActivityBinding(binding)
         binding.addActivityResultListener(instance)
-        Log.d("FlyChat", "onAttachedToActivity ${instance.mainActivity}")
+        Log.d(TAG, "onAttachedToActivity ${MirrorFlyManager.getActivity()}")
         val mainActivityIntent = binding.activity.intent
-        Log.d("FlyChat", "mainActivityIntent ${mainActivityIntent.extras}")
+        Log.d(TAG, "mainActivityIntent ${mainActivityIntent.extras}")
         instance.fromCallNotification = false
         mainActivityIntent.extras?.let {
-            Log.d("FlyChat", "mainActivityIntent ${it.getBoolean("IS_CALL_NOTIFICATION")}")
+            Log.d(TAG, "mainActivityIntent ${it.getBoolean("IS_CALL_NOTIFICATION")}")
             if (it.getBoolean("IS_CALL_NOTIFICATION")) {
                 instance.fromCallNotification = true
             }
         }
-        if (!launchedActivityFromHistory(mainActivityIntent)) {
-            /*if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.action)) {
-                val notificationResponse: Map<String, Any> =
-                    extractNotificationResponseMap(mainActivityIntent)
-                processForegroundNotificationAction(mainActivityIntent, notificationResponse)
-            }*/
-        }
+//        if (!launchedActivityFromHistory(mainActivityIntent)) {
+        /*if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.action)) {
+            val notificationResponse: Map<String, Any> =
+                extractNotificationResponseMap(mainActivityIntent)
+            processForegroundNotificationAction(mainActivityIntent, notificationResponse)
+        }*/
+//        }
         binding.addOnNewIntentListener(instance)
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
         ChatManager.setAvailableFeaturesCallback(instance)
         CallManager.setMissedCallListener(instance)
         if (isRegistered) {
             CallLogManager.setCallLogsListener(instance)
-            ChatEventsManager.setupMessageEventListener(this)
+            /*ChatEventsManager.setupMessageEventListener(this)
             ChatEventsManager.attachProfileEventsListener(this)
             ChatEventsManager.attachGroupEventsListener(this)
             ChatEventsManager.attachLoginEventsListener(this)
-            ChatEventsManager.attachTypingEventListener(this)
+            ChatEventsManager.attachTypingEventListener(this)*/
         }
         instance.lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
         instance.lifecycle.addObserver(instance)
+    }
+
+    private fun launchedActivityFromHistory(intent: Intent?): Boolean {
+        return (intent != null
+                && intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
+                == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY)
     }
 
     override fun onStart(owner: LifecycleOwner) {
@@ -4541,20 +1176,20 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        instance.mainActivity = null;
-        Log.d("FlyChat", "onDetachedFromActivityForConfigChanges")
+        Log.d(TAG, "onDetachedFromActivityForConfigChanges")
+        MirrorFlyManager.setActivityBinding(null)
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        instance.mainActivity = binding.activity;
+        Log.d(TAG, "onReattachedToActivityForConfigChanges")
+        MirrorFlyManager.setActivityBinding(binding)
         binding.addActivityResultListener(this)
-        binding.addOnNewIntentListener(this);
-        Log.d("FlyChat", "onReattachedToActivityForConfigChanges")
+        binding.addOnNewIntentListener(this)
     }
 
     override fun onDetachedFromActivity() {
-        instance.mainActivity = null;
-        Log.d("FlyChat", "onDetachedFromActivity")
+        Log.d(TAG, "onDetachedFromActivity")
+        MirrorFlyManager.setActivityBinding(null)
         ChatEventsManager.detachProfileEventsListener(this)
         ChatEventsManager.detachGroupEventsListener(this)
         ChatEventsManager.detachLoginEventsListener(this)
@@ -4563,111 +1198,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         instance.lifecycle.removeObserver(this)
     }
 
-    private fun openCreateContact(call: MethodCall) {
-        val phone = call.argument("number") ?: ""
-        // Create a new Intent to open the Contacts app with a pre-filled contact form
-        val intent = Intent(Intent.ACTION_INSERT)
-        intent.type = ContactsContract.Contacts.CONTENT_TYPE
-
-        // Set the contact fields using the data provided by the Flutter app
-        intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone)
-
-        // Launch the Contacts app with the pre-filled contact form
-        instance.mainActivity?.startActivity(intent)
-    }
-
-    private var mainActivity: Activity? = null
-    private var fromCallNotification: Boolean = false
-    private fun setActivity(flutterActivity: Activity) {
-        instance.mainActivity = flutterActivity
-    }
-
-    private fun launchedActivityFromHistory(intent: Intent?): Boolean {
-        return (intent != null
-                && intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
-                == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY)
-    }
-
-    private fun getCallNotificationAppLaunchDetails(result: MethodChannel.Result) {
-        /*val notificationAppLaunchDetails: MutableMap<String, Any> = HashMap()
-        var notificationLaunchedApp = false
-        if (mainActivity != null) {
-            val launchIntent: Intent = mainActivity!!.intent
-            notificationLaunchedApp =
-                (launchIntent != null && (SELECT_NOTIFICATION.equals(launchIntent.action)
-                        || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.action))
-                        && !launchedActivityFromHistory(launchIntent))
-            if (notificationLaunchedApp) {
-                notificationAppLaunchDetails["notificationResponse"] =
-                    extractNotificationResponseMap(launchIntent)
-            }
-        }
-//        notificationAppLaunchDetails[NOTIFICATION_LAUNCHED_APP] = notificationLaunchedApp
-        result.success(notificationAppLaunchDetails)*/
-        val appLaunchDetail = JSONObject()
-        var notificationLaunchedApp = false
-        if (mainActivity != null) {
-            val launchIntent = mainActivity!!.intent
-            notificationLaunchedApp =
-                (launchIntent != null /*&& (SELECT_NOTIFICATION.equals(launchIntent.action)
-                        || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.action))*/
-                        && !launchedActivityFromHistory(launchIntent))
-            if (notificationLaunchedApp) {
-                appLaunchDetail.put("action", launchIntent.action)
-                appLaunchDetail.put("data", extractNotificationResponseMap(launchIntent))
-            }
-        }
-        result.success(appLaunchDetail.toString())
-    }
-
-    fun extractNotificationResponseMap(intent: Intent): Map<String, Any?>? {
-//        val notificationId = intent.getIntExtra(NOTIFICATION_ID, 0)
-        val notificationResponseMap: MutableMap<String, Any?> = HashMap()
-        /*notificationResponseMap[NOTIFICATION_ID] =
-            notificationId
-        notificationResponseMap[ACTION_ID] = intent.getStringExtra(ACTION_ID)
-        notificationResponseMap[FlutterLocalNotificationsPlugin.PAYLOAD] =
-            intent.getStringExtra(FlutterLocalNotificationsPlugin.PAYLOAD)
-        val remoteInput: Bundle = RemoteInput.getResultsFromIntent(intent)
-        if (remoteInput != null) {
-            notificationResponseMap[INPUT] = remoteInput.getString(INPUT_RESULT)
-        }
-        if (SELECT_NOTIFICATION.equals(intent.action)) {
-            notificationResponseMap[NOTIFICATION_RESPONSE_TYPE] = 0
-        }
-        if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.action)) {
-            notificationResponseMap[NOTIFICATION_RESPONSE_TYPE] = 1
-        }*/
-        return notificationResponseMap
-    }
-
-    class EventCallbackHandler : EventChannel.StreamHandler {
-
-        private var eventSink: EventChannel.EventSink? = null
-
-        override fun onListen(arguments: Any?, sink: EventChannel.EventSink) {
-            eventSink = sink
-        }
-
-        fun send(event: String, body: Map<String, Any>) {
-            val data = mapOf(
-                "event" to event,
-                "body" to body
-            )
-            Handler(Looper.getMainLooper()).post {
-                eventSink?.success(data)
-            }
-        }
-
-        override fun onCancel(arguments: Any?) {
-            eventSink = null
-        }
-    }
-
     override fun onNewIntent(intent: Intent): Boolean {
         val res: Boolean = sendNotificationPayloadMessage(intent)
-        if (res && mainActivity != null) {
-            mainActivity!!.intent = intent
+        if (res && MirrorFlyManager.getActivity() != null) {
+            MirrorFlyManager.getActivity()!!.intent = intent
         }
         return res
     }
@@ -4687,117 +1221,46 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         return false
     }
 
-    //    var isFileChooser = false
-    var audioFileResult: MethodChannel.Result? = null
-    private var activityBinding: ActivityPluginBinding? = null
-    private fun selectAudioFileFromStorage(result: MethodChannel.Result) {
-        Log.d("FlyChat", "selectAudioFileFromStorage ${instance.mainActivity}")
-//        isFileChooser = true
-        instance.audioFileResult = result
-        val manufacturer = Build.MANUFACTURER.toUpperCase(Locale.getDefault())
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
-        val audioListIntent = Intent(Intent.ACTION_GET_CONTENT)
-        audioListIntent.type = Constants.AUDIO_FILE
-        val audioPickerApps: List<ResolveInfo> =
-            mContext.packageManager.queryIntentActivities(audioListIntent, 0)
-        when {
-            manufacturer.contains("HMD GLOBAL") -> {
-                openCustomOSAudioSelection()
-            }
-            manufacturer.contains("VIVO") -> {
-                openCustomOSAudioSelection()
-            }
-            manufacturer.contains("REALME") -> {
-                openCustomOSAudioSelection()
-            }
-            manufacturer.contains("SAMSUNG") -> {
-                val intent2 = Intent("com.sec.android.app.myfiles.PICK_DATA")
-                intent2.putExtra("CONTENT_TYPE", audioListIntent.type)
-                intent2.addCategory(Intent.CATEGORY_DEFAULT)
-                mainActivity?.startActivityForResult(intent2, Constants.FROM_GALLERY)
-                /* setting isActivityStartedForResult to true to avoid xmpp disconnection*/
-                ChatManager.isActivityStartedForResult = true
-            }
-            intent.resolveActivity(mContext.packageManager) != null -> {
-                mainActivity?.startActivityForResult(intent, Constants.FROM_GALLERY)
-                /* setting isActivityStartedForResult to true to avoid xmpp disconnection*/
-                ChatManager.isActivityStartedForResult = true
-            }
-            audioPickerApps.isNotEmpty() -> {
-                try {
-                    val audioIntent = Intent(Intent.ACTION_GET_CONTENT)
-                    audioIntent.setDataAndType(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        Constants.AUDIO_FILE
-                    )
-                    mainActivity?.startActivityForResult(audioIntent, Constants.FROM_GALLERY)
-                } catch (e: Exception) {
-                    instance.audioFileResult?.error("500", e.message, e)
-                    LogMessage.e(TAG, e.stackTraceToString())
-                } catch (e: SecurityException) {
-                    instance.audioFileResult?.error("500", e.message, e)
-                    LogMessage.e(TAG, e.stackTraceToString())
-                }
-
-            }
-            else -> noAudioFound()
-        }
-    }
-
-    private fun noAudioFound() {
-//        isFileChooser = false
-        instance.audioFileResult?.error("500", "No suitable app found!", "")
-//        showToast("No suitable app found!")
-    }
-
-    private fun openCustomOSAudioSelection() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = Constants.AUDIO_FILE
-        if (intent.resolveActivity(mContext.packageManager) != null) {
-            mainActivity?.startActivityForResult(intent, Constants.FROM_GALLERY)
-            /* setting isActivityStartedForResult to true to avoid xmpp disconnection*/
-            ChatManager.isActivityStartedForResult = true
-        }
-    }
-
+    //    var audioFileResult: MethodChannel.Result? = null
     private fun handleAudioVideoIntentFromGalleryMenu(resultCode: Int, intent: Intent?) {
         if (resultCode == Activity.RESULT_CANCELED) {
-            instance.audioFileResult?.error("500", "picker cancelled by user", "")
-            instance.audioFileResult = null
+            MirrorFlyManager.audioFileResult?.error("500", "picker cancelled by user", "")
+            MirrorFlyManager.audioFileResult = null
             return
         }
         val uri = intent?.data
         if (uri != null) {
             val uriOfSelectedFile = intent.data!!
-            val mimeType = instance.mainActivity?.applicationContext?.contentResolver?.getType(
-                uriOfSelectedFile
-            )
+            val mimeType =
+                MirrorFlyManager.getActivity()?.applicationContext?.contentResolver?.getType(
+                    uriOfSelectedFile
+                )
             val pathOfSelectedFile = RealPathUtil.getRealPath(
-                instance.mainActivity?.applicationContext!!,
+                MirrorFlyManager.getActivity()?.applicationContext!!,
                 uriOfSelectedFile
             )
             if (pathOfSelectedFile != null) {
                 if (mimeType == null || mimeType.startsWith(com.mirrorflysdk.flycommons.Constants.MSG_TYPE_AUDIO)) {
 //                isFileChooser = true
-                    instance.audioFileResult?.success(pathOfSelectedFile)
-                    instance.audioFileResult = null
+                    MirrorFlyManager.audioFileResult?.success(pathOfSelectedFile)
+                    MirrorFlyManager.audioFileResult = null
                 } else {
-                    instance.audioFileResult?.error("500", "mime type not found", "")
-                    instance.audioFileResult = null
+                    MirrorFlyManager.audioFileResult?.error("500", "mime type not found", "")
+                    MirrorFlyManager.audioFileResult = null
                 }
             } else {
-                instance.audioFileResult?.error("500", "file path null", "")
-                instance.audioFileResult = null
+                MirrorFlyManager.audioFileResult?.error("500", "file path null", "")
+                MirrorFlyManager.audioFileResult = null
             }
         } else {
-            instance.audioFileResult?.error("500", "file uri not found", "")
-            instance.audioFileResult = null
+            MirrorFlyManager.audioFileResult?.error("500", "file uri not found", "")
+            MirrorFlyManager.audioFileResult = null
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        Log.d("onActivityResult", data.toString())
-        Log.d("onActivityResult", "mainActivity ${instance.mainActivity}")
+        Log.d(TAG, "onActivityResult" + data.toString())
+        Log.d(TAG, "onActivityResult mainActivity ${MirrorFlyManager.getActivity()}")
 //        setting isActivityStartedForResult to false for xmpp disconnection
         ChatManager.isActivityStartedForResult = false
         when (requestCode) {
@@ -4810,7 +1273,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onUpdateAvailableFeatures(features: Features) {
         LogMessage.d("onAvailableFeaturesUpdated", features.toJsonString())
-        onUpdateAvailableFeaturesStreamHandler.onAvailableFeaturesUpdated?.success(features.toJsonString())
+//        onUpdateAvailableFeaturesStreamHandler.onAvailableFeaturesUpdated?.success(features.toJsonString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onAvailableFeaturesUpdatedChannel,
+            features.toJsonString()
+        )
     }
 
     override fun onMissedCall(
@@ -4822,20 +1289,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     ) {
         Log.d(
             "onMissedCall",
-            "onMissedCall ${instance.mainActivity} userJid : $userJid, isOneToOne: $isOneToOneCall, groupId: $groupId, callType: $callType, userList: $userList"
+            "onMissedCall ${MirrorFlyManager.getActivity()} userJid : $userJid, isOneToOne: $isOneToOneCall, groupId: $groupId, callType: $callType, userList: $userList"
         )
-//        val notificationContent = getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList)
-//        LogMessage.d("onMissedCall",notificationContent.toString())
-        /*CallNotificationUtils.createNotification(
-            getContext(),
-            notificationContent.first, //Title Missed call Notification
-            notificationContent.second //Message Content Missed call from whom
-        )*/
         val json = JSONObject()
-        /*json.put("title",notificationContent.first)
-        json.put("content",notificationContent.second)
-        LogMessage.d("MissedCallNotification",json.toString())
-        onMissedCallNotificationStreamHandler.onMissedCall?.success(json)*/
         json.put("isOneToOneCall", isOneToOneCall)
         json.put("userJid", userJid)
         json.put("groupId", groupId)
@@ -4856,9 +1312,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         we can pass the array list directly as done in usersIBlockedListFetched
 
          */
-        if (instance.mainActivity != null) {
-            instance.mainActivity?.runOnUiThread {
-                onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
+        if (MirrorFlyManager.getActivity() != null) {
+            MirrorFlyManager.getActivity()?.runOnUiThread {
+//                onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
+                FlyMethodConstants.updateCallSinkValue(Constants.onMissedCall, json.toString())
             }
         } else {
             val notificationContent = getMissedCallNotificationContent(
@@ -4930,12 +1387,14 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val map = JSONObject()
         map.put("callIdList", callIdList)
         map.put("isClearAll", isClearAll)
-        onCallLogsDeletedStreamHandler.onCallLogsDeleted?.success(map.toString())
+//        onCallLogsDeletedStreamHandler.onCallLogsDeleted?.success(map.toString())
+        FlyMethodConstants.updateCallSinkValue(Constants.onCallLogsDeletedChannel, map.toString())
     }
 
     override fun onCallLogsUpdated() {
         LogMessage.d("onCallLogs Updated ", "Updated Called")
-        onCallLogsUpdatedStreamHandler.onCallLogsUpdated?.success(true)
+//        onCallLogsUpdatedStreamHandler.onCallLogsUpdated?.success(true)
+        FlyMethodConstants.updateCallSinkValue(Constants.onCallLogsUpdatedChannel, true)
     }
 
 

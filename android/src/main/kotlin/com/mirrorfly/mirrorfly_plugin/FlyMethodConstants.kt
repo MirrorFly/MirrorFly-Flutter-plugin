@@ -1,67 +1,68 @@
 package com.mirrorfly.mirrorfly_plugin
 
 import com.mirrorfly.mirrorfly_plugin.call.*
+import com.mirrorflysdk.flycommons.LogMessage
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 object FlyMethodConstants {
-    private val flyChatMethods: FlyChatMethods by lazy { FlyChatMethods }
-    private val flyCallMethods: FlyCallMethods by lazy { FlyCallMethods }
+    private val flyChatMethods: FlyChatMethods by lazy { FlyChatMethods() }
+    private val flyCallMethods: FlyCallMethods by lazy { FlyCallMethods() }
 
 //    val channels = arrayListOf(Constants.MirrorflyMethodChannel,Constants.callMethodChannel)
 
     private val chatEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(
-        Constants.onMessageReceivedChannel to MessageReceivedStreamHandler,
-        Constants.onMessageStatusUpdatedChannel to MessageStatusUpdatedStreamHandler,
-        Constants.onMediaStatusUpdatedChannel to MediaStatusUpdatedStreamHandler,
-        Constants.onUploadDownloadProgressChangedChannel to UploadDownloadProgressChangedStreamHandler,
-        Constants.showUpdateCancelNotificationChannel to ShowOrUpdateOrCancelNotificationStreamHandler,
-        Constants.onGroupProfileFetchedChannel to onGroupProfileFetchedStreamHandler,
-        Constants.onNewGroupCreatedChannel to onNewGroupCreatedStreamHandler,
-        Constants.onGroupProfileUpdatedChannel to onGroupProfileUpdatedStreamHandler,
-        Constants.onNewMemberAddedToGroupChannel to onNewMemberAddedToGroupStreamHandler,
-        Constants.onMemberRemovedFromGroupChannel to onMemberRemovedFromGroupStreamHandler,
-        Constants.onFetchingGroupMembersCompletedChannel to onFetchingGroupMembersCompletedStreamHandler,
-        Constants.onDeleteGroupChannel to onDeleteGroupStreamHandler,
-        Constants.onFetchingGroupListCompletedChannel to onFetchingGroupListCompletedStreamHandler,
-        Constants.onMemberMadeAsAdminChannel to onMemberMadeAsAdminStreamHandler,
-        Constants.onMemberRemovedAsAdminChannel to onMemberRemovedAsAdminStreamHandler,
-        Constants.onLeftFromGroupChannel to onLeftFromGroupStreamHandler,
-        Constants.onGroupNotificationMessageChannel to onGroupNotificationMessageStreamHandler,
-        Constants.onGroupDeletedLocallyChannel to onGroupDeletedLocallyStreamHandler,
-        Constants.blockedThisUserChannel to blockedThisUserStreamHandler,
-        Constants.myProfileUpdatedChannel to myProfileUpdatedStreamHandler,
-        Constants.onAdminBlockedOtherUserChannel to onAdminBlockedOtherUserStreamHandler,
-        Constants.onAdminBlockedUserChannel to onAdminBlockedUserStreamHandler,
-        Constants.onContactSyncCompleteChannel to onContactSyncCompleteStreamHandler,
-        Constants.onLoggedOutChannel to onLoggedOutStreamHandler,
-        Constants.unblockedThisUserChannel to unblockedThisUserStreamHandler,
-        Constants.userBlockedMeChannel to userBlockedMeStreamHandler,
-        Constants.userCameOnlineChannel to userCameOnlineStreamHandler,
-        Constants.userDeletedHisProfileChannel to userDeletedHisProfileStreamHandler,
-        Constants.userProfileFetchedChannel to userProfileFetchedStreamHandler,
-//        Constants.usersProfilesFetchedChannel to usersProfilesFetchedStreamHandler,
-        Constants.userUnBlockedMeChannel to userUnBlockedMeStreamHandler,
-        Constants.userUpdatedHisProfileChannel to userUpdatedHisProfileStreamHandler,
-        Constants.userWentOfflineChannel to userWentOfflineStreamHandler,
-        Constants.usersIBlockedListFetchedChannel to usersIBlockedListFetchedStreamHandler,
-        Constants.usersProfilesFetchedChannel to usersProfilesFetchedStreamHandler,
-        Constants.usersWhoBlockedMeListFetchedChannel to usersWhoBlockedMeListFetchedStreamHandler,
-        Constants.onConnectedChannel to onConnectedStreamHandler,
-        Constants.onDisconnectedChannel to onDisconnectedStreamHandler,
-        Constants.onConnectionFailedChannel to onConnectionFailedStreamHandler,
-        Constants.connectionFailedChannel to connectionFailedStreamHandler,
-        Constants.connectionSuccessChannel to connectionSuccessStreamHandler,
-        Constants.onWebChatPasswordChangedChannel to onWebChatPasswordChangedStreamHandler,
-        Constants.setTypingStatusChannel to setTypingStatusStreamHandler,
-        Constants.onChatTypingStatusChannel to onChatTypingStatusStreamHandler,
-        Constants.onGroupTypingStatusChannel to onGroupTypingStatusStreamHandler,
-        Constants.onFailureChannel to onFailureStreamHandler,
-        Constants.onProgressChangedChannel to onProgressChangedStreamHandler,
-        Constants.onSuccessChannel to onSuccessStreamHandler,
-        Constants.onAvailableFeaturesUpdatedChannel to onUpdateAvailableFeaturesStreamHandler,
+        Constants.onMessageReceivedChannel to EventStreamHandler(),
+        Constants.onMessageStatusUpdatedChannel to EventStreamHandler(),
+        Constants.onMediaStatusUpdatedChannel to EventStreamHandler(),
+        Constants.onUploadDownloadProgressChangedChannel to EventStreamHandler(),
+        Constants.showUpdateCancelNotificationChannel to EventStreamHandler(),
+        Constants.onGroupProfileFetchedChannel to EventStreamHandler(),
+        Constants.onNewGroupCreatedChannel to EventStreamHandler(),
+        Constants.onGroupProfileUpdatedChannel to EventStreamHandler(),
+        Constants.onNewMemberAddedToGroupChannel to EventStreamHandler(),
+        Constants.onMemberRemovedFromGroupChannel to EventStreamHandler(),
+        Constants.onFetchingGroupMembersCompletedChannel to EventStreamHandler(),
+        Constants.onDeleteGroupChannel to EventStreamHandler(),
+        Constants.onFetchingGroupListCompletedChannel to EventStreamHandler(),
+        Constants.onMemberMadeAsAdminChannel to EventStreamHandler(),
+        Constants.onMemberRemovedAsAdminChannel to EventStreamHandler(),
+        Constants.onLeftFromGroupChannel to EventStreamHandler(),
+        Constants.onGroupNotificationMessageChannel to EventStreamHandler(),
+        Constants.onGroupDeletedLocallyChannel to EventStreamHandler(),
+        Constants.blockedThisUserChannel to EventStreamHandler(),
+        Constants.myProfileUpdatedChannel to EventStreamHandler(),
+        Constants.onAdminBlockedOtherUserChannel to EventStreamHandler(),
+        Constants.onAdminBlockedUserChannel to EventStreamHandler(),
+        Constants.onContactSyncCompleteChannel to EventStreamHandler(),
+        Constants.onLoggedOutChannel to EventStreamHandler(),
+        Constants.unblockedThisUserChannel to EventStreamHandler(),
+        Constants.userBlockedMeChannel to EventStreamHandler(),
+        Constants.userCameOnlineChannel to EventStreamHandler(),
+        Constants.userDeletedHisProfileChannel to EventStreamHandler(),
+        Constants.userProfileFetchedChannel to EventStreamHandler(),
+//        Constants.usersProfilesFetchedChannel to EventStreamHandler(),
+        Constants.userUnBlockedMeChannel to EventStreamHandler(),
+        Constants.userUpdatedHisProfileChannel to EventStreamHandler(),
+        Constants.userWentOfflineChannel to EventStreamHandler(),
+        Constants.usersIBlockedListFetchedChannel to EventStreamHandler(),
+        Constants.usersProfilesFetchedChannel to EventStreamHandler(),
+        Constants.usersWhoBlockedMeListFetchedChannel to EventStreamHandler(),
+        Constants.onConnectedChannel to EventStreamHandler(),
+        Constants.onDisconnectedChannel to EventStreamHandler(),
+        Constants.onConnectionFailedChannel to EventStreamHandler(),
+        Constants.connectionFailedChannel to EventStreamHandler(),
+        Constants.connectionSuccessChannel to EventStreamHandler(),
+        Constants.onWebChatPasswordChangedChannel to EventStreamHandler(),
+        Constants.setTypingStatusChannel to EventStreamHandler(),
+        Constants.onChatTypingStatusChannel to EventStreamHandler(),
+        Constants.onGroupTypingStatusChannel to EventStreamHandler(),
+        Constants.onFailureChannel to EventStreamHandler(),
+        Constants.onProgressChangedChannel to EventStreamHandler(),
+        Constants.onSuccessChannel to EventStreamHandler(),
+        Constants.onAvailableFeaturesUpdatedChannel to EventStreamHandler()
     )
     val chatMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "init" to flyChatMethods::buildChatSDK,
@@ -254,17 +255,17 @@ object FlyMethodConstants {
     )
 
     private val callEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(
-        Constants.onLocalVideoTrackAdded to onLocalVideoTrackAddedStreamHandler,
-        Constants.onRemoteVideoTrackAdded to onRemoteVideoTrackAddedStreamHandler,
-        Constants.onTrackAdded to onTrackAddedStreamHandler,
-        Constants.onCallStatusUpdated to onCallStatusUpdatedStreamHandler,
-        Constants.onCallAction to onCallActionStreamHandler,
-        Constants.onMuteStatusUpdated to onMuteStatusUpdatedStreamHandler,
-        Constants.onUserSpeaking to onUserSpeakingStreamHandler,
-        Constants.onUserStoppedSpeaking to onUserStoppedSpeakingStreamHandler,
-        Constants.onMissedCall to onMissedCallNotificationStreamHandler,
-        Constants.onCallLogsUpdatedChannel to onCallLogsUpdatedStreamHandler,
-        Constants.onCallLogsDeletedChannel to onCallLogsDeletedStreamHandler,
+        Constants.onLocalVideoTrackAdded to EventStreamHandler(),
+        Constants.onRemoteVideoTrackAdded to EventStreamHandler(),
+        Constants.onTrackAdded to EventStreamHandler(),
+        Constants.onCallStatusUpdated to EventStreamHandler(),
+        Constants.onCallAction to EventStreamHandler(),
+        Constants.onMuteStatusUpdated to EventStreamHandler(),
+        Constants.onUserSpeaking to EventStreamHandler(),
+        Constants.onUserStoppedSpeaking to EventStreamHandler(),
+        Constants.onMissedCall to EventStreamHandler(),
+        Constants.onCallLogsUpdatedChannel to EventStreamHandler(),
+        Constants.onCallLogsDeletedChannel to EventStreamHandler(),
     )
     val callMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "getCallUsersList" to flyCallMethods::getCallUsersList,
@@ -275,6 +276,7 @@ object FlyMethodConstants {
         "makeVideoCall" to flyCallMethods::makeVideoCall,
         "answerCall" to flyCallMethods::answerCall,
         "declineCall" to flyCallMethods::declineCall,
+        "disconnectCall" to flyCallMethods::disconnectCall,
         "muteAudio" to flyCallMethods::muteAudio,
         "isVideoMuted" to flyCallMethods::isVideoMuted,
         "isRemoteVideoMuted" to flyCallMethods::isRemoteVideoMuted,
@@ -312,7 +314,7 @@ object FlyMethodConstants {
         "getLocalCallLogs" to flyCallMethods::getLocalCallLogs,
         "markAllUnreadMissedCallsAsRead" to flyCallMethods::markAllUnreadMissedCallsAsRead,
     )
-    
+
 
     fun initializeChatListeners(binaryMessenger: BinaryMessenger) {
         chatEventListeners.forEach { (channelName, streamHandler) ->
@@ -330,19 +332,27 @@ object FlyMethodConstants {
 
     fun updateChatSinkValue(channelName: String, value: Any?) {
         val streamHandler = chatEventListeners[channelName]
+        LogMessage.d(
+            "#updateChatSinkValue",
+            "$channelName : " + (streamHandler is FlyEventSinkProvider).toString()
+        )
         if (streamHandler is FlyEventSinkProvider) {
             streamHandler.setEventSinkValue(value)
         } else {
-            println("#updateChatSinkValue $channelName not found")
+            LogMessage.d("#updateChatSinkValue", "$channelName not found")
         }
     }
 
     fun updateCallSinkValue(channelName: String, value: Any?) {
         val streamHandler = callEventListeners[channelName]
+        LogMessage.d(
+            "#updateCallSinkValue",
+            "$channelName : " + (streamHandler is FlyEventSinkProvider).toString()
+        )
         if (streamHandler is FlyEventSinkProvider) {
             streamHandler.setEventSinkValue(value)
         } else {
-            println("#updateCallSinkValue $channelName not found")
+            LogMessage.d("#updateCallSinkValue", "$channelName not found")
         }
     }
 }

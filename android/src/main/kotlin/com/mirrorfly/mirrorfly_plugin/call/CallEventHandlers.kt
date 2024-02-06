@@ -1,8 +1,6 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
-import io.flutter.plugin.common.EventChannel
-
-object onLocalVideoTrackAddedStreamHandler : EventChannel.StreamHandler {
+/*object onLocalVideoTrackAddedStreamHandler : EventChannel.StreamHandler {
 
     var onLocalVideoTrackAdded: EventChannel.EventSink? = null
 
@@ -104,7 +102,7 @@ object onMissedCallNotificationStreamHandler : EventChannel.StreamHandler{
     override fun onCancel(arguments: Any?) {
         onMissedCall = null
     }
-}
+}*/
 
 object FlutterCall{
     /**
