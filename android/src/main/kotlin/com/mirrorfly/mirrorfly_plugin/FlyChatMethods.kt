@@ -1640,12 +1640,19 @@ class FlyChatMethods {
     fun sendMessage(call: MethodCall, result: MethodChannel.Result) {
         val messageParams = call.arguments<HashMap<String, Any>>()
         LogMessage.d("sendMessage", messageParams.toString())
-        val fileMessage = buildFileMessage(messageParams)
-        LogMessage.d("fileMessage", fileMessage.toJsonString())
-        if (fileMessage.messageType == MessageType.TEXT) {
-            sendTextMessage(buildTextMessage(messageParams), result)
-        } else {
-            sendMediaFileMessage(fileMessage, result)
+        val messageType = messageParams?.get("messageType") as String?
+        messageType?.let {
+            if (MessageType.valueOf(messageType) == MessageType.TEXT) {
+                val textMessage = buildTextMessage(messageParams)
+                textMessage?.let {
+                    LogMessage.d("textMessage", textMessage.toJsonString())
+                    sendTextMessage(textMessage, result)
+                }
+            } else {
+                val fileMessage = buildFileMessage(messageParams)
+                LogMessage.d("fileMessage", fileMessage.toJsonString())
+                sendMediaFileMessage(fileMessage, result)
+            }
         }
     }
 
