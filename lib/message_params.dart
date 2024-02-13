@@ -196,8 +196,9 @@ class MessageParams {
   String toJid;
   String? replyMessageId;
   MessageType messageType;
-  List<String>? mentionedUsersIds;
-  List<MessageMetaData> metaData;
+
+  // List<String>? mentionedUsersIds;
+  // List<MessageMetaData> metaData;
   TextMessageParams? textMessageParams;
   LocationMessageParams? locationMessageParams;
   ContactMessageParams? contactMessageParams;
@@ -208,8 +209,8 @@ class MessageParams {
     required this.toJid,
     this.replyMessageId,
     required this.messageType,
-    this.mentionedUsersIds,
-    this.metaData = const [],
+    // this.mentionedUsersIds,
+    // this.metaData = const [],
     this.textMessageParams,
     this.locationMessageParams,
     this.contactMessageParams,
@@ -261,6 +262,7 @@ class MessageParams {
       topicId: topicId,
     );
   }
+
   factory MessageParams.image({
     required String toJid,
     String? replyMessageId,
@@ -275,6 +277,7 @@ class MessageParams {
       topicId: topicId,
     );
   }
+
   factory MessageParams.audio({
     required String toJid,
     String? replyMessageId,
@@ -290,6 +293,7 @@ class MessageParams {
       topicId: topicId,
     );
   }
+
   factory MessageParams.video({
     required String toJid,
     String? replyMessageId,
@@ -304,6 +308,7 @@ class MessageParams {
       topicId: topicId,
     );
   }
+
   factory MessageParams.document({
     required String toJid,
     String? replyMessageId,
@@ -319,7 +324,6 @@ class MessageParams {
     );
   }
 }
-
 
 //
 // class MessageParams {
@@ -353,8 +357,8 @@ extension ExtractMessageParams on MessageParams {
         'toJid': toJid,
         'replyMessageId': replyMessageId,
         'messageType': messageType.value,
-        'mentionedUsersIds': mentionedUsersIds,
-        'metaData': List<dynamic>.from(metaData.map((x) => x.toMap())),
+        'mentionedUsersIds': null, //mentionedUsersIds,
+        'metaData': null, //List<dynamic>.from(metaData.map((x) => x.toMap())),
         'textMessage': textMessageParams?.toMap(),
         'locationMessage': locationMessageParams?.toMap(),
         'contactMessage': contactMessageParams?.toMap(),
