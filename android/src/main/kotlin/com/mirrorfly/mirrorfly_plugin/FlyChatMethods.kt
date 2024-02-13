@@ -237,7 +237,7 @@ class FlyChatMethods {
 
     fun buildInitializeSDK(call: MethodCall, result: MethodChannel.Result) {
 
-        val licenseKey: String? = call.argument("licenseKey")
+        val licenseKey: String = call.argument("licenseKey") ?: ""
         val chatHistoryEnable: Boolean = call.argument("chatHistoryEnable") ?: false
         val storageFolderName: String? = call.argument("storageFolderName")
         val enableMobileNumberLogin: Boolean? = call.argument("enableMobileNumberLogin")
@@ -257,7 +257,7 @@ class FlyChatMethods {
 
         FlyCallMethods().initCall()
 
-        ChatManager.initializeSDK(licenseKey!!) { isSuccess, throwable, data ->
+        ChatManager.initializeSDK(licenseKey) { isSuccess, throwable, data ->
             if (isSuccess) {
                 LogMessage.d(tag, "initializeSDK success")
                 result.success(true)
@@ -1674,7 +1674,7 @@ class FlyChatMethods {
                         result.error("500", "message not available", error)
                     }
                 } else {
-                    result.error("500", error?.message, error)
+                    result.error("500", error?.message ?: "", error)
                 }
             }
         })
@@ -1698,7 +1698,7 @@ class FlyChatMethods {
                         result.error("500", "message not available", error)
                     }
                 } else {
-                    result.error("500", error?.message, error)
+                    result.error("500", error?.message ?: "", error)
                 }
             }
 
@@ -2244,7 +2244,7 @@ class FlyChatMethods {
                                 }
                             } else {
                                 //LogMessage.d(TAG, "Message sent Failed")
-                                LogMessage.e("sendTextMessage", error?.message)
+                                LogMessage.e("sendTextMessage", error)
                                 result.error("500", error?.message, error)
                             }
                         }
