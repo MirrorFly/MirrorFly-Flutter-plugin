@@ -3006,7 +3006,9 @@ class FlyChatMethods {
 
     fun leaveFromGroup(call: MethodCall, result: MethodChannel.Result) {
         val groupJid = call.argument<String>("groupJid") ?: ""
-        GroupManager.leaveFromGroup(groupJid) { isSuccess, throwable, _ ->
+        val userJid = call.argument<String>("userJid") ?: ""
+        LogMessage.d("leaveGroup",call.arguments.toString())
+        GroupManager.leaveFromGroup(groupJid,userJid) { isSuccess, throwable, _ ->
             if (isSuccess) {
                 result.success(true)
             } else {
