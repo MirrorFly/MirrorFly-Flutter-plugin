@@ -1812,7 +1812,7 @@ class FlyChatMethods {
     private var messageListQuery: FetchMessageListQuery? = null
     fun initializeMessageListParams(call: MethodCall, result: MethodChannel.Result) {
         val chatJid: String = call.argument("userJid") ?: ""
-        val messageId: String = call.argument("messageId") ?: ""
+        val messageId: String = call.argument("messageId") ?: "M$chatJid"
         val messageTime: String = call.argument("messageTime") ?: ""
         val inclusive: Boolean = call.argument("exclude") ?: false
         val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: true
@@ -3007,8 +3007,8 @@ class FlyChatMethods {
     fun leaveFromGroup(call: MethodCall, result: MethodChannel.Result) {
         val groupJid = call.argument<String>("groupJid") ?: ""
         val userJid = call.argument<String>("userJid") ?: ""
-        LogMessage.d("leaveGroup",call.arguments.toString())
-        GroupManager.leaveFromGroup(groupJid,userJid) { isSuccess, throwable, _ ->
+        LogMessage.d("leaveGroup", call.arguments.toString())
+        GroupManager.leaveFromGroup(groupJid, userJid) { isSuccess, throwable, _ ->
             if (isSuccess) {
                 result.success(true)
             } else {
