@@ -26,7 +26,7 @@ import 'builder.dart';
 import 'model/callback.dart';
 
 class FlyErrorCode {
-  static const unHandle = "FL-401";
+  static const unHandle = "401";
 }
 
 class FlyErrorMessage {
