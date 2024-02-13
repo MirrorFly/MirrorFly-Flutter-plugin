@@ -15,6 +15,7 @@ public class EventStreamHandler: NSObject, FlutterStreamHandler, FlyEventSinkPro
     
     func setEventSinkValue(_ value: Any?) {
         self.eventSinkValue = value
+        eventSink?(value)
         updateEventSinkValue()
     }
     

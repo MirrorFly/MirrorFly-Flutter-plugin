@@ -279,7 +279,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
-    bool isRecorded = false,
+    required bool isRecorded,
     String topicId = "",
   }) {
     return MessageParams._(

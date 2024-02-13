@@ -107,3 +107,19 @@ enum CallStatus : String {
     case tryagain = "Unavailable, Try again later"
     case onHold = "Call on Hold"
 }
+
+enum FlyMessageType : String {
+    case TEXT = "TEXT";
+    case IMAGE = "IMAGE";
+    case AUDIO = "AUDIO";
+    case AUDIO_RECORDED = "AUDIO_RECORDED";
+    case VIDEO = "VIDEO";
+    case CONTACT = "CONTACT";
+    case DOCUMENT = "DOCUMENT";
+    case LOCATION = "LOCATION";
+    case NOTIFICATION = "NOTIFICATION";
+    
+    static func fromString(_ value: String) -> FlyMessageType? {
+        return FlyMessageType(rawValue: value)
+    }
+}

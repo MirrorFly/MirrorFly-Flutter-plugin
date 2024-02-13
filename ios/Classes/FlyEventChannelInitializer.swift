@@ -56,7 +56,6 @@ class FlyChatEventChannelInitializer {
         (channelName: Constants.onContactSyncComplete_channel, streamHandler: OnContactSyncCompleteStreamHandler()),
         (channelName: Constants.getAvailableFeatures_channel, streamHandler: OnGetAvailableFeaturesStreamHandler()),
         (channelName: Constants.showUpdateCancelNotificationChannel, streamHandler: ShowOrUpdateOrCancelNotificationStreamHandler()),
-        (channelName: Constants.onMediaStatusUpdatedChannel, streamHandler: MediaStatusUpdatedStreamHandler()),
         (channelName: Constants.onConnectionFailed_channel, streamHandler: OnConnectionFailedStreamHandler()),
         (channelName: Constants.userCameOnline_channel, streamHandler: UserCameOnlineStreamHandler()),
         (channelName: Constants.userWentOffline_channel, streamHandler: UserWentOfflineStreamHandler()),
@@ -105,12 +104,14 @@ class FlyChatEventChannelInitializer {
         }
     
     func updateSinkValue(forChannel channelName: String, value: Any?) {
+        print("\(Constants.tag) updateSinkValue \(channelName) value \(value)")
         guard let streamHandler = FlyChatEventChannelInitializer.chatEventChannels.first(where: { $0.channelName == channelName })?.streamHandler else {
                 print("#Mirrorfly Chat else condition")
                return
            }
            
            if let provider = streamHandler as? FlyEventSinkProvider {
+               print("\(Constants.tag) updateSinkValue provider \(provider)")
                provider.setEventSinkValue(value)
            }
        }
