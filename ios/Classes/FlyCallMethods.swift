@@ -94,9 +94,7 @@ import MirrorFlySDK
 //
 //        NSLog("selectedAudioDevice \(selectedAudioDevice)")
 //    }
-    func selectAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        
-    }
+   
     func makeCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["user_jid"] as? String ?? ""
@@ -105,12 +103,14 @@ import MirrorFlySDK
            if isSuccess  {
                if(!CallManager.isAudioCallPermissionsGranted()){
                    NSLog("MirrorflyCall Audio call permission not granted")
-                   result(FlutterError(code: "500", message: "Microphone Permission not enabled", details: nil))
+                   result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_PERMISSION_NOT_ENABLED, details: nil))
                    return
                }
                if isSuccess == false {
                    let errorMessage = self?.getErrorMessage(description: message)
                    NSLog("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
+                   
+                   result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
                }else{
                    NSLog("MirrorflyCall Success -->")
                    result(isSuccess)
@@ -126,13 +126,13 @@ import MirrorFlySDK
         
         if(!CallManager.isAudioCallPermissionsGranted()){
             NSLog("MirrorflyCall Audio call permission not granted")
-            result(FlutterError(code: "500", message: "Microphone Permission not enabled", details: nil))
+            result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_PERMISSION_NOT_ENABLED, details: nil))
             return
 
         }
         if(!CallManager.isVideoCallPermissionsGranted()){
             NSLog("MirrorflyCall Video call permission not granted")
-            result(FlutterError(code: "500", message: "Camera Permission not enabled", details: nil))
+            result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.CAMERA_PERMISSION_NOT_ENABLED, details: nil))
             return
         }
         try! CallManager.makeVideoCall(jid) { isSuccess , message in
@@ -140,6 +140,11 @@ import MirrorFlySDK
             if (isSuccess){
                 NSLog("MirrorflyCall Success")
                 result(isSuccess)
+            }else{
+                let errorMessage = self.getErrorMessage(description: message)
+                NSLog("MirroflyCall making call error--->\(errorMessage)")
+                result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
+            
             }
         }
 //        result(true)
@@ -181,36 +186,42 @@ import MirrorFlySDK
         do {
             try CallManager.makeGroupVideoCall(jidList, groupID: groupJid) { (isSuccess, message) in
                 
-                
                 if isSuccess{
                     NSLog("***Make Group Video Call Success")
+                    result(true)
                 }else{
-                    NSLog("***Make Group Video Call Failed \(message)")
+                    let errorMessage = self.getErrorMessage(description: message)
+                    NSLog("MirroflyCall Group Video Call error--->\(errorMessage)")
+                    result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
                 }
             }
         }catch(let error ) {
             NSLog("***makeGroupVideoCall Error \(error.localizedDescription)")
+            result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: error.localizedDescription))
         }
-        result(true)
     }
     func makeGroupVoiceCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let groupJid = args["groupJid"] as? String ?? ""
         let jidList = args["jidList"] as? [String] ?? []
         
-        NSLog("***making group call")
         do {
             try CallManager.makeGroupVoiceCall(jidList, groupID: groupJid) { (isSuccess, message) in
                 if isSuccess{
                     NSLog("***Make Group Voice Call Success")
+                    result(true)
                 }else{
                     NSLog("***Make Group Voice Call Failed \(message)")
+                    let errorMessage = self.getErrorMessage(description: message)
+                    NSLog("MirroflyCall Group Video Call error--->\(errorMessage)")
+                    result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
                 }
             }
         }catch(let error ) {
             NSLog("***makeGroupVideoCall Error \(error.localizedDescription)")
+            result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: error.localizedDescription))
         }
-        result(true)
+        
     }
     func inviteUsersToOngoingCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
@@ -221,9 +232,17 @@ import MirrorFlySDK
                 NSLog("inviteUsersToOngoingCall Success")
                 result(true)
             } else {
-                let errorMessage = self.getErrorMessage(description: message)
-                NSLog("inviteUsersToOngoingCall Error\(errorMessage.description) ")
-                result(FlutterError(code: "500", message: "Invite Users To OngoingCall Failed", details: errorMessage.description))
+                let (errorCode, errorMessage) = self.getErrorCodeWithMessage(message: message)
+                NSLog("inviteUsersToOngoingCall Error\(errorMessage) ")
+                switch errorCode {
+                case nil:
+                    result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.INVITE_FAILED_MESSAGE, details: errorMessage))
+                case String(ErrorCode.FORBIDDEN):
+                    result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: errorMessage))
+                default:
+                    result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.INVITE_FAILED_MESSAGE, details: errorMessage))
+                }
+
             }
         };
     }
@@ -361,8 +380,16 @@ import MirrorFlySDK
     func getErrorMessage(description: String) -> String {
         
         let split = description.components(separatedBy: "ErrorCode")
-        let errorMessage = split.isEmpty ? description : split[0]
+        let errorMessage = split.isEmpty ? description : split[0].replacingOccurrences(of: " ", with: "").replacingOccurrences(of: ":", with: "")
         return errorMessage
+    }
+        
+    func getErrorCodeWithMessage(message: String) -> (errorCode: String?, errorMessage: String) {
+        let split = description.components(separatedBy: "ErrorCode")
+        let errorMessage = split.isEmpty ? description : split.first
+        print("Error Code With Message \(String(describing: errorMessage))")
+        let errorCode = split.count > 1 ? split[1].replacingOccurrences(of: " ", with: "").replacingOccurrences(of: ":", with: "") : nil
+        return (errorCode, message)
     }
     
     
@@ -374,7 +401,11 @@ import MirrorFlySDK
     
     func requestVideoCallSwitch(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
         CallManager.requestVideoCallSwitch { isSuccess in
-           result(isSuccess)
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.SWITCH_FAILED_MESSAGE, details: nil))
+            }
         }
     }
     
@@ -459,10 +490,25 @@ import MirrorFlySDK
                     result(callListJson)
                     
                 }else{
-                    result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
+                    
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyData.getMessage()))
+//                    result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
                 }
             }else{
-                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
+                if case let .unexpected(message, _) = error {
+                    //.unexpected handled here
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    
+                }else if case let .xmpp_connection_not_available(message, code) = error {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error?.localizedDescription))
+                }
+//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
             }
         }
     }
@@ -471,7 +517,8 @@ import MirrorFlySDK
         let callLogArray = CallLogManager.getAllCallLogs()
         print("\(Constants.callTag) getLocalCallLogs \(String(describing: callLogArray))")
         if callLogArray.isEmpty{
-            result(FlutterError(code: "500", message: "Call Log Filter List Fetch Failed", details: nil))
+            result("{\"data\" : [], \"total_pages\" : 0}");
+//            result(FlutterError(code: "500", message: "Call Log Filter List Fetch Failed", details: nil))
         }else{
             
             let callListConverted = getCallLogs(callList: callLogArray, totalPages: 0)
@@ -480,13 +527,13 @@ import MirrorFlySDK
             print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
             result(callListJson)
 //            if callLogArray["data"] is [String : Any]{
-//               
+//
 //                let callListConverted = getCallLogs(flyData: callLogArray)
 //                print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
 //                let callListJson = callListConverted.dictToJson()
 //                print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
 //                result(callListJson)
-//                
+//
 //            }else{
 //                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
 //            }
@@ -494,23 +541,23 @@ import MirrorFlySDK
         
         
 //        CallLogManager().getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
-//            
+//
 //            var flyData = data
 ////            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
 //            print("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
-//           
-//    
-//            
+//
+//
+//
 //            if isSuccess{
 ////                result(callLogList.)
 //                if flyData["data"] is [String : Any]{
-//                   
+//
 //                    let callListConverted = getCallLogs(flyData: flyData)
 //                    print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
 //                    let callListJson = callListConverted.dictToJson()
 //                    print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
 //                    result(callListJson)
-//                    
+//
 //                }else{
 //                    result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
 //                }
@@ -526,6 +573,7 @@ import MirrorFlySDK
         let jidList = args["jidList"] as? [String] ?? []
         NSLog("\(Constants.tag) deleteCallLog isClearAll \(isClearAll)")
 
+        
         ChatManager.deleteCallLog(isClearAll: isClearAll, callLogIds: jidList) { isSuccess, error, data in
             var flyData = data
             if isSuccess {
@@ -533,10 +581,11 @@ import MirrorFlySDK
                     CallLogManager().deleteCallLogs()
                 }
                 let deleteMessage = flyData.getMessage() as? String
-                print("deleteMessage response \(deleteMessage)")
+                print("\(Constants.tag) deleteCallLog \(String(describing: deleteMessage))")
                 result(isSuccess)
             }else{
-                result(FlutterError(code: "500", message: "Call Log Delete Failed", details: flyData.getMessage()))
+                
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error?.localizedDescription))
             }
         }
     }
@@ -548,9 +597,21 @@ import MirrorFlySDK
                   var flyData = data
                 _ = flyData.getMessage() as? String
                 _ = flyData.getData() as? [CallLog]
+                result(isSuccess)
+            }else{
+                if case let .unexpected(message, _) = error {
+                    //.unexpected handled here
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .xmpp_connection_not_available(message, code) = error {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error?.localizedDescription))
+                }
             }
-            
-            result(isSuccess)
         }
     }
     

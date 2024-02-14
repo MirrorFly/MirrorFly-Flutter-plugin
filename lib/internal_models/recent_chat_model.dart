@@ -193,6 +193,9 @@ String getContactType(Map<String, dynamic> json) {
 }
 
 String? getLastMessageStatus(dynamic status) {
+  if (status == null) {
+    return null;
+  }
   if (Platform.isAndroid) {
     return status;
   } else {
@@ -211,6 +214,9 @@ String? getLastMessageStatus(dynamic status) {
   }
 }
 
-String getMessageType(dynamic type) {
+String? getMessageType(dynamic type) {
+  if (type == null) {
+    return null;
+  }
   return type.toString().toUpperCase() == "FILE" ? "DOCUMENT" : type.toString().toUpperCase();
 }

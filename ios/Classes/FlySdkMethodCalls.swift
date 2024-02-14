@@ -17,40 +17,39 @@ import MirrorFlySDK
 import UIKit
 
 #if DEBUG
-    let ISEXPORT = false
+let ISEXPORT = false
 #else
-    let ISEXPORT = true
+let ISEXPORT = true
 #endif
 
 @objc public class FlySdkMethodCalls : NSObject{
     
-    static var isTrialLicenceKey : Bool = true;
-    static var chatHistoryEnable : Bool = false;
-    static var isContactSyncInProgress : Bool = false;
+    var isTrialLicenceKey : Bool = true;
+    var chatHistoryEnable : Bool = false;
     
-//    static var userlist = [ProfileDetails]()
+    //    var userlist = [ProfileDetails]()
     
-    static var recentChatListParams = RecentChatListParams(limit: 15)
+    var recentChatListParams = RecentChatListParams(limit: 15)
     
-    static var recentChatListBuilder: RecentChatListBuilder?
+    var recentChatListBuilder: RecentChatListBuilder?
     
-
-    static var bestAttemptContent: UNMutableNotificationContent?
-    static var contentHandler: ((UNNotificationContent) -> Void)?
-
-    static var messageListParams = FetchMessageListParams()
-    static var messageListQuery : FetchMessageListQuery? = nil
-
+    
+    var bestAttemptContent: UNMutableNotificationContent?
+    var contentHandler: ((UNNotificationContent) -> Void)?
+    
+    var messageListParams = FetchMessageListParams()
+    var messageListQuery : FetchMessageListQuery? = nil
+    
     //Need to alter this below two lines based on RecentChat list
-    static var topicChatListParams = TopicChatListParams(limit: 15)
-    static var topicChatListBuilder : TopicChatListBuilder?
-    //static let messageListParams = FetchMessageListParams()
-//    static let topicMessageListQuery =  FetchMessageListQuery(fetchMessageListParams: messageListParams)
-
-    static func buildChatSDK(call: FlutterMethodCall) {
-
+    var topicChatListParams = TopicChatListParams(limit: 15)
+    var topicChatListBuilder : TopicChatListBuilder?
+    //let messageListParams = FetchMessageListParams()
+    //    let topicMessageListQuery =  FetchMessageListQuery(fetchMessageListParams: messageListParams)
+    
+    func buildChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
         let args = call.arguments as! Dictionary<String, Any>
-
+        
         let licenseKey = args["licenseKey"] as? String ?? ""
         _ = args["enableMobileNumberLogin"] as? Bool ?? true
         isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
@@ -59,7 +58,7 @@ import UIKit
         _ = args["maximumRecentChatPin"] as? Int ?? 3
         
         
-
+        
         _ = args["ivKey"] as? String ?? ""
         let containerID = args["iOSContainerID"] as? String ?? ""
         
@@ -77,24 +76,24 @@ import UIKit
             .setMaximumMembersInAGroup(membersCount: maxMembersCount)
             .build()
         assert(sdkGroupConfig != nil)
-
+        
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
-
-                ChatManager.setAppGroupContainerId(id: containerID)
-                ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
-                    if isSuccess {
-                        print("SDK INITIALISED")
-                    }else{
-                        print("SDK FAILED TO INITIALISE \(flyError)")
-                    }
-                }
+        
+        ChatManager.setAppGroupContainerId(id: containerID)
+        ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
+            if isSuccess {
+                print("SDK INITIALISED")
+            }else{
+                print("SDK FAILED TO INITIALISE \(String(describing: flyError))")
+            }
+        }
         
         
         print("ChatManager.enableChatHistory \(chatHistoryEnable)")
         
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
-
+            
             DispatchQueue.main.asyncAfter(deadline: .now()+2) {
                 
                 do {
@@ -105,29 +104,29 @@ import UIKit
                 }
             }
         }
-
         
-//        ChatManager.disableLocalNotification()
         
-        ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
+        //        ChatManager.disableLocalNotification()
+        
+        //        ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
         
         Utility.saveInPreference(key: Constants.contactSyncEnable, value: !isTrialLicenceKey)
         
-//        FlyDefaults.chatHistoryEnabled = true
-//        FlyDefaults.isBusyStatusEnabled = true
+        //        FlyDefaults.chatHistoryEnabled = true
+        //        FlyDefaults.isBusyStatusEnabled = true
         ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
         
-//        ChatManager.setRegisterDeviceType(deviceType: "android")
-
+        //        ChatManager.setRegisterDeviceType(deviceType: "android")
+        
     }
     
-    static func initializeSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func initializeSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
-
+        
         let licenseKey = args["licenseKey"] as? String ?? ""
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         let containerID = args["iOSContainerID"] as? String ?? ""
-        let enableSDKLog = args["enableSDKLog"] as? Bool ?? false
+        _ = args["enableSDKLog"] as? Bool ?? false
         
         
         ChatManager.setAppGroupContainerId(id: containerID)
@@ -137,7 +136,7 @@ import UIKit
             if isSuccess {
                 NSLog("SDK INITIALISED")
                 if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
-
+                    
                     DispatchQueue.main.asyncAfter(deadline: .now()+2) {
                         
                         do {
@@ -148,51 +147,59 @@ import UIKit
                         }
                     }
                 }
+                ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
                 result(true)
             }else{
-                NSLog("SDK FAILED TO INITIALISE \(flyError)")
-                result(FlutterError(code: "500",
-                                    message: "SDK failed to Initialize",
-                                    details: nil))
+                NSLog("SDK FAILED TO INITIALISE \(String(describing: flyError?.localizedDescription))")
+                
+                if !isSuccess, case let .unexpected(message, code) = flyError {
+                    NSLog("Failed Initialisation message \(message)")
+                    if code == ErrorCode.RESPONSE_FAILURE{
+                        result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.INVALID_CREDENTAILS_MESSAGE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INITALIZATION_FAILED, message: FLErrorMessage.INVALID_CREDENTAILS_MESSAGE, details: message))
+                    }
+                }
+                
             }
         }
-        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
-
+        
+        
     }
     
-    static func getPlistValue(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getPlistValue(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let key = args["key"] as? String ?? ""
         // Get the path to the Info.plist file
         guard let infoPlistPath = Bundle.main.path(forResource: "Info", ofType: "plist") else {
-            result(FlutterError(code: "500",
-                                message: "Info.plist file not found",
-                                details: nil))
+            result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE,
+                                message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE,
+                                details: "Info.plist file not found"))
             return
         }
-
+        
         // Load the contents of the Info.plist file
         guard let infoDict = NSDictionary(contentsOfFile: infoPlistPath) else {
-            result(FlutterError(code: "500",
-                                message: "Failed to load Info.plist",
-                                details: nil))
+            result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE,
+                                message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE,
+                                details: "Failed to load Info.plist"))
             return
         }
-
+        
         // Access the value using the appropriate key
         if let value = infoDict[key] as? String {
             result(value)
         } else {
             //            print("App version not found in Info.plist.")
-            result(FlutterError(code: "500",
-                                message: "\(key) key not found in Info plist",
-                                details: nil))
+            result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE,
+                                message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE,
+                                details: "\(key) key not found in Info plist"))
         }
-
+        
     }
     
-    static func registerUser(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func registerUser(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -203,25 +210,22 @@ import UIKit
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
         
         if(userIdentifier.isEmpty){
-            result(FlutterError(code: "500",
-                                message: "User Name is Empty",
-                                details: nil))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: FLErrorMessage.USER_PARAM_MISSING))
+            
             return
         }
         let voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
-//        voipToken = voipToken.isEmpty ? deviceToken : voipToken
-
+        //        voipToken = voipToken.isEmpty ? deviceToken : voipToken
+        
         NSLog("\(Constants.tag) voipToken \(voipToken)")
         NSLog("\(Constants.tag) voipToken.isEmpty \(voipToken.isEmpty)")
         
         NSLog("\(Constants.tag) Register Device Token \(deviceToken)")
         NSLog("\(Constants.tag) ISEXPORT \(ISEXPORT)")
-
+        
         try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: "d", pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
-                
-                print("Register Response")
                 
                 let registerResponse = [
                     "data": data,
@@ -232,143 +236,161 @@ import UIKit
                 if  data["newLogin"] as? Bool ?? false{
                     NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
                     CallLogManager().deleteCallLogs()
-//                    ChatManager.deleteAllChatTags()
-//                    iCloudmanager().deleteLoaclBackup()
+                    //                    ChatManager.deleteAllChatTags()
+                    //                    iCloudmanager().deleteLoaclBackup()
                     
                 }
                 
                 ChatManager.updateAppLoggedIn(isLoggedin: true)
-//                FlyDefaults.myXmppPassword = data["password"] as! String
-//                FlyDefaults.myXmppUsername = data["username"] as! String
-//                FlyDefaults.myMobileNumber = userIdentifier
-//                FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
                 
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
                 
                 
                 ChatManager.connect()
                 
-
+                
                 do {
                     try CallManager.initCallSDK()
                 }
                 catch(let error ) {
-                    print("#FlyCall Exception : \(error.localizedDescription)")
+                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
                 }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
                     
                     let resp = registerResponse.dictToJson()
                     if(resp != nil){
-                        print("ChatManager.registerApiService==**==\(String(describing: resp))")
+                        NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
                         result(resp)
                     }else{
-                        result(FlutterError(code: "500", message: "Failed to Register User", details: nil))
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
                     }
-
+                    
                 }
             }else{
-//                let error = data.getMessage()
                 let err = flyError?.description ?? ""
                 let error = err.contains("405") ? err : data.getMessage()
-                if(err.contains("405")){
-                    result(FlutterError(code: "405",message: "You have reached the maximum device limit, If you want to continue one of your device will logged out . Do you want to continue?",details: nil))
-                }else if(err.contains("403")){
-                    result(FlutterError(code: "403",message: error as? String,details: nil))
-                }else {
-                    result(FlutterError(code: "500",message: error as? String,details: nil))
+                
+                NSLog("\(Constants.tag) #chatSDK Error \(error)")
+                
+                if !isSuccess, case let .data_not_available(message, code) = flyError {
+                    switch (code){
+                    case 405:
+                        result(FlutterError(code: FLErrorCode.MAX_LOGIN_REACHED,message: FLErrorMessage.MAX_LOGIN_REACHED_MESSAGE + " Do you want to continue then set forceRegister as true in registerUser method",details: message))
+                        break;
+                    case 403:
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION,message: FLErrorMessage.USER_BLOCKED_MESSAGE,details: message))
+                        break;
+                    case 807, 1000, _:
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: message))
+                        break;
+                    }
+                }else if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE, details: message))
+                }else if case let .fields_empty(message, _) = flyError{
+                    result(FlutterError(code: FLErrorCode.ARGUMENTS_EMPTY_OR_NULL, message: FLErrorMessage.MISSING_ARGUMENTS, details: message))
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE, details: error))
                 }
-                print("#chatSDK \(error)")
+                
             }
         }
     }
     
-    static func refreshAndGetAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func refreshAndGetAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
         ChatManager.refreshToken { (isSuccess, flyError, resultDict) in
             if (isSuccess) {
                 var resp = resultDict
                 let tokendata = resp.getData()
                 let refreshToken = tokendata as AnyObject
-
+                
                 let newToken = refreshToken["token"] as Any
-
+                
                 result(newToken)
-
+                
             } else {
-                result(FlutterError(code: "500", message: "Unable to refresh token", details: flyError?.localizedDescription))
-
+                result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS,message: FLErrorMessage.AUTHTOKEN_REFRESH_FAILED_MESSAGE,details: flyError?.localizedDescription))
             }
         }
     }
     
-    static func getCurrentAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getCurrentAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
         let imageUrl = ChatManager.getImageUrl(imageName: "getAuthToken")
         print("getCurrentAuthToken==**==imageUrl \(imageUrl)")
         let components = imageUrl.components(separatedBy: "?mf=")
         
         guard components.count > 1 else {
-            result(nil)
+            result("")
             return
         }
-        
-//        let queryString = components[1]
-        
-//        let queryStringComponents = queryString.components(separatedBy: "=")
-        
-//        guard queryStringComponents.count > 1 else {
-//            result(nil)
-//            return
-//        }
         
         let authToken = components[1]
         print("getCurrentAuthToken==**==\(authToken)")
         result(authToken)
     }
     
-    static func getJid(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getJid(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userName = args["username"] as? String
         if(userName == nil){
-            result(FlutterError(code: "500",
-                                message: "User Name is Empty",
-                                details: nil))
+            result(FlutterError(code: FLErrorCode.MISSING_PARAMS,message: FLErrorMessage.USER_PARAM_MISSING,details: nil))
             return
         }
         do{
             try result(FlyUtils.getJid(from: userName!))
         }catch let jidError{
-            result(FlutterError(code: "500", message: "Unable to get JID", details: jidError.localizedDescription))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.JID_FETCH_FAILED,details: jidError.localizedDescription))
         }
     }
     
-    static func sendTextMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func sendTextMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let txtMessage = args["message"] as? String ?? nil
         let receiverJID = args["JID"] as? String ?? ""
         let replyMessageID = args["replyMessageId"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
-        let editMessageId = args["editMessageId"] as? String ?? ""
-
+        _ = args["editMessageId"] as? String ?? ""
+        
         if(txtMessage == nil || receiverJID == ""){
-            result(FlutterError(code: "500", message: "Parameters Missing", details: nil))
+            result(FlutterError(code: FLErrorCode.MISSING_PARAMS, message: FLErrorMessage.PARAMS_MISSING, details: nil))
             return
         }
-        let messageParams = TextMessage(toId:  receiverJID, messageText: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [])
         
+        var messageParams = TextMessage()
+        messageParams.toId = receiverJID
+        messageParams.messageText = txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines)
+        messageParams.replyMessageId = replyMessageID // Optional
+        messageParams.mentionedUsersIds = []  // Optional
+        //        textMessage.metaData = META_DATA // Optional
+        messageParams.topicID = topicId
         FlyMessenger.sendTextMessage(messageParams: messageParams){ isSuccess, error, chatMessage in
             if isSuccess {
-                //        FlyMessenger.sendTextMessage(toJid: receiverJID, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID, mentionedUsersIds: [],topicID: topicId, editMessageId: editMessageId) { isSuccess,error,chatMessage in
                 if isSuccess {
-                    print("sending text messages-->\(chatMessage?.messageTextContent ?? "Message is Empty")")
                     let textMsgResponse = chatMessage.toJson()
                     if(textMsgResponse != nil){
-                        print("FlyMessenger.sendTextMessage==**==\(String(describing: textMsgResponse))")
                         result(textMsgResponse)
                     } else {
-                        result(FlutterError(code: "500", message: "Failed to Send Text Message", details: nil))
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: nil))
                     }
                 }else{
-                    result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
+                    if case let .invalid_data(message, _) = error {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if case let .unexpected(message, code) = error {
+                        if code == ErrorCode.CANNOT_PROCESS{
+                            result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                        }
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                    }
+                    
                 }
             }
             
@@ -376,7 +398,7 @@ import UIKit
         
     }
     
-    static func sendLocationMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func sendLocationMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let latitude = args["latitude"] as? Double ?? 00.0
         let longitude = args["longitude"] as? Double ?? 00.0
@@ -385,26 +407,63 @@ import UIKit
         let replyMessageID = args["replyMessageId"] as? String ?? ""
         
         if(latitude == 00.0 || longitude == 00.0){
-            result(FlutterError(code: "500", message: "Location is Empty", details: nil))
+            result(FlutterError(code: FLErrorCode.MISSING_PARAMS,message: FLErrorMessage.INVALID_LOCATION,details: nil))
             return
         }
         if(userJid == nil){
-            result(FlutterError(code: "500", message: "Location is Empty", details: nil))
+            result(FlutterError(code: FLErrorCode.MISSING_PARAMS,message: FLErrorMessage.INVALID_JID,details: nil))
             return
         }
         
-        FlyMessenger.sendLocationMessage(toJid: userJid!, latitude: latitude, longitude: longitude, replyMessageId: replyMessageID,topicID: topicId) { isSuccess,error,chatMessage in
-            if isSuccess {
+        var locationMessageParams = LocationMessageParams()
+        locationMessageParams.latitude = latitude
+        locationMessageParams.longitude = longitude
+        
+        var fileMessage = FileMessage()
+        fileMessage.toId = userJid
+        fileMessage.messageType = MessageType.location
+        fileMessage.locationMessage = locationMessageParams
+        fileMessage.replyMessageId = replyMessageID // Optional
+        //        fileMessage.mentionedUsersIds = MENTION_IDS  // Optional
+        //        fileMessage.metaData = META_DATA // Optional
+        fileMessage.topicID = topicId // Optional
+        
+        FlyMessenger.sendMediaFileMessage(messageParams: fileMessage){ isSuccess,error,chatMessage in
+            if (isSuccess) {
                 let locationResponse = chatMessage?.toJson()
                 print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
                 result(locationResponse)
             }else{
-                result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
             }
         }
+        /// Deprecated
+        //        FlyMessenger.sendLocationMessage(toJid: userJid!, latitude: latitude, longitude: longitude, replyMessageId: replyMessageID,topicID: topicId) { isSuccess,error,chatMessage in
+        //            if isSuccess {
+        //                let locationResponse = chatMessage?.toJson()
+        //                print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
+        //                result(locationResponse)
+        //            }else{
+        //                result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
+        //            }
+        //        }
     }
     
-    static func sendImageMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func sendImageMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? nil
         let filePath = args["filePath"] as? String ?? ""
@@ -412,7 +471,7 @@ import UIKit
         
         let caption = args["caption"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
-
+        
         let imagefileUrl = URL(fileURLWithPath: filePath)
         
         
@@ -429,7 +488,8 @@ import UIKit
         
         
         if(userJid == nil){
-            result(FlutterError(code: "500", message: "User jid is Empty", details: nil))
+            
+            result(FlutterError(code: FLErrorCode.MISSING_PARAMS,message: FLErrorMessage.USER_PARAM_MISSING,details: nil))
             return
         }
         
@@ -448,12 +508,34 @@ import UIKit
         }
         
         FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId, mentionedUsersIds: [],topicID: topicId){isSuccess,error,message in
-            let response = message?.toJson()
-            result(response)
+            if isSuccess{
+                let response = message?.toJson()
+                result(response)
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
         }
     }
     
-    static func sendAudioMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func sendAudioMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         let replyMessageId = args["replyMessageId"] as? String ?? ""
@@ -478,14 +560,32 @@ import UIKit
                 mediaData.mediaType = .audio
                 
                 FlyMessenger.sendAudioMessage(toJid:  userJid, mediaData: mediaData, replyMessageId :  replyMessageId, isRecorded : isRecorded,topicID: topicId) { isSuccess,error,message in
-                    if message != nil {
+                    if isSuccess && message != nil {
                         
                         let audioResponse = message?.toJson()
                         print("FlyMessenger.sendAudioMessage==**==\(String(describing: audioResponse))")
                         result(audioResponse)
                         
                     }else{
-                        result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
+                        if case let .invalid_data(message, _) = error {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                        }else if case let .unexpected(message, code) = error {
+                            if code == ErrorCode.CANNOT_PROCESS{
+                                result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                            }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                                result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                            }else if code == ErrorCode.NO_NETWORK{
+                                result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                            }else if code == ErrorCode.FORBIDDEN{
+                                result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                            }else{
+                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                            }
+                        }else if case let .invalid_jid(message, _) = error {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                        }
                     }
                 }
             }
@@ -493,15 +593,12 @@ import UIKit
         
     }
     
-    static func isArchivedSettingsEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func isArchivedSettingsEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(ChatManager.isArchivedSettingsEnabled())
     }
     
-    static func cancelNotifications(call: FlutterMethodCall, result: @escaping FlutterResult){
-        result("")
-    }
     
-    static func downloadMedia(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func downloadMedia(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let mediaMessageId = args["mediaMessage_id"] as? String ?? ""
@@ -509,11 +606,23 @@ import UIKit
         
         FlyMessenger.downloadMedia(messageId: mediaMessageId){ isSuccess,error,message in
             
-            result(isSuccess)
+            if isSuccess {
+                result(isSuccess)
+            }else{
+                if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.DOWNLOAD_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.DOWNLOAD_FAILED, details: error?.localizedDescription))
+                }
+            }
         }
     }
     
-    static func iOSFileExist(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func iOSFileExist(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let filePath = args["file_path"] as? String ?? ""
@@ -521,11 +630,11 @@ import UIKit
         let fileManagerr = FileManager.default
         
         let existsOrNot = fileManagerr.fileExists(atPath: filePath)
-
+        
         result(existsOrNot)
     }
     
-    static func updateFavouriteStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateFavouriteStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         
@@ -543,12 +652,24 @@ import UIKit
         
         ChatManager.updateFavouriteStatus(messageId: messageID, chatUserId: chatUserJID, isFavourite: isFavourite, chatType: favChatType) { (isSuccess, flyError, data) in
             
-            result(isSuccess)
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
+            }
             
         }
     }
     
-    static func getUserList(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getUserList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let pageNumber = args["page"] as? Int ?? 1
@@ -560,7 +681,6 @@ import UIKit
                 
                 print("getUsersList\(userList)")
                 if let userData = userList.getData() as? [ProfileDetails] {
-//                    userlist = userData
                     let userDataJson = userData.toJson()
                     print("userDataJson\(String(describing: userDataJson))")
                     let totalPages = userList["totalPages"] as! Int
@@ -576,13 +696,25 @@ import UIKit
                     result(userlistJson)
                 }
             }else{
-                result(FlutterError(code: "500", message: flyError?.localizedDescription, details: nil))
+                if case let .unexpected(message, _) = flyError {
+                    
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
         
     }
     
-    static func getRegisteredUsers(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getRegisteredUsers(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as? Dictionary<String, Any>
         let fromServer = args?["server"] as? Bool ?? false
         
@@ -596,15 +728,28 @@ import UIKit
                 if((data.getData() as? [ProfileDetails])?.count != 0){
                     userData = (list?.toJson())!
                 }
-                
                 result(userData)
             } else{
-                result(FlutterError(code: "500", message: flyError?.localizedDescription, details: nil))
+                if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
     }
     
-    static func sendVideoMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func sendVideoMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         let caption = args["caption"] as? String ?? ""
@@ -612,8 +757,8 @@ import UIKit
         let filePath = args["filePath"] as? String ?? ""
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
-        let topicId = args["topicId"] as? String ?? ""
-
+        _ = args["topicId"] as? String ?? ""
+        
         let videoFileUrl = URL(fileURLWithPath: filePath)
         
         var thumbnail : UIImage?
@@ -645,15 +790,38 @@ import UIKit
                 media.caption = caption
                 
                 FlyMessenger.sendVideoMessage(toJid: userJid, mediaData: media, replyMessageId: replyMessageId, mentionedUsersIds: []){ isSuccess,error,message in
-                    if let chatMessage = message {
-                        let sendVideoResponse = chatMessage.toJson()
-                        print("FlyMessenger.sendVideoMessage==**==\(String(describing: sendVideoResponse))")
-                        result(sendVideoResponse)
-
+                    if isSuccess{
+                        if let chatMessage = message {
+                            let sendVideoResponse = chatMessage.toJson()
+                            print("FlyMessenger.sendVideoMessage==**==\(String(describing: sendVideoResponse))")
+                            result(sendVideoResponse)
+                            
+                        }
+                    }else{
+                        if case let .invalid_data(message, _) = error {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                        }else if case let .unexpected(message, code) = error {
+                            if code == ErrorCode.CANNOT_PROCESS{
+                                result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                            }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                                result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                            }else if code == ErrorCode.NO_NETWORK{
+                                result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                            }else if code == ErrorCode.FORBIDDEN{
+                                result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                            }else{
+                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                            }
+                        }else if case let .invalid_jid(message, _) = error {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                        }
                     }
                 }
             }else{
                 print("Video Compression Error")
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.COMPRESSION_FAILED, details: nil))
             }
         }
     }
@@ -672,7 +840,7 @@ import UIKit
         }
     }
     
-    static func sendContactMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func sendContactMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
@@ -682,27 +850,48 @@ import UIKit
         let contactList = args["contact_list"] as? [String] ?? []
         
         FlyMessenger.sendContactMessage(toJid: userJid, contactName: contactName, contactNumbers: contactList, replyMessageId: replyMessageId,topicID: topicId){ isSuccess,error,message  in
-            if message != nil {
-                
-                let contactMessageResponse = message?.toJson()
-                print("FlyMessenger.sendContactMessage==**==\(String(describing: contactMessageResponse))")
-                result(contactMessageResponse)
-                
+            if isSuccess{
+                if message != nil {
+                    let contactMessageResponse = message?.toJson()
+                    print("FlyMessenger.sendContactMessage==**==\(String(describing: contactMessageResponse))")
+                    result(contactMessageResponse)
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
             }else{
-                result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
             }
+            
         }
     }
     
     
-    static func sendDocumentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func sendDocumentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
-
+        
         let documentFilePath = args["file"] as? String ?? ""
         let documentFileUrl = URL(fileURLWithPath: documentFilePath)
         
@@ -710,7 +899,8 @@ import UIKit
         MediaUtils.processDocument(url: documentFileUrl){ isSuccess,localPath,fileSize,fileName, errorMessage in
             if !isSuccess {
                 if !errorMessage.isEmpty {
-                    result(FlutterError(code: "500", message: errorMessage.description, details: nil))
+                    
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage.description))
                 }
                 return
             }
@@ -722,26 +912,47 @@ import UIKit
                 mediaData.mediaType = .document
                 
                 FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId,topicID: topicId) { isSuccess, error, message in
-                    if message != nil {
-                        let documentMessageResponse = message?.toJson()
-                        result(documentMessageResponse)
-                        
+                    if isSuccess {
+                        if message != nil {
+                            let documentMessageResponse = message?.toJson()
+                            result(documentMessageResponse)
+                            
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                        }
                     }else{
-                        result(FlutterError(code: "500", message: error?.localizedDescription, details: nil))
+                        if case let .invalid_data(message, _) = error {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                        }else if case let .unexpected(message, code) = error {
+                            if code == ErrorCode.CANNOT_PROCESS{
+                                result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                            }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                                result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                            }else if code == ErrorCode.NO_NETWORK{
+                                result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                            }else if code == ErrorCode.FORBIDDEN{
+                                result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                            }else{
+                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                            }
+                        }else if case let .invalid_jid(message, _) = error {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                        }
                     }
-                    
                 }
                 
             } else {
-                
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: nil))
             }
         }
     }
-
-    static func getProfileStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
+    
+    func getProfileStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let profileStatus = ChatManager.getAllStatus()
         if(profileStatus.isEmpty){
-            result(nil)
+            result([])
         }
         
         let profileStatusJson = profileStatus.toJson()
@@ -749,18 +960,18 @@ import UIKit
         result(profileStatusJson)
         
     }
-    static func insertDefaultStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func insertDefaultStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let status = args["status"] as? String ?? ""
         
         let _: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
-
+        
         result(true)
-
+        
     }
     
-    static func insertNewProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func insertNewProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let newStatus = args["status"] as? String ?? ""
         
@@ -780,14 +991,14 @@ import UIKit
         if(!isAlreadyExists){
             ChatManager.saveProfileStatus(statusText: newStatus, currentStatus: true)
         }
-//        result("{\"status\" : true }")
-        result(true)
+        result("{\"status\" : true }")
+        
     }
-    static func isTrailLicence(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func isTrailLicence(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(isTrialLicenceKey)
     }
     
-    static func setMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func setMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let statusText = args["status"] as? String ?? ""
@@ -807,25 +1018,27 @@ import UIKit
         let statusUpdateJSON = "{\"message\": \"Status Update Success\",\"status\": true}"
         
         result(statusUpdateJSON)
-
+        
     }
     
-    static func getStatus() -> [ProfileStatus] {
+    func getStatus() -> [ProfileStatus] {
         let profileStatus = ChatManager.getAllStatus()
         return profileStatus
     }
     
-    static func deleteProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func deleteProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let statusId = args["id"] as? String ?? ""
         let deleteStatusResponse = ChatManager.deleteStatus(statusId: statusId)
         
+        print("\(Constants.tag) deleteStatusResponse \(deleteStatusResponse)")
+        
         result(true)
         
     }
     
-    static func isUserUnArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func isUserUnArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -835,7 +1048,7 @@ import UIKit
         result(isUserUnarchived)
         
     }
-    static func forwardMessagesToMultipleUsers(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func forwardMessagesToMultipleUsers(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -844,15 +1057,23 @@ import UIKit
         
         FlyMessenger.composeForwardMessage(messageIds: messageIDList, toJidList: userList, completionHandler: { isSuccess, flyError, flyData in
             if isSuccess{
-                result(true)
+                result("Message Forward Success")
+            }else{
+                if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: nil))
+                }
             }
         })
         
-        
-        
     }
     
-    static func isMemberOfGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func isMemberOfGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -867,7 +1088,7 @@ import UIKit
         result(isMember.doesExist)
         
     }
-    static func getGroupMembersList(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getGroupMembersList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let groupJid = args["jid"] as? String ?? ""
         var groupMembers = [GroupParticipantDetail]()
@@ -875,16 +1096,16 @@ import UIKit
         
         groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != AppUtils.getMyJid()})
         let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == AppUtils.getMyJid()})
-//        if(myJid.count > 0){
-//            myJid[0].profileDetail?.nickName = "You"
-//            myJid[0].profileDetail?.name = "You"
-//        }
+        //        if(myJid.count > 0){
+        //            myJid[0].profileDetail?.nickName = "You"
+        //            myJid[0].profileDetail?.name = "You"
+        //        }
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
         if(myJid.count > 0){
             groupMembers.append(contentsOf: myJid)
         }
         
-
+        
         var groupMemberProfile: String = "["
         
         groupMembers.forEach{ groupMember in
@@ -899,20 +1120,22 @@ import UIKit
         groupMemberProfile = groupMemberProfile.dropLast() + "]"
         
         print("getGroupMembersList==**== \(String(describing: groupMemberProfile))")
-
+        
         result(groupMemberProfile)
     }
-    static func enableDisableArchivedSettings(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func enableDisableArchivedSettings(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let enableArchive = args["enable"] as? Bool ?? false
         ChatManager.enableDisableArchivedSettings(enableArchive) { isSuccess, error, data in
             if isSuccess {
                 result(isSuccess)
+            }else{
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: nil))
             }
         }
     }
     
-    static func getFavouriteMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getFavouriteMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let starredMessages =  ChatManager.getFavouriteMessages()
         
@@ -921,14 +1144,33 @@ import UIKit
         result(starredMessagesJson)
     }
     
-    static func clearAllConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func clearAllConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         ChatManager.shared.clearAllConversation{ isSuccess, error, data in
-            result(isSuccess)
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                if case let .xmpp_connection_not_available(message, code) = error {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error?.localizedDescription))
+                }
+            }
+            
         }
     }
     
-    static func getUnsentMessageOfAJid(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getUnsentMessageOfAJid(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userjid = args["jid"] as? String ?? ""
         
@@ -938,32 +1180,32 @@ import UIKit
         
     }
     
-    static func saveUnsentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func saveUnsentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userjid = args["jid"] as? String ?? ""
         let texMessage = args["texMessage"] as? String ?? ""
         FlyMessenger.saveUnsentMessage(id: userjid, message: texMessage)
     }
     
-    static func getRingtoneName(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getRingtoneName(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("[]")
         
     }
-    static func getDefaultNotificationUri(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getDefaultNotificationUri(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("[]")
         
     }
     
-    static func verifyToken(call: FlutterMethodCall, result: @escaping FlutterResult){
-
+    func verifyToken(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
         
         result("")
         
     }
     
-    static func getUserProfile(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getUserProfile(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let server = args["server"] as? Bool ?? false
@@ -984,16 +1226,28 @@ import UIKit
                     print("ContactManager.shared.getUserProfile==**==\(profileJSON)")
                     result(profileJSON)
                 } else{
-                    result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                    
+                    if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    }else {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
                 }
             }
         }catch{
             print("Error while calling User Profile Details")
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: nil))
         }
         
     }
     
-    static func updateMyProfile(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateMyProfile(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let email = args["email"] as? String ?? ""
@@ -1003,7 +1257,7 @@ import UIKit
         let image = args["image"] as? String ?? nil
         let userJid = AppUtils.getMyJid()
         
-        NSLog("update my profile image path --> \(image)")
+        NSLog("update my profile image path --> \(String(describing: image))")
         
         if (nickName.isEmpty && mobile.isEmpty && email.isEmpty) {
             result(FlutterError(code: "400", message: "Fill All details", details: nil))
@@ -1022,12 +1276,12 @@ import UIKit
         if(image != nil){
             print("Image is not null if condition")
             myProfile.image = image!
-//            isImagePicked = false
+            //            isImagePicked = false
         }else{
             print("Image is null else condition")
-//            isImagePicked = false
+            //            isImagePicked = false
         }
-
+        
         ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
             if isSuccess {
                 var data = flyData
@@ -1036,43 +1290,64 @@ import UIKit
                 print("***profile Data\(data.getData() as? FlyProfile)")
                 let profileUpdateResponse = data.getData() as? FlyProfile
                 let profileDataJson = profileUpdateResponse?.toJson()
-                print("***profile Data json \(profileDataJson)")
-
-                var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
-
-//                saveMyProfileDataToUserDefaults(profile: myProfile)
+                print("***profile Data json \(String(describing: profileDataJson))")
+                
+                let profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+                
+                //                saveMyProfileDataToUserDefaults(profile: myProfile)
                 print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
                 result(profileResponseJson)
             } else{
-                result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else if case let .invalid_auth_token(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.AUTHTOKEN_EXPIRED, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
                 
             }
         }
         
     }
     
-    static func removeProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func removeProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
         ContactManager.shared.removeProfileImage(){ isSuccess, flyError, flyData in
             if isSuccess {
                 result(isSuccess)
             } else{
-                print(flyError!.localizedDescription)
+                if case let .data_not_available(message, code) = flyError {
+                    switch (code){
+                    case 403:
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION,message: FLErrorMessage.USER_BLOCKED_MESSAGE,details: message))
+                        break;
+                    case _:
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.METHOD_FETCH_FAILED,details: message))
+                        break;
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.METHOD_FETCH_FAILED,details: flyError?.localizedDescription))
+                }
             }
         }
     }
     
-    static func saveMyProfileDataToUserDefaults(profile : FlyProfile){
+    func saveMyProfileDataToUserDefaults(profile : FlyProfile){
         // Commented private flydefaults profile saved inside SDK
-//        FlyDefaults.myName = profile.name
-//        FlyDefaults.myImageUrl = profile.image
-//        FlyDefaults.myMobileNumber = profile.mobileNumber
-//        FlyDefaults.myStatus = profile.status
-//        FlyDefaults.myEmail = profile.email
+        //        FlyDefaults.myName = profile.name
+        //        FlyDefaults.myImageUrl = profile.image
+        //        FlyDefaults.myMobileNumber = profile.mobileNumber
+        //        FlyDefaults.myStatus = profile.status
+        //        FlyDefaults.myEmail = profile.email
         
         self.saveMyJidAsContacts()
     }
     
-    static func saveMyJidAsContacts() {
+    func saveMyJidAsContacts() {
         
         let profileData = ProfileDetails(jid: AppUtils.getMyJid())
         profileData.name = ContactManager.getMyProfile().name
@@ -1081,148 +1356,149 @@ import UIKit
         profileData.email = ContactManager.getMyProfile().email
         profileData.status = ContactManager.getMyProfile().status
         profileData.image = ContactManager.getMyProfile().image
-
-//        ContactManager.shared.saveUser(profileDetails: profileData, saveAs: .live)
+        
+        //        ContactManager.shared.saveUser(profileDetails: profileData, saveAs: .live)
     }
     
-    static func getMediaEndPoint(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getMediaEndPoint(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let urlString = ChatManager.getAppConfigDetails().baseURL + "" + "media" + "/"
         result(urlString)
         
     }
     
-    static func syncContacts(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
-        
-        
-    }
-    static func updateMyProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateMyProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let profileImage = args["image"] as? String ?? ""
-//        print("*****profileImage\(profileImage)")
-//        var localFileUrl = ""
-//        let sourceURL = URL(fileURLWithPath: profileImage)
-//        print("****sourceURL \(sourceURL)")
-//        let fileName = (profileImage as NSString).lastPathComponent
-//        print("file name" + fileName)
-
+        //        print("*****profileImage\(profileImage)")
+        //        var localFileUrl = ""
+        //        let sourceURL = URL(fileURLWithPath: profileImage)
+        //        print("****sourceURL \(sourceURL)")
+        //        let fileName = (profileImage as NSString).lastPathComponent
+        //        print("file name" + fileName)
+        
         NSLog("iOS updateMyProfileImage Called \(profileImage)")
-//        ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
-//                if isSuccess {
-//                    var data = flyData
-//                    // Profile Image updated successfully update the UI
-//                    NSLog("updateMyProfileImage success response\(data)")
-//                    let message = data.getMessage()
-//                    var profileUpdateResponse = data.getData() as? FlyProfile
-//                    let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
-//
-//                    if let fileName = fileArray?.last {
-//                        profileUpdateResponse?.image = fileName
-//                        NSLog("updateMyProfileImage success fileName\(fileName)")
-//                    }
-//
-//                    let profileDataJson = profileUpdateResponse?.toJson()
-//                    print("***profile Data json \(profileDataJson)")
-//                    var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
-//                    result(profileResponseJson)
-//                } else{
-//                    NSLog("updateMyProfileImage Error\(flyError!.localizedDescription)")
-//                    result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
-//                }
-//        }
+        //        ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
+        //                if isSuccess {
+        //                    var data = flyData
+        //                    // Profile Image updated successfully update the UI
+        //                    NSLog("updateMyProfileImage success response\(data)")
+        //                    let message = data.getMessage()
+        //                    var profileUpdateResponse = data.getData() as? FlyProfile
+        //                    let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
+        //
+        //                    if let fileName = fileArray?.last {
+        //                        profileUpdateResponse?.image = fileName
+        //                        NSLog("updateMyProfileImage success fileName\(fileName)")
+        //                    }
+        //
+        //                    let profileDataJson = profileUpdateResponse?.toJson()
+        //                    print("***profile Data json \(profileDataJson)")
+        //                    var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+        //                    result(profileResponseJson)
+        //                } else{
+        //                    NSLog("updateMyProfileImage Error\(flyError!.localizedDescription)")
+        //                    result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+        //                }
+        //        }
         
-        do {
-
-            if (profileImage != ""){
-//                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
-                    print("File saved at: \(profileImage)")
-//                    localFileUrl = fileUrl
-//                    FlyDefaults.myImageToken = fileUrl
-
-                    let userJid = AppUtils.getMyJid()
-
-                let userProfile = ChatManager.profileDetaisFor(jid: userJid)
-                    var myProfile = FlyProfile(jid: userJid)
-                    myProfile.name = userProfile?.name ?? ""
-                    myProfile.nickName = userProfile?.nickName ?? ""
-                    myProfile.mobileNumber = userProfile?.mobileNumber ?? ""
-                    myProfile.email = userProfile?.email ?? ""
-                    myProfile.image = profileImage
-
-                    ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
-                        if isSuccess {
-                            var data = flyData
-
-                            let message = data.getMessage()
-                            print("***profile Data\(data.getData() as? FlyProfile)")
-                            var profileUpdateResponse = data.getData() as? FlyProfile
-                            let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
-
-                            if let fileName = fileArray?.last {
-                                profileUpdateResponse?.image = fileName
-                                    }
-
-                            let profileDataJson = profileUpdateResponse?.toJson()
-                            print("***profile Data json \(profileDataJson)")
-
-//                            Utility.saveInPreference(key: Constants.isProfileSaved, value: true)
-
-
-                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
-
-//                            saveMyProfileDataToUserDefaults(profile: myProfile)
-                            print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
-                            result(profileResponseJson)
-                        } else{
-                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
-
-                        }
+        //        do {
+        
+        if (profileImage != ""){
+            //                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
+            print("File saved at: \(profileImage)")
+            //                    localFileUrl = fileUrl
+            //                    FlyDefaults.myImageToken = fileUrl
+            
+            let userJid = AppUtils.getMyJid()
+            
+            let userProfile = ChatManager.profileDetaisFor(jid: userJid)
+            var myProfile = FlyProfile(jid: userJid)
+            myProfile.name = userProfile?.name ?? ""
+            myProfile.nickName = userProfile?.nickName ?? ""
+            myProfile.mobileNumber = userProfile?.mobileNumber ?? ""
+            myProfile.email = userProfile?.email ?? ""
+            myProfile.image = profileImage
+            
+            ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
+                if isSuccess {
+                    var data = flyData
+                    
+                    let message = data.getMessage()
+                    print("***profile Data\(data.getData() as? FlyProfile)")
+                    var profileUpdateResponse = data.getData() as? FlyProfile
+                    let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
+                    
+                    if let fileName = fileArray?.last {
+                        profileUpdateResponse?.image = fileName
                     }
-//                } else {
-//                    print("Failed to save the file.")
-
-//                }
-            }else{
-                result(FlutterError(code: "400", message: "Image not available to update profile", details: nil))
+                    
+                    let profileDataJson = profileUpdateResponse?.toJson()
+                    print("***profile Data json \(String(describing: profileDataJson))")
+                    
+                    //                            Utility.saveInPreference(key: Constants.isProfileSaved, value: true)
+                    
+                    
+                    let profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+                    
+                    //                            saveMyProfileDataToUserDefaults(profile: myProfile)
+                    print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
+                    result(profileResponseJson)
+                } else{
+                    if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else if case let .invalid_auth_token(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.AUTHTOKEN_EXPIRED, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
+                    
+                }
             }
-
-        } catch {
-            // Error handling
-            print("Error reading file: \(error.localizedDescription)")
+            //                } else {
+            //                    print("Failed to save the file.")
+            
+            //                }
+        }else{
+            result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: nil))
         }
-
+        
+        //        } catch {
+        //            // Error handling
+        //            print("Error reading file: \(error.localizedDescription)")
+        //        }
+        
     }
     
-    static func contactSyncStateValue(call: FlutterMethodCall, result: @escaping FlutterResult){
-     
-        print("contactSyncStateValue\(isContactSyncInProgress)")
-        result(isContactSyncInProgress)
-    }
-//
-//    static func contactSyncState(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        //        NotificationCenter.default.addObserver(self, selector: #selector(self.contactSyncCompleted(notification:)), name: NSNotification.Name(FlyConstants.contactSyncState), object: nil)
-//        //        @objc func contactSyncCompleted(notification: Notification){
-//        //             if let contactSyncState = notification.userInfo?[FlyConstants.contactSyncState] as? String {
-//        //                switch ContactSyncState(rawValue: contactSyncState) {
-//        //                    case .inprogress:
-//        //                        //Update the UI
-//        //                    case .success:
-//        //                        //Update the UI
-//        //                    case .failed:
-//        //                        //Update the UI
-//        //                }
-//        //            }
-//        //        }
-//
-//    }
+    
+    //
+    //    func contactSyncState(call: FlutterMethodCall, result: @escaping FlutterResult){
+    //        //        NotificationCenter.default.addObserver(self, selector: #selector(self.contactSyncCompleted(notification:)), name: NSNotification.Name(FlyConstants.contactSyncState), object: nil)
+    //        //        @objc func contactSyncCompleted(notification: Notification){
+    //        //             if let contactSyncState = notification.userInfo?[FlyConstants.contactSyncState] as? String {
+    //        //                switch ContactSyncState(rawValue: contactSyncState) {
+    //        //                    case .inprogress:
+    //        //                        //Update the UI
+    //        //                    case .success:
+    //        //                        //Update the UI
+    //        //                    case .failed:
+    //        //                        //Update the UI
+    //        //                }
+    //        //            }
+    //        //        }
+    //
+    //    }
     
     
-    static func revokeContactSync(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func revokeContactSync(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         
     }
-    static func getUsersWhoBlockedMe(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getUsersWhoBlockedMe(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -1237,27 +1513,40 @@ import UIKit
                 let blockedProfileJson = blockedprofileDetailsArray.toJson()
                 result(blockedProfileJson)
             } else{
-                print("\(Constants.tag) getUsersWhoBlockedMe Error: \(flyError!.localizedDescription)")
-                result(FlutterError(code: "500", message: "Failed to Encode Chat Messages", details: flyError!.localizedDescription))
+                if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
     }
-    static func getUnKnownUserProfiles(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getUnKnownUserProfiles(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         
     }
-    static func getMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         
     }
     
-    static func getMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let busyStatus = ChatManager.shared.getMyBusyStatus()
         let busyStatusJson = busyStatus.toJson()
         result(busyStatusJson)
     }
     
-    static func setMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func setMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userStatus = args["status"] as? String ?? ""
         
@@ -1265,11 +1554,11 @@ import UIKit
             if isSuccess{
                 result(isSuccess)
             }else{
-                result(FlutterError(code: "500", message: "Set MyBusy Status Error", details: error?.localizedDescription))
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error?.localizedDescription))
             }
         }
     }
-    static func enableDisableBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func enableDisableBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -1279,13 +1568,13 @@ import UIKit
             if isSuccess{
                 result(isSuccess)
             }else{
-                result(FlutterError(code: "500", message: "Enable Disable BusyStatus Status Error", details: error?.localizedDescription))
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error?.localizedDescription))
             }
         }
         
     }
     
-    static func insertBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func insertBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let busyStatus = args["busy_status"] as? String ?? ""
         print("setting busy status\(busyStatus)")
@@ -1293,12 +1582,12 @@ import UIKit
             if isSuccess{
                 result(isSuccess)
             }else{
-                result(FlutterError(code: "500", message: "Set MyBusy Status Error", details: error?.localizedDescription))
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error?.localizedDescription))
             }
         }
     }
     
-    static func getBusyStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getBusyStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let busyStatusList = ChatManager.shared.getBusyStatusList()
         print("Get Status Started profileList Count \(busyStatusList.count)")
         let busyStatusJsonList = busyStatusList.toJson()
@@ -1306,13 +1595,13 @@ import UIKit
         result(busyStatusJsonList)
     }
     
-    static func deleteBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func deleteBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let busyId = args["id"] as? String ?? ""
         let status = args["status"] as? String ?? ""
         let isCurrentStatus = args["isCurrentStatus"] as? Bool ?? false
-                        
+        
         let busyStatus = BusyStatus(statusText: status, isCurrentStatus: isCurrentStatus)
         
         print("deleteBusyStatus==**==\(busyStatus)")
@@ -1323,7 +1612,7 @@ import UIKit
         
         
     }
-    static func enableDisableHideLastSeen(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func enableDisableHideLastSeen(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         
         let args = call.arguments as! Dictionary<String, Any>
@@ -1332,14 +1621,26 @@ import UIKit
         
         ChatManager.enableDisableHideLastSeen(EnableLastSeen: enableLastSeen) { isSuccess, flyError, flyData in
             
-            result(isSuccess)
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
+            }
         }
     }
-    static func isHideLastSeenEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func isHideLastSeenEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result(ChatManager.isLastSeenEnabled())
     }
-    static func deleteMessagesForMe(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func deleteMessagesForMe(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["jid"] as? String ?? ""
         let chatType = args["chat_type"] as? String ?? ""
@@ -1354,12 +1655,24 @@ import UIKit
         }
         
         ChatManager.deleteMessagesForMe(toJid: jid, messageIdList: messageIDList, deleteChatType: deleteChatType,isRevokeMediaAccess: isMediaDelete) { (isSuccess, error, data) in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_DELETE_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_DELETE_FAILED, details: error?.localizedDescription))
+                }
+            }
             
-            result(isSuccess)
         }
         
     }
-    static func deleteMessagesForEveryone(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func deleteMessagesForEveryone(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["jid"] as? String ?? ""
         let chatType = args["chat_type"] as? String ?? ""
@@ -1379,14 +1692,24 @@ import UIKit
         print("messageIDList\(messageIDList)")
         
         ChatManager.deleteMessagesForEveryone(toJid: jid, messageIdList: messageIDList, deleteChatType: deleteChatType,isRevokeMediaAccess: isMediaDelete) { (isSuccess, error, data) in
-            
-            print("deleteMessagesForEveryone result\(isSuccess)")
-            result(isSuccess)
-            
+            if isSuccess{
+                print("deleteMessagesForEveryone result\(isSuccess)")
+                result(isSuccess)
+            }else{
+                if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGES_DELETE_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGES_DELETE_FAILED, details: error?.localizedDescription))
+                }
+            }
         }
         
     }
-    static func markAsRead(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func markAsRead(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? ""
@@ -1395,7 +1718,7 @@ import UIKit
         ChatManager.markConversationAsRead(for: [jid])
         result(true)
     }
-    static func markConversationAsUnread(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func markConversationAsUnread(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let jidList = args["jidlist"] as? [String] ?? []
@@ -1405,7 +1728,7 @@ import UIKit
         ChatManager.markConversationAsUnread(for: jidList)
         result(true)
     }
-    static func markConversationAsRead(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func markConversationAsRead(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let jidList = args["jidlist"] as? [String] ?? []
@@ -1415,7 +1738,7 @@ import UIKit
         ChatManager.markConversationAsRead(for: jidList)
         result(true)
     }
-    static func getMessagesOfJid(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getMessagesOfJid(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let userJid = args["JID"] as? String ?? ""
@@ -1426,23 +1749,23 @@ import UIKit
             print("getMessagesOfJid==**==\(chatJson)")
             result(chatJson)
         } else {
-            result(FlutterError(code: "500", message: "Failed to Encode Chat Messages", details: nil))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: nil))
         }
         
     }
     
-    static func markAsReadDeleteUnreadSeparator(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func markAsReadDeleteUnreadSeparator(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? ""
-
+        
         ChatManager.markConversationAsRead(for: [jid])
         FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
         
         result(true)
     }
     
-    static func deleteUnreadMessageSeparatorOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func deleteUnreadMessageSeparatorOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? ""
@@ -1451,14 +1774,14 @@ import UIKit
         result(true)
         
     }
-    static func getRecalledMessagesOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        let args = call.arguments as! Dictionary<String, Any>
+    func getRecalledMessagesOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
+        //        let args = call.arguments as! Dictionary<String, Any>
         
-//        let jid = args["jid"] as? String ?? nil
+        //        let jid = args["jid"] as? String ?? nil
         
         
     }
-    static func uploadMedia(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func uploadMedia(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let messageid = args["messageid"] as? String ?? ""
@@ -1472,22 +1795,22 @@ import UIKit
         }
         
     }
-    static func getMessagesUsingIds(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        let args = call.arguments as! Dictionary<String, Any>
+    func getMessagesUsingIds(call: FlutterMethodCall, result: @escaping FlutterResult){
+        //        let args = call.arguments as! Dictionary<String, Any>
         
-//        var messages : [ChatMessage] = FlyMessenger.getMessagesUsingIds(MESSAGE_MIDS)
-        
-        
-    }
-    static func updateMediaDownloadStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        //        var messages : [ChatMessage] = FlyMessenger.getMessagesUsingIds(MESSAGE_MIDS)
         
         
     }
-    static func updateMediaUploadStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateMediaDownloadStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         
     }
-    static func cancelMediaUploadOrDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateMediaUploadStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        
+    }
+    func cancelMediaUploadOrDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let messageId = args["messageId"] as? String ?? ""
         
@@ -1498,34 +1821,35 @@ import UIKit
                 result(false)
             }
         }
-
+        
     }
-    static func setMediaEncryption(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func setMediaEncryption(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let isEncryptionEnable = args["encryption"] as? Bool ?? true
         
         ChatManager.setMediaEncryption(isEnable: isEncryptionEnable)
     }
-    static func deleteAllMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func deleteAllMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         _ = call.arguments as! Dictionary<String, Any>
         
     }
-    static func getGroupJid(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getGroupJid(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let groupId = args["groupId"] as? String ?? ""
-    
+        
         do
         {
             let groupIDResponse = try FlyUtils.getGroupJid(groupId: groupId)
             result(groupIDResponse)
             
         }catch let sdkError{
-            result(FlutterError(code: "500", message: "Unable to get GroupJid", details: sdkError.localizedDescription))
+            print("\(Constants.tag) getGroupJid sdkError \(sdkError)")
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.GROUP_JID_FETCH_FAILED, details: nil))
         }
         
     }
-    static func updateRecentChatPinStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateRecentChatPinStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let userJID = args["jid"] as? String ?? ""
@@ -1534,7 +1858,7 @@ import UIKit
         ChatManager.updateRecentChatPinStatus(jid: userJID, pinRecentChat: pin_recent_chat)
     }
     
-    static func updateChatMuteStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateChatMuteStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -1542,7 +1866,7 @@ import UIKit
         let muteStatus = args["mute_status"] as? Bool ?? false
         ChatManager.updateChatMuteStatus(jid: userJID, muteStatus: muteStatus)
     }
-    static func sendTypingStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func sendTypingStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -1555,11 +1879,11 @@ import UIKit
         }else{
             chatType = .groupChat
         }
-            
+        
         ChatManager.sendTypingStatus(to: toJid, chatType: chatType)
     }
     
-    static func sendTypingGoneStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func sendTypingGoneStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -1572,11 +1896,11 @@ import UIKit
         }else{
             chatType = .groupChat
         }
-            
+        
         ChatManager.sendTypingGoneStatus(to: toJid, chatType: chatType)
     }
     
-    static func deleteRecentChat(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func deleteRecentChat(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let userJID = args["jid"] as? String ?? ""
@@ -1585,20 +1909,48 @@ import UIKit
         userJIDs.append(userJID)
         
         ChatManager.deleteRecentChats(jids: userJIDs, completionHandler: { isSuccess, flyError, flyData in
-            result(isSuccess)
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.RECENT_CHAT_DELETE_FAILED, details: message))
+                }else if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.RECENT_CHAT_DELETE_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.RECENT_CHAT_DELETE_FAILED, details: flyError?.localizedDescription))
+                }
+            }
         })
         
     }
-    static func deleteRecentChats(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func deleteRecentChats(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJIDList = args["jidlist"] as? [String] ?? []
         
-        ChatManager.deleteRecentChats(jids: userJIDList, completionHandler: { isSuccess, FlyError, flyData in
-            result(isSuccess)
+        ChatManager.deleteRecentChats(jids: userJIDList, completionHandler: { isSuccess, flyError, flyData in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.RECENT_CHAT_DELETE_FAILED, details: message))
+                }else if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.RECENT_CHAT_DELETE_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.RECENT_CHAT_DELETE_FAILED, details: flyError?.localizedDescription))
+                }
+            }
         })
         
     }
-    static func makeAdmin(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func makeAdmin(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let groupJID = args["jid"] as? String ?? ""
         let userJID = args["userjid"] as? String ?? ""
@@ -1609,21 +1961,38 @@ import UIKit
                 if isSuccess {
                     result(isSuccess)
                 } else{
-                    result(FlutterError(code: "500", message: "Unable to Make User Admin", details: flyError))
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .unexpected(message, code) = flyError {
+                        if code == ErrorCode.FORBIDDEN{
+                            result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }
+                    }else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
                 }
             })
         }catch let error{
-
-            result(FlutterError(code: "500", message: "Unable to Make User Admin", details: error.localizedDescription))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
         }
         
     }
     
-    static func setNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
-
+    func setNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
     }
     
-    static func updateGroupName(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateGroupName(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let groupJID = args["jid"] as? String ?? ""
@@ -1631,14 +2000,36 @@ import UIKit
         
         do{
             try GroupManager.shared.updateGroupName(groupJid: groupJID, groupName: groupName, completionHandler: { isSuccess, flyError, flyData in
-                result(isSuccess)
+                if isSuccess{
+                    result(isSuccess)
+                }else{
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .unexpected(message, code) = flyError {
+                        if code == ErrorCode.FORBIDDEN{
+                            result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }
+                    }else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
+                }
             })
         }catch let error{
-            result(FlutterError(code: "500", message: "Unable to Update Group Name", details: error.localizedDescription))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
         }
         
     }
-    static func updateGroupProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateGroupProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let groupJID = args["jid"] as? String ?? ""
@@ -1646,30 +2037,75 @@ import UIKit
         
         do{
             try GroupManager.shared.updateGroupProfileImage(groupJid: groupJID, groupProfileImageUrl: groupImageFile, completionHandler: { isSuccess, flyError, flyData in
-
-                result(isSuccess)
+                
+                if isSuccess{
+                    result(isSuccess)
+                }else{
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .unexpected(message, code) = flyError {
+                        if code == ErrorCode.FORBIDDEN{
+                            result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }
+                    }else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
+                }
+                
                 
             })
         }catch let error{
-            result(FlutterError(code: "500", message: "Unable to Update Group Image", details: error.localizedDescription))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
         }
         
     }
-    static func removeGroupProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func removeGroupProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let groupJID = args["jid"] as? String ?? ""
         
         do{
             try GroupManager.shared.removeGroupProfileImage(groupJid: groupJID, completionHandler: { isSuccess, flyError, flyData in
-                result(isSuccess)
+                if isSuccess{
+                    result(isSuccess)
+                }else{
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .unexpected(message, code) = flyError {
+                        if code == ErrorCode.FORBIDDEN{
+                            result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }
+                    }else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
+                }
             })
         }catch let error{
-            result(FlutterError(code: "500", message: "Unable to Remove Group Image", details: error.localizedDescription))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
         }
         
     }
-    static func addUsersToGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func addUsersToGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let groupJID = args["jid"] as? String ?? ""
@@ -1677,14 +2113,39 @@ import UIKit
         
         do{
             try GroupManager.shared.addParticipantToGroup(groupId: groupJID, newUserJidList: members, completionHandler: { isSuccess, flyError, flyData in
-                result(isSuccess)
+                if isSuccess{
+                    result(isSuccess)
+                }else{
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .unexpected(message, code) = flyError {
+                        if code == ErrorCode.FORBIDDEN{
+                            result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }
+                    }else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else if case let .groupMembersValidationMessage(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.ARGUMENTS_EMPTY_OR_NULL, message: FLErrorMessage.MISSING_ARGUMENTS, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
+                }
+                
             })
         }catch let error{
-            result(FlutterError(code: "500", message: "Unable to Add Group Members", details: error.localizedDescription))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
         }
         
     }
-    static func removeMemberFromGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func removeMemberFromGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let groupJID = args["jid"] as? String ?? ""
@@ -1692,15 +2153,39 @@ import UIKit
         
         do{
             try GroupManager.shared.removeParticipantFromGroup(groupId: groupJID, removeGroupMemberJid: userJID, completionHandler: { isSuccess, flyError, flyData in
-                result(isSuccess)
+                if isSuccess{
+                    result(isSuccess)
+                }else{
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .unexpected(message, code) = flyError {
+                        if code == ErrorCode.FORBIDDEN{
+                            result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }
+                    }else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else if case let .groupMembersValidationMessage(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.ARGUMENTS_EMPTY_OR_NULL, message: FLErrorMessage.MISSING_ARGUMENTS, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
+                }
             })
         }catch let error{
-            result(FlutterError(code: "500", message: "Unable to remove member from group", details: error.localizedDescription))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
         }
         
     }
     
-    static func getMessageStatusOfASingleChatMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getMessageStatusOfASingleChatMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let messageID = args["messageID"] as? String ?? ""
         let seenReceipt = ChatManager.getSingleChatMessageSeenReceipt(messageId: messageID)
@@ -1710,18 +2195,15 @@ import UIKit
         let acknowledgeReceipt = ChatManager.getSingleChatMessageAcknowledgeReceipt(messageId: messageID)
         print("acknowledgeReceipt\(String(describing: acknowledgeReceipt))")
         
-        var seenResponse = String(format: "%.0f",seenReceipt?.time ?? "")
-        var deliveredResponse = String(format: "%.0f",deliverReceipt?.time ?? "")
-        var acknowledgeResponse = String(format: "%.0f",acknowledgeReceipt?.time ?? "")
+        let seenResponse = String(format: "%.0f",seenReceipt?.time ?? "")
+        let deliveredResponse = String(format: "%.0f",deliverReceipt?.time ?? "")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(seenResponse == "0" ? "" : seenResponse, forKey: "seenTime")
         jsonObject.setValue(deliveredResponse == "0" ? "" : deliveredResponse, forKey: "deliveredTime")
-        jsonObject.setValue(acknowledgeResponse == "0" ? "" : acknowledgeResponse, forKey: "sentTime")
-        jsonObject.setValue(messageID, forKey: "messageId")
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         result(jsonString)
     }
-    static func exportChatConversationToEmail(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func exportChatConversationToEmail(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJID = args["jid"] as? String ?? ""
         
@@ -1739,45 +2221,61 @@ import UIKit
         
     }
     
-    static func getAllGroups(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getAllGroups(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let fetchFromServer = args["server"] as? Bool ?? false
         
         print("calling getAllGroups")
         GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
             
-        //need to check response
+            //need to check response
             if isSuccess {
                 var data  = flyData
                 
-//                let getAllGroupJson = data.dictToJson()
+                //                let getAllGroupJson = data.dictToJson()
                 
                 let groupData = data.getData() as? [ProfileDetails]
                 
                 let groupDataJson = groupData?.toJson()
                 
-              
-//                if let groupJsonData = extractData(from: getAllGroupJson!) { //  getAllGroupJson?.extractJSONObject() {
-//
-//                    if let groupData = groupJsonData["data"] {
-//                        print("GroupManager.shared.getGroups==**==\(groupData)")
-//                        result(groupData)
-//                    }
-//
-//                }
+                
+                //                if let groupJsonData = extractData(from: getAllGroupJson!) { //  getAllGroupJson?.extractJSONObject() {
+                //
+                //                    if let groupData = groupJsonData["data"] {
+                //                        print("GroupManager.shared.getGroups==**==\(groupData)")
+                //                        result(groupData)
+                //                    }
+                //
+                //                }
                 result(groupDataJson)
                 
             } else{
-                result(FlutterError(code: "500", message: "Unable to Fetch Group List", details: flyError?.localizedDescription))
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
     }
     
-    static func searchConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func searchConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let searchKey = args["searchKey"] as? String ?? ""
         _ = args["jidForSearch"] as? String ?? ""
-        let globalSearch = args["globalSearch"] as? Bool ?? true
+        _ = args["globalSearch"] as? Bool ?? true
         
         let searchedMessages : [SearchMessage] = ChatManager.shared.searchMessage(text: searchKey)
         
@@ -1797,84 +2295,97 @@ import UIKit
         searchConversationResp = searchConversationResp + "]"
         
         print("searchConversation==**==\(searchConversationResp)")
-       
+        
         result(searchConversationResp)
     }
     
-    static func isMuted(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func isMuted(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJID = args["jid"] as? String ?? ""
         //need to check the fn
-//        result(FlyCoreController.shared.isContactMuted(jid: userJID))
+        //        result(FlyCoreController.shared.isContactMuted(jid: userJID))
         let isMuted = ContactManager.shared.getUserProfileDetails(for: userJID)?.isMuted ?? false
         result(isMuted)
     }
     
-    static func isBusyStatusEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
-       result(ChatManager.shared.isBusyStatusEnabled())
+    func isBusyStatusEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
+        result(ChatManager.shared.isBusyStatusEnabled())
     }
     
-    static func getUserLastSeenTime(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getUserLastSeenTime(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
-
+        
         let jid = args["jid"] as? String ?? ""
-
+        
         ChatManager.getUserLastSeen( for: jid) { isSuccess, flyError, flyData in
             var data  = flyData
             if isSuccess {
                 let lastseenSeconds = data.getData() as? String
                 if let seconds = Int(lastseenSeconds ?? "0") {
-                    let timestamp = subtractSecondsAndGetTimestamp(seconds: TimeInterval(seconds))
-
+                    let timestamp = self.subtractSecondsAndGetTimestamp(seconds: TimeInterval(seconds))
+                    
                     result(String(Int(timestamp)))
                 }
-
+                
             } else{
-
-                result(FlutterError(code: "500", message: "Unable to Fetch User Last seen", details: data.getMessage()))
+                
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
+                
             }
         }
     }
-    static func subtractSecondsAndGetTimestamp(seconds: TimeInterval) -> TimeInterval {
+    func subtractSecondsAndGetTimestamp(seconds: TimeInterval) -> TimeInterval {
         let currentDate = Date()
         let earlierDate = currentDate.addingTimeInterval(-seconds)
         let timestamp = earlierDate.timeIntervalSince1970 * 1000
         return timestamp
     }
-    static func getRecentChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getRecentChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         ChatManager.getRecentChatList { (isSuccess, flyError, resultDict) in
             if (isSuccess) {
                 var recentlist = resultDict
                 let recentChatList = recentlist.getData() as? [RecentChat] ?? []
-
+                
                 if(recentChatList.isEmpty){
                     result("{\"data\": [] }")
                 }else{
                     if let recentChatJson = recentChatList.toJson() {
                         let recentChatListJson = "{\"data\":" + recentChatJson + "}"
-
+                        
                         print("ChatManager.getRecentChatList==**==\(recentChatListJson)")
                         result(recentChatListJson)
                     } else {
                         print("Failed to convert object to JSON")
-                        result(FlutterError(code: "500", message: "Error Parsing the Recent Chat List", details: nil))
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
                     }
-
                 }
-
             } else {
-
-                result(FlutterError(code: "500", message: "Unable to Fetch Recent Chat List", details: flyError?.localizedDescription))
-
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
     }
     
-    static func getRecentChatListHistory(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getRecentChatListHistory(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
-
+        
         let isFirstSet = args["firstSet"] as? Bool ?? true
         
         let limit = args["limit"] as? Int ?? 15
@@ -1888,10 +2399,11 @@ import UIKit
             print("recentChatListBuilder already set")
         }
         if(isFirstSet){
-            
+            recentChatListBuilder =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
             print("loading first set")
             recentChatListBuilder!.loadRecentChatList { isSuccess, flyError, flyData in
                 var data  = flyData
+                print("getRecentChatListHistory ios \(String(describing: data))")
                 if (isSuccess) {
                     let recentChatArray  = data.getData() as? [RecentChat] ?? []
                     if(recentChatArray.isEmpty){
@@ -1905,13 +2417,12 @@ import UIKit
                             result(recentChatListJson)
                         } else {
                             print("Failed to convert object to JSON")
-                            result(FlutterError(code: "500", message: "Error Parsing the Recent Chat List", details: nil))
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
                         }
                         
                     }
                 } else {
-                    // Fetch recentchat failed print error to know more about the exception
-                    result(FlutterError(code: "500", message: "Unabke to fetch the Recent Chat List", details: nil))
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
                 }
             }
         }else{
@@ -1933,37 +2444,36 @@ import UIKit
                                 result(recentChatListJson)
                             } else {
                                 print("Failed to convert object to JSON")
-                                result(FlutterError(code: "500", message: "Error Parsing the Recent Chat List", details: nil))
+                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
                             }
                             
                         }
                     } else {
-                        // Fetch recentchat failed print error to know more about the exception
-                        result(FlutterError(code: "500", message: "Unabke to fetch the Recent Chat List", details: nil))
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
                     }
                 }
             }else{
                 print("Next set data is not available")
                 result("{\"data\": [] }")
             }
-
-
+            
+            
         }
     }
-
-    static func getRecentChatListHistoryByTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
-
+    
+    func getRecentChatListHistoryByTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
         let args = call.arguments as! Dictionary<String, Any>
-
+        
         let isFirstSet = args["firstSet"] as? Bool ?? true
-
+        
         let limit = args["limit"] as? Int ?? 15
-
+        
         let topicId = args["topicId"] as? String ?? ""
-
+        
         topicChatListParams.limit = limit
         topicChatListParams.topicID = topicId
-
+        
         if(topicChatListBuilder == nil){
             print("topicChatListBuilder is nil")
             topicChatListBuilder =  TopicChatListBuilder(topicChatListParams: topicChatListParams)
@@ -1971,7 +2481,7 @@ import UIKit
             print("topicChatListBuilder already set")
         }
         if(isFirstSet){
-
+            topicChatListBuilder =  TopicChatListBuilder(topicChatListParams: topicChatListParams)
             print("loading first set")
             topicChatListBuilder!.loadTopicBasedChatList{ isSuccess, flyError, flyData in
                 var data  = flyData
@@ -1985,62 +2495,80 @@ import UIKit
                             print("topicrecentChatList==**==\(recentChatListJson)")
                             result(recentChatListJson)
                         } else {
-                            print("Failed to convert object to JSON")
-                            result(FlutterError(code: "500", message: "Error Parsing the Topic based Recent Chat List", details: nil))
+                            
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
                         }
-
+                        
                     }
                 } else {
-                    // Fetch recentchat failed print error to know more about the exception
-                    result(FlutterError(code: "500", message: "Unable to fetch the Topic based Recent Chat List", details: nil))
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
                 }
             }
         }else{
             print("loading next set")
-//            if(topicChatListBuilder!.hasNextRecentChatData()){
-                print("Next set has data")
-                topicChatListBuilder!.nextSetOfTopicBasedChatList { isSuccess, flyError, flyData in
-                    var data  = flyData
-                    if (isSuccess) {
-                        let recentChatArray  = data.getData() as? [RecentChat] ?? []
-
-                        if(recentChatArray.isEmpty){
-                            print("returning empty data")
-                            result("{\"data\": [] }")
-                        }else{
-                            if let recentChatJson = recentChatArray.toJson() {
-                                let recentChatListJson = "{\"data\":" + recentChatJson + "}"
-                                print("topicrecentChatList==**==\(recentChatListJson)")
-                                result(recentChatListJson)
-                            } else {
-                                print("Failed to convert object to JSON")
-                                result(FlutterError(code: "500", message: "Error Parsing the Topic based Recent Chat List", details: nil))
-                            }
-
+            //            if(topicChatListBuilder!.hasNextRecentChatData()){
+            print("Next set has data")
+            topicChatListBuilder!.nextSetOfTopicBasedChatList { isSuccess, flyError, flyData in
+                var data  = flyData
+                if (isSuccess) {
+                    let recentChatArray  = data.getData() as? [RecentChat] ?? []
+                    
+                    if(recentChatArray.isEmpty){
+                        print("returning empty data")
+                        result("{\"data\": [] }")
+                    }else{
+                        if let recentChatJson = recentChatArray.toJson() {
+                            let recentChatListJson = "{\"data\":" + recentChatJson + "}"
+                            print("topicrecentChatList==**==\(recentChatListJson)")
+                            result(recentChatListJson)
+                        } else {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
                         }
-                    } else {
-                        // Fetch recentchat failed print error to know more about the exception
-                        result(FlutterError(code: "500", message: "Unabke to fetch the Topic based Recent Chat List", details: nil))
+                        
+                    }
+                } else {
+                    
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
                     }
                 }
-//            }else{
-//                print("Next set data is not available")
-//                result("{\"data\": [] }")
-//            }
-
-
+            }
+            //            }else{
+            //                print("Next set data is not available")
+            //                result("{\"data\": [] }")
+            //            }
+            
+            
         }
     }
-
-    static func initializeMessageList(call: FlutterMethodCall, result: @escaping FlutterResult){
-
+    
+    func initializeMessageList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
         let args = call.arguments as! Dictionary<String, Any>
-
-
+        
+        
         if let messageId = args["messageId"] as? String {
             messageListParams.messageId = messageId
         }
-
+        
         if let chatId = args["userJid"] as? String {
             messageListParams.chatId = chatId
         }
@@ -2052,67 +2580,62 @@ import UIKit
         }
         let limit = args["limit"] as? Int ?? 50
         messageListParams.limit = limit
-
+        
         let ascendingOrder = args["ascendingOrder"] as? Bool ?? true
-
+        
         print("Ascending order value \(ascendingOrder)")
-
+        
         messageListParams.ascendingOrder = ascendingOrder
-
+        
         if let topicId = args["topicId"] as? String {
             messageListParams.topicID = topicId
         }
-
+        
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
-
+        
         result(true)
-
+        
     }
-
-    static func loadMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
-
+    
+    func loadMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
         if(messageListQuery == nil){
             NSLog("\(Constants.tag) Message List Not Initialized")
-            result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
         }
         if(messageListQuery?.isFetchingInProgress() ?? false){
-            result(FlutterError(code: "500", message: "Fetching Query is already in Progress", details: nil))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_PROCESSING))
         }
         messageListQuery?.loadMessages { isSuccess, flyError, flyData in
-           var data  = flyData
-           if (isSuccess) {
+            var data  = flyData
+            if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
-
-               if let chatJson = messageList.toJson() {
-//                   NSLog("\(Constants.tag) Initial Message List \(chatJson)")
-                   print("\(Constants.tag) Initial Message List ios \(chatJson)")
-                   result(chatJson)
-               } else {
-                   NSLog("\(Constants.tag) Initial Message List Load Failed")
-                   print("\(Constants.tag) Initial Message List Load Failed")
-
-                   result(FlutterError(code: "500", message: "Failed to Encode Chat Messages", details: nil))
-               }
-           } else {
-               NSLog("\(Constants.tag) Initial Message List Load Failed")
-               result(FlutterError(code: "500", message: "Failed to Load Chat Messages", details: flyError?.localizedDescription))
-           }
-       }
+                if let chatJson = messageList.toJson() {
+                    NSLog("\(Constants.tag) Initial Message List ios \(chatJson)")
+                    print("\(Constants.tag) Initial Message List ios print \(chatJson)")
+                    result(chatJson)
+                } else {
+                    NSLog("\(Constants.tag) Initial Message List Load Failed")
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
+                }
+            } else {
+                NSLog("\(Constants.tag) Initial Message List Load Failed")
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+            }
+        }
     }
-
-    static func loadPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+    
+    func loadPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         print("calling previous message")
         if(messageListQuery == nil){
             NSLog("\(Constants.tag) Message List Not Initialized")
-            result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
+            
         }
-
-        if(!(messageListQuery?.hasPreviousMessages() ?? false)){
-            NSLog("\(Constants.tag) Reached Complete Previous Message List")
-            result(nil)
-        }
+        
         if(messageListQuery?.isFetchingInProgress() ?? false){
-            result(FlutterError(code: "500", message: "Fetching Query is already in Progress", details: nil))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_PROCESSING))
+            
         }
         messageListQuery?.loadPreviousMessages { isSuccess, flyError, flyData in
             var data  = flyData
@@ -2120,55 +2643,52 @@ import UIKit
                 let messageList  = data.getData() as? [ChatMessage]
                 if let chatJson = messageList.toJson() {
                     print("\(Constants.tag) Previous Message List \(chatJson)")
-                    if !(messageList?.isEmpty ?? true){
-                        result(chatJson)
-                    }
-
+                    //                    if !(messageList?.isEmpty ?? true){
+                    result(chatJson)
+                    //                    }
+                    
                 } else {
                     NSLog("\(Constants.tag) Previous Message List Load Failed")
-                    result(FlutterError(code: "500", message: "Failed to Encode Previous Chat Messages", details: nil))
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
                 }
             } else {
                 NSLog("\(Constants.tag) Initial Message List Load Failed")
-                result(FlutterError(code: "500", message: "Failed to Load Previous Chat Messages", details: flyError?.localizedDescription))
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
             }
         }
     }
-
-    static func loadNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
-
+    
+    func loadNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
         if(messageListQuery == nil){
             NSLog("\(Constants.tag) Message List Not Initialized")
-            result(FlutterError(code: "500", message: "Message List Not Initialized", details: nil))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
+            return
         }
-
-        if(!(messageListQuery?.hasNextMessages() ?? false)){
-            result(nil)
-        }
-
+        
         messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in
-          var data  = flyData
-          if (isSuccess) {
+            var data  = flyData
+            if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
-              if let chatJson = messageList.toJson() {
-                  print("\(Constants.tag) Next Message List \(chatJson)")
-//                  NSLog("\(Constants.tag) Next Message List \(chatJson)")
-
-                  result(chatJson)
-              } else {
-                  NSLog("\(Constants.tag) Next Message List Load Failed")
-                  result(FlutterError(code: "500", message: "Failed to Encode Next Chat Messages", details: nil))
-              }
-          } else {
-              NSLog("\(Constants.tag) Initial Message List Load Failed")
-              result(FlutterError(code: "500", message: "Failed to Load Next Chat Messages", details: flyError?.localizedDescription))
-          }
+                if let chatJson = messageList.toJson() {
+                    print("\(Constants.tag) Next Message List \(chatJson)")
+                    //                  NSLog("\(Constants.tag) Next Message List \(chatJson)")
+                    
+                    result(chatJson)
+                } else {
+                    NSLog("\(Constants.tag) Next Message List Load Failed")
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
+                }
+            } else {
+                NSLog("\(Constants.tag) Initial Message List Load Failed")
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+            }
         }
     }
-
-
-
-    static func getRecentChatListIncludingArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
+    
+    
+    
+    func getRecentChatListIncludingArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let recentChatList = ChatManager.getRecentChatListIncludingArchived()
         let recentChatListJson = recentChatList.toJson()
@@ -2176,7 +2696,7 @@ import UIKit
         result(recentChatListJson)
     }
     
-    static func getRecentChatOf(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getRecentChatOf(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? ""
@@ -2185,24 +2705,25 @@ import UIKit
         print("recentChat-->\(String(describing: recentChat))")
         if(recentChat == nil){
             result(nil)
+            return
         }
         
         let recentChatJson = recentChat?.toJson()
         print("getRecentChatOf==**==\(String(describing: recentChatJson))")
         result(recentChatJson)
     }
-    static func recentChatPinnedCount(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func recentChatPinnedCount(call: FlutterMethodCall, result: @escaping FlutterResult){
         let recentPinCount = ChatManager.recentChatPinnedCount()
         result(recentPinCount)
     }
     
-    static func setOnGoingChatUser(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func setOnGoingChatUser(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let userJid = args["jid"] as? String ?? ""
         ChatManager.setOnGoingChatUser(jid: userJid)
     }
-    static func reportUserOrMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func reportUserOrMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         
@@ -2217,49 +2738,84 @@ import UIKit
         }
         
     }
-    static func blockUser(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func blockUser(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["userJID"] as? String ?? ""
         
         do{
             
             try ContactManager.shared.blockUser(for: userJid){ isSuccess, flyError, flyData in
-
+                
                 if isSuccess {
                     let blockUserResponseJson = flyData.dictToJson()
                     print("ContactManager.shared.blockUser==**==\(String(describing: blockUserResponseJson))")
-//                    result(blockUserResponseJson)
-                    result(true)
+                    result(blockUserResponseJson)
                 } else{
-                    result(FlutterError(code: "500", message: "Unable to Block User", details: flyError?.localizedDescription))
+                    
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .unexpected(message, code) = flyError {
+                        if code == ErrorCode.FORBIDDEN{
+                            result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }
+                    }else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
                 }
             }
         }catch let error{
-            
-            result(FlutterError(code: "500", message: "Unable to Block User", details: error.localizedDescription))
+            result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
         }
         
     }
-    static func unblockUser(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func unblockUser(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["userJID"] as? String ?? ""
         
         do{
             
             try ContactManager.shared.unblockUser(for: userJid){ isSuccess, flyError, flyData in
-
+                
                 if isSuccess {
                     result(true)
                 } else{
-                    result(FlutterError(code: "500", message: "Unable to Un-Block User", details: flyError?.localizedDescription))
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .unexpected(message, code) = flyError {
+                        if code == ErrorCode.FORBIDDEN{
+                            result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }
+                    }else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
                 }
             }
         }catch let error{
-            result(FlutterError(code: "500", message: "Unable to Un-Block User", details: error.localizedDescription))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
         }
         
     }
-    static func createGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func createGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let groupName = args["group_name"] as? String ?? ""
         let file = args["file"] as? String ?? ""
@@ -2287,21 +2843,35 @@ import UIKit
                     
                     let groupProfileDataJson = groupProfileData?.toJson()
                     print("GroupManager.shared.createGroup==**==\(String(describing: groupProfileDataJson))")
-//                    result(groupProfileDataJson)
-                    result(true)
+                    result(groupProfileDataJson)
                 } else{
-                    result(FlutterError(code: "500", message: "Unable to Create Group", details: flyError?.localizedDescription))
+                    
+                    if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else if case let .unexpected(message, code) = flyError {
+                        if code == ErrorCode.FORBIDDEN{
+                            result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }
+                    }else if case let .invalid_auth_token(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.AUTHTOKEN_EXPIRED, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
                 }
             })
-            
-            
         }catch let error{
-            result(FlutterError(code: "500", message: "Unable to Create Group", details: error.localizedDescription))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
         }
         
     }
     
-    static func clearChat(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func clearChat(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         let userChatType = args["chat_type"] as? String ?? ""
@@ -2314,44 +2884,76 @@ import UIKit
             chatType = .groupChat
         }
         
-        let lastMessageId = ChatManager.getLastMessageId(jid: userJid)
+        //        let lastMessageId = ChatManager.getLastMessageId(jid: userJid)
         
-        ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred) { (isSuccess, flyerror, resultDict) in
+        ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred) { (isSuccess, flyError, resultDict) in
             
             if(isSuccess){
                 result(true)
             }else{
-                result(false)
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
-
+        
     }
-    static func getUsersIBlocked(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getUsersIBlocked(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let fetchFromServer = args["serverCall"] as? Bool ?? false
         
-
+        
         ContactManager.shared.getUsersIBlocked(fetchFromServer: fetchFromServer){ isSuccess, flyError, flyData in
-
+            
             var data  = flyData
-
+            
             if isSuccess {
                 let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
                 let blockedProfileJson = blockedprofileDetailsArray.toJson()
                 print("ContactManager.shared.getUsersIBlocked==**==\(String(describing: blockedProfileJson))")
                 result(blockedProfileJson)
             } else{
-                result(FlutterError(code: "500", message: "Unable to Fetch Blocked List", details: flyError?.localizedDescription))
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
-
+        
     }
-    static func getMediaMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getMediaMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let userJid = args["jid"] as? String ?? ""
-        ChatManager.getVideoImageAudioMessageGroupByMonth(jid: userJid) { isSuccess,error,data  in
+        ChatManager.getVideoImageAudioMessageGroupByMonth(jid: userJid) { isSuccess,flyError,data  in
             
             if isSuccess {
                 var mediaData = data
@@ -2368,18 +2970,28 @@ import UIKit
                 }
                 
             }else{
-                result(FlutterError(code: "500", message: "Unable to Fetch Media Messages", details: error?.localizedDescription))
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
-
+        
     }
-    static func getDocsMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getDocsMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
-
+        
         let userJid = args["jid"] as? String ?? ""
-
-
-        ChatManager.getDocumentMessageGroupByMonth(jid: userJid) { isSuccess, error, data in
+        
+        
+        ChatManager.getDocumentMessageGroupByMonth(jid: userJid) { isSuccess, flyError, data in
             if isSuccess{
                 var flydata = data
                 let mediaMessages : [[ChatMessage]] = flydata.getData() as? [[ChatMessage]] ?? []
@@ -2393,17 +3005,27 @@ import UIKit
                     result(mediaMsgJson)
                 }
             }else{
-                result(FlutterError(code: "500", message: "Unable to Fetch Document Messages", details: error?.localizedDescription))
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
-
+        
     }
     
-    static func getLinkMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getLinkMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         
-        ChatManager.getLinkMessageGroupByMonth(jid: userJid) { isSuccess, error, data  in
+        ChatManager.getLinkMessageGroupByMonth(jid: userJid) { isSuccess, flyError, data  in
             if isSuccess{
                 var flydata = data
                 let mediaLinkMessages = flydata.getData() as? [[LinkMessage]] ?? []
@@ -2428,12 +3050,22 @@ import UIKit
                     result(viewAllMediaLinkMessages)
                 }
             }else{
-                result(FlutterError(code: "500", message: "Unable to Fetch Link Messages", details: error?.localizedDescription))
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
     }
     
-    static func isAdmin(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func isAdmin(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let groupJid = args["group_jid"] as? String ?? ""
@@ -2442,7 +3074,7 @@ import UIKit
         result(GroupManager.shared.isAdmin(participantJid: userJid, groupJid: groupJid).isAdmin)
         
     }
-    static func leaveFromGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func leaveFromGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let groupJid = args["groupJid"] as? String ?? ""
@@ -2453,20 +3085,20 @@ import UIKit
         }
     }
     
-    static func getMediaAutoDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getMediaAutoDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(ChatManager.isAutoDownloadEnabled())
     }
     
-    static func setMediaAutoDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func setMediaAutoDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let autoDownloadEnable = args["enable"] as? Bool ?? false
-//        FlyDefaults.autoDownloadEnable = autoDownloadEnable
-//        FlyDefaults.autoDownloadLastEnabledTime = autoDownloadEnable ? FlyUtils.getTimeInMillis() : 0
+        //        FlyDefaults.autoDownloadEnable = autoDownloadEnable
+        //        FlyDefaults.autoDownloadLastEnabledTime = autoDownloadEnable ? FlyUtils.getTimeInMillis() : 0
         ChatManager.shared.enableAutoDownload(isEnable: autoDownloadEnable)
         result(true)
     }
     
-    static func getMediaSetting(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getMediaSetting(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let networkType = args["NetworkType"] as? Int ?? 0
@@ -2504,7 +3136,7 @@ import UIKit
         }
     }
     
-    static func saveMediaSettings(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func saveMediaSettings(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let isPhotoEnabled = args["Photos"] as? Bool ?? false
@@ -2512,9 +3144,9 @@ import UIKit
         let isAudioEnabled = args["Audio"] as? Bool ?? false
         let isDocumentEnabled = args["Documents"] as? Bool ?? false
         let networkType = args["NetworkType"] as? Int ?? 0
-
+        
         if (networkType == 0){//cellular
-
+            
             ChatManager.updateAutoDownloadMobile(type: .photo, enable: isPhotoEnabled)
             ChatManager.updateAutoDownloadMobile(type: .videos, enable: isVideoEnabled)
             ChatManager.updateAutoDownloadMobile(type: .audio, enable: isAudioEnabled)
@@ -2529,7 +3161,7 @@ import UIKit
         }
     }
     
-    static func updateArchiveUnArchiveChat(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateArchiveUnArchiveChat(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let userJid = args["jid"] as? String ?? ""
@@ -2537,7 +3169,7 @@ import UIKit
         
         var userJidList = [] as [String]
         userJidList.append(userJid)
-
+        
         /* //This method is used only to notify the local DB
          if(archive){
          print("Archiving chat")
@@ -2554,19 +3186,21 @@ import UIKit
             if isSuccess {
                 var flydata = resultDict
                 print(flydata.getData())
-
+                
+                result(isSuccess)
             }else{
                 //archive/unarchive chat failed
+                
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
             }
             
-            result(isSuccess)
         }
-
-
-
+        
+        
+        
     }
-    static func logoutOfChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
-
+    func logoutOfChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
         NSLog("#VOIP ******* logging out")
         ChatManager.logoutApi { isSuccess, flyError, flyData in
             if isSuccess {
@@ -2578,12 +3212,22 @@ import UIKit
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
                 result(isSuccess)
             }else{
-                result(FlutterError(code: "500", message: "Unable to Logout", details: flyError?.localizedDescription))
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
     }
     
-    static func getMessageOfId(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getMessageOfId(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -2594,9 +3238,9 @@ import UIKit
         let messageJson = message?.toJson()
         print("getMessageOfId==**==\(String(describing: messageJson))")
         result(messageJson)
-
+        
     }
-    static func getArchivedChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getArchivedChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         /*  Note that when chat history is disabled, need to call ChatManager.getArchivedChatsFromServer to fetch the archive chat list from server to local DB */
         
@@ -2604,68 +3248,83 @@ import UIKit
             if isSuccess {
                 var flydata = resultDict
                 print(flydata.getData())
-
+                
                 let archiveData = flydata.getData() as? [RecentChat] ?? []
                 print("Archive chat list get")
                 if(archiveData.isEmpty){
                     result("{\"data\": [] }")
                 }else{
-
+                    
                     let archiveChatJson = archiveData.toJson()
-
+                    
                     let archiveChatListJson = "{\"data\":" + (archiveChatJson ?? "[]") + "}"
-                    print("ChatManager.getArchivedChatList==**==\(archiveChatJson)")
+                    print("ChatManager.getArchivedChatList==**==\(String(describing: archiveChatJson))")
                     result(archiveChatListJson)
                 }
-
+                
             }else{
-                result(FlutterError(code: "500", message: "Unable to Fetch Archived List", details: flyError?.localizedDescription))
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
             }
         }
         result(true)
     }
     
-    static func getProfileDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getProfileDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
         
         if(userJid.isEmpty){
-            result(FlutterError(code: "500", message: "user jid cannot be empty", details: nil))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: nil))
             return
         }
-
+        
         let userProfile = ChatManager.profileDetaisFor(jid: userJid)
-        print("userProfile*** \(userProfile)")
-
+        print("userProfile*** \(String(describing: userProfile))")
+        
         if(userProfile == nil){
             do {
                 try ContactManager.shared.getUserProfile(for: userJid, fetchFromServer: true, saveAsFriend: true){ isSuccess, flyError, flyData in
                     var data  = flyData
                     let profileData = data.getData() as? ProfileDetails
                     print("***getUserProfile\(String(describing: profileData))")
-
+                    
                     print("***getUserProfile dict\(String(describing: profileData.toJson()))")
                     if isSuccess {
                         //                                 let profileJSON = "{\"data\" : " + (profileData.toJson() ?? "[]") + ",\"status\": true}"
                         //                                print("ContactManager.shared.getUserProfile==**==\(profileData.toJson())")
                         result(profileData.toJson())
                     } else{
-                        result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                        
+                        if case let .invalid_data(message, _) = flyError {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }else if case let .invalid_jid(message, _) = flyError {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                        }else if case let .unexpected(message, _) = flyError {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                            if code == ErrorCode.NO_NETWORK{
+                                result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                            }else{
+                                result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                            }
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                        }
                     }
                 }
             }catch{
-                print("Error while calling User Profile Details")
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: nil))
             }
-
+            
         }else{
             let userProfileJson = userProfile.toJson()
             print("getProfileDetails==**==\(String(describing: userProfileJson))")
             result(userProfileJson)
         }
-
+        
     }
-    static func deleteAccount(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func deleteAccount(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let deleteReason = args["delete_reason"] as? String ?? ""
         let deleteFeedback = args["delete_feedback"] as? String ?? ""
@@ -2676,15 +3335,27 @@ import UIKit
                 Utility.clearUserDefaults()
                 let deleteResponseJson = data.dictToJson()
                 print("ContactManager.shared.deleteMyAccountRequest==**==\(String(describing: deleteResponseJson))")
-//                result(deleteResponseJson)
-                result(true)
+                result(deleteResponseJson)
             } else{
-                result(FlutterError(code: "500", message: "Unable to Delete Account", details: flyError?.localizedDescription))
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else if case let .fields_empty(message, _) = flyError{
+                    result(FlutterError(code: FLErrorCode.ARGUMENTS_EMPTY_OR_NULL, message: FLErrorMessage.MISSING_ARGUMENTS, details: message))
+                }
+                else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
-
+        
     }
-    static func getGroupMessageDeliveredToList(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getGroupMessageDeliveredToList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let messageId = args["messageId"] as? String ?? ""
         let jid = args["jid"] as? String ?? ""
@@ -2695,14 +3366,14 @@ import UIKit
         
         let groupMessageDeliveredListJson = groupMessageDeliveredList.deliveredParticipantList.toJson() ?? "[]"
         
-        let deliveredListJson = "{\"count\": \"\(String(deliveredCount))\",\"totalParticipantCount\" : \(String(totalParticipatCount)),\"participantList\" : " + groupMessageDeliveredListJson + "}"
+        let deliveredListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"deliveredParticipantList\" : " + groupMessageDeliveredListJson + "}"
         
-
+        
         print("getGroupMessageDeliveredToList==**==\(String(describing: deliveredListJson))")
         result(deliveredListJson)
     }
     
-    static func getGroupMessageReadByList(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func getGroupMessageReadByList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let messageId = args["messageId"] as? String ?? ""
         let jid = args["jid"] as? String ?? ""
@@ -2710,27 +3381,27 @@ import UIKit
         let groupMessageReadList = GroupManager.shared.getMessageSeenListBy(messageId: messageId, groupId: jid)
         print("groupMessageReadList=> \(groupMessageReadList)")
         
-        var deliveredCount = groupMessageReadList.seenCount
-        var totalParticipatCount = groupMessageReadList.totalParticipatCount
+        let deliveredCount = groupMessageReadList.seenCount
+        let totalParticipatCount = groupMessageReadList.totalParticipatCount
         let groupMessageReadListJson = groupMessageReadList.seenParticipantList.toJson() ?? "[]"
         
-        let readListJson = "{\"count\": \"\(String(deliveredCount))\",\"totalParticipantCount\" : \(String(totalParticipatCount)),\"participantList\" : " + groupMessageReadListJson + "}"
+        let readListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"seenParticipantList\" : " + groupMessageReadListJson + "}"
         
         
         print("getGroupMessageReadByList==**==\(String(describing: readListJson))")
         result(readListJson)
-
+        
     }
-    static func addContact(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func addContact(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let number = args["number"] as? String ?? ""
         let userName = args["name"] as? String ?? ""
-
+        
         print("#Add Mobile Number \(number)")
         let contact = CNMutableContact()
-
+        
         let homePhone = CNLabeledValue(label: CNLabelHome, value: CNPhoneNumber(stringValue : number ))
-
+        
         contact.phoneNumbers = [homePhone]
         contact.givenName = userName
         let saveRequest = CNSaveRequest()
@@ -2743,27 +3414,50 @@ import UIKit
         }
         result(true)
     }
-    static func setDefaultNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func setDefaultNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("")
     }
-    static func deleteGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func deleteGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let groupJid = args["jid"] as? String ?? ""
         
         do{
             try GroupManager.shared.deleteGroup(groupJid: groupJid, completionHandler: { isSuccess, flyError, flyData in
-                result(isSuccess)
+                if isSuccess{
+                    result(isSuccess)
+                }else{
+                    if case let .invalid_data(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                    }else if case let .unexpected(message, code) = flyError {
+                        if code == ErrorCode.FORBIDDEN{
+                            result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                        }
+                    }else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK{
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
+                }
             })
         }catch let error{
-            print("#Plugin Error ---> ChatManger Set Iv key Failed, \(error.localizedDescription)")
-            result(false)
+            //            result(false)
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
+            
         }
         
         
     }
     
-    static func updateFcmToken(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateFcmToken(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let token = args["token"] as? String ?? ""
         
@@ -2773,36 +3467,33 @@ import UIKit
         
         result(true)
     }
-
-    static func handleReceivedMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+    
+    func handleReceivedMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         NSLog("#Mirrorfly handleReceivedMessage")
-
+        
     }
-    static func getUnreadMessageCountExceptMutedChat(call: FlutterMethodCall, result: @escaping FlutterResult){
-
+    func getUnreadMessageCountExceptMutedChat(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
         let (messageCount, chatCount) = ChatManager.getUnreadMessageAndChatCountForUnmutedUsers()
-
+        
         print("chatCount \(chatCount)")
-
+        
         result(messageCount)
-
+        
     }
-
-    static func createTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
+    
+    func createTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let topicName = args["topicName"] as? String ?? ""
         let metaData = args["metaData"] as? [[String: Any]] ?? []
         print("metaData \(String(describing: metaData))")
         var metaDataArray : [MetaData] = []
         for data in metaData {
-            var obj = MetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+            let obj = MetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
             metaDataArray.append(obj)
         }
-//        ["message": Topic created successfully, "data": {
-//            topicId = "0b290e7f-b05c-4859-a72d-100c48f73c8d";
-//        }, "status": 200]
-        ChatManager.createTopic(topicName: topicName,metaData: metaDataArray) { isSuccess, error, data in
+        ChatManager.createTopic(topicName: topicName,metaData: metaDataArray) { isSuccess, flyError, data in
             print("createTopic ==**==\(data)")
             if isSuccess{
                 var resp = data
@@ -2810,30 +3501,40 @@ import UIKit
                     if let topicId = response["topicId"] as? String {
                         result(topicId)
                     }else{
-                        result(FlutterError(code: "500",message: "data not found",details: nil))
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.CREATE_TOPIC_FAILED, details: nil))
                     }
                 }else{
-                    result(FlutterError(code: "500",message: "data not found",details: nil))
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.CREATE_TOPIC_FAILED, details: nil))
                 }
             }else{
-                result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
     }
-
-    static func getAvailableFeatures(call: FlutterMethodCall, result: @escaping FlutterResult){
-
+    
+    func getAvailableFeatures(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
         let availableFeatures = ChatManager.getAvailableFeatures()
         print("Available Features \(availableFeatures)")
-//        print("Available Features \(availableFeatures.toJson())")
-//        availableFeatures.toJson()
+        //        print("Available Features \(availableFeatures.toJson())")
+        //        availableFeatures.toJson()
         result(availableFeatures.toJson())
     }
-
-    static func getTopics(call: FlutterMethodCall, result: @escaping FlutterResult){
+    
+    func getTopics(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let topicIds = args["topicIds"] as? [String] ?? []
-        ChatManager.getTopics(topicIds: topicIds) { isSuccess, error, data in
+        ChatManager.getTopics(topicIds: topicIds) { isSuccess, flyError, data in
             if isSuccess{
                 var resp = data
                 if let response = resp.getData() as? [String: Any] {
@@ -2841,37 +3542,463 @@ import UIKit
                         print("getTopics ==**==\(topics.toJSONString())")
                         result(topics.toJSONString())
                     }else{
-                        result(FlutterError(code: "500",message: "data not found",details: nil))
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.FETCH_TOPIC_FAILED, details: nil))
                     }
                 }else{
-                    result(FlutterError(code: "500",message: "data not found",details: nil))
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.FETCH_TOPIC_FAILED, details: nil))
                 }
             }else{
-                print("getTopics error \(error?.localizedDescription)")
-                result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
+                print("getTopics error \(String(describing: flyError?.localizedDescription))")
+                //                result(FlutterError(code: "807",message: error?.localizedDescription,details: nil))
+                if case let .invalid_data(message, _) = flyError {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
+                }else if case let .xmpp_connection_not_available(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
             }
         }
     }
     
-    static func setRegionCode(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
-        let regionCode = args["regionCode"] as? String ?? "IN"
-//        ChatManager.setUserCountryISOCode(regionCode)
+    func setRegionCode(call: FlutterMethodCall, result: @escaping FlutterResult){
+        //        let args = call.arguments as! Dictionary<String, Any>
+        //        let regionCode = args["regionCode"] as? String ?? "IN"
+        //        ChatManager.setUserCountryISOCode(regionCode)
     }
     
-    static func hasPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func hasPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         if messageListQuery != nil {
             result(messageListQuery?.hasPreviousMessages())
         }else{
-            result(FlutterError(code: "500",message: "Message List not Initialized. Initialize using  initializeMessageList() method", details: nil))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_QUERY_EMPTY, details: nil))
         }
     }
     
-    static func hasNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func hasNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         if messageListQuery != nil {
             result(messageListQuery?.hasNextMessages())
         }else{
-            result(FlutterError(code: "500",message: "Message List not Initialized. Initialize using  initializeMessageList() method", details: nil))
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_QUERY_EMPTY, details: nil))
+        }
+    }
+    func appLaunchedFromMissedCall(call: FlutterMethodCall, result: @escaping FlutterResult){
+        result(false)
+    }
+    
+    func sendMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let messageType = args["messageType"] as? String
+        let receiverJID = args["toJid"] as? String
+        let replyMessageID = args["replyMessageId"] as? String
+        let topicId = args["topicId"] as? String
+        let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
+        
+        if receiverJID == "" || receiverJID == nil{
+            result(FlutterError(code: FLErrorCode.MISSING_PARAMS,message: FLErrorMessage.INVALID_JID,details: nil))
+            return
+        }
+        
+        if let sendingMessageType = FlyMessageType.fromString(messageType ?? "") {
+            print("\(Constants.tag) sendMessage -> Messsage Type \(sendingMessageType)")
+            switch sendingMessageType {
+            case .TEXT:
+                var messageParams = TextMessage()
+                messageParams.toId = receiverJID
+                messageParams.messageText =
+                (AppUtils.shared.getValueForKey(dictionary: args["textMessage"] as? Dictionary<String, Any>, key: "messageText") as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+                messageParams.replyMessageId = replyMessageID
+                messageParams.mentionedUsersIds = mentionedUsersIds
+                //            messageParams.metaData = META_DATA
+                messageParams.topicID = topicId
+                
+                self.sendText(textMessageParams: messageParams, call: call, result: result)
+                
+                break;
+            case .IMAGE:
+                
+                let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
+                let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
+                //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
+                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
+                let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
+                
+                //                guard let phFileAsset = AppUtils.shared.getPHAsset(from: filePathArg)
+                //                else {
+                //                    print("sendMessage phFileAsset Conversion Error")
+                //                    return
+                //                }
+                let imagefileUrl = URL(fileURLWithPath: filePathArg)
+                
+                
+                var selectedImage : UIImage?
+                
+                
+                let selectedImageData = NSData(contentsOf: imagefileUrl)
+                
+                if(selectedImageData != nil){
+                    selectedImage = UIImage(data: selectedImageData! as Data)
+                }else{
+                    print("Selected Image Data is null")
+                }
+                
+                //                if let (fileName, data, size, image, thumbImage,isVideo) = MediaUtils.getAssetsImageInfo(asset: phFileAsset), let fileExtension =  URL(string: fileName)?.pathExtension{
+                
+                //                    if MediaUtils.checkMediaFileFormat(format:fileExtension){
+                //                        print("#media : ImageEditController getAssetsImageInfo IMAGE \(fileName) ")
+                MediaUtils.compressImageFile(imageData:  selectedImageData! as Data, mediaQuality: .medium) { isSuccess, data, fileName, localFilePath, fileKey, fileSize, errorMessage  in
+                    if isSuccess{
+                        
+                        let mediaParams = FileMessageParams(fileUrl: localFilePath!, fileName: fileNameArg == "" ? fileName : fileNameArg,  caption : fileCaptionArg, fileSize: fileSize, duration: 0.0, thumbImage: fileThumbImageArg == "" ? MediaUtils.convertImageToBase64String(img: selectedImage!) : fileThumbImageArg, fileKey: fileKey)
+                        
+                        let imageFileMessage = FileMessage(toId: receiverJID!, messageType: .image, fileMessage : mediaParams, replyMessageId : replyMessageID, mentionedUsersIds: mentionedUsersIds)
+                        
+                        self.sendImage(imageMessageParams: imageFileMessage, call: call, result: result)
+                        
+                        
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage?.description))
+                    }
+                }
+                //                    }
+                //                }
+                break;
+                
+            case .VIDEO:
+                let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
+                let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
+                //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
+                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
+                let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
+                
+                let videoFileUrl = URL(fileURLWithPath: filePathArg)
+                
+                var thumbnail : UIImage?
+                do {
+                    let asset = AVURLAsset(url: videoFileUrl, options: nil)
+                    let imgGenerator = AVAssetImageGenerator(asset: asset)
+                    imgGenerator.appliesPreferredTrackTransform = true
+                    let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+                    thumbnail = UIImage(cgImage: cgImage)
+                } catch let error {
+                    print("*** Error generating thumbnail: \(error.localizedDescription)")
+                }
+                
+                let base64Img = MediaUtils.convertImageToBase64(img: thumbnail!)
+                
+                MediaUtils.compressVideoFile(videoURL: videoFileUrl, mediaQuality: .medium) { isSuccess, url, fileName, fileKey, fileSize , duration, errorMessage  in
+                    if let compressedURL = url,  isSuccess{
+                        
+                        let mediaParams = FileMessageParams(fileUrl: compressedURL, fileName: fileName, caption: fileCaptionArg, fileSize: fileSize, duration: duration, thumbImage: base64Img, fileKey: fileKey)
+                        let videoFileMessage = FileMessage(toId: receiverJID!, messageType: .video, fileMessage : mediaParams, replyMessageId: replyMessageID, mentionedUsersIds: mentionedUsersIds)
+                        
+                        self.sendVideo(videoMessageParams: videoFileMessage, call: call, result: result)
+                        
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage?.description))
+                    }
+                }
+                
+                break;
+                
+            case .AUDIO, .AUDIO_RECORDED:
+                
+                let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
+                let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
+                //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
+                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
+                let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
+                
+                let audiofileUrl = URL(fileURLWithPath: filePathArg)
+                
+                MediaUtils.processAudioFile(url: audiofileUrl) { isSuccess, fileName ,localPath, fileSize, duration, fileKey, errorMessage  in
+                    if let localPathURL = localPath, isSuccess{
+                        let audioParams = FileMessageParams (fileUrl: localPathURL, fileName: fileName,fileSize: fileSize, duration: duration, fileKey: fileKey)
+                        let audioFileMessage = FileMessage(toId: receiverJID ?? emptyString(), messageType: sendingMessageType == .AUDIO_RECORDED ? .audioRecorded : .audio, fileMessage : audioParams, replyMessageId: replyMessageID ?? emptyString())
+                        self.sendAudio(audioMessageParams: audioFileMessage, call: call, result: result)
+                        
+                    } else {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage.description))
+                    }
+                }
+                
+                break;
+                
+            case .CONTACT:
+                let contactDict = args["contactMessage"] as? Dictionary<String, Any>
+                
+                let contactName = AppUtils.shared.getValueForKey(dictionary: contactDict, key: "name") as? String ?? ""
+                let contactNumbers = AppUtils.shared.getValueForKey(dictionary: contactDict, key: "numbers") as? [String] ?? []
+                
+                let contactMessageParams = FileMessage(toId: receiverJID!, messageType: .contact, contactMessage: ContactMessageParams(name: contactName, numbers: contactNumbers), replyMessageId: replyMessageID ?? emptyString())
+                
+                sendContact(contactMessageParams: contactMessageParams, call: call, result: result)
+                break;
+                
+            case .DOCUMENT:
+                let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
+                let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
+                
+                let documentFileUrl = URL(fileURLWithPath: filePathArg)
+                
+                /// As of now, SDK allows only upto 2GB
+                MediaUtils.processDocumentFile(url: documentFileUrl, maxSizeInMB: 2048.0) { isSuccess,localPath,fileSize,fileName,errorMessage in
+                    if let localPathURL = localPath, isSuccess {
+                        
+                        let documentParams = FileMessageParams(fileUrl: localPathURL, fileName: fileName)
+                        let documentMsg = FileMessage(toId: receiverJID!, messageType: .document, fileMessage: documentParams, replyMessageId: replyMessageID ?? emptyString())
+                        
+                        self.sendDocument(documentMessageParams: documentMsg, call: call, result: result)
+                        
+                    } else {
+                        
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage.description))
+                    }
+                }
+                
+                break;
+                
+            case .LOCATION:
+                
+                
+                let locationDict = args["locationMessage"] as? Dictionary<String, Any>
+                let latitude = AppUtils.shared.getValueForKey(dictionary: locationDict, key: "latitude") as? Double ?? 0.0
+                let longitude = AppUtils.shared.getValueForKey(dictionary: locationDict, key: "longitude") as? Double ?? 0.0
+                
+                let locationMessageParams = FileMessage(toId: receiverJID!, messageType: .location, locationMessage: LocationMessageParams(latitude: latitude, longitude: longitude), replyMessageId: replyMessageID ?? emptyString())
+                
+                sendLocation(locationMessageParams: locationMessageParams, call: call, result: result)
+                
+                break;
+                
+            default:
+                print("sendMessage -> Messsage Type goes to Default")
+                break;
+            }
+        }else{
+            
+        }
+        
+        
+    }
+    
+    private func sendText(textMessageParams: TextMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        FlyMessenger.sendTextMessage(messageParams: textMessageParams){ isSuccess, error, chatMessage in
+            
+            if isSuccess {
+                let textMsgResponse = chatMessage.toJson()
+                if(textMsgResponse != nil){
+                    result(textMsgResponse)
+                } else {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: nil))
+                }
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+                
+            }
+            
+        }
+    }
+    private func sendImage(imageMessageParams: FileMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        FlyMessenger.sendMediaFileMessage(messageParams: imageMessageParams) { isSuccess, error, sendMessage in
+            if isSuccess{
+                let response = sendMessage?.toJson()
+                result(response)
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
+        }
+    }
+    
+    private func sendVideo(videoMessageParams: FileMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        FlyMessenger.sendMediaFileMessage(messageParams: videoMessageParams){ isSuccess,error,message in
+            if isSuccess{
+                if let chatMessage = message {
+                    let sendVideoResponse = chatMessage.toJson()
+                    print("FlyMessenger.sendVideoMessage==**==\(String(describing: sendVideoResponse))")
+                    result(sendVideoResponse)
+                    
+                }
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                    }else if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
+        }
+    }
+    private func sendContact(contactMessageParams: FileMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        FlyMessenger.sendMediaFileMessage(messageParams: contactMessageParams){ isSuccess,error,message in
+            if (isSuccess) {
+                let contactMessageResponse = message?.toJson()
+                print("FlyMessenger.sendContactMessage==**==\(String(describing: contactMessageResponse))")
+                result(contactMessageResponse)
+                return
+            }else {
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
+        }
+    }
+    
+    private func sendAudio(audioMessageParams: FileMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        FlyMessenger.sendMediaFileMessage(messageParams: audioMessageParams) { isSuccess,error,message in
+            if isSuccess{
+                let audioResponse = message?.toJson()
+                result(audioResponse)
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                    }else if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
+        }
+    }
+    
+    private func sendDocument(documentMessageParams: FileMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+                
+                FlyMessenger.sendMediaFileMessage(messageParams: documentMessageParams, sendMessageListener: { isSuccess, error, message in
+                    
+                    if let chatMessage = message , isSuccess{
+                        let documentMessageResponse = chatMessage.toJson()
+                        result(documentMessageResponse)
+                    }else{
+                        if case let .invalid_data(message, _) = error {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                        }else if case let .unexpected(message, code) = error {
+                            if code == ErrorCode.CANNOT_PROCESS{
+                                result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                            }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                                result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                            }else if code == ErrorCode.NO_NETWORK{
+                                result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                            }else if code == ErrorCode.FORBIDDEN{
+                                result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                            }else{
+                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                            }
+                        }else if case let .invalid_jid(message, _) = error {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                        }
+                    }
+                    
+                })
+                
+    }
+    
+    private func sendLocation(locationMessageParams: FileMessage, call : FlutterMethodCall, result: @escaping FlutterResult){
+        
+        FlyMessenger.sendMediaFileMessage(messageParams: locationMessageParams){ isSuccess,error,chatMessage in
+            if (isSuccess) {
+                let locationResponse = chatMessage?.toJson()
+                print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
+                result(locationResponse)
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
         }
     }
 }

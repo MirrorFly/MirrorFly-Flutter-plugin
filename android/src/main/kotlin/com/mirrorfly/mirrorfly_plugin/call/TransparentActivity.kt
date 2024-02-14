@@ -7,11 +7,11 @@ import android.os.Bundle
 import com.mirrorfly.mirrorfly_plugin.AppUtils
 import com.mirrorfly.mirrorfly_plugin.Constants
 import com.mirrorfly.mirrorfly_plugin.FlyChatPlugin
-import com.mirrorfly.mirrorfly_plugin.toJson
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.LogMessage
 import org.json.JSONObject
 
+//ignore this class
 class TransparentActivity : Activity() {
 
     companion object {
@@ -39,9 +39,9 @@ class TransparentActivity : Activity() {
         /*val broadcastIntent = CallkitIncomingBroadcastReceiver.getIntent(this, intent.action!!, data)
         broadcastIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
         sendBroadcast(broadcastIntent)*/
-        if(intent.action == Constants.ACTION_CALL_INCOMING){
-
-        }else {
+        if (intent.action == Constants.ACTION_CALL_INCOMING) {
+            //action call incoming
+        } else {
             val json = JSONObject()
             json.put("callStatus", "Attended")
             json.put("userJid", CallManager.getCurrentUserId())
