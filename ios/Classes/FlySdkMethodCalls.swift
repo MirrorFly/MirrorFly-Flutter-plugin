@@ -2643,9 +2643,9 @@ let ISEXPORT = true
                 let messageList  = data.getData() as? [ChatMessage]
                 if let chatJson = messageList.toJson() {
                     print("\(Constants.tag) Previous Message List \(chatJson)")
-                    if !(messageList?.isEmpty ?? true){
-                        result(chatJson)
-                    }
+                    //                    if !(messageList?.isEmpty ?? true){
+                    result(chatJson)
+                    //                    }
                     
                 } else {
                     NSLog("\(Constants.tag) Previous Message List Load Failed")
@@ -3610,125 +3610,175 @@ let ISEXPORT = true
             case .TEXT:
                 var messageParams = TextMessage()
                 messageParams.toId = receiverJID
-                messageParams.messageText = 
+                messageParams.messageText =
                 (AppUtils.shared.getValueForKey(dictionary: args["textMessage"] as? Dictionary<String, Any>, key: "messageText") as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
                 messageParams.replyMessageId = replyMessageID
                 messageParams.mentionedUsersIds = mentionedUsersIds
                 //            messageParams.metaData = META_DATA
                 messageParams.topicID = topicId
-                FlyMessenger.sendTextMessage(messageParams: messageParams){ isSuccess, error, chatMessage in
-                    
-                        if isSuccess {
-                            let textMsgResponse = chatMessage.toJson()
-                            if(textMsgResponse != nil){
-                                result(textMsgResponse)
-                            } else {
-                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: nil))
-                            }
-                        }else{
-                            if case let .invalid_data(message, _) = error {
-                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
-                            }else if case let .unexpected(message, code) = error {
-                                if code == ErrorCode.CANNOT_PROCESS{
-                                    result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
-                                }else{
-                                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
-                                }
-                            }else{
-                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
-                            }
-                            
-                        }
-                    
-                }
+                
+                self.sendText(textMessageParams: messageParams, call: call, result: result)
+                
                 break;
             case .IMAGE:
                 
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
-//                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
+                //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
                 var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
                 var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
                 let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
-                guard let phFileAsset = AppUtils.shared.getPHAsset(from: filePathArg) 
-                else {
-                    print("sendMessage phFileAsset Conversion Error")
-                    return
+                //                guard let phFileAsset = AppUtils.shared.getPHAsset(from: filePathArg)
+                //                else {
+                //                    print("sendMessage phFileAsset Conversion Error")
+                //                    return
+                //                }
+                let imagefileUrl = URL(fileURLWithPath: filePathArg)
+                
+                
+                var selectedImage : UIImage?
+                
+                
+                let selectedImageData = NSData(contentsOf: imagefileUrl)
+                
+                if(selectedImageData != nil){
+                    selectedImage = UIImage(data: selectedImageData! as Data)
+                }else{
+                    print("Selected Image Data is null")
                 }
                 
-                if let (fileName, data, size, image, thumbImage,isVideo) = MediaUtils.getAssetsImageInfo(asset: phFileAsset), let fileExtension =  URL(string: fileName)?.pathExtension{
-                    
-                    if MediaUtils.checkMediaFileFormat(format:fileExtension){
-                        print("#media : ImageEditController getAssetsImageInfo IMAGE \(fileName) ")
-                        MediaUtils.compressImageFile(imageData:  data, mediaQuality: .medium) { isSuccess, data, fileName, localFilePath, fileKey, fileSize, errorMessage  in
-                            if isSuccess{
-                                var media = MediaData()
-                                media.mediaType = .image
-                                media.fileURL = localFilePath
-                                media.fileName = fileNameArg == "" ? fileName : fileNameArg
-                                media.fileSize = fileSize
-                                media.fileKey = fileKey
-                                media.base64Thumbnail = fileThumbImageArg == "" ? MediaUtils.convertImageToBase64String(img: thumbImage) : fileThumbImageArg
-                                media.caption = fileCaptionArg
-                                media.mentionedUsers = []
-                                
-                                let mediaParams = FileMessageParams(fileUrl: localFilePath!, fileName: fileNameArg == "" ? fileName : fileNameArg,  caption : fileCaptionArg, fileSize: fileSize, duration: 0.0, thumbImage: fileThumbImageArg == "" ? MediaUtils.convertImageToBase64String(img: thumbImage) : fileThumbImageArg, fileKey: fileKey)
-                                
-                                FlyMessenger.sendMediaFileMessage(messageParams: FileMessage(toId: receiverJID!, messageType: .image, fileMessage : mediaParams, replyMessageId : replyMessageID, mentionedUsersIds: mentionedUsersIds)) { isSuccess, error, sendMessage in
-                                    if isSuccess{
-                                        let response = sendMessage?.toJson()
-                                        result(response)
-                                    }else{
-                                        if case let .invalid_data(message, _) = error {
-                                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
-                                        }else if case let .unexpected(message, code) = error {
-                                            if code == ErrorCode.CANNOT_PROCESS{
-                                                result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
-                                            }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
-                                                result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
-                                            }else if code == ErrorCode.FORBIDDEN{
-                                                result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
-                                            }else if code == ErrorCode.NO_NETWORK{
-                                                result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
-                                            }else{
-                                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
-                                            }
-                                        }else if case let .invalid_jid(message, _) = error {
-                                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
-                                        }else{
-                                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
-                                        }
-                                    }
-                                }
-                            }else{
-                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage?.description))
-                            }
-                        }
+                //                if let (fileName, data, size, image, thumbImage,isVideo) = MediaUtils.getAssetsImageInfo(asset: phFileAsset), let fileExtension =  URL(string: fileName)?.pathExtension{
+                
+                //                    if MediaUtils.checkMediaFileFormat(format:fileExtension){
+                //                        print("#media : ImageEditController getAssetsImageInfo IMAGE \(fileName) ")
+                MediaUtils.compressImageFile(imageData:  selectedImageData! as Data, mediaQuality: .medium) { isSuccess, data, fileName, localFilePath, fileKey, fileSize, errorMessage  in
+                    if isSuccess{
+                        
+                        let mediaParams = FileMessageParams(fileUrl: localFilePath!, fileName: fileNameArg == "" ? fileName : fileNameArg,  caption : fileCaptionArg, fileSize: fileSize, duration: 0.0, thumbImage: fileThumbImageArg == "" ? MediaUtils.convertImageToBase64String(img: selectedImage!) : fileThumbImageArg, fileKey: fileKey)
+                        
+                        let imageFileMessage = FileMessage(toId: receiverJID!, messageType: .image, fileMessage : mediaParams, replyMessageId : replyMessageID, mentionedUsersIds: mentionedUsersIds)
+                        
+                        self.sendImage(imageMessageParams: imageFileMessage, call: call, result: result)
+                        
+                        
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage?.description))
                     }
                 }
+                //                    }
+                //                }
                 break;
                 
             case .VIDEO:
+                let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
+                let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
+                //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
+                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
+                let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
+                let videoFileUrl = URL(fileURLWithPath: filePathArg)
                 
+                var thumbnail : UIImage?
+                do {
+                    let asset = AVURLAsset(url: videoFileUrl, options: nil)
+                    let imgGenerator = AVAssetImageGenerator(asset: asset)
+                    imgGenerator.appliesPreferredTrackTransform = true
+                    let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+                    thumbnail = UIImage(cgImage: cgImage)
+                } catch let error {
+                    print("*** Error generating thumbnail: \(error.localizedDescription)")
+                }
+                
+                let base64Img = MediaUtils.convertImageToBase64(img: thumbnail!)
+                
+                MediaUtils.compressVideoFile(videoURL: videoFileUrl, mediaQuality: .medium) { isSuccess, url, fileName, fileKey, fileSize , duration, errorMessage  in
+                    if let compressedURL = url,  isSuccess{
+                        
+                        let mediaParams = FileMessageParams(fileUrl: compressedURL, fileName: fileName, caption: fileCaptionArg, fileSize: fileSize, duration: duration, thumbImage: base64Img, fileKey: fileKey)
+                        let videoFileMessage = FileMessage(toId: receiverJID!, messageType: .video, fileMessage : mediaParams, replyMessageId: replyMessageID, mentionedUsersIds: mentionedUsersIds)
+                        
+                        self.sendVideo(videoMessageParams: videoFileMessage, call: call, result: result)
+                        
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage?.description))
+                    }
+                }
                 
                 break;
                 
-            case .AUDIO:
+            case .AUDIO, .AUDIO_RECORDED:
+                
+                let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
+                let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
+                //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
+                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
+                let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
+                
+                let audiofileUrl = URL(fileURLWithPath: filePathArg)
+                
+                MediaUtils.processAudioFile(url: audiofileUrl) { isSuccess, fileName ,localPath, fileSize, duration, fileKey, errorMessage  in
+                    if let localPathURL = localPath, isSuccess{
+                        let audioParams = FileMessageParams (fileUrl: localPathURL, fileName: fileName,fileSize: fileSize, duration: duration, fileKey: fileKey)
+                        let audioFileMessage = FileMessage(toId: receiverJID ?? emptyString(), messageType: sendingMessageType == .AUDIO_RECORDED ? .audioRecorded : .audio, fileMessage : audioParams, replyMessageId: replyMessageID ?? emptyString())
+                        self.sendAudio(audioMessageParams: audioFileMessage, call: call, result: result)
+                        
+                    } else {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage.description))
+                    }
+                }
                 
                 break;
                 
             case .CONTACT:
+                let contactDict = args["contactMessage"] as? Dictionary<String, Any>
                 
+                let contactName = AppUtils.shared.getValueForKey(dictionary: contactDict, key: "name") as? String ?? ""
+                let contactNumbers = AppUtils.shared.getValueForKey(dictionary: contactDict, key: "numbers") as? [String] ?? []
+                
+                let contactMessageParams = FileMessage(toId: receiverJID!, messageType: .contact, contactMessage: ContactMessageParams(name: contactName, numbers: contactNumbers), replyMessageId: replyMessageID ?? emptyString())
+                
+                sendContact(contactMessageParams: contactMessageParams, call: call, result: result)
                 break;
                 
             case .DOCUMENT:
+                let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
+                let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
+                
+                let documentFileUrl = URL(fileURLWithPath: filePathArg)
+                
+                /// As of now, SDK allows only upto 2GB
+                MediaUtils.processDocumentFile(url: documentFileUrl, maxSizeInMB: 2048.0) { isSuccess,localPath,fileSize,fileName,errorMessage in
+                    if let localPathURL = localPath, isSuccess {
+                        
+                        let documentParams = FileMessageParams(fileUrl: localPathURL, fileName: fileName)
+                        let documentMsg = FileMessage(toId: receiverJID!, messageType: .document, fileMessage: documentParams, replyMessageId: replyMessageID ?? emptyString())
+                        
+                        self.sendDocument(documentMessageParams: documentMsg, call: call, result: result)
+                        
+                    } else {
+                        
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage.description))
+                    }
+                }
                 
                 break;
                 
             case .LOCATION:
+                
+                
+                let locationDict = args["locationMessage"] as? Dictionary<String, Any>
+                let latitude = AppUtils.shared.getValueForKey(dictionary: locationDict, key: "latitude") as? Double ?? 0.0
+                let longitude = AppUtils.shared.getValueForKey(dictionary: locationDict, key: "longitude") as? Double ?? 0.0
+                
+                let locationMessageParams = FileMessage(toId: receiverJID!, messageType: .location, locationMessage: LocationMessageParams(latitude: latitude, longitude: longitude), replyMessageId: replyMessageID ?? emptyString())
+                
+                sendLocation(locationMessageParams: locationMessageParams, call: call, result: result)
                 
                 break;
                 
@@ -3741,6 +3791,215 @@ let ISEXPORT = true
         }
         
         
+    }
+    
+    private func sendText(textMessageParams: TextMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        FlyMessenger.sendTextMessage(messageParams: textMessageParams){ isSuccess, error, chatMessage in
+            
+            if isSuccess {
+                let textMsgResponse = chatMessage.toJson()
+                if(textMsgResponse != nil){
+                    result(textMsgResponse)
+                } else {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: nil))
+                }
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+                
+            }
+            
+        }
+    }
+    private func sendImage(imageMessageParams: FileMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        FlyMessenger.sendMediaFileMessage(messageParams: imageMessageParams) { isSuccess, error, sendMessage in
+            if isSuccess{
+                let response = sendMessage?.toJson()
+                result(response)
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
+        }
+    }
+    
+    private func sendVideo(videoMessageParams: FileMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        FlyMessenger.sendMediaFileMessage(messageParams: videoMessageParams){ isSuccess,error,message in
+            if isSuccess{
+                if let chatMessage = message {
+                    let sendVideoResponse = chatMessage.toJson()
+                    print("FlyMessenger.sendVideoMessage==**==\(String(describing: sendVideoResponse))")
+                    result(sendVideoResponse)
+                    
+                }
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                    }else if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
+        }
+    }
+    private func sendContact(contactMessageParams: FileMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        FlyMessenger.sendMediaFileMessage(messageParams: contactMessageParams){ isSuccess,error,message in
+            if (isSuccess) {
+                let contactMessageResponse = message?.toJson()
+                print("FlyMessenger.sendContactMessage==**==\(String(describing: contactMessageResponse))")
+                result(contactMessageResponse)
+                return
+            }else {
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
+        }
+    }
+    
+    private func sendAudio(audioMessageParams: FileMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        FlyMessenger.sendMediaFileMessage(messageParams: audioMessageParams) { isSuccess,error,message in
+            if isSuccess{
+                let audioResponse = message?.toJson()
+                result(audioResponse)
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                    }else if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
+        }
+    }
+    
+    private func sendDocument(documentMessageParams: FileMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+                
+                FlyMessenger.sendMediaFileMessage(messageParams: documentMessageParams, sendMessageListener: { isSuccess, error, message in
+                    
+                    if let chatMessage = message , isSuccess{
+                        let documentMessageResponse = chatMessage.toJson()
+                        result(documentMessageResponse)
+                    }else{
+                        if case let .invalid_data(message, _) = error {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                        }else if case let .unexpected(message, code) = error {
+                            if code == ErrorCode.CANNOT_PROCESS{
+                                result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                            }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                                result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: message))
+                            }else if code == ErrorCode.NO_NETWORK{
+                                result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                            }else if code == ErrorCode.FORBIDDEN{
+                                result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                            }else{
+                                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                            }
+                        }else if case let .invalid_jid(message, _) = error {
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                        }
+                    }
+                    
+                })
+                
+    }
+    
+    private func sendLocation(locationMessageParams: FileMessage, call : FlutterMethodCall, result: @escaping FlutterResult){
+        
+        FlyMessenger.sendMediaFileMessage(messageParams: locationMessageParams){ isSuccess,error,chatMessage in
+            if (isSuccess) {
+                let locationResponse = chatMessage?.toJson()
+                print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
+                result(locationResponse)
+            }else{
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
+        }
     }
 }
 

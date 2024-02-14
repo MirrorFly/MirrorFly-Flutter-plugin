@@ -1061,7 +1061,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.insertBusyStatus(busyStatus);
   }
 
-  @Deprecated('')
+  @Deprecated('This method is deprecated. Please refrain from using it, as the functionality has been internally managed within the plugin')
   static Future<bool?> isTrailLicence() async {
     return FlyChatFlutterPlatform.instance.isTrailLicence();
   }
