@@ -6,14 +6,14 @@ Future<void> main() async {
   Mirrorfly.initializeSDK(
       licenseKey: 'your license key',
       iOSContainerID: 'your app group id',
-      flyCallback: (FlyResponse response){
-        if(response.isSuccess){
+      flyCallback: (FlyResponse response) {
+        if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);
-        }else{
+        } else {
           LogMessage.d("onFailure", response.exception?.message.toString());
         }
-      });//Must be same as AppGroups given in Xcode Capability
-  runApp(const MyApp());
+        runApp(const MyApp());
+      }); //Must be same as AppGroups given in Xcode Capability
 }
 
 class MyApp extends StatelessWidget {

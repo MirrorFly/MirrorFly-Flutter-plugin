@@ -237,7 +237,7 @@ class FlyChatMethods {
 
     fun buildInitializeSDK(call: MethodCall, result: MethodChannel.Result) {
 
-        val licenseKey: String? = call.argument("licenseKey")
+        val licenseKey: String = call.argument("licenseKey") ?: ""
         val chatHistoryEnable: Boolean = call.argument("chatHistoryEnable") ?: false
         val storageFolderName: String? = call.argument("storageFolderName")
         val enableMobileNumberLogin: Boolean? = call.argument("enableMobileNumberLogin")
@@ -257,7 +257,7 @@ class FlyChatMethods {
 
         FlyCallMethods().initCall()
 
-        ChatManager.initializeSDK(licenseKey!!) { isSuccess, throwable, data ->
+        ChatManager.initializeSDK(licenseKey) { isSuccess, throwable, data ->
             if (isSuccess) {
                 LogMessage.d(tag, "initializeSDK success")
                 result.success(true)
@@ -1640,12 +1640,19 @@ class FlyChatMethods {
     fun sendMessage(call: MethodCall, result: MethodChannel.Result) {
         val messageParams = call.arguments<HashMap<String, Any>>()
         LogMessage.d("sendMessage", messageParams.toString())
-        val fileMessage = buildFileMessage(messageParams)
-        LogMessage.d("fileMessage", fileMessage.toJsonString())
-        if (fileMessage.messageType == MessageType.TEXT) {
-            sendTextMessage(buildTextMessage(messageParams), result)
-        } else {
-            sendMediaFileMessage(fileMessage, result)
+        val messageType = messageParams?.get("messageType") as String?
+        messageType?.let {
+            if (MessageType.valueOf(messageType) == MessageType.TEXT) {
+                val textMessage = buildTextMessage(messageParams)
+                textMessage?.let {
+                    LogMessage.d("textMessage", textMessage.toJsonString())
+                    sendTextMessage(textMessage, result)
+                }
+            } else {
+                val fileMessage = buildFileMessage(messageParams)
+                LogMessage.d("fileMessage", fileMessage.toJsonString())
+                sendMediaFileMessage(fileMessage, result)
+            }
         }
     }
 
@@ -1667,7 +1674,7 @@ class FlyChatMethods {
                         result.error("500", "message not available", error)
                     }
                 } else {
-                    result.error("500", error?.message, error)
+                    result.error("500", error?.message ?: "", error)
                 }
             }
         })
@@ -1691,7 +1698,7 @@ class FlyChatMethods {
                         result.error("500", "message not available", error)
                     }
                 } else {
-                    result.error("500", error?.message, error)
+                    result.error("500", error?.message ?: "", error)
                 }
             }
 
@@ -1805,7 +1812,7 @@ class FlyChatMethods {
     private var messageListQuery: FetchMessageListQuery? = null
     fun initializeMessageListParams(call: MethodCall, result: MethodChannel.Result) {
         val chatJid: String = call.argument("userJid") ?: ""
-        val messageId: String = call.argument("messageId") ?: ""
+        val messageId: String = call.argument("messageId") ?: "M$chatJid"
         val messageTime: String = call.argument("messageTime") ?: ""
         val inclusive: Boolean = call.argument("exclude") ?: false
         val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: true
@@ -2237,7 +2244,7 @@ class FlyChatMethods {
                                 }
                             } else {
                                 //LogMessage.d(TAG, "Message sent Failed")
-                                LogMessage.e("sendTextMessage", error?.message)
+                                LogMessage.e("sendTextMessage", error)
                                 result.error("500", error?.message, error)
                             }
                         }
@@ -2999,7 +3006,9 @@ class FlyChatMethods {
 
     fun leaveFromGroup(call: MethodCall, result: MethodChannel.Result) {
         val groupJid = call.argument<String>("groupJid") ?: ""
-        GroupManager.leaveFromGroup(groupJid) { isSuccess, throwable, _ ->
+        val userJid = call.argument<String>("userJid") ?: ""
+        LogMessage.d("leaveGroup", call.arguments.toString())
+        GroupManager.leaveFromGroup(groupJid, userJid) { isSuccess, throwable, _ ->
             if (isSuccess) {
                 result.success(true)
             } else {

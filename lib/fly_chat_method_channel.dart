@@ -26,7 +26,7 @@ import 'builder.dart';
 import 'model/callback.dart';
 
 class FlyErrorCode {
-  static const unHandle = "FL-401";
+  static const unHandle = "401";
 }
 
 class FlyErrorMessage {
@@ -3228,15 +3228,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     bool? response;
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod<bool>('leaveFromGroup', {"userJid": userJid, "groupJid": groupJid});
+      await mirrorFlyMethodChannel.invokeMethod<bool>('leaveFromGroup', {"userJid": userJid, "groupJid": groupJid});
       LogMessage.d("leaveFromGroup Result ", " $response");
       return response;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      return false;
+      rethrow;
     } on Exception catch (error) {
       LogMessage.d("Exception ", " $error");
-      return false;
+      rethrow;
     }
   }
 
@@ -3249,10 +3249,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return response;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      return false;
+      rethrow;
     } on Exception catch (error) {
       LogMessage.d("Exception ", " $error");
-      return false;
+      rethrow;
     }
   }
 

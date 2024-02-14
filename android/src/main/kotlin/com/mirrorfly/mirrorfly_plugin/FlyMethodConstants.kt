@@ -25,8 +25,8 @@ object FlyMethodConstants {
         Constants.onNewMemberAddedToGroupChannel to EventStreamHandler(),
         Constants.onMemberRemovedFromGroupChannel to EventStreamHandler(),
         Constants.onFetchingGroupMembersCompletedChannel to EventStreamHandler(),
-        Constants.onDeleteGroupChannel to EventStreamHandler(),
-        Constants.onFetchingGroupListCompletedChannel to EventStreamHandler(),
+        Constants.onDeleteGroupChannel to EventStreamHandler(),//NI
+        Constants.onFetchingGroupListCompletedChannel to EventStreamHandler(),//NI
         Constants.onMemberMadeAsAdminChannel to EventStreamHandler(),
         Constants.onMemberRemovedAsAdminChannel to EventStreamHandler(),
         Constants.onLeftFromGroupChannel to EventStreamHandler(),
@@ -53,15 +53,15 @@ object FlyMethodConstants {
         Constants.onConnectedChannel to EventStreamHandler(),
         Constants.onDisconnectedChannel to EventStreamHandler(),
         Constants.onConnectionFailedChannel to EventStreamHandler(),
-        Constants.connectionFailedChannel to EventStreamHandler(),
-        Constants.connectionSuccessChannel to EventStreamHandler(),
-        Constants.onWebChatPasswordChangedChannel to EventStreamHandler(),
+        Constants.connectionFailedChannel to EventStreamHandler(),//NI
+        Constants.connectionSuccessChannel to EventStreamHandler(),//NI
+        Constants.onWebChatPasswordChangedChannel to EventStreamHandler(),//NI
         Constants.setTypingStatusChannel to EventStreamHandler(),
-        Constants.onChatTypingStatusChannel to EventStreamHandler(),
+        Constants.onChatTypingStatusChannel to EventStreamHandler(),//NI
         Constants.onGroupTypingStatusChannel to EventStreamHandler(),
-        Constants.onFailureChannel to EventStreamHandler(),
-        Constants.onProgressChangedChannel to EventStreamHandler(),
-        Constants.onSuccessChannel to EventStreamHandler(),
+        Constants.onFailureChannel to EventStreamHandler(),//NI
+        Constants.onProgressChangedChannel to EventStreamHandler(),//NI
+        Constants.onSuccessChannel to EventStreamHandler(),//NI
         Constants.onAvailableFeaturesUpdatedChannel to EventStreamHandler()
     )
     val chatMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
