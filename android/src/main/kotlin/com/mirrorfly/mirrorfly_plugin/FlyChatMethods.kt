@@ -1812,7 +1812,7 @@ class FlyChatMethods {
     private var messageListQuery: FetchMessageListQuery? = null
     fun initializeMessageListParams(call: MethodCall, result: MethodChannel.Result) {
         val chatJid: String = call.argument("userJid") ?: ""
-        val messageId: String = call.argument("messageId") ?: "M$chatJid"
+        val messageId: String = call.argument("messageId") ?: ""
         val messageTime: String = call.argument("messageTime") ?: ""
         val inclusive: Boolean = call.argument("exclude") ?: false
         val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: true
