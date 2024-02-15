@@ -218,7 +218,7 @@ class MessageParams {
     this.topicId = "",
   });
 
-  factory MessageParams.text({
+  factory MessageParams.Text({
     required String toJid,
     String? replyMessageId,
     required TextMessageParams textMessageParams,
@@ -233,7 +233,7 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.location({
+  factory MessageParams.Location({
     required String toJid,
     String? replyMessageId,
     required LocationMessageParams locationMessageParams,
@@ -248,7 +248,7 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.contact({
+  factory MessageParams.Contact({
     required String toJid,
     String? replyMessageId,
     required ContactMessageParams contactMessageParams,
@@ -263,7 +263,7 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.image({
+  factory MessageParams.Image({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
@@ -278,7 +278,7 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.audio({
+  factory MessageParams.Audio({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
@@ -294,7 +294,7 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.video({
+  factory MessageParams.Video({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
@@ -309,7 +309,7 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.document({
+  factory MessageParams.Document({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
