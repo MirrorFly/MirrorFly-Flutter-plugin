@@ -991,7 +991,8 @@ let ISEXPORT = true
         if(!isAlreadyExists){
             ChatManager.saveProfileStatus(statusText: newStatus, currentStatus: true)
         }
-        result("{\"status\" : true }")
+//        result("{\"status\" : true }")
+        result(true)
         
     }
     func isTrailLicence(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1057,7 +1058,7 @@ let ISEXPORT = true
         
         FlyMessenger.composeForwardMessage(messageIds: messageIDList, toJidList: userList, completionHandler: { isSuccess, flyError, flyData in
             if isSuccess{
-                result("Message Forward Success")
+                result(true)
             }else{
                 if case let .unexpected(message, code) = flyError {
                     if code == ErrorCode.CANNOT_PROCESS{
@@ -1495,7 +1496,8 @@ let ISEXPORT = true
     
     
     func revokeContactSync(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+        // in iOS there is no method for Contact revoke. so passing default true value
+        result(true)
         
     }
     func getUsersWhoBlockedMe(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1796,14 +1798,18 @@ let ISEXPORT = true
         
     }
     func getMessagesUsingIds(call: FlutterMethodCall, result: @escaping FlutterResult){
-        //        let args = call.arguments as! Dictionary<String, Any>
+        let args = call.arguments as! Dictionary<String, Any>
+        let messageIds = args["MessageIds"] as? [String] ?? []
         
-        //        var messages : [ChatMessage] = FlyMessenger.getMessagesUsingIds(MESSAGE_MIDS)
-        
+        let messagesList = FlyMessenger.getMessagesUsingIds(messageIds: messageIds)
+        if let chatJson = messagesList.toJson() {
+            result(chatJson)
+        } else {
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
+        }
         
     }
     func updateMediaDownloadStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
         
     }
     func updateMediaUploadStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -2195,11 +2201,14 @@ let ISEXPORT = true
         let acknowledgeReceipt = ChatManager.getSingleChatMessageAcknowledgeReceipt(messageId: messageID)
         print("acknowledgeReceipt\(String(describing: acknowledgeReceipt))")
         
-        let seenResponse = String(format: "%.0f",seenReceipt?.time ?? "")
-        let deliveredResponse = String(format: "%.0f",deliverReceipt?.time ?? "")
+        var seenResponse = String(format: "%.0f",seenReceipt?.time ?? "")
+        var deliveredResponse = String(format: "%.0f",deliverReceipt?.time ?? "")
+        var acknowledgeResponse = String(format: "%.0f",acknowledgeReceipt?.time ?? "")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(seenResponse == "0" ? "" : seenResponse, forKey: "seenTime")
         jsonObject.setValue(deliveredResponse == "0" ? "" : deliveredResponse, forKey: "deliveredTime")
+        jsonObject.setValue(acknowledgeResponse == "0" ? "" : acknowledgeResponse, forKey: "sentTime")
+        jsonObject.setValue(messageID, forKey: "messageId")
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         result(jsonString)
     }
@@ -2749,7 +2758,7 @@ let ISEXPORT = true
                 if isSuccess {
                     let blockUserResponseJson = flyData.dictToJson()
                     print("ContactManager.shared.blockUser==**==\(String(describing: blockUserResponseJson))")
-                    result(blockUserResponseJson)
+                    result(true)
                 } else{
                     
                     if case let .invalid_data(message, _) = flyError {
@@ -2843,7 +2852,7 @@ let ISEXPORT = true
                     
                     let groupProfileDataJson = groupProfileData?.toJson()
                     print("GroupManager.shared.createGroup==**==\(String(describing: groupProfileDataJson))")
-                    result(groupProfileDataJson)
+                    result(true)
                 } else{
                     
                     if case let .xmpp_connection_not_available(message, code) = flyError {
@@ -3242,8 +3251,6 @@ let ISEXPORT = true
     }
     func getArchivedChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-        /*  Note that when chat history is disabled, need to call ChatManager.getArchivedChatsFromServer to fetch the archive chat list from server to local DB */
-        
         ChatManager.getArchivedChatList { (isSuccess, flyError, resultDict) in
             if isSuccess {
                 var flydata = resultDict
@@ -3335,7 +3342,7 @@ let ISEXPORT = true
                 Utility.clearUserDefaults()
                 let deleteResponseJson = data.dictToJson()
                 print("ContactManager.shared.deleteMyAccountRequest==**==\(String(describing: deleteResponseJson))")
-                result(deleteResponseJson)
+                result(true)
             } else{
                 if case let .invalid_data(message, _) = flyError {
                     result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
@@ -3366,11 +3373,11 @@ let ISEXPORT = true
         
         let groupMessageDeliveredListJson = groupMessageDeliveredList.deliveredParticipantList.toJson() ?? "[]"
         
-        let deliveredListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"deliveredParticipantList\" : " + groupMessageDeliveredListJson + "}"
-        
-        
-        print("getGroupMessageDeliveredToList==**==\(String(describing: deliveredListJson))")
-        result(deliveredListJson)
+        let deliveredListJson = "{\"count\": \"\(String(deliveredCount))\",\"totalParticipantCount\" : \(String(totalParticipatCount)),\"participantList\" : " + groupMessageDeliveredListJson + "}"
+               
+
+               print("getGroupMessageDeliveredToList==**==\(String(describing: deliveredListJson))")
+               result(deliveredListJson)
     }
     
     func getGroupMessageReadByList(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -3385,11 +3392,11 @@ let ISEXPORT = true
         let totalParticipatCount = groupMessageReadList.totalParticipatCount
         let groupMessageReadListJson = groupMessageReadList.seenParticipantList.toJson() ?? "[]"
         
-        let readListJson = "{\"deliveredCount\": \"\(String(deliveredCount))\",\"totalParticipatCount\" : \(String(totalParticipatCount)),\"seenParticipantList\" : " + groupMessageReadListJson + "}"
-        
-        
-        print("getGroupMessageReadByList==**==\(String(describing: readListJson))")
-        result(readListJson)
+        let readListJson = "{\"count\": \"\(String(deliveredCount))\",\"totalParticipantCount\" : \(String(totalParticipatCount)),\"participantList\" : " + groupMessageReadListJson + "}"
+                
+                
+                print("getGroupMessageReadByList==**==\(String(describing: readListJson))")
+                result(readListJson)
         
     }
     func addContact(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -3483,6 +3490,11 @@ let ISEXPORT = true
         
     }
     
+    func getUnreadMessagesCount(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let (messageCount, chatCount) = ChatManager.getUNreadMessageAndChatCount()
+        result(messageCount)
+    }
+    
     func createTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let topicName = args["topicName"] as? String ?? ""
@@ -3566,9 +3578,13 @@ let ISEXPORT = true
     }
     
     func setRegionCode(call: FlutterMethodCall, result: @escaping FlutterResult){
-        //        let args = call.arguments as! Dictionary<String, Any>
-        //        let regionCode = args["regionCode"] as? String ?? "IN"
-        //        ChatManager.setUserCountryISOCode(regionCode)
+        let args = call.arguments as! Dictionary<String, Any>
+        let regionCode = args["regionCode"] as? String ?? "IN"
+        do {
+            try ChatManager.shared.setUserCountryISOCode(isoCode: regionCode)
+        } catch (let error ){
+            print("#FlyChat Exception : \(error.localizedDescription)")
+        }
     }
     
     func hasPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -4001,6 +4017,52 @@ let ISEXPORT = true
             }
         }
     }
+    func unFavouriteAllFavouriteMessages(call : FlutterMethodCall, result: @escaping FlutterResult){
+        ChatManager.unFavouriteAllFavouriteMessages{(isSuccess, flyError, resultDict) in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.UNFAVOURITE_MESSAGE_FAILED, details: flyError?.localizedDescription))
+            }
+        }
+    }
+    
+    func loginWebChatViaQRCode(call : FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let barcode = args["barcode"] as? String ?? ""
+        
+        WebLoginsManager.shared.handleQrCodeData(qrCodeString: barcode) { isSuccess, message in
+            if isSuccess {
+                print("QRCodeScannerViewModel isSuccess")
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.QR_LOGIN_FAILED, details: message))
+            }
+        }
+    }
+    
+    
+    func webLoginDetailsCleared(call : FlutterMethodCall, result: @escaping FlutterResult){
+        
+    }
+    
+    func sendContactUsInfo(call : FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let title = args["title"] as? String ?? ""
+        let description = args["description"] as? String ?? ""
+        
+        ContactManager.shared.sendContactUsInfo(title: title, description: description) { isSuccess, error, data in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.CONTACT_US_FAILED_MESSAGE, details: nil))
+            }
+        }
+    }
+    
+    
 }
 
 

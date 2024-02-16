@@ -15,7 +15,7 @@ class FlyMethodConstants {
         return [
             "getCallUsersList": flyCallMethods.getCallUsersList,
             "getAudioDevices": flyCallMethods.getAudioDevices,
-            "makeVoiceCall": flyCallMethods.makeCall,
+            "makeVoiceCall": flyCallMethods.makeVoiceCall,
             "makeVideoCall": flyCallMethods.makeVideoCall,
             "answerCall": flyCallMethods.answerCall,
             "declineCall": flyCallMethods.declineCall,
@@ -206,5 +206,10 @@ class FlyMethodConstants {
                 "hasNextMessages": flyChatMethods.hasNextMessages,
                 "getCurrentAuthToken": flyChatMethods.getCurrentAuthToken,
                 "sendMessage": flyChatMethods.sendMessage,
+                "unFavouriteAllFavouriteMessages": flyChatMethods.unFavouriteAllFavouriteMessages,
+                "getUnreadMessagesCount": flyChatMethods.getUnreadMessagesCount,
+                "loginWebChatViaQRCode": flyChatMethods.loginWebChatViaQRCode,
+                "webLoginDetailsCleared": flyChatMethods.webLoginDetailsCleared,
+                "sendContactUsInfo": flyChatMethods.sendContactUsInfo,
             ] }()
 }
