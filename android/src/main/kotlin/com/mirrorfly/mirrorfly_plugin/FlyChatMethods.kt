@@ -49,6 +49,7 @@ import com.mirrorflysdk.models.TopicChatListParams
 import com.mirrorflysdk.utils.ThumbSize
 import com.mirrorflysdk.utils.Utils
 import com.mirrorflysdk.utils.VideoRecUtils
+import com.mirrorflysdk.xmpp.FlyXMPP
 import com.mirrorflysdk.xmpp.chat.models.CreateGroupModel
 import com.mirrorflysdk.xmpp.chat.models.Profile
 import io.flutter.Log
@@ -342,6 +343,7 @@ class FlyChatMethods {
                         ChatManager.setAvailableFeaturesCallback(instance)
                         CallManager.setMissedCallListener(instance)*/
                         SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
+                        ChatManager.connect()
                         ChatManager.setConnectionListener(object : ChatConnectionListener {
                             override fun onConnected() {
                                 LogMessage.d(tag, "onConnected")
@@ -961,7 +963,7 @@ class FlyChatMethods {
     fun revokeContactSync(call: MethodCall, result: MethodChannel.Result) {
         FlyCore.revokeContactSync { isSuccess, throwable, data ->
             if (isSuccess) {
-                result.success(data.toJsonString())
+                result.success(isSuccess)//(data.toJsonString())
             } else {
                 result.error("500", throwable?.message, throwable)
             }
@@ -972,7 +974,8 @@ class FlyChatMethods {
         val server = call.argument<Boolean>("server") ?: false
         FlyCore.getUsersWhoBlockedMe(server) { isSuccess, throwable, data ->
             if (isSuccess) {
-                result.success(data.toJsonString())
+                val profilesList = data["data"] as ArrayList<ProfileDetails>
+                result.success(profilesList.toJsonString())
             } else {
                 result.error("500", throwable?.message, throwable)
             }
@@ -3101,14 +3104,14 @@ class FlyChatMethods {
         val barcode = call.argument<String>("barcode") ?: ""
         try {
             FlyCore.loginWebChatViaQRCode(barcode) { isSuccess, throwable, _ ->
-                result.success(isSuccess)
                 if (isSuccess) {
-                    val vibrator =
+                    result.success(isSuccess)
+                    /*val vibrator =
                         MirrorFlyManager.getContext()
                             .getSystemService(FlutterActivity.VIBRATOR_SERVICE) as Vibrator
                     if (vibrator.hasVibrator()) {
                         vibrator.vibrate(50)
-                    }
+                    }*/
                 } else {
                     result.error("500", throwable?.message.toString(), "")
                 }

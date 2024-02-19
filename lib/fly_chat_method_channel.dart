@@ -460,12 +460,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<dynamic> getUsersWhoBlockedMe([bool server = false]) async {
-    dynamic response = "";
+  Future<String> getUsersWhoBlockedMe([bool server = false]) async {
+    String response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getUsersWhoBlockedMe', {"server": server});
       LogMessage.d("getUsersWhoBlockedMe Result ", " $response");
-      return response;
+      return convertProfileDetailsJsonFromString(response);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -613,12 +613,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool?> isBusyStatusEnabled() async {
+  Future<bool> isBusyStatusEnabled() async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel.invokeMethod<bool>('isBusyStatusEnabled');
       LogMessage.d("isBusyStatusEnabled", " $res");
-      return res;
+      return res ?? false;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception", " $e");
       rethrow;
@@ -1455,7 +1455,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  setMediaEncryption(String encryption) async {
+  setMediaEncryption(bool encryption) async {
     try {
       await mirrorFlyMethodChannel.invokeMethod('setMediaEncryption', {"encryption": encryption});
     } on PlatformException catch (e) {
@@ -2241,7 +2241,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> updateMyProfile(String name, String email, String mobile, String status, String? image,
+  Future<void> updateMyProfile(String name, String? email, String? mobile, String? status, String? image,
       Function(FlyResponse response) callback) async {
     //updateProfile
     String? profileResponse;
@@ -3228,7 +3228,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     bool? response;
     try {
       response =
-      await mirrorFlyMethodChannel.invokeMethod<bool>('leaveFromGroup', {"userJid": userJid, "groupJid": groupJid});
+          await mirrorFlyMethodChannel.invokeMethod<bool>('leaveFromGroup', {"userJid": userJid, "groupJid": groupJid});
       LogMessage.d("leaveFromGroup Result ", " $response");
       return response;
     } on PlatformException catch (e) {

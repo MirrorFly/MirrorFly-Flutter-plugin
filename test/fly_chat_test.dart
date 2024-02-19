@@ -548,7 +548,7 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }*/
 
   @override
-  Future getUsersWhoBlockedMe([bool server = false]) {
+  Future<String> getUsersWhoBlockedMe([bool server = false]) {
     // getUsersWhoBlockedMe
     throw UnimplementedError();
   }
@@ -596,7 +596,7 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<bool?> isBusyStatusEnabled() {
+  Future<bool> isBusyStatusEnabled() {
     // isBusyStatusEnabled
     throw UnimplementedError();
   }
@@ -1019,7 +1019,7 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  setMediaEncryption(String encryption) {
+  setMediaEncryption(bool encryption) {
     // setMediaEncryption
     throw UnimplementedError();
   }
@@ -1159,8 +1159,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> updateMyProfile(
-      String name, String email, String mobile, String status, String? image, Function(FlyResponse response) callback) {
+  Future<void> updateMyProfile(String name, String? email, String? mobile, String? status, String? image,
+      Function(FlyResponse response) callback) {
     // updateMyProfile
     throw UnimplementedError();
   }

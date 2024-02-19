@@ -59,7 +59,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getUsersWhoBlockedMe([bool server = false]) {
+  Future<String> getUsersWhoBlockedMe([bool server = false]) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -95,7 +95,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<bool?> isBusyStatusEnabled() {
+  Future<bool> isBusyStatusEnabled() {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -323,7 +323,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  setMediaEncryption(String encryption) {
+  setMediaEncryption(bool encryption) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -606,8 +606,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<void> updateMyProfile(
-      String name, String email, String mobile, String status, String? image, Function(FlyResponse response) callback) {
+  Future<void> updateMyProfile(String name, String? email, String? mobile, String? status, String? image,
+      Function(FlyResponse response) callback) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -664,9 +664,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<dynamic> getMedia(String mid) {
+  /*Future<dynamic> getMedia(String mid) {
     throw UnimplementedError('has not been implemented.');
-  }
+  }*/
 
   Future<bool?> markAsReadDeleteUnreadSeparator(String jid) {
     throw UnimplementedError('has not been implemented.');
