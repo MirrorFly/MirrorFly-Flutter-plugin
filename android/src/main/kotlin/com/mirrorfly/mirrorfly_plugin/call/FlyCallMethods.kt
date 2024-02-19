@@ -201,8 +201,17 @@ class FlyCallMethods : MissedCallListener, MediaNotificationHelper {
 
     fun disconnectCall(call: MethodCall, result: MethodChannel.Result) {
 //        if (checkIsUserInCall()) {
-        CallManager.disconnectCall()
-        result.success(true)
+        CallManager.disconnectCall(object : CallActionListener {
+            override fun onResponse(isSuccess: Boolean, message: String) {
+                if (isSuccess) {
+                    result.success(true)
+                } else {
+                    result.error("500", message, message)
+                }
+            }
+
+        })
+
         /* }else{
              result.success(true)
          }*/

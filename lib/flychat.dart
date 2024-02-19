@@ -128,16 +128,18 @@ class Mirrorfly {
   ///     first synchronization attempt.
   ///
   /// Returns:
-  ///   A Future<bool?> representing the success of the synchronization operation.
-  ///   It returns true if synchronization is successful, false otherwise, or null
-  ///   in case of any errors or exceptions.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
   ///
   /// Example usage:
   /// ```dart
-  /// Mirrorfly.syncContacts(isFirstTime: true);
+  /// Mirrorfly.syncContacts(isFirstTime: true,flyCallBack: (response){
+  /// });
   /// ```
-  static Future<bool?> syncContacts({required bool isFirstTime}) async {
-    return FlyChatFlutterPlatform.instance.syncContacts(isFirstTime);
+  static Future<void> syncContacts(
+      {required bool isFirstTime, required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.syncContacts(isFirstTime, flyCallBack);
   }
 
   static Future<bool> contactSyncStateValue() {
@@ -148,8 +150,8 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.contactSyncState();
   }*/
 
-  static Future<dynamic> revokeContactSync() {
-    return FlyChatFlutterPlatform.instance.revokeContactSync();
+  static Future<void> revokeContactSync({required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.revokeContactSync(flyCallBack);
   }
 
   /// Retrieves a list of users who have blocked the current user.
@@ -176,8 +178,9 @@ class Mirrorfly {
   ///   A [Future] that completes with the list of users who have blocked the
   ///   current user. The type of the list may vary depending on the implementation,
   ///   so it is returned as `String`.
-  static Future<String> getUsersWhoBlockedMe({bool fetchFromServer = false}) {
-    return FlyChatFlutterPlatform.instance.getUsersWhoBlockedMe(fetchFromServer);
+  static Future<void> getUsersWhoBlockedMe(
+      {bool fetchFromServer = false, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getUsersWhoBlockedMe(fetchFromServer, flyCallBack);
   }
 
   /*static Future<dynamic> getUnKnownUserProfiles() {
@@ -236,16 +239,18 @@ class Mirrorfly {
   /// This method asynchronously sets the busy status of the current user to the specified [busyStatus].
   /// The [busyStatus] parameter is a required string indicating the user's current status, such as "I'm busy" or "Driving".
   ///
-  /// Returns a Future<bool?> indicating whether the operation was successful.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
   ///
   ///Example:
   /// ```dart
-  /// Mirrorfly.setMyBusyStatus(busyStatus: "I'm busy").then((value) {
-  //
-  //  });
+  /// Mirrorfly.setMyBusyStatus(busyStatus: "I'm busy",flyCallBack: (response){
+  /// });
   /// ```
-  static Future<bool?> setMyBusyStatus({required String busyStatus}) {
-    return FlyChatFlutterPlatform.instance.setMyBusyStatus(busyStatus);
+  static Future<void> setMyBusyStatus(
+      {required String busyStatus, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.setMyBusyStatus(busyStatus, flyCallBack);
   }
 
   /// Enables or disables the busy status feature.
@@ -259,27 +264,27 @@ class Mirrorfly {
   /// - If `true`, the busy status feature will be enabled.
   /// - If `false`, the busy status feature will be disabled.
   ///
-  /// Returns a [Future] that completes with a `bool` value `true' indicating  the success
-  /// of the operation. If the operation succeeds, it returns `true`; otherwise, it throws Exception.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  /// Throws:
-  ///   - [PlatformException] throws an Exception
   ///
   /// Example usage:
   /// ```dart
-  /// Mirrorfly.enableDisableBusyStatus(enable: true).then((){
+  /// Mirrorfly.enableDisableBusyStatus(enable: true,flyCallBack: (response){
   ///
-  /// }).catchError((onError) {
-  //
-  //  });
+  /// });
   /// ```
-  static Future<bool?> enableDisableBusyStatus({required bool enable}) {
-    return FlyChatFlutterPlatform.instance.enableDisableBusyStatus(enable);
+  static Future<void> enableDisableBusyStatus(
+      {required bool enable, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.enableDisableBusyStatus(enable, flyCallBack);
   }
 
   @Deprecated('Instead of use Mirrorfly.setLastSeenVisibility()')
-  static Future<bool?> enableDisableHideLastSeen(bool enable) {
-    return FlyChatFlutterPlatform.instance.enableDisableHideLastSeen(enable);
+  static Future<bool?> enableDisableHideLastSeen(bool enable) async {
+    await FlyChatFlutterPlatform.instance.enableDisableHideLastSeen(enable, (res) {
+      return res;
+    });
+    return null;
   }
 
   /// Sets the visibility of the last seen status.
@@ -290,22 +295,19 @@ class Mirrorfly {
   /// The [enable] parameter specifies whether to enable (`true`) or disable (`false`) the
   /// visibility of the last seen status.
   ///
-  /// Returns a [Future] that completes with a [bool] value indicating the success or failure
-  /// of the operation. If the operation succeeds, it returns `true`; otherwise, it throws Exception.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  /// Throws:
-  ///   - [PlatformException] throws an Exception
   ///
   /// Example usage:
   /// ```dart
-  /// Mirrorfly.setLastSeenVisibility(enable: true).then((){
+  /// Mirrorfly.setLastSeenVisibility(enable: true,flyCallBack: (response){
   ///
-  /// }).catchError((onError) {
-  //
-  //  });
+  /// });
   /// ```
-  static Future<bool?> setLastSeenVisibility({required bool enable}) {
-    return FlyChatFlutterPlatform.instance.enableDisableHideLastSeen(enable);
+  static Future<void> setLastSeenVisibility(
+      {required bool enable, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.enableDisableHideLastSeen(enable, flyCallBack);
   }
 
   /// Checks whether the busy status feature is enabled in the Mirrorfly chat platform.
@@ -349,14 +351,15 @@ class Mirrorfly {
   /// Unfavorites all the favorite messages.
   ///
   /// This static method calls the corresponding [unFavouriteAllFavouriteMessages] method
-  /// to unfavorite all favorite messages. It returns a [Future] that
-  /// resolves to a [bool] value indicating the success or failure
-  /// of the operation. If the operation succeeds, it returns `true`; otherwise, it throws Exception.
+  /// to unfavorite all favorite messages.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
   ///
   /// Returns:
   /// - A [Future] that resolves to a [bool] value.
-  static Future<bool?> unFavouriteAllFavouriteMessages() {
-    return FlyChatFlutterPlatform.instance.unFavouriteAllFavouriteMessages();
+  static Future<void> unFavouriteAllFavouriteMessages({required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.unFavouriteAllFavouriteMessages(flyCallBack);
   }
 
   /// Marks a message as read on the Mirrorfly chat platform.
@@ -514,7 +517,7 @@ class Mirrorfly {
 
   @Deprecated('Instead of use Mirrorfly.deleteRecentChats()')
   static deleteRecentChat(String jid) {
-    return FlyChatFlutterPlatform.instance.deleteRecentChat(jid);
+    return FlyChatFlutterPlatform.instance.deleteRecentChat(jid, null);
   }
 
   /*static setTypingStatusListener() {
@@ -552,17 +555,19 @@ class Mirrorfly {
   /// The [jidList] parameter is a required list of strings containing the
   /// JIDs of the chats to be deleted.
   ///
-  /// Returns a [Future] that completes with a boolean value indicating
-  /// whether the operation was successful.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
   ///
   /// Example:
   /// ```dart
-  /// Mirrorfly.deleteRecentChats(jidList: ['user1@example.com', 'user2@example.com']);
+  /// Mirrorfly.deleteRecentChats(jidList: ['user1@example.com', 'user2@example.com'],flyCallBack: (response){
+  /// });
   /// ```
   ///
-  /// Throws a [PlatformException] if an error occurs during the process.
-  static Future<bool?> deleteRecentChats({required List<String> jidList}) {
-    return FlyChatFlutterPlatform.instance.deleteRecentChats(jidList);
+  static Future<void> deleteRecentChats(
+      {required List<String> jidList, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.deleteRecentChats(jidList, flyCallBack);
   }
 
   /// Marks the conversations with the specified JIDs as read.
@@ -644,10 +649,12 @@ class Mirrorfly {
   /// Clears all conversations from the Mirrorfly chat platform.
   ///
   /// This method asynchronously clears all conversations from the Mirrorfly chat platform.
-  /// It returns a Future<bool?> indicating whether the operation was successful. otherwise, it throws Exception.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  static Future<bool?> clearAllConversation() {
-    return FlyChatFlutterPlatform.instance.clearAllConversation();
+  ///
+  static Future<void> clearAllConversation({required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.clearAllConversation(flyCallBack);
   }
 
   /// Updates the Firebase Cloud Messaging (FCM) token for the Mirrorfly SDK.
@@ -657,12 +664,13 @@ class Mirrorfly {
   ///
   /// The [firebaseToken] parameter is the FCM token obtained from Firebase Cloud Messaging.
   ///
-  /// Returns a [Future] that completes with a boolean value indicating whether
-  /// the operation was successful. If the operation is successful, the future completes
-  /// with `true`. If an error occurs during the operation, the future throws Exception.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  static Future<bool?> updateFcmToken({required String firebaseToken}) {
-    return FlyChatFlutterPlatform.instance.updateFcmToken(firebaseToken);
+  ///
+  static Future<void> updateFcmToken(
+      {required String firebaseToken, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.updateFcmToken(firebaseToken, flyCallBack);
   }
 
   @Deprecated('Instead of use Mirrorfly.isChatMuted()')
@@ -700,14 +708,15 @@ class Mirrorfly {
   /// The [notificationData] parameter is a required [Map] containing the `remoteMessage.data`
   /// received in the FCM message notification [RemoteMessage].
   ///
-  /// Returns a [Future] that completes with a [String] representing the result
-  /// of handling the FCM message by the Mirrorfly SDK.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
   ///to Show Notification using FCM 'remoteMessage.data' as [notificationData]
   ///for iOS Need to add Notification Extension Service
   ///add this line in your extension service MirrorFlyNotification().handleNotification(notificationRequest: request, contentHandler: contentHandler, containerID: "xxx", licenseKey: "xxxx")
-  static Future<String?> handleReceivedMessage({required Map notificationData}) {
-    return FlyChatFlutterPlatform.instance.handleReceivedMessage(notificationData);
+  static Future<void> handleReceivedMessage(
+      {required Map notificationData, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.handleReceivedMessage(notificationData, flyCallBack);
   }
 
   /*static Future<String?> getLastNUnreadMessages({required int messagesCount}) {
@@ -736,16 +745,21 @@ class Mirrorfly {
   /// This method enables or disables the archived settings feature in the Mirrorfly SDK,
   /// based on the value of the [enable] parameter.
   ///
-  /// Returns a Future<bool?> representing the success of the operation.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  /// Throws a [PlatformException] if an error occurs during the platform interaction.
-  static Future<bool?> enableDisableArchivedSettings({required bool enable}) {
-    return FlyChatFlutterPlatform.instance.enableDisableArchivedSettings(enable);
+  ///
+  static Future<void> enableDisableArchivedSettings(
+      {required bool enable, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.enableDisableArchivedSettings(enable, flyCallBack);
   }
 
   @Deprecated('Instead of use Mirrorfly.setChatArchived()')
-  static Future<bool?> updateArchiveUnArchiveChat(String jid, bool isArchived) {
-    return FlyChatFlutterPlatform.instance.updateArchiveUnArchiveChat(jid, isArchived);
+  static Future<bool?> updateArchiveUnArchiveChat(String jid, bool isArchived) async {
+    await FlyChatFlutterPlatform.instance.updateArchiveUnArchiveChat(jid, isArchived, (res) {
+      return res;
+    });
+    return null;
   }
 
   /// Provides functionality to set the archived status of a chat.
@@ -754,17 +768,19 @@ class Mirrorfly {
   /// by the unique identifier [jid]. If [isArchived] is `true`, the chat will be
   /// archived; if `false`, it will be unarchived.
   ///
-  /// Returns a [Future] that completes with a boolean value indicating whether the
-  /// operation was successful. If the operation is successful, `true` is returned;
-  /// otherwise, `false` is returned.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
   /// Example usage:
   /// ```dart
-  /// bool isChatArchived = await Mirrorfly.setChatArchived(jid: 'unique_chat_jid', isArchived: true);
+  /// Mirrorfly.setChatArchived(jid: 'unique_chat_jid', isArchived: true,flyCallBack:(response){
+  /// bool isChatArchived = response.isSuccess;
+  /// });
   /// print('Chat archived status: $isChatArchived');
   /// ```
-  static Future<bool?> setChatArchived({required String jid, required bool isArchived}) {
-    return FlyChatFlutterPlatform.instance.updateArchiveUnArchiveChat(jid, isArchived);
+  static Future<void> setChatArchived(
+      {required String jid, required bool isArchived, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.updateArchiveUnArchiveChat(jid, isArchived, flyCallBack);
   }
 
   /*static Future<int?> getGroupMessageStatusCount({required String messageId}) {
@@ -841,10 +857,11 @@ class Mirrorfly {
   ///
   /// Retrieves a list of archived chats from the Mirrorfly platform.
   /// Each chat in the list represents a conversation that has been archived.
-  /// Returns a [Future] that completes with the list of archived chats as [String],
-  /// or `null` if there are no archived chats.
-  static Future<String?> getArchivedChatList() {
-    return FlyChatFlutterPlatform.instance.getArchivedChatList();
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
+  static Future<void> getArchivedChatList({required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getArchivedChatList(flyCallBack);
   }
 
   /*static Future<dynamic> getMessageActions(List<String> messageidlist) {
@@ -945,22 +962,29 @@ class Mirrorfly {
   /// The [jid] parameter is required and represents the JID of the user whose last
   /// seen time is to be retrieved.
   ///
-  /// Returns a [Future] that completes with a [String] representing the last seen
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
+  /// Returns a [data] that completes with a [String] representing the last seen
   /// time in [DateTime.fromMillisecondsSinceEpoch] of the user, or `null` if the last seen time is not available or an error
   /// occurs during the retrieval process.
   ///
   /// Example:
   /// ```dart
-  /// String? lastSeenTime = await Mirrorfly.getUserLastSeenTime(jid: 'user123@domain.com');
-  /// if (lastSeenTime != null) {
-  ///   DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: true);
-  ///   print('Last seen time: $lastSeen');
-  /// } else {
-  ///   print('Last seen time is not available.');
-  /// }
+  /// Mirrorfly.getUserLastSeenTime(jid: 'user123@domain.com',flyCallBack: (response){
+  ///   if(response.isSuccess){
+  ///     String lastSeenTime = response.data;
+  ///     if (lastSeenTime.isNotEmpty) {
+  ///       DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: true);
+  ///       print('Last seen time: $lastSeen');
+  ///     } else {
+  ///       print('Last seen time is not available.');
+  ///     }
+  ///   }
+  /// });
   /// ```
-  static Future<String?> getUserLastSeenTime({required String jid}) {
-    return FlyChatFlutterPlatform.instance.getUserLastSeenTime(jid);
+  static Future<void> getUserLastSeenTime({required String jid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getUserLastSeenTime(jid, flyCallBack);
   }
 
   @Deprecated('Instead of use refreshAndGetAuthToken')
@@ -1123,7 +1147,7 @@ class Mirrorfly {
   /// ```
   static Future<void> sendMessage(
       {required MessageParams messageParams, required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance.sendMessage(messageParams: messageParams, flyCallback: flyCallback);
+    return FlyChatFlutterPlatform.instance.sendMessage(messageParams: messageParams, callback: flyCallback);
   }
 
   @Deprecated('Instead of use Mirrorfly.getRegisteredUsers()')
@@ -1171,19 +1195,19 @@ class Mirrorfly {
   ///
   /// [currentPage]: The current page number to retrieve the call logs list from.
   ///
-  /// Returns a Future<String?> representing the call logs list.
-  /// Returns `null` if an error occurs during the retrieval process.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
   /// Example usage:
   /// ```dart
-  /// Mirrorfly.getCallLogsList(currentPage: 1).then((value) {
-  //          if (value != null) {
-  //            var list = callLogListFromJson(value);
-  //          }
-  //      }
-  /// );
+  /// Mirrorfly.getCallLogsList(currentPage: 1,flyCallBack: (response){
+  //     if (response.isSuccess) {
+  //       var list = callLogListFromJson(response.data);
+  //     }
+  /// });
   /// ```
-  static Future<String?> getCallLogsList({required int currentPage}) {
-    return FlyChatFlutterPlatform.instance.getCallLogsList(currentPage);
+  static Future<void> getCallLogsList({required int currentPage, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getCallLogsList(currentPage, flyCallBack);
   }
 
   /// Provides access to call logs list from the platform.
@@ -1210,12 +1234,12 @@ class Mirrorfly {
   /// Deletes call logs for the specified list of JIDs [jidList].
   /// If [isClearAll] is set to `true`, all call logs will be deleted.
   ///
-  /// Returns a [Future] that completes with a [bool] value indicating whether
-  /// the call logs were successfully deleted.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  /// Throws an error if there is an issue deleting the call logs.
-  static Future<bool> deleteCallLog({required List<String> jidList, required bool isClearAll}) {
-    return FlyChatFlutterPlatform.instance.deleteCallLog(jidList, isClearAll);
+  static Future<void> deleteCallLog(
+      {required List<String> jidList, required bool isClearAll, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.deleteCallLog(jidList, isClearAll, flyCallBack);
   }
 
   static Stream<dynamic> get onMessageReceived => FlyChatFlutterPlatform.instance.onMessageReceived;
@@ -1365,15 +1389,22 @@ class Mirrorfly {
   /// from the Mirrorfly chat platform by calling the corresponding method
   /// on the [FlyChatFlutterPlatform] instance.
   ///
-  /// Returns a [Future] that resolves to a [String] representing the recent
-  /// chat list data retrieved from the Local DB.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  /// Throws an error if the operation fails or if the platform does not support
-  /// retrieving recent chat lists.
+  /// Example usage:
   ///
+  /// ```dart
+  /// await Mirrorfly.getRecentChatList(flyCallback: (response) {
+  ///     // Handle the response here
+  ///     if (response.isSuccess && response.data.isNotEmpty) {
+  //         var data = recentChatFromJson(response.data);
+  //      }
+  ///   }
+  /// );
   /// ```
-  static Future<String> getRecentChatList() {
-    return FlyChatFlutterPlatform.instance.getRecentChatList();
+  static Future<void> getRecentChatList({required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getRecentChatList(flyCallBack);
   }
 
   /// Retrieves the recent chat list history asynchronously.
@@ -1413,7 +1444,7 @@ class Mirrorfly {
   /// * @param [topicId] - use to get messages by topic id
   /// * @param [limit] - No of messages will be fetched for each request default 25
   /// * @param [ascendingOrder] - If true message list will be returned ascendingOrder by message time default false
-  static Future<dynamic> initializeMessageList(
+  static Future<bool> initializeMessageList(
       {required String userJid,
       String? messageId,
       double? messageTime,
@@ -1432,7 +1463,9 @@ class Mirrorfly {
   }
 
   /// This [loadMessages] is used to Fetch initial conversations between you and a single chat user or group.
-  /// * @param [flyCallback] set the `Function(FlyResponse response)` flyCallback to get the response
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
   /// This method should be called only after the initializeMessageList Method.
   static Future<void> loadMessages({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.loadMessages(flyCallback);
@@ -1444,7 +1477,9 @@ class Mirrorfly {
   }
 
   /// This [loadPreviousMessages] is used to fetch previous set of conversations between you and a single chat user or group.
-  /// * @param [flyCallback] set the `Function(FlyResponse response)` flyCallback to get the response
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
   /// This set contains the limit/length set in initializeMessageList method
   static Future<void> loadPreviousMessages({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.loadPreviousMessages(flyCallback);
@@ -1456,7 +1491,9 @@ class Mirrorfly {
   }
 
   /// This [loadNextMessages] is used to fetch next set of conversations between you and a single chat user or group.
-  /// * @param [flyCallback] set the `Function(FlyResponse response)` flyCallback to get the response
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
   /// This set contains the limit/length set in initializeMessageList method
   static Future<void> loadNextMessages({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.loadNextMessages(flyCallback);
@@ -1568,8 +1605,9 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getProfileLocal(jid, fetchFromServer);
   }*/
 
-  static Future<dynamic> setMyProfileStatus({required String status, required String statusId}) {
-    return FlyChatFlutterPlatform.instance.setMyProfileStatus(status, statusId);
+  static Future<void> setMyProfileStatus(
+      {required String status, required String statusId, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.setMyProfileStatus(status, statusId, flyCallBack);
   }
 
   static Future<bool?> insertNewProfileStatus({required String status}) {
@@ -1581,17 +1619,21 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.updateMyProfileImage(image, flyCallback);
   }
 
-  static Future<bool?> removeProfileImage() {
-    return FlyChatFlutterPlatform.instance.removeProfileImage();
+  static Future<void> removeProfileImage({required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.removeProfileImage(flyCallBack);
   }
 
-  static Future<bool?> removeGroupProfileImage({required String jid}) {
-    return FlyChatFlutterPlatform.instance.removeGroupProfileImage(jid);
+  static Future<void> removeGroupProfileImage(
+      {required String jid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.removeGroupProfileImage(jid, flyCallBack);
   }
 
   /// This [refreshAndGetAuthToken] is used to get refreshed Auth Token.
-  static Future<String?> refreshAndGetAuthToken() {
-    return FlyChatFlutterPlatform.instance.refreshAndGetAuthToken();
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
+  static Future<void> refreshAndGetAuthToken({required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.refreshAndGetAuthToken(flyCallBack);
   }
 
   /// Retrieves the current authentication token asynchronously.
@@ -1652,20 +1694,21 @@ class Mirrorfly {
   /// indicating whether the logout operation was successful (`true`) or not (`false`).
   ///
   /// Returns:
-  ///   A [Future] that completes with a [bool] value indicating the success of
-  ///   the logout operation. If the operation is successful, the Future completes
-  ///   with `true`; otherwise, it completes with `false`.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
   /// Example:
   /// ```dart
-  /// Mirrorfly.logoutOfChatSDK().then((value) {
-  ///   print('User logged out of Mirrorfly chat SDK.');
-  /// }).catchError((er) {
-  ///   print('Failed to logout of Mirrorfly chat SDK.');
+  /// Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
+  ///   if(response.isSuccess){
+  ///     print('User logged out of Mirrorfly chat SDK.');
+  ///   }else{
+  ///     print('Failed to logout of Mirrorfly chat SDK.');
+  ///   }
   /// });
   /// ```
-  static Future<bool> logoutOfChatSDK() {
-    return FlyChatFlutterPlatform.instance.logoutOfChatSDK();
+  static Future<void> logoutOfChatSDK({required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.logoutOfChatSDK(flyCallBack);
   }
 
   /// Sets the ongoing chat user for the current session.
@@ -1696,13 +1739,16 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.openFile(filePath);
   }*/
 
-  static Future<dynamic> getRecentChatListIncludingArchived() {
+  static Future<String> getRecentChatListIncludingArchived() {
     return FlyChatFlutterPlatform.instance.getRecentChatListIncludingArchived();
   }
 
-  static Future<String> searchConversation(
-      {required String searchKey, String? jidForSearch, bool globalSearch = true}) {
-    return FlyChatFlutterPlatform.instance.searchConversation(searchKey, jidForSearch, globalSearch);
+  static Future<void> searchConversation(
+      {required String searchKey,
+      String? jidForSearch,
+      bool globalSearch = true,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.searchConversation(searchKey, jidForSearch, globalSearch, flyCallBack);
   }
 
   static Future<void> getRegisteredUsers(
@@ -1718,8 +1764,12 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getRecentChatOf(jid);
   }
 
-  static Future<bool> clearChat({required String jid, required String chatType, required bool clearExceptStarred}) {
-    return FlyChatFlutterPlatform.instance.clearChat(jid, chatType, clearExceptStarred);
+  static Future<void> clearChat(
+      {required String jid,
+      required String chatType,
+      required bool clearExceptStarred,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.clearChat(jid, chatType, clearExceptStarred, flyCallBack);
   }
 
   /*static Future<dynamic> reportChatOrUser({required String jid, required String chatType, String? messageId}) {
@@ -1730,14 +1780,23 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getMessagesUsingIds(messageIds);
   }
 
-  static Future<bool?> deleteMessagesForMe(
-      {required String jid, required String chatType, required List<String> messageIds, bool? isMediaDelete}) {
-    return FlyChatFlutterPlatform.instance.deleteMessagesForMe(jid, chatType, messageIds, isMediaDelete);
+  static Future<void> deleteMessagesForMe(
+      {required String jid,
+      required String chatType,
+      required List<String> messageIds,
+      bool? isMediaDelete,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.deleteMessagesForMe(jid, chatType, messageIds, isMediaDelete, flyCallBack);
   }
 
-  static Future<bool> deleteMessagesForEveryone(
-      {required String jid, required String chatType, required List<String> messageIds, bool? isMediaDelete}) {
-    return FlyChatFlutterPlatform.instance.deleteMessagesForEveryone(jid, chatType, messageIds, isMediaDelete);
+  static Future<void> deleteMessagesForEveryone(
+      {required String jid,
+      required String chatType,
+      required List<String> messageIds,
+      bool? isMediaDelete,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance
+        .deleteMessagesForEveryone(jid, chatType, messageIds, isMediaDelete, flyCallBack);
   }
 
   /*static Future<dynamic> deleteMessages(
@@ -1746,38 +1805,45 @@ class Mirrorfly {
   }*/
 
   @Deprecated('Instead of use Mirrorfly.getGroupMessageDeliveredRecipients()')
-  static Future<dynamic> getGroupMessageDeliveredToList(String messageId, String jid) {
-    return FlyChatFlutterPlatform.instance.getGroupMessageDeliveredToList(messageId, jid);
+  static Future<dynamic> getGroupMessageDeliveredToList(String messageId, String jid) async {
+    await FlyChatFlutterPlatform.instance.getGroupMessageDeliveredToList(messageId, jid, (res) {
+      return res.data;
+    });
   }
 
-  static Future<dynamic> getGroupMessageDeliveredRecipients(String messageId, String groupJid) {
-    return FlyChatFlutterPlatform.instance.getGroupMessageDeliveredToList(messageId, groupJid);
+  static Future<void> getGroupMessageDeliveredRecipients(
+      {required String messageId, required String groupJid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getGroupMessageDeliveredToList(messageId, groupJid, flyCallBack);
   }
 
   @Deprecated('Instead of use Mirrorfly.getGroupMessageSeenRecipients()')
-  static Future<String> getGroupMessageReadByList(String messageId, String jid) {
-    return FlyChatFlutterPlatform.instance.getGroupMessageReadByList(messageId, jid);
+  static Future<String> getGroupMessageReadByList(String messageId, String jid) async {
+    await FlyChatFlutterPlatform.instance.getGroupMessageReadByList(messageId, jid, (res) {
+      return res.data;
+    });
+    return "";
   }
 
-  static Future<String> getGroupMessageSeenRecipients({required String messageId, required String groupJid}) {
-    return FlyChatFlutterPlatform.instance.getGroupMessageReadByList(messageId, groupJid);
+  static Future<void> getGroupMessageSeenRecipients(
+      {required String messageId, required String groupJid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getGroupMessageReadByList(messageId, groupJid, flyCallBack);
   }
 
   @Deprecated('Instead of use Mirrorfly.getMessageStatusOf()')
-  static Future<dynamic> getMessageStatusOfASingleChatMessage(String messageID) {
+  static Future<String> getMessageStatusOfASingleChatMessage(String messageID) {
     return FlyChatFlutterPlatform.instance.getMessageStatusOfASingleChatMessage(messageID);
   }
 
-  static Future<dynamic> getMessageStatusOf({required String messageId}) {
+  static Future<String> getMessageStatusOf({required String messageId}) {
     return FlyChatFlutterPlatform.instance.getMessageStatusOfASingleChatMessage(messageId);
   }
 
-  static Future<bool?> blockUser({required String userJid}) {
-    return FlyChatFlutterPlatform.instance.blockUser(userJid);
+  static Future<void> blockUser({required String userJid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.blockUser(userJid, flyCallBack);
   }
 
-  static Future<bool?> unblockUser({required String userJid}) {
-    return FlyChatFlutterPlatform.instance.unblockUser(userJid);
+  static Future<void> unblockUser({required String userJid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.unblockUser(userJid, flyCallBack);
   }
 
   /*static Future<String?> showCustomTones() {
@@ -1809,34 +1875,48 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getWebLoginDetails();
   }*/
 
-  static Future<bool?> updateFavouriteStatus(
-      {required String messageId, required String chatUserJid, required bool isFavourite, required String chatType}) {
-    return FlyChatFlutterPlatform.instance.updateFavouriteStatus(messageId, chatUserJid, isFavourite, chatType);
+  static Future<void> updateFavouriteStatus(
+      {required String messageId,
+      required String chatUserJid,
+      required bool isFavourite,
+      required String chatType,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance
+        .updateFavouriteStatus(messageId, chatUserJid, isFavourite, chatType, flyCallBack);
   }
 
-  static Future<bool?> forwardMessagesToMultipleUsers(
-      {required List<String> messageIds, required List<String> userList}) {
-    return FlyChatFlutterPlatform.instance.forwardMessagesToMultipleUsers(messageIds, userList);
+  static Future<void> forwardMessagesToMultipleUsers(
+      {required List<String> messageIds,
+      required List<String> userList,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.forwardMessagesToMultipleUsers(messageIds, userList, flyCallBack);
   }
 
   /*static Future<dynamic> forwardMessages(List<String> messageIds, String tojid, String chattype) {
     return FlyChatFlutterPlatform.instance.forwardMessages(messageIds, tojid, chattype);
   }*/
 
-  static Future<bool?> createGroup({required String groupName, required List<String> userList, required String image}) {
-    return FlyChatFlutterPlatform.instance.createGroup(groupName, userList, image);
+  static Future<void> createGroup(
+      {required String groupName,
+      required List<String> userList,
+      required String image,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.createGroup(groupName, userList, image, flyCallBack);
   }
 
-  static Future<bool?> addUsersToGroup({required String jid, required List<String> userList}) {
-    return FlyChatFlutterPlatform.instance.addUsersToGroup(jid, userList);
+  static Future<void> addUsersToGroup(
+      {required String jid, required List<String> userList, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.addUsersToGroup(jid, userList, flyCallBack);
   }
 
-  static Future<String> getGroupMembersList({required String jid, bool? fetchFromServer}) {
-    return FlyChatFlutterPlatform.instance.getGroupMembersList(jid, fetchFromServer);
+  static Future<void> getGroupMembersList(
+      {required String jid, bool? fetchFromServer, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getGroupMembersList(jid, fetchFromServer, flyCallBack);
   }
 
-  static Future<dynamic> getUsersIBlocked({bool fetchFromServer = false}) {
-    return FlyChatFlutterPlatform.instance.getUsersIBlocked(fetchFromServer);
+  static Future<void> getUsersIBlocked(
+      {bool fetchFromServer = false, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getUsersIBlocked(fetchFromServer, flyCallBack);
   }
 
   static Future<String?> getMediaMessages({required String jid}) {
@@ -1851,28 +1931,36 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getLinkMessages(jid);
   }
 
-  static Future<String> exportChatConversationToEmail({required String jid}) {
-    return FlyChatFlutterPlatform.instance.exportChatConversationToEmail(jid);
+  static Future<void> exportChatConversationToEmail(
+      {required String jid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.exportChatConversationToEmail(jid, flyCallBack);
   }
 
-  static Future<bool?> reportUserOrMessages({required String jid, required String type, String messageId = ""}) {
-    return FlyChatFlutterPlatform.instance.reportUserOrMessages(jid, type, messageId);
+  static Future<void> reportUserOrMessages(
+      {required String jid,
+      required String type,
+      String messageId = "",
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.reportUserOrMessages(jid, type, messageId, flyCallBack);
   }
 
-  static Future<bool?> makeAdmin({required String groupJid, required String userJid}) {
-    return FlyChatFlutterPlatform.instance.makeAdmin(groupJid, userJid);
+  static Future<void> makeAdmin(
+      {required String groupJid, required String userJid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.makeAdmin(groupJid, userJid, flyCallBack);
   }
 
-  static Future<bool?> removeMemberFromGroup({required String groupJid, required String userJid}) {
-    return FlyChatFlutterPlatform.instance.removeMemberFromGroup(groupJid, userJid);
+  static Future<void> removeMemberFromGroup(
+      {required String groupJid, required String userJid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.removeMemberFromGroup(groupJid, userJid, flyCallBack);
   }
 
-  static Future<bool?> leaveFromGroup({required String userJid, required String groupJid}) {
-    return FlyChatFlutterPlatform.instance.leaveFromGroup(userJid, groupJid);
+  static Future<void> leaveFromGroup(
+      {required String userJid, required String groupJid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.leaveFromGroup(userJid, groupJid, flyCallBack);
   }
 
-  static Future<bool?> deleteGroup({required String jid}) {
-    return FlyChatFlutterPlatform.instance.deleteGroup(jid);
+  static Future<void> deleteGroup({required String jid, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.deleteGroup(jid, flyCallBack);
   }
 
   @Deprecated('Instead of use Mirrorfly.isGroupAdmin()')
@@ -1884,20 +1972,23 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.isAdmin(userJid, groupJid);
   }
 
-  static Future<bool?> updateGroupProfileImage({required String jid, required String file}) {
-    return FlyChatFlutterPlatform.instance.updateGroupProfileImage(jid, file);
+  static Future<void> updateGroupProfileImage(
+      {required String jid, required String file, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.updateGroupProfileImage(jid, file, flyCallBack);
   }
 
-  static Future<bool?> updateGroupName({required String jid, required String name}) {
-    return FlyChatFlutterPlatform.instance.updateGroupName(jid, name);
+  static Future<void> updateGroupName(
+      {required String jid, required String name, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.updateGroupName(jid, name, flyCallBack);
   }
 
   static Future<bool?> isMemberOfGroup({required String userJid, required String groupJid}) {
     return FlyChatFlutterPlatform.instance.isMemberOfGroup(groupJid, userJid);
   }
 
-  static Future<bool?> sendContactUsInfo({required String title, required String description}) {
-    return FlyChatFlutterPlatform.instance.sendContactUsInfo(title, description);
+  static Future<void> sendContactUsInfo(
+      {required String title, required String description, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.sendContactUsInfo(title, description, flyCallBack);
   }
 
   /*static copyTextMessages({required List<String> messageIds}) {
@@ -1915,11 +2006,12 @@ class Mirrorfly {
   /// for deleting the account. Optionally, you can provide a [feedback] message
   /// to provide additional details or feedback regarding the deletion.
   ///
-  /// The method returns a [Future] that completes with a boolean value
-  /// representing the success or failure of the account deletion operation.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  static Future<bool?> deleteAccount({required String reason, String? feedback}) {
-    return FlyChatFlutterPlatform.instance.deleteAccount(reason, feedback);
+  static Future<void> deleteAccount(
+      {required String reason, String? feedback, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.deleteAccount(reason, feedback, flyCallBack);
   }
 
   /// Retrieves the user's favorite messages from the Mirrorfly chat platform.
@@ -1948,14 +2040,14 @@ class Mirrorfly {
   /// or `null` if an error occurs.
   ///
   ///Example
-  ///Mirrorfly.getAllGroups().then((value) {
-  //       if (value != null) {
-  //         List<ProfileDetails> list = profileFromJson(value);
-  //       }
-  //     }).catchError((error) {
-  //     });
-  static Future<String?> getAllGroups({bool fetchFromServer = false}) {
-    return FlyChatFlutterPlatform.instance.getAllGroups(fetchFromServer);
+  ///Mirrorfly.getAllGroups(flyCallBack: (response){
+  //    if (response.isSuccess && response.data.isNotEmpty) {
+  //      List<ProfileDetails> list = profileFromJson(value);
+  //    }
+  ///});
+  static Future<void> getAllGroups(
+      {bool fetchFromServer = false, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getAllGroups(fetchFromServer, flyCallBack);
   }
 
   /*static Future<String?> getDefaultNotificationUri() {
@@ -2134,8 +2226,11 @@ class Mirrorfly {
   /// Returns a [Future] that completes with a [String] representing the unique identifier of the created topic.
   ///
   /// Throws an error if the creation of the topic fails.
-  static Future<String?> createTopic({required String topicName, List<TopicMetaData> metaData = const []}) async {
-    return FlyChatFlutterPlatform.instance.createTopic(topicName: topicName, metaData: metaData);
+  static Future<void> createTopic(
+      {required String topicName,
+      List<TopicMetaData> metaData = const [],
+      required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.createTopic(topicName: topicName, metaData: metaData, callback: flyCallBack);
   }
 
   /// Retrieves topics from the Mirrorfly platform.
@@ -2143,23 +2238,18 @@ class Mirrorfly {
   /// This method asynchronously retrieves topics from the Mirrorfly platform
   /// based on the provided list of [topicIds].
   ///
-  /// Returns a [Future] that completes with the retrieved topic details as a [String].
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  /// Throws an [ArgumentError] if [topicIds] is null or empty.
   /// Example:
-  /// await Mirrorfly.getTopics(topicIds: [
-  //         "c47cdeec-32a0-4abb-a318-ab60048df577",
-  //         "a8f8877b-52c0-47cc-83d1-6e0292876daa",
-  //         "b7ba6a95-56f4-4354-a40c-b9a03b0cf470"
-  //       ]).then((value) {
-  //         var topics = topicsFromJson(value.toString());
-  //
-  //       }).catchError((onError) {
-  //         print("getTopics error $onError");
-  //         //807 for topic Id Empty and invalid topic id
-  //       });
-  static Future<String?> getTopics({required List<String> topicIds}) async {
-    return FlyChatFlutterPlatform.instance.getTopics(topicIds: topicIds);
+  /// await Mirrorfly.getTopics(topicIds: ["c47cdeec-32a0-4abb-a318-ab60048df577"],flyCallBack: (response){
+  ///   if(response.isSuccess && response.data.isNotEmpty){
+  ///     var topics = topicsFromJson(response.data);
+  ///   }
+  /// });
+  static Future<void> getTopics(
+      {required List<String> topicIds, required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.getTopics(topicIds: topicIds, callback: flyCallBack);
   }
 
   /// Retrieves the recent chat list history by Topic asynchronously.
@@ -2168,8 +2258,8 @@ class Mirrorfly {
   /// You can specify whether it's the first set of data to fetch using [firstSet].
   /// The maximum number of chat items to retrieve is specified by [limit],
   /// with a default value of 15 if not provided.
-  /// The result is returned asynchronously through the [flyCallback] function,
-  /// which accepts a [FlyResponse] object as a parameter.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
   /// Example usage:
   ///
@@ -2201,11 +2291,13 @@ class Mirrorfly {
   /// the video call will be initiated.
   ///
   /// Before initiating the video call, this method checks for permissions to access
-  /// the [camera] and [microphone]. If the necessary permissions are not granted,
-  /// the method throws Exception, indicating that the call cannot be initiated.
+  /// the [camera] and [microphone].
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  static Future<bool> makeVideoCall({required String userJid}) async {
-    return FlyChatFlutterPlatform.instance.makeVideoCall(userJid);
+  static Future<void> makeVideoCall(
+      {required String userJid, required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.makeVideoCall(userJid, flyCallBack);
   }
 
   /// Makes a voice call to the specified user.
@@ -2214,11 +2306,13 @@ class Mirrorfly {
   /// the voice call will be initiated.
   ///
   /// Before initiating the voice call, this method checks for permissions to access
-  /// the [microphone]. If the necessary permissions are not granted,
-  /// the method throws Exception, indicating that the call cannot be initiated.
+  /// the [microphone].
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  static Future<bool> makeVoiceCall({required String userJid}) async {
-    return FlyChatFlutterPlatform.instance.makeVoiceCall(userJid);
+  static Future<void> makeVoiceCall(
+      {required String userJid, required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.makeVoiceCall(userJid, flyCallBack);
   }
 
   /// Initiates a group voice call using Mirrorfly.
@@ -2229,14 +2323,18 @@ class Mirrorfly {
   /// [jidList] A list of unique identifiers for individual users to be called in the group.
   ///
   /// Before initiating the voice call, this method checks for permissions to access
-  /// the [microphone]. If the necessary permissions are not granted,
-  /// the method throws Exception, indicating that the call cannot be initiated.
+  /// the [microphone].
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
   /// Returns a Future<bool> indicating whether the call initiation was successful.
   /// If successful, returns true; otherwise, throws an Exception.
   ///
-  static Future<bool> makeGroupVoiceCall({String groupJid = "", List<String> jidList = const []}) async {
-    return FlyChatFlutterPlatform.instance.makeGroupVoiceCall(groupJid, jidList);
+  static Future<void> makeGroupVoiceCall(
+      {String groupJid = "",
+      List<String> jidList = const [],
+      required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.makeGroupVoiceCall(groupJid, jidList, flyCallBack);
   }
 
   /// Initiates a group video call using Mirrorfly.
@@ -2247,14 +2345,18 @@ class Mirrorfly {
   /// [jidList] A list of unique identifiers for individual users to be called in the group.
   ///
   /// Before initiating the video call, this method checks for permissions to access
-  /// the [camera] and [microphone]. If the necessary permissions are not granted,
-  /// the method throws Exception, indicating that the call cannot be initiated.
+  /// the [camera] and [microphone].
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
   /// Returns a Future<bool> indicating whether the call initiation was successful.
   /// If successful, returns true; otherwise, throws an Exception.
   ///
-  static Future<bool> makeGroupVideoCall({String groupJid = "", List<String> jidList = const []}) async {
-    return FlyChatFlutterPlatform.instance.makeGroupVideoCall(groupJid, jidList);
+  static Future<void> makeGroupVideoCall(
+      {String groupJid = "",
+      List<String> jidList = const [],
+      required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.makeGroupVideoCall(groupJid, jidList, flyCallBack);
   }
 
   /// Retrieves a list of users in the current call.
@@ -2263,7 +2365,7 @@ class Mirrorfly {
   ///
   /// Returns a [Future] that completes with the result of users list in the call with their call status.
   ///
-  static Future<dynamic> getCallUsersList() async {
+  static Future<String> getCallUsersList() async {
     return FlyChatFlutterPlatform.instance.getCallUsersList();
   }
 
@@ -2338,12 +2440,11 @@ class Mirrorfly {
   /// It takes a boolean [status] parameter indicating whether to mute or unmute audio.
   /// If [status] is true, audio will be muted; if false, audio will be unmuted.
   ///
-  /// Returns a [Future] that completes with a nullable boolean indicating whether
-  /// the operation was successful. The future completes with `true` if the audio
-  /// muting operation succeeds, otherwise it completes with `false`.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  static Future<bool?> muteAudio({required bool status}) async {
-    return FlyChatFlutterPlatform.instance.muteAudio(status);
+  static Future<void> muteAudio({required bool status, required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.muteAudio(status, flyCallBack);
   }
 
   /// Mutes or unmutes the video during an ongoing call.
@@ -2352,11 +2453,11 @@ class Mirrorfly {
   ///
   /// The [status] parameter indicates whether the video should be muted (`true`) or unmuted (`false`).
   ///
-  /// Returns a Future<bool?> indicating the success of the operation.
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  /// Throws a [PlatformException] if the operation fails due to a platform-specific error.
-  static Future<bool?> muteVideo({required bool status}) async {
-    return FlyChatFlutterPlatform.instance.muteVideo(status);
+  static Future<void> muteVideo({required bool status, required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.muteVideo(status, flyCallBack);
   }
 
   /// Routes audio to the specified destination.
@@ -2392,12 +2493,11 @@ class Mirrorfly {
   /// This static method invokes the [disconnectCall] method from the
   /// `FlyChatFlutterPlatform` instance to disconnect the ongoing call.
   ///
-  /// Returns a [Future] that completes with a nullable boolean value indicating
-  /// whether the call disconnection was successful. If the call is successfully
-  /// disconnected, the future completes with `true`; otherwise, throws an Exception
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  static Future<bool?> disconnectCall() async {
-    return FlyChatFlutterPlatform.instance.disconnectCall();
+  static Future<void> disconnectCall({required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.disconnectCall(flyCallBack);
   }
 
   /// Returns the selected audio device during a call.
@@ -2490,7 +2590,7 @@ class Mirrorfly {
   ///Used to [requestVideoCallSwitch] from Audio to Video Call
   /// You can switch the Audio Call to Video Call on requesting the Remote User
   /// If the remote User Accepts, Audio Call will be changed to Video Call.
-  static Future<dynamic> requestVideoCallSwitch() async {
+  static Future<bool> requestVideoCallSwitch() async {
     return FlyChatFlutterPlatform.instance.requestVideoCallSwitch();
   }
 
@@ -2502,7 +2602,7 @@ class Mirrorfly {
   ///
   /// [cancelVideoCallSwitch] Used to Cancel the Video Call Request from Audio to Video Call
   /// You can use this cancelVideoCallSwitch to deny the request and also call this method When the Request Timeouts
-  static Future<dynamic> cancelVideoCallSwitch() async {
+  static Future<bool> cancelVideoCallSwitch() async {
     return FlyChatFlutterPlatform.instance.cancelVideoCallSwitch();
   }
 
@@ -2518,7 +2618,7 @@ class Mirrorfly {
   /// If the operation is successful, the future completes with the result from the platform-specific method.
   /// If an error occurs during the operation, the future completes with an error.
   ///
-  static Future<dynamic> acceptVideoCallSwitchRequest() async {
+  static Future<bool> acceptVideoCallSwitchRequest() async {
     return FlyChatFlutterPlatform.instance.acceptVideoCallSwitchRequest();
   }
 
@@ -2529,7 +2629,7 @@ class Mirrorfly {
   ///
   /// Returns a [Future] that completes with the result of the operation.
   ///
-  static Future<dynamic> declineVideoCallSwitchRequest() async {
+  static Future<bool> declineVideoCallSwitchRequest() async {
     return FlyChatFlutterPlatform.instance.declineVideoCallSwitchRequest();
   }
 
