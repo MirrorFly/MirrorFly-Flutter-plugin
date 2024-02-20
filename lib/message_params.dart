@@ -220,7 +220,7 @@ class MessageParams {
   });
 
   /// Constructs a [MessageParams] object for a Text message.
-  factory MessageParams.text({
+  factory MessageParams.Text({
     required String toJid,
     String? replyMessageId,
     required TextMessageParams textMessageParams,
@@ -236,7 +236,7 @@ class MessageParams {
   }
 
   /// Constructs a [MessageParams] object for a Location message.
-  factory MessageParams.location({
+  factory MessageParams.Location({
     required String toJid,
     String? replyMessageId,
     required LocationMessageParams locationMessageParams,
@@ -252,7 +252,7 @@ class MessageParams {
   }
 
   /// Constructs a [MessageParams] object for a Contact message.
-  factory MessageParams.contact({
+  factory MessageParams.Contact({
     required String toJid,
     String? replyMessageId,
     required ContactMessageParams contactMessageParams,
@@ -268,7 +268,7 @@ class MessageParams {
   }
 
   /// Constructs a [MessageParams] object for a Image message.
-  factory MessageParams.image({
+  factory MessageParams.Image({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
@@ -284,7 +284,7 @@ class MessageParams {
   }
 
   /// Constructs a [MessageParams] object for a Audio message.
-  factory MessageParams.audio({
+  factory MessageParams.Audio({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
@@ -301,7 +301,7 @@ class MessageParams {
   }
 
   /// Constructs a [MessageParams] object for a Video message.
-  factory MessageParams.video({
+  factory MessageParams.Video({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
@@ -317,7 +317,7 @@ class MessageParams {
   }
 
   /// Constructs a [MessageParams] object for a Document message.
-  factory MessageParams.document({
+  factory MessageParams.Document({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
