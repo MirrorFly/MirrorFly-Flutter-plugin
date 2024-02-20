@@ -1172,7 +1172,7 @@ class Mirrorfly {
   ///   flyCallback: (response) {
   ///     // Handle the response from the Mirrorfly platform
   ///     if(response.isSuccess){
-  ///       if (response.hasdata) {
+  ///       if (response.hasData) {
   ///         var list = userListFromJson(response.data);
   ///       }
   ///     }
@@ -1397,7 +1397,7 @@ class Mirrorfly {
   /// ```dart
   /// await Mirrorfly.getRecentChatList(flyCallback: (response) {
   ///     // Handle the response here
-  ///     if (response.isSuccess && response.hasdata) {
+  ///     if (response.isSuccess && response.hasData) {
   //         var data = recentChatFromJson(response.data);
   //      }
   ///   }
@@ -1424,7 +1424,7 @@ class Mirrorfly {
   ///   limit: 20,
   ///   flyCallback: (response) {
   ///     // Handle the response here
-  ///     if (response.isSuccess && response.hasdata) {
+  ///     if (response.isSuccess && response.hasData) {
   //         var data = recentChatFromJson(response.data);
   //      }
   ///   }
@@ -2041,7 +2041,7 @@ class Mirrorfly {
   ///
   ///Example
   ///Mirrorfly.getAllGroups(flyCallBack: (response){
-  //    if (response.isSuccess && response.hasdata) {
+  //    if (response.isSuccess && response.hasData) {
   //      List<ProfileDetails> list = profileFromJson(value);
   //    }
   ///});
@@ -2243,7 +2243,7 @@ class Mirrorfly {
   ///
   /// Example:
   /// await Mirrorfly.getTopics(topicIds: ["c47cdeec-32a0-4abb-a318-ab60048df577"],flyCallBack: (response){
-  ///   if(response.isSuccess && response.hasdata){
+  ///   if(response.isSuccess && response.hasData){
   ///     var topics = topicsFromJson(response.data);
   ///   }
   /// });
@@ -2270,7 +2270,7 @@ class Mirrorfly {
   ///   limit: 20,
   ///   flyCallback: (response) {
   ///     // Handle the response here
-  ///     if (response.isSuccess && response.hasdata) {
+  ///     if (response.isSuccess && response.hasData) {
   //         var data = recentChatFromJson(response.data);
   //      }
   ///   }
