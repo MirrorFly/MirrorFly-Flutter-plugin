@@ -163,7 +163,7 @@ Use the below method to register a user in sandbox Live mode.
 ```dart
 Mirrorfly.registerUser(userIdentifier,flyCallback: (FlyResponse response) {
     // you will get the user registration response
-    if (response.isSuccess && response.hasdata) {
+    if (response.isSuccess && response.hasData) {
         var userData = registerModelFromJson(response.data); //message
 
     } else {
