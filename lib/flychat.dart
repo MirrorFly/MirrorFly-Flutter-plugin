@@ -1172,7 +1172,7 @@ class Mirrorfly {
   ///   flyCallback: (response) {
   ///     // Handle the response from the Mirrorfly platform
   ///     if(response.isSuccess){
-  ///       if (response.data.isNotEmpty) {
+  ///       if (response.hasdata) {
   ///         var list = userListFromJson(response.data);
   ///       }
   ///     }
@@ -1397,7 +1397,7 @@ class Mirrorfly {
   /// ```dart
   /// await Mirrorfly.getRecentChatList(flyCallback: (response) {
   ///     // Handle the response here
-  ///     if (response.isSuccess && response.data.isNotEmpty) {
+  ///     if (response.isSuccess && response.hasdata) {
   //         var data = recentChatFromJson(response.data);
   //      }
   ///   }
@@ -1424,7 +1424,7 @@ class Mirrorfly {
   ///   limit: 20,
   ///   flyCallback: (response) {
   ///     // Handle the response here
-  ///     if (response.isSuccess && response.data.isNotEmpty) {
+  ///     if (response.isSuccess && response.hasdata) {
   //         var data = recentChatFromJson(response.data);
   //      }
   ///   }
@@ -2041,7 +2041,7 @@ class Mirrorfly {
   ///
   ///Example
   ///Mirrorfly.getAllGroups(flyCallBack: (response){
-  //    if (response.isSuccess && response.data.isNotEmpty) {
+  //    if (response.isSuccess && response.hasdata) {
   //      List<ProfileDetails> list = profileFromJson(value);
   //    }
   ///});
@@ -2098,10 +2098,10 @@ class Mirrorfly {
   static saveMediaSettings(
       {required bool photos,
       required bool videos,
-      required bool audio,
+      required bool audios,
       required bool documents,
       required int networkType}) async {
-    return FlyChatFlutterPlatform.instance.saveMediaSettings(photos, videos, audio, documents, networkType);
+    return FlyChatFlutterPlatform.instance.saveMediaSettings(photos, videos, audios, documents, networkType);
   }
 
   // Retrieves media settings from the Mirrorfly chat platform.
@@ -2150,9 +2150,9 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.setMediaAutoDownload(enable);
   }
 
-  /*static Future<String?> getJidFromPhoneNumber({required String mobileNumber, required String countryCode}) async {
+  static Future<String?> getJidFromPhoneNumber({required String mobileNumber, required String countryCode}) async {
     return FlyChatFlutterPlatform.instance.getJidFromPhoneNumber(mobileNumber, countryCode);
-  }*/
+  }
 
   /*static Future<bool?> getNotificationSound() async {
     return FlyChatFlutterPlatform.instance.getNotificationSound();
@@ -2243,7 +2243,7 @@ class Mirrorfly {
   ///
   /// Example:
   /// await Mirrorfly.getTopics(topicIds: ["c47cdeec-32a0-4abb-a318-ab60048df577"],flyCallBack: (response){
-  ///   if(response.isSuccess && response.data.isNotEmpty){
+  ///   if(response.isSuccess && response.hasdata){
   ///     var topics = topicsFromJson(response.data);
   ///   }
   /// });
@@ -2270,7 +2270,7 @@ class Mirrorfly {
   ///   limit: 20,
   ///   flyCallback: (response) {
   ///     // Handle the response here
-  ///     if (response.isSuccess && response.data.isNotEmpty) {
+  ///     if (response.isSuccess && response.hasdata) {
   //         var data = recentChatFromJson(response.data);
   //      }
   ///   }
@@ -2296,8 +2296,8 @@ class Mirrorfly {
   /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
   static Future<void> makeVideoCall(
-      {required String userJid, required Function(FlyResponse response) flyCallBack}) async {
-    return FlyChatFlutterPlatform.instance.makeVideoCall(userJid, flyCallBack);
+      {required String toUserJid, required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.makeVideoCall(toUserJid, flyCallBack);
   }
 
   /// Makes a voice call to the specified user.
@@ -2311,8 +2311,8 @@ class Mirrorfly {
   /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
   static Future<void> makeVoiceCall(
-      {required String userJid, required Function(FlyResponse response) flyCallBack}) async {
-    return FlyChatFlutterPlatform.instance.makeVoiceCall(userJid, flyCallBack);
+      {required String toUserJid, required Function(FlyResponse response) flyCallBack}) async {
+    return FlyChatFlutterPlatform.instance.makeVoiceCall(toUserJid, flyCallBack);
   }
 
   /// Initiates a group voice call using Mirrorfly.
@@ -2332,9 +2332,9 @@ class Mirrorfly {
   ///
   static Future<void> makeGroupVoiceCall(
       {String groupJid = "",
-      List<String> jidList = const [],
+      List<String> toUserJidList = const [],
       required Function(FlyResponse response) flyCallBack}) async {
-    return FlyChatFlutterPlatform.instance.makeGroupVoiceCall(groupJid, jidList, flyCallBack);
+    return FlyChatFlutterPlatform.instance.makeGroupVoiceCall(groupJid, toUserJidList, flyCallBack);
   }
 
   /// Initiates a group video call using Mirrorfly.
@@ -2354,9 +2354,9 @@ class Mirrorfly {
   ///
   static Future<void> makeGroupVideoCall(
       {String groupJid = "",
-      List<String> jidList = const [],
+      List<String> toUserJidList = const [],
       required Function(FlyResponse response) flyCallBack}) async {
-    return FlyChatFlutterPlatform.instance.makeGroupVideoCall(groupJid, jidList, flyCallBack);
+    return FlyChatFlutterPlatform.instance.makeGroupVideoCall(groupJid, toUserJidList, flyCallBack);
   }
 
   /// Retrieves a list of users in the current call.
