@@ -302,9 +302,6 @@ class FlyChatMethods {
             val isForceRegister: Boolean = call.argument("isForceRegister") ?: true
             LogMessage.d("isForceRegister", isForceRegister.toString())
             if (userIdentifier != null) {
-                //LogMessage.d(TAG, userIdentifier.toString())
-
-//                try {
                 FlyCore.registerUser(
                     userIdentifier,
                     token, isForceRegister
@@ -312,10 +309,6 @@ class FlyChatMethods {
                     if (isSuccess) {
 
                         val response = JSONObject(data).toString()
-//                            val datum = data["data"] as JSONObject
-//                            val username: String = datum.getString(com.mirrorflysdk.flycommons.Constants.USERNAME)
-//                            CallManager.setCurrentUserId(FlyUtils.getJid(username))
-                        //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                         LogMessage.d("FlyCore.registerUser", data.toJsonString())
                         if (token.isNotEmpty()) {
                             PushNotificationManager.updateFcmToken(
@@ -343,7 +336,6 @@ class FlyChatMethods {
                         ChatManager.setAvailableFeaturesCallback(instance)
                         CallManager.setMissedCallListener(instance)*/
                         SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
-                        ChatManager.connect()
                         ChatManager.setConnectionListener(object : ChatConnectionListener {
                             override fun onConnected() {
                                 LogMessage.d(tag, "onConnected")
@@ -381,17 +373,7 @@ class FlyChatMethods {
                         }
                     }
                 }
-                /*} catch (e: Exception) {
-
-                    LogMessage.d("Register Exception", e.toString())
-
-//                    result.error("404", e.message.toString() , null)
-                    result.error("404", e.message, e)
-                }*/
-
             } else {
-                //LogMessage.d("MIRROR_FLY", "user identifier is null")
-                //LogMessage.d("MIRROR_FLY", call.arguments.toString())
                 result.error("404", "User Identifier empty", "")
             }
         }
