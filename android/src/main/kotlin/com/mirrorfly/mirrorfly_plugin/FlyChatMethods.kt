@@ -723,9 +723,15 @@ class FlyChatMethods {
     }
 
     fun updateChatMuteStatus(call: MethodCall, result: MethodChannel.Result) {
+        LogMessage.d("updateChatMuteStatus", call.arguments.toString())
         val jid = call.argument<String>("jid") ?: ""
         val mute_status = call.argument<Boolean>("mute_status") ?: false
-        FlyCore.updateChatMuteStatus(jid, mute_status)
+        if (GroupManager.isValidGroupJid(jid)) {
+            GroupManager.updateGroupMuteStatus(jid, mute_status)
+        } else {
+            FlyCore.updateChatMuteStatus(jid, mute_status)
+        }
+        LogMessage.d("updateChatMuteStatus", "isMuted" + ChatManager.isMuted(jid))
     }
 
     fun sendTypingStatus(call: MethodCall, result: MethodChannel.Result) {
@@ -2925,7 +2931,7 @@ class FlyChatMethods {
     }
 
     fun exportChatConversationToEmail(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String?>("jid") ?: ""
+//        val jid = call.argument<String?>("jid") ?: ""
 //        FlyCore.exportChatConversationToEmail(jid, emptyList())
         prepareChatConversationToExport(call, result)
     }
