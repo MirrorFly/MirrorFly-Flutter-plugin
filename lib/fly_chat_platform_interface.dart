@@ -91,7 +91,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<void> enableDisableHideLastSeen(bool enable, Function(FlyResponse response)? callback) {
+  Future<bool?> enableDisableHideLastSeen(bool enable) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<void> setLastSeenVisibility(bool enable, Function(FlyResponse response)? callback) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -259,7 +263,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<void> updateArchiveUnArchiveChat(String jid, bool isArchived, Function(FlyResponse response)? callback) {
+  Future<bool?> updateArchiveUnArchiveChat(String jid, bool isArchived) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<void> setChatArchived(String jid, bool isArchived, Function(FlyResponse response)? callback) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -740,11 +748,20 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<void> getGroupMessageDeliveredToList(String messageId, String jid, Function(FlyResponse response)? callback) {
+  Future<String> getGroupMessageDeliveredToList(String messageId, String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<void> getGroupMessageReadByList(String messageId, String jid, Function(FlyResponse response)? callback) {
+  Future<void> getGroupMessageDeliveredRecipients(
+      String messageId, String jid, Function(FlyResponse response)? callback) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<String> getGroupMessageReadByList(String messageId, String jid) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<void> getGroupMessageSeenRecipients(String messageId, String jid, Function(FlyResponse response)? callback) {
     throw UnimplementedError('has not been implemented.');
   }
 

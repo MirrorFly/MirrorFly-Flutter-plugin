@@ -8,6 +8,7 @@ import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/internal_models/audio_devices_model.dart';
 import 'package:mirrorfly_plugin/internal_models/available_features_model.dart';
 import 'package:mirrorfly_plugin/internal_models/call_logs_model.dart';
+import 'package:mirrorfly_plugin/internal_models/chat_message_status_detail.dart';
 import 'package:mirrorfly_plugin/internal_models/chat_messages_model.dart';
 import 'package:mirrorfly_plugin/internal_models/export_chat_model.dart';
 import 'package:mirrorfly_plugin/internal_models/get_user_profile_model.dart';
@@ -608,7 +609,25 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> enableDisableHideLastSeen(bool enable, Function(FlyResponse response)? callback) async {
+  Future<bool?> enableDisableHideLastSeen(bool enable) async {
+    bool? res;
+    try {
+      await mirrorFlyMethodChannel.invokeMethod<bool>('enableDisableHideLastSeen', {"enable": enable});
+      // callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(e.code, e.message, e.details)));
+      rethrow;
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> setLastSeenVisibility(bool enable, Function(FlyResponse response)? callback) async {
     // bool? res;
     try {
       await mirrorFlyMethodChannel.invokeMethod<bool>('enableDisableHideLastSeen', {"enable": enable});
@@ -1245,7 +1264,26 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> updateArchiveUnArchiveChat(String jid, bool isArchived, Function(FlyResponse response)? callback) async {
+  Future<bool?> updateArchiveUnArchiveChat(String jid, bool isArchived) async {
+    bool? res;
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod<bool>('updateArchiveUnArchiveChat', {"jid": jid, "isArchived": isArchived});
+      // callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(e.code, e.message, e.details)));
+      rethrow;
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> setChatArchived(String jid, bool isArchived, Function(FlyResponse response)? callback) async {
     // bool? res;
     try {
       await mirrorFlyMethodChannel
@@ -2903,7 +2941,26 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }*/
 
   @override
-  Future<void> getGroupMessageDeliveredToList(
+  Future<String> getGroupMessageDeliveredToList(String messageId, String jid) async {
+    String? response;
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod('getGroupMessageDeliveredToList', {"messageId": messageId, "jid": jid});
+      // callback?.call(FlyResponse(true, convertMessageDeliveredStatusToJson(response), FlyConstants.empty));
+      return convertMessageDeliveredStatusToJson(response);
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(e.code, e.message, e.details)));
+      rethrow;
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> getGroupMessageDeliveredRecipients(
       String messageId, String jid, Function(FlyResponse response)? callback) async {
     String? response;
     try {
@@ -2923,7 +2980,27 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> getGroupMessageReadByList(String messageId, String jid, Function(FlyResponse response)? callback) async {
+  Future<String> getGroupMessageReadByList(String messageId, String jid) async {
+    String? response;
+    try {
+      response =
+          await mirrorFlyMethodChannel.invokeMethod('getGroupMessageReadByList', {"messageId": messageId, "jid": jid});
+      // callback?.call(FlyResponse(true, convertMessageDeliveredStatusToJson(response), FlyConstants.empty));
+      return convertMessageDeliveredStatusToJson(response);
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(e.code, e.message, e.details)));
+      rethrow;
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> getGroupMessageSeenRecipients(
+      String messageId, String jid, Function(FlyResponse response)? callback) async {
     String? response;
     try {
       response =
@@ -2949,7 +3026,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       messageInfoResponse =
           await mirrorFlyMethodChannel.invokeMethod('getMessageStatusOfASingleChatMessage', {"messageID": messageID});
       LogMessage.d("Message Info Response ", " $messageInfoResponse");
-      return messageInfoResponse;
+      return convertChatMessageStatusDetailToJson(messageInfoResponse);
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;

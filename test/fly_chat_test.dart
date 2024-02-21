@@ -254,8 +254,14 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> enableDisableHideLastSeen(bool enable, Function(FlyResponse response)? callback) {
+  Future<bool?> enableDisableHideLastSeen(bool enable) {
     //  implement enableDisableHideLastSeen
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setLastSeenVisibility(bool enable, Function(FlyResponse response)? callback) {
+    //  implement setLastSeenVisibility
     throw UnimplementedError();
   }
 
@@ -381,14 +387,27 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> getGroupMessageDeliveredToList(String messageId, String jid, Function(FlyResponse response)? callback) {
+  Future<String> getGroupMessageDeliveredToList(String messageId, String jid) {
     //  implement getGroupMessageDeliveredToList
     throw UnimplementedError();
   }
 
   @override
-  Future<void> getGroupMessageReadByList(String messageId, String jid, Function(FlyResponse response)? callback) {
+  Future<void> getGroupMessageDeliveredRecipients(
+      String messageId, String jid, Function(FlyResponse response)? callback) {
+    //  implement getGroupMessageDeliveredRecipients
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getGroupMessageReadByList(String messageId, String jid) {
     //  implement getGroupMessageReadByList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getGroupMessageSeenRecipients(String messageId, String jid, Function(FlyResponse response)? callback) {
+    //  implement getGroupMessageSeenRecipients
     throw UnimplementedError();
   }
 
@@ -1456,8 +1475,14 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   Stream get unblockedThisUser => throw UnimplementedError();
 
   @override
-  Future<void> updateArchiveUnArchiveChat(String jid, bool isArchived, Function(FlyResponse response)? callback) {
+  Future<bool?> updateArchiveUnArchiveChat(String jid, bool isArchived) {
     //  implement updateArchiveUnArchiveChat
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setChatArchived(String jid, bool isArchived, Function(FlyResponse response)? callback) {
+    //  implement setChatArchived
     throw UnimplementedError();
   }
 

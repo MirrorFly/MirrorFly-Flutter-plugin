@@ -8,7 +8,8 @@ import 'fly_chat_platform_interface.dart';
 class Mirrorfly {
   Mirrorfly._();
 
-  @Deprecated('')
+  @Deprecated(
+      'This method is deprecated. Please refrain from using it, as the functionality has been internally managed within the plugin')
   static var isTrialLicence = true;
   static var isChatHistoryEnabled = false;
 
@@ -281,10 +282,7 @@ class Mirrorfly {
 
   @Deprecated('Instead of use Mirrorfly.setLastSeenVisibility()')
   static Future<bool?> enableDisableHideLastSeen(bool enable) async {
-    await FlyChatFlutterPlatform.instance.enableDisableHideLastSeen(enable, (res) {
-      return res;
-    });
-    return null;
+    return FlyChatFlutterPlatform.instance.enableDisableHideLastSeen(enable);
   }
 
   /// Sets the visibility of the last seen status.
@@ -307,7 +305,7 @@ class Mirrorfly {
   /// ```
   static Future<void> setLastSeenVisibility(
       {required bool enable, required Function(FlyResponse response) flyCallBack}) {
-    return FlyChatFlutterPlatform.instance.enableDisableHideLastSeen(enable, flyCallBack);
+    return FlyChatFlutterPlatform.instance.setLastSeenVisibility(enable, flyCallBack);
   }
 
   /// Checks whether the busy status feature is enabled in the Mirrorfly chat platform.
@@ -756,10 +754,7 @@ class Mirrorfly {
 
   @Deprecated('Instead of use Mirrorfly.setChatArchived()')
   static Future<bool?> updateArchiveUnArchiveChat(String jid, bool isArchived) async {
-    await FlyChatFlutterPlatform.instance.updateArchiveUnArchiveChat(jid, isArchived, (res) {
-      return res;
-    });
-    return null;
+    return FlyChatFlutterPlatform.instance.updateArchiveUnArchiveChat(jid, isArchived);
   }
 
   /// Provides functionality to set the archived status of a chat.
@@ -780,7 +775,7 @@ class Mirrorfly {
   /// ```
   static Future<void> setChatArchived(
       {required String jid, required bool isArchived, required Function(FlyResponse response) flyCallBack}) {
-    return FlyChatFlutterPlatform.instance.updateArchiveUnArchiveChat(jid, isArchived, flyCallBack);
+    return FlyChatFlutterPlatform.instance.setChatArchived(jid, isArchived, flyCallBack);
   }
 
   /*static Future<int?> getGroupMessageStatusCount({required String messageId}) {
@@ -1805,28 +1800,43 @@ class Mirrorfly {
   }*/
 
   @Deprecated('Instead of use Mirrorfly.getGroupMessageDeliveredRecipients()')
-  static Future<dynamic> getGroupMessageDeliveredToList(String messageId, String jid) async {
-    await FlyChatFlutterPlatform.instance.getGroupMessageDeliveredToList(messageId, jid, (res) {
-      return res.data;
-    });
+  static Future<String> getGroupMessageDeliveredToList(String messageId, String jid) async {
+    return FlyChatFlutterPlatform.instance.getGroupMessageDeliveredToList(messageId, jid);
   }
 
+  /// Get Delivered Recipients of a Group message to the Mirrorfly chat platform.
+  ///
+  /// The [messageId] parameter specifies the unique identifier of the message
+  /// for which the message you have to get Delivered recipients
+  ///
+  /// Returns:
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  /// [FlyResponse.data] is Json Encoded value of the message Status Details ([MessageStatusDetail])
+  ///
   static Future<void> getGroupMessageDeliveredRecipients(
       {required String messageId, required String groupJid, required Function(FlyResponse response) flyCallBack}) {
-    return FlyChatFlutterPlatform.instance.getGroupMessageDeliveredToList(messageId, groupJid, flyCallBack);
+    return FlyChatFlutterPlatform.instance.getGroupMessageDeliveredRecipients(messageId, groupJid, flyCallBack);
   }
 
   @Deprecated('Instead of use Mirrorfly.getGroupMessageSeenRecipients()')
   static Future<String> getGroupMessageReadByList(String messageId, String jid) async {
-    await FlyChatFlutterPlatform.instance.getGroupMessageReadByList(messageId, jid, (res) {
-      return res.data;
-    });
-    return "";
+    return FlyChatFlutterPlatform.instance.getGroupMessageReadByList(messageId, jid);
   }
 
+  /// Get Seen Recipients of a Group message to the Mirrorfly chat platform.
+  ///
+  /// The [messageId] parameter specifies the unique identifier of the message
+  /// for which the message you have to get seen recipients
+  ///
+  /// Returns:
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  /// [FlyResponse.data] is Json Encoded value of the message Status Details ([MessageStatusDetail])
+  ///
   static Future<void> getGroupMessageSeenRecipients(
       {required String messageId, required String groupJid, required Function(FlyResponse response) flyCallBack}) {
-    return FlyChatFlutterPlatform.instance.getGroupMessageReadByList(messageId, groupJid, flyCallBack);
+    return FlyChatFlutterPlatform.instance.getGroupMessageSeenRecipients(messageId, groupJid, flyCallBack);
   }
 
   @Deprecated('Instead of use Mirrorfly.getMessageStatusOf()')
@@ -1834,6 +1844,14 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getMessageStatusOfASingleChatMessage(messageID);
   }
 
+  /// Get Status of a message to the Mirrorfly chat platform.
+  ///
+  /// The [messageId] parameter specifies the unique identifier of the message
+  /// for which the message you have to get
+  ///
+  /// Returns a [String] that completes with a Json Encoded value of the message Status Details ([ChatMessageStatusDetail])
+  ///
+  /// Throws an [PlatformException] if any error occurred.
   static Future<String> getMessageStatusOf({required String messageId}) {
     return FlyChatFlutterPlatform.instance.getMessageStatusOfASingleChatMessage(messageId);
   }
