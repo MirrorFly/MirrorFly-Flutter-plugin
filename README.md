@@ -67,17 +67,19 @@ Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned 
 - Check and Add the following code at end of your `ios/Podfile`
 
 ```dart
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    flutter_additional_ios_build_settings(target)
-    target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.1'
-      config.build_settings['ENABLE_BITCODE'] = 'NO'
-      config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
-      config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
-      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"      
-     end
-  end
+post_install do |
+installer|installer.pods_project.targets.each do |
+target|flutter_additional_ios_build_settings
+(
+target)
+target.build_configurations.each do |config|
+config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.1'
+config.build_settings['ENABLE_BITCODE'] = 'NO'
+config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
+config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+end
+end
 end
 ```
 
@@ -85,7 +87,28 @@ end
   using `Xcode`.
 
 ```dart
-Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the top left corner -> Search for `App groups` and add the `App group capability`
+Goto Project
+-
+>
+Target ->
+Signing & Capabilities ->
+Click `+
+Capability`
+
+at the
+
+top left
+corner ->
+Search for `
+
+App groups
+`
+
+and add
+the `
+
+App group
+capability`
 ```
 
 > **Note**: The App Group Must be same as `iOSContainerId` given during the SDK
@@ -137,14 +160,14 @@ before `runApp()`.
   Mirrorfly.initializeSDK(
       licenseKey: 'your license key',
       iOSContainerID: 'your app group id',
-      flyCallback: (FlyResponse response){
-          if(response.isSuccess){
-            LogMessage.d("onSuccess", response.message);
-          }else{
-            LogMessage.d("onFailure", response.exception?.message.toString());
-          }
-          runApp(const MyApp());
-    });
+      flyCallback: (FlyResponse response) {
+        if (response.isSuccess) {
+          LogMessage.d("onSuccess", response.message);
+        } else {
+          LogMessage.d("onFailure", response.exception?.message.toString());
+        }
+        runApp(const MyApp());
+      });
 }
 ```
 
@@ -157,32 +180,37 @@ Use the below method to register a user in sandbox Live mode.
 
 > **Note**: While registration, the below `registerUser` method will accept the `FCM_TOKEN` as an
 > optional param and pass it
-> across. `The connection will be established automatically upon completion of registration and not required for seperate login`
+>
+across. `The connection will be established automatically upon completion of registration and not required for seperate login`
 > .
 
 ```dart
-Mirrorfly.registerUser(userIdentifier,flyCallback: (FlyResponse response) {
-    // you will get the user registration response
-    if (response.isSuccess && response.hasData) {
-        var userData = registerModelFromJson(response.data); //message
+Mirrorfly.registerUser
+(
+userIdentifier,flyCallback: (FlyResponse response) {
+// you will get the user registration response
+if (response.isSuccess && response.hasData) {
+var userData = registerModelFromJson(response.data); //message
 
-    } else {
-      // Register user failed print throwable to find the exception details.
-        if (response.exception?.code == "403") {
-          //admin blocked the user
-        } else if (response.exception?.code  == "405") {
-          //maximum device limit reached
-        }
-    }
+} else {
+// Register user failed print throwable to find the exception details.
+if (response.exception?.code == "403") {
+//admin blocked the user
+} else if (response.exception?.code == "405") {
+//maximum device limit reached
+}
+}
 });
 ```
 
 > **Note**: After registering, make sure to update the profile of the registered
-> user [Update Profile](https://www.mirrorfly.com/docs/chat/flutter-plugin/profile-module/#update-user-profile)
+>
+user [Update Profile](https://www.mirrorfly.com/docs/chat/flutter-plugin/profile-module/#update-user-profile)
 > .
 
 > **Note**: You need to re-login when
-> the [onLoggedOut](https://www.mirrorfly.com/docs/chat/flutter-plugin/callback-listeners/#logged-out)
+>
+the [onLoggedOut](https://www.mirrorfly.com/docs/chat/flutter-plugin/callback-listeners/#logged-out)
 > event is triggered.
 
 > **Note**: It is recommended to disallow users to backup an app if it contains sensitive data.
@@ -190,7 +218,8 @@ Mirrorfly.registerUser(userIdentifier,flyCallback: (FlyResponse response) {
 > modify/read the content of an app even on a non-rooted device.
 
 > **Caution**: If FORCE_REGISTER is false and it reached the maximum no of multi-sessions then
-> registration will not succeed it will throw a 405 exception, Either FORCE_REGISTER should be true or
+> registration will not succeed it will throw a 405 exception, Either FORCE_REGISTER should be true
+> or
 > one of the existing session need to be logged out to continue registration.
 
 ## Send a One-to-One Message
@@ -202,28 +231,39 @@ Use the below method to send a text message to other user,
 ## To get JID of User
 
 ```dart
-var userJid = await Mirrorfly.getJid(username: username);
+
+var userJid = await
+Mirrorfly.getJid
+(
+username
+:
+username
+);
 ```
 
 ## To get Group JID
 
 ```dart
-var groupJid = await Mirrorfly.getGroupJid(groupId: groupID);
+
+var groupJid = await
+Mirrorfly.getGroupJid
+(
+groupId
+:
+groupID
+);
 ```
 
 ```dart
-Mirrorfly.sendMessage(messageParams: MessageParams.Text(toJid: "",
-    replyMessageId: "",textMessageParams: TextMessageParams(messageText: "Hi")), flyCallback: (response){
-    if(response.isSuccess){
-        var chatMessage = sendMessageModelFromJson(response.data);
-        print('Message sent successfully');
-     } else {
-       print('Failed to send message: ${response.errorMessage}');
-     }
-});
-Mirrorfly.sendTextMessage(message, jid).then((value) {
-  // you will get the message sent success response
-  var chatMessage = sendMessageModelFromJson(value);
+Mirrorfly.sendMessage
+(
+messageParams: MessageParams.text(toJid: "",
+replyMessageId: "",textMessageParams: TextMessageParams(messageText: "Hi")), flyCallback: (response){
+if(response.isSuccess){
+print('Message sent successfully');
+} else {
+print('Failed to send message: ${response.errorMessage}');
+}
 });
 ```
 
@@ -234,9 +274,11 @@ details please visit
 this [callback listeners](https://www.mirrorfly.com/docs/chat/flutter_plugin/callback-listeners)
 
 ```dart
-Mirrorfly.onMessageReceived.listen(result){
-  // you will get the new messages
-  var chatMessage = sendMessageModelFromJson(result)
+Mirrorfly.onMessageReceived.listen
+(
+result){
+// you will get the new messages
+var chatMessage = sendMessageModelFromJson(result)
 }
 ```
 
@@ -250,16 +292,20 @@ Mirrorfly.onMessageReceived.listen(result){
 ## To make a Video Call
 
 ```dart
-Mirrorfly.makeVideoCall(toUserJid: userJID).then((isSuccess) {
-  
+Mirrorfly.makeVideoCall
+(
+toUserJid: userJID).then((isSuccess) {
+
 });
 ```
 
 ## To make a Voice Call
 
 ```dart
-Mirrorfly.makeVoiceCall(toUserJid: userJID).then((isSuccess) {
-  
+Mirrorfly.makeVoiceCall
+(
+toUserJid: userJID).then((isSuccess) {
+
 });
 ```
 
@@ -269,16 +315,20 @@ Mirrorfly.makeVoiceCall(toUserJid: userJID).then((isSuccess) {
 ## To make a Group Voice Call
 
 ```dart
-Mirrorfly.makeGroupVoiceCall(groupJid: GROUP_ID, toUserJidList: USER_LIST).then((isSuccess) {
-                
+Mirrorfly.makeGroupVoiceCall
+(
+groupJid: GROUP_ID, toUserJidList: USER_LIST).then((isSuccess) {
+
 });
 ```
 
 ## To make a Group Video Call
 
 ```dart
-Mirrorfly.makeGroupVideoCall(groupJid: GROUP_ID, toUserJidList: USER_LIST).then((isSuccess) {
-                
+Mirrorfly.makeGroupVideoCall
+(
+groupJid: GROUP_ID, toUserJidList: USER_LIST).then((isSuccess) {
+
 });
 ```
 
