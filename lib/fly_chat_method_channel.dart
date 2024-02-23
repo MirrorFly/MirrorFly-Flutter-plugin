@@ -3259,15 +3259,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Future<void> createGroup(String groupName, List<String> userJidList, String imageFilePath,
       Function(FlyResponse response)? callback) async {
-    bool? response;
+    String? response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>('createGroup', {
+      response = await mirrorFlyMethodChannel.invokeMethod('createGroup', {
         "group_name": groupName,
         "members": userJidList,
         "file": imageFilePath,
       });
       LogMessage.d("create group Response ", " $response");
-      callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      callback?.call(FlyResponse(true, response ?? FlyConstants.empty, FlyConstants.empty));
       // return response;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");

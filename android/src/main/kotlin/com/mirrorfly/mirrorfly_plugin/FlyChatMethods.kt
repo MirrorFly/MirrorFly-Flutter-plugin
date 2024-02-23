@@ -1317,7 +1317,7 @@ class FlyChatMethods {
     fun getMessagesUsingIds(call: MethodCall, result: MethodChannel.Result) {
         val messageIDList = call.argument<List<String>>("MessageIds") ?: arrayListOf()
         val messages = FlyMessenger.getMessagesUsingIds(messageIDList)
-        result.success(messages)
+        result.success(messages.toJsonString())
     }
 
     fun reportUserOrMessages(call: MethodCall, result: MethodChannel.Result) {
@@ -2859,8 +2859,8 @@ class FlyChatMethods {
                     //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("GroupManager.createGroup", hashmap.tojsonString())
                     val groupData = hashmap["data"] as CreateGroupModel
-//                    result.success(groupData.toJsonString())
-                    result.success(true)
+                    result.success(groupData.toJsonString())
+//                    result.success(true)
                 } else {
                     result.error("500", "Unable to Create Group", throwable.toString())
                 }
