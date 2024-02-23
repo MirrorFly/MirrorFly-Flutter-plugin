@@ -211,5 +211,6 @@ class FlyMethodConstants {
                 "loginWebChatViaQRCode": flyChatMethods.loginWebChatViaQRCode,
                 "webLoginDetailsCleared": flyChatMethods.webLoginDetailsCleared,
                 "sendContactUsInfo": flyChatMethods.sendContactUsInfo,
+                "getJidFromPhoneNumber": flyChatMethods.getJidFromPhoneNumber,
             ] }()
 }

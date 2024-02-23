@@ -15,6 +15,7 @@ import Contacts
 import ContactsUI
 import MirrorFlySDK
 import UIKit
+import libPhoneNumber_iOS
 
 #if DEBUG
 let ISEXPORT = false
@@ -348,6 +349,36 @@ let ISEXPORT = true
             result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.JID_FETCH_FAILED,details: jidError.localizedDescription))
         }
     }
+    
+    func getJidFromPhoneNumber(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let mobileNumber = args["mobileNumber"] as? String ?? ""
+        let countryCode = args["countryCode"] as? String ?? ""
+        
+        let phoneNumberUtil = NBPhoneNumberUtil()
+        
+        if mobileNumber.starts(with: "*") {
+            NSLog("Invalid PhoneNumber: \(mobileNumber)")
+            result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.JID_FETCH_FAILED,details: nil))
+        }
+        
+        do {
+            let phoneNumber = try phoneNumberUtil.parse(mobileNumber.replacingOccurrences(of: "^0+", with: ""), defaultRegion: countryCode)
+            
+            if let unformattedPhoneNumber = try? phoneNumberUtil.format(phoneNumber, numberFormat: .E164).replacingOccurrences(of: "+", with: "") {
+                do{
+                    try result(FlyUtils.getJid(from: unformattedPhoneNumber))
+                }catch let jidError{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.JID_FETCH_FAILED,details: nil))
+                }
+            }
+        } catch let error as NSError {
+            result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.JID_FETCH_FAILED,details: error))
+        
+        }
+        
+    }
+
     
     func sendTextMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -3245,7 +3276,7 @@ let ISEXPORT = true
         let message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: messageId)
         
         let messageJson = message?.toJson()
-        print("getMessageOfId==**==\(String(describing: messageJson))")
+        print("getMessageOfId==**==\(messageId) --> \(String(describing: messageJson))")
         result(messageJson)
         
     }
