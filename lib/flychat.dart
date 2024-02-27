@@ -1327,10 +1327,14 @@ class Mirrorfly {
 
   static Stream<dynamic> get onWebChatPasswordChanged => FlyChatFlutterPlatform.instance.onWebChatPasswordChanged;
 
+  @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get setTypingStatus => FlyChatFlutterPlatform.instance.setTypingStatus;
-
+  
+  static Stream<dynamic> get typingStatus => FlyChatFlutterPlatform.instance.setTypingStatus;
+  
+  @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get onChatTypingStatus => FlyChatFlutterPlatform.instance.onChatTypingStatus;
-
+  @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get onGroupTypingStatus => FlyChatFlutterPlatform.instance.onGroupTypingStatus;
 
   static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;

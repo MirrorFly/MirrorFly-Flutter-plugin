@@ -1946,7 +1946,7 @@ class FlyChatMethods {
             result.error("404", "User JID Required", null)
         } else {
             val userJID: String? = call.argument("JID")
-            if (userJID != null) {
+            if (userJID != null && userJID.isNotEmpty()) {
                 val messages: List<ChatMessage> = FlyMessenger.getMessagesOfJid(userJID)
                 //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyMessenger.getMessagesOfJid", messages.tojsonString())
