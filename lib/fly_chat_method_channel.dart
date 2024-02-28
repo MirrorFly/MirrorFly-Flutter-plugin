@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/internal_models/audio_devices_model.dart';
 import 'package:mirrorfly_plugin/internal_models/available_features_model.dart';
@@ -34,8 +35,12 @@ class FlyErrorMessage {
 }
 
 /// An implementation of UikitFlutterPlatform that uses method channels.
-class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
+class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   /// The method channel used to interact with the native platform.
+  ///
+
+  static MirrorFlyEventHandler? eventListenerClassFile;
+
   @visibleForTesting
   final mirrorFlyMethodChannel = const MethodChannel('contus.mirrorfly/flyChat');
   @visibleForTesting
@@ -291,8 +296,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   ///Using [addStreamsAllToStreamController] to add all streams to stream controller
   ///benefit to use stream controller we can call multiple listeners to listen.
   addStreamsAllToStreamController() {
+
     messageOnReceivedChannel.receiveBroadcastStream().listen((event) {
-      _messageOnReceivedStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
+      debugPrint("messageOnReceivedChannel receiveBroadcastStream");
+      var message = convertChatMessageJsonFromString(event);
+      _messageOnReceivedStreamController.add(message);
+      // eventListenerClassFile?.onMessageReceivedEvent(message);
     });
     messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
       messageStatusUpdateStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
@@ -4258,5 +4267,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
+  }
+
+  @override
+  void setEventListener(MirrorFlyEventHandler mirrorFlyEventHandler) {
+    eventListenerClassFile = mirrorFlyEventHandler;
   }
 }

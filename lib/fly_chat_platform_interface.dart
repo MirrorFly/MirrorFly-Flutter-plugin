@@ -1,4 +1,5 @@
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -1112,6 +1113,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<bool?> syncCallLogs() {
     throw UnimplementedError('syncCallLogs has not been implemented.');
+  }
+
+  setEventListener(MirrorFlyEventHandler mirrorFlyEventHandler) {
+    throw UnimplementedError('setEventListener has not been implemented.');
   }
 
 /*Future<dynamic> changeCallType({required String switchType}) async {

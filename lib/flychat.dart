@@ -1,12 +1,15 @@
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 
+import 'event_handlers.dart';
 import 'fly_chat_platform_interface.dart';
 import 'model/callback.dart';
 import 'model/topic_metadata.dart';
 
 class Mirrorfly {
   Mirrorfly._();
+
+  MirrorFlyEventHandler? eventListenerClassFile;
 
   @Deprecated('')
   static var isTrialLicence = true;
@@ -1316,6 +1319,10 @@ class Mirrorfly {
   /// [syncCallLogs] Used to sync the Call logs from server to local DB.
   static Future<bool?> syncCallLogs() async {
     return FlyChatFlutterPlatform.instance.syncCallLogs();
+  }
+
+  static setEventListener(MirrorFlyEventHandler mirrorFlyEventHandler) {
+    return FlyChatFlutterPlatform.instance.setEventListener(mirrorFlyEventHandler);
   }
 
 /* /// [changeCallType] Used to Change the Call Type

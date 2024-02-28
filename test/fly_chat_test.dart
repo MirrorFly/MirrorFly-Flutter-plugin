@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
@@ -1665,6 +1666,12 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   @override
   Future<bool?> syncCallLogs() {
     //  implement syncCallLogs
+    throw UnimplementedError();
+  }
+
+  @override
+  setEventListener(MirrorFlyEventHandler mirrorFlyEventHandler) {
+    // implement setEventListener
     throw UnimplementedError();
   }
 
