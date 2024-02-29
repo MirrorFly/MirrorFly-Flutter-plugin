@@ -1177,7 +1177,7 @@ class Mirrorfly {
   ///
   /// Throws a [PlatformException] if an error occurs during the API call.
   static Future<void> getUserList(
-      {required int page,
+      {int page = 1,
       String search = "",
       int perPageResultSize = 20,
       required Function(FlyResponse response) flyCallback}) {
