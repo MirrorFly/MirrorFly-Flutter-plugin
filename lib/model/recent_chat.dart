@@ -8,6 +8,9 @@ RecentChat recentChatFromJson(String str) => RecentChat.fromJson(json.decode(str
 
 RecentChatData recentChatDataFromJson(String str) => RecentChatData.fromJson(json.decode(str));
 
+List<RecentChatData> recentChatDataListFromJson(String str) =>
+    List<RecentChatData>.from(json.decode(str).map((x) => RecentChatData.fromJson(x)));
+
 String recentChatToJson(RecentChat data) => json.encode(data.toJson());
 
 class RecentChat {
