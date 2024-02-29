@@ -288,23 +288,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   ///benefit to use stream controller we can call multiple listeners to listen.
   addStreamsAllToStreamController() {
     messageOnReceivedChannel.receiveBroadcastStream().listen((event) {
-      _messageOnReceivedStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
+      _messageOnReceivedStreamController.add(convertChatMessageJsonFromString(event));
     });
     messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
-      messageStatusUpdateStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
+      messageStatusUpdateStreamController.add(convertChatMessageJsonFromString(event));
     });
     mediaStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
-      mediaStatusUpdatedStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
+      mediaStatusUpdatedStreamController.add(convertChatMessageJsonFromString(event));
     });
     onGroupNotificationMessageChannel.receiveBroadcastStream().listen((event) {
-      onGroupNotificationMessageStreamController.addStream(Stream.value(convertChatMessageJsonFromString(event)));
+      onGroupNotificationMessageStreamController.add(convertChatMessageJsonFromString(event));
     });
     showOrUpdateOrCancelNotificationChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"];
       var chatMessage = convertChatMessageJsonFromString(data["chatMessage"]);
       var map = {"jid": jid, "chatMessage": chatMessage};
-      showOrUpdateOrCancelNotificationStreamController.addStream(Stream.value(json.encode(map)));
+      showOrUpdateOrCancelNotificationStreamController.add(json.encode(map));
     });
     uploadDownloadProgressChangedStreamController
         .addStream(uploadDownloadProgressChangedChannel.receiveBroadcastStream());
