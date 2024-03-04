@@ -50,9 +50,9 @@ public class OnConnectedStreamHandler: EventStreamHandler { }
 public class OnDisconnectedStreamHandler: EventStreamHandler { }
 public class OnConnectionNotAuthorizedStreamHandler: EventStreamHandler { }
 //public class ConnectionFailedStreamHandler: EventStreamHandler { }
-public class ConnectionSuccessStreamHandler: EventStreamHandler { }
+//public class ConnectionSuccessStreamHandler: EventStreamHandler { }
 public class OnWebChatPasswordChangedStreamHandler: EventStreamHandler { }
-public class OnFailureStreamHandler: EventStreamHandler { }
+//public class OnFailureStreamHandler: EventStreamHandler { }
 public class OnProgressChangedStreamHandler: EventStreamHandler { }
 public class OnSuccessStreamHandler: EventStreamHandler { }
 

@@ -9,7 +9,7 @@ import 'model/topic_metadata.dart';
 class Mirrorfly {
   Mirrorfly._();
 
-  MirrorFlyEventHandler? eventListenerClassFile;
+  MessageEventsListener? eventListenerClassFile;
 
   @Deprecated('')
   static var isTrialLicence = true;
@@ -582,9 +582,9 @@ class Mirrorfly {
 
   static Stream<dynamic> get onConnectionFailed => FlyChatFlutterPlatform.instance.onConnectionFailed;
 
-  static Stream<dynamic> get connectionFailed => FlyChatFlutterPlatform.instance.connectionFailed;
+  // static Stream<dynamic> get connectionFailed => FlyChatFlutterPlatform.instance.connectionFailed;
 
-  static Stream<dynamic> get connectionSuccess => FlyChatFlutterPlatform.instance.connectionSuccess;
+  // static Stream<dynamic> get connectionSuccess => FlyChatFlutterPlatform.instance.connectionSuccess;
 
   static Stream<dynamic> get onWebChatPasswordChanged => FlyChatFlutterPlatform.instance.onWebChatPasswordChanged;
 
@@ -594,11 +594,11 @@ class Mirrorfly {
 
   static Stream<dynamic> get onGroupTypingStatus => FlyChatFlutterPlatform.instance.onGroupTypingStatus;
 
-  static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
+  // static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
-  static Stream<dynamic> get onProgressChanged => FlyChatFlutterPlatform.instance.onProgressChanged;
-
-  static Stream<dynamic> get onSuccess => FlyChatFlutterPlatform.instance.onSuccess;
+  // static Stream<dynamic> get onProgressChanged => FlyChatFlutterPlatform.instance.onProgressChanged;
+  //
+  // static Stream<dynamic> get onSuccess => FlyChatFlutterPlatform.instance.onSuccess;
 
   // static Stream<dynamic> get onCallReceiving =>
   //     FlyChatFlutterPlatform.instance.onCallReceiving;
@@ -1321,8 +1321,11 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.syncCallLogs();
   }
 
-  static setEventListener(MirrorFlyEventHandler mirrorFlyEventHandler) {
-    return FlyChatFlutterPlatform.instance.setEventListener(mirrorFlyEventHandler);
+  static setMessageEventListener(MessageEventsListener messageEventsListener) {
+    return FlyChatFlutterPlatform.instance.setMessageEventListener(messageEventsListener);
+  }
+  static setCallsEventListener(CallEventsListener callEventsListener) {
+    return FlyChatFlutterPlatform.instance.setCallEventListener(callEventsListener);
   }
 
 /* /// [changeCallType] Used to Change the Call Type

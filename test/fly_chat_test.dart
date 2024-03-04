@@ -81,13 +81,13 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
     throw UnimplementedError();
   }
 
-  @override
+  // @override
   // connectionFailed
-  Stream get connectionFailed => throw UnimplementedError();
+  // Stream get connectionFailed => throw UnimplementedError();
 
-  @override
-  // connectionSuccess
-  Stream get connectionSuccess => throw UnimplementedError();
+  // @override
+  // // connectionSuccess
+  // Stream get connectionSuccess => throw UnimplementedError();
 
   /*@override
   Future contactSyncState() {
@@ -738,9 +738,9 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   // onDisconnected
   Stream get onDisconnected => throw UnimplementedError();
 
-  @override
+  // @override
   // onFailure
-  Stream get onFailure => throw UnimplementedError();
+  // Stream get onFailure => throw UnimplementedError();
 
   @override
   // onFetchingGroupListCompleted
@@ -818,13 +818,13 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   // onNewMemberAddedToGroup
   Stream get onNewMemberAddedToGroup => throw UnimplementedError();
 
-  @override
-  // onProgressChanged
-  Stream get onProgressChanged => throw UnimplementedError();
-
-  @override
-  // onSuccess
-  Stream get onSuccess => throw UnimplementedError();
+  // @override
+  // // onProgressChanged
+  // Stream get onProgressChanged => throw UnimplementedError();
+  //
+  // @override
+  // // onSuccess
+  // Stream get onSuccess => throw UnimplementedError();
 
   @override
   // onWebChatPasswordChanged
@@ -1670,8 +1670,14 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  setEventListener(MirrorFlyEventHandler mirrorFlyEventHandler) {
-    // implement setEventListener
+  setMessageEventListener(MessageEventsListener messageEventsListener) {
+    // implement setMessageEventListener
+    throw UnimplementedError();
+  }
+
+  @override
+  setCallEventListener(CallEventsListener callEventsListener) {
+    // implement setCallEventListener
     throw UnimplementedError();
   }
 
