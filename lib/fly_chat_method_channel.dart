@@ -374,8 +374,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
     onChatTypingStatusStreamController.addStream(onChatTypingStatusChannel.receiveBroadcastStream());
     onGroupTypingStatusStreamController.addStream(onGroupTypingStatusChannel.receiveBroadcastStream());
     // onFailureStreamController.addStream(onFailureChannel.receiveBroadcastStream());
-    onProgressChangedStreamController.addStream(onProgressChangedChannel.receiveBroadcastStream());
-    onSuccessStreamController.addStream(onSuccessChannel.receiveBroadcastStream());
+    // onProgressChangedStreamController.addStream(onProgressChangedChannel.receiveBroadcastStream());
+    // onSuccessStreamController.addStream(onSuccessChannel.receiveBroadcastStream());
     // onCallReceivingStreamController.addStream(onCallReceivingChannel.receiveBroadcastStream());
     onLocalVideoTrackAddedStreamController.addStream(onLocalVideoTrackAddedChannel.receiveBroadcastStream());
     onRemoteVideoTrackAddedStreamController.addStream(onRemoteVideoTrackAddedChannel.receiveBroadcastStream());
@@ -1988,11 +1988,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   // @override
   // Stream<dynamic> get onFailure => onFailureStreamController.stream;
 
-  @override
-  Stream<dynamic> get onProgressChanged => onProgressChangedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onSuccess => onSuccessStreamController.stream;
+  // @override
+  // Stream<dynamic> get onProgressChanged => onProgressChangedStreamController.stream;
+  //
+  // @override
+  // Stream<dynamic> get onSuccess => onSuccessStreamController.stream;
 
   // @override
   // Stream<dynamic> get onCallReceiving =>
