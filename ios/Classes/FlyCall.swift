@@ -429,9 +429,13 @@ import PushKit
         let deviceTokenString = pushCredentials.token.reduce("") { $0 + String(format: "%02X", $1) }
         NSLog("\(Constants.callTag) #token pushRegistry VT => \(deviceTokenString)")
         NSLog("\(Constants.callTag) device Token \(deviceTokenString)")
-        VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
         Utility.saveInPreference(key: Constants.voipToken, value: deviceTokenString)
-        VOIPManager.sharedInstance.updateDeviceToken()
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+            VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
+            VOIPManager.sharedInstance.updateDeviceToken()
+        }else{
+            NSLog("\(Constants.callTag) Update VOIP Token is skipped due to user is not logged in")
+        }
     }
 
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {

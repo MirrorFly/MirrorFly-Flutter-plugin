@@ -257,6 +257,9 @@ let ISEXPORT = true
                     NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
                 }
                 
+                VOIPManager.sharedInstance.saveVOIPToken(token: Utility.getStringFromPreference(key: Constants.voipToken))
+                VOIPManager.sharedInstance.updateDeviceToken()
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
                     
                     let resp = registerResponse.dictToJson()
@@ -983,7 +986,7 @@ let ISEXPORT = true
     func getProfileStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let profileStatus = ChatManager.getAllStatus()
         if(profileStatus.isEmpty){
-            result([])
+            result("[]")
         }
         
         let profileStatusJson = profileStatus.toJson()
