@@ -2883,7 +2883,15 @@ let ISEXPORT = true
                     
                     let groupProfileDataJson = groupProfileData?.toJson()
                     print("GroupManager.shared.createGroup==**==\(String(describing: groupProfileDataJson))")
-                    result(true)
+                    let groupId = groupProfileData?.jid.components(separatedBy: "@")
+                    let jsonDictionary: [String: Any] = [
+                        "groupId": groupId?[0] ?? "",
+                        "groupMembers": members,
+                        "groupName": groupProfileData?.name ?? "",
+                        "groupProfileImage": groupProfileData?.image ?? ""
+                    ]
+                    result(jsonDictionary.dictToJson())
+//                    result(true)
                 } else{
                     
                     if case let .xmpp_connection_not_available(message, code) = flyError {

@@ -192,6 +192,7 @@ extension ExtractEditMessage on EditMessage {
       {'messageId': messageId, 'editedTextContent': editedTextContent, 'mentionedUsersIds': mentionedUsersIds};
 }
 
+/// Represents parameters for constructing a message.
 class MessageParams {
   String toJid;
   String? replyMessageId;
@@ -218,7 +219,8 @@ class MessageParams {
     this.topicId = "",
   });
 
-  factory MessageParams.Text({
+  /// Constructs a [MessageParams] object for a Text message.
+  factory MessageParams.text({
     required String toJid,
     String? replyMessageId,
     required TextMessageParams textMessageParams,
@@ -233,7 +235,8 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.Location({
+  /// Constructs a [MessageParams] object for a Location message.
+  factory MessageParams.location({
     required String toJid,
     String? replyMessageId,
     required LocationMessageParams locationMessageParams,
@@ -248,7 +251,8 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.Contact({
+  /// Constructs a [MessageParams] object for a Contact message.
+  factory MessageParams.contact({
     required String toJid,
     String? replyMessageId,
     required ContactMessageParams contactMessageParams,
@@ -263,7 +267,8 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.Image({
+  /// Constructs a [MessageParams] object for a Image message.
+  factory MessageParams.image({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
@@ -278,7 +283,8 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.Audio({
+  /// Constructs a [MessageParams] object for a Audio message.
+  factory MessageParams.audio({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
@@ -294,7 +300,8 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.Video({
+  /// Constructs a [MessageParams] object for a Video message.
+  factory MessageParams.video({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
@@ -309,7 +316,8 @@ class MessageParams {
     );
   }
 
-  factory MessageParams.Document({
+  /// Constructs a [MessageParams] object for a Document message.
+  factory MessageParams.document({
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,

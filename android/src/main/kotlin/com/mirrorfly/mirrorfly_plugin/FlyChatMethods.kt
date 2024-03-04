@@ -49,6 +49,7 @@ import com.mirrorflysdk.models.TopicChatListParams
 import com.mirrorflysdk.utils.ThumbSize
 import com.mirrorflysdk.utils.Utils
 import com.mirrorflysdk.utils.VideoRecUtils
+import com.mirrorflysdk.xmpp.FlyXMPP
 import com.mirrorflysdk.xmpp.chat.models.CreateGroupModel
 import com.mirrorflysdk.xmpp.chat.models.Profile
 import io.flutter.Log
@@ -301,9 +302,6 @@ class FlyChatMethods {
             val isForceRegister: Boolean = call.argument("isForceRegister") ?: true
             LogMessage.d("isForceRegister", isForceRegister.toString())
             if (userIdentifier != null) {
-                //LogMessage.d(TAG, userIdentifier.toString())
-
-//                try {
                 FlyCore.registerUser(
                     userIdentifier,
                     token, isForceRegister
@@ -311,10 +309,6 @@ class FlyChatMethods {
                     if (isSuccess) {
 
                         val response = JSONObject(data).toString()
-//                            val datum = data["data"] as JSONObject
-//                            val username: String = datum.getString(com.mirrorflysdk.flycommons.Constants.USERNAME)
-//                            CallManager.setCurrentUserId(FlyUtils.getJid(username))
-                        //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                         LogMessage.d("FlyCore.registerUser", data.toJsonString())
                         if (token.isNotEmpty()) {
                             PushNotificationManager.updateFcmToken(
@@ -379,17 +373,7 @@ class FlyChatMethods {
                         }
                     }
                 }
-                /*} catch (e: Exception) {
-
-                    LogMessage.d("Register Exception", e.toString())
-
-//                    result.error("404", e.message.toString() , null)
-                    result.error("404", e.message, e)
-                }*/
-
             } else {
-                //LogMessage.d("MIRROR_FLY", "user identifier is null")
-                //LogMessage.d("MIRROR_FLY", call.arguments.toString())
                 result.error("404", "User Identifier empty", "")
             }
         }
@@ -739,9 +723,15 @@ class FlyChatMethods {
     }
 
     fun updateChatMuteStatus(call: MethodCall, result: MethodChannel.Result) {
+        LogMessage.d("updateChatMuteStatus", call.arguments.toString())
         val jid = call.argument<String>("jid") ?: ""
         val mute_status = call.argument<Boolean>("mute_status") ?: false
-        FlyCore.updateChatMuteStatus(jid, mute_status)
+        if (GroupManager.isValidGroupJid(jid)) {
+            GroupManager.updateGroupMuteStatus(jid, mute_status)
+        } else {
+            FlyCore.updateChatMuteStatus(jid, mute_status)
+        }
+        LogMessage.d("updateChatMuteStatus", "isMuted" + ChatManager.isMuted(jid))
     }
 
     fun sendTypingStatus(call: MethodCall, result: MethodChannel.Result) {
@@ -961,7 +951,7 @@ class FlyChatMethods {
     fun revokeContactSync(call: MethodCall, result: MethodChannel.Result) {
         FlyCore.revokeContactSync { isSuccess, throwable, data ->
             if (isSuccess) {
-                result.success(data.toJsonString())
+                result.success(isSuccess)//(data.toJsonString())
             } else {
                 result.error("500", throwable?.message, throwable)
             }
@@ -972,7 +962,8 @@ class FlyChatMethods {
         val server = call.argument<Boolean>("server") ?: false
         FlyCore.getUsersWhoBlockedMe(server) { isSuccess, throwable, data ->
             if (isSuccess) {
-                result.success(data.toJsonString())
+                val profilesList = data["data"] as ArrayList<ProfileDetails>
+                result.success(profilesList.toJsonString())
             } else {
                 result.error("500", throwable?.message, throwable)
             }
@@ -1326,7 +1317,7 @@ class FlyChatMethods {
     fun getMessagesUsingIds(call: MethodCall, result: MethodChannel.Result) {
         val messageIDList = call.argument<List<String>>("MessageIds") ?: arrayListOf()
         val messages = FlyMessenger.getMessagesUsingIds(messageIDList)
-        result.success(messages)
+        result.success(messages.toJsonString())
     }
 
     fun reportUserOrMessages(call: MethodCall, result: MethodChannel.Result) {
@@ -1955,7 +1946,7 @@ class FlyChatMethods {
             result.error("404", "User JID Required", null)
         } else {
             val userJID: String? = call.argument("JID")
-            if (userJID != null) {
+            if (userJID != null && userJID.isNotEmpty()) {
                 val messages: List<ChatMessage> = FlyMessenger.getMessagesOfJid(userJID)
                 //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyMessenger.getMessagesOfJid", messages.tojsonString())
@@ -2868,8 +2859,8 @@ class FlyChatMethods {
                     //LogMessage.d("RESPONSE_CAPTURE", "===========================")
                     //DebugUtilis.v("GroupManager.createGroup", hashmap.tojsonString())
                     val groupData = hashmap["data"] as CreateGroupModel
-//                    result.success(groupData.toJsonString())
-                    result.success(true)
+                    result.success(groupData.toJsonString())
+//                    result.success(true)
                 } else {
                     result.error("500", "Unable to Create Group", throwable.toString())
                 }
@@ -2940,7 +2931,7 @@ class FlyChatMethods {
     }
 
     fun exportChatConversationToEmail(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String?>("jid") ?: ""
+//        val jid = call.argument<String?>("jid") ?: ""
 //        FlyCore.exportChatConversationToEmail(jid, emptyList())
         prepareChatConversationToExport(call, result)
     }
@@ -3101,14 +3092,14 @@ class FlyChatMethods {
         val barcode = call.argument<String>("barcode") ?: ""
         try {
             FlyCore.loginWebChatViaQRCode(barcode) { isSuccess, throwable, _ ->
-                result.success(isSuccess)
                 if (isSuccess) {
-                    val vibrator =
+                    result.success(isSuccess)
+                    /*val vibrator =
                         MirrorFlyManager.getContext()
                             .getSystemService(FlutterActivity.VIBRATOR_SERVICE) as Vibrator
                     if (vibrator.hasVibrator()) {
                         vibrator.vibrate(50)
-                    }
+                    }*/
                 } else {
                     result.error("500", throwable?.message.toString(), "")
                 }
