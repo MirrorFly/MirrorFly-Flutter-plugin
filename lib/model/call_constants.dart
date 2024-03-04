@@ -104,3 +104,8 @@ class CallState {
   static const int outgoingCall = 1;
   static const int incomingCall = 2;
 }
+
+class CallDirection {
+  static const String outgoing = "Outgoing";
+  static const String incoming = "Incoming";
+}
