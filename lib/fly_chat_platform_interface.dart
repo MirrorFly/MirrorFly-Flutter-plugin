@@ -1,4 +1,5 @@
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -504,9 +505,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get onConnectionFailed => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get connectionFailed => throw UnimplementedError('has not been implemented.');
+  // Stream<dynamic> get connectionFailed => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get connectionSuccess => throw UnimplementedError('has not been implemented.');
+  // Stream<dynamic> get connectionSuccess => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get onWebChatPasswordChanged => throw UnimplementedError('has not been implemented.');
 
@@ -516,11 +517,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get onGroupTypingStatus => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onFailure => throw UnimplementedError('has not been implemented.');
+  // Stream<dynamic> get onFailure => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onProgressChanged => throw UnimplementedError('has not been implemented.');
-
-  Stream<dynamic> get onSuccess => throw UnimplementedError('has not been implemented.');
+  // Stream<dynamic> get onProgressChanged => throw UnimplementedError('has not been implemented.');
+  //
+  // Stream<dynamic> get onSuccess => throw UnimplementedError('has not been implemented.');
 
   // Stream<dynamic> get onCallReceiving =>
   //     throw UnimplementedError('onCallReceiving has not been implemented.');
@@ -1141,6 +1142,14 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<bool?> syncCallLogs() {
     throw UnimplementedError('syncCallLogs has not been implemented.');
+  }
+
+  setMessageEventListener(MessageEventsListener messageEventsListener) {
+    throw UnimplementedError('setMessageEventListener has not been implemented.');
+  }
+
+  setCallEventListener(CallEventsListener callEventsListener) {
+    throw UnimplementedError('setCallEventListener has not been implemented.');
   }
 
 /*Future<dynamic> changeCallType({required String switchType}) async {

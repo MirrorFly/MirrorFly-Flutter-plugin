@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
@@ -91,13 +92,13 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
     throw UnimplementedError();
   }
 
-  @override
-  //  implement connectionFailed
-  Stream get connectionFailed => throw UnimplementedError();
+  // @override
+  // connectionFailed
+  // Stream get connectionFailed => throw UnimplementedError();
 
-  @override
-  //  implement connectionSuccess
-  Stream get connectionSuccess => throw UnimplementedError();
+  // @override
+  // // connectionSuccess
+  // Stream get connectionSuccess => throw UnimplementedError();
 
   @override
   Future<bool> contactSyncStateValue() {
@@ -1036,9 +1037,9 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   //  implement onDisconnected
   Stream get onDisconnected => throw UnimplementedError();
 
-  @override
-  //  implement onFailure
-  Stream get onFailure => throw UnimplementedError();
+  // @override
+  // onFailure
+  // Stream get onFailure => throw UnimplementedError();
 
   @override
   //  implement onFetchingGroupListCompleted
@@ -1120,17 +1121,17 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   //  implement onNewMemberAddedToGroup
   Stream get onNewMemberAddedToGroup => throw UnimplementedError();
 
-  @override
-  //  implement onProgressChanged
-  Stream get onProgressChanged => throw UnimplementedError();
+  // @override
+  // //  implement onProgressChanged
+  // Stream get onProgressChanged => throw UnimplementedError();
 
   @override
   //  implement onRemoteVideoTrackAdded
   Stream get onRemoteVideoTrackAdded => throw UnimplementedError();
 
-  @override
-  //  implement onSuccess
-  Stream get onSuccess => throw UnimplementedError();
+  // @override
+  // //  implement onSuccess
+  // Stream get onSuccess => throw UnimplementedError();
 
   @override
   //  implement onTrackAdded
@@ -1603,6 +1604,18 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   @override
   Future<bool?> webLoginDetailsCleared() {
     //  implement webLoginDetailsCleared
+    throw UnimplementedError();
+  }
+
+  @override
+  setMessageEventListener(MessageEventsListener messageEventsListener) {
+    // implement setMessageEventListener
+    throw UnimplementedError();
+  }
+
+  @override
+  setCallEventListener(CallEventsListener callEventsListener) {
+    // implement setCallEventListener
     throw UnimplementedError();
   }
 }

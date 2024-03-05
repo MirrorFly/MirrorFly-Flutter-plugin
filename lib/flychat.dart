@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import 'event_handlers.dart';
 import 'fly_chat_platform_interface.dart';
 
 class Mirrorfly {
   Mirrorfly._();
-
+  MessageEventsListener? eventListenerClassFile;
   @Deprecated(
       'This method is deprecated. Please refrain from using it, as the functionality has been internally managed within the plugin')
   static var isTrialLicence = true;
@@ -1321,27 +1322,27 @@ class Mirrorfly {
 
   static Stream<dynamic> get onConnectionFailed => FlyChatFlutterPlatform.instance.onConnectionFailed;
 
-  static Stream<dynamic> get connectionFailed => FlyChatFlutterPlatform.instance.connectionFailed;
+  // static Stream<dynamic> get connectionFailed => FlyChatFlutterPlatform.instance.connectionFailed;
 
-  static Stream<dynamic> get connectionSuccess => FlyChatFlutterPlatform.instance.connectionSuccess;
+  // static Stream<dynamic> get connectionSuccess => FlyChatFlutterPlatform.instance.connectionSuccess;
 
   static Stream<dynamic> get onWebChatPasswordChanged => FlyChatFlutterPlatform.instance.onWebChatPasswordChanged;
 
   @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get setTypingStatus => FlyChatFlutterPlatform.instance.setTypingStatus;
-  
+
   static Stream<dynamic> get typingStatus => FlyChatFlutterPlatform.instance.setTypingStatus;
-  
+
   @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get onChatTypingStatus => FlyChatFlutterPlatform.instance.onChatTypingStatus;
   @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get onGroupTypingStatus => FlyChatFlutterPlatform.instance.onGroupTypingStatus;
 
-  static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
+  // static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
-  static Stream<dynamic> get onProgressChanged => FlyChatFlutterPlatform.instance.onProgressChanged;
-
-  static Stream<dynamic> get onSuccess => FlyChatFlutterPlatform.instance.onSuccess;
+  // static Stream<dynamic> get onProgressChanged => FlyChatFlutterPlatform.instance.onProgressChanged;
+  //
+  // static Stream<dynamic> get onSuccess => FlyChatFlutterPlatform.instance.onSuccess;
 
   // static Stream<dynamic> get onCallReceiving =>
   //     FlyChatFlutterPlatform.instance.onCallReceiving;
@@ -2726,6 +2727,13 @@ class Mirrorfly {
   ///
   static Future<bool?> syncCallLogs() async {
     return FlyChatFlutterPlatform.instance.syncCallLogs();
+  }
+
+  static setMessageEventListener(MessageEventsListener messageEventsListener) {
+    return FlyChatFlutterPlatform.instance.setMessageEventListener(messageEventsListener);
+  }
+  static setCallsEventListener(CallEventsListener callEventsListener) {
+    return FlyChatFlutterPlatform.instance.setCallEventListener(callEventsListener);
   }
 
 /* /// [changeCallType] Used to Change the Call Type

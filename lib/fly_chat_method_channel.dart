@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/internal_models/audio_devices_model.dart';
 import 'package:mirrorfly_plugin/internal_models/available_features_model.dart';
@@ -27,9 +28,22 @@ import 'builder.dart';
 import 'fly_constants.dart';
 import 'model/callback.dart';
 
+class FlyErrorCode {
+  static const unHandle = "1000";
+}
+
+class FlyErrorMessage {
+  static const unHandle = "Unexpected Error";
+}
+
 /// An implementation of UikitFlutterPlatform that uses method channels.
-class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
+class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   /// The method channel used to interact with the native platform.
+  ///
+
+  MessageEventsListener? messageEventsListener;
+  CallEventsListener? callEventsListener;
+
   @visibleForTesting
   final mirrorFlyMethodChannel = const MethodChannel('contus.mirrorfly/flyChat');
   @visibleForTesting
@@ -158,12 +172,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final onConnectionFailedChannel = const EventChannel('contus.mirrorfly/onConnectionFailed');
   final StreamController<dynamic> onConnectionFailedStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final connectionFailedChannel = const EventChannel('contus.mirrorfly/connectionFailed');
-  final StreamController<dynamic> connectionFailedStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final connectionSuccessChannel = const EventChannel('contus.mirrorfly/connectionSuccess');
-  final StreamController<dynamic> connectionSuccessStreamController = StreamController<dynamic>.broadcast();
+  // @visibleForTesting
+  // final connectionFailedChannel = const EventChannel('contus.mirrorfly/connectionFailed');
+  // final StreamController<dynamic> connectionFailedStreamController = StreamController<dynamic>.broadcast();
+  // @visibleForTesting
+  // final connectionSuccessChannel = const EventChannel('contus.mirrorfly/connectionSuccess');
+  // final StreamController<dynamic> connectionSuccessStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onWebChatPasswordChangedChannel = const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
   final StreamController<dynamic> onWebChatPasswordChangedStreamController = StreamController<dynamic>.broadcast();
@@ -176,15 +190,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @visibleForTesting
   final onGroupTypingStatusChannel = const EventChannel('contus.mirrorfly/onGroupTypingStatus');
   final StreamController<dynamic> onGroupTypingStatusStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
-  final StreamController<dynamic> onFailureStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final onProgressChangedChannel = const EventChannel('contus.mirrorfly/onProgressChanged');
-  final StreamController<dynamic> onProgressChangedStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
-  final StreamController<dynamic> onSuccessStreamController = StreamController<dynamic>.broadcast();
+  // @visibleForTesting
+  // final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
+  // final StreamController<dynamic> onFailureStreamController = StreamController<dynamic>.broadcast();
+  // @visibleForTesting
+  // final onProgressChangedChannel = const EventChannel('contus.mirrorfly/onProgressChanged');
+  // final StreamController<dynamic> onProgressChangedStreamController = StreamController<dynamic>.broadcast();
+  // @visibleForTesting
+  // final onSuccessChannel = const EventChannel('contus.mirrorfly/onSuccess');
+  // final StreamController<dynamic> onSuccessStreamController = StreamController<dynamic>.broadcast();
 
   //Need to add stream controller here
   // @visibleForTesting
@@ -287,11 +301,17 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   ///Using [addStreamsAllToStreamController] to add all streams to stream controller
   ///benefit to use stream controller we can call multiple listeners to listen.
   addStreamsAllToStreamController() {
+
     messageOnReceivedChannel.receiveBroadcastStream().listen((event) {
-      _messageOnReceivedStreamController.add(convertChatMessageJsonFromString(event));
+      debugPrint("messageOnReceivedChannel receiveBroadcastStream");
+      var message = convertChatMessageJsonFromString(event);
+      _messageOnReceivedStreamController.add(message);
+      messageEventsListener?.onMessageReceived(message);
     });
     messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
-      messageStatusUpdateStreamController.add(convertChatMessageJsonFromString(event));
+      var messageStatus = convertChatMessageJsonFromString(event);
+      messageStatusUpdateStreamController.add(messageStatus);
+      // messageEventsListener?.message(messageStatus);
     });
     mediaStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
       mediaStatusUpdatedStreamController.add(convertChatMessageJsonFromString(event));
@@ -351,15 +371,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     onConnectedStreamController.addStream(onConnectedChannel.receiveBroadcastStream());
     onDisconnectedStreamController.addStream(onDisconnectedChannel.receiveBroadcastStream());
     onConnectionFailedStreamController.addStream(onConnectionFailedChannel.receiveBroadcastStream());
-    connectionFailedStreamController.addStream(connectionFailedChannel.receiveBroadcastStream());
-    connectionSuccessStreamController.addStream(connectionSuccessChannel.receiveBroadcastStream());
+    // connectionFailedStreamController.addStream(connectionFailedChannel.receiveBroadcastStream());
+    // connectionSuccessStreamController.addStream(connectionSuccessChannel.receiveBroadcastStream());
     onWebChatPasswordChangedStreamController.addStream(onWebChatPasswordChangedChannel.receiveBroadcastStream());
     setTypingStatusStreamController.addStream(setTypingStatusChannel.receiveBroadcastStream());
     onChatTypingStatusStreamController.addStream(onChatTypingStatusChannel.receiveBroadcastStream());
     onGroupTypingStatusStreamController.addStream(onGroupTypingStatusChannel.receiveBroadcastStream());
-    onFailureStreamController.addStream(onFailureChannel.receiveBroadcastStream());
-    onProgressChangedStreamController.addStream(onProgressChangedChannel.receiveBroadcastStream());
-    onSuccessStreamController.addStream(onSuccessChannel.receiveBroadcastStream());
+    // onFailureStreamController.addStream(onFailureChannel.receiveBroadcastStream());
+    // onProgressChangedStreamController.addStream(onProgressChangedChannel.receiveBroadcastStream());
+    // onSuccessStreamController.addStream(onSuccessChannel.receiveBroadcastStream());
     // onCallReceivingStreamController.addStream(onCallReceivingChannel.receiveBroadcastStream());
     onLocalVideoTrackAddedStreamController.addStream(onLocalVideoTrackAddedChannel.receiveBroadcastStream());
     onRemoteVideoTrackAddedStreamController.addStream(onRemoteVideoTrackAddedChannel.receiveBroadcastStream());
@@ -2063,11 +2083,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onConnectionFailed => onConnectionFailedStreamController.stream;
 
-  @override
-  Stream<dynamic> get connectionFailed => connectionFailedStreamController.stream;
+  // @override
+  // Stream<dynamic> get connectionFailed => connectionFailedStreamController.stream;
 
-  @override
-  Stream<dynamic> get connectionSuccess => connectionSuccessStreamController.stream;
+  // @override
+  // Stream<dynamic> get connectionSuccess => connectionSuccessStreamController.stream;
 
   @override
   Stream<dynamic> get onWebChatPasswordChanged => onWebChatPasswordChangedStreamController.stream;
@@ -2081,14 +2101,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onGroupTypingStatus => onGroupTypingStatusStreamController.stream;
 
-  @override
-  Stream<dynamic> get onFailure => onFailureStreamController.stream;
+  // @override
+  // Stream<dynamic> get onFailure => onFailureStreamController.stream;
 
-  @override
-  Stream<dynamic> get onProgressChanged => onProgressChangedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onSuccess => onSuccessStreamController.stream;
+  // @override
+  // Stream<dynamic> get onProgressChanged => onProgressChangedStreamController.stream;
+  //
+  // @override
+  // Stream<dynamic> get onSuccess => onSuccessStreamController.stream;
 
   // @override
   // Stream<dynamic> get onCallReceiving =>
@@ -4560,5 +4580,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
+  }
+
+  @override
+  void setMessageEventListener(MessageEventsListener messageEventsListener) {
+    this.messageEventsListener = messageEventsListener;
+  }
+
+  @override
+  void setCallEventListener(CallEventsListener callEventsListener) {
+    this.callEventsListener = callEventsListener;
   }
 }
