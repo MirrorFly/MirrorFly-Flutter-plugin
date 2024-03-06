@@ -1,6 +1,7 @@
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
+import 'package:mirrorfly_plugin/internal_models/get_user_profile_model.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -1146,6 +1147,16 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   setMessageEventListener(MessageEventsListener messageEventsListener) {
     throw UnimplementedError('setMessageEventListener has not been implemented.');
+  }
+
+  setConnectionEventListener(ConnectionEventsListener connectionEventsListener) {
+    throw UnimplementedError('setConnectionEventListener has not been implemented.');
+  }
+  setGroupEventsListener(GroupEventsListener groupEventsListener) {
+    throw UnimplementedError('setGroupEventsListener has not been implemented.');
+  }
+  setProfileEventsListener(ProfileEventsListener profileEventsListener) {
+    throw UnimplementedError('setProfileEventsListener has not been implemented.');
   }
 
   setCallEventListener(CallEventsListener callEventsListener) {

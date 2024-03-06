@@ -11,17 +11,10 @@ import Flutter
 
 public class EventStreamHandler: NSObject, FlutterStreamHandler, FlyEventSinkProvider {
     var eventSink: FlutterEventSink?
-//    private var eventSinkValue: Any?
     
     func setEventSinkValue(_ value: Any?) {
-//        self.eventSinkValue = value
         eventSink?(value)
-//        updateEventSinkValue()
     }
-    
-//    private func updateEventSinkValue() {
-//        eventSink?(eventSinkValue)
-//    }
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         eventSink = events

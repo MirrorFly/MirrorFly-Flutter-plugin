@@ -2732,6 +2732,15 @@ class Mirrorfly {
   static setMessageEventListener(MessageEventsListener messageEventsListener) {
     return FlyChatFlutterPlatform.instance.setMessageEventListener(messageEventsListener);
   }
+  static setConnectionEventListener(ConnectionEventsListener connectionEventsListener) {
+    return FlyChatFlutterPlatform.instance.setConnectionEventListener(connectionEventsListener);
+  }
+  static setProfileEventsListener(ProfileEventsListener profileEventsListener) {
+    return FlyChatFlutterPlatform.instance.setProfileEventsListener(profileEventsListener);
+  }
+  static setGroupEventsListener(GroupEventsListener groupEventsListener) {
+    return FlyChatFlutterPlatform.instance.setGroupEventsListener(groupEventsListener);
+  }
   static setCallsEventListener(CallEventsListener callEventsListener) {
     return FlyChatFlutterPlatform.instance.setCallEventListener(callEventsListener);
   }

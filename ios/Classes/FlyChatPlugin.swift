@@ -439,7 +439,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(message.messageId, forKey: "message_id")
-        jsonObject.setValue(progressPercentageString, forKey: "progress_percentage")
+        jsonObject.setValue(Int(progressPercentageString), forKey: "progress_percentage")
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onUploadDownloadProgressChangedChannel, value: jsonString)

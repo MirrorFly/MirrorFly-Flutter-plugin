@@ -392,6 +392,7 @@ import PushKit
             NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> Unique ID is not Found")
         }
         
+        eventChannelInitializer.sinkValues[Constants.onLocalVideoTrackAddedChannel] = jidJson
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
     
@@ -412,6 +413,7 @@ import PushKit
             // Handle case when unique ID is not found
         }
 
+        eventChannelInitializer.sinkValues[Constants.onRemoteVideoTrackAddedChannel] = jidJson
         eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
     }
     

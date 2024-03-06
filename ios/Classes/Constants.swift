@@ -39,7 +39,7 @@ struct Constants {
         static let onNewMemberAddedToGroup_channel = "\(domain)/onNewMemberAddedToGroup"
         static let onMemberRemovedFromGroup_channel = "\(domain)/onMemberRemovedFromGroup"
         static let onFetchingGroupMembersCompleted_channel = "\(domain)/onFetchingGroupMembersCompleted"
-        static let onDeleteGroup_channel = "\(domain)/onDeleteGroup"
+//        static let onDeleteGroup_channel = "\(domain)/onDeleteGroup"
         static let onFetchingGroupListCompleted_channel = "\(domain)/onFetchingGroupListCompleted"
         static let onMemberMadeAsAdmin_channel = "\(domain)/onMemberMadeAsAdmin"
         static let onMemberRemovedAsAdmin_channel = "\(domain)/onMemberRemovedAsAdmin"

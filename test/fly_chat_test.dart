@@ -1612,6 +1612,21 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
     // implement setMessageEventListener
     throw UnimplementedError();
   }
+  @override
+  setConnectionEventListener(ConnectionEventsListener connectionEventsListener) {
+    // implement setConnectionEventListener
+    throw UnimplementedError();
+  }
+  @override
+  setProfileEventsListener(ProfileEventsListener profileEventsListener) {
+    // implement setProfileEventsListener
+    throw UnimplementedError();
+  }
+  @override
+  setGroupEventsListener(GroupEventsListener groupEventsListener) {
+    // implement setGroupEventsListener
+    throw UnimplementedError();
+  }
 
   @override
   setCallEventListener(CallEventsListener callEventsListener) {

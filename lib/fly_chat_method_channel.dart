@@ -27,6 +27,7 @@ import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 import 'builder.dart';
 import 'fly_constants.dart';
 import 'model/callback.dart';
+import 'model/chat_message_model.dart' as client;
 
 class FlyErrorCode {
   static const unHandle = "1000";
@@ -43,6 +44,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
 
   MessageEventsListener? messageEventsListener;
   CallEventsListener? callEventsListener;
+  ConnectionEventsListener? connectionEventsListener;
+  ProfileEventsListener? profileEventsListener;
+  GroupEventsListener? groupEventsListener;
 
   @visibleForTesting
   final mirrorFlyMethodChannel = const MethodChannel('contus.mirrorfly/flyChat');
@@ -81,9 +85,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   final onFetchingGroupMembersCompletedChannel = const EventChannel('contus.mirrorfly/onFetchingGroupMembersCompleted');
   final StreamController<dynamic> onFetchingGroupMembersCompletedStreamController =
       StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final onDeleteGroupChannel = const EventChannel('contus.mirrorfly/onDeleteGroup');
-  final StreamController<dynamic> onDeleteGroupStreamController = StreamController<dynamic>.broadcast();
+  // @visibleForTesting
+  // final onDeleteGroupChannel = const EventChannel('contus.mirrorfly/onDeleteGroup');
+  // final StreamController<dynamic> onDeleteGroupStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onFetchingGroupListCompletedChannel = const EventChannel('contus.mirrorfly/onFetchingGroupListCompleted');
   final StreamController<dynamic> onFetchingGroupListCompletedStreamController = StreamController<dynamic>.broadcast();
@@ -253,6 +257,446 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   final onCallLogsDeletedChannel = const EventChannel('contus.mirrorfly/onCallLogsDeleted');
   final StreamController<dynamic> onCallLogsDeletedStreamController = StreamController<dynamic>.broadcast();
 
+
+
+  @override
+  Stream<dynamic> get onMessageReceived => _messageOnReceivedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMessageStatusUpdated => messageStatusUpdateStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMediaStatusUpdated => mediaStatusUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onUploadDownloadProgressChanged => uploadDownloadProgressChangedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onGroupProfileFetched => onGroupProfileFetchedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onNewGroupCreated => onNewGroupCreatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onGroupProfileUpdated => onGroupProfileUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onNewMemberAddedToGroup => onNewMemberAddedToGroupStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMemberRemovedFromGroup => onMemberRemovedFromGroupStreamController.stream;
+
+  @override
+  Stream<dynamic> get onFetchingGroupMembersCompleted => onFetchingGroupMembersCompletedStreamController.stream;
+
+  // @override
+  // Stream<dynamic> get onDeleteGroup => onDeleteGroupStreamController.stream;
+
+  @override
+  Stream<dynamic> get onFetchingGroupListCompleted => onFetchingGroupListCompletedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMemberMadeAsAdmin => onMemberMadeAsAdminStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMemberRemovedAsAdmin => onMemberRemovedAsAdminStreamController.stream;
+
+  @override
+  Stream<dynamic> get onLeftFromGroup => onLeftFromGroupStreamController.stream;
+
+  @override
+  Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessageStreamController.stream;
+
+  @override
+  Stream<dynamic> get showOrUpdateOrCancelNotification => showOrUpdateOrCancelNotificationStreamController.stream;
+
+  @override
+  Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocallyStreamController.stream;
+
+  @override
+  Stream<dynamic> get blockedThisUser => blockedThisUserStreamController.stream;
+
+  @override
+  Stream<dynamic> get myProfileUpdated => myProfileUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onAdminBlockedOtherUser => onAdminBlockedOtherUserStreamController.stream;
+
+  @override
+  Stream<dynamic> get onAdminBlockedUser => onAdminBlockedUserStreamController.stream;
+
+  @override
+  Stream<dynamic> get onContactSyncComplete => onContactSyncCompleteStreamController.stream;
+
+  @override
+  Stream<dynamic> get onLoggedOut => onLoggedOutStreamController.stream;
+
+  @override
+  Stream<dynamic> get unblockedThisUser => unblockedThisUserStreamController.stream;
+
+  @override
+  Stream<dynamic> get userBlockedMe => userBlockedMeStreamController.stream;
+
+  @override
+  Stream<dynamic> get userCameOnline => userCameOnlineStreamController.stream;
+
+  @override
+  Stream<dynamic> get userDeletedHisProfile => userDeletedHisProfileStreamController.stream;
+
+  @override
+  Stream<dynamic> get userProfileFetched => userProfileFetchedStreamController.stream;
+
+  @override
+  Stream<dynamic> get userUnBlockedMe => userUnBlockedMeStreamController.stream;
+
+  @override
+  Stream<dynamic> get userUpdatedHisProfile => userUpdatedHisProfileStreamController.stream;
+
+  @override
+  Stream<dynamic> get userWentOffline => userWentOfflineStreamController.stream;
+
+  @override
+  Stream<dynamic> get usersIBlockedListFetched => usersIBlockedListFetchedStreamController.stream;
+
+  @override
+  Stream<dynamic> get usersProfilesFetched => usersProfilesFetchedStreamController.stream;
+
+  @override
+  Stream<dynamic> get usersWhoBlockedMeListFetched => usersWhoBlockedMeListFetchedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onConnected => onConnectedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onDisconnected => onDisconnectedStreamController.stream;
+
+  /*@override
+  Stream<dynamic> get onConnectionNotAuthorized =>
+      onConnectionNotAuthorizedStreamController.stream;*/
+
+  @override
+  Stream<dynamic> get onConnectionFailed => onConnectionFailedStreamController.stream;
+
+  // @override
+  // Stream<dynamic> get connectionFailed => connectionFailedStreamController.stream;
+
+  // @override
+  // Stream<dynamic> get connectionSuccess => connectionSuccessStreamController.stream;
+
+  @override
+  Stream<dynamic> get onWebChatPasswordChanged => onWebChatPasswordChangedStreamController.stream;
+
+  @override
+  Stream<dynamic> get setTypingStatus => setTypingStatusStreamController.stream;
+
+  @override
+  Stream<dynamic> get onChatTypingStatus => onChatTypingStatusStreamController.stream;
+
+  @override
+  Stream<dynamic> get onGroupTypingStatus => onGroupTypingStatusStreamController.stream;
+
+  // @override
+  // Stream<dynamic> get onFailure => onFailureStreamController.stream;
+
+  // @override
+  // Stream<dynamic> get onProgressChanged => onProgressChangedStreamController.stream;
+  //
+  // @override
+  // Stream<dynamic> get onSuccess => onSuccessStreamController.stream;
+
+  // @override
+  // Stream<dynamic> get onCallReceiving =>
+  //     onCallReceivingStreamController.stream;
+
+  @override
+  Stream<dynamic> get onLocalVideoTrackAdded => onLocalVideoTrackAddedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onRemoteVideoTrackAdded => onRemoteVideoTrackAddedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onTrackAdded => onTrackAddedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onCallStatusUpdated => onCallStatusUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onCallAction => onCallActionStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMuteStatusUpdated => onMuteStatusUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onUserSpeaking => onUserSpeakingStreamController.stream;
+
+  @override
+  Stream<dynamic> get onUserStoppedSpeaking => onUserStoppedSpeakingStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMissedCall => onMissedCallStreamController.stream;
+
+  @override
+  Stream<dynamic> get onAvailableFeaturesUpdated => onAvailableFeaturesUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onCallLogsUpdated => onCallLogsUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onCallLogsDeleted => onCallLogsDeletedStreamController.stream;
+
+  ///Using [addStreamsAllToStreamController] to add all streams to stream controller
+  ///benefit to use stream controller we can call multiple listeners to listen.
+  addStreamsAllToStreamController() {
+
+    messageOnReceivedChannel.receiveBroadcastStream().listen((event) {
+      var message = convertChatMessageJsonFromString(event);
+      _messageOnReceivedStreamController.add(message);
+      messageEventsListener?.onMessageReceived(client.sendMessageModelFromJson(message));
+    });
+    messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
+      var messageStatus = convertChatMessageJsonFromString(event);
+      messageStatusUpdateStreamController.add(messageStatus);
+      messageEventsListener?.onMessageStatusUpdated(client.sendMessageModelFromJson(messageStatus));
+    });
+    mediaStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
+      var mediaStatus = convertChatMessageJsonFromString(event);
+      mediaStatusUpdatedStreamController.add(mediaStatus);
+      messageEventsListener?.onMediaStatusUpdated(client.sendMessageModelFromJson(mediaStatus));
+    });
+    onGroupNotificationMessageChannel.receiveBroadcastStream().listen((event) {
+      var groupNotification = convertChatMessageJsonFromString(event);
+      onGroupNotificationMessageStreamController.add(groupNotification);
+      groupEventsListener?.onGroupNotificationMessage(client.sendMessageModelFromJson(groupNotification));
+    });
+    showOrUpdateOrCancelNotificationChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"];
+      var chatMessage = convertChatMessageJsonFromString(data["chatMessage"]);
+      var map = {"jid": jid, "chatMessage": chatMessage};
+      var notification = json.encode(map);
+      showOrUpdateOrCancelNotificationStreamController.add(notification);
+      messageEventsListener?.showOrUpdateOrCancelNotification(jid, client.sendMessageModelFromJson(chatMessage));
+    });
+    uploadDownloadProgressChangedChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var messageId = data["message_id"] ?? "";
+      var progressPercentage = data["progress_percentage"];
+      uploadDownloadProgressChangedStreamController.add(event);
+      messageEventsListener?.onUploadDownloadProgressChanged(messageId, progressPercentage);
+    });
+    onGroupProfileFetchedChannel.receiveBroadcastStream().listen((groupJid) {
+      onGroupProfileFetchedStreamController.add(groupJid);
+      groupEventsListener?.onGroupProfileFetched(groupJid);
+    });
+    onNewGroupCreatedChannel.receiveBroadcastStream().listen((groupJid) {
+      onNewGroupCreatedStreamController.add(groupJid);
+      groupEventsListener?.onNewGroupCreated(groupJid);
+    });
+    onGroupProfileUpdatedChannel.receiveBroadcastStream().listen((groupJid) {
+      onGroupProfileUpdatedStreamController.add(groupJid);
+      groupEventsListener?.onGroupProfileUpdated(groupJid);
+    });
+    onNewMemberAddedToGroupChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var groupJid = data["groupJid"] ?? "";
+      var newMemberJid = data["newMemberJid"] ?? "";
+      var addedByMemberJid = data["addedByMemberJid"] ?? "";
+      onNewMemberAddedToGroupStreamController.add(event);
+      groupEventsListener?.onNewMemberAddedToGroup(groupJid, newMemberJid, addedByMemberJid);
+    });
+    onMemberRemovedFromGroupChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var groupJid = data["groupJid"] ?? "";
+      var removedMemberJid = data["removedMemberJid"] ?? "";
+      var removedByMemberJid = data["removedByMemberJid"] ?? "";
+      onMemberRemovedFromGroupStreamController.add(event);
+      groupEventsListener?.onMemberRemovedFromGroup(groupJid, removedMemberJid, removedByMemberJid);
+    });
+    onFetchingGroupMembersCompletedChannel.receiveBroadcastStream().listen((groupJid) {
+      onFetchingGroupMembersCompletedStreamController.add(groupJid);
+      groupEventsListener?.onFetchingGroupMembersCompleted(groupJid);
+    });
+    // onDeleteGroupChannel.receiveBroadcastStream().listen((event) {
+    //   onDeleteGroupStreamController.add(event);
+    //   groupEventsListener?.onDeleteGroup(event);
+    // });
+    onFetchingGroupListCompletedChannel.receiveBroadcastStream().listen((event) {
+      onFetchingGroupListCompletedStreamController.add(event);
+      groupEventsListener?.onFetchingGroupListCompleted(event);
+    });
+    onMemberMadeAsAdminChannel.receiveBroadcastStream().listen((event) {
+      onMemberMadeAsAdminStreamController.add(event);
+      groupEventsListener?.onMemberMadeAsAdmin(event);
+    });
+    onMemberRemovedAsAdminChannel.receiveBroadcastStream().listen((event) {
+      onMemberRemovedAsAdminStreamController.add(event);
+      groupEventsListener?.onMemberRemovedAsAdmin(event);
+    });
+    onLeftFromGroupChannel.receiveBroadcastStream().listen((event) {
+      onLeftFromGroupStreamController.add(event);
+      groupEventsListener?.onLeftFromGroup(event);
+    });
+
+    onGroupDeletedLocallyChannel.receiveBroadcastStream().listen((event) {
+      onGroupDeletedLocallyStreamController.add(event);
+      groupEventsListener?.onGroupDeletedLocally(event);
+    });
+    blockedThisUserChannel.receiveBroadcastStream().listen((event) {
+      blockedThisUserStreamController.add(event);
+      profileEventsListener?.blockedThisUser(event);
+    });
+    myProfileUpdatedChannel.receiveBroadcastStream().listen((event) {
+      myProfileUpdatedStreamController.add(event);
+      profileEventsListener?.myProfileUpdated(event);
+    });
+    onAdminBlockedOtherUserChannel.receiveBroadcastStream().listen((event) {
+      onAdminBlockedOtherUserStreamController.add(event);
+      profileEventsListener?.onAdminBlockedOtherUser(event);
+    });
+    onAdminBlockedUserChannel.receiveBroadcastStream().listen((event) {
+      onAdminBlockedUserStreamController.add(event);
+      profileEventsListener?.onAdminBlockedUser(event);
+    });
+    onContactSyncCompleteChannel.receiveBroadcastStream().listen((event) {
+      onContactSyncCompleteStreamController.add(event);
+      profileEventsListener?.onContactSyncComplete(event);
+    });
+    onLoggedOutChannel.receiveBroadcastStream().listen((event) {
+      onLoggedOutStreamController.add(event);
+      connectionEventsListener?.onLoggedOut(event);
+    });
+    unblockedThisUserChannel.receiveBroadcastStream().listen((event) {
+      unblockedThisUserStreamController.add(event);
+      profileEventsListener?.unblockedThisUser(event);
+    });
+    userBlockedMeChannel.receiveBroadcastStream().listen((event) {
+      userBlockedMeStreamController.add(event);
+      profileEventsListener?.userUnBlockedMe(event);
+    });
+    userCameOnlineChannel.receiveBroadcastStream().listen((event) {
+      userCameOnlineStreamController.add(event);
+      messageEventsListener?.userCameOnline(event);
+    });
+    userDeletedHisProfileChannel.receiveBroadcastStream().listen((event) {
+      userDeletedHisProfileStreamController.add(event);
+      profileEventsListener?.userDeletedHisProfile(event);
+    });
+    userProfileFetchedChannel.receiveBroadcastStream().listen((event) {
+      userProfileFetchedStreamController.add(event);
+      profileEventsListener?.userProfileFetched(event);
+    });
+    userUnBlockedMeChannel.receiveBroadcastStream().listen((event) {
+      userUnBlockedMeStreamController.add(event);
+      profileEventsListener?.userUnBlockedMe(event);
+    });
+    userUpdatedHisProfileChannel.receiveBroadcastStream().listen((event) {
+      userUpdatedHisProfileStreamController.add(event);
+      profileEventsListener?.userUpdatedHisProfile(event);
+    });
+    userWentOfflineChannel.receiveBroadcastStream().listen((event) {
+      userWentOfflineStreamController.add(event);
+      messageEventsListener?.userWentOffline(event);
+    });
+    usersIBlockedListFetchedChannel.receiveBroadcastStream().listen((event) {
+      usersIBlockedListFetchedStreamController.add(event);
+      profileEventsListener?.usersIBlockedListFetched(event);
+    });
+    usersProfilesFetchedChannel.receiveBroadcastStream().listen((event) {
+      usersProfilesFetchedStreamController.add(event);
+      profileEventsListener?.usersProfilesFetched(event);
+    });
+    usersWhoBlockedMeListFetchedChannel.receiveBroadcastStream().listen((event) {
+      usersWhoBlockedMeListFetchedStreamController.add(event);
+      profileEventsListener?.usersWhoBlockedMeListFetched(event);
+    });
+    onConnectedChannel.receiveBroadcastStream().listen((event) {
+      onConnectedStreamController.add(event);
+      connectionEventsListener?.onConnected(event);
+    });
+    onDisconnectedChannel.receiveBroadcastStream().listen((event) {
+      onDisconnectedStreamController.add(event);
+      connectionEventsListener?.onDisconnected(event);
+    });
+    onConnectionFailedChannel.receiveBroadcastStream().listen((event) {
+      onConnectionFailedStreamController.add(event);
+      connectionEventsListener?.onConnectionFailed(event);
+    });
+    // connectionFailedChannel.receiveBroadcastStream().listen((event) {
+    //   connectionFailedStreamController.add(event);});
+    // connectionSuccessChannel.receiveBroadcastStream().listen((event) {
+    //   connectionSuccessStreamController.add(event);});
+    onWebChatPasswordChangedChannel.receiveBroadcastStream().listen((event) {
+      onWebChatPasswordChangedStreamController.add(event);
+    });
+    setTypingStatusChannel.receiveBroadcastStream().listen((event) {
+      setTypingStatusStreamController.add(event);
+      messageEventsListener?.setTypingStatus(event);
+    });
+    onChatTypingStatusChannel.receiveBroadcastStream().listen((event) {
+      onChatTypingStatusStreamController.add(event);
+
+    });
+    onGroupTypingStatusChannel.receiveBroadcastStream().listen((event) {
+      onGroupTypingStatusStreamController.add(event);
+    });
+    // onFailureChannel.receiveBroadcastStream().listen((event) {
+    //   onFailureStreamController.add(event);});
+    // onProgressChangedChannel.receiveBroadcastStream().listen((event) {
+    //   onProgressChangedStreamController.add(event);});
+    // onSuccessChannel.receiveBroadcastStream().listen((event) {
+    //   onSuccessStreamController.add(event);});
+    // onCallReceivingChannel.receiveBroadcastStream().listen((event) {
+    //   onCallReceivingStreamController.add(event);});
+    onLocalVideoTrackAddedChannel.receiveBroadcastStream().listen((event) {
+      onLocalVideoTrackAddedStreamController.add(event);
+      callEventsListener?.onLocalVideoTrackAdded(event);
+    });
+    onRemoteVideoTrackAddedChannel.receiveBroadcastStream().listen((event) {
+      onRemoteVideoTrackAddedStreamController.add(event);
+      callEventsListener?.onRemoteVideoTrackAdded(event);
+    });
+    onTrackAddedChannel.receiveBroadcastStream().listen((event) {
+      onTrackAddedStreamController.add(event);
+      callEventsListener?.onTrackAdded(event);
+    });
+    onCallStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
+      onCallStatusUpdatedStreamController.add(event);
+      callEventsListener?.onCallStatusUpdated(event);
+    });
+    onCallActionChannel.receiveBroadcastStream().listen((event) {
+      onCallActionStreamController.add(event);
+      callEventsListener?.onCallAction(event);
+    });
+    onMuteStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
+      onMuteStatusUpdatedStreamController.add(event);
+      callEventsListener?.onMuteStatusUpdated(event);
+    });
+    onUserSpeakingChannel.receiveBroadcastStream().listen((event) {
+      onUserSpeakingStreamController.add(event);
+      callEventsListener?.onUserSpeaking(event);
+    });
+    onUserStoppedSpeakingChannel.receiveBroadcastStream().listen((event) {
+      onUserStoppedSpeakingStreamController.add(event);
+      callEventsListener?.onUserStoppedSpeaking(event);
+    });
+    onMissedCallChannel.receiveBroadcastStream().listen((event) {
+      onMissedCallStreamController.add(event);
+      callEventsListener?.onMissedCall(event);
+    });
+    onAvailableFeaturesUpdatedChannel.receiveBroadcastStream().listen((event) {
+      onAvailableFeaturesUpdatedStreamController.add(event);
+      messageEventsListener?.onAvailableFeaturesUpdated(event);
+    });
+    onCallLogsUpdatedChannel.receiveBroadcastStream().listen((event) {
+      onCallLogsUpdatedStreamController.add(event);
+      callEventsListener?.onCallLogsUpdated(event);
+    });
+    onCallLogsDeletedChannel.receiveBroadcastStream().listen((event) {
+      onCallLogsDeletedStreamController.add(event);
+      callEventsListener?.onCallLogsDeleted(event);
+    });
+  }
+
   /*@override
   Future<String?> getPlatformVersion() async {
     final version =
@@ -296,103 +740,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
       // return res;
       return;
     }
-  }
-
-  ///Using [addStreamsAllToStreamController] to add all streams to stream controller
-  ///benefit to use stream controller we can call multiple listeners to listen.
-  addStreamsAllToStreamController() {
-
-    messageOnReceivedChannel.receiveBroadcastStream().listen((event) {
-      debugPrint("messageOnReceivedChannel receiveBroadcastStream");
-      var message = convertChatMessageJsonFromString(event);
-      _messageOnReceivedStreamController.add(message);
-      messageEventsListener?.onMessageReceived(message);
-    });
-    messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
-      var messageStatus = convertChatMessageJsonFromString(event);
-      messageStatusUpdateStreamController.add(messageStatus);
-      // messageEventsListener?.message(messageStatus);
-    });
-    mediaStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
-      mediaStatusUpdatedStreamController.add(convertChatMessageJsonFromString(event));
-    });
-    onGroupNotificationMessageChannel.receiveBroadcastStream().listen((event) {
-      onGroupNotificationMessageStreamController.add(convertChatMessageJsonFromString(event));
-    });
-    showOrUpdateOrCancelNotificationChannel.receiveBroadcastStream().listen((event) {
-      var data = json.decode(event.toString());
-      var jid = data["jid"];
-      var chatMessage = convertChatMessageJsonFromString(data["chatMessage"]);
-      var map = {"jid": jid, "chatMessage": chatMessage};
-      showOrUpdateOrCancelNotificationStreamController.add(json.encode(map));
-    });
-    uploadDownloadProgressChangedStreamController
-        .addStream(uploadDownloadProgressChangedChannel.receiveBroadcastStream());
-    onGroupProfileFetchedStreamController
-        .addStream(onGroupProfileFetchedChannel.receiveBroadcastStream() /*as Stream<String>*/);
-    onNewGroupCreatedStreamController
-        .addStream(onNewGroupCreatedChannel.receiveBroadcastStream() /*as Stream<String>*/);
-    onGroupProfileUpdatedStreamController
-        .addStream(onGroupProfileUpdatedChannel.receiveBroadcastStream() /*as Stream<String>*/);
-    onNewMemberAddedToGroupStreamController.addStream(onNewMemberAddedToGroupChannel.receiveBroadcastStream());
-    onMemberRemovedFromGroupStreamController.addStream(onMemberRemovedFromGroupChannel.receiveBroadcastStream());
-    onFetchingGroupMembersCompletedStreamController
-        .addStream(onFetchingGroupMembersCompletedChannel.receiveBroadcastStream() /*as Stream<String>*/);
-    onDeleteGroupStreamController.addStream(onDeleteGroupChannel.receiveBroadcastStream());
-    onFetchingGroupListCompletedStreamController
-        .addStream(onFetchingGroupListCompletedChannel.receiveBroadcastStream());
-    onMemberMadeAsAdminStreamController.addStream(onMemberMadeAsAdminChannel.receiveBroadcastStream());
-    onMemberRemovedAsAdminStreamController.addStream(onMemberRemovedAsAdminChannel.receiveBroadcastStream());
-    onLeftFromGroupStreamController.addStream(onLeftFromGroupChannel.receiveBroadcastStream());
-
-    onGroupDeletedLocallyStreamController
-        .addStream(onGroupDeletedLocallyChannel.receiveBroadcastStream() /*as Stream<String>*/);
-    blockedThisUserStreamController.addStream(blockedThisUserChannel.receiveBroadcastStream());
-    myProfileUpdatedStreamController.addStream(myProfileUpdatedChannel.receiveBroadcastStream() /*as Stream<bool>*/);
-    onAdminBlockedOtherUserStreamController.addStream(onAdminBlockedOtherUserChannel.receiveBroadcastStream());
-    onAdminBlockedUserStreamController.addStream(onAdminBlockedUserChannel.receiveBroadcastStream());
-    onContactSyncCompleteStreamController
-        .addStream(onContactSyncCompleteChannel.receiveBroadcastStream() /*as Stream<bool>*/);
-    onLoggedOutStreamController.addStream(onLoggedOutChannel.receiveBroadcastStream() /*as Stream<bool>*/);
-    unblockedThisUserStreamController.addStream(unblockedThisUserChannel.receiveBroadcastStream());
-    userBlockedMeStreamController.addStream(userBlockedMeChannel.receiveBroadcastStream());
-    userCameOnlineStreamController.addStream(userCameOnlineChannel.receiveBroadcastStream());
-    userDeletedHisProfileStreamController
-        .addStream(userDeletedHisProfileChannel.receiveBroadcastStream() /*as Stream<String>*/);
-    userProfileFetchedStreamController.addStream(userProfileFetchedChannel.receiveBroadcastStream());
-    userUnBlockedMeStreamController.addStream(userUnBlockedMeChannel.receiveBroadcastStream());
-    userUpdatedHisProfileStreamController.addStream(userUpdatedHisProfileChannel.receiveBroadcastStream());
-    userWentOfflineStreamController.addStream(userWentOfflineChannel.receiveBroadcastStream());
-    usersIBlockedListFetchedStreamController.addStream(usersIBlockedListFetchedChannel.receiveBroadcastStream());
-    usersProfilesFetchedStreamController
-        .addStream(usersProfilesFetchedChannel.receiveBroadcastStream() /*as Stream<bool>*/);
-    usersWhoBlockedMeListFetchedStreamController
-        .addStream(usersWhoBlockedMeListFetchedChannel.receiveBroadcastStream());
-    onConnectedStreamController.addStream(onConnectedChannel.receiveBroadcastStream());
-    onDisconnectedStreamController.addStream(onDisconnectedChannel.receiveBroadcastStream());
-    onConnectionFailedStreamController.addStream(onConnectionFailedChannel.receiveBroadcastStream());
-    // connectionFailedStreamController.addStream(connectionFailedChannel.receiveBroadcastStream());
-    // connectionSuccessStreamController.addStream(connectionSuccessChannel.receiveBroadcastStream());
-    onWebChatPasswordChangedStreamController.addStream(onWebChatPasswordChangedChannel.receiveBroadcastStream());
-    setTypingStatusStreamController.addStream(setTypingStatusChannel.receiveBroadcastStream());
-    onChatTypingStatusStreamController.addStream(onChatTypingStatusChannel.receiveBroadcastStream());
-    onGroupTypingStatusStreamController.addStream(onGroupTypingStatusChannel.receiveBroadcastStream());
-    // onFailureStreamController.addStream(onFailureChannel.receiveBroadcastStream());
-    // onProgressChangedStreamController.addStream(onProgressChangedChannel.receiveBroadcastStream());
-    // onSuccessStreamController.addStream(onSuccessChannel.receiveBroadcastStream());
-    // onCallReceivingStreamController.addStream(onCallReceivingChannel.receiveBroadcastStream());
-    onLocalVideoTrackAddedStreamController.addStream(onLocalVideoTrackAddedChannel.receiveBroadcastStream());
-    onRemoteVideoTrackAddedStreamController.addStream(onRemoteVideoTrackAddedChannel.receiveBroadcastStream());
-    onTrackAddedStreamController.addStream(onTrackAddedChannel.receiveBroadcastStream());
-    onCallStatusUpdatedStreamController.addStream(onCallStatusUpdatedChannel.receiveBroadcastStream());
-    onCallActionStreamController.addStream(onCallActionChannel.receiveBroadcastStream());
-    onMuteStatusUpdatedStreamController.addStream(onMuteStatusUpdatedChannel.receiveBroadcastStream());
-    onUserSpeakingStreamController.addStream(onUserSpeakingChannel.receiveBroadcastStream());
-    onUserStoppedSpeakingStreamController.addStream(onUserStoppedSpeakingChannel.receiveBroadcastStream());
-    onMissedCallStreamController.addStream(onMissedCallChannel.receiveBroadcastStream());
-    onAvailableFeaturesUpdatedStreamController.addStream(onAvailableFeaturesUpdatedChannel.receiveBroadcastStream());
-    onCallLogsUpdatedStreamController.addStream(onCallLogsUpdatedChannel.receiveBroadcastStream());
-    onCallLogsDeletedStreamController.addStream(onCallLogsDeletedChannel.receiveBroadcastStream());
   }
 
   @override
@@ -1965,190 +2312,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
     }
   }
 
-  @override
-  Stream<dynamic> get onMessageReceived => _messageOnReceivedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onMessageStatusUpdated => messageStatusUpdateStreamController.stream;
-
-  @override
-  Stream<dynamic> get onMediaStatusUpdated => mediaStatusUpdatedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onUploadDownloadProgressChanged => uploadDownloadProgressChangedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onGroupProfileFetched => onGroupProfileFetchedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onNewGroupCreated => onNewGroupCreatedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onGroupProfileUpdated => onGroupProfileUpdatedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onNewMemberAddedToGroup => onNewMemberAddedToGroupStreamController.stream;
-
-  @override
-  Stream<dynamic> get onMemberRemovedFromGroup => onMemberRemovedFromGroupStreamController.stream;
-
-  @override
-  Stream<dynamic> get onFetchingGroupMembersCompleted => onFetchingGroupMembersCompletedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onDeleteGroup => onDeleteGroupStreamController.stream;
-
-  @override
-  Stream<dynamic> get onFetchingGroupListCompleted => onFetchingGroupListCompletedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onMemberMadeAsAdmin => onMemberMadeAsAdminStreamController.stream;
-
-  @override
-  Stream<dynamic> get onMemberRemovedAsAdmin => onMemberRemovedAsAdminStreamController.stream;
-
-  @override
-  Stream<dynamic> get onLeftFromGroup => onLeftFromGroupStreamController.stream;
-
-  @override
-  Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessageStreamController.stream;
-
-  @override
-  Stream<dynamic> get showOrUpdateOrCancelNotification => showOrUpdateOrCancelNotificationStreamController.stream;
-
-  @override
-  Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocallyStreamController.stream;
-
-  @override
-  Stream<dynamic> get blockedThisUser => blockedThisUserStreamController.stream;
-
-  @override
-  Stream<dynamic> get myProfileUpdated => myProfileUpdatedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onAdminBlockedOtherUser => onAdminBlockedOtherUserStreamController.stream;
-
-  @override
-  Stream<dynamic> get onAdminBlockedUser => onAdminBlockedUserStreamController.stream;
-
-  @override
-  Stream<dynamic> get onContactSyncComplete => onContactSyncCompleteStreamController.stream;
-
-  @override
-  Stream<dynamic> get onLoggedOut => onLoggedOutStreamController.stream;
-
-  @override
-  Stream<dynamic> get unblockedThisUser => unblockedThisUserStreamController.stream;
-
-  @override
-  Stream<dynamic> get userBlockedMe => userBlockedMeStreamController.stream;
-
-  @override
-  Stream<dynamic> get userCameOnline => userCameOnlineStreamController.stream;
-
-  @override
-  Stream<dynamic> get userDeletedHisProfile => userDeletedHisProfileStreamController.stream;
-
-  @override
-  Stream<dynamic> get userProfileFetched => userProfileFetchedStreamController.stream;
-
-  @override
-  Stream<dynamic> get userUnBlockedMe => userUnBlockedMeStreamController.stream;
-
-  @override
-  Stream<dynamic> get userUpdatedHisProfile => userUpdatedHisProfileStreamController.stream;
-
-  @override
-  Stream<dynamic> get userWentOffline => userWentOfflineStreamController.stream;
-
-  @override
-  Stream<dynamic> get usersIBlockedListFetched => usersIBlockedListFetchedStreamController.stream;
-
-  @override
-  Stream<dynamic> get usersProfilesFetched => usersProfilesFetchedStreamController.stream;
-
-  @override
-  Stream<dynamic> get usersWhoBlockedMeListFetched => usersWhoBlockedMeListFetchedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onConnected => onConnectedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onDisconnected => onDisconnectedStreamController.stream;
-
-  /*@override
-  Stream<dynamic> get onConnectionNotAuthorized =>
-      onConnectionNotAuthorizedStreamController.stream;*/
-
-  @override
-  Stream<dynamic> get onConnectionFailed => onConnectionFailedStreamController.stream;
-
-  // @override
-  // Stream<dynamic> get connectionFailed => connectionFailedStreamController.stream;
-
-  // @override
-  // Stream<dynamic> get connectionSuccess => connectionSuccessStreamController.stream;
-
-  @override
-  Stream<dynamic> get onWebChatPasswordChanged => onWebChatPasswordChangedStreamController.stream;
-
-  @override
-  Stream<dynamic> get setTypingStatus => setTypingStatusStreamController.stream;
-
-  @override
-  Stream<dynamic> get onChatTypingStatus => onChatTypingStatusStreamController.stream;
-
-  @override
-  Stream<dynamic> get onGroupTypingStatus => onGroupTypingStatusStreamController.stream;
-
-  // @override
-  // Stream<dynamic> get onFailure => onFailureStreamController.stream;
-
-  // @override
-  // Stream<dynamic> get onProgressChanged => onProgressChangedStreamController.stream;
-  //
-  // @override
-  // Stream<dynamic> get onSuccess => onSuccessStreamController.stream;
-
-  // @override
-  // Stream<dynamic> get onCallReceiving =>
-  //     onCallReceivingStreamController.stream;
-
-  @override
-  Stream<dynamic> get onLocalVideoTrackAdded => onLocalVideoTrackAddedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onRemoteVideoTrackAdded => onRemoteVideoTrackAddedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onTrackAdded => onTrackAddedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onCallStatusUpdated => onCallStatusUpdatedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onCallAction => onCallActionStreamController.stream;
-
-  @override
-  Stream<dynamic> get onMuteStatusUpdated => onMuteStatusUpdatedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onUserSpeaking => onUserSpeakingStreamController.stream;
-
-  @override
-  Stream<dynamic> get onUserStoppedSpeaking => onUserStoppedSpeakingStreamController.stream;
-
-  @override
-  Stream<dynamic> get onMissedCall => onMissedCallStreamController.stream;
-
-  @override
-  Stream<dynamic> get onAvailableFeaturesUpdated => onAvailableFeaturesUpdatedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onCallLogsUpdated => onCallLogsUpdatedStreamController.stream;
-
-  @override
-  Stream<dynamic> get onCallLogsDeleted => onCallLogsDeletedStreamController.stream;
 
   @override
   Future<String?> imagePath(String imgurl) async {
@@ -4585,6 +4748,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   @override
   void setMessageEventListener(MessageEventsListener messageEventsListener) {
     this.messageEventsListener = messageEventsListener;
+  }
+
+  @override
+  void setConnectionEventListener(ConnectionEventsListener connectionEventsListener) {
+    this.connectionEventsListener = connectionEventsListener;
+  }
+  @override
+  void setProfileEventsListener(ProfileEventsListener profileEventsListener) {
+    this.profileEventsListener = profileEventsListener;
+  }
+  @override
+  void setGroupEventsListener(GroupEventsListener groupEventsListener) {
+    this.groupEventsListener = groupEventsListener;
   }
 
   @override
