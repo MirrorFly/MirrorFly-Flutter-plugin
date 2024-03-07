@@ -88,7 +88,8 @@ object Constants {
     const val onSuccessChannel = "$Domain/onSuccess"
     const val onAvailableFeaturesUpdatedChannel = "$Domain/onAvailableFeaturesUpdated"
     const val onCallLogsUpdatedChannel = "$Domain/onCallLog"
-    const val onCallLogsDeletedChannel = "$Domain/onCallLogsDeleted"
+    const val onCallLogDeletedChannel = "$Domain/onCallLogDeleted"
+    const val clearAllCallLogChannel = "$Domain/clearAllCallLog"
 
     //call Method channel constants
     const val callMethodChannel = "$Domain/flyCall"

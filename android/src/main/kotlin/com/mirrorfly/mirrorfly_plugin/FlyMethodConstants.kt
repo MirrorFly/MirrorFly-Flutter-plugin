@@ -265,7 +265,8 @@ object FlyMethodConstants {
         Constants.onUserStoppedSpeaking to EventStreamHandler(),
         Constants.onMissedCall to EventStreamHandler(),
         Constants.onCallLogsUpdatedChannel to EventStreamHandler(),
-        Constants.onCallLogsDeletedChannel to EventStreamHandler(),
+        Constants.onCallLogDeletedChannel to EventStreamHandler(),
+        Constants.clearAllCallLogChannel to EventStreamHandler(),
     )
     val callMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "getCallUsersList" to flyCallMethods::getCallUsersList,
