@@ -508,13 +508,19 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     
     public func didBlockOrUnblockGroup(groupJid: String, isBlocked: Bool) {
         
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(groupJid, forKey: "jid")
+        jsonObject.setValue("groupchat", forKey: "type")
+        jsonObject.setValue(isBlocked, forKey: "status")
+        let jsonString = pluginDictToJson(dictionary: jsonObject)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onAdminBlockedOtherUser_channel, value: jsonString)
     }
     
     public func didBlockOrUnblockContact(userJid: String, isBlocked: Bool) {
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userJid, forKey: "jid")
-        jsonObject.setValue("", forKey: "type")
+        jsonObject.setValue("chat", forKey: "type")
         jsonObject.setValue(isBlocked, forKey: "status")
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onAdminBlockedOtherUser_channel, value: jsonString)

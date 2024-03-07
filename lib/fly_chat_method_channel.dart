@@ -28,6 +28,8 @@ import 'builder.dart';
 import 'fly_constants.dart';
 import 'model/callback.dart';
 import 'model/chat_message_model.dart' as client;
+import 'model/profile_model.dart' as client;
+import 'model/available_features.dart' as client;
 
 class FlyErrorCode {
   static const unHandle = "1000";
@@ -88,9 +90,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   // @visibleForTesting
   // final onDeleteGroupChannel = const EventChannel('contus.mirrorfly/onDeleteGroup');
   // final StreamController<dynamic> onDeleteGroupStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final onFetchingGroupListCompletedChannel = const EventChannel('contus.mirrorfly/onFetchingGroupListCompleted');
-  final StreamController<dynamic> onFetchingGroupListCompletedStreamController = StreamController<dynamic>.broadcast();
+  // @visibleForTesting
+  // final onFetchingGroupListCompletedChannel = const EventChannel('contus.mirrorfly/onFetchingGroupListCompleted');
+  // final StreamController<dynamic> onFetchingGroupListCompletedStreamController = StreamController<dynamic>.broadcast();
   @visibleForTesting
   final onMemberMadeAsAdminChannel = const EventChannel('contus.mirrorfly/onMemberMadeAsAdmin');
   final StreamController<dynamic> onMemberMadeAsAdminStreamController = StreamController<dynamic>.broadcast();
@@ -254,8 +256,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   final StreamController<dynamic> onCallLogsUpdatedStreamController = StreamController<dynamic>.broadcast();
 
   @visibleForTesting
-  final onCallLogsDeletedChannel = const EventChannel('contus.mirrorfly/onCallLogsDeleted');
-  final StreamController<dynamic> onCallLogsDeletedStreamController = StreamController<dynamic>.broadcast();
+  final onCallLogDeletedChannel = const EventChannel('contus.mirrorfly/onCallLogDeleted');
+  final StreamController<dynamic> onCallLogDeletedStreamController = StreamController<dynamic>.broadcast();
+
+  @visibleForTesting
+  final onClearAllCallLogChannel = const EventChannel('contus.mirrorfly/clearAllCallLog');
+  final StreamController<dynamic> onClearAllCallLogStreamController = StreamController<dynamic>.broadcast();
 
 
 
@@ -292,8 +298,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   // @override
   // Stream<dynamic> get onDeleteGroup => onDeleteGroupStreamController.stream;
 
-  @override
-  Stream<dynamic> get onFetchingGroupListCompleted => onFetchingGroupListCompletedStreamController.stream;
+  // @override
+  // Stream<dynamic> get onFetchingGroupListCompleted => onFetchingGroupListCompletedStreamController.stream;
 
   @override
   Stream<dynamic> get onMemberMadeAsAdmin => onMemberMadeAsAdminStreamController.stream;
@@ -442,7 +448,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   Stream<dynamic> get onCallLogsUpdated => onCallLogsUpdatedStreamController.stream;
 
   @override
-  Stream<dynamic> get onCallLogsDeleted => onCallLogsDeletedStreamController.stream;
+  Stream<dynamic> get onCallLogDeleted => onCallLogDeletedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onClearAllCallLog => onClearAllCallLogStreamController.stream;
 
   ///Using [addStreamsAllToStreamController] to add all streams to stream controller
   ///benefit to use stream controller we can call multiple listeners to listen.
@@ -480,7 +489,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
     uploadDownloadProgressChangedChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var messageId = data["message_id"] ?? "";
-      var progressPercentage = data["progress_percentage"];
+      var progressPercentage = data["progress_percentage"] ?? 0;
       uploadDownloadProgressChangedStreamController.add(event);
       messageEventsListener?.onUploadDownloadProgressChanged(messageId, progressPercentage);
     });
@@ -520,102 +529,144 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
     //   onDeleteGroupStreamController.add(event);
     //   groupEventsListener?.onDeleteGroup(event);
     // });
-    onFetchingGroupListCompletedChannel.receiveBroadcastStream().listen((event) {
-      onFetchingGroupListCompletedStreamController.add(event);
-      groupEventsListener?.onFetchingGroupListCompleted(event);
-    });
+    // onFetchingGroupListCompletedChannel.receiveBroadcastStream().listen((event) {
+    //   onFetchingGroupListCompletedStreamController.add(event);
+    //   groupEventsListener?.onFetchingGroupListCompleted(event);
+    // });
     onMemberMadeAsAdminChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var groupJid = data["groupJid"] ?? "";
+      var newAdminMemberJid = data["newAdminMemberJid"] ?? "";
+      var madeByMemberJid = data["madeByMemberJid"] ?? "";
       onMemberMadeAsAdminStreamController.add(event);
-      groupEventsListener?.onMemberMadeAsAdmin(event);
+      groupEventsListener?.onMemberMadeAsAdmin(groupJid, newAdminMemberJid, madeByMemberJid);
     });
     onMemberRemovedAsAdminChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var groupJid = data["groupJid"] ?? "";
+      var removedAdminMemberJid = data["removedAdminMemberJid"] ?? "";
+      var removedByMemberJid = data["removedByMemberJid"] ?? "";
       onMemberRemovedAsAdminStreamController.add(event);
-      groupEventsListener?.onMemberRemovedAsAdmin(event);
+      groupEventsListener?.onMemberRemovedAsAdmin(groupJid, removedAdminMemberJid, removedByMemberJid);
     });
     onLeftFromGroupChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var groupJid = data["groupJid"] ?? "";
+      var leftUserJid = data["leftUserJid"] ?? "";
       onLeftFromGroupStreamController.add(event);
-      groupEventsListener?.onLeftFromGroup(event);
+      groupEventsListener?.onLeftFromGroup(groupJid, leftUserJid);
     });
 
-    onGroupDeletedLocallyChannel.receiveBroadcastStream().listen((event) {
-      onGroupDeletedLocallyStreamController.add(event);
-      groupEventsListener?.onGroupDeletedLocally(event);
+    onGroupDeletedLocallyChannel.receiveBroadcastStream().listen((groupJid) {
+      onGroupDeletedLocallyStreamController.add(groupJid);
+      groupEventsListener?.onGroupDeletedLocally(groupJid);
     });
     blockedThisUserChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var userJid = data["jid"] ?? "";
       blockedThisUserStreamController.add(event);
-      profileEventsListener?.blockedThisUser(event);
+      profileEventsListener?.blockedThisUser(userJid);
     });
     myProfileUpdatedChannel.receiveBroadcastStream().listen((event) {
       myProfileUpdatedStreamController.add(event);
-      profileEventsListener?.myProfileUpdated(event);
+      profileEventsListener?.myProfileUpdated();
     });
     onAdminBlockedOtherUserChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"] ?? "";
+      var chatType = data["type"] ?? "";
+      var isBlocked = data["status"] ?? "";
       onAdminBlockedOtherUserStreamController.add(event);
-      profileEventsListener?.onAdminBlockedOtherUser(event);
+      profileEventsListener?.onAdminBlockedOtherUser(jid, chatType, isBlocked);
     });
     onAdminBlockedUserChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"] ?? "";
+      var isBlocked = data["status"] ?? "";
       onAdminBlockedUserStreamController.add(event);
-      profileEventsListener?.onAdminBlockedUser(event);
+      profileEventsListener?.onAdminBlockedUser(jid, isBlocked);
     });
-    onContactSyncCompleteChannel.receiveBroadcastStream().listen((event) {
-      onContactSyncCompleteStreamController.add(event);
-      profileEventsListener?.onContactSyncComplete(event);
+    onContactSyncCompleteChannel.receiveBroadcastStream().listen((isSuccess) {
+      onContactSyncCompleteStreamController.add(isSuccess);
+      profileEventsListener?.onContactSyncComplete(isSuccess);
     });
     onLoggedOutChannel.receiveBroadcastStream().listen((event) {
       onLoggedOutStreamController.add(event);
-      connectionEventsListener?.onLoggedOut(event);
+      connectionEventsListener?.onLoggedOut();
     });
     unblockedThisUserChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"] ?? "";
       unblockedThisUserStreamController.add(event);
-      profileEventsListener?.unblockedThisUser(event);
+      profileEventsListener?.unblockedThisUser(jid);
     });
     userBlockedMeChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"] ?? "";
       userBlockedMeStreamController.add(event);
-      profileEventsListener?.userUnBlockedMe(event);
+      profileEventsListener?.userBlockedMe(jid);
     });
     userCameOnlineChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"] ?? "";
       userCameOnlineStreamController.add(event);
-      messageEventsListener?.userCameOnline(event);
+      messageEventsListener?.userCameOnline(jid);
     });
     userDeletedHisProfileChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"] ?? "";
       userDeletedHisProfileStreamController.add(event);
-      profileEventsListener?.userDeletedHisProfile(event);
+      profileEventsListener?.userDeletedHisProfile(jid);
     });
     userProfileFetchedChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"] ?? "";
+      var profileDetails = data["profileDetails"] ?? "";
+      client.ProfileData profileData = client.profileData(profileDetails);
       userProfileFetchedStreamController.add(event);
-      profileEventsListener?.userProfileFetched(event);
+      profileEventsListener?.userProfileFetched(jid, profileData);
     });
     userUnBlockedMeChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"] ?? "";
       userUnBlockedMeStreamController.add(event);
-      profileEventsListener?.userUnBlockedMe(event);
+      profileEventsListener?.userUnBlockedMe(jid);
     });
     userUpdatedHisProfileChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"] ?? "";
       userUpdatedHisProfileStreamController.add(event);
-      profileEventsListener?.userUpdatedHisProfile(event);
+      profileEventsListener?.userUpdatedHisProfile(jid);
     });
     userWentOfflineChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"] ?? "";
       userWentOfflineStreamController.add(event);
-      messageEventsListener?.userWentOffline(event);
+      messageEventsListener?.userWentOffline(jid);
     });
     usersIBlockedListFetchedChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jidList = data["jidlist"] ?? "";
       usersIBlockedListFetchedStreamController.add(event);
-      profileEventsListener?.usersIBlockedListFetched(event);
+      profileEventsListener?.usersIBlockedListFetched(jidList);
     });
     usersProfilesFetchedChannel.receiveBroadcastStream().listen((event) {
       usersProfilesFetchedStreamController.add(event);
-      profileEventsListener?.usersProfilesFetched(event);
+      profileEventsListener?.usersProfilesFetched();
     });
     usersWhoBlockedMeListFetchedChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var jidList = data["jidlist"] ?? "";
       usersWhoBlockedMeListFetchedStreamController.add(event);
-      profileEventsListener?.usersWhoBlockedMeListFetched(event);
+      profileEventsListener?.usersWhoBlockedMeListFetched(jidList);
     });
     onConnectedChannel.receiveBroadcastStream().listen((event) {
       onConnectedStreamController.add(event);
-      connectionEventsListener?.onConnected(event);
+      connectionEventsListener?.onConnected();
     });
     onDisconnectedChannel.receiveBroadcastStream().listen((event) {
       onDisconnectedStreamController.add(event);
-      connectionEventsListener?.onDisconnected(event);
+      connectionEventsListener?.onDisconnected();
     });
     onConnectionFailedChannel.receiveBroadcastStream().listen((event) {
       onConnectionFailedStreamController.add(event);
@@ -629,8 +680,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
       onWebChatPasswordChangedStreamController.add(event);
     });
     setTypingStatusChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var singleOrGroupJid = data["singleOrgroupJid"] ?? "";
+      var userJid = data["userJid"] ?? "";
+      var status = data["status"] ?? "";
       setTypingStatusStreamController.add(event);
-      messageEventsListener?.setTypingStatus(event);
+      messageEventsListener?.setTypingStatus(singleOrGroupJid, userJid, status);
     });
     onChatTypingStatusChannel.receiveBroadcastStream().listen((event) {
       onChatTypingStatusStreamController.add(event);
@@ -648,52 +703,85 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
     // onCallReceivingChannel.receiveBroadcastStream().listen((event) {
     //   onCallReceivingStreamController.add(event);});
     onLocalVideoTrackAddedChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var userJid = data["userJid"] ?? "";
       onLocalVideoTrackAddedStreamController.add(event);
-      callEventsListener?.onLocalVideoTrackAdded(event);
+      callEventsListener?.onLocalVideoTrackAdded(userJid);
     });
     onRemoteVideoTrackAddedChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var userJid = data["userJid"] ?? "";
       onRemoteVideoTrackAddedStreamController.add(event);
-      callEventsListener?.onRemoteVideoTrackAdded(event);
+      callEventsListener?.onRemoteVideoTrackAdded(userJid);
     });
     onTrackAddedChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var userJid = data["userJid"] ?? "";
       onTrackAddedStreamController.add(event);
-      callEventsListener?.onTrackAdded(event);
+      callEventsListener?.onTrackAdded(userJid);
     });
     onCallStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
+      var statusUpdateReceived = jsonDecode(event);
+      var callMode = statusUpdateReceived["callMode"].toString();
+      var userJid = statusUpdateReceived["userJid"].toString();
+      var callType = statusUpdateReceived["callType"].toString();
+      var callStatus = statusUpdateReceived["callStatus"].toString();
       onCallStatusUpdatedStreamController.add(event);
-      callEventsListener?.onCallStatusUpdated(event);
+      callEventsListener?.onCallStatusUpdated(userJid, callMode, callType, callStatus);
     });
     onCallActionChannel.receiveBroadcastStream().listen((event) {
+      var actionReceived = jsonDecode(event);
+      var callAction = actionReceived["callAction"].toString();
+      var userJid = actionReceived["userJid"].toString();
+      var callMode = actionReceived["callMode"].toString();
+      var callType = actionReceived["callType"].toString();
       onCallActionStreamController.add(event);
-      callEventsListener?.onCallAction(event);
+      callEventsListener?.onCallAction(userJid, callMode, callType, callAction);
     });
     onMuteStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
+      var muteStatus = jsonDecode(event);
+      var muteEvent = muteStatus["muteEvent"].toString();
+      var userJid = muteStatus["userJid"].toString();
       onMuteStatusUpdatedStreamController.add(event);
-      callEventsListener?.onMuteStatusUpdated(event);
+      callEventsListener?.onMuteStatusUpdated(userJid, muteEvent);
     });
     onUserSpeakingChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var audioLevel = data["audioLevel"];
+      var userJid = data["userJid"];
       onUserSpeakingStreamController.add(event);
-      callEventsListener?.onUserSpeaking(event);
+      callEventsListener?.onUserSpeaking(userJid, audioLevel);
     });
-    onUserStoppedSpeakingChannel.receiveBroadcastStream().listen((event) {
-      onUserStoppedSpeakingStreamController.add(event);
-      callEventsListener?.onUserStoppedSpeaking(event);
+    onUserStoppedSpeakingChannel.receiveBroadcastStream().listen((userJid) {
+      onUserStoppedSpeakingStreamController.add(userJid);
+      callEventsListener?.onUserStoppedSpeaking(userJid);
     });
     onMissedCallChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var isOneToOneCall = data["isOneToOneCall"];
+      var userJid = data["userJid"];
+      var groupId = data["groupId"];
+      var callType = data["callType"];
+      var userList = data["userList"].toString().split(",");
       onMissedCallStreamController.add(event);
-      callEventsListener?.onMissedCall(event);
+      callEventsListener?.onMissedCall(userJid, groupId, isOneToOneCall, callType, userList);
     });
     onAvailableFeaturesUpdatedChannel.receiveBroadcastStream().listen((event) {
+      client.AvailableFeatures availableFeatures = client.availableFeaturesFromJson(event.toString());
       onAvailableFeaturesUpdatedStreamController.add(event);
-      messageEventsListener?.onAvailableFeaturesUpdated(event);
+      messageEventsListener?.onAvailableFeaturesUpdated(availableFeatures);
     });
     onCallLogsUpdatedChannel.receiveBroadcastStream().listen((event) {
       onCallLogsUpdatedStreamController.add(event);
-      callEventsListener?.onCallLogsUpdated(event);
+      callEventsListener?.onCallLogsUpdated();
     });
-    onCallLogsDeletedChannel.receiveBroadcastStream().listen((event) {
-      onCallLogsDeletedStreamController.add(event);
-      callEventsListener?.onCallLogsDeleted(event);
+    onCallLogDeletedChannel.receiveBroadcastStream().listen((callLogId) {
+      onCallLogDeletedStreamController.add(callLogId);
+      callEventsListener?.onCallLogDeleted(callLogId);
+    });
+    onClearAllCallLogChannel.receiveBroadcastStream().listen((event) {
+      onClearAllCallLogStreamController.add(event);
+      callEventsListener?.onCallLogsCleared();
     });
   }
 

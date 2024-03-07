@@ -23,8 +23,9 @@ struct Constants {
     static let onUserSpeakingChannel = "\(domain)/onUserSpeaking"
     static let onUserStoppedSpeakingChannel = "\(domain)/onUserStoppedSpeaking"
     static let onMissedCallChannel = "\(domain)/onMissedCall"
-    static let oncallLogUpdateChannel = "\(domain)/onCallLog"
-    static let oncallLogDeletedChannel = "\(domain)/onCallLogsDeleted"
+    static let onCallLogUpdateChannel = "\(domain)/onCallLog"
+    static let onCallLogDeletedChannel = "\(domain)/onCallLogDeleted"
+    static let clearAllCallLogChannel = "\(domain)/clearAllCallLog"
     
     /// Method Channels for Chats
         static let onMessageReceivedChannel = "\(domain)/onMessageReceived"
@@ -40,7 +41,7 @@ struct Constants {
         static let onMemberRemovedFromGroup_channel = "\(domain)/onMemberRemovedFromGroup"
         static let onFetchingGroupMembersCompleted_channel = "\(domain)/onFetchingGroupMembersCompleted"
 //        static let onDeleteGroup_channel = "\(domain)/onDeleteGroup"
-        static let onFetchingGroupListCompleted_channel = "\(domain)/onFetchingGroupListCompleted"
+//        static let onFetchingGroupListCompleted_channel = "\(domain)/onFetchingGroupListCompleted"
         static let onMemberMadeAsAdmin_channel = "\(domain)/onMemberMadeAsAdmin"
         static let onMemberRemovedAsAdmin_channel = "\(domain)/onMemberRemovedAsAdmin"
         static let onLeftFromGroup_channel = "\(domain)/onLeftFromGroup"

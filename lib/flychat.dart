@@ -1260,10 +1260,10 @@ class Mirrorfly {
   static Stream<dynamic> get onFetchingGroupMembersCompleted =>
       FlyChatFlutterPlatform.instance.onFetchingGroupMembersCompleted;
 
-  static Stream<dynamic> get onDeleteGroup => FlyChatFlutterPlatform.instance.onDeleteGroup;
-
-  static Stream<dynamic> get onFetchingGroupListCompleted =>
-      FlyChatFlutterPlatform.instance.onFetchingGroupListCompleted;
+  // static Stream<dynamic> get onDeleteGroup => FlyChatFlutterPlatform.instance.onDeleteGroup;
+  //
+  // static Stream<dynamic> get onFetchingGroupListCompleted =>
+  //     FlyChatFlutterPlatform.instance.onFetchingGroupListCompleted;
 
   static Stream<dynamic> get onMemberMadeAsAdmin => FlyChatFlutterPlatform.instance.onMemberMadeAsAdmin;
 
@@ -1369,7 +1369,9 @@ class Mirrorfly {
 
   static Stream<dynamic> get onCallLogsUpdated => FlyChatFlutterPlatform.instance.onCallLogsUpdated;
 
-  static Stream<dynamic> get onCallLogsDeleted => FlyChatFlutterPlatform.instance.onCallLogsDeleted;
+  static Stream<dynamic> get onCallLogDeleted => FlyChatFlutterPlatform.instance.onCallLogDeleted;
+
+  static Stream<dynamic> get onCallLogsCleared => FlyChatFlutterPlatform.instance.onClearAllCallLog;
 
   /*static Future<String?> imagePath({required String imgUrl}) {
     return FlyChatFlutterPlatform.instance.imagePath(imgUrl);

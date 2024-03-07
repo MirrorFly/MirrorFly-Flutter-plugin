@@ -204,7 +204,7 @@ import PushKit
         
         //Added to Sync the Call log in Call Status update
         NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
         
         if(userJID != "" && callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
@@ -367,7 +367,8 @@ import PushKit
             // Handle case when unique ID is not found
         }
         
-        eventChannelInitializer.sinkValues[Constants.onUserSpeakingChannel] = userId
+//        eventChannelInitializer.sinkValues[Constants.onUserSpeakingChannel] = userId
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onUserSpeakingChannel, value: userId)
     }
     
     func onLocalVideoTrackAdded(userId: String, videoTrack: RTCVideoTrack) {
@@ -487,23 +488,25 @@ import PushKit
         
         //Added to Sync the Call log in Missed call Event
         NSLog("\(Constants.callTag) Events: callLogUpdate in onMissedCall")
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
         
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMissedCallChannel, value: onMissedCallJson)
     }
     
     func clearAllCallLog() {
         NSLog("\(Constants.callTag) clearAllCallLog")
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.clearAllCallLogChannel, value: true)
     }
     
     func deleteCallLogs(callLogId: String) {
         NSLog("\(Constants.callTag) deleteCallLogs")
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogDeletedChannel, value: callLogId)
     }
 
     
     func onCallLogsUpdated() {
         NSLog("\(Constants.callTag) Events: callLogUpdate")
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
     }
     
     func userProfileDidChange(for jid: String, profileDetails: MirrorFlySDK.ProfileDetails) {

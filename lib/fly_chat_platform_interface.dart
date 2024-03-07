@@ -1,7 +1,6 @@
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
-import 'package:mirrorfly_plugin/internal_models/get_user_profile_model.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -447,9 +446,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get onFetchingGroupMembersCompleted => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onDeleteGroup => throw UnimplementedError('has not been implemented.');
+  // Stream<dynamic> get onDeleteGroup => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onFetchingGroupListCompleted => throw UnimplementedError('has not been implemented.');
+  // Stream<dynamic> get onFetchingGroupListCompleted => throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get onMemberMadeAsAdmin => throw UnimplementedError('has not been implemented.');
 
@@ -553,7 +552,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Stream<dynamic> get onCallLogsUpdated => throw UnimplementedError('onCallLogsUpdated has not been implemented.');
 
-  Stream<dynamic> get onCallLogsDeleted => throw UnimplementedError('onCallLogsDeleted has not been implemented.');
+  Stream<dynamic> get onCallLogDeleted => throw UnimplementedError('onCallLogDeleted has not been implemented.');
+
+  Stream<dynamic> get onClearAllCallLog => throw UnimplementedError('onClearAllCallLog has not been implemented.');
 
   Future<String?> imagePath(String imgurl) {
     throw UnimplementedError('has not been implemented.');

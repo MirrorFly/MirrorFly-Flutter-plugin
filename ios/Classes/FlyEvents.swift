@@ -76,4 +76,6 @@ public class OnMuteStatusUpdatedStreamHandler: EventStreamHandler { }
 public class OnUserSpeakingStreamHandler: EventStreamHandler { }
 public class OnUserStoppedSpeakingStreamHandler: EventStreamHandler { }
 public class OnMissedCallStreamHandler: EventStreamHandler { }
-public class OncallLogUpdateStreamHandler: EventStreamHandler { }
+public class OnCallLogUpdateStreamHandler: EventStreamHandler { }
+public class OnCallLogDeletedStreamHandler: EventStreamHandler { }
+public class ClearAllCallLogChannelStreamHandler: EventStreamHandler { }

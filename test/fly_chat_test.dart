@@ -1002,8 +1002,12 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   Stream get onCallAction => throw UnimplementedError();
 
   @override
-  //  implement onCallLogsDeleted
-  Stream get onCallLogsDeleted => throw UnimplementedError();
+  //  implement onCallLogDeleted
+  Stream get onCallLogDeleted => throw UnimplementedError();
+
+  @override
+  //  implement onCallLogDeleted
+  Stream get onClearAllCallLog => throw UnimplementedError();
 
   @override
   //  implement onCallLogsUpdated
@@ -1029,9 +1033,9 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   //  implement onContactSyncComplete
   Stream get onContactSyncComplete => throw UnimplementedError();
 
-  @override
-  //  implement onDeleteGroup
-  Stream get onDeleteGroup => throw UnimplementedError();
+  // @override
+  // //  implement onDeleteGroup
+  // Stream get onDeleteGroup => throw UnimplementedError();
 
   @override
   //  implement onDisconnected
@@ -1041,9 +1045,9 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   // onFailure
   // Stream get onFailure => throw UnimplementedError();
 
-  @override
-  //  implement onFetchingGroupListCompleted
-  Stream get onFetchingGroupListCompleted => throw UnimplementedError();
+  // @override
+  // //  implement onFetchingGroupListCompleted
+  // Stream get onFetchingGroupListCompleted => throw UnimplementedError();
 
   @override
   //  implement onFetchingGroupMembersCompleted
