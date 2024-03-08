@@ -971,7 +971,7 @@ class Mirrorfly {
   ///   if(response.isSuccess){
   ///     String lastSeenTime = response.data;
   ///     if (lastSeenTime.isNotEmpty) {
-  ///       DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: true);
+  ///       DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: false);
   ///       print('Last seen time: $lastSeen');
   ///     } else {
   ///       print('Last seen time is not available.');
