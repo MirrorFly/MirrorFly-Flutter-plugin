@@ -368,7 +368,7 @@ import PushKit
         }
         
 //        eventChannelInitializer.sinkValues[Constants.onUserSpeakingChannel] = userId
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onUserSpeakingChannel, value: userId)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onUserStoppedSpeakingChannel, value: userId)
     }
     
     func onLocalVideoTrackAdded(userId: String, videoTrack: RTCVideoTrack) {
@@ -393,8 +393,11 @@ import PushKit
             NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> Unique ID is not Found")
         }
         
-        eventChannelInitializer.sinkValues[Constants.onLocalVideoTrackAddedChannel] = jidJson
-        eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
+//        eventChannelInitializer.sinkValues[Constants.onLocalVideoTrackAddedChannel] = jidJson
+//        eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
+        
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onLocalVideoTrackAddedChannel, value: jidJson)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onTrackAddedChannel, value: jidJson)
     }
     
     func onRemoteVideoTrackAdded(userId: String, track: RTCVideoTrack) {
@@ -414,8 +417,12 @@ import PushKit
             // Handle case when unique ID is not found
         }
 
-        eventChannelInitializer.sinkValues[Constants.onRemoteVideoTrackAddedChannel] = jidJson
-        eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
+//        eventChannelInitializer.sinkValues[Constants.onRemoteVideoTrackAddedChannel] = jidJson
+//        eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
+        
+        
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onRemoteVideoTrackAddedChannel, value: jidJson)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onTrackAddedChannel, value: jidJson)
     }
     
     
