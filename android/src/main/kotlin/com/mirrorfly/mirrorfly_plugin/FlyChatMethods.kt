@@ -49,11 +49,9 @@ import com.mirrorflysdk.models.TopicChatListParams
 import com.mirrorflysdk.utils.ThumbSize
 import com.mirrorflysdk.utils.Utils
 import com.mirrorflysdk.utils.VideoRecUtils
-import com.mirrorflysdk.xmpp.FlyXMPP
 import com.mirrorflysdk.xmpp.chat.models.CreateGroupModel
 import com.mirrorflysdk.xmpp.chat.models.Profile
 import io.flutter.Log
-import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -1418,7 +1416,7 @@ class FlyChatMethods {
                         toId = userJID
                         this.topicId = topicId
                         messageType =
-                            if (isRecorded) MessageType.AUDIO_RECORDED else MessageType.AUDIO
+                                if (isRecorded) MessageType.AUDIO_RECORDED else MessageType.AUDIO
                         replyMessageId = replyMessageID //Optional
                         fileMessage = FileMessageParams().apply {
                             fileUrl = audiofileUrl
@@ -3442,8 +3440,8 @@ class FlyChatMethods {
                 try {
                     val audioIntent = Intent(Intent.ACTION_GET_CONTENT)
                     audioIntent.setDataAndType(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        Constants.AUDIO_FILE
+                            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                            Constants.AUDIO_FILE
                     )
                     getActivity()?.startActivityForResult(audioIntent, Constants.FROM_GALLERY)
                 } catch (e: Exception) {
@@ -3511,8 +3509,8 @@ class FlyChatMethods {
     }
 
     private fun getMissedCallNotificationContent(
-        isOneToOneCall: Boolean, userJid: String, groupId: String?, callType: String,
-        userList: ArrayList<String>
+            isOneToOneCall: Boolean, userJid: String, groupId: String?, callType: String,
+            userList: ArrayList<String>
     ): Pair<String, String> {
         val messageContent: String
         val missedCallMessage = StringBuilder()
@@ -3555,7 +3553,7 @@ class FlyChatMethods {
 
     private fun getDisplayName(jid: String): String {
         return ContactManager.getProfileDetails(jid)?.name
-            ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
+                ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
     }
 
 }
