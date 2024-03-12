@@ -7,16 +7,22 @@ import 'dart:io';
 
 import 'profile_detail_model.dart';
 
-MessageStatusDetail messageDeliveredStatusFromJson(String str) => MessageStatusDetail.fromJson(json.decode(str));
+MessageStatusDetail messageDeliveredStatusFromJson(String str) =>
+    MessageStatusDetail.fromJson(json.decode(str));
 
-String messageDeliveredStatusToJson(MessageStatusDetail data) => json.encode(data);
+String messageDeliveredStatusToJson(MessageStatusDetail data) =>
+    json.encode(data);
 
-MessageStatusDetail messageReadStatusFromJson(String str) => MessageStatusDetail.fromJson(json.decode(str));
+MessageStatusDetail messageReadStatusFromJson(String str) =>
+    MessageStatusDetail.fromJson(json.decode(str));
 
-MessageStatusDetail messageStatusDetailFromJson(String str) => MessageStatusDetail.fromJson(json.decode(str));
+MessageStatusDetail messageStatusDetailFromJson(String str) =>
+    MessageStatusDetail.fromJson(json.decode(str));
 
 String convertMessageDeliveredStatusToJson(String? str) =>
-    (str == null || str.isEmpty) ? "" : messageDeliveredStatusToJson(messageDeliveredStatusFromJson(str));
+    (str == null || str.isEmpty)
+        ? ""
+        : messageDeliveredStatusToJson(messageDeliveredStatusFromJson(str));
 
 class MessageStatusDetail {
   MessageStatusDetail({
@@ -29,16 +35,19 @@ class MessageStatusDetail {
   int? totalParticipantCount;
   List<ParticipantList> participantList;
 
-  factory MessageStatusDetail.fromJson(Map<String, dynamic> json) => MessageStatusDetail(
+  factory MessageStatusDetail.fromJson(Map<String, dynamic> json) =>
+      MessageStatusDetail(
         count: json["count"],
         totalParticipantCount: json["totalParticipantCount"],
-        participantList: List<ParticipantList>.from(json["participantList"].map((x) => ParticipantList.fromJson(x))),
+        participantList: List<ParticipantList>.from(
+            json["participantList"].map((x) => ParticipantList.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "count": count,
         "totalParticipantCount": totalParticipantCount,
-        "participantList": List<dynamic>.from(participantList.map((x) => x.toJson())),
+        "participantList":
+            List<dynamic>.from(participantList.map((x) => x.toJson())),
       };
 }
 
@@ -53,9 +62,11 @@ class ParticipantList {
   String? messageId;
   String? time;
 
-  factory ParticipantList.fromJson(Map<String, dynamic> json) => ParticipantList(
-        profileDetails:
-            ProfileDetails.fromJson((Platform.isAndroid ? json["memberProfileDetails"] : json["profileDetails"])),
+  factory ParticipantList.fromJson(Map<String, dynamic> json) =>
+      ParticipantList(
+        profileDetails: ProfileDetails.fromJson((Platform.isAndroid
+            ? json["memberProfileDetails"]
+            : json["profileDetails"])),
         messageId: json["messageId"],
         time: json["time"].toString(),
       );
@@ -116,13 +127,16 @@ class MemberProfileDetails {
   String? status;
   String? thumbImage;
 
-  factory MemberProfileDetails.fromJson(Map<String, dynamic> json) => MemberProfileDetails(
+  factory MemberProfileDetails.fromJson(Map<String, dynamic> json) =>
+      MemberProfileDetails(
         contactType: getContactType(json["contactType"].toString()),
         email: json["email"],
         groupCreatedTime: json["groupCreatedTime"].toString(),
         image: json["image"],
         imagePrivacyFlag: json["imagePrivacyFlag"].toString(),
-        isAdminBlocked: Platform.isAndroid ? json["isAdminBlocked"] : json["isBlockedByAdmin"],
+        isAdminBlocked: Platform.isAndroid
+            ? json["isAdminBlocked"]
+            : json["isBlockedByAdmin"],
         isBlocked: json["isBlocked"],
         isBlockedMe: json["isBlockedMe"],
         isGroupAdmin: json["isGroupAdmin"],

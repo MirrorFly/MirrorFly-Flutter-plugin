@@ -5,20 +5,26 @@
 import 'dart:convert';
 import 'dart:io';
 
-List<ChatMessage> chatMessageFromJson(String str) =>
-    List<ChatMessage>.from(json.decode(str).map((x) => ChatMessage.fromJson(x)));
+List<ChatMessage> chatMessageFromJson(String str) => List<ChatMessage>.from(
+    json.decode(str).map((x) => ChatMessage.fromJson(x)));
 
-String chatMessageToJson(List<ChatMessage> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String chatMessageToJson(List<ChatMessage> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-ChatMessage sendMessageModelFromJson(String str) => ChatMessage.fromJson(json.decode(str));
+ChatMessage sendMessageModelFromJson(String str) =>
+    ChatMessage.fromJson(json.decode(str));
 
 String sendMessageModelToJson(ChatMessage data) => json.encode(data.toJson());
 
 String convertChatMessagesJsonFromString(String? str) =>
-    (str == null || str.isEmpty) ? "" : chatMessageToJson(chatMessageFromJson(str));
+    (str == null || str.isEmpty)
+        ? ""
+        : chatMessageToJson(chatMessageFromJson(str));
 
 String convertChatMessageJsonFromString(String? str) =>
-    (str == null || str.isEmpty) ? "" : sendMessageModelToJson(sendMessageModelFromJson(str));
+    (str == null || str.isEmpty)
+        ? ""
+        : sendMessageModelToJson(sendMessageModelFromJson(str));
 
 class ChatMessage {
   ChatMessage({
@@ -78,21 +84,30 @@ class ChatMessage {
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
       chatUserJid: json["chatUserJid"] ?? "",
       contactType: getContactType(json),
-      isItCarbonMessage: Platform.isAndroid ? json["isItCarbonMessage"] ?? false : json["isCarbonMessage"] ?? false,
-      isItSavedContact: Platform.isAndroid ? json["isItSavedContact"] ?? false : json["isSavedContact"] ?? false,
+      isItCarbonMessage: Platform.isAndroid
+          ? json["isItCarbonMessage"] ?? false
+          : json["isCarbonMessage"] ?? false,
+      isItSavedContact: Platform.isAndroid
+          ? json["isItSavedContact"] ?? false
+          : json["isSavedContact"] ?? false,
       isMessageDeleted: json["isMessageDeleted"],
       isMessageRecalled: json["isMessageRecalled"],
       isMessageSentByMe: json["isMessageSentByMe"],
       isMessageStarred: json["isMessageStarred"],
       isSelected: json["isSelected"] ?? false,
-      isThisAReplyMessage: Platform.isAndroid ? json["isThisAReplyMessage"] : json["isReplyMessage"],
-      messageChatType: json["messageChatType"].toString().toLowerCase() == "singlechat"
-          ? "chat"
-          : json["messageChatType"].toLowerCase(),
+      isThisAReplyMessage: Platform.isAndroid
+          ? json["isThisAReplyMessage"]
+          : json["isReplyMessage"],
+      messageChatType:
+          json["messageChatType"].toString().toLowerCase() == "singlechat"
+              ? "chat"
+              : json["messageChatType"].toLowerCase(),
       messageCustomField: json["messageCustomField"] ?? {},
       messageId: json["messageId"],
       messageSentTime: json["messageSentTime"].toInt(),
-      messageStatus: getMessageStatus(Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"]),
+      messageStatus: getMessageStatus(Platform.isAndroid
+          ? json["messageStatus"]["status"]
+          : json["messageStatus"]),
       messageTextContent: json["messageTextContent"].toString(),
       messageType: getMessageType(json["messageType"]),
       replyParentChatMessage: json["replyParentChatMessage"] == null
@@ -101,11 +116,15 @@ class ChatMessage {
       senderNickName: json["senderNickName"],
       senderUserJid: json["senderUserJid"],
       senderUserName: json["senderUserName"],
-      contactChatMessage:
-          json["contactChatMessage"] == null ? null : ContactChatMessage.fromJson(json["contactChatMessage"]),
-      mediaChatMessage: json["mediaChatMessage"] == null ? null : MediaChatMessage.fromJson(json["mediaChatMessage"]),
-      locationChatMessage:
-          json["locationChatMessage"] == null ? null : LocationChatMessage.fromJson(json["locationChatMessage"]),
+      contactChatMessage: json["contactChatMessage"] == null
+          ? null
+          : ContactChatMessage.fromJson(json["contactChatMessage"]),
+      mediaChatMessage: json["mediaChatMessage"] == null
+          ? null
+          : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+      locationChatMessage: json["locationChatMessage"] == null
+          ? null
+          : LocationChatMessage.fromJson(json["locationChatMessage"]),
       topicId: Platform.isIOS ? json["topicID"] : json["topicId"]);
 
   Map<String, dynamic> toJson() => {
@@ -126,13 +145,16 @@ class ChatMessage {
         "messageStatus": messageStatus,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
-        "replyParentChatMessage": replyParentChatMessage ?? replyParentChatMessage?.toJson(),
+        "replyParentChatMessage":
+            replyParentChatMessage ?? replyParentChatMessage?.toJson(),
         "senderNickName": senderNickName,
         "senderUserJid": senderUserJid,
         "senderUserName": senderUserName,
-        "contactChatMessage": contactChatMessage ?? contactChatMessage?.toJson(),
+        "contactChatMessage":
+            contactChatMessage ?? contactChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage ?? mediaChatMessage?.toJson(),
-        "locationChatMessage": locationChatMessage ?? locationChatMessage?.toJson(),
+        "locationChatMessage":
+            locationChatMessage ?? locationChatMessage?.toJson(),
         "topicId": topicId
       };
 }
@@ -150,9 +172,11 @@ class ContactChatMessage {
   List<bool> isChatAppUser;
   String messageId;
 
-  factory ContactChatMessage.fromJson(Map<String, dynamic> json) => ContactChatMessage(
+  factory ContactChatMessage.fromJson(Map<String, dynamic> json) =>
+      ContactChatMessage(
         contactName: json["contactName"],
-        contactPhoneNumbers: List<String>.from(json["contactPhoneNumbers"].map((x) => x)),
+        contactPhoneNumbers:
+            List<String>.from(json["contactPhoneNumbers"].map((x) => x)),
         isChatAppUser: Platform.isAndroid
             ? List<bool>.from(json["isChatAppUser"].map((x) => x))
             : List<bool>.from(json["isChatUser"].map((x) => x)),
@@ -161,7 +185,8 @@ class ContactChatMessage {
 
   Map<String, dynamic> toJson() => {
         "contactName": contactName,
-        "contactPhoneNumbers": List<dynamic>.from(contactPhoneNumbers.map((x) => x)),
+        "contactPhoneNumbers":
+            List<dynamic>.from(contactPhoneNumbers.map((x) => x)),
         "isChatAppUser": List<dynamic>.from(isChatAppUser.map((x) => x)),
         "messageId": messageId,
       };
@@ -180,7 +205,8 @@ class LocationChatMessage {
   String mapLocationUrl;
   String messageId;
 
-  factory LocationChatMessage.fromJson(Map<String, dynamic> json) => LocationChatMessage(
+  factory LocationChatMessage.fromJson(Map<String, dynamic> json) =>
+      LocationChatMessage(
         latitude: json["latitude"].toDouble(),
         longitude: json["longitude"].toDouble(),
         mapLocationUrl: json["mapLocationUrl"],
@@ -224,14 +250,16 @@ class MediaChatMessage {
   String messageId;
   String messageType;
 
-  factory MediaChatMessage.fromJson(Map<String, dynamic> json) => MediaChatMessage(
+  factory MediaChatMessage.fromJson(Map<String, dynamic> json) =>
+      MediaChatMessage(
         isAudioRecorded: Platform.isAndroid
             ? json["isAudioRecorded"] ?? false
             : json["audioType"] == "recording"
                 ? true
                 : false,
         mediaCaptionText: json["mediaCaptionText"] ?? "",
-        mediaDownloadStatus: getMediaDownloadStatus(json["mediaDownloadStatus"]),
+        mediaDownloadStatus:
+            getMediaDownloadStatus(json["mediaDownloadStatus"]),
         mediaDuration: json["mediaDuration"],
         mediaFileName: json["mediaFileName"],
         mediaFileSize: json["mediaFileSize"],
@@ -267,7 +295,8 @@ class MediaChatMessage {
 class MessageCustomField {
   MessageCustomField();
 
-  factory MessageCustomField.fromJson(Map<String, dynamic> json) => MessageCustomField();
+  factory MessageCustomField.fromJson(Map<String, dynamic> json) =>
+      MessageCustomField();
 
   Map<String, dynamic> toJson() => {};
 }
@@ -321,7 +350,8 @@ class ReplyParentChatMessage {
   ContactChatMessage? contactChatMessage;
   MediaChatMessage? mediaChatMessage;
 
-  factory ReplyParentChatMessage.fromJson(Map<String, dynamic> json) => ReplyParentChatMessage(
+  factory ReplyParentChatMessage.fromJson(Map<String, dynamic> json) =>
+      ReplyParentChatMessage(
         chatUserJid: json["chatUserJid"],
         isMessageDeleted: json["isMessageDeleted"],
         isMessageRecalled: json["isMessageRecalled"],
@@ -333,11 +363,15 @@ class ReplyParentChatMessage {
         messageType: getReplyMessageType(json),
         senderNickName: json["senderNickName"],
         senderUserName: json["senderUserName"],
-        locationChatMessage:
-            json["locationChatMessage"] == null ? null : LocationChatMessage.fromJson(json["locationChatMessage"]),
-        contactChatMessage:
-            json["contactChatMessage"] == null ? null : ContactChatMessage.fromJson(json["contactChatMessage"]),
-        mediaChatMessage: json["mediaChatMessage"] == null ? null : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+        locationChatMessage: json["locationChatMessage"] == null
+            ? null
+            : LocationChatMessage.fromJson(json["locationChatMessage"]),
+        contactChatMessage: json["contactChatMessage"] == null
+            ? null
+            : ContactChatMessage.fromJson(json["contactChatMessage"]),
+        mediaChatMessage: json["mediaChatMessage"] == null
+            ? null
+            : MediaChatMessage.fromJson(json["mediaChatMessage"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -352,8 +386,10 @@ class ReplyParentChatMessage {
         "messageType": messageType,
         "senderNickName": senderNickName,
         "senderUserName": senderUserName,
-        "locationChatMessage": locationChatMessage ?? locationChatMessage?.toJson(),
-        "contactChatMessage": contactChatMessage ?? contactChatMessage?.toJson(),
+        "locationChatMessage":
+            locationChatMessage ?? locationChatMessage?.toJson(),
+        "contactChatMessage":
+            contactChatMessage ?? contactChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage ?? mediaChatMessage?.toJson(),
       };
 }
@@ -377,7 +413,8 @@ String getContactType(Map<String, dynamic> json) {
       return "live_contact";
     } else if (json["isDeletedUser"]) {
       return "deleted_contact";
-    } else if (json["messageChatType"].toString().toLowerCase() == "singlechat") {
+    } else if (json["messageChatType"].toString().toLowerCase() ==
+        "singlechat") {
       return "unknown_contact";
     } else {
       return "";
@@ -408,7 +445,9 @@ String getMessageType(dynamic type) {
   if (type == null) {
     return "";
   }
-  return type.toString().toUpperCase() == "FILE" ? "DOCUMENT" : type.toString().toUpperCase();
+  return type.toString().toUpperCase() == "FILE"
+      ? "DOCUMENT"
+      : type.toString().toUpperCase();
 }
 
 int getMediaDownloadStatus(int mediaDownloadStatus) {
@@ -442,7 +481,9 @@ int getMediaUploadStatus(int mediaUploadStatus) {
 }
 
 String getMediaMessageType(String type) {
-  return type.toString().toUpperCase() == "FILE" ? "DOCUMENT" : type.toString().toUpperCase();
+  return type.toString().toUpperCase() == "FILE"
+      ? "DOCUMENT"
+      : type.toString().toUpperCase();
 }
 
 String getReplyMessageType(dynamic json) {
@@ -451,8 +492,12 @@ String getReplyMessageType(dynamic json) {
   } else {
     if (json["messageTextContent"].toString().isNotEmpty) {
       return "TEXT";
-    } else if (json["mediaChatMessage"] != null && json["mediaChatMessage"]["mediaFileType"].toString().isNotEmpty) {
-      return json["mediaChatMessage"]["mediaFileType"].toString().toUpperCase() == "FILE"
+    } else if (json["mediaChatMessage"] != null &&
+        json["mediaChatMessage"]["mediaFileType"].toString().isNotEmpty) {
+      return json["mediaChatMessage"]["mediaFileType"]
+                  .toString()
+                  .toUpperCase() ==
+              "FILE"
           ? "DOCUMENT"
           : json["mediaChatMessage"]["mediaFileType"].toString().toUpperCase();
     } else if (json["contactChatMessage"] != null) {

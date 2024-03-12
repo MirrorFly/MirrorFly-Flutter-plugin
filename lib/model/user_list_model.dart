@@ -20,20 +20,24 @@ class UserList {
   factory UserList.fromJson(Map<String, dynamic> json) => UserList(
         data: json["data"] == null
             ? null
-            : List<ProfileDetails>.from(json["data"].map((x) => ProfileDetails.fromJson(x))),
+            : List<ProfileDetails>.from(
+                json["data"].map((x) => ProfileDetails.fromJson(x))),
         status: json["status"],
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data == null
+            ? null
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
         "status": status,
       };
 }
 
-List<ProfileDetails> profileFromJson(String str) =>
-    List<ProfileDetails>.from(json.decode(str).map((x) => ProfileDetails.fromJson(x)));
+List<ProfileDetails> profileFromJson(String str) => List<ProfileDetails>.from(
+    json.decode(str).map((x) => ProfileDetails.fromJson(x)));
 
-ProfileDetails profiledata(String str) => ProfileDetails.fromJson(json.decode(str.toString()));
+ProfileDetails profiledata(String str) =>
+    ProfileDetails.fromJson(json.decode(str.toString()));
 
 /*class Profile {
   Profile({

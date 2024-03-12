@@ -2976,19 +2976,29 @@ class Mirrorfly {
   }
 
   static setMessageEventListener(MessageEventListeners messageEventListeners) {
-    return FlyChatFlutterPlatform.instance.setMessageEventListener(messageEventListeners);
+    return FlyChatFlutterPlatform.instance
+        .setMessageEventListener(messageEventListeners);
   }
-  static setConnectionEventListener(ConnectionEventListeners connectionEventListeners) {
-    return FlyChatFlutterPlatform.instance.setConnectionEventListener(connectionEventListeners);
+
+  static setConnectionEventListener(
+      ConnectionEventListeners connectionEventListeners) {
+    return FlyChatFlutterPlatform.instance
+        .setConnectionEventListener(connectionEventListeners);
   }
+
   static setProfileEventListener(ProfileEventListeners profileEventListeners) {
-    return FlyChatFlutterPlatform.instance.setProfileEventsListener(profileEventListeners);
+    return FlyChatFlutterPlatform.instance
+        .setProfileEventsListener(profileEventListeners);
   }
+
   static setGroupEventListener(GroupEventListeners groupEventListeners) {
-    return FlyChatFlutterPlatform.instance.setGroupEventsListener(groupEventListeners);
+    return FlyChatFlutterPlatform.instance
+        .setGroupEventsListener(groupEventListeners);
   }
+
   static setCallEventListener(CallEventListeners callEventListeners) {
-    return FlyChatFlutterPlatform.instance.setCallEventListener(callEventListeners);
+    return FlyChatFlutterPlatform.instance
+        .setCallEventListener(callEventListeners);
   }
 
 /* /// [changeCallType] Used to Change the Call Type

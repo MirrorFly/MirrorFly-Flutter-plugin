@@ -1,11 +1,15 @@
 import 'dart:convert';
 
-ChatMessageStatusDetail chatMessageStatusDetailFromJson(String str) => ChatMessageStatusDetail.fromJson(json.decode(str));
+ChatMessageStatusDetail chatMessageStatusDetailFromJson(String str) =>
+    ChatMessageStatusDetail.fromJson(json.decode(str));
 
-String chatMessageStatusDetailToJson(ChatMessageStatusDetail data) => json.encode(data.toJson());
+String chatMessageStatusDetailToJson(ChatMessageStatusDetail data) =>
+    json.encode(data.toJson());
 
 String convertChatMessageStatusDetailToJson(String? str) =>
-    (str == null || str.isEmpty) ? "" : chatMessageStatusDetailToJson(chatMessageStatusDetailFromJson(str));
+    (str == null || str.isEmpty)
+        ? ""
+        : chatMessageStatusDetailToJson(chatMessageStatusDetailFromJson(str));
 
 class ChatMessageStatusDetail {
   String? deliveredTime;
@@ -20,17 +24,18 @@ class ChatMessageStatusDetail {
     this.sentTime,
   });
 
-  factory ChatMessageStatusDetail.fromJson(Map<String, dynamic> json) => ChatMessageStatusDetail(
-    deliveredTime: json["deliveredTime"],
-    messageId: json["messageId"],
-    seenTime: json["seenTime"],
-    sentTime: json["sentTime"],
-  );
+  factory ChatMessageStatusDetail.fromJson(Map<String, dynamic> json) =>
+      ChatMessageStatusDetail(
+        deliveredTime: json["deliveredTime"],
+        messageId: json["messageId"],
+        seenTime: json["seenTime"],
+        sentTime: json["sentTime"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "deliveredTime": deliveredTime,
-    "messageId": messageId,
-    "seenTime": seenTime,
-    "sentTime": sentTime,
-  };
+        "deliveredTime": deliveredTime,
+        "messageId": messageId,
+        "seenTime": seenTime,
+        "sentTime": sentTime,
+      };
 }

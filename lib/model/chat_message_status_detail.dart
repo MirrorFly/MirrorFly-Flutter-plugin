@@ -3,7 +3,8 @@ import 'dart:convert';
 ChatMessageStatusDetail chatMessageStatusDetailFromJson(String str) =>
     ChatMessageStatusDetail.fromJson(json.decode(str));
 
-String chatMessageStatusDetailToJson(ChatMessageStatusDetail data) => json.encode(data.toJson());
+String chatMessageStatusDetailToJson(ChatMessageStatusDetail data) =>
+    json.encode(data.toJson());
 
 class ChatMessageStatusDetail {
   String? deliveredTime;
@@ -18,7 +19,8 @@ class ChatMessageStatusDetail {
     this.sentTime,
   });
 
-  factory ChatMessageStatusDetail.fromJson(Map<String, dynamic> json) => ChatMessageStatusDetail(
+  factory ChatMessageStatusDetail.fromJson(Map<String, dynamic> json) =>
+      ChatMessageStatusDetail(
         deliveredTime: json["deliveredTime"],
         messageId: json["messageId"],
         seenTime: json["seenTime"],

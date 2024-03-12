@@ -8,7 +8,9 @@ import 'package:mirrorfly_plugin/model/callback.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyChatFlutterPlatform {
+class MockFlyChatFlutterPlatform
+    with MockPlatformInterfaceMixin
+    implements FlyChatFlutterPlatform {
   @override
   Future<bool> acceptVideoCallSwitchRequest() {
     //  implement acceptVideoCallSwitchRequest
@@ -22,7 +24,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> addUsersToGroup(String jid, List<String> userList, Function(FlyResponse response)? callback) {
+  Future<void> addUsersToGroup(String jid, List<String> userList,
+      Function(FlyResponse response)? callback) {
     //  implement addUsersToGroup
     throw UnimplementedError();
   }
@@ -40,7 +43,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> blockUser(String userJID, Function(FlyResponse response)? callback) {
+  Future<void> blockUser(
+      String userJID, Function(FlyResponse response)? callback) {
     //  implement blockUser
     throw UnimplementedError();
   }
@@ -86,8 +90,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> clearChat(
-      String jid, String chatType, bool clearExceptStarred, Function(FlyResponse response)? callback) {
+  Future<void> clearChat(String jid, String chatType, bool clearExceptStarred,
+      Function(FlyResponse response)? callback) {
     //  implement clearChat
     throw UnimplementedError();
   }
@@ -113,8 +117,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> createGroup(
-      String groupName, List<String> userJidList, String imageFilePath, Function(FlyResponse response)? callback) {
+  Future<void> createGroup(String groupName, List<String> userJidList,
+      String imageFilePath, Function(FlyResponse response)? callback) {
     //  implement createGroup
     throw UnimplementedError();
   }
@@ -127,7 +131,9 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
 
   @override
   Future<void> createTopic(
-      {required String topicName, List<TopicMetaData> metaData = const [], Function(FlyResponse response)? callback}) {
+      {required String topicName,
+      List<TopicMetaData> metaData = const [],
+      Function(FlyResponse response)? callback}) {
     //  implement createTopic
     throw UnimplementedError();
   }
@@ -145,7 +151,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> deleteAccount(String reason, String? feedback, Function(FlyResponse response)? callback) {
+  Future<void> deleteAccount(String reason, String? feedback,
+      Function(FlyResponse response)? callback) {
     //  implement deleteAccount
     throw UnimplementedError();
   }
@@ -157,38 +164,50 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<bool?> deleteBusyStatus(String id, String status, bool isCurrentStatus) {
+  Future<bool?> deleteBusyStatus(
+      String id, String status, bool isCurrentStatus) {
     //  implement deleteBusyStatus
     throw UnimplementedError();
   }
 
   @override
-  Future<void> deleteCallLog(List<String> jidlist, bool isClearAll, Function(FlyResponse response)? callback) {
+  Future<void> deleteCallLog(List<String> jidlist, bool isClearAll,
+      Function(FlyResponse response)? callback) {
     //  implement deleteCallLog
     throw UnimplementedError();
   }
 
   @override
-  Future<void> deleteGroup(String jid, Function(FlyResponse response)? callback) {
+  Future<void> deleteGroup(
+      String jid, Function(FlyResponse response)? callback) {
     //  implement deleteGroup
     throw UnimplementedError();
   }
 
   @override
-  Future deleteMessages(String jid, List<String> messageIds, bool isDeleteForEveryOne) {
+  Future deleteMessages(
+      String jid, List<String> messageIds, bool isDeleteForEveryOne) {
     //  implement deleteMessages
     throw UnimplementedError();
   }
 
   @override
-  Future<void> deleteMessagesForEveryone(String jid, String chatType, List<String> messageIds, bool? isMediaDelete,
+  Future<void> deleteMessagesForEveryone(
+      String jid,
+      String chatType,
+      List<String> messageIds,
+      bool? isMediaDelete,
       Function(FlyResponse response)? callback) {
     //  implement deleteMessagesForEveryone
     throw UnimplementedError();
   }
 
   @override
-  Future<void> deleteMessagesForMe(String jid, String chatType, List<String> messageIds, bool? isMediaDelete,
+  Future<void> deleteMessagesForMe(
+      String jid,
+      String chatType,
+      List<String> messageIds,
+      bool? isMediaDelete,
       Function(FlyResponse response)? callback) {
     //  implement deleteMessagesForMe
     throw UnimplementedError();
@@ -201,19 +220,22 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<bool?> deleteProfileStatus(String id, String status, bool isCurrentStatus) {
+  Future<bool?> deleteProfileStatus(
+      String id, String status, bool isCurrentStatus) {
     //  implement deleteProfileStatus
     throw UnimplementedError();
   }
 
   @override
-  Future<void> deleteRecentChat(String jid, Function(FlyResponse response)? callback) {
+  Future<void> deleteRecentChat(
+      String jid, Function(FlyResponse response)? callback) {
     //  implement deleteRecentChat
     throw UnimplementedError();
   }
 
   @override
-  Future<void> deleteRecentChats(List<String> jidlist, Function(FlyResponse response)? callback) {
+  Future<void> deleteRecentChats(
+      List<String> jidlist, Function(FlyResponse response)? callback) {
     //  implement deleteRecentChats
     throw UnimplementedError();
   }
@@ -243,13 +265,15 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> enableDisableArchivedSettings(bool enable, Function(FlyResponse response)? callback) {
+  Future<void> enableDisableArchivedSettings(
+      bool enable, Function(FlyResponse response)? callback) {
     //  implement enableDisableArchivedSettings
     throw UnimplementedError();
   }
 
   @override
-  Future<void> enableDisableBusyStatus(bool enable, Function(FlyResponse response)? callback) {
+  Future<void> enableDisableBusyStatus(
+      bool enable, Function(FlyResponse response)? callback) {
     //  implement enableDisableBusyStatus
     throw UnimplementedError();
   }
@@ -261,20 +285,22 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> setLastSeenVisibility(bool enable, Function(FlyResponse response)? callback) {
+  Future<void> setLastSeenVisibility(
+      bool enable, Function(FlyResponse response)? callback) {
     //  implement setLastSeenVisibility
     throw UnimplementedError();
   }
 
   @override
-  Future<void> exportChatConversationToEmail(String jid, Function(FlyResponse response)? callback) {
+  Future<void> exportChatConversationToEmail(
+      String jid, Function(FlyResponse response)? callback) {
     //  implement exportChatConversationToEmail
     throw UnimplementedError();
   }
 
   @override
-  Future<void> forwardMessagesToMultipleUsers(
-      List<String> messageIds, List<String> userList, Function(FlyResponse response)? callback) {
+  Future<void> forwardMessagesToMultipleUsers(List<String> messageIds,
+      List<String> userList, Function(FlyResponse response)? callback) {
     //  implement forwardMessagesToMultipleUsers
     throw UnimplementedError();
   }
@@ -286,7 +312,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> getAllGroups([bool? server, Function(FlyResponse response)? callback]) {
+  Future<void> getAllGroups(
+      [bool? server, Function(FlyResponse response)? callback]) {
     //  implement getAllGroups
     throw UnimplementedError();
   }
@@ -328,7 +355,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> getCallLogsList(int currentPage, Function(FlyResponse response)? callback) {
+  Future<void> getCallLogsList(
+      int currentPage, Function(FlyResponse response)? callback) {
     //  implement getCallLogsList
     throw UnimplementedError();
   }
@@ -382,7 +410,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> getGroupMembersList(String jid, bool? server, Function(FlyResponse response)? callback) {
+  Future<void> getGroupMembersList(
+      String jid, bool? server, Function(FlyResponse response)? callback) {
     //  implement getGroupMembersList
     throw UnimplementedError();
   }
@@ -407,7 +436,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> getGroupMessageSeenRecipients(String messageId, String jid, Function(FlyResponse response)? callback) {
+  Future<void> getGroupMessageSeenRecipients(
+      String messageId, String jid, Function(FlyResponse response)? callback) {
     //  implement getGroupMessageSeenRecipients
     throw UnimplementedError();
   }
@@ -419,7 +449,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> getGroupProfile(String groupJid, bool server, Function(FlyResponse response)? callback) {
+  Future<void> getGroupProfile(
+      String groupJid, bool server, Function(FlyResponse response)? callback) {
     //  implement getGroupProfile
     throw UnimplementedError();
   }
@@ -443,7 +474,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<String?> getJidFromPhoneNumber(String mobileNumber, String countryCode) {
+  Future<String?> getJidFromPhoneNumber(
+      String mobileNumber, String countryCode) {
     //  implement getJidFromPhoneNumber
     throw UnimplementedError();
   }
@@ -564,14 +596,19 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
 
   @override
   Future<void> getRecentChatListHistory(
-      {required bool firstSet, int limit = 15, required Function(FlyResponse response) callback}) {
+      {required bool firstSet,
+      int limit = 15,
+      required Function(FlyResponse response) callback}) {
     //  implement getRecentChatListHistory
     throw UnimplementedError();
   }
 
   @override
   Future<void> getRecentChatListHistoryByTopic(
-      {String? topicId, required bool firstSet, int limit = 15, required Function(FlyResponse response) callback}) {
+      {String? topicId,
+      required bool firstSet,
+      int limit = 15,
+      required Function(FlyResponse response) callback}) {
     //  implement getRecentChatListHistoryByTopic
     throw UnimplementedError();
   }
@@ -595,7 +632,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> getRegisteredUsers(bool server, Function(FlyResponse response) callback) {
+  Future<void> getRegisteredUsers(
+      bool server, Function(FlyResponse response) callback) {
     //  implement getRegisteredUsers
     throw UnimplementedError();
   }
@@ -619,7 +657,9 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> getTopics({required List<String> topicIds, Function(FlyResponse response)? callback}) {
+  Future<void> getTopics(
+      {required List<String> topicIds,
+      Function(FlyResponse response)? callback}) {
     //  implement getTopics
     throw UnimplementedError();
   }
@@ -649,39 +689,45 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> getUserLastSeenTime(String jid, Function(FlyResponse response)? callback) {
+  Future<void> getUserLastSeenTime(
+      String jid, Function(FlyResponse response)? callback) {
     //  implement getUserLastSeenTime
     throw UnimplementedError();
   }
 
   @override
-  Future<void> getUserList(int page, String search, Function(FlyResponse response) callback,
+  Future<void> getUserList(
+      int page, String search, Function(FlyResponse response) callback,
       {int perPageResultSize = 20}) {
     //  implement getUserList
     throw UnimplementedError();
   }
 
   @override
-  Future<void> getUserProfile(String jid, Function(FlyResponse response) callback,
+  Future<void> getUserProfile(
+      String jid, Function(FlyResponse response) callback,
       [bool fromserver = false, bool saveasfriend = false]) {
     //  implement getUserProfile
     throw UnimplementedError();
   }
 
   @override
-  Future<void> getUsersIBlocked(bool? server, Function(FlyResponse response)? callback) {
+  Future<void> getUsersIBlocked(
+      bool? server, Function(FlyResponse response)? callback) {
     //  implement getUsersIBlocked
     throw UnimplementedError();
   }
 
   @override
-  Future<void> getUsersWhoBlockedMe([bool server = false, Function(FlyResponse response)? callback]) {
+  Future<void> getUsersWhoBlockedMe(
+      [bool server = false, Function(FlyResponse response)? callback]) {
     //  implement getUsersWhoBlockedMe
     throw UnimplementedError();
   }
 
   @override
-  Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) {
+  Future<String> getValueFromManifestOrInfoPlist(
+      {String? androidManifestKey, String? iOSPlistKey}) {
     //  implement getValueFromManifestOrInfoPlist
     throw UnimplementedError();
   }
@@ -693,7 +739,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> handleReceivedMessage(Map notificationData, Function(FlyResponse response)? callback) {
+  Future<void> handleReceivedMessage(
+      Map notificationData, Function(FlyResponse response)? callback) {
     //  implement handleReceivedMessage
     throw UnimplementedError();
   }
@@ -742,7 +789,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> initializeSDK(InitializeSDKBuilder builder, Function(FlyResponse response) callback) {
+  Future<void> initializeSDK(
+      InitializeSDKBuilder builder, Function(FlyResponse response) callback) {
     //  implement initializeSDK
     throw UnimplementedError();
   }
@@ -850,7 +898,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> leaveFromGroup(String? userJid, String groupJid, Function(FlyResponse response)? callback) {
+  Future<void> leaveFromGroup(String? userJid, String groupJid,
+      Function(FlyResponse response)? callback) {
     //  implement leaveFromGroup
     throw UnimplementedError();
   }
@@ -886,7 +935,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> loginWebChatViaQRCode(String barcode, Function(FlyResponse response)? callback) {
+  Future<void> loginWebChatViaQRCode(
+      String barcode, Function(FlyResponse response)? callback) {
     //  implement loginWebChatViaQRCode
     throw UnimplementedError();
   }
@@ -904,31 +954,36 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> makeAdmin(String groupjid, String userjid, Function(FlyResponse response)? callback) {
+  Future<void> makeAdmin(String groupjid, String userjid,
+      Function(FlyResponse response)? callback) {
     //  implement makeAdmin
     throw UnimplementedError();
   }
 
   @override
-  Future<void> makeGroupVideoCall(String groupJid, List<String>? jidList, Function(FlyResponse response)? callback) {
+  Future<void> makeGroupVideoCall(String groupJid, List<String>? jidList,
+      Function(FlyResponse response)? callback) {
     //  implement makeGroupVideoCall
     throw UnimplementedError();
   }
 
   @override
-  Future<void> makeGroupVoiceCall(String groupJid, List<String>? jidList, Function(FlyResponse response)? callback) {
+  Future<void> makeGroupVoiceCall(String groupJid, List<String>? jidList,
+      Function(FlyResponse response)? callback) {
     //  implement makeGroupVoiceCall
     throw UnimplementedError();
   }
 
   @override
-  Future<void> makeVideoCall(String userJid, Function(FlyResponse response)? callback) {
+  Future<void> makeVideoCall(
+      String userJid, Function(FlyResponse response)? callback) {
     //  implement makeVideoCall
     throw UnimplementedError();
   }
 
   @override
-  Future<void> makeVoiceCall(String userJid, Function(FlyResponse response)? callback) {
+  Future<void> makeVoiceCall(
+      String userJid, Function(FlyResponse response)? callback) {
     //  implement makeVoiceCall
     throw UnimplementedError();
   }
@@ -970,13 +1025,15 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> muteAudio(bool status, Function(FlyResponse response)? callback) {
+  Future<void> muteAudio(
+      bool status, Function(FlyResponse response)? callback) {
     //  implement muteAudio
     throw UnimplementedError();
   }
 
   @override
-  Future<void> muteVideo(bool status, Function(FlyResponse response)? callback) {
+  Future<void> muteVideo(
+      bool status, Function(FlyResponse response)? callback) {
     //  implement muteVideo
     throw UnimplementedError();
   }
@@ -1170,14 +1227,17 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> refreshAndGetAuthToken(Function(FlyResponse response)? callback) {
+  Future<void> refreshAndGetAuthToken(
+      Function(FlyResponse response)? callback) {
     //  implement refreshAndGetAuthToken
     throw UnimplementedError();
   }
 
   @override
   Future<void> registerUser(String userIdentifier,
-      {String fcmToken = "", bool isForceRegister = true, required Function(FlyResponse response) callback}) {
+      {String fcmToken = "",
+      bool isForceRegister = true,
+      required Function(FlyResponse response) callback}) {
     //  implement registerUser
     throw UnimplementedError();
   }
@@ -1189,13 +1249,15 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> removeGroupProfileImage(String jid, Function(FlyResponse response)? callback) {
+  Future<void> removeGroupProfileImage(
+      String jid, Function(FlyResponse response)? callback) {
     //  implement removeGroupProfileImage
     throw UnimplementedError();
   }
 
   @override
-  Future<void> removeMemberFromGroup(String groupjid, String userjid, Function(FlyResponse response)? callback) {
+  Future<void> removeMemberFromGroup(String groupjid, String userjid,
+      Function(FlyResponse response)? callback) {
     //  implement removeMemberFromGroup
     throw UnimplementedError();
   }
@@ -1213,8 +1275,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> reportUserOrMessages(
-      String jid, String type, String? messageId, Function(FlyResponse response)? callback) {
+  Future<void> reportUserOrMessages(String jid, String type, String? messageId,
+      Function(FlyResponse response)? callback) {
     //  implement reportUserOrMessages
     throw UnimplementedError();
   }
@@ -1238,7 +1300,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  saveMediaSettings(bool photos, bool videos, bool audio, bool documents, int networkType) {
+  saveMediaSettings(
+      bool photos, bool videos, bool audio, bool documents, int networkType) {
     //  implement saveMediaSettings
     throw UnimplementedError();
   }
@@ -1251,7 +1314,9 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
 
   @override
   Future<void> searchConversation(String searchKey,
-      [String? jidForSearch, bool globalSearch = true, Function(FlyResponse response)? callback]) {
+      [String? jidForSearch,
+      bool globalSearch = true,
+      Function(FlyResponse response)? callback]) {
     //  implement searchConversation
     throw UnimplementedError();
   }
@@ -1263,41 +1328,47 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<String> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
+  Future<String> sendAudioMessage(String jid, String filePath, bool isRecorded,
+      String duration, String replyMessageId,
       {String? audioFileUrl, String? topicId}) {
     //  implement sendAudioMessage
     throw UnimplementedError();
   }
 
   @override
-  Future<String> sendContactMessage(List<String> contactList, String jid, String contactName, String replyMessageId,
+  Future<String> sendContactMessage(List<String> contactList, String jid,
+      String contactName, String replyMessageId,
       {String? topicId}) {
     //  implement sendContactMessage
     throw UnimplementedError();
   }
 
   @override
-  Future<void> sendContactUsInfo(String title, String description, Function(FlyResponse response)? callback) {
+  Future<void> sendContactUsInfo(String title, String description,
+      Function(FlyResponse response)? callback) {
     //  implement sendContactUsInfo
     throw UnimplementedError();
   }
 
   @override
-  Future<String> sendDocumentMessage(String jid, String documentPath, String replyMessageId,
+  Future<String> sendDocumentMessage(
+      String jid, String documentPath, String replyMessageId,
       {String? fileUrl, String? topicId}) {
     //  implement sendDocumentMessage
     throw UnimplementedError();
   }
 
   @override
-  Future<String> sendImageMessage(String jid, String filePath, String? caption, String? replyMessageID,
+  Future<String> sendImageMessage(
+      String jid, String filePath, String? caption, String? replyMessageID,
       {String? imageFileUrl, String? topicId}) {
     //  implement sendImageMessage
     throw UnimplementedError();
   }
 
   @override
-  Future<String> sendLocationMessage(String jid, double latitude, double longitude, String replyMessageId,
+  Future<String> sendLocationMessage(
+      String jid, double latitude, double longitude, String replyMessageId,
       {String? topicId}) {
     //  implement sendLocationMessage
     throw UnimplementedError();
@@ -1305,19 +1376,24 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
 
   @override
   Future<void> sendMediaFileMessage(
-      {required FileMessage messageParams, required Function(FlyResponse response) callback}) {
+      {required FileMessage messageParams,
+      required Function(FlyResponse response) callback}) {
     //  implement sendMediaFileMessage
     throw UnimplementedError();
   }
 
   @override
-  Future<void> sendMessage({required MessageParams messageParams, required Function(FlyResponse response) callback}) {
+  Future<void> sendMessage(
+      {required MessageParams messageParams,
+      required Function(FlyResponse response) callback}) {
     //  implement sendMessage
     throw UnimplementedError();
   }
 
   @override
-  Future<String> sendTextMessage(String message, String jid, String replyMessageId, {String? topicId}) {
+  Future<String> sendTextMessage(
+      String message, String jid, String replyMessageId,
+      {String? topicId}) {
     //  implement sendTextMessage
     throw UnimplementedError();
   }
@@ -1335,8 +1411,12 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<String> sendVideoMessage(String jid, String filePath, String? caption, String? replyMessageID,
-      {String? videoFileUrl, num? videoDuration, String? thumbImageBase64, String? topicId}) {
+  Future<String> sendVideoMessage(
+      String jid, String filePath, String? caption, String? replyMessageID,
+      {String? videoFileUrl,
+      num? videoDuration,
+      String? thumbImageBase64,
+      String? topicId}) {
     //  implement sendVideoMessage
     throw UnimplementedError();
   }
@@ -1378,13 +1458,15 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> setMyBusyStatus(String busyStatus, Function(FlyResponse response)? callback) {
+  Future<void> setMyBusyStatus(
+      String busyStatus, Function(FlyResponse response)? callback) {
     //  implement setMyBusyStatus
     throw UnimplementedError();
   }
 
   @override
-  Future<void> setMyProfileStatus(String status, String statusId, Function(FlyResponse response)? callback) {
+  Future<void> setMyProfileStatus(String status, String statusId,
+      Function(FlyResponse response)? callback) {
     //  implement setMyProfileStatus
     throw UnimplementedError();
   }
@@ -1458,19 +1540,22 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> syncContacts(bool isfirsttime, Function(FlyResponse response)? callback) {
+  Future<void> syncContacts(
+      bool isfirsttime, Function(FlyResponse response)? callback) {
     //  implement syncContacts
     throw UnimplementedError();
   }
 
   @override
-  Future<void> unFavouriteAllFavouriteMessages(Function(FlyResponse response)? callback) {
+  Future<void> unFavouriteAllFavouriteMessages(
+      Function(FlyResponse response)? callback) {
     //  implement unFavouriteAllFavouriteMessages
     throw UnimplementedError();
   }
 
   @override
-  Future<void> unblockUser(String userJID, Function(FlyResponse response)? callback) {
+  Future<void> unblockUser(
+      String userJID, Function(FlyResponse response)? callback) {
     //  implement unblockUser
     throw UnimplementedError();
   }
@@ -1486,7 +1571,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> setChatArchived(String jid, bool isArchived, Function(FlyResponse response)? callback) {
+  Future<void> setChatArchived(
+      String jid, bool isArchived, Function(FlyResponse response)? callback) {
     //  implement setChatArchived
     throw UnimplementedError();
   }
@@ -1498,51 +1584,61 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
-  Future<void> updateFavouriteStatus(String messageID, String chatUserJID, bool isFavourite, String chatType,
+  Future<void> updateFavouriteStatus(
+      String messageID,
+      String chatUserJID,
+      bool isFavourite,
+      String chatType,
       Function(FlyResponse response)? callback) {
     //  implement updateFavouriteStatus
     throw UnimplementedError();
   }
 
   @override
-  Future<void> updateFcmToken(String firebasetoken, Function(FlyResponse response)? callback) {
+  Future<void> updateFcmToken(
+      String firebasetoken, Function(FlyResponse response)? callback) {
     //  implement updateFcmToken
     throw UnimplementedError();
   }
 
   @override
-  Future<void> updateGroupName(String jid, String name, Function(FlyResponse response)? callback) {
+  Future<void> updateGroupName(
+      String jid, String name, Function(FlyResponse response)? callback) {
     //  implement updateGroupName
     throw UnimplementedError();
   }
 
   @override
-  Future<void> updateGroupProfileImage(String jid, String file, Function(FlyResponse response)? callback) {
+  Future<void> updateGroupProfileImage(
+      String jid, String file, Function(FlyResponse response)? callback) {
     //  implement updateGroupProfileImage
     throw UnimplementedError();
   }
 
   @override
-  updateMediaDownloadStatus(String mediaMessageId, int progress, int downloadStatus, num dataTransferred) {
+  updateMediaDownloadStatus(String mediaMessageId, int progress,
+      int downloadStatus, num dataTransferred) {
     //  implement updateMediaDownloadStatus
     throw UnimplementedError();
   }
 
   @override
-  updateMediaUploadStatus(String mediaMessageId, int progress, int uploadStatus, num dataTransferred) {
+  updateMediaUploadStatus(String mediaMessageId, int progress, int uploadStatus,
+      num dataTransferred) {
     //  implement updateMediaUploadStatus
     throw UnimplementedError();
   }
 
   @override
-  Future<void> updateMyProfile(String name, String? email, String? mobile, String? status, String? image,
-      Function(FlyResponse response) callback) {
+  Future<void> updateMyProfile(String name, String? email, String? mobile,
+      String? status, String? image, Function(FlyResponse response) callback) {
     //  implement updateMyProfile
     throw UnimplementedError();
   }
 
   @override
-  Future<void> updateMyProfileImage(String image, Function(FlyResponse response) callback) {
+  Future<void> updateMyProfileImage(
+      String image, Function(FlyResponse response) callback) {
     //  implement updateMyProfileImage
     throw UnimplementedError();
   }
@@ -1616,16 +1712,20 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
     // implement setMessageEventListener
     throw UnimplementedError();
   }
+
   @override
-  setConnectionEventListener(ConnectionEventListeners connectionEventListeners) {
+  setConnectionEventListener(
+      ConnectionEventListeners connectionEventListeners) {
     // implement setConnectionEventListener
     throw UnimplementedError();
   }
+
   @override
   setProfileEventsListener(ProfileEventListeners profileEventListeners) {
     // implement setProfileEventsListener
     throw UnimplementedError();
   }
+
   @override
   setGroupEventsListener(GroupEventListeners groupEventListeners) {
     // implement setGroupEventsListener
@@ -1640,7 +1740,8 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
 }
 
 void main() {
-  final FlyChatFlutterPlatform initialPlatform = FlyChatFlutterPlatform.instance;
+  final FlyChatFlutterPlatform initialPlatform =
+      FlyChatFlutterPlatform.instance;
 
   test('$MethodChannelFlyChatFlutter is the default instance', () {
     expect(initialPlatform, isInstanceOf<MethodChannelFlyChatFlutter>());

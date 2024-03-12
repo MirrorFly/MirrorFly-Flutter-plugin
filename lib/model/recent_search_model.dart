@@ -1,6 +1,10 @@
 class RecentSearch {
   RecentSearch(
-      {required this.jid, required this.mid, required this.searchType, required this.chatType, required this.isSearch});
+      {required this.jid,
+      required this.mid,
+      required this.searchType,
+      required this.chatType,
+      required this.isSearch});
 
   String? jid;
   String? mid;

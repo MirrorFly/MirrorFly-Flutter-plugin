@@ -188,8 +188,11 @@ class EditMessage {
 }
 
 extension ExtractEditMessage on EditMessage {
-  Map<String, dynamic> toMap() =>
-      {'messageId': messageId, 'editedTextContent': editedTextContent, 'mentionedUsersIds': mentionedUsersIds};
+  Map<String, dynamic> toMap() => {
+        'messageId': messageId,
+        'editedTextContent': editedTextContent,
+        'mentionedUsersIds': mentionedUsersIds
+      };
 }
 
 /// Represents parameters for constructing a message.

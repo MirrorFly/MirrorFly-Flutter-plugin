@@ -4,7 +4,8 @@
 
 import 'dart:convert';
 
-ProfileModel profileDataFromJson(String str) => ProfileModel.fromJson(json.decode(str));
+ProfileModel profileDataFromJson(String str) =>
+    ProfileModel.fromJson(json.decode(str));
 ProfileData profileData(String str) => ProfileData.fromJson(json.decode(str));
 
 String profileDataToJson(ProfileModel data) => json.encode(data.toJson());
