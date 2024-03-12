@@ -59,13 +59,13 @@ abstract class CallEventListeners{
   void onCallLogsUpdated();
   void onCallLogDeleted(String callLogId);
   void onCallLogsCleared();
-  void onMissedCall(String userJid, String groupId, bool isOneToOneCall, String callType, List<String> userList);//
-  void onLocalVideoTrackAdded(String userJid);//
-  void onRemoteVideoTrackAdded(String userJid);//
+  void onMissedCall(String userJid, String groupId, bool isOneToOneCall, String callType, List<String> userList);
+  void onLocalVideoTrackAdded(String userJid);
+  void onRemoteVideoTrackAdded(String userJid);
   void onTrackAdded(String userJid);
-  void onCallStatusUpdated(String userJid, String callMode, String callType, String callStatus);//
-  void onCallAction(String userJid, String callMode, String callType, String callAction);//
-  void onMuteStatusUpdated(String userJid, String muteEvent);//
-  void onUserSpeaking(String userJid, String audioLevel);//
-  void onUserStoppedSpeaking(String userJid);//
+  void onCallStatusUpdated(String userJid, String callMode, String callType, String callStatus);
+  void onCallAction(String userJid, String callMode, String callType, String callAction);
+  void onMuteStatusUpdated(String userJid, String muteEvent);
+  void onUserSpeaking(String userJid, String audioLevel);
+  void onUserStoppedSpeaking(String userJid);
 }
