@@ -1405,15 +1405,9 @@ let ISEXPORT = true
     func updateMyProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let profileImage = args["image"] as? String ?? ""
-        //        print("*****profileImage\(profileImage)")
-        //        var localFileUrl = ""
-        //        let sourceURL = URL(fileURLWithPath: profileImage)
-        //        print("****sourceURL \(sourceURL)")
-        //        let fileName = (profileImage as NSString).lastPathComponent
-        //        print("file name" + fileName)
+//        let fileName = (profileImage as NSString).lastPathComponent
         
-        NSLog("iOS updateMyProfileImage Called \(profileImage)")
-                ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
+        ContactManager.shared.updateMyProfileImage(image:  profileImage){ isSuccess, flyError, flyData in
                         if isSuccess {
                             var data = flyData
                             // Profile Image updated successfully update the UI
@@ -1428,7 +1422,7 @@ let ISEXPORT = true
                             }
         
                             let profileDataJson = profileUpdateResponse?.toJson()
-                            print("***profile Data json \(profileDataJson)")
+                            print("***profile Data json \(String(describing: profileDataJson))")
                             var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
                             result(profileResponseJson)
                         } else{
