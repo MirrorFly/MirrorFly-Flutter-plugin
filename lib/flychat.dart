@@ -8,7 +8,6 @@ import 'fly_chat_platform_interface.dart';
 
 class Mirrorfly {
   Mirrorfly._();
-  MessageEventsListener? eventListenerClassFile;
   @Deprecated(
       'This method is deprecated. Please refrain from using it, as the functionality has been internally managed within the plugin')
   static var isTrialLicence = true;
@@ -2731,20 +2730,20 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.syncCallLogs();
   }
 
-  static setMessageEventListener(MessageEventsListener messageEventsListener) {
-    return FlyChatFlutterPlatform.instance.setMessageEventListener(messageEventsListener);
+  static setMessageEventListener(MessageEventListeners messageEventListeners) {
+    return FlyChatFlutterPlatform.instance.setMessageEventListener(messageEventListeners);
   }
-  static setConnectionEventListener(ConnectionEventsListener connectionEventsListener) {
-    return FlyChatFlutterPlatform.instance.setConnectionEventListener(connectionEventsListener);
+  static setConnectionEventListener(ConnectionEventListeners connectionEventListeners) {
+    return FlyChatFlutterPlatform.instance.setConnectionEventListener(connectionEventListeners);
   }
-  static setProfileEventsListener(ProfileEventsListener profileEventsListener) {
-    return FlyChatFlutterPlatform.instance.setProfileEventsListener(profileEventsListener);
+  static setProfileEventListener(ProfileEventListeners profileEventListeners) {
+    return FlyChatFlutterPlatform.instance.setProfileEventsListener(profileEventListeners);
   }
-  static setGroupEventsListener(GroupEventsListener groupEventsListener) {
-    return FlyChatFlutterPlatform.instance.setGroupEventsListener(groupEventsListener);
+  static setGroupEventListener(GroupEventListeners groupEventListeners) {
+    return FlyChatFlutterPlatform.instance.setGroupEventsListener(groupEventListeners);
   }
-  static setCallsEventListener(CallEventsListener callEventsListener) {
-    return FlyChatFlutterPlatform.instance.setCallEventListener(callEventsListener);
+  static setCallEventListener(CallEventListeners callEventListeners) {
+    return FlyChatFlutterPlatform.instance.setCallEventListener(callEventListeners);
   }
 
 /* /// [changeCallType] Used to Change the Call Type
