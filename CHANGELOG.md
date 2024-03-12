@@ -4,6 +4,7 @@
 * Profile model class changed as ProfileDetails
 * output response changed as json encoded String.
 * FlyCallback added for methods
+* Collective event listeners available
 
 ## [0.0.13] Group Call Feature
 
