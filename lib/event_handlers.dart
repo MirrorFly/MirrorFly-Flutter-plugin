@@ -5,8 +5,7 @@ import 'package:mirrorfly_plugin/model/available_features.dart';
 import 'model/chat_message_model.dart';
 import 'model/profile_model.dart';
 
-abstract class MessageEventsListener {
-
+abstract class MessageEventListeners {
   void onMessageReceived(ChatMessageModel chatMessage);
   void onMessageStatusUpdated(ChatMessageModel chatMessage);
   void onMediaStatusUpdated(ChatMessageModel mediaMessage);
@@ -18,14 +17,14 @@ abstract class MessageEventsListener {
   void userWentOffline(String jid);
 }
 
-abstract class ConnectionEventsListener{
+abstract class ConnectionEventListeners{
   void onConnected();
   void onDisconnected();
   void onConnectionFailed(String connectionError);
   void onLoggedOut();
 }
 
-abstract class ProfileEventsListener{
+abstract class ProfileEventListeners{
   void usersProfilesFetched();
   void userBlockedMe(String jid);
   void userUnBlockedMe(String jid);
@@ -42,7 +41,7 @@ abstract class ProfileEventsListener{
   void onAdminBlockedUser(String jid, String isBlocked);
 }
 
-abstract class GroupEventsListener{
+abstract class GroupEventListeners{
   void onGroupDeletedLocally(String groupJid);
   void onNewMemberAddedToGroup(String groupJid, String newMemberJid, String addedByMemberJid);
   void onMemberRemovedFromGroup(String groupJid, String removedMemberJid, String removedByMemberJid);
@@ -56,7 +55,7 @@ abstract class GroupEventsListener{
   void onNewGroupCreated(String groupJid);
 }
 
-abstract class CallEventsListener{
+abstract class CallEventListeners{
   void onCallLogsUpdated();
   void onCallLogDeleted(String callLogId);
   void onCallLogsCleared();

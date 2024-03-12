@@ -28,13 +28,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         registrar.addMethodCallDelegate(instance, channel: channel)
         instance.setupEventChannel(registrar: registrar)
         
-//        let flyCalls = FlyCall(registrar: registrar)
-//
         FlyCall.register(with: registrar)
         
-        
-//        flyCallMethods.setupMethodChannel(registrar: registrar)
-//        flyCallMethods.setupEventChannel(registrar: registrar)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -467,13 +462,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
             let chatMessageJson = chatMessage?.toJson()
             
             self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageStatusUpdatedChannel, value: chatMessageJson)
-//            if(messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
-//                print("onMessagesDeletedforEveryone event\(String(describing: chatMessageJson))")
-//                messageStatusUpdatedStreamHandler?.onMessageStatusUpdated?(chatMessageJson)
-//
-//            }else{
-//                print("Message status Stream Handler is Nil")
-//            }
+
         }
         
     }

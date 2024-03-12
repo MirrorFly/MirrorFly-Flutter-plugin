@@ -36,6 +36,7 @@ class FlyEventChannelInitializer {
         }
     
     func updateSinkValue(forChannel channelName: String, value: Any?) {
+        print("\(Constants.callTag) updateSinkValue \(channelName) value \(String(describing: value)) ---> end of update sink")
         guard let streamHandler = FlyEventChannelInitializer.callEventChannels.first(where: { $0.channelName == channelName })?.streamHandler else {
                 print("#MirrorflyCall else condition")
                return

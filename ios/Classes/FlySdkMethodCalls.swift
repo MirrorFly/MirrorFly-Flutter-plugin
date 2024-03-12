@@ -1025,7 +1025,6 @@ let ISEXPORT = true
         if(!isAlreadyExists){
             ChatManager.saveProfileStatus(statusText: newStatus, currentStatus: true)
         }
-//        result("{\"status\" : true }")
         result(true)
         
     }
@@ -1311,10 +1310,8 @@ let ISEXPORT = true
         if(image != nil){
             print("Image is not null if condition")
             myProfile.image = image!
-            //            isImagePicked = false
         }else{
             print("Image is null else condition")
-            //            isImagePicked = false
         }
         
         ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
@@ -1329,7 +1326,6 @@ let ISEXPORT = true
                 
                 let profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
                 
-                //                saveMyProfileDataToUserDefaults(profile: myProfile)
                 print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
                 result(profileResponseJson)
             } else{
@@ -1372,12 +1368,6 @@ let ISEXPORT = true
     }
     
     func saveMyProfileDataToUserDefaults(profile : FlyProfile){
-        // Commented private flydefaults profile saved inside SDK
-        //        FlyDefaults.myName = profile.name
-        //        FlyDefaults.myImageUrl = profile.image
-        //        FlyDefaults.myMobileNumber = profile.mobileNumber
-        //        FlyDefaults.myStatus = profile.status
-        //        FlyDefaults.myEmail = profile.email
         
         self.saveMyJidAsContacts()
     }
@@ -1405,15 +1395,9 @@ let ISEXPORT = true
     func updateMyProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let profileImage = args["image"] as? String ?? ""
-        //        print("*****profileImage\(profileImage)")
-        //        var localFileUrl = ""
-        //        let sourceURL = URL(fileURLWithPath: profileImage)
-        //        print("****sourceURL \(sourceURL)")
-        //        let fileName = (profileImage as NSString).lastPathComponent
-        //        print("file name" + fileName)
+//        let fileName = (profileImage as NSString).lastPathComponent
         
-        NSLog("iOS updateMyProfileImage Called \(profileImage)")
-                ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
+        ContactManager.shared.updateMyProfileImage(image:  profileImage){ isSuccess, flyError, flyData in
                         if isSuccess {
                             var data = flyData
                             // Profile Image updated successfully update the UI
@@ -1428,7 +1412,7 @@ let ISEXPORT = true
                             }
         
                             let profileDataJson = profileUpdateResponse?.toJson()
-                            print("***profile Data json \(profileDataJson)")
+                            print("***profile Data json \(String(describing: profileDataJson))")
                             var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
                             result(profileResponseJson)
                         } else{
@@ -1437,96 +1421,8 @@ let ISEXPORT = true
                         }
                 }
         
-        //        do {
-        
-//        if (profileImage != ""){
-//            //                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
-//            print("File saved at: \(profileImage)")
-//            //                    localFileUrl = fileUrl
-//            //                    FlyDefaults.myImageToken = fileUrl
-//            
-//            let userJid = AppUtils.getMyJid()
-//            
-//            let userProfile = ChatManager.profileDetaisFor(jid: userJid)
-//            var myProfile = FlyProfile(jid: userJid)
-//            myProfile.name = userProfile?.name ?? ""
-//            myProfile.nickName = userProfile?.nickName ?? ""
-//            myProfile.mobileNumber = userProfile?.mobileNumber ?? ""
-//            myProfile.email = userProfile?.email ?? ""
-//            myProfile.image = profileImage
-//            
-//            ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
-//                if isSuccess {
-//                    var data = flyData
-//                    
-//                    let message = data.getMessage()
-//                    print("***profile Data\(data.getData() as? FlyProfile)")
-//                    var profileUpdateResponse = data.getData() as? FlyProfile
-//                    let fileArray = profileUpdateResponse?.image.components(separatedBy: "/")
-//                    
-//                    if let fileName = fileArray?.last {
-//                        profileUpdateResponse?.image = fileName
-//                    }
-//                    
-//                    let profileDataJson = profileUpdateResponse?.toJson()
-//                    print("***profile Data json \(String(describing: profileDataJson))")
-//                    
-//                    //                            Utility.saveInPreference(key: Constants.isProfileSaved, value: true)
-//                    
-//                    
-//                    let profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
-//                    
-//                    //                            saveMyProfileDataToUserDefaults(profile: myProfile)
-//                    print("ContactManager.shared.updateMyProfile==**==\(profileResponseJson)")
-//                    result(profileResponseJson)
-//                } else{
-//                    if case let .xmpp_connection_not_available(message, code) = flyError {
-//                        if code == ErrorCode.NO_NETWORK{
-//                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
-//                        }else{
-//                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
-//                        }
-//                    }else if case let .invalid_auth_token(message, _) = flyError {
-//                        result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.AUTHTOKEN_EXPIRED, details: message))
-//                    }else{
-//                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
-//                    }
-//                    
-//                }
-//            }
-//            //                } else {
-//            //                    print("Failed to save the file.")
-//            
-//            //                }
-//        }else{
-//            result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE, message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE, details: nil))
-//        }
-        
-        //        } catch {
-        //            // Error handling
-        //            print("Error reading file: \(error.localizedDescription)")
-        //        }
-        
     }
     
-    
-    //
-    //    func contactSyncState(call: FlutterMethodCall, result: @escaping FlutterResult){
-    //        //        NotificationCenter.default.addObserver(self, selector: #selector(self.contactSyncCompleted(notification:)), name: NSNotification.Name(FlyConstants.contactSyncState), object: nil)
-    //        //        @objc func contactSyncCompleted(notification: Notification){
-    //        //             if let contactSyncState = notification.userInfo?[FlyConstants.contactSyncState] as? String {
-    //        //                switch ContactSyncState(rawValue: contactSyncState) {
-    //        //                    case .inprogress:
-    //        //                        //Update the UI
-    //        //                    case .success:
-    //        //                        //Update the UI
-    //        //                    case .failed:
-    //        //                        //Update the UI
-    //        //                }
-    //        //            }
-    //        //        }
-    //
-    //    }
     
     
     func revokeContactSync(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -2271,25 +2167,14 @@ let ISEXPORT = true
         print("calling getAllGroups")
         GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
             
-            //need to check response
             if isSuccess {
                 var data  = flyData
-                
-                //                let getAllGroupJson = data.dictToJson()
                 
                 let groupData = data.getData() as? [ProfileDetails]
                 
                 let groupDataJson = groupData?.toJson()
                 
-                
-                //                if let groupJsonData = extractData(from: getAllGroupJson!) { //  getAllGroupJson?.extractJSONObject() {
-                //
-                //                    if let groupData = groupJsonData["data"] {
-                //                        print("GroupManager.shared.getGroups==**==\(groupData)")
-                //                        result(groupData)
-                //                    }
-                //
-                //                }
+            
                 result(groupDataJson)
                 
             } else{
@@ -2594,11 +2479,6 @@ let ISEXPORT = true
                     }
                 }
             }
-            //            }else{
-            //                print("Next set data is not available")
-            //                result("{\"data\": [] }")
-            //            }
-            
             
         }
     }

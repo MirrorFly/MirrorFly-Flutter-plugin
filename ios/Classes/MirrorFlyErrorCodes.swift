@@ -9,6 +9,9 @@ import Foundation
 
 class FLErrorCode {
     
+    ///
+    /// Reverted back to old code, waiting doe Android Error Codes to be done to match the exact same
+    ///
     /// 807, 1000, 1009
     ///  Called When the method Channel gives Fialure Response
     public static let INVALID_DATA : String = "500"//"FL-422"

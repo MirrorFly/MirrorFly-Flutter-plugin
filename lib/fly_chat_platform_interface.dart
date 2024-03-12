@@ -1146,21 +1146,21 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('syncCallLogs has not been implemented.');
   }
 
-  setMessageEventListener(MessageEventsListener messageEventsListener) {
+  setMessageEventListener(MessageEventListeners messageEventsListener) {
     throw UnimplementedError('setMessageEventListener has not been implemented.');
   }
 
-  setConnectionEventListener(ConnectionEventsListener connectionEventsListener) {
+  setConnectionEventListener(ConnectionEventListeners connectionEventsListener) {
     throw UnimplementedError('setConnectionEventListener has not been implemented.');
   }
-  setGroupEventsListener(GroupEventsListener groupEventsListener) {
+  setGroupEventsListener(GroupEventListeners groupEventsListener) {
     throw UnimplementedError('setGroupEventsListener has not been implemented.');
   }
-  setProfileEventsListener(ProfileEventsListener profileEventsListener) {
+  setProfileEventsListener(ProfileEventListeners profileEventsListener) {
     throw UnimplementedError('setProfileEventsListener has not been implemented.');
   }
 
-  setCallEventListener(CallEventsListener callEventsListener) {
+  setCallEventListener(CallEventListeners callEventsListener) {
     throw UnimplementedError('setCallEventListener has not been implemented.');
   }
 

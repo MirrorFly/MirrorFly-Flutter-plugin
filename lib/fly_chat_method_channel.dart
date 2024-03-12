@@ -44,11 +44,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   /// The method channel used to interact with the native platform.
   ///
 
-  MessageEventsListener? messageEventsListener;
-  CallEventsListener? callEventsListener;
-  ConnectionEventsListener? connectionEventsListener;
-  ProfileEventsListener? profileEventsListener;
-  GroupEventsListener? groupEventsListener;
+  MessageEventListeners? messageEventsListener;
+  CallEventListeners? callEventsListener;
+  ConnectionEventListeners? connectionEventsListener;
+  ProfileEventListeners? profileEventsListener;
+  GroupEventListeners? groupEventsListener;
 
   @visibleForTesting
   final mirrorFlyMethodChannel = const MethodChannel('contus.mirrorfly/flyChat');
@@ -4834,25 +4834,25 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform{
   }
 
   @override
-  void setMessageEventListener(MessageEventsListener messageEventsListener) {
+  void setMessageEventListener(MessageEventListeners messageEventsListener) {
     this.messageEventsListener = messageEventsListener;
   }
 
   @override
-  void setConnectionEventListener(ConnectionEventsListener connectionEventsListener) {
+  void setConnectionEventListener(ConnectionEventListeners connectionEventsListener) {
     this.connectionEventsListener = connectionEventsListener;
   }
   @override
-  void setProfileEventsListener(ProfileEventsListener profileEventsListener) {
+  void setProfileEventsListener(ProfileEventListeners profileEventsListener) {
     this.profileEventsListener = profileEventsListener;
   }
   @override
-  void setGroupEventsListener(GroupEventsListener groupEventsListener) {
+  void setGroupEventsListener(GroupEventListeners groupEventsListener) {
     this.groupEventsListener = groupEventsListener;
   }
 
   @override
-  void setCallEventListener(CallEventsListener callEventsListener) {
+  void setCallEventListener(CallEventListeners callEventsListener) {
     this.callEventsListener = callEventsListener;
   }
 }
