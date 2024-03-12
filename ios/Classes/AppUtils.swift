@@ -33,20 +33,6 @@ class AppUtils: NSObject {
         
     }
     
-//    func getPHAsset(from imageUrl: String) -> PHAsset? {
-//        let assetURL = URL(string: imageUrl)
-//
-//        if let assetURL = assetURL {
-//          let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [assetURL.absoluteString], options: nil)
-//
-//          if let phAsset = fetchResult.firstObject {
-//            return phAsset
-//          }
-//        }
-//
-//        return nil
-//      }
-    
     
     func getPHAsset(from imageUrl: String) -> PHAsset? {
         let assetURL = URL(fileURLWithPath: imageUrl)
@@ -67,21 +53,6 @@ class AppUtils: NSObject {
 
         return nil
     }
-//    func getPHAsset(from imageUrl: String) -> PHAsset? {
-//        let assetURL = URL(fileURLWithPath: imageUrl)
-//
-//        // Convert file path to PHAsset local identifier
-//        let fetchOptions = PHFetchOptions()
-//        fetchOptions.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
-//
-//        let fetchResult = PHAsset.fetchAssets(with: fetchOptions)
-//
-//        if let phAsset = fetchResult.firstObject {
-//            return phAsset
-//        }
-//
-//        return nil
-//    }
     
     func getValueForKey<T, U>(dictionary: [T: U]?, key: T) -> U? {
         guard let dict = dictionary, let value = dict[key] else {
