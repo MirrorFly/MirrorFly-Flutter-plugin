@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16'
   s.dependency 'MirrorFlySDK', '5.15.7'
 
-  #s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+#    s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
 
 
