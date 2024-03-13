@@ -14,18 +14,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import com.mirrorfly.mirrorfly_plugin.AppUtils
+import com.mirrorfly.mirrorfly_plugin.*
 import com.mirrorfly.mirrorfly_plugin.AppUtils.checkAndAddPermissions
-import com.mirrorfly.mirrorfly_plugin.Constants
-import com.mirrorfly.mirrorfly_plugin.FlyChatPlugin
-import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
 import com.mirrorflysdk.api.chat.ProfileEventsListener
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.CallAction
-import com.mirrorflysdk.flycall.webrtc.CallDirection
 import com.mirrorflysdk.flycall.webrtc.CallStatus
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
@@ -36,7 +32,7 @@ import org.json.JSONObject
 
 class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListener {
     private val tag = "CallKitUiActivity"
-    private lateinit var callStatusTextView : TextView
+    private lateinit var callStatusTextView: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_call_kit_ui)
@@ -44,13 +40,13 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
 //        CallManager.setCallUiListener(this)
         FlutterCall.setListener(this)
         LogMessage.d("CallKitUiActivity", "onCreate")
-        val userName = findViewById<TextView>(R.id.tvNameCaller)
+//        val userName = findViewById<TextView>(R.id.tvNameCaller)
         callStatusTextView = findViewById<TextView>(R.id.tvNumber)
-        val imageCallMember1 = findViewById<CircleImageView>(R.id.image_call_member_1)
-        val imageCallMember2 = findViewById<CircleImageView>(R.id.image_call_member_2)
-        val imageCallMember3 = findViewById<CircleImageView>(R.id.image_call_member_3)
-        val imageCallMember4 = findViewById<CircleImageView>(R.id.image_call_member_4)
-        val userImage = findViewById<CircleImageView>(R.id.ivAvatar)
+//        val imageCallMember1 = findViewById<CircleImageView>(R.id.image_call_member_1)
+//        val imageCallMember2 = findViewById<CircleImageView>(R.id.image_call_member_2)
+//        val imageCallMember3 = findViewById<CircleImageView>(R.id.image_call_member_3)
+//        val imageCallMember4 = findViewById<CircleImageView>(R.id.image_call_member_4)
+//        val userImage = findViewById<CircleImageView>(R.id.ivAvatar)
         val accept = findViewById<ImageView>(R.id.ivAcceptCall)
         accept.setOnClickListener { attendCall() }
         val decline = findViewById<ImageView>(R.id.ivDeclineCall)
@@ -85,8 +81,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         setUpCallDataAndUI()
     }
 
-    private fun updateUsersProfile(){
-        LogMessage.d(tag,CallManager.getCallUsersList().joinToString(","))
+    private fun updateUsersProfile() {
+        LogMessage.d(tag, CallManager.getCallUsersList().joinToString(","))
         val imageCallMember1 = findViewById<CircleImageView>(R.id.image_call_member_1)
         val imageCallMember2 = findViewById<CircleImageView>(R.id.image_call_member_2)
         val imageCallMember3 = findViewById<CircleImageView>(R.id.image_call_member_3)
@@ -95,10 +91,10 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         val userName = findViewById<TextView>(R.id.tvNameCaller)
         val participants = findViewById<TextView>(R.id.participants)
         val users = CallManager.getCallUsersList()
-        LogMessage.d(tag,"getCallUsersList : "+users.joinToString(","))
-        if(users.isNotEmpty()) {
-            if(!CallManager.isOneToOneCall()) {
-                if(CallManager.getGroupID().isNotEmpty()){
+        LogMessage.d(tag, "getCallUsersList : " + users.joinToString(","))
+        if (users.isNotEmpty()) {
+            if (!CallManager.isOneToOneCall()) {
+                if (CallManager.getGroupID().isNotEmpty()) {
                     val membersName = Utils.setGroupMemberProfile(
                         this,
                         users,
@@ -114,10 +110,16 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     userImage.visibility = View.VISIBLE
                     userName.visibility = View.VISIBLE
                     val profile = ContactManager.getProfileDetails(CallManager.getGroupID())
-                    val name = ContactManager.getDisplayName(CallManager.getGroupID())
+//                    val name = ContactManager.getDisplayName(CallManager.getGroupID())
                     userName.text = profile.getDisplayName()
-                    Utils.loadGlideImage(this, userImage, profile.getDisplayName(), profile?.image ?: "",true)
-                }else {
+                    Utils.loadGlideImage(
+                        this,
+                        userImage,
+                        profile.getDisplayName(),
+                        profile?.image ?: "",
+                        true
+                    )
+                } else {
                     userImage.visibility = View.GONE
                     participants.visibility = View.GONE
                     val membersName = Utils.setGroupMemberProfile(
@@ -128,66 +130,73 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                         imageCallMember3,
                         imageCallMember4
                     )
-                    LogMessage.d("membersName ${users.joinToString(",")} ",membersName.toString());
+                    LogMessage.d("membersName ${users.joinToString(",")} ", membersName.toString())
                     userName.text = membersName
                     userName.visibility = View.VISIBLE
                 }
-            }else{
+            } else {
                 Utils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
                 userName.visibility = View.VISIBLE
                 userImage.visibility = View.VISIBLE
                 val profile = ContactManager.getProfileDetails(CallManager.getEndCallerJid())
-                val name = ContactManager.getDisplayName(CallManager.getEndCallerJid())
+//                val name = ContactManager.getDisplayName(CallManager.getEndCallerJid())
                 userName.text = profile.getDisplayName()
-                Utils.loadGlideImage(this, userImage, profile.getDisplayName(), profile?.image ?: "",false)
+                Utils.loadGlideImage(
+                    this,
+                    userImage,
+                    profile.getDisplayName(),
+                    profile?.image ?: "",
+                    false
+                )
             }
-        }else{
+        } else {
             finish()
         }
 
     }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         LogMessage.i(tag, "CALL_UI onNewIntent()")
         setUpCallDataAndUI()
     }
 
-    private fun setUpCallDataAndUI(){
-        LogMessage.d(tag,"FlyChatPlugin.hasInstance : ${FlyChatPlugin.hasInstance()}")
-        LogMessage.d(tag,"isActivityBExists : ${isActivityBExists()}")
-        LogMessage.d(tag,"FROM : ${intent.extras?.getString("FROM").toString()}")
+    private fun setUpCallDataAndUI() {
+        LogMessage.d(tag, "isActivityBExists : ${isActivityBExists()}")
+        LogMessage.d(tag, "FROM : ${intent.extras?.getString("FROM").toString()}")
         updateCallStatus()
         val acceptCall = intent.extras?.getBoolean(CallConstants.ACCEPT_CALL)
-        LogMessage.d(tag,"${CallConstants.ACCEPT_CALL} : ${acceptCall.toString()}")
-        if (acceptCall!=null && acceptCall){
+        LogMessage.d(tag, "${CallConstants.ACCEPT_CALL} : ${acceptCall.toString()}")
+        if (acceptCall != null && acceptCall) {
             attendCall(fromIntent = true)
         }
     }
 
     private fun isActivityBExists(): Boolean {
-       val intent = AppUtils.getAppIntent(this)//Intent()
+        val intent = AppUtils.getAppIntent(this)//Intent()
 //        intent?.component = ComponentName(this.packageName, activityBClassName)
 
         // Get the PackageManager
         val packageManager = packageManager
 
         // Check if the Activity B is found
-        val resolveInfo = packageManager.resolveActivity(intent!!, PackageManager.MATCH_DEFAULT_ONLY)
+        val resolveInfo =
+            packageManager.resolveActivity(intent!!, PackageManager.MATCH_DEFAULT_ONLY)
         return resolveInfo != null
     }
 
     override fun onStart() {
         super.onStart()
-        Log.d(tag,"onStart")
+        Log.d(tag, "onStart")
         // Bind to the service. If the service is in foreground mode, this signals to the service
         // that since this activity is in the foreground, the service can exit foreground mode.
         // for showing call notification
         //CallManager.bindCallService()
-        AppUtils.checkPermission(this,this,findViewById(R.id.actions))
+        AppUtils.checkPermission(this, this, findViewById(R.id.actions))
     }
 
     override fun onStop() {
-        Log.d(tag,"onStop")
+        Log.d(tag, "onStop")
         // Unbind from the service. This signals to the service that this activity is no longer
         // in the foreground, and the service can respond by promoting itself to a foreground
         // service.
@@ -262,30 +271,34 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
 
     private fun attendCall(fromIntent: Boolean = false) {
         if (CallManager.getCallType() == CallType.AUDIO_CALL && (!CallManager.isAudioCallPermissionsGranted() || !CallManager.isNotificationPermissionsGranted())) {
-            AppUtils.checkPermission(this,this,findViewById(R.id.actions))
+            AppUtils.checkPermission(this, this, findViewById(R.id.actions))
             return
         }
         if (CallManager.getCallType() == CallType.VIDEO_CALL && (!CallManager.isVideoCallPermissionsGranted() || !CallManager.isNotificationPermissionsGranted())) {
-            AppUtils.checkPermission(this,this,findViewById(R.id.actions))
+            AppUtils.checkPermission(this, this, findViewById(R.id.actions))
             return
         }
         Log.d("attendCall", "onclick")
 
         CallManager.answerCall(object : CallActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
-                LogMessage.d(tag,"isSuccess $isSuccess message $message")
+                LogMessage.d(tag, "isSuccess $isSuccess message $message")
                 if (isSuccess) {
-                    if(fromIntent) {
+                    if (fromIntent) {
                         val json = JSONObject()
                         json.put("callStatus", "Attended")
                         json.put("userJid", CallManager.getCurrentUserId())
                         json.put("callType", CallManager.getCallType())
                         json.put("callMode", CallManager.getCallMode())
-                        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+//                        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+                        FlyMethodConstants.updateCallSinkValue(
+                            Constants.onCallStatusUpdated,
+                            json.toString()
+                        )
                         finishTask()
                         val intent = AppUtils.getAppIntent(this@CallKitUiActivity)
                         startActivity(intent)
-                    }else{
+                    } else {
                         finishTask()
                     }
                 }
@@ -329,33 +342,32 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 val permissionsToCheck = mutableListOf<String>()
                 val permanentlyDeniedPermissions = mutableListOf<String>()
 
-                    for (i in permissions.indices) {
-                        val permission = permissions[i]
-                        val grantResult = grantResults[i]
+                for (i in permissions.indices) {
+                    val permission = permissions[i]
+                    val grantResult = grantResults[i]
 
-                        Log.d("permission result loop", permission)
-                        Log.d("permission result loop grantResult", grantResult.toString())
-                        when {
-                            grantResult == PackageManager.PERMISSION_GRANTED -> {
-                                Log.d("PermissionResult", "$permission is granted")
-                            }
-                            !ActivityCompat.shouldShowRequestPermissionRationale(this, permission) -> {
-                                Log.d("PermissionResult", "$permission is permanently denied")
-                                permanentlyDeniedPermissions.add(permission)
-                            }
-                            else -> {
-                                Log.d("PermissionResult", "$permission is denied")
-                                permissionsToCheck.add(permission)
-                            }
+                    Log.d("permission result loop", permission)
+                    Log.d("permission result loop grantResult", grantResult.toString())
+                    when {
+                        grantResult == PackageManager.PERMISSION_GRANTED -> {
+                            Log.d("PermissionResult", "$permission is granted")
+                        }
+                        !ActivityCompat.shouldShowRequestPermissionRationale(this, permission) -> {
+                            Log.d("PermissionResult", "$permission is permanently denied")
+                            permanentlyDeniedPermissions.add(permission)
+                        }
+                        else -> {
+                            Log.d("PermissionResult", "$permission is denied")
+                            permissionsToCheck.add(permission)
                         }
                     }
-
-                if (permanentlyDeniedPermissions.isNotEmpty()){
-                    AppUtils.openAppSettings(this)
-                }else if(permissionsToCheck.isNotEmpty()){
-                    AppUtils.askPermission(this, permissionsToCheck.toTypedArray())
                 }
 
+                if (permanentlyDeniedPermissions.isNotEmpty()) {
+                    AppUtils.openAppSettings(this)
+                } else if (permissionsToCheck.isNotEmpty()) {
+                    AppUtils.askPermission(this, permissionsToCheck.toTypedArray())
+                }
 
 
                 /*val permissionsToRequest = mutableListOf<String>()
@@ -389,7 +401,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
                 }*/
             }
-            AppUtils.VIDEO_PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty()){
+            AppUtils.VIDEO_PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty()) {
 
                 val permissionsToCheck = mutableListOf<String>()
                 permissionsToCheck.add(Manifest.permission.CAMERA)
@@ -399,17 +411,20 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     permissionsToCheck.add(Manifest.permission.BLUETOOTH_CONNECT)
                 }
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     permissionsToCheck.add(Manifest.permission.POST_NOTIFICATIONS)
                 }
 
 
-                val (deniedPermissions, permanentlyDeniedPermissions) = checkAndAddPermissions(this, permissionsToCheck)
+                val (deniedPermissions, permanentlyDeniedPermissions) = checkAndAddPermissions(
+                    this,
+                    permissionsToCheck
+                )
 
                 if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
                     CallManager.sendCallPermissionDenied()
 //                    AppUtils.showPermissionSnackBar(this, findViewById(android.R.id.content), Constants.AUDIO_CALL_PERMISSION, permissionsToCheck.toTypedArray())
-                }else{
+                } else {
                     CallManager.startVideoCapture()
                 }
 
@@ -446,31 +461,35 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
             }
         }
     }
-    private fun handleCallStatusMessages(@CallStatus callEvent: String, userJid: String){
-        LogMessage.d(tag,"callEvent : $callEvent userJid : $userJid")
+
+    private fun handleCallStatusMessages(@CallStatus callEvent: String, userJid: String) {
+        LogMessage.d(tag, "callEvent : $callEvent userJid : $userJid")
         updateCallStatus()
         when (callEvent) {
-            CallStatus.CONNECTING ->{}
-            CallStatus.RINGING ->{}
-            CallStatus.CONNECTED ->{}
-            CallStatus.DISCONNECTED ->{}
-            CallStatus.ON_HOLD ->{}
-            CallStatus.ON_RESUME ->{}
-            CallStatus.USER_JOINED ->{}
-            CallStatus.USER_LEFT ->{}
-            CallStatus.INVITE_CALL_TIME_OUT ->{}
-            CallStatus.OUTGOING_CALL_TIME_OUT ->{}
-            CallStatus.INCOMING_CALL_TIME_OUT ->{}
-            CallStatus.RECONNECTING ->{}
-            CallStatus.RECONNECTED ->{}
-            CallStatus.CALLING ->{}
-            CallStatus.CALLING_10S ->{}
-            CallStatus.CALLING_AFTER_10S ->{}
+            CallStatus.CONNECTING -> {}
+            CallStatus.RINGING -> {}
+            CallStatus.CONNECTED -> {}
+            CallStatus.DISCONNECTED -> {}
+            CallStatus.ON_HOLD -> {}
+            CallStatus.ON_RESUME -> {}
+            CallStatus.USER_JOINED -> {}
+            CallStatus.USER_LEFT -> {}
+            CallStatus.INVITE_CALL_TIME_OUT -> {}
+            CallStatus.OUTGOING_CALL_TIME_OUT -> {}
+            CallStatus.INCOMING_CALL_TIME_OUT -> {}
+            CallStatus.RECONNECTING -> {}
+            CallStatus.RECONNECTED -> {}
+            CallStatus.CALLING -> {}
+            CallStatus.CALLING_10S -> {}
+            CallStatus.CALLING_AFTER_10S -> {}
         }
     }
 
-    private fun updateCallStatus(){
-        LogMessage.d(tag,"CallManager.getOnGoingCallStatus(this) ${CallManager.getOnGoingCallStatus(this)}")
+    private fun updateCallStatus() {
+        LogMessage.d(
+            tag,
+            "CallManager.getOnGoingCallStatus(this) ${CallManager.getOnGoingCallStatus(this)}"
+        )
         callStatusTextView.text = CallManager.getOnGoingCallStatus(this)
     }
 
@@ -480,98 +499,104 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         when (requestCode) {
             AppUtils.CALL_REQUEST -> {
                 attendCall(fromIntent = true)
-                LogMessage.d(tag,"onActivityResult $data")
+                LogMessage.d(tag, "onActivityResult $data")
             }
         }
     }
 
-//    override fun onShowCallUi(callAction: String?) {
-    override fun onShowCallUiFlutter(callAction: String?,userJid: String?) {
-        LogMessage.d(tag, "#onShowCallUi $callAction ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.Q}")
-        when(callAction){
-            CallStatus.INCOMING_CALL_TIME_OUT->{
-                if(CallManager.isOneToOneCall()){
+    //    override fun onShowCallUi(callAction: String?) {
+    override fun onShowCallUiFlutter(callAction: String?, userJid: String?) {
+        LogMessage.d(
+            tag,
+            "#onShowCallUi $callAction ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.Q}"
+        )
+        when (callAction) {
+            CallStatus.INCOMING_CALL_TIME_OUT -> {
+                if (CallManager.isOneToOneCall()) {
                     CallManager.disconnectCall()
                     finish()
                 }
             }
-            CallConstants.ACTION_SHOW_CALL_UI->{}
-            CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
-            CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
-            CallConstants.ACTION_START_VIDEO_CAPTURE->{}
-            CallAction.ACTION_INVITE_USERS->{}
-            CallAction.ACTION_ANSWER_CALL->{
+            CallConstants.ACTION_SHOW_CALL_UI -> {}
+            CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED -> {}
+            CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED -> {}
+            CallConstants.ACTION_START_VIDEO_CAPTURE -> {}
+            CallAction.ACTION_INVITE_USERS -> {}
+            CallAction.ACTION_ANSWER_CALL -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val y = AppUtils.getAppIntent(this)
                     y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     this.startActivity(y)
                 }
             }
-            CallAction.ACTION_DENY_CALL->{
-                if(CallManager.isOneToOneCall()){
+            CallAction.ACTION_DENY_CALL -> {
+                if (CallManager.isOneToOneCall()) {
                     CallManager.disconnectCall()
                     finish()
                 }
             }
-            CallAction.ACTION_LOCAL_HANGUP->{
+            CallAction.ACTION_LOCAL_HANGUP -> {
 //                if(CallManager.isOneToOneCall()){
 //                    CallManager.disconnectCall()
-                    finish()
+                finish()
 //                }
             }
-            CallAction.ACTION_REMOTE_HANGUP->{
-                if(CallManager.isOneToOneCall()){
+            CallAction.ACTION_REMOTE_HANGUP -> {
+                if (CallManager.isOneToOneCall()) {
                     CallManager.disconnectCall()
                     finish()
                 }
             }
-            CallAction.ACTION_REMOTE_OTHER_BUSY->{
+            CallAction.ACTION_REMOTE_OTHER_BUSY -> {
                 updateUsersProfile()
             }
-            CallStatus.USER_LEFT ->{
+            CallStatus.USER_LEFT -> {
                 updateUsersProfile()
-                if (userJid!=null && userJid.isNotEmpty()) {
-                    val name = ContactManager.getProfileDetails(CallManager.getGroupID()).getDisplayName()
-                    Toast.makeText(this, "$name Left",Toast.LENGTH_SHORT).show()
+                if (userJid != null && userJid.isNotEmpty()) {
+                    val name =
+                        ContactManager.getProfileDetails(CallManager.getGroupID()).getDisplayName()
+                    Toast.makeText(this, "$name Left", Toast.LENGTH_SHORT).show()
                 }
             }
-            CallAction.ACTION_REMOTE_BUSY->{
+            CallAction.ACTION_REMOTE_BUSY -> {
                 updateUsersProfile()
-                if (userJid!=null && userJid.isNotEmpty()) {
-                    val name = ContactManager.getProfileDetails(CallManager.getGroupID()).getDisplayName()
-                    Toast.makeText(this, "$name is Busy",Toast.LENGTH_SHORT).show()
+                if (userJid != null && userJid.isNotEmpty()) {
+                    val name =
+                        ContactManager.getProfileDetails(CallManager.getGroupID()).getDisplayName()
+                    Toast.makeText(this, "$name is Busy", Toast.LENGTH_SHORT).show()
                 }
             }
-            CallAction.ACTION_REMOTE_ENGAGED->{
+            CallAction.ACTION_REMOTE_ENGAGED -> {
                 updateUsersProfile()
-                if (userJid!=null && userJid.isNotEmpty()) {
-                    val name = ContactManager.getProfileDetails(CallManager.getGroupID()).getDisplayName()
-                    Toast.makeText(this, "$name is on another call",Toast.LENGTH_SHORT).show()
+                if (userJid != null && userJid.isNotEmpty()) {
+                    val name =
+                        ContactManager.getProfileDetails(CallManager.getGroupID()).getDisplayName()
+                    Toast.makeText(this, "$name is on another call", Toast.LENGTH_SHORT).show()
                 }
             }
-            CallAction.ACTION_CALL_AGAIN->{}
-            CallAction.ACTION_CANCEL_CALL_AGAIN->{}
-            CallAction.ACTION_SWITCH_CAMERA->{}
-            CallAction.ACTION_REMOTE_VIDEO_STATUS->{}
-            CallAction.CHANGE_TO_AUDIO_CALL->{}
-            CallAction.ACTION_VIDEO_CALL_CANCEL_CONVERSION->{}
-            CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED->{}
-            CallAction.ACTION_VIDEO_CALL_CONVERSION_REJECTED->{}
-            CallAction.ACTION_REMOTE_VIDEO_ADDED->{}
-            CallAction.ACTION_AUDIO_DEVICE_CHANGED->{}
-            CallAction.ACTION_CAMERA_SWITCH_SUCCESS->{}
-            CallAction.ACTION_CAMERA_SWITCH_FAILURE->{}
-            CallAction.ACTION_PERMISSION_DENIED->{}
-            CallAction.CALL_REQUEST_RESPONSE->{}
-            CallAction.USER_SPEAKING->{}
-            CallAction.USER_STOPPED_SPEAKING->{}
-            CallAction.ACTION_MAKE_SERVER_CONNECTION->{}
-            CallAction.ACTION_CLOSE_SERVER_CONNECTION->{}
+            CallAction.ACTION_CALL_AGAIN -> {}
+            CallAction.ACTION_CANCEL_CALL_AGAIN -> {}
+            CallAction.ACTION_SWITCH_CAMERA -> {}
+            CallAction.ACTION_REMOTE_VIDEO_STATUS -> {}
+            CallAction.CHANGE_TO_AUDIO_CALL -> {}
+            CallAction.ACTION_VIDEO_CALL_CANCEL_CONVERSION -> {}
+            CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED -> {}
+            CallAction.ACTION_VIDEO_CALL_CONVERSION_REJECTED -> {}
+            CallAction.ACTION_REMOTE_VIDEO_ADDED -> {}
+            CallAction.ACTION_AUDIO_DEVICE_CHANGED -> {}
+            CallAction.ACTION_CAMERA_SWITCH_SUCCESS -> {}
+            CallAction.ACTION_CAMERA_SWITCH_FAILURE -> {}
+            CallAction.ACTION_PERMISSION_DENIED -> {}
+            CallAction.CALL_REQUEST_RESPONSE -> {}
+            CallAction.USER_SPEAKING -> {}
+            CallAction.USER_STOPPED_SPEAKING -> {}
+            CallAction.ACTION_MAKE_SERVER_CONNECTION -> {}
+            CallAction.ACTION_CLOSE_SERVER_CONNECTION -> {}
         }
     }
 
-    override fun onCallStatusUpdated(callStatus: String, userJid: String){
-        handleCallStatusMessages(callStatus,userJid)
+    override fun onCallStatusUpdated(callStatus: String, userJid: String) {
+        handleCallStatusMessages(callStatus, userJid)
     }
 
     override fun blockedThisUser(jid: String) {

@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.lifecycle.Lifecycle
-import com.mirrorfly.mirrorfly_plugin.AppUtils
-import com.mirrorfly.mirrorfly_plugin.Constants
-import com.mirrorfly.mirrorfly_plugin.R
+import com.mirrorfly.mirrorfly_plugin.*
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.*
@@ -18,36 +16,40 @@ import io.flutter.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
 
 
-class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) :  MethodChannel.MethodCallHandler ,
-    CallEventsListener,CallUiListener {
-    private var tag = "#FlutterAndroidCall"
-    private var sdk = SdkCallFunctions(context)
-    init {
+class FlyCallPlugin : MethodChannel.MethodCallHandler,
+    CallEventsListener, CallUiListener {
+    val tag = "#FlutterCallMethods"
+    val context: Context by lazy { MirrorFlyManager.applicationContext }
+    private val flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? by lazy { MirrorFlyManager.flutterPluginBinding }
+
+    fun init() {
         Logger.d("$tag init")
-//        EventChannel(binaryMessenger,Constants.onCallReceiving).setStreamHandler(OnCallReceivingStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onLocalVideoTrackAdded).setStreamHandler(onLocalVideoTrackAddedStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onRemoteVideoTrackAdded).setStreamHandler(onRemoteVideoTrackAddedStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onTrackAdded).setStreamHandler(onTrackAddedStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onCallStatusUpdated).setStreamHandler(onCallStatusUpdatedStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onCallAction).setStreamHandler(onCallActionStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onMuteStatusUpdated).setStreamHandler(onMuteStatusUpdatedStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onUserSpeaking).setStreamHandler(onUserSpeakingStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onUserStoppedSpeaking).setStreamHandler(onUserStoppedSpeakingStreamHandler)
-        EventChannel(flutterPluginBinding.binaryMessenger,Constants.onMissedCall).setStreamHandler(onMissedCallNotificationStreamHandler)
-        MethodChannel(flutterPluginBinding.binaryMessenger, Constants.callMethodChannel).setMethodCallHandler(this)
         CallManager.setCallEventsListener(this)
         CallManager.setCallUiListener(this)
+    }
 
+
+    fun initChannels() {
+        flutterPluginBinding?.binaryMessenger?.let {
+            MethodChannel(
+                it,
+                Constants.callMethodChannel
+            ).setMethodCallHandler(this)
+        }
+        flutterPluginBinding?.binaryMessenger?.let { FlyMethodConstants.initializeCallListeners(it) }
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        when (call.method) {
+        FlyMethodConstants.callMethodHandlers[call.method]?.let { methodHandler ->
+            Log.d(tag, "Method call ${call.method}")
+            methodHandler.invoke(call, result)
+        }
+        /*when (call.method) {
             "getCallDirection"-> {
                 val direction = if(CallDirection.INCOMING_CALL == CallManager.getCallDirection()) "Incoming" else "Outgoing"
                 result.success(direction)
@@ -159,7 +161,12 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 result.success(CallManager.getOnGoingCallStatus(context))
             }
             "getUnreadMissedCallCount" -> {
-                result.success(CallLogManager.getUnreadMissedCallCount())
+                if(!ChatManager.getBaseURL().isNullOrEmpty()){
+                    result.success(CallLogManager.getUnreadMissedCallCount())
+                }else{
+                    result.error("500","SDK not isInitialised",null)
+                }
+
             }
             "requestVideoCallSwitch" -> {
                 sdk.requestVideoCallSwitch(call, result)
@@ -195,186 +202,254 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 sdk.deleteCallLog(call,result)
             }
             "markAllUnreadMissedCallsAsRead" -> {
-                CallLogManager.markAllUnreadMissedCallsAsRead()
-                result.success(true)
-                LogMessage.d("markAllUnreadMissedCallsAsRead","called")
+                if(!ChatManager.getBaseURL().isNullOrEmpty()) {
+                    CallLogManager.markAllUnreadMissedCallsAsRead()
+                    LogMessage.d("markAllUnreadMissedCallsAsRead","called")
+                    result.success(true)
+                }else{
+                    result.error("500","SDK not isInitialised",null)
+                }
             }
             "syncCallLogs" -> {
                 sdk.syncCallLogs(call, result)
             }
             "isCallConversionRequestAvailable" -> {
                 result.success(CallManager.isCallConversionRequestAvailable())
-            }
-            /*"changeCallType" -> {
-                sdk.changeCallType(call, result)
-            }
-            "reRouteAudio" -> {
-                sdk.reRouteAudio(call, result)
-            }*/
-        }
+
+
+        }*/
     }
+
     override fun onCallStatusUpdated(callStatus: String, userJid: String) {
-        Log.d(tag,"#onCallStatusUpdated callStatus $callStatus userJid $userJid")
+        Log.d(tag, "#onCallStatusUpdated callStatus $callStatus userJid $userJid")
         //Adding this condition to match the iOS, but this scenario is not occurred till now. Even though Adding this for exceptional cases.
         var userJID = userJid
-        if (userJID == ""){
+        if (userJID == "") {
             userJID = CallManager.getCurrentUserId()
         }
         val json = JSONObject()
-        json.put("callStatus",callStatus)
-        json.put("userJid",userJID)
-        json.put("callType",CallManager.getCallType())
-        json.put("callMode",CallManager.getCallMode())
+        json.put("callStatus", callStatus)
+        json.put("userJid", userJID)
+        json.put("callType", CallManager.getCallType())
+        json.put("callMode", CallManager.getCallMode())
         FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
         //Call on hold if user attended other call in ongoing call after then ON_RESUME called
-        if(callStatus == CallStatus.CALL_TIME_OUT && CallManager.isCallConnected()){
-            Log.d("#onCallStatusUpdated","CALL_TIME_OUT connected ${CallManager.isCallConnected()}")
+        if (callStatus == CallStatus.CALL_TIME_OUT && CallManager.isCallConnected()) {
+            Log.d(
+                "#onCallStatusUpdated",
+                "CALL_TIME_OUT connected ${CallManager.isCallConnected()}"
+            )
             //FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
 //            handleCallStatusMessages(callStatus,json)
 //            CallManager.getTimeOutUsersList().forEach {
 //                json.put("userJid",it)
-                //FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, it)
-                handleCallStatusMessages(callStatus, json)
+            //FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, it)
+            handleCallStatusMessages(callStatus, json)
 //            }
-        }else if (callStatus != CallStatus.OUTGOING_CALL_TIME_OUT && callStatus != CallStatus.INCOMING_CALL_TIME_OUT && callStatus != CallStatus.INVITE_CALL_TIME_OUT){
-            Log.d("#onCallStatusUpdated","$callStatus connected ${CallManager.isCallConnected()}")
+        } else if (callStatus != CallStatus.OUTGOING_CALL_TIME_OUT && callStatus != CallStatus.INCOMING_CALL_TIME_OUT && callStatus != CallStatus.INVITE_CALL_TIME_OUT) {
+            Log.d("#onCallStatusUpdated", "$callStatus connected ${CallManager.isCallConnected()}")
             //FlutterCall.callUiListener?.onCallStatusUpdated(callStatus, userJID)
             handleCallStatusMessages(callStatus, json)
         }
-        if(userJID!=CallManager.getCurrentUserId() && (callStatus == CallStatus.CONNECTED || callStatus == CallStatus.RECONNECTED)){
-            Log.d(tag,"Connected and Not Me userJid $userJID video ${CallManager.getRemoteProxyVideoSink(userJID)} video mute ${CallManager.isRemoteVideoMuted(userJID)} video paused ${CallManager.isRemoteVideoPaused(userJID)}")
+        if (userJID != CallManager.getCurrentUserId() && (callStatus == CallStatus.CONNECTED || callStatus == CallStatus.RECONNECTED)) {
+            Log.d(
+                tag,
+                "Connected and Not Me userJid $userJID video ${
+                    CallManager.getRemoteProxyVideoSink(userJID)
+                } video mute ${CallManager.isRemoteVideoMuted(userJID)} video paused ${
+                    CallManager.isRemoteVideoPaused(
+                        userJID
+                    )
+                }"
+            )
 
         }
     }
-    private fun handleCallStatusMessages(@CallStatus callEvent: String, json: JSONObject){
-        LogMessage.d(tag,"callEvent : $callEvent json : $json")
-        json.put("callStatus",callEvent)
+
+    private fun handleCallStatusMessages(@CallStatus callEvent: String, json: JSONObject) {
+        LogMessage.d(tag, "callEvent : $callEvent json : $json")
+        json.put("callStatus", callEvent)
         when (callEvent) {
-            CallStatus.CONNECTING ->{}
-            CallStatus.RINGING ->{}
-            CallStatus.CONNECTED ->{}
-            CallStatus.DISCONNECTED ->{}
-            CallStatus.ON_HOLD ->{}
-            CallStatus.ON_RESUME ->{}
-            CallStatus.USER_JOINED ->{}
-            CallStatus.USER_LEFT ->{
-                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.USER_LEFT,json.getString("userJid"))
+            CallStatus.CONNECTING -> {}
+            CallStatus.RINGING -> {}
+            CallStatus.CONNECTED -> {}
+            CallStatus.DISCONNECTED -> {}
+            CallStatus.ON_HOLD -> {}
+            CallStatus.ON_RESUME -> {}
+            CallStatus.USER_JOINED -> {}
+            CallStatus.USER_LEFT -> {
+                FlutterCall.callUiListener?.onShowCallUiFlutter(
+                    CallStatus.USER_LEFT,
+                    json.getString("userJid")
+                )
             }
-            CallStatus.INVITE_CALL_TIME_OUT ->{}
-            CallStatus.OUTGOING_CALL_TIME_OUT ->{
-                json.put("callStatus","CALL TIME OUT")
+            CallStatus.INVITE_CALL_TIME_OUT -> {}
+            CallStatus.OUTGOING_CALL_TIME_OUT -> {
+                json.put("callStatus", "CALL TIME OUT")
             }
-            CallStatus.CALL_TIME_OUT ->{
-                json.put("callStatus","CALL TIME OUT")
-                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT,json.getString("userJid"))
+            CallStatus.CALL_TIME_OUT -> {
+                json.put("callStatus", "CALL TIME OUT")
+                FlutterCall.callUiListener?.onShowCallUiFlutter(
+                    CallStatus.INCOMING_CALL_TIME_OUT,
+                    json.getString("userJid")
+                )
             }
-            CallStatus.INCOMING_CALL_TIME_OUT ->{
-                FlutterCall.callUiListener?.onShowCallUiFlutter(CallStatus.INCOMING_CALL_TIME_OUT,json.getString("userJid"))
+            CallStatus.INCOMING_CALL_TIME_OUT -> {
+                FlutterCall.callUiListener?.onShowCallUiFlutter(
+                    CallStatus.INCOMING_CALL_TIME_OUT,
+                    json.getString("userJid")
+                )
             }
-            CallStatus.RECONNECTING ->{}
-            CallStatus.RECONNECTED ->{
+            CallStatus.RECONNECTING -> {}
+            CallStatus.RECONNECTED -> {
                 val userJid = json.getString("userJid")
-                val isVideoMuted = if(CallManager.getCurrentUserId()!= userJid) CallManager.isRemoteVideoMuted(userJid) else CallManager.isVideoMuted()
-                LogMessage.d(tag,"${CallStatus.RECONNECTED} CallManager.isCallConversionRequestAvailable() "+CallManager.isCallConversionRequestAvailable()+" Reconnected isVideoMuted $isVideoMuted userJid : $userJid")
-                if(CallManager.getCurrentUserId()!=userJid && CallManager.isRemoteVideoMuted(userJid)) {
+                val isVideoMuted =
+                    if (CallManager.getCurrentUserId() != userJid) CallManager.isRemoteVideoMuted(
+                        userJid
+                    ) else CallManager.isVideoMuted()
+                LogMessage.d(
+                    tag,
+                    "${CallStatus.RECONNECTED} CallManager.isCallConversionRequestAvailable() " + CallManager.isCallConversionRequestAvailable() + " Reconnected isVideoMuted $isVideoMuted userJid : $userJid"
+                )
+                if (CallManager.getCurrentUserId() != userJid && CallManager.isRemoteVideoMuted(
+                        userJid
+                    )
+                ) {
                     if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
                         MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)
                     }
-                }else{
-                    if(CallManager.isCallConversionRequestAvailable() && CallManager.isOneToOneCall()) {
+                } else {
+                    if (CallManager.isCallConversionRequestAvailable() && CallManager.isOneToOneCall()) {
                         val jsons = JSONObject()
                         jsons.put("callAction", "ACTION_VIDEO_CALL_CONVERSION")
                         jsons.put("userJid", CallManager.getEndCallerJid())
                         jsons.put("callType", CallManager.getCallType())
                         jsons.put("callMode", CallManager.getCallMode())
-                        onCallActionStreamHandler.onCallAction?.success(jsons.toString())
+//                        onCallActionStreamHandler.onCallAction?.success(jsons.toString())
+                        FlyMethodConstants.updateCallSinkValue(
+                            Constants.onCallAction,
+                            jsons.toString()
+                        )
                     }
                 }
             }
-            CallStatus.CALLING ->{
+            CallStatus.CALLING -> {
                 //Calling status not in iOS so here we sent Trying to Connect status
-                json.put("callStatus","Trying to Connect")
+                json.put("callStatus", "Trying to Connect")
             }
-            CallStatus.CALLING_10S ->{}
-            CallStatus.CALLING_AFTER_10S ->{}
+            CallStatus.CALLING_10S -> {}
+            CallStatus.CALLING_AFTER_10S -> {}
         }
-        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+//        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+        FlyMethodConstants.updateCallSinkValue(Constants.onCallStatusUpdated, json.toString())
+
 
     }
 
     override fun onCallAction(callAction: String, userJid: String) {
-        Log.d(tag,"#onCallAction callAction $callAction userJid $userJid")
+        Log.d(tag, "#onCallAction callAction $callAction userJid $userJid")
         val json = JSONObject()
-        json.put("callAction" , if(userJid==ChatManager.getCurrentUserJid() && callAction==CallAction.ACTION_REMOTE_HANGUP) CallAction.ACTION_LOCAL_HANGUP else callAction)
-        json.put("userJid",userJid)
-        json.put("callType",CallManager.getCallType())
-        json.put("callMode",CallManager.getCallMode())
-        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction,userJid)
-        if(callAction == CallAction.ACTION_REMOTE_VIDEO_STATUS){
-            if (CallManager.isRemoteVideoPaused(userJid)){
-                json.put("callAction","REMOTE_VIDEO_PAUSED")
-                if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+        json.put(
+            "callAction",
+            if (userJid == ChatManager.getCurrentUserJid() && callAction == CallAction.ACTION_REMOTE_HANGUP) CallAction.ACTION_LOCAL_HANGUP else callAction
+        )
+        json.put("userJid", userJid)
+        json.put("callType", CallManager.getCallType())
+        json.put("callMode", CallManager.getCallMode())
+        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction, userJid)
+        if (callAction == CallAction.ACTION_REMOTE_VIDEO_STATUS) {
+            if (CallManager.isRemoteVideoPaused(userJid)) {
+                json.put("callAction", "REMOTE_VIDEO_PAUSED")
+                if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
                     MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)
                 }
-            }else if(!CallManager.isRemoteVideoPaused(userJid)){
-                json.put("callAction","REMOTE_VIDEO_RESUMED")
-                if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null && !CallManager.isRemoteVideoMuted(userJid)) {
+            } else if (!CallManager.isRemoteVideoPaused(userJid)) {
+                json.put("callAction", "REMOTE_VIDEO_RESUMED")
+                if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null && !CallManager.isRemoteVideoMuted(
+                        userJid
+                    )
+                ) {
                     MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
                 }
             }
         }
-        if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
-            LogMessage.d("#onCallAction","CallManager.isRemoteVideoPaused($userJid) ${CallManager.isRemoteVideoPaused(userJid)} ${MirrorflyViewHashMap.getMirrorflyView(userJid)}")
-            if(MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())!=null && !CallManager.isVideoMuted()) {
+        if (callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED) {
+            LogMessage.d(
+                "#onCallAction",
+                "CallManager.isRemoteVideoPaused($userJid) ${CallManager.isRemoteVideoPaused(userJid)} ${
+                    MirrorflyViewHashMap.getMirrorflyView(userJid)
+                }"
+            )
+            if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId()) != null && !CallManager.isVideoMuted()) {
                 MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
                     ?.setLocalTarget()
             }
-            if(!CallManager.isRemoteVideoPaused(userJid)){
-                if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null && !CallManager.isRemoteVideoMuted(userJid)) {
+            if (!CallManager.isRemoteVideoPaused(userJid)) {
+                if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null && !CallManager.isRemoteVideoMuted(
+                        userJid
+                    )
+                ) {
                     MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
                 }
             }
         }
-        if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_REJECTED || callAction == CallAction.ACTION_VIDEO_CALL_CANCEL_CONVERSION || callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
-            //CallAudioManager.getInstance(context).stopIncomingRequestTone()
-        }
+//        if(callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_REJECTED || callAction == CallAction.ACTION_VIDEO_CALL_CANCEL_CONVERSION || callAction == CallAction.ACTION_VIDEO_CALL_CONVERSION_ACCEPTED){
+        //CallAudioManager.getInstance(context).stopIncomingRequestTone()
+//        }
         //sendCallStatusUpdate(callAction,userJid)
-        if(userJid==ChatManager.getCurrentUserJid() && callAction==CallAction.ACTION_REMOTE_HANGUP){
+        if (userJid == ChatManager.getCurrentUserJid() && callAction == CallAction.ACTION_REMOTE_HANGUP) {
             sendCallStatusForLocalJidInRemoteHangUP(callAction, userJid)
-        }else {
-            onCallActionStreamHandler.onCallAction?.success(json.toString())
+        } else {
+//            onCallActionStreamHandler.onCallAction?.success(json.toString())
+            FlyMethodConstants.updateCallSinkValue(Constants.onCallAction, json.toString())
         }
     }
-    private fun sendCallStatusForLocalJidInRemoteHangUP(callAction: String, userJid: String){
-        Log.d(tag,"#onCallAction sendCallStatusForLocalJidInRemoteHangUP $callAction userJid $userJid")
-        if(userJid==ChatManager.getCurrentUserJid() && callAction==CallAction.ACTION_REMOTE_HANGUP){
-            if(!CallManager.isCallConnected()){
+
+    private fun sendCallStatusForLocalJidInRemoteHangUP(callAction: String, userJid: String) {
+        Log.d(
+            tag,
+            "#onCallAction sendCallStatusForLocalJidInRemoteHangUP $callAction userJid $userJid"
+        )
+        if (userJid == ChatManager.getCurrentUserJid() && callAction == CallAction.ACTION_REMOTE_HANGUP) {
+            if (!CallManager.isCallConnected()) {
                 val json = JSONObject()
-                json.put("userJid",userJid)
-                json.put("callType",CallManager.getCallType())
-                json.put("callMode",CallManager.getCallMode())
+                json.put("userJid", userJid)
+                json.put("callType", CallManager.getCallType())
+                json.put("callMode", CallManager.getCallMode())
                 json.put("callStatus", CallStatus.DISCONNECTED)
-                onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+//                onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+                FlyMethodConstants.updateCallSinkValue(
+                    Constants.onCallStatusUpdated,
+                    json.toString()
+                )
             }
         }
     }
 
-    private fun sendCallStatusUpdate(status: String,userJid: String){
+    private fun sendCallStatusUpdate(status: String, userJid: String) {
         val json = JSONObject()
-        json.put("userJid",userJid)
-        json.put("callType",CallManager.getCallType())
-        json.put("callMode",CallManager.getCallMode())
-        when(status){
-            CallAction.ACTION_REMOTE_HANGUP-> {
-                if(CallManager.isOneToOneCall()) {
+        json.put("userJid", userJid)
+        json.put("callType", CallManager.getCallType())
+        json.put("callMode", CallManager.getCallMode())
+        when (status) {
+            CallAction.ACTION_REMOTE_HANGUP -> {
+                if (CallManager.isOneToOneCall()) {
                     json.put("callStatus", "Disconnected")
-                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+//                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+                    FlyMethodConstants.updateCallSinkValue(
+                        Constants.onCallStatusUpdated,
+                        json.toString()
+                    )
                 }
             }
-            CallAction.ACTION_REMOTE_BUSY->{
-                if(CallManager.isOneToOneCall()) {
+            CallAction.ACTION_REMOTE_BUSY -> {
+                if (CallManager.isOneToOneCall()) {
                     json.put("callStatus", "Disconnected")
-                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+//                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
+                    FlyMethodConstants.updateCallSinkValue(
+                        Constants.onCallStatusUpdated,
+                        json.toString()
+                    )
                 }
             }
         }
@@ -382,67 +457,96 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
     }
 
     override fun onVideoTrackAdded(userJid: String) {
-        Log.d(tag,"#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${MirrorflyViewHashMap.getMirrorflyViewId(userJid)} isCallConversionRequestAvailable : ${CallManager.isCallConversionRequestAvailable()} video ${CallManager.getRemoteProxyVideoSink(userJid)}")
-        if(!CallManager.isCallConversionRequestAvailable()) {
+        Log.d(
+            tag,
+            "#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${
+                MirrorflyViewHashMap.getMirrorflyViewId(userJid)
+            } isCallConversionRequestAvailable : ${CallManager.isCallConversionRequestAvailable()} video ${
+                CallManager.getRemoteProxyVideoSink(
+                    userJid
+                )
+            }"
+        )
+        if (!CallManager.isCallConversionRequestAvailable()) {
             val json = JSONObject()
             json.put("userJid", userJid)
-            onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(json.toString())
+//            onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(json.toString())
+            FlyMethodConstants.updateCallSinkValue(
+                Constants.onRemoteVideoTrackAdded,
+                json.toString()
+            )
             if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
                 MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
             } else {
                 Log.d(tag, "#onVideoTrackAdded view not created")
             }
-            onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
+//            onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
+            FlyMethodConstants.updateCallSinkValue(Constants.onTrackAdded, json.toString())
         }
     }
 
     override fun onLocalVideoTrackAdded() {
-        Log.d(tag,"#onLocalVideoTrackAdded mirrorflyViews.size ${MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())} ${MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())}")
+        Log.d(
+            tag,
+            "#onLocalVideoTrackAdded mirrorflyViews.size ${
+                MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())
+            } ${MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())}"
+        )
         val json = JSONObject()
-        json.put("userJid",ChatManager.getCurrentUserJid())
-        onLocalVideoTrackAddedStreamHandler.onLocalVideoTrackAdded?.success(json.toString())
-        if(MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())!=null) {
+        json.put("userJid", ChatManager.getCurrentUserJid())
+//        onLocalVideoTrackAddedStreamHandler.onLocalVideoTrackAdded?.success(json.toString())
+        FlyMethodConstants.updateCallSinkValue(Constants.onLocalVideoTrackAdded, json.toString())
+        if (MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid()) != null) {
             MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())?.setLocalTarget()
-        }else{
-            Log.d(tag,"#onVideoTrackAdded view not created")
+        } else {
+            Log.d(tag, "#onVideoTrackAdded view not created")
         }
-        onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
+//        onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
+        FlyMethodConstants.updateCallSinkValue(Constants.onTrackAdded, json.toString())
     }
 
     override fun onMuteStatusUpdated(muteEvent: String, userJid: String) {
-        Log.d(tag,"#onMuteStatusUpdated muteEvent $muteEvent userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)}")
+        Log.d(
+            tag,
+            "#onMuteStatusUpdated muteEvent $muteEvent userJid $userJid  ${
+                MirrorflyViewHashMap.getMirrorflyView(userJid)
+            }"
+        )
         val json = JSONObject()
-        json.put("muteEvent",muteEvent)
-        json.put("userJid",userJid)
-        if(muteEvent==MuteEvent.ACTION_REMOTE_VIDEO_MUTE){
-            if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+        json.put("muteEvent", muteEvent)
+        json.put("userJid", userJid)
+        if (muteEvent == MuteEvent.ACTION_REMOTE_VIDEO_MUTE) {
+            if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
                 MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)
             }
-        }else if(muteEvent==MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE){
-            if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null&& !CallManager.isCallConversionRequestAvailable()) {
+        } else if (muteEvent == MuteEvent.ACTION_REMOTE_VIDEO_UN_MUTE) {
+            if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null && !CallManager.isCallConversionRequestAvailable()) {
                 MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
             }
         }
-        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
+//        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
+        FlyMethodConstants.updateCallSinkValue(Constants.onMuteStatusUpdated, json.toString())
     }
 
     override fun onUserSpeaking(userJid: String, audioLevel: Int) {
-        Log.d(tag,"#onUserSpeaking audioLevel $audioLevel userJid $userJid")
+        Log.d(tag, "#onUserSpeaking audioLevel $audioLevel userJid $userJid")
         val json = JSONObject()
-        json.put("audioLevel",audioLevel)
-        json.put("userJid",userJid)
-        if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+        json.put("audioLevel", audioLevel)
+        json.put("userJid", userJid)
+        if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
             MirrorflyViewHashMap.getMirrorflyView(userJid)?.userSpeaking(userJid)
         }
-        onUserSpeakingStreamHandler.onUserSpeaking?.success(json.toString())
+//        onUserSpeakingStreamHandler.onUserSpeaking?.success(json.toString())
+        FlyMethodConstants.updateCallSinkValue(Constants.onUserSpeaking, json.toString())
     }
 
     override fun onUserStoppedSpeaking(userJid: String) {
-        Log.d(tag,"#onUserStoppedSpeaking $userJid")
-        if(MirrorflyViewHashMap.getMirrorflyView(userJid)!=null) {
+        Log.d(tag, "#onUserStoppedSpeaking $userJid")
+        if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
             MirrorflyViewHashMap.getMirrorflyView(userJid)?.userStoppedSpeaking(userJid)
         }
-        onUserStoppedSpeakingStreamHandler.onUserStoppedSpeaking?.success(userJid)
+//        onUserStoppedSpeakingStreamHandler.onUserStoppedSpeaking?.success(userJid)
+        FlyMethodConstants.updateCallSinkValue(Constants.onUserStoppedSpeaking, userJid)
     }
 
     override fun getCallAttendedPendingIntent(): PendingIntent {
@@ -452,24 +556,30 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
     }
 
     override fun getCallNotAttendedPendingIntent(): PendingIntent {
-        val intent = Intent(context,CallKitUiActivity::class.java)
-        intent.action=CallConstants.ACTION_SHOW_CALL_UI
-        intent.putExtra(CallConstants.ACCEPT_CALL,false)
-        intent.putExtra("FROM","getCallNotAttendedPendingIntent")
+        val intent = Intent(context, CallKitUiActivity::class.java)
+        intent.action = CallConstants.ACTION_SHOW_CALL_UI
+        intent.putExtra(CallConstants.ACCEPT_CALL, false)
+        intent.putExtra("FROM", "getCallNotAttendedPendingIntent")
         return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
     }
 
     override fun getCallAcceptPendingIntent(): PendingIntent {
-        val intentTransparent = Intent(context,CallKitUiActivity::class.java)/*TransparentActivity.getIntent(
+        val intentTransparent = Intent(context, CallKitUiActivity::class.java)/*TransparentActivity.getIntent(
             context,
             Constants.ACTION_CALL_ACCEPT,
             null
         )*/
-        intentTransparent.action=CallConstants.ACCEPT_CALL
-        intentTransparent.putExtra(CallConstants.ACCEPT_CALL,true)
-        intentTransparent.putExtra("FROM",CallConstants.ACCEPT_CALL)
-        return PendingIntent.getActivity(context, AppUtils.CALL_REQUEST, intentTransparent, getFlagPendingIntent())
+        intentTransparent.action = CallConstants.ACCEPT_CALL
+        intentTransparent.putExtra(CallConstants.ACCEPT_CALL, true)
+        intentTransparent.putExtra("FROM", CallConstants.ACCEPT_CALL)
+        return PendingIntent.getActivity(
+            context,
+            AppUtils.CALL_REQUEST,
+            intentTransparent,
+            getFlagPendingIntent()
+        )
     }
+
     private fun getFlagPendingIntent(): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -481,8 +591,8 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
 
     override fun onShowCallUi(callAction: String?) {
         LogMessage.d(tag, "#onShowCallUi $callAction")
-        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction,null)
-        if(callAction!=null) {
+        FlutterCall.callUiListener?.onShowCallUiFlutter(callAction, null)
+        if (callAction != null) {
             when (callAction) {
                 CallConstants.ACTION_SHOW_CALL_UI -> {
                     LogMessage.d(CallConstants.ACTION_SHOW_CALL_UI, CallManager.getCallDirection())
@@ -505,27 +615,46 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                     json.put("userJid", CallManager.getCurrentUserId())
                     json.put("callType", CallManager.getCallType())
                     json.put("callMode", CallManager.getCallMode())
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
-                        LogMessage.d(tag, "#onShowCallUi ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.Q} need to accept ${CallManager.getCallType()} call ${CallManager.isCallConnected()}")
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                        LogMessage.d(
+                            tag,
+                            "#onShowCallUi ${Build.VERSION.SDK_INT} ${Build.VERSION_CODES.Q} need to accept ${CallManager.getCallType()} call ${CallManager.isCallConnected()}"
+                        )
                         answerCall()
-                    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         answerCall()
                     } else {
                         handler.post {
-                            onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+//                            onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+//                                json.toString()
+//                            )
+                            FlyMethodConstants.updateCallSinkValue(
+                                Constants.onCallStatusUpdated,
                                 json.toString()
                             )
                         }
                     }
                 }
-                CallAction.CALL_REQUEST_RESPONSE->{
+                CallAction.CALL_REQUEST_RESPONSE -> {
                     handler.post {
-                        LogMessage.d(tag, "#onShowCallUi CallManager.isVideoMuted() ${CallManager.isVideoMuted()} CallManager.getLocalProxyVideoSink() ${CallManager.getLocalProxyVideoSink()}")
-                        if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId()) != null && !CallManager.isVideoMuted() && CallManager.getLocalProxyVideoSink()!=null) {
+                        LogMessage.d(
+                            tag,
+                            "#onShowCallUi CallManager.isVideoMuted() ${CallManager.isVideoMuted()} CallManager.getLocalProxyVideoSink() ${CallManager.getLocalProxyVideoSink()}"
+                        )
+                        if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId()) != null && !CallManager.isVideoMuted() && CallManager.getLocalProxyVideoSink() != null) {
                             MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
                                 ?.setLocalTarget()
                         }
-                        LogMessage.d(tag, "#onShowCallUi CallManager.isRemoteVideoPaused(${CallManager.getEndCallerJid()}) ${CallManager.isRemoteVideoPaused(CallManager.getEndCallerJid())} CallManager.isRemoteVideoMuted(${CallManager.getEndCallerJid()}) ${CallManager.isRemoteVideoMuted(CallManager.getEndCallerJid())}")
+                        LogMessage.d(
+                            tag,
+                            "#onShowCallUi CallManager.isRemoteVideoPaused(${CallManager.getEndCallerJid()}) ${
+                                CallManager.isRemoteVideoPaused(CallManager.getEndCallerJid())
+                            } CallManager.isRemoteVideoMuted(${CallManager.getEndCallerJid()}) ${
+                                CallManager.isRemoteVideoMuted(
+                                    CallManager.getEndCallerJid()
+                                )
+                            }"
+                        )
                         if (!CallManager.isRemoteVideoPaused(CallManager.getEndCallerJid())) {
                             if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getEndCallerJid()) != null && !CallManager.isRemoteVideoMuted(
                                     CallManager.getEndCallerJid()
@@ -566,51 +695,33 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
             CallAction.ACTION_MAKE_SERVER_CONNECTION->{}
             CallAction.ACTION_CLOSE_SERVER_CONNECTION->{}*/
             }
-        }else{
-            LogMessage.d(tag, "#onShowCallUi isCallConversionRequestAvailable ${CallManager.isCallConversionRequestAvailable()}")
-            if(CallManager.isCallConversionRequestAvailable() && CallManager.isOneToOneCall()){
+        } else {
+            LogMessage.d(
+                tag,
+                "#onShowCallUi isCallConversionRequestAvailable ${CallManager.isCallConversionRequestAvailable()}"
+            )
+            if (CallManager.isCallConversionRequestAvailable() && CallManager.isOneToOneCall()) {
                 //CallAudioManager.getInstance(context).playIncomingRequestTone()
                 val json = JSONObject()
-                json.put("callAction","ACTION_VIDEO_CALL_CONVERSION")
-                json.put("userJid",CallManager.getEndCallerJid())
-                json.put("callType",CallManager.getCallType())
-                json.put("callMode",CallManager.getCallMode())
+                json.put("callAction", "ACTION_VIDEO_CALL_CONVERSION")
+                json.put("userJid", CallManager.getEndCallerJid())
+                json.put("callType", CallManager.getCallType())
+                json.put("callMode", CallManager.getCallMode())
                 handler.post {
-                    onCallActionStreamHandler.onCallAction?.success(json.toString())
+//                    onCallActionStreamHandler.onCallAction?.success(json.toString())
+                    FlyMethodConstants.updateCallSinkValue(Constants.onCallAction, json.toString())
                 }
             }
         }
     }
 
-    /*override fun onCallReceiving(
-        callAction: String?,
-        callType: String,
-        callUsers: ArrayList<String>,
-        roomId: String,
-        groupId: String?,
-        callDirection: String?
-    ) {
-        Log.d(tag,"callAction $callAction callType $callType callUsers $callUsers roomId $roomId groupId $groupId callDirection $callDirection")
-        val json = hashMapOf<String,String?>()
-        json("callAction") = callAction
-        json("callType") = callType
-        json("callUsers") = callUsers.joinToString(",")
-        json("roomId") = roomId
-        json("groupId") = groupId
-        json("callDirection") = callDirection
-        runOnUiThread {
-            //call the methodChannel.invokeMethod here to avoid @UiThread exception
-            OnCallReceivingStreamHandler.onCallReceiving?.success(json)
-        }
-    }*/
-
-    private fun answerCall(){
+    private fun answerCall() {
         val json = JSONObject()
         json.put("callStatus", "Attended")
         json.put("userJid", CallManager.getCurrentUserId())
         json.put("callType", CallManager.getCallType())
         json.put("callMode", CallManager.getCallMode())
-        if(CallManager.getCallType().isNotEmpty()) {
+        if (CallManager.getCallType().isNotEmpty()) {
             if (CallManager.isAudioCall() && CallManager.isAudioCallPermissionsGranted()) {
                 LogMessage.d(
                     tag,
@@ -620,7 +731,11 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(y)
                 handler.post {
-                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+//                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+//                        json.toString()
+//                    )
+                    FlyMethodConstants.updateCallSinkValue(
+                        Constants.onCallStatusUpdated,
                         json.toString()
                     )
                 }
@@ -634,7 +749,11 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
                 y?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(y)
                 handler.post {
-                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+//                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(
+//                        json.toString()
+//                    )
+                    FlyMethodConstants.updateCallSinkValue(
+                        Constants.onCallStatusUpdated,
                         json.toString()
                     )
                 }
@@ -665,7 +784,6 @@ class FlyCall(private var context: Context, flutterPluginBinding: FlutterPlugin.
 
         })*/
     }
-
 }
 
 

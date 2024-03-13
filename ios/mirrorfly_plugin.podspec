@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'mirrorfly_plugin'
-  s.version          = '0.0.13'
+  s.version          = '1.0.0'
   s.summary          = 'A Mirrorfly Flutter Plugin'
   s.description      = 'A Mirrorfly Flutter plugin to Experience an outstanding real time messaging solution. The powerful communication that adds an extra mileage to build your chat app.'
 
@@ -28,20 +28,28 @@ Pod::Spec.new do |s|
   s.dependency 'GoogleWebRTC'
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16'
-  s.dependency 'MirrorFlySDK', '5.14.5'
+  s.dependency 'MirrorFlySDK', '5.15.7'
 
-  #s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+#    s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
 
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
+  #s.pod_target_xcconfig = { 'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES' }
+  #s.pod_target_xcconfig = { 'ENABLE_BITCODE' => 'NO' }
+
+#  s.pod_target_xcconfig = {
+#      'DEFINES_MODULE' => 'YES',
+#      'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 arm64',
+#      'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES',
+#      'ENABLE_BITCODE' => 'NO',
+#      'APPLICATION_EXTENSION_API_ONLY' => 'No',
+#  }
+
   #s.pod_target_xcconfig = { 'VALID_ARCHS' => 'armv7 arm64 x86_64', 'IPHONEOS_DEPLOYMENT_TARGET' => '12.1',}
 #  s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 #s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 #s.user_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-#  s.pod_target_xcconfig = {
-#    'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES'
-#  }
   s.swift_version = '5.0'
 end

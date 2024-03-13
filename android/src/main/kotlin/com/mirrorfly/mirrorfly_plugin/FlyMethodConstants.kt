@@ -1,0 +1,359 @@
+package com.mirrorfly.mirrorfly_plugin
+
+import com.mirrorfly.mirrorfly_plugin.call.*
+import com.mirrorflysdk.flycommons.LogMessage
+import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+
+object FlyMethodConstants {
+    private val flyChatMethods: FlyChatMethods by lazy { FlyChatMethods() }
+    private val flyCallMethods: FlyCallMethods by lazy { FlyCallMethods() }
+
+//    val channels = arrayListOf(Constants.MirrorflyMethodChannel,Constants.callMethodChannel)
+
+    private val chatEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(
+        Constants.onMessageReceivedChannel to EventStreamHandler(),
+        Constants.onMessageStatusUpdatedChannel to EventStreamHandler(),
+        Constants.onMediaStatusUpdatedChannel to EventStreamHandler(),
+        Constants.onUploadDownloadProgressChangedChannel to EventStreamHandler(),
+        Constants.showUpdateCancelNotificationChannel to EventStreamHandler(),
+        Constants.onGroupProfileFetchedChannel to EventStreamHandler(),
+        Constants.onNewGroupCreatedChannel to EventStreamHandler(),
+        Constants.onGroupProfileUpdatedChannel to EventStreamHandler(),
+        Constants.onNewMemberAddedToGroupChannel to EventStreamHandler(),
+        Constants.onMemberRemovedFromGroupChannel to EventStreamHandler(),
+        Constants.onFetchingGroupMembersCompletedChannel to EventStreamHandler(),
+        Constants.onDeleteGroupChannel to EventStreamHandler(),//NI
+        Constants.onFetchingGroupListCompletedChannel to EventStreamHandler(),//NI
+        Constants.onMemberMadeAsAdminChannel to EventStreamHandler(),
+        Constants.onMemberRemovedAsAdminChannel to EventStreamHandler(),
+        Constants.onLeftFromGroupChannel to EventStreamHandler(),
+        Constants.onGroupNotificationMessageChannel to EventStreamHandler(),
+        Constants.onGroupDeletedLocallyChannel to EventStreamHandler(),
+        Constants.blockedThisUserChannel to EventStreamHandler(),
+        Constants.myProfileUpdatedChannel to EventStreamHandler(),
+        Constants.onAdminBlockedOtherUserChannel to EventStreamHandler(),
+        Constants.onAdminBlockedUserChannel to EventStreamHandler(),
+        Constants.onContactSyncCompleteChannel to EventStreamHandler(),
+        Constants.onLoggedOutChannel to EventStreamHandler(),
+        Constants.unblockedThisUserChannel to EventStreamHandler(),
+        Constants.userBlockedMeChannel to EventStreamHandler(),
+        Constants.userCameOnlineChannel to EventStreamHandler(),
+        Constants.userDeletedHisProfileChannel to EventStreamHandler(),
+        Constants.userProfileFetchedChannel to EventStreamHandler(),
+//        Constants.usersProfilesFetchedChannel to EventStreamHandler(),
+        Constants.userUnBlockedMeChannel to EventStreamHandler(),
+        Constants.userUpdatedHisProfileChannel to EventStreamHandler(),
+        Constants.userWentOfflineChannel to EventStreamHandler(),
+        Constants.usersIBlockedListFetchedChannel to EventStreamHandler(),
+        Constants.usersProfilesFetchedChannel to EventStreamHandler(),
+        Constants.usersWhoBlockedMeListFetchedChannel to EventStreamHandler(),
+        Constants.onConnectedChannel to EventStreamHandler(),
+        Constants.onDisconnectedChannel to EventStreamHandler(),
+        Constants.onConnectionFailedChannel to EventStreamHandler(),
+        Constants.connectionFailedChannel to EventStreamHandler(),//NI
+        Constants.connectionSuccessChannel to EventStreamHandler(),//NI
+        Constants.onWebChatPasswordChangedChannel to EventStreamHandler(),//NI
+        Constants.setTypingStatusChannel to EventStreamHandler(),
+        Constants.onChatTypingStatusChannel to EventStreamHandler(),//NI
+        Constants.onGroupTypingStatusChannel to EventStreamHandler(),
+        Constants.onFailureChannel to EventStreamHandler(),//NI
+        Constants.onProgressChangedChannel to EventStreamHandler(),//NI
+        Constants.onSuccessChannel to EventStreamHandler(),//NI
+        Constants.onAvailableFeaturesUpdatedChannel to EventStreamHandler()
+    )
+    val chatMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
+        "init" to flyChatMethods::buildChatSDK,
+        "initializeSDK" to flyChatMethods::buildInitializeSDK,
+        "getManifestValue" to flyChatMethods::getManifestValue,
+        "revokeContactSync" to flyChatMethods::revokeContactSync,
+        "getUsersWhoBlockedMe" to flyChatMethods::getUsersWhoBlockedMe,
+        "getUnKnownUserProfiles" to flyChatMethods::getUnKnownUserProfiles,
+        "getMyProfileStatus" to flyChatMethods::getMyProfileStatus,
+        "getMyBusyStatus" to flyChatMethods::getMyBusyStatus,
+        "setMyBusyStatus" to flyChatMethods::setMyBusyStatus,
+        "enableDisableBusyStatus" to flyChatMethods::enableDisableBusyStatus,
+        "getBusyStatusList" to flyChatMethods::getBusyStatusList,
+        "deleteProfileStatus" to flyChatMethods::deleteProfileStatus,
+        "deleteBusyStatus" to flyChatMethods::deleteBusyStatus,
+        "enableDisableHideLastSeen" to flyChatMethods::enableDisableHideLastSeen,
+        "isHideLastSeenEnabled" to flyChatMethods::isHideLastSeenEnabled,
+        "deleteMessagesForMe" to flyChatMethods::deleteMessagesForMe,
+        "deleteMessagesForEveryone" to flyChatMethods::deleteMessagesForEveryone,
+        "markAsRead" to flyChatMethods::markAsRead,
+        "markConversationAsUnread" to flyChatMethods::markConversationAsUnread,
+        "markConversationAsRead" to flyChatMethods::markConversationAsRead,
+        "deleteUnreadMessageSeparatorOfAConversation" to flyChatMethods::deleteUnreadMessageSeparatorOfAConversation,
+        "getRecalledMessagesOfAConversation" to flyChatMethods::getRecalledMessagesOfAConversation,
+        "uploadMedia" to flyChatMethods::uploadMedia,
+        "getMessagesUsingIds" to flyChatMethods::getMessagesUsingIds,
+        "updateMediaDownloadStatus" to flyChatMethods::updateMediaDownloadStatus,
+        "updateMediaUploadStatus" to flyChatMethods::updateMediaUploadStatus,
+        "cancelMediaUploadOrDownload" to flyChatMethods::cancelMediaUploadOrDownload,
+        "setMediaEncryption" to flyChatMethods::setMediaEncryption,
+        "deleteAllMessages" to flyChatMethods::deleteAllMessages,
+        "getGroupJid" to flyChatMethods::getGroupJid,
+        "getProfileDetails" to flyChatMethods::getProfileDetails,
+        "getProfileStatusList" to flyChatMethods::getProfileStatusList,
+        "insertDefaultStatus" to flyChatMethods::insertDefaultStatus,
+        "getRingtoneName" to flyChatMethods::getRingtoneName,
+        "setOnGoingChatUser" to flyChatMethods::setOnGoingChatUser,
+        "markAsReadDeleteUnreadSeparator" to flyChatMethods::markAsReadDeleteUnreadSeparator,
+        "getMessagesOfJid" to flyChatMethods::getMessagesOfJid,
+        "updateRecentChatPinStatus" to flyChatMethods::updateRecentChatPinStatus,
+        "deleteRecentChat" to flyChatMethods::deleteRecentChat,
+        "recentChatPinnedCount" to flyChatMethods::recentChatPinnedCount,
+        "getRecentChatList" to flyChatMethods::getRecentChatList,
+        "getRecentChatListHistory" to flyChatMethods::getRecentChatListHistory,
+        "getRecentChatListHistoryByTopic" to flyChatMethods::getRecentChatListHistoryByTopic,
+        "getRecentChatListIncludingArchived" to flyChatMethods::getRecentChatListIncludingArchived,
+        "getRecentChatOf" to flyChatMethods::getRecentChatOf,
+        "register_user" to flyChatMethods::registerUser,
+        "authtoken" to flyChatMethods::refreshAndGetAuthToken,
+        "refreshAuthToken" to flyChatMethods::refreshAndGetAuthToken,
+        "verifyToken" to flyChatMethods::verifyToken,
+        "get_jid" to flyChatMethods::getJid,
+        "send_text_msg" to flyChatMethods::sendTextMessage,
+        "sendLocationMessage" to flyChatMethods::sendLocationMessage,
+        "send_image_message" to flyChatMethods::sendImageMessage,
+        "send_video_message" to flyChatMethods::sendVideoMessage,
+        "sendContactMessage" to flyChatMethods::sendContactMessage,
+        "sendDocumentMessage" to flyChatMethods::sendDocumentMessage,
+        "sendAudioMessage" to flyChatMethods::sendAudioMessage,
+        "get_user_list" to flyChatMethods::getUserList,
+        "getRegisteredUsers" to flyChatMethods::getRegisteredUsers,
+        "getUserProfile" to flyChatMethods::getUserProfile,
+        "clear_chat" to flyChatMethods::clearChat,
+        "updateMyProfile" to flyChatMethods::updateMyProfile,
+        "media_endpoint" to flyChatMethods::getMediaEndPoint,
+        "reportUserOrMessages" to flyChatMethods::reportUserOrMessages,
+        "block_user" to flyChatMethods::blockUser,
+        "un_block_user" to flyChatMethods::unblockUser,
+        "createGroup" to flyChatMethods::createGroup,
+        "getUserLastSeenTime" to flyChatMethods::getUserLastSeenTime,
+        "getUsersIBlocked" to flyChatMethods::getUsersIBlocked,
+        "setMyProfileStatus" to flyChatMethods::setMyProfileStatus,
+        "getMediaMessages" to flyChatMethods::getMediaMessages,
+        "isMemberOfGroup" to flyChatMethods::isMemberOfGroup,
+        "updateArchiveUnArchiveChat" to flyChatMethods::updateArchiveUnArchiveChat,
+        "getArchivedChatList" to flyChatMethods::getArchivedChatList,
+        "updateChatMuteStatus" to flyChatMethods::updateChatMuteStatus,
+        "sendTypingStatus" to flyChatMethods::sendTypingStatus,
+        "sendTypingGoneStatus" to flyChatMethods::sendTypingGoneStatus,
+        "setNotificationSound" to flyChatMethods::setNotificationSound,
+        "isBusyStatusEnabled" to flyChatMethods::isBusyStatusEnabled,
+        "updateMyProfileImage" to flyChatMethods::updateMyProfileImage,
+        "isUserUnArchived" to flyChatMethods::isUserUnArchived,
+        "forwardMessagesToMultipleUsers" to flyChatMethods::forwardMessagesToMultipleUsers,
+        "removeProfileImage" to flyChatMethods::removeProfileImage,
+        "isArchivedSettingsEnabled" to flyChatMethods::isArchivedSettingsEnabled,
+        "getGroupMembersList" to flyChatMethods::getGroupMembersList,
+        "enableDisableArchivedSettings" to flyChatMethods::enableDisableArchivedSettings,
+        "clearAllConversation" to flyChatMethods::clearAllConversation,
+        "insertBusyStatus" to flyChatMethods::insertBusyStatus,
+        "getDocsMessages" to flyChatMethods::getDocsMessages,
+        "getLinkMessages" to flyChatMethods::getLinkMessages,
+        "isAdmin" to flyChatMethods::isAdmin,
+        "leaveFromGroup" to flyChatMethods::leaveFromGroup,
+        "getMediaAutoDownload" to flyChatMethods::getMediaAutoDownload,
+        "setMediaAutoDownload" to flyChatMethods::setMediaAutoDownload,
+        "getMediaSetting" to flyChatMethods::getMediaSetting,
+        "saveMediaSettings" to flyChatMethods::saveMediaSettings,
+        "downloadMedia" to flyChatMethods::downloadMedia,
+        "updateFavouriteStatus" to flyChatMethods::updateFavouriteStatus,
+//        "iOSFileExist" to flyChatMethods::iOSFileExist,
+        "get_favourite_messages" to flyChatMethods::getFavouriteMessages,
+        "getUnsentMessageOfAJid" to flyChatMethods::getUnsentMessageOfAJid,
+        "saveUnsentMessage" to flyChatMethods::saveUnsentMessage,
+        "deleteRecentChats" to flyChatMethods::deleteRecentChats,
+        "getDefaultNotificationUri" to flyChatMethods::getDefaultNotificationUri,
+        "logoutOfChatSDK" to flyChatMethods::logoutOfChatSDK,
+        "getMessageOfId" to flyChatMethods::getMessageOfId,
+        "insertNewProfileStatus" to flyChatMethods::insertNewProfileStatus,
+        "IS_TRIAL_LICENSE" to flyChatMethods::isTrailLicence,
+        "syncContacts" to flyChatMethods::syncContacts,
+        "contactSyncStateValue" to flyChatMethods::contactSyncStateValue,
+        "makeAdmin" to flyChatMethods::makeAdmin,
+        "updateGroupName" to flyChatMethods::updateGroupName,
+        "updateGroupProfileImage" to flyChatMethods::updateGroupProfileImage,
+        "removeGroupProfileImage" to flyChatMethods::removeGroupProfileImage,
+        "addUsersToGroup" to flyChatMethods::addUsersToGroup,
+        "removeMemberFromGroup" to flyChatMethods::removeMemberFromGroup,
+        "isMuted" to flyChatMethods::isMuted,
+        "exportChatConversationToEmail" to flyChatMethods::exportChatConversationToEmail,
+        "getAllGroups" to flyChatMethods::getAllGroups,
+        "searchConversation" to flyChatMethods::searchConversation,
+        "delete_account" to flyChatMethods::deleteAccount,
+        "getGroupMessageDeliveredToList" to flyChatMethods::getGroupMessageDeliveredToList,
+        "getGroupMessageReadByList" to flyChatMethods::getGroupMessageReadByList,
+        "setDefaultNotificationSound" to flyChatMethods::setDefaultNotificationSound,
+        "deleteGroup" to flyChatMethods::deleteGroup,
+        "getMessageStatusOfASingleChatMessage" to flyChatMethods::getMessageStatusOfASingleChatMessage,
+        "addContact" to flyChatMethods::openCreateContact,
+        "initializeMessageList" to flyChatMethods::initializeMessageListParams,
+        "loadMessages" to flyChatMethods::loadMessages,
+        "loadPreviousMessages" to flyChatMethods::loadPreviousMessages,
+        "loadNextMessages" to flyChatMethods::loadNextMessages,
+        "handleReceivedMessage" to flyChatMethods::handleReceivedMessage,
+        "updateFcmToken" to flyChatMethods::updateFcmToken,
+        "getUnreadMessageCountExceptMutedChat" to flyChatMethods::getUnreadMessageCountExceptMutedChat,
+        "createTopic" to flyChatMethods::createTopic,
+        "getTopics" to flyChatMethods::getTopics,
+        "getAvailableFeatures" to flyChatMethods::getAvailableFeatures,
+        "appLaunchedFromMissedCall" to flyChatMethods::appLaunchedFromMissedCall,
+        "setRegionCode" to flyChatMethods::setRegionCode,
+        "hasPreviousMessages" to flyChatMethods::hasPreviousMessages,
+        "hasNextMessages" to flyChatMethods::hasNextMessages,
+        "sendMessage" to flyChatMethods::sendMessage,
+
+        "open_file" to flyChatMethods::openMediaFile,
+        "sendMediaFileMessage" to flyChatMethods::sendMediaFileMessage,
+        "createOfflineGroupInOnline" to flyChatMethods::createOfflineGroupInOnline,
+        "getGroupProfile" to flyChatMethods::getGroupProfile,
+        "prepareChatConversationToExport" to flyChatMethods::prepareChatConversationToExport,
+        "getCurrentAuthToken" to flyChatMethods::getCurrentAuthToken,
+//        "doesFetchingMembersListFromServedRequired" to flyChatMethods::doesFetchingMembersListFromServedRequired,
+//        "getMembersCountOfGroup" to flyChatMethods::getMembersCountOfGroup,
+//        "getUsersListToAddMembersInOldGroup" to flyChatMethods::getUsersListToAddMembersInOldGroup,
+//        "getUsersListToAddMembersInNewGroup" to flyChatMethods::getUsersListToAddMembersInNewGroup,
+//        "getGroupMessageStatusCount" to flyChatMethods::getGroupMessageStatusCount,
+//        "deleteOfflineGroup" to flyChatMethods::deleteOfflineGroup,
+//        "getIsProfileBlockedByAdmin" to flyChatMethods::getIsProfileBlockedByAdmin,
+//        "getArchivedChatsFromServer" to flyChatMethods::getArchivedChatsFromServer,
+//        "getMessageActions" to flyChatMethods::getMessageActions,
+//        "copyTextMessages" to flyChatMethods::copyTextMessages,
+//        "setCustomValue" to flyChatMethods::setCustomValue,
+//        "getCustomValue" to flyChatMethods::getCustomValue,
+//        "removeCustomValue" to flyChatMethods::removeCustomValue,
+//        "inviteUserViaSMS" to flyChatMethods::inviteUserViaSMS,
+//        "cancelBackup" to flyChatMethods::cancelBackup,
+//        "startBackup" to flyChatMethods::startBackup,
+//        "cancelRestore" to flyChatMethods::cancelRestore,
+//        "clearAllSDKData" to flyChatMethods::clearAllSDKData,
+//        "getLastNUnreadMessages" to flyChatMethods::getLastNUnreadMessages,
+//        "getNUnreadMessagesOfEachUsers" to flyChatMethods::getNUnreadMessagesOfEachUsers,
+//        "getUnreadMessagesCount" to flyChatMethods::getUnreadMessagesCount,
+//        "get_message_using_ids" to flyChatMethods::get_message_using_ids,
+//        "getWebLoginDetails" to flyChatMethods::getWebLoginDetails,
+//        "webLoginDetailsCleared" to flyChatMethods::webLoginDetailsCleared,
+//        "logoutWebUser" to flyChatMethods::logoutWebUser,
+        "get_image_path" to flyChatMethods::getImagePath,
+        "delete_messages" to flyChatMethods::deleteMessages,
+        "forwardMessages" to flyChatMethods::forwardMessages,
+        "sendContactUsInfo" to flyChatMethods::sendContactUsInfo,
+        "loginWebChatViaQRCode" to flyChatMethods::loginWebChatViaQRCode,
+        "showCustomTones" to flyChatMethods::showCustomTones,
+        "cancelNotifications" to flyChatMethods::cancelNotifications,
+        "getNotificationSound" to flyChatMethods::getNotificationSound,
+        "setMuteNotification" to flyChatMethods::setMuteNotification,
+        "setNotificationVibration" to flyChatMethods::setNotificationVibration,
+        "unFavouriteAllFavouriteMessages" to flyChatMethods::unFavouriteAllFavouriteMessages,
+        "getJidFromPhoneNumber" to flyChatMethods::getJidFromPhoneNumber,
+        "openAudioFilePicker" to flyChatMethods::selectAudioFileFromStorage,
+    )
+
+    private val callEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(
+        Constants.onLocalVideoTrackAdded to EventStreamHandler(),
+        Constants.onRemoteVideoTrackAdded to EventStreamHandler(),
+        Constants.onTrackAdded to EventStreamHandler(),
+        Constants.onCallStatusUpdated to EventStreamHandler(),
+        Constants.onCallAction to EventStreamHandler(),
+        Constants.onMuteStatusUpdated to EventStreamHandler(),
+        Constants.onUserSpeaking to EventStreamHandler(),
+        Constants.onUserStoppedSpeaking to EventStreamHandler(),
+        Constants.onMissedCall to EventStreamHandler(),
+        Constants.onCallLogsUpdatedChannel to EventStreamHandler(),
+        Constants.onCallLogDeletedChannel to EventStreamHandler(),
+        Constants.clearAllCallLogChannel to EventStreamHandler(),
+    )
+    val callMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
+        "getCallUsersList" to flyCallMethods::getCallUsersList,
+//        "getAudioDevices" to flyCallMethods::getAudioDevices,
+//        "selectAudioDevice" to flyCallMethods::selectAudioDevice,
+        "selectedAudioDevice" to flyCallMethods::selectedAudioDevice,
+        "makeVoiceCall" to flyCallMethods::makeVoiceCall,
+        "makeVideoCall" to flyCallMethods::makeVideoCall,
+        "answerCall" to flyCallMethods::answerCall,
+        "declineCall" to flyCallMethods::declineCall,
+        "disconnectCall" to flyCallMethods::disconnectCall,
+        "muteAudio" to flyCallMethods::muteAudio,
+        "isVideoMuted" to flyCallMethods::isVideoMuted,
+        "isRemoteVideoMuted" to flyCallMethods::isRemoteVideoMuted,
+        "isRemoteVideoPaused" to flyCallMethods::isRemoteVideoPaused,
+        "makeGroupVideoCall" to flyCallMethods::makeGroupVideoCall,
+        "makeGroupVoiceCall" to flyCallMethods::makeGroupVoiceCall,
+        "switchCamera" to flyCallMethods::switchCamera,
+        "isCallOnHold" to flyCallMethods::isCallOnHold,
+        "isOneToOneCall" to flyCallMethods::isOneToOneCall,
+        "getCallType" to flyCallMethods::getCallType,
+        "getGroupID" to flyCallMethods::getGroupID,
+        "isCallConnected" to flyCallMethods::isCallConnected,
+        "isVideoCall" to flyCallMethods::isVideoCall,
+        "isAudioCall" to flyCallMethods::isAudioCall,
+        "isCallNotConnected" to flyCallMethods::isCallNotConnected,
+        "isUserAudioMuted" to flyCallMethods::isUserAudioMuted,
+        "isUserVideoMuted" to flyCallMethods::isUserVideoMuted,
+        "inviteUsersToOngoingCall" to flyCallMethods::inviteUsersToOngoingCall,
+        "getCallDirection" to flyCallMethods::getCallDirection,
+        "getAllAvailableAudioInput" to flyCallMethods::getAllAvailableAudioInput,
+        "routeAudioTo" to flyCallMethods::routeAudioTo,
+        "isOnGoingCall" to flyCallMethods::isOnGoingCall,
+        "muteVideo" to flyCallMethods::muteVideo,
+        "getUnreadMissedCallCount" to flyCallMethods::getUnreadMissedCallCount,
+        "requestVideoCallSwitch" to flyCallMethods::requestVideoCallSwitch,
+        "cancelVideoCallSwitch" to flyCallMethods::cancelVideoCallSwitch,
+        "acceptVideoCallSwitchRequest" to flyCallMethods::acceptVideoCallSwitchRequest,
+        "declineVideoCallSwitchRequest" to flyCallMethods::declineVideoCallSwitchRequest,
+        "getMaxCallUsersCount" to flyCallMethods::getMaxCallUsersCount,
+        "getInvitedUsersList" to flyCallMethods::getInvitedUsersList,
+        "getCallLogsList" to flyCallMethods::getCallLogsList,
+        "deleteCallLog" to flyCallMethods::deleteCallLog,
+        "syncCallLogs" to flyCallMethods::syncCallLogs,
+        "isCallConversionRequestAvailable" to flyCallMethods::isCallConversionRequestAvailable,
+        "getLocalCallLogs" to flyCallMethods::getLocalCallLogs,
+        "markAllUnreadMissedCallsAsRead" to flyCallMethods::markAllUnreadMissedCallsAsRead,
+    )
+
+
+    fun initializeChatListeners(binaryMessenger: BinaryMessenger) {
+        chatEventListeners.forEach { (channelName, streamHandler) ->
+            val handler = streamHandler as? EventStreamHandler
+            EventChannel(binaryMessenger, channelName).setStreamHandler(handler)
+        }
+    }
+
+    fun initializeCallListeners(binaryMessenger: BinaryMessenger) {
+        callEventListeners.forEach { (channelName, streamHandler) ->
+            val handler = streamHandler as? EventStreamHandler
+            EventChannel(binaryMessenger, channelName).setStreamHandler(handler)
+        }
+    }
+
+    fun updateChatSinkValue(channelName: String, value: Any?) {
+        val streamHandler = chatEventListeners[channelName]
+        LogMessage.d(
+            "#updateChatSinkValue",
+            "$channelName : " + (streamHandler is FlyEventSinkProvider).toString()
+        )
+        if (streamHandler is FlyEventSinkProvider) {
+            streamHandler.setEventSinkValue(value)
+        } else {
+            LogMessage.d("#updateChatSinkValue", "$channelName not found")
+        }
+    }
+
+    fun updateCallSinkValue(channelName: String, value: Any?) {
+        val streamHandler = callEventListeners[channelName]
+        LogMessage.d(
+            "#updateCallSinkValue",
+            "$channelName : " + (streamHandler is FlyEventSinkProvider).toString()
+        )
+        if (streamHandler is FlyEventSinkProvider) {
+            streamHandler.setEventSinkValue(value)
+        } else {
+            LogMessage.d("#updateCallSinkValue", "$channelName not found")
+        }
+    }
+}

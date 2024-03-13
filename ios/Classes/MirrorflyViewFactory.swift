@@ -128,55 +128,9 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
             // Handle case when unique ID is not found
             NSLog("\(Constants.callTag) MirrorflyViewFactory View --> Unique ID is not Found")
         }
-        
-//        if(mirrorflyViews.count > 0){
-//            NSLog("\(Constants.callTag) MirrorflyViewFactory clearing Mirrorfly Views")
-//            for (uniqueID, _) in mirrorflyViews {
-//                if let (_, mirrorflyView) = mirrorflyViews[uniqueID] {
-//                    NSLog("\(Constants.callTag) MirrorflyViewFactory View disposing \(uniqueID)")
-//                    mirrorflyView.dispose()
-//                    NSLog("\(Constants.callTag) MirrorflyViewFactory View disposed \(uniqueID)")
-//                } else {
-//                    // Handle case when view is not found
-//                    NSLog("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed")
-//                }
-//                mirrorflyViews.removeValue(forKey: uniqueID)
-//                NSLog("\(Constants.tag) MirrorflyViewFactory after removal of view from Array list size --> \(mirrorflyViews.count)")
-//
-//            }
-//
-//        }
     }
 
-    
-//    func generateUniqueID(from string: String) -> Int64 {
-//        guard let data = string.data(using: .utf8) else {
-//            fatalError("Failed to convert string to data")
-//        }
-//
-//        var hash = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
-//
-//        _ = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) in
-//            CC_MD5(bytes.baseAddress, CC_LONG(data.count), &hash)
-//        }
-//
-//        let truncatedHash = hash.prefix(MemoryLayout<UInt64>.size)
-//        let uniqueID = truncatedHash.withUnsafeBytes { $0.load(as: UInt64.self) }
-//
-//        let signedUniqueID = Int64(bitPattern: uniqueID)
-//
-//        return signedUniqueID
-//    }
-    
-//    func getMirrorflyView(string: String) -> MirrorflyView? {
-//        if let (uniqueID, view) = mirrorflyViews.first(where: { $0.value.0 == string }) {
-//            return view
-//        }
-//        return nil
-//    }
-//    func getMirrorflyView(string: String) -> MirrorflyView? {
-//        return mirrorflyViews[string]
-//    }
+
     public func getUniqueID(forString string: String) -> Int64? {
         for (uniqueID, tuple) in mirrorflyViews {
             if tuple.0 == string {
