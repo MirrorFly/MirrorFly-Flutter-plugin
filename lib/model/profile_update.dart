@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-ProfileUpdate profileUpdateFromJson(String str) => ProfileUpdate.fromJson(json.decode(str));
+ProfileUpdate profileUpdateFromJson(String str) =>
+    ProfileUpdate.fromJson(json.decode(str));
 
 String profileUpdateToJson(ProfileUpdate data) => json.encode(data.toJson());
 

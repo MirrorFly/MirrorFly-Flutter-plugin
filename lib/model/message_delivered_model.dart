@@ -6,37 +6,45 @@ import 'dart:convert';
 
 import 'package:mirrorfly_plugin/model/user_list_model.dart';
 
-MessageDeliveredStatus messageDeliveredStatusFromJson(String str) => MessageDeliveredStatus.fromJson(json.decode(str));
+MessageStatusDetail messageDeliveredStatusFromJson(String str) =>
+    MessageStatusDetail.fromJson(json.decode(str));
 
-MessageDeliveredStatus messageReadStatusFromJson(String str) => MessageDeliveredStatus.fromJson(json.decode(str));
+MessageStatusDetail messageReadStatusFromJson(String str) =>
+    MessageStatusDetail.fromJson(json.decode(str));
 
-MessageDeliveredStatus messageStatusDetailFromJson(String str) => MessageDeliveredStatus.fromJson(json.decode(str));
+MessageStatusDetail messageStatusDetailFromJson(String str) =>
+    MessageStatusDetail.fromJson(json.decode(str));
 
-String messageDeliveredStatusToJson(MessageDeliveredStatus data) => json.encode(data.toJson());
+String messageDeliveredStatusToJson(MessageStatusDetail data) =>
+    json.encode(data.toJson());
 
-class MessageDeliveredStatus {
+class MessageStatusDetail {
   String? count;
   int? totalParticipantCount;
   List<ParticipantList>? participantList;
 
-  MessageDeliveredStatus({
+  MessageStatusDetail({
     this.count,
     this.totalParticipantCount,
     this.participantList,
   });
 
-  factory MessageDeliveredStatus.fromJson(Map<String, dynamic> json) => MessageDeliveredStatus(
+  factory MessageStatusDetail.fromJson(Map<String, dynamic> json) =>
+      MessageStatusDetail(
         count: json["count"],
         totalParticipantCount: json["totalParticipantCount"],
         participantList: json["participantList"] == null
             ? []
-            : List<ParticipantList>.from(json["participantList"]!.map((x) => ParticipantList.fromJson(x))),
+            : List<ParticipantList>.from(json["participantList"]!
+                .map((x) => ParticipantList.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "count": count,
         "totalParticipantCount": totalParticipantCount,
-        "participantList": participantList == null ? [] : List<dynamic>.from(participantList!.map((x) => x.toJson())),
+        "participantList": participantList == null
+            ? []
+            : List<dynamic>.from(participantList!.map((x) => x.toJson())),
       };
 }
 
@@ -51,8 +59,11 @@ class ParticipantList {
     this.time,
   });
 
-  factory ParticipantList.fromJson(Map<String, dynamic> json) => ParticipantList(
-        profileDetails: json["profileDetails"] == null ? null : ProfileDetails.fromJson(json["profileDetails"]),
+  factory ParticipantList.fromJson(Map<String, dynamic> json) =>
+      ParticipantList(
+        profileDetails: json["profileDetails"] == null
+            ? null
+            : ProfileDetails.fromJson(json["profileDetails"]),
         messageId: json["messageId"],
         time: json["time"],
       );

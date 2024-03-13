@@ -8,6 +8,7 @@ export 'message_params.dart';
 export 'model/available_features.dart';
 export 'model/call_constants.dart';
 export 'model/callback.dart';
+export 'model/chat_message_status_detail.dart';
 export 'model/country_model.dart';
 export 'model/export_model.dart';
 export 'model/group_members_model.dart';

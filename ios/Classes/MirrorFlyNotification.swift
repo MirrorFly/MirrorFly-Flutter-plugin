@@ -22,9 +22,6 @@ import MirrorFlySDK
         NSLog("#Mirrorfly Received data3 \(String(describing: bestAttemptContent?.userInfo))")
         let payloadType = bestAttemptContent?.userInfo["type"] as? String
 
-        
-//        let licenseKey = Utility.getStringFromPreference(key: Constants.licenseKey)
-//        let containerID = Utility.getStringFromPreference(key: Constants.containerID)
 
         NSLog("#Mirrorfly licenseKey1 \(licenseKey)")
         NSLog("#Mirrorfly containerID1 \(containerID)")

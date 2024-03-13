@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
@@ -7,1622 +8,450 @@ import 'package:mirrorfly_plugin/model/callback.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyChatFlutterPlatform {
-  @override
-  init(ChatBuilder builder) {
-    // implement init
-    throw UnimplementedError();
-  }
-
-  /* @override
-  Future<String?> getPlatformVersion() => Future.value('42');
-*/
-  @override
-  Future<bool?> addUsersToGroup(String jid, List<String> userList) {
-    throw UnimplementedError();
-  }
-
-  @Deprecated('Instead of use refreshAndGetAuthToken')
-  @override
-  Future<String?> authToken() {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> blockUser(String userJID) {
-    // blockUser
-    throw UnimplementedError();
-  }
-
-  @override
-  // blockedThisUser
-  Stream get blockedThisUser => throw UnimplementedError();
-
-  @override
-  cancelBackup() {
-    // cancelBackup
-    throw UnimplementedError();
-  }
-
-  @override
-  cancelMediaUploadOrDownload(String messageId) {
-    // cancelMediaUploadOrDownload
-    throw UnimplementedError();
-  }
-
-  /*@override
-  cancelNotifications() {
-    // cancelNotifications
-    throw UnimplementedError();
-  }*/
-
-  @override
-  cancelRestore() {
-    // cancelRestore
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> clearAllConversation() {
-    // clearAllConversation
-    throw UnimplementedError();
-  }
-
-  @override
-  clearAllSDKData() {
-    // clearAllSDKData
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> clearChat(String jid, String chatType, bool clearExceptStarred) {
-    // clearChat
-    throw UnimplementedError();
-  }
-
-  @override
-  // connectionFailed
-  Stream get connectionFailed => throw UnimplementedError();
-
-  @override
-  // connectionSuccess
-  Stream get connectionSuccess => throw UnimplementedError();
-
-  /*@override
-  Future contactSyncState() {
-    // contactSyncState
-    throw UnimplementedError();
-  }*/
-
-  @override
-  Future<bool> contactSyncStateValue() {
-    // contactSyncStateValue
-    throw UnimplementedError();
-  }
-
-  @override
-  copyTextMessages(List<String> messageIds) {
-    // copyTextMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> createGroup(String groupname, List<String> userList, String image) {
-    // createGroup
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> createOfflineGroupInOnline(String groupId) {
-    // createOfflineGroupInOnline
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> deleteAccount(String reason, String? feedback) {
-    // deleteAccount
-    throw UnimplementedError();
-  }
-
-  @override
-  deleteAllMessages() {
-    // deleteAllMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> deleteBusyStatus(String id, String status, bool isCurrentStatus) {
-    // deleteBusyStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> deleteGroup(String jid) {
-    // deleteGroup
-    throw UnimplementedError();
-  }
-
-  @override
-  Future deleteMessages(String jid, List<String> messageIds, bool isDeleteForEveryOne) {
-    // deleteMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> deleteMessagesForEveryone(String jid, String chatType, List<String> messageIds, bool? isMediaDelete) {
-    // deleteMessagesForEveryone
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> deleteMessagesForMe(String jid, String chatType, List<String> messageIds, bool? isMediaDelete) {
-    // deleteMessagesForMe
-    throw UnimplementedError();
-  }
-
-  @override
-  deleteOfflineGroup(String groupJid) {
-    // deleteOfflineGroup
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> deleteProfileStatus(String id, String status, bool isCurrentStatus) {
-    // deleteProfileStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  deleteRecentChat(String jid) {
-    // deleteRecentChat
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> deleteRecentChats(List<String> jidlist) {
-    // deleteRecentChats
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> deleteUnreadMessageSeparatorOfAConversation(String jid) {
-    // deleteUnreadMessageSeparatorOfAConversation
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> doesFetchingMembersListFromServedRequired(String groupJid) {
-    // doesFetchingMembersListFromServedRequired
-    throw UnimplementedError();
-  }
-
-  @override
-  downloadMedia(String mid) {
-    // downloadMedia
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> enableDisableArchivedSettings(bool enable) {
-    // enableDisableArchivedSettings
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> enableDisableBusyStatus(bool enable) {
-    // enableDisableBusyStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> enableDisableHideLastSeen(bool enable) {
-    // enableDisableHideLastSeen
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> exportChatConversationToEmail(String jid) {
-    // exportChatConversationToEmail
-    throw UnimplementedError();
-  }
-
-  /*@override
-  Future forwardMessages(
-      List<String> messageIds, String tojid, String chattype) {
-    // forwardMessages
-    throw UnimplementedError();
-  }*/
-
-  @override
-  Future<bool?> forwardMessagesToMultipleUsers(List<String> messageIds, List<String> userList) {
-    // forwardMessagesToMultipleUsers
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getAllGroups([bool? server]) {
-    // getAllGroups
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getArchivedChatList() {
-    // getArchivedChatList
-    throw UnimplementedError();
-  }
-
-  @override
-  getArchivedChatsFromServer() {
-    // getArchivedChatsFromServer
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getBusyStatusList() {
-    // getBusyStatusList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getCustomValue(String messageId, String key) {
-    // getCustomValue
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getDefaultNotificationUri() {
-    // getDefaultNotificationUri
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getDocsMessages(String jid) {
-    // getDocsMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getFavouriteMessages() {
-    // getFavouriteMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getGroupJid(String groupId) {
-    // getGroupJid
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getGroupMembersList(String jid, bool? server) {
-    // getGroupMembersList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future getGroupMessageDeliveredToList(String messageId, String jid) {
-    // getGroupMessageDeliveredToList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getGroupMessageReadByList(String messageId, String jid) {
-    // getGroupMessageReadByList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<int?> getGroupMessageStatusCount(String messageid) {
-    // getGroupMessageStatusCount
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getGroupProfile(String groupJid, bool server) {
-    // getGroupProfile
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> getIsProfileBlockedByAdmin() {
-    // getIsProfileBlockedByAdmin
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getJid(String username) {
-    // getJid
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getLastNUnreadMessages(int messagesCount) {
-    // getLastNUnreadMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getLinkMessages(String jid) {
-    // getLinkMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future getMedia(String mid) {
-    // getMedia
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getMediaMessages(String jid) {
-    // getMediaMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<int?> getMembersCountOfGroup(String groupJid) {
-    // getMembersCountOfGroup
-    throw UnimplementedError();
-  }
-
-  /*@override
-  Future getMessageActions(List<String> messageidlist) {
-    // getMessageActions
-    throw UnimplementedError();
-  }*/
-
-  @override
-  Future<String?> getMessageOfId(String mid) {
-    // getMessageOfId
-    throw UnimplementedError();
-  }
-
-  @override
-  Future getMessageStatusOfASingleChatMessage(String messageID) {
-    // getMessageStatusOfASingleChatMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getMessagesOfJid(String jid) {
-    // getMessagesOfJid
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getMessagesUsingIds(List<String> messageIds) {
-    // getMessagesUsingIds
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getMyBusyStatus() {
-    // getMyBusyStatus
-    throw UnimplementedError();
-  }
-
-  /*@override
-  Future getMyProfileStatus() {
-    // getMyProfileStatus
-    throw UnimplementedError();
-  }*/
-
-  /*@override
-  Future getNUnreadMessagesOfEachUsers(int messagesCount) {
-    // getNUnreadMessagesOfEachUsers
-    throw UnimplementedError();
-  }*/
-
-  @override
-  Future<String?> getProfileDetails(String jid) {
-    // getProfileDetails
-    throw UnimplementedError();
-  }
-
-  /*@override
-  Future getProfileLocal(String jid, bool server) {
-    // getProfileLocal
-    throw UnimplementedError();
-  }*/
-
-  @override
-  Future<String?> getProfileStatusList() {
-    // getProfileStatusList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getRecalledMessagesOfAConversation(String jid) {
-    // getRecalledMessagesOfAConversation
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getRecentChatList() {
-    // getRecentChatList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getRecentChatListIncludingArchived() {
-    // getRecentChatListIncludingArchived
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getRecentChatOf(String jid) {
-    // getRecentChatOf
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getRegisteredUserList({required bool server}) {
-    // getRegisteredUserList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> getRegisteredUsers(bool server, Function(FlyResponse response) callback) {
-    // getRegisteredUsers
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getRingtoneName() {
-    // getRingtoneName
-    throw UnimplementedError();
-  }
-
-  @override
-  getRoster() {
-    // getRoster
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getSendData() {
-    // getSendData
-    throw UnimplementedError();
-  }
-
-  /*@override
-  Future getUnKnownUserProfiles() {
-    // getUnKnownUserProfiles
-    throw UnimplementedError();
-  }*/
-
-  @override
-  Future<int?> getUnreadMessageCountExceptMutedChat() {
-    // getUnreadMessageCountExceptMutedChat
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<int?> getUnreadMessagesCount() {
-    // getUnreadMessagesCount
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getUnsentMessageOfAJid(String jid) {
-    // getUnsentMessageOfAJid
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getUserLastSeenTime(String jid) {
-    // getUserLastSeenTime
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> getUserList(int page, String search, Function(FlyResponse response) callback,
-      {int perPageResultSize = 20}) {
-    // getUserList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> getUserProfile(String jid, Function(FlyResponse response) callback,
-      [bool fromserver = false, bool saveasfriend = false]) {
-    // getUserProfile
-    throw UnimplementedError();
-  }
-
-  @override
-  Future getUsersIBlocked(bool? server) {
-    // getUsersIBlocked
-    throw UnimplementedError();
-  }
-
-  /*@override
-  Future<String?> getUsersListToAddMembersInNewGroup() {
-    // getUsersListToAddMembersInNewGroup
-    throw UnimplementedError();
-  }*/
-
-  /*@override
-  Future<String?> getUsersListToAddMembersInOldGroup(String groupJid) {
-    // getUsersListToAddMembersInOldGroup
-    throw UnimplementedError();
-  }*/
-
-  @override
-  Future getUsersWhoBlockedMe([bool server = false]) {
-    // getUsersWhoBlockedMe
-    throw UnimplementedError();
-  }
-
-  @override
-  Future getWebLoginDetails() {
-    // getWebLoginDetails
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> handleReceivedMessage(Map notificationData) {
-    // handleReceivedMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> imagePath(String imgurl) {
-    // imagePath
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> insertDefaultStatus(String status) {
-    // insertDefaultStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  inviteUserViaSMS(String mobileNo, String message) {
-    // inviteUserViaSMS
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isAdmin(String jid, String groupJid) {
-    // isAdmin
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isArchivedSettingsEnabled() {
-    // isArchivedSettingsEnabled
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isBusyStatusEnabled() {
-    // isBusyStatusEnabled
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isHideLastSeenEnabled() {
-    // isHideLastSeenEnabled
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isMemberOfGroup(String jid, String? userjid) {
-    // isMemberOfGroup
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isMuted(String jid) {
-    // isMuted
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isUserUnArchived(String jid) {
-    // isUserUnArchived
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> leaveFromGroup(String? userJid, String groupJid) {
-    // leaveFromGroup
-    throw UnimplementedError();
-  }
-
-  @override
-  Future listenGroupChatEvents() {
-    // listenGroupChatEvents
-    throw UnimplementedError();
-  }
-
-  @override
-  Future listenMessageEvents() {
-    // listenMessageEvents
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> loginWebChatViaQRCode(String barcode) {
-    // loginWebChatViaQRCode
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> logoutOfChatSDK() {
-    // logoutOfChatSDK
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> logoutWebUser(List<String> logins) {
-    // logoutWebUser
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> makeAdmin(String groupjid, String userjid) {
-    // makeAdmin
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> markAsRead(String jid) {
-    // markAsRead
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> markAsReadDeleteUnreadSeparator(String jid) {
-    // markAsReadDeleteUnreadSeparator
-    throw UnimplementedError();
-  }
-
-  @override
-  markConversationAsRead(List<String> jidlist) {
-    // markConversationAsRead
-    throw UnimplementedError();
-  }
-
-  @override
-  markConversationAsUnread(List<String> jidlist) {
-    // markConversationAsUnread
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> mediaEndPoint() {
-    // mediaEndPoint
-    throw UnimplementedError();
-  }
-
-  @override
-  // myProfileUpdated
-  Stream get myProfileUpdated => throw UnimplementedError();
-
-  @override
-  // onAdminBlockedOtherUser
-  Stream get onAdminBlockedOtherUser => throw UnimplementedError();
-
-  @override
-  // onAdminBlockedUser
-  Stream get onAdminBlockedUser => throw UnimplementedError();
-
-  @override
-  // onChatTypingStatus
-  Stream get onChatTypingStatus => throw UnimplementedError();
-
-  @override
-  // onConnected
-  Stream get onConnected => throw UnimplementedError();
-
-  /*@override
-  // onConnectionNotAuthorized
-  Stream get onConnectionNotAuthorized => throw UnimplementedError();*/
-
-  @override
-  // onConnectionFailed
-  Stream get onConnectionFailed => throw UnimplementedError();
-
-  @override
-  // onContactSyncComplete
-  Stream get onContactSyncComplete => throw UnimplementedError();
-
-  @override
-  // onDeleteGroup
-  Stream get onDeleteGroup => throw UnimplementedError();
-
-  @override
-  // onDisconnected
-  Stream get onDisconnected => throw UnimplementedError();
-
-  @override
-  // onFailure
-  Stream get onFailure => throw UnimplementedError();
-
-  @override
-  // onFetchingGroupListCompleted
-  Stream get onFetchingGroupListCompleted => throw UnimplementedError();
-
-  @override
-  // onFetchingGroupMembersCompleted
-  Stream get onFetchingGroupMembersCompleted => throw UnimplementedError();
-
-  @override
-  // onGroupDeletedLocally
-  Stream get onGroupDeletedLocally => throw UnimplementedError();
-
-  @override
-  // onGroupNotificationMessage
-  Stream get onGroupNotificationMessage => throw UnimplementedError();
-
-  @override
-  // onShowOrUpdateOrCancelNotification
-  Stream get showOrUpdateOrCancelNotification => throw UnimplementedError();
-
-  @override
-  // onGroupProfileFetched
-  Stream get onGroupProfileFetched => throw UnimplementedError();
-
-  @override
-  // onGroupProfileUpdated
-  Stream get onGroupProfileUpdated => throw UnimplementedError();
-
-  @override
-  // onGroupTypingStatus
-  Stream get onGroupTypingStatus => throw UnimplementedError();
-
-  @override
-  // onLeftFromGroup
-  Stream get onLeftFromGroup => throw UnimplementedError();
-
-  @override
-  // onLoggedOut
-  Stream get onLoggedOut => throw UnimplementedError();
-
-  @override
-  // onMediaStatusUpdated
-  Stream get onMediaStatusUpdated => throw UnimplementedError();
-
-  @override
-  // implement uploadDownloadProgressChanged
-  Stream get onUploadDownloadProgressChanged => throw UnimplementedError();
-
-  @override
-  // onMemberMadeAsAdmin
-  Stream get onMemberMadeAsAdmin => throw UnimplementedError();
-
-  @override
-  // onMemberRemovedAsAdmin
-  Stream get onMemberRemovedAsAdmin => throw UnimplementedError();
-
-  @override
-  // onMemberRemovedFromGroup
-  Stream get onMemberRemovedFromGroup => throw UnimplementedError();
-
-  @override
-  // onMessageReceived
-  Stream get onMessageReceived => throw UnimplementedError();
-
-  @override
-  // onMessageStatusUpdated
-  Stream get onMessageStatusUpdated => throw UnimplementedError();
-
-  @override
-  // onNewGroupCreated
-  Stream get onNewGroupCreated => throw UnimplementedError();
-
-  @override
-  // onNewMemberAddedToGroup
-  Stream get onNewMemberAddedToGroup => throw UnimplementedError();
-
-  @override
-  // onProgressChanged
-  Stream get onProgressChanged => throw UnimplementedError();
-
-  @override
-  // onSuccess
-  Stream get onSuccess => throw UnimplementedError();
-
-  @override
-  // onWebChatPasswordChanged
-  Stream get onWebChatPasswordChanged => throw UnimplementedError();
-
-  /*@override
-  Future openFile(String filePath) {
-    // openFile
-    throw UnimplementedError();
-  }*/
-
-  /*@override
-  Future prepareChatConversationToExport(String jid) {
-    // prepareChatConversationToExport
-    throw UnimplementedError();
-  }*/
-
-  @override
-  Future<int?> recentChatPinnedCount() {
-    // recentChatPinnedCount
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> refreshAndGetAuthToken() {
-    // refreshAndGetAuthToken
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getCurrentAuthToken() {
-    // getCurrentAuthToken
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> registerUser(String userIdentifier,
-      {String fcmToken = "", bool isForceRegister = true, required Function(FlyResponse response) callback}) {
-    // registerUser
-    throw UnimplementedError();
-  }
-
-  @override
-  removeCustomValue(String messageId, String key) {
-    // removeCustomValue
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> removeGroupProfileImage(String jid) {
-    // removeGroupProfileImage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> removeMemberFromGroup(String groupjid, String userjid) {
-    // removeMemberFromGroup
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> removeProfileImage() {
-    // removeProfileImage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future reportChatOrUser(String jid, String chatType, String? messageId) {
-    // reportChatOrUser
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> reportUserOrMessages(String jid, String type, String? messageId) {
-    // reportUserOrMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future revokeContactSync() {
-    // revokeContactSync
-    throw UnimplementedError();
-  }
-
-  /*@override
-  Future saveProfile(String name, String email) {
-    // saveProfile
-    throw UnimplementedError();
-  }*/
-
-  @override
-  saveUnsentMessage(String jid, String message) {
-    // saveUnsentMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> searchConversation(String searchKey, [String? jidForSearch, bool globalSearch = true]) {
-    // searchConversation
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId,
-      {String? audioFileUrl, String? topicId}) {
-    // sendAudioMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> sendContactMessage(List<String> contactList, String jid, String contactName, String replyMessageId,
-      {String? topicId}) {
-    // sendContactMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> sendContactUsInfo(String title, String description) {
-    // sendContactUsInfo
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> sendDocumentMessage(String jid, String documentPath, String replyMessageId,
-      {String? fileUrl, String? topicId}) {
-    // sendDocumentMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  sendImageMessage(String jid, String filePath, String? caption, String? replyMessageID,
-      {String? imageFileUrl, String? topicId}) {
-    // sendImageMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> sendLocationMessage(String jid, double latitude, double longitude, String replyMessageId,
-      {String? topicId}) {
-    // sendLocationMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> sendTextMessage(String message, String jid, String replyMessageId, {String? topicId}) {
-    // sendTextMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> sendMediaFileMessage(
-      {required FileMessage messageParams, required Function(FlyResponse response) flyCallback}) {
-    // TODO: implement sendMediaFileMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> sendMessage(
-      {required MessageParams messageParams, required Function(FlyResponse response) flyCallback}) {
-    // TODO: implement sendMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  sendTypingGoneStatus(String toJid, String chattype) {
-    // sendTypingGoneStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  sendTypingStatus(String toJid, String chattype) {
-    // sendTypingStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> sendVideoMessage(String jid, String filePath, String? caption, String? replyMessageID,
-      {String? videoFileUrl, num? videoDuration, String? thumbImageBase64, String? topicId}) {
-    // sendVideoMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> sentFileMessage(String? file, String jid) {
-    // sentFileMessage
-    throw UnimplementedError();
-  }
-
-  @override
-  setCustomValue(String messageId, String key, String value) {
-    // setCustomValue
-    throw UnimplementedError();
-  }
-
-  @override
-  setMediaEncryption(String encryption) {
-    // setMediaEncryption
-    throw UnimplementedError();
-  }
-
-  @override
-  setMuteNotification(bool enable) {
-    // setMuteNotification
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> setMyBusyStatus(String busystatus) {
-    // setMyBusyStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> setMyProfileStatus(String status, [String? statusId]) {
-    // setMyProfileStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  setNotificationSound(bool enable) {
-    // setNotificationSound
-    throw UnimplementedError();
-  }
-
-  @override
-  setNotificationUri(String uri) {
-    // setNotificationUri
-    throw UnimplementedError();
-  }
-
-  @override
-  setNotificationVibration(bool enable) {
-    // setNotificationVibration
-    throw UnimplementedError();
-  }
-
-  @override
-  setOnGoingChatUser(String jid) {
-    // setOnGoingChatUser
-    throw UnimplementedError();
-  }
-
-  @override
-  // setTypingStatus
-  Stream get setTypingStatus => throw UnimplementedError();
-
-  @override
-  setTypingStatusListener() {
-    // setTypingStatusListener
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> showCustomTones() {
-    // showCustomTones
-    throw UnimplementedError();
-  }
-
-  @override
-  startBackup() {
-    // startBackup
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> syncContacts(bool isfirsttime) {
-    // syncContacts
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> unFavouriteAllFavouriteMessages() {
-    // unFavouriteAllFavouriteMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> unblockUser(String userJID) {
-    // unblockUser
-    throw UnimplementedError();
-  }
-
-  @override
-  // unblockedThisUser
-  Stream get unblockedThisUser => throw UnimplementedError();
-
-  @override
-  Future<bool?> updateArchiveUnArchiveChat(String jid, bool isArchived) {
-    // updateArchiveUnArchiveChat
-    throw UnimplementedError();
-  }
-
-  @override
-  updateChatMuteStatus(String jid, bool muteStatus) {
-    // updateChatMuteStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> updateFavouriteStatus(String messageID, String chatUserJID, bool isFavourite, String chatType) {
-    // updateFavouriteStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> updateFcmToken(String firebasetoken) {
-    // updateFcmToken
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> updateGroupName(String jid, String name) {
-    // updateGroupName
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> updateGroupProfileImage(String jid, String file) {
-    // updateGroupProfileImage
-    throw UnimplementedError();
-  }
-
-  @override
-  updateMediaDownloadStatus(String mediaMessageId, int progress, int downloadStatus, num dataTransferred) {
-    // updateMediaDownloadStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  updateMediaUploadStatus(String mediaMessageId, int progress, int uploadStatus, num dataTransferred) {
-    // updateMediaUploadStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> updateMyProfile(
-      String name, String email, String mobile, String status, String? image, Function(FlyResponse response) callback) {
-    // updateMyProfile
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> updateMyProfileImage(String image, Function(FlyResponse response) callback) {
-    // updateMyProfileImage
-    throw UnimplementedError();
-  }
-
-  @override
-  updateRecentChatPinStatus(String jid, bool pinStatus) {
-    // updateRecentChatPinStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> uploadMedia(String messageid) {
-    // uploadMedia
-    throw UnimplementedError();
-  }
-
-  @override
-  // userBlockedMe
-  Stream get userBlockedMe => throw UnimplementedError();
-
-  @override
-  // userCameOnline
-  Stream get userCameOnline => throw UnimplementedError();
-
-  @override
-  // userDeletedHisProfile
-  Stream<String> get userDeletedHisProfile => throw UnimplementedError();
-
-  @override
-  // userProfileFetched
-  Stream get userProfileFetched => throw UnimplementedError();
-
-  @override
-  // userUnBlockedMe
-  Stream get userUnBlockedMe => throw UnimplementedError();
-
-  @override
-  // userUpdatedHisProfile
-  Stream get userUpdatedHisProfile => throw UnimplementedError();
-
-  @override
-  // userWentOffline
-  Stream get userWentOffline => throw UnimplementedError();
-
-  @override
-  // usersIBlockedListFetched
-  Stream get usersIBlockedListFetched => throw UnimplementedError();
-
-  @override
-  // usersWhoBlockedMeListFetched
-  Stream get usersWhoBlockedMeListFetched => throw UnimplementedError();
-
-  @override
-  Future<String?> verifyToken(String userName, String token) {
-    // verifyToken
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> webLoginDetailsCleared() {
-    // webLoginDetailsCleared
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getJidFromPhoneNumber(String mobileNumber, String countryCode) {
-    // getJidFromPhoneNumber
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> getMediaAutoDownload() {
-    // getMediaAutoDownload
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> getMediaSetting(int networkType, String type) {
-    // getMediaSetting
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> getNotificationSound() {
-    // getNotificationSound
-    throw UnimplementedError();
-  }
-
-  @override
-  saveMediaSettings(bool photos, bool videos, bool audio, bool documents, int networkType) {
-    // saveMediaSettings
-    throw UnimplementedError();
-  }
-
-  @override
-  setMediaAutoDownload(bool enable) {
-    // setMediaAutoDownload
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> insertBusyStatus(String busyStatus) {
-    // insertBusyStatus
+class MockFlyChatFlutterPlatform
+    with MockPlatformInterfaceMixin
+    implements FlyChatFlutterPlatform {
+  @override
+  Future<bool> acceptVideoCallSwitchRequest() {
+    //  implement acceptVideoCallSwitchRequest
     throw UnimplementedError();
   }
 
   @override
   Future<bool?> addContact(String number, String name) {
-    // implement addContact
+    //  implement addContact
     throw UnimplementedError();
   }
 
   @override
-  Future<String?> getNonChatUsers() {
-    // implement getNonChatUsers
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isTrailLicence() {
-    // implement isTrailLicence
-    throw UnimplementedError();
-  }
-
-  @override
-  Future setRegionCode(String regionCode) {
-    // implement setRegionCode
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getValueFromManifestOrInfoPlist({String? androidManifestKey, String? iOSPlistKey}) {
-    // implement getValueFromManifestOrInfoPlist
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> iOSFileExist(String filePath) {
-    // implement iOSFileExist
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> insertNewProfileStatus(String status) {
-    // implement insertNewProfileStatus
-    throw UnimplementedError();
-  }
-
-  @override
-  Future setDefaultNotificationSound() {
-    // implement setDefaultNotificationSound
-    throw UnimplementedError();
-  }
-
-  @override
-  // implement usersProfilesFetched
-  Stream get usersProfilesFetched => throw UnimplementedError();
-
-  // @override
-  // implement onCallReceiving
-  // Stream get onCallReceiving => throw UnimplementedError();
-
-  @override
-  // implement onLocalVideoTrackAdded
-  Stream get onLocalVideoTrackAdded => throw UnimplementedError();
-
-  @override
-  // implement onCallAction
-  Stream get onCallAction => throw UnimplementedError();
-
-  @override
-  // implement onCallStatusUpdated
-  Stream get onCallStatusUpdated => throw UnimplementedError();
-
-  @override
-  //  implement onMuteStatusUpdated
-  Stream get onMuteStatusUpdated => throw UnimplementedError();
-
-  @override
-  // implement onRemoteVideoTrackAdded
-  Stream get onRemoteVideoTrackAdded => throw UnimplementedError();
-
-  @override
-  // implement onTrackAdded
-  Stream get onTrackAdded => throw UnimplementedError();
-
-  @override
-  // implement onUserSpeaking
-  Stream get onUserSpeaking => throw UnimplementedError();
-
-  @override
-  // implement onUserStoppedSpeaking
-  Stream get onUserStoppedSpeaking => throw UnimplementedError();
-
-  @override
-  // implement onMissedCall
-  Stream get onMissedCall => throw UnimplementedError();
-
-  @override
-  // implement onAvailableFeaturesUpdated
-  Stream get onAvailableFeaturesUpdated => throw UnimplementedError();
-
-  @override
-  // implement onCallLogsUpdated
-  Stream get onCallLogsUpdated => throw UnimplementedError();
-
-  @override
-  // implement onCallLogsDeleted
-  Stream get onCallLogsDeleted => throw UnimplementedError();
-
-  @override
-  Future getCallUsersList() {
-    // implement getCallUsers
-    throw UnimplementedError();
-  }
-
-  @override
-  Future switchCamera() {
-    // implement switchCamera
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getCallType() {
-    // implement getCallTypeonAvailable
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getCallGroupJid() {
-    // implement getCallGroupJid
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> muteAudio(bool status) {
-    // implement muteAudio
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> muteVideo(bool status) {
-    // implement muteVideo
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> declineCall() {
-    // implement declineCall
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> createTopic({required String topicName, List<TopicMetaData> metaData = const []}) {
-    //  implement createTopic
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getTopics({required List<String> topicIds}) {
-    //  implement getTopics
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> getRecentChatListHistoryByTopic(
-      {String? topicId, required bool firstSet, int limit = 15, required Function(FlyResponse response) callback}) {
-    //  implement getRecentChatListHistoryByTopic
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> makeVideoCall(String userJid) {
-    //  implement makeVideoCall
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> makeVoiceCall(String userJid) {
-    // implement makeVoiceCall
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> makeGroupVoiceCall(String groupJid, List<String>? jidList) {
-    // implement makeGroupVoiceCall
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> makeGroupVideoCall(String groupJid, List<String>? jidList) {
-    // implement makeGroupVideoCall
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getCallDirection() {
-    // implement getCallDirection
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> getRecentChatListHistory(
-      {required bool firstSet, int limit = 15, required Function(FlyResponse response) callback}) {
-    // implement getRecentChatListHistory
-    throw UnimplementedError();
-  }
-
-  @override
-  Future initializeMessageList(
-      {required String userJid,
-      String? messageId,
-      double? messageTime,
-      bool? exclude,
-      bool ascendingOrder = true,
-      String? topicId,
-      int limit = 25}) {
-    // implement initializeMessageList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> loadMessages(Function(FlyResponse response) callback) {
-    // implement loadMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> hasNextMessages() {
-    // implement hasNextMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> loadNextMessages(Function(FlyResponse response) callback) {
-    // implement loadNextMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> hasPreviousMessages() {
-    // implement hasPreviousMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> loadPreviousMessages(Function(FlyResponse response) callback) {
-    // implement loadPreviousMessages
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getAllAvailableAudioInput() {
-    // implement getAllAvailableAudioInput
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> routeAudioTo({required String routeType}) {
-    // implement routeAudioTo
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isOnGoingCall() {
-    // implement isOnGoingCall
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> disconnectCall() {
-    // implement disconnectCall
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> selectedAudioDevice() {
-    // implement selectedAudioDevice
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isUserAudioMuted([String? userJid]) {
-    // implement isUserAudioMuted
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> isUserVideoMuted([String? userJid]) {
-    // implement isUserVideoMuted
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<int?> getUnreadMissedCallCount() {
-    // getUnreadMissedCallCount
+  Future<void> addUsersToGroup(String jid, List<String> userList,
+      Function(FlyResponse response)? callback) {
+    //  implement addUsersToGroup
     throw UnimplementedError();
   }
 
   @override
   Future<bool?> appLaunchedFromMissedCall() {
-    // getUnreadMissedCallCount
+    //  implement appLaunchedFromMissedCall
     throw UnimplementedError();
   }
 
   @override
-  Future<String?> openAudioFilePicker() {
-    // implement isUserVideoMuted
+  Future<String?> authToken() {
+    //  implement authToken
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> blockUser(
+      String userJID, Function(FlyResponse response)? callback) {
+    //  implement blockUser
+    throw UnimplementedError();
+  }
+
+  @override
+  //  implement blockedThisUser
+  Stream get blockedThisUser => throw UnimplementedError();
+
+  @override
+  cancelBackup() {
+    //  implement cancelBackup
+    throw UnimplementedError();
+  }
+
+  @override
+  cancelMediaUploadOrDownload(String messageId) {
+    //  implement cancelMediaUploadOrDownload
+    throw UnimplementedError();
+  }
+
+  @override
+  cancelRestore() {
+    //  implement cancelRestore
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> cancelVideoCallSwitch() {
+    //  implement cancelVideoCallSwitch
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> clearAllConversation(Function(FlyResponse response)? callback) {
+    //  implement clearAllConversation
+    throw UnimplementedError();
+  }
+
+  @override
+  clearAllSDKData() {
+    //  implement clearAllSDKData
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> clearChat(String jid, String chatType, bool clearExceptStarred,
+      Function(FlyResponse response)? callback) {
+    //  implement clearChat
+    throw UnimplementedError();
+  }
+
+  // @override
+  // connectionFailed
+  // Stream get connectionFailed => throw UnimplementedError();
+
+  // @override
+  // // connectionSuccess
+  // Stream get connectionSuccess => throw UnimplementedError();
+
+  @override
+  Future<bool> contactSyncStateValue() {
+    //  implement contactSyncStateValue
+    throw UnimplementedError();
+  }
+
+  @override
+  copyTextMessages(List<String> messageIds) {
+    //  implement copyTextMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> createGroup(String groupName, List<String> userJidList,
+      String imageFilePath, Function(FlyResponse response)? callback) {
+    //  implement createGroup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> createOfflineGroupInOnline(String groupId) {
+    //  implement createOfflineGroupInOnline
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> createTopic(
+      {required String topicName,
+      List<TopicMetaData> metaData = const [],
+      Function(FlyResponse response)? callback}) {
+    //  implement createTopic
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> declineCall() {
+    //  implement declineCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> declineVideoCallSwitchRequest() {
+    //  implement declineVideoCallSwitchRequest
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteAccount(String reason, String? feedback,
+      Function(FlyResponse response)? callback) {
+    //  implement deleteAccount
+    throw UnimplementedError();
+  }
+
+  @override
+  deleteAllMessages() {
+    //  implement deleteAllMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> deleteBusyStatus(
+      String id, String status, bool isCurrentStatus) {
+    //  implement deleteBusyStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteCallLog(List<String> jidlist, bool isClearAll,
+      Function(FlyResponse response)? callback) {
+    //  implement deleteCallLog
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteGroup(
+      String jid, Function(FlyResponse response)? callback) {
+    //  implement deleteGroup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future deleteMessages(
+      String jid, List<String> messageIds, bool isDeleteForEveryOne) {
+    //  implement deleteMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteMessagesForEveryone(
+      String jid,
+      String chatType,
+      List<String> messageIds,
+      bool? isMediaDelete,
+      Function(FlyResponse response)? callback) {
+    //  implement deleteMessagesForEveryone
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteMessagesForMe(
+      String jid,
+      String chatType,
+      List<String> messageIds,
+      bool? isMediaDelete,
+      Function(FlyResponse response)? callback) {
+    //  implement deleteMessagesForMe
+    throw UnimplementedError();
+  }
+
+  @override
+  deleteOfflineGroup(String groupJid) {
+    //  implement deleteOfflineGroup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> deleteProfileStatus(
+      String id, String status, bool isCurrentStatus) {
+    //  implement deleteProfileStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteRecentChat(
+      String jid, Function(FlyResponse response)? callback) {
+    //  implement deleteRecentChat
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteRecentChats(
+      List<String> jidlist, Function(FlyResponse response)? callback) {
+    //  implement deleteRecentChats
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> deleteUnreadMessageSeparatorOfAConversation(String jid) {
+    //  implement deleteUnreadMessageSeparatorOfAConversation
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> disconnectCall(Function(FlyResponse response)? callback) {
+    //  implement disconnectCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> doesFetchingMembersListFromServedRequired(String groupJid) {
+    //  implement doesFetchingMembersListFromServedRequired
+    throw UnimplementedError();
+  }
+
+  @override
+  downloadMedia(String mid) {
+    //  implement downloadMedia
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> enableDisableArchivedSettings(
+      bool enable, Function(FlyResponse response)? callback) {
+    //  implement enableDisableArchivedSettings
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> enableDisableBusyStatus(
+      bool enable, Function(FlyResponse response)? callback) {
+    //  implement enableDisableBusyStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> enableDisableHideLastSeen(bool enable) {
+    //  implement enableDisableHideLastSeen
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setLastSeenVisibility(
+      bool enable, Function(FlyResponse response)? callback) {
+    //  implement setLastSeenVisibility
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> exportChatConversationToEmail(
+      String jid, Function(FlyResponse response)? callback) {
+    //  implement exportChatConversationToEmail
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> forwardMessagesToMultipleUsers(List<String> messageIds,
+      List<String> userList, Function(FlyResponse response)? callback) {
+    //  implement forwardMessagesToMultipleUsers
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getAllAvailableAudioInput() {
+    //  implement getAllAvailableAudioInput
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getAllGroups(
+      [bool? server, Function(FlyResponse response)? callback]) {
+    //  implement getAllGroups
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getArchivedChatList(Function(FlyResponse response)? callback) {
+    //  implement getArchivedChatList
+    throw UnimplementedError();
+  }
+
+  @override
+  getArchivedChatsFromServer() {
+    //  implement getArchivedChatsFromServer
     throw UnimplementedError();
   }
 
   @override
   Future<String> getAvailableFeatures() {
-    // implement getAvailableFeatures
+    //  implement getAvailableFeatures
     throw UnimplementedError();
   }
 
   @override
-  Future<bool?> requestVideoCallSwitch() {
-    // implement requestVideoCallSwitch
+  Future<String?> getBusyStatusList() {
+    //  implement getBusyStatusList
     throw UnimplementedError();
   }
 
   @override
-  Future<bool?> cancelVideoCallSwitch() {
-    // implement cancelVideoCallSwitch
+  Future<String> getCallDirection() {
+    //  implement getCallDirection
     throw UnimplementedError();
   }
 
   @override
-  Future<bool?> acceptVideoCallSwitchRequest() {
-    // implement acceptVideoCallSwitchRequest
+  Future<String> getCallGroupJid() {
+    //  implement getCallGroupJid
     throw UnimplementedError();
   }
 
   @override
-  Future<bool?> declineVideoCallSwitchRequest() {
-    // implement declineVideoCallSwitchRequest
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<int?> getMaxCallUsersCount() {
-    // implement getMaxCallUsersCount
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> getCallLogsList(int currentPage) {
+  Future<void> getCallLogsList(
+      int currentPage, Function(FlyResponse response)? callback) {
     //  implement getCallLogsList
     throw UnimplementedError();
   }
 
   @override
-  inviteUsersToOngoingCall(List<String> jidList) {
-    //  implement inviteUsersToOngoingCall
+  Future<String> getCallType() {
+    //  implement getCallType
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getCallUsersList() {
+    //  implement getCallUsersList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getCurrentAuthToken() {
+    //  implement getCurrentAuthToken
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getCustomValue(String messageId, String key) {
+    //  implement getCustomValue
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getDefaultNotificationUri() {
+    //  implement getDefaultNotificationUri
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getDocsMessages(String jid) {
+    //  implement getDocsMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getFavouriteMessages() {
+    //  implement getFavouriteMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getGroupJid(String groupId) {
+    //  implement getGroupJid
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getGroupMembersList(
+      String jid, bool? server, Function(FlyResponse response)? callback) {
+    //  implement getGroupMembersList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getGroupMessageDeliveredToList(String messageId, String jid) {
+    //  implement getGroupMessageDeliveredToList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getGroupMessageDeliveredRecipients(
+      String messageId, String jid, Function(FlyResponse response)? callback) {
+    //  implement getGroupMessageDeliveredRecipients
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getGroupMessageReadByList(String messageId, String jid) {
+    //  implement getGroupMessageReadByList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getGroupMessageSeenRecipients(
+      String messageId, String jid, Function(FlyResponse response)? callback) {
+    //  implement getGroupMessageSeenRecipients
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> getGroupMessageStatusCount(String messageid) {
+    //  implement getGroupMessageStatusCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getGroupProfile(
+      String groupJid, bool server, Function(FlyResponse response)? callback) {
+    //  implement getGroupProfile
     throw UnimplementedError();
   }
 
@@ -1633,26 +462,384 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
+  Future<bool?> getIsProfileBlockedByAdmin() {
+    //  implement getIsProfileBlockedByAdmin
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getJid(String username) {
+    //  implement getJid
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getJidFromPhoneNumber(
+      String mobileNumber, String countryCode) {
+    //  implement getJidFromPhoneNumber
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getLastNUnreadMessages(int messagesCount) {
+    //  implement getLastNUnreadMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getLinkMessages(String jid) {
+    //  implement getLinkMessages
+    throw UnimplementedError();
+  }
+
+  @override
   Future<String> getLocalCallLogs() {
-    //  implement filteredCallLog
+    //  implement getLocalCallLogs
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> deleteCallLog(List<String> jidlist, bool isClearAll) {
-    // implement deleteCallLog
+  Future<int?> getMaxCallUsersCount() {
+    //  implement getMaxCallUsersCount
     throw UnimplementedError();
   }
 
   @override
-  Future<void> initializeSDK(InitializeSDKBuilder builder, Function(FlyResponse response) callback) {
-    // implement initSDK
+  Future<bool?> getMediaAutoDownload() {
+    //  implement getMediaAutoDownload
     throw UnimplementedError();
   }
 
   @override
-  Future<bool?> markAllUnreadMissedCallsAsRead() {
-    // implement markAllUnreadMissedCallsAsRead
+  Future<String?> getMediaMessages(String jid) {
+    //  implement getMediaMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> getMediaSetting(int networkType, String type) {
+    //  implement getMediaSetting
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> getMembersCountOfGroup(String groupJid) {
+    //  implement getMembersCountOfGroup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getMessageOfId(String mid) {
+    //  implement getMessageOfId
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getMessageStatusOfASingleChatMessage(String messageID) {
+    //  implement getMessageStatusOfASingleChatMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getMessagesOfJid(String jid) {
+    //  implement getMessagesOfJid
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getMessagesUsingIds(List<String> messageIds) {
+    //  implement getMessagesUsingIds
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getMyBusyStatus() {
+    //  implement getMyBusyStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getNonChatUsers() {
+    //  implement getNonChatUsers
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> getNotificationSound() {
+    //  implement getNotificationSound
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getProfileDetails(String jid) {
+    //  implement getProfileDetails
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getProfileStatusList() {
+    //  implement getProfileStatusList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getRecalledMessagesOfAConversation(String jid) {
+    //  implement getRecalledMessagesOfAConversation
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getRecentChatList(Function(FlyResponse response)? callback) {
+    //  implement getRecentChatList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getRecentChatListHistory(
+      {required bool firstSet,
+      int limit = 15,
+      required Function(FlyResponse response) callback}) {
+    //  implement getRecentChatListHistory
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getRecentChatListHistoryByTopic(
+      {String? topicId,
+      required bool firstSet,
+      int limit = 15,
+      required Function(FlyResponse response) callback}) {
+    //  implement getRecentChatListHistoryByTopic
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getRecentChatListIncludingArchived() {
+    //  implement getRecentChatListIncludingArchived
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getRecentChatOf(String jid) {
+    //  implement getRecentChatOf
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getRegisteredUserList({required bool server}) {
+    //  implement getRegisteredUserList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getRegisteredUsers(
+      bool server, Function(FlyResponse response) callback) {
+    //  implement getRegisteredUsers
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getRingtoneName() {
+    //  implement getRingtoneName
+    throw UnimplementedError();
+  }
+
+  @override
+  getRoster() {
+    //  implement getRoster
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getSendData() {
+    //  implement getSendData
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getTopics(
+      {required List<String> topicIds,
+      Function(FlyResponse response)? callback}) {
+    //  implement getTopics
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> getUnreadMessageCountExceptMutedChat() {
+    //  implement getUnreadMessageCountExceptMutedChat
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> getUnreadMessagesCount() {
+    //  implement getUnreadMessagesCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> getUnreadMissedCallCount() {
+    //  implement getUnreadMissedCallCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getUnsentMessageOfAJid(String jid) {
+    //  implement getUnsentMessageOfAJid
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getUserLastSeenTime(
+      String jid, Function(FlyResponse response)? callback) {
+    //  implement getUserLastSeenTime
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getUserList(
+      int page, String search, Function(FlyResponse response) callback,
+      {int perPageResultSize = 20}) {
+    //  implement getUserList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getUserProfile(
+      String jid, Function(FlyResponse response) callback,
+      [bool fromserver = false, bool saveasfriend = false]) {
+    //  implement getUserProfile
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getUsersIBlocked(
+      bool? server, Function(FlyResponse response)? callback) {
+    //  implement getUsersIBlocked
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> getUsersWhoBlockedMe(
+      [bool server = false, Function(FlyResponse response)? callback]) {
+    //  implement getUsersWhoBlockedMe
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getValueFromManifestOrInfoPlist(
+      {String? androidManifestKey, String? iOSPlistKey}) {
+    //  implement getValueFromManifestOrInfoPlist
+    throw UnimplementedError();
+  }
+
+  @override
+  Future getWebLoginDetails() {
+    //  implement getWebLoginDetails
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> handleReceivedMessage(
+      Map notificationData, Function(FlyResponse response)? callback) {
+    //  implement handleReceivedMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> hasNextMessages() {
+    //  implement hasNextMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> hasPreviousMessages() {
+    //  implement hasPreviousMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> iOSFileExist(String filePath) {
+    //  implement iOSFileExist
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> imagePath(String imgurl) {
+    //  implement imagePath
+    throw UnimplementedError();
+  }
+
+  @override
+  init(ChatBuilder builder) {
+    //  implement init
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> initializeMessageList(
+      {required String userJid,
+      String? messageId,
+      double? messageTime,
+      bool? exclude,
+      int limit = 25,
+      String? topicId,
+      bool ascendingOrder = true}) {
+    //  implement initializeMessageList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> initializeSDK(
+      InitializeSDKBuilder builder, Function(FlyResponse response) callback) {
+    //  implement initializeSDK
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> insertBusyStatus(String busyStatus) {
+    //  implement insertBusyStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> insertDefaultStatus(String status) {
+    //  implement insertDefaultStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> insertNewProfileStatus(String status) {
+    //  implement insertNewProfileStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  inviteUserViaSMS(String mobileNo, String message) {
+    //  implement inviteUserViaSMS
+    throw UnimplementedError();
+  }
+
+  @override
+  Future inviteUsersToOngoingCall(List<String> jidList) {
+    //  implement inviteUsersToOngoingCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isAdmin(String userJid, String groupJID) {
+    //  implement isAdmin
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isArchivedSettingsEnabled() {
+    //  implement isArchivedSettingsEnabled
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> isBusyStatusEnabled() {
+    //  implement isBusyStatusEnabled
     throw UnimplementedError();
   }
 
@@ -1663,26 +850,898 @@ class MockFlyChatFlutterPlatform with MockPlatformInterfaceMixin implements FlyC
   }
 
   @override
+  Future<bool?> isHideLastSeenEnabled() {
+    //  implement isHideLastSeenEnabled
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isMemberOfGroup(String jid, String? userJid) {
+    //  implement isMemberOfGroup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isMuted(String jid) {
+    //  implement isMuted
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isOnGoingCall() {
+    //  implement isOnGoingCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isTrailLicence() {
+    //  implement isTrailLicence
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isUserAudioMuted([String? userJid]) {
+    //  implement isUserAudioMuted
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isUserUnArchived(String jid) {
+    //  implement isUserUnArchived
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isUserVideoMuted([String? userJid]) {
+    //  implement isUserVideoMuted
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> leaveFromGroup(String? userJid, String groupJid,
+      Function(FlyResponse response)? callback) {
+    //  implement leaveFromGroup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future listenGroupChatEvents() {
+    //  implement listenGroupChatEvents
+    throw UnimplementedError();
+  }
+
+  @override
+  Future listenMessageEvents() {
+    //  implement listenMessageEvents
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> loadMessages(Function(FlyResponse response) callback) {
+    //  implement loadMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> loadNextMessages(Function(FlyResponse response) callback) {
+    //  implement loadNextMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> loadPreviousMessages(Function(FlyResponse response) callback) {
+    //  implement loadPreviousMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> loginWebChatViaQRCode(
+      String barcode, Function(FlyResponse response)? callback) {
+    //  implement loginWebChatViaQRCode
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> logoutOfChatSDK(Function(FlyResponse response)? callback) {
+    //  implement logoutOfChatSDK
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> logoutWebUser(List<String> logins) {
+    //  implement logoutWebUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> makeAdmin(String groupjid, String userjid,
+      Function(FlyResponse response)? callback) {
+    //  implement makeAdmin
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> makeGroupVideoCall(String groupJid, List<String>? jidList,
+      Function(FlyResponse response)? callback) {
+    //  implement makeGroupVideoCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> makeGroupVoiceCall(String groupJid, List<String>? jidList,
+      Function(FlyResponse response)? callback) {
+    //  implement makeGroupVoiceCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> makeVideoCall(
+      String userJid, Function(FlyResponse response)? callback) {
+    //  implement makeVideoCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> makeVoiceCall(
+      String userJid, Function(FlyResponse response)? callback) {
+    //  implement makeVoiceCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> markAllUnreadMissedCallsAsRead() {
+    //  implement markAllUnreadMissedCallsAsRead
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> markAsRead(String jid) {
+    //  implement markAsRead
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> markAsReadDeleteUnreadSeparator(String jid) {
+    //  implement markAsReadDeleteUnreadSeparator
+    throw UnimplementedError();
+  }
+
+  @override
+  markConversationAsRead(List<String> jidlist) {
+    //  implement markConversationAsRead
+    throw UnimplementedError();
+  }
+
+  @override
+  markConversationAsUnread(List<String> jidlist) {
+    //  implement markConversationAsUnread
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> mediaEndPoint() {
+    //  implement mediaEndPoint
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> muteAudio(
+      bool status, Function(FlyResponse response)? callback) {
+    //  implement muteAudio
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> muteVideo(
+      bool status, Function(FlyResponse response)? callback) {
+    //  implement muteVideo
+    throw UnimplementedError();
+  }
+
+  @override
+  //  implement myProfileUpdated
+  Stream get myProfileUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onAdminBlockedOtherUser
+  Stream get onAdminBlockedOtherUser => throw UnimplementedError();
+
+  @override
+  //  implement onAdminBlockedUser
+  Stream get onAdminBlockedUser => throw UnimplementedError();
+
+  @override
+  //  implement onAvailableFeaturesUpdated
+  Stream get onAvailableFeaturesUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onCallAction
+  Stream get onCallAction => throw UnimplementedError();
+
+  @override
+  //  implement onCallLogDeleted
+  Stream get onCallLogDeleted => throw UnimplementedError();
+
+  @override
+  //  implement onCallLogDeleted
+  Stream get onClearAllCallLog => throw UnimplementedError();
+
+  @override
+  //  implement onCallLogsUpdated
+  Stream get onCallLogsUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onCallStatusUpdated
+  Stream get onCallStatusUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onChatTypingStatus
+  Stream get onChatTypingStatus => throw UnimplementedError();
+
+  @override
+  //  implement onConnected
+  Stream get onConnected => throw UnimplementedError();
+
+  @override
+  //  implement onConnectionFailed
+  Stream get onConnectionFailed => throw UnimplementedError();
+
+  @override
+  //  implement onContactSyncComplete
+  Stream get onContactSyncComplete => throw UnimplementedError();
+
+  // @override
+  // //  implement onDeleteGroup
+  // Stream get onDeleteGroup => throw UnimplementedError();
+
+  @override
+  //  implement onDisconnected
+  Stream get onDisconnected => throw UnimplementedError();
+
+  // @override
+  // onFailure
+  // Stream get onFailure => throw UnimplementedError();
+
+  // @override
+  // //  implement onFetchingGroupListCompleted
+  // Stream get onFetchingGroupListCompleted => throw UnimplementedError();
+
+  @override
+  //  implement onFetchingGroupMembersCompleted
+  Stream get onFetchingGroupMembersCompleted => throw UnimplementedError();
+
+  @override
+  //  implement onGroupDeletedLocally
+  Stream get onGroupDeletedLocally => throw UnimplementedError();
+
+  @override
+  //  implement onGroupNotificationMessage
+  Stream get onGroupNotificationMessage => throw UnimplementedError();
+
+  @override
+  //  implement onGroupProfileFetched
+  Stream get onGroupProfileFetched => throw UnimplementedError();
+
+  @override
+  //  implement onGroupProfileUpdated
+  Stream get onGroupProfileUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onGroupTypingStatus
+  Stream get onGroupTypingStatus => throw UnimplementedError();
+
+  @override
+  //  implement onLeftFromGroup
+  Stream get onLeftFromGroup => throw UnimplementedError();
+
+  @override
+  //  implement onLocalVideoTrackAdded
+  Stream get onLocalVideoTrackAdded => throw UnimplementedError();
+
+  @override
+  //  implement onLoggedOut
+  Stream get onLoggedOut => throw UnimplementedError();
+
+  @override
+  //  implement onMediaStatusUpdated
+  Stream get onMediaStatusUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onMemberMadeAsAdmin
+  Stream get onMemberMadeAsAdmin => throw UnimplementedError();
+
+  @override
+  //  implement onMemberRemovedAsAdmin
+  Stream get onMemberRemovedAsAdmin => throw UnimplementedError();
+
+  @override
+  //  implement onMemberRemovedFromGroup
+  Stream get onMemberRemovedFromGroup => throw UnimplementedError();
+
+  @override
+  //  implement onMessageReceived
+  Stream get onMessageReceived => throw UnimplementedError();
+
+  @override
+  //  implement onMessageStatusUpdated
+  Stream get onMessageStatusUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onMissedCall
+  Stream get onMissedCall => throw UnimplementedError();
+
+  @override
+  //  implement onMuteStatusUpdated
+  Stream get onMuteStatusUpdated => throw UnimplementedError();
+
+  @override
+  //  implement onNewGroupCreated
+  Stream get onNewGroupCreated => throw UnimplementedError();
+
+  @override
+  //  implement onNewMemberAddedToGroup
+  Stream get onNewMemberAddedToGroup => throw UnimplementedError();
+
+  // @override
+  // //  implement onProgressChanged
+  // Stream get onProgressChanged => throw UnimplementedError();
+
+  @override
+  //  implement onRemoteVideoTrackAdded
+  Stream get onRemoteVideoTrackAdded => throw UnimplementedError();
+
+  // @override
+  // //  implement onSuccess
+  // Stream get onSuccess => throw UnimplementedError();
+
+  @override
+  //  implement onTrackAdded
+  Stream get onTrackAdded => throw UnimplementedError();
+
+  @override
+  //  implement onUploadDownloadProgressChanged
+  Stream get onUploadDownloadProgressChanged => throw UnimplementedError();
+
+  @override
+  //  implement onUserSpeaking
+  Stream get onUserSpeaking => throw UnimplementedError();
+
+  @override
+  //  implement onUserStoppedSpeaking
+  Stream get onUserStoppedSpeaking => throw UnimplementedError();
+
+  @override
+  //  implement onWebChatPasswordChanged
+  Stream get onWebChatPasswordChanged => throw UnimplementedError();
+
+  @override
+  Future<String?> openAudioFilePicker() {
+    //  implement openAudioFilePicker
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> recentChatPinnedCount() {
+    //  implement recentChatPinnedCount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> refreshAndGetAuthToken(
+      Function(FlyResponse response)? callback) {
+    //  implement refreshAndGetAuthToken
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> registerUser(String userIdentifier,
+      {String fcmToken = "",
+      bool isForceRegister = true,
+      required Function(FlyResponse response) callback}) {
+    //  implement registerUser
+    throw UnimplementedError();
+  }
+
+  @override
+  removeCustomValue(String messageId, String key) {
+    //  implement removeCustomValue
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeGroupProfileImage(
+      String jid, Function(FlyResponse response)? callback) {
+    //  implement removeGroupProfileImage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeMemberFromGroup(String groupjid, String userjid,
+      Function(FlyResponse response)? callback) {
+    //  implement removeMemberFromGroup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeProfileImage(Function(FlyResponse response)? callback) {
+    //  implement removeProfileImage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future reportChatOrUser(String jid, String chatType, String? messageId) {
+    //  implement reportChatOrUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> reportUserOrMessages(String jid, String type, String? messageId,
+      Function(FlyResponse response)? callback) {
+    //  implement reportUserOrMessages
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> requestVideoCallSwitch() {
+    //  implement requestVideoCallSwitch
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> revokeContactSync(Function(FlyResponse response)? callback) {
+    //  implement revokeContactSync
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> routeAudioTo({required String routeType}) {
+    //  implement routeAudioTo
+    throw UnimplementedError();
+  }
+
+  @override
+  saveMediaSettings(
+      bool photos, bool videos, bool audio, bool documents, int networkType) {
+    //  implement saveMediaSettings
+    throw UnimplementedError();
+  }
+
+  @override
+  saveUnsentMessage(String jid, String message) {
+    //  implement saveUnsentMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> searchConversation(String searchKey,
+      [String? jidForSearch,
+      bool globalSearch = true,
+      Function(FlyResponse response)? callback]) {
+    //  implement searchConversation
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> selectedAudioDevice() {
+    //  implement selectedAudioDevice
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> sendAudioMessage(String jid, String filePath, bool isRecorded,
+      String duration, String replyMessageId,
+      {String? audioFileUrl, String? topicId}) {
+    //  implement sendAudioMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> sendContactMessage(List<String> contactList, String jid,
+      String contactName, String replyMessageId,
+      {String? topicId}) {
+    //  implement sendContactMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> sendContactUsInfo(String title, String description,
+      Function(FlyResponse response)? callback) {
+    //  implement sendContactUsInfo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> sendDocumentMessage(
+      String jid, String documentPath, String replyMessageId,
+      {String? fileUrl, String? topicId}) {
+    //  implement sendDocumentMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> sendImageMessage(
+      String jid, String filePath, String? caption, String? replyMessageID,
+      {String? imageFileUrl, String? topicId}) {
+    //  implement sendImageMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> sendLocationMessage(
+      String jid, double latitude, double longitude, String replyMessageId,
+      {String? topicId}) {
+    //  implement sendLocationMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> sendMediaFileMessage(
+      {required FileMessage messageParams,
+      required Function(FlyResponse response) callback}) {
+    //  implement sendMediaFileMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> sendMessage(
+      {required MessageParams messageParams,
+      required Function(FlyResponse response) callback}) {
+    //  implement sendMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> sendTextMessage(
+      String message, String jid, String replyMessageId,
+      {String? topicId}) {
+    //  implement sendTextMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  sendTypingGoneStatus(String toJid, String chattype) {
+    //  implement sendTypingGoneStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  sendTypingStatus(String toJid, String chattype) {
+    //  implement sendTypingStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> sendVideoMessage(
+      String jid, String filePath, String? caption, String? replyMessageID,
+      {String? videoFileUrl,
+      num? videoDuration,
+      String? thumbImageBase64,
+      String? topicId}) {
+    //  implement sendVideoMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> sentFileMessage(String? file, String jid) {
+    //  implement sentFileMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  setCustomValue(String messageId, String key, String value) {
+    //  implement setCustomValue
+    throw UnimplementedError();
+  }
+
+  @override
+  Future setDefaultNotificationSound() {
+    //  implement setDefaultNotificationSound
+    throw UnimplementedError();
+  }
+
+  @override
+  setMediaAutoDownload(bool enable) {
+    //  implement setMediaAutoDownload
+    throw UnimplementedError();
+  }
+
+  @override
+  setMediaEncryption(bool encryption) {
+    //  implement setMediaEncryption
+    throw UnimplementedError();
+  }
+
+  @override
+  setMuteNotification(bool enable) {
+    //  implement setMuteNotification
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setMyBusyStatus(
+      String busyStatus, Function(FlyResponse response)? callback) {
+    //  implement setMyBusyStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setMyProfileStatus(String status, String statusId,
+      Function(FlyResponse response)? callback) {
+    //  implement setMyProfileStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  setNotificationSound(bool enable) {
+    //  implement setNotificationSound
+    throw UnimplementedError();
+  }
+
+  @override
+  setNotificationUri(String uri) {
+    //  implement setNotificationUri
+    throw UnimplementedError();
+  }
+
+  @override
+  setNotificationVibration(bool enable) {
+    //  implement setNotificationVibration
+    throw UnimplementedError();
+  }
+
+  @override
+  setOnGoingChatUser(String jid) {
+    //  implement setOnGoingChatUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future setRegionCode(String regionCode) {
+    //  implement setRegionCode
+    throw UnimplementedError();
+  }
+
+  @override
+  //  implement setTypingStatus
+  Stream get setTypingStatus => throw UnimplementedError();
+
+  @override
+  setTypingStatusListener() {
+    //  implement setTypingStatusListener
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> showCustomTones() {
+    //  implement showCustomTones
+    throw UnimplementedError();
+  }
+
+  @override
+  //  implement showOrUpdateOrCancelNotification
+  Stream get showOrUpdateOrCancelNotification => throw UnimplementedError();
+
+  @override
+  startBackup() {
+    //  implement startBackup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future switchCamera() {
+    //  implement switchCamera
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool?> syncCallLogs() {
     //  implement syncCallLogs
     throw UnimplementedError();
   }
 
-/*@override
-  Future<bool?> changeCallType({required String switchType}) {
-    // implement changeCallType
+  @override
+  Future<void> syncContacts(
+      bool isfirsttime, Function(FlyResponse response)? callback) {
+    //  implement syncContacts
     throw UnimplementedError();
   }
 
   @override
-  Future reRouteAudio() {
-    // implement reRouteAudio
+  Future<void> unFavouriteAllFavouriteMessages(
+      Function(FlyResponse response)? callback) {
+    //  implement unFavouriteAllFavouriteMessages
     throw UnimplementedError();
-  }*/
+  }
+
+  @override
+  Future<void> unblockUser(
+      String userJID, Function(FlyResponse response)? callback) {
+    //  implement unblockUser
+    throw UnimplementedError();
+  }
+
+  @override
+  //  implement unblockedThisUser
+  Stream get unblockedThisUser => throw UnimplementedError();
+
+  @override
+  Future<bool?> updateArchiveUnArchiveChat(String jid, bool isArchived) {
+    //  implement updateArchiveUnArchiveChat
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setChatArchived(
+      String jid, bool isArchived, Function(FlyResponse response)? callback) {
+    //  implement setChatArchived
+    throw UnimplementedError();
+  }
+
+  @override
+  updateChatMuteStatus(String jid, bool muteStatus) {
+    //  implement updateChatMuteStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateFavouriteStatus(
+      String messageID,
+      String chatUserJID,
+      bool isFavourite,
+      String chatType,
+      Function(FlyResponse response)? callback) {
+    //  implement updateFavouriteStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateFcmToken(
+      String firebasetoken, Function(FlyResponse response)? callback) {
+    //  implement updateFcmToken
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateGroupName(
+      String jid, String name, Function(FlyResponse response)? callback) {
+    //  implement updateGroupName
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateGroupProfileImage(
+      String jid, String file, Function(FlyResponse response)? callback) {
+    //  implement updateGroupProfileImage
+    throw UnimplementedError();
+  }
+
+  @override
+  updateMediaDownloadStatus(String mediaMessageId, int progress,
+      int downloadStatus, num dataTransferred) {
+    //  implement updateMediaDownloadStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  updateMediaUploadStatus(String mediaMessageId, int progress, int uploadStatus,
+      num dataTransferred) {
+    //  implement updateMediaUploadStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateMyProfile(String name, String? email, String? mobile,
+      String? status, String? image, Function(FlyResponse response) callback) {
+    //  implement updateMyProfile
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateMyProfileImage(
+      String image, Function(FlyResponse response) callback) {
+    //  implement updateMyProfileImage
+    throw UnimplementedError();
+  }
+
+  @override
+  updateRecentChatPinStatus(String jid, bool pinStatus) {
+    //  implement updateRecentChatPinStatus
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> uploadMedia(String messageid) {
+    //  implement uploadMedia
+    throw UnimplementedError();
+  }
+
+  @override
+  //  implement userBlockedMe
+  Stream get userBlockedMe => throw UnimplementedError();
+
+  @override
+  //  implement userCameOnline
+  Stream get userCameOnline => throw UnimplementedError();
+
+  @override
+  //  implement userDeletedHisProfile
+  Stream get userDeletedHisProfile => throw UnimplementedError();
+
+  @override
+  //  implement userProfileFetched
+  Stream get userProfileFetched => throw UnimplementedError();
+
+  @override
+  //  implement userUnBlockedMe
+  Stream get userUnBlockedMe => throw UnimplementedError();
+
+  @override
+  //  implement userUpdatedHisProfile
+  Stream get userUpdatedHisProfile => throw UnimplementedError();
+
+  @override
+  //  implement userWentOffline
+  Stream get userWentOffline => throw UnimplementedError();
+
+  @override
+  //  implement usersIBlockedListFetched
+  Stream get usersIBlockedListFetched => throw UnimplementedError();
+
+  @override
+  //  implement usersProfilesFetched
+  Stream get usersProfilesFetched => throw UnimplementedError();
+
+  @override
+  //  implement usersWhoBlockedMeListFetched
+  Stream get usersWhoBlockedMeListFetched => throw UnimplementedError();
+
+  @override
+  Future<String?> verifyToken(String userName, String token) {
+    //  implement verifyToken
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> webLoginDetailsCleared() {
+    //  implement webLoginDetailsCleared
+    throw UnimplementedError();
+  }
+
+  @override
+  setMessageEventListener(MessageEventListeners messageEventListeners) {
+    // implement setMessageEventListener
+    throw UnimplementedError();
+  }
+
+  @override
+  setConnectionEventListener(
+      ConnectionEventListeners connectionEventListeners) {
+    // implement setConnectionEventListener
+    throw UnimplementedError();
+  }
+
+  @override
+  setProfileEventsListener(ProfileEventListeners profileEventListeners) {
+    // implement setProfileEventsListener
+    throw UnimplementedError();
+  }
+
+  @override
+  setGroupEventsListener(GroupEventListeners groupEventListeners) {
+    // implement setGroupEventsListener
+    throw UnimplementedError();
+  }
+
+  @override
+  setCallEventListener(CallEventListeners callEventListeners) {
+    // implement setCallEventListener
+    throw UnimplementedError();
+  }
 }
 
 void main() {
-  final FlyChatFlutterPlatform initialPlatform = FlyChatFlutterPlatform.instance;
+  final FlyChatFlutterPlatform initialPlatform =
+      FlyChatFlutterPlatform.instance;
 
   test('$MethodChannelFlyChatFlutter is the default instance', () {
     expect(initialPlatform, isInstanceOf<MethodChannelFlyChatFlutter>());

@@ -5,27 +5,35 @@
 import 'dart:convert';
 import 'dart:io';
 
-RecentChat recentChatFromJson(String str) => RecentChat.fromJson(json.decode(str));
+RecentChat recentChatFromJson(String str) =>
+    RecentChat.fromJson(json.decode(str));
 
 String recentChatToJson(RecentChat data) => json.encode(data.toJson());
 
-String convertRecentChatFromJson(String? str) =>
-    (str == null || str.isEmpty) ? "" : recentChatToJson(recentChatFromJson(str));
+String convertRecentChatFromJson(String? str) => (str == null || str.isEmpty)
+    ? ""
+    : recentChatToJson(recentChatFromJson(str));
 
-RecentChatData recentChatDataFromJson(String str) => RecentChatData.fromJson(json.decode(str));
+RecentChatData recentChatDataFromJson(String str) =>
+    RecentChatData.fromJson(json.decode(str));
 
 String recentChatDataToJson(RecentChatData str) => json.encode(str.toJson());
 
 List<RecentChat> recentChatListFromJson(String str) =>
     List<RecentChat>.from(json.decode(str).map((x) => RecentChat.fromJson(x)));
 
-String recentChatListToJson(List<RecentChat> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String recentChatListToJson(List<RecentChat> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 String convertRecentChatListFromJson(String? str) =>
-    (str == null || str.isEmpty) ? "" : recentChatListToJson(recentChatListFromJson(str));
+    (str == null || str.isEmpty)
+        ? ""
+        : recentChatListToJson(recentChatListFromJson(str));
 
 String convertRecentChatDataJsonFromString(String? str) =>
-    (str == null || str.isEmpty) ? "" : recentChatDataToJson(recentChatDataFromJson(str));
+    (str == null || str.isEmpty)
+        ? ""
+        : recentChatDataToJson(recentChatDataFromJson(str));
 
 class RecentChatData {
   RecentChatData({
@@ -35,11 +43,16 @@ class RecentChatData {
   List<RecentChat>? data;
 
   factory RecentChatData.fromJson(Map<String, dynamic> json) => RecentChatData(
-        data: json["data"] == null ? null : List<RecentChat>.from(json["data"].map((x) => RecentChat.fromJson(x))),
+        data: json["data"] == null
+            ? null
+            : List<RecentChat>.from(
+                json["data"].map((x) => RecentChat.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data == null
+            ? null
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
       };
 }
 
@@ -104,12 +117,15 @@ class RecentChat {
 
   factory RecentChat.fromJson(Map<String, dynamic> json) => RecentChat(
         contactType: getContactType(json),
-        isAdminBlocked: Platform.isAndroid ? json["isAdminBlocked"] : json["isBlockedByAdmin"],
+        isAdminBlocked: Platform.isAndroid
+            ? json["isAdminBlocked"]
+            : json["isBlockedByAdmin"],
         isBlocked: json["isBlocked"],
         isBlockedMe: json["isBlockedMe"],
         isBroadCast: json["isBroadCast"],
         isChatArchived: json["isChatArchived"],
-        isPrivateChat: Platform.isAndroid ? json["isChatLocked"] : json["isPrivateChat"],
+        isPrivateChat:
+            Platform.isAndroid ? json["isChatLocked"] : json["isPrivateChat"],
         isChatPinned: json["isChatPinned"],
         isConversationUnRead: json["isConversationUnRead"],
         isGroup: json["isGroup"],
@@ -218,5 +234,7 @@ String? getMessageType(dynamic type) {
   if (type == null) {
     return null;
   }
-  return type.toString().toUpperCase() == "FILE" ? "DOCUMENT" : type.toString().toUpperCase();
+  return type.toString().toUpperCase() == "FILE"
+      ? "DOCUMENT"
+      : type.toString().toUpperCase();
 }

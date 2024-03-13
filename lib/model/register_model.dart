@@ -4,7 +4,8 @@
 
 import 'dart:convert';
 
-RegisterModel registerModelFromJson(String str) => RegisterModel.fromJson(json.decode(str));
+RegisterModel registerModelFromJson(String str) =>
+    RegisterModel.fromJson(json.decode(str));
 
 String registerModelToJson(RegisterModel data) => json.encode(data.toJson());
 
@@ -190,8 +191,12 @@ class Config {
         pinExpireDays: json["pinExpireDays"],
         pinTimeOut: json["pinTimeOut"],
         fileSizeLimit: json["fileSizeLimit"],
-        stuns: json["stuns"] == null ? [] : List<String>.from(json["stuns"]!.map((x) => x)),
-        turns: json["turns"] == null ? [] : List<Turn>.from(json["turns"]!.map((x) => Turn.fromJson(x))),
+        stuns: json["stuns"] == null
+            ? []
+            : List<String>.from(json["stuns"]!.map((x) => x)),
+        turns: json["turns"] == null
+            ? []
+            : List<Turn>.from(json["turns"]!.map((x) => Turn.fromJson(x))),
         liveStreamingSignalServer: json["liveStreamingSignalServer"],
         isLiveStreamingEnabled: json["isLiveStreamingEnabled"],
         sipcallEnabled: json["sipcallEnabled"],
@@ -242,7 +247,9 @@ class Config {
         "pinTimeOut": pinTimeOut,
         "fileSizeLimit": fileSizeLimit,
         "stuns": stuns == null ? [] : List<dynamic>.from(stuns!.map((x) => x)),
-        "turns": turns == null ? [] : List<dynamic>.from(turns!.map((x) => x.toJson())),
+        "turns": turns == null
+            ? []
+            : List<dynamic>.from(turns!.map((x) => x.toJson())),
         "liveStreamingSignalServer": liveStreamingSignalServer,
         "isLiveStreamingEnabled": isLiveStreamingEnabled,
         "sipcallEnabled": sipcallEnabled,

@@ -5,12 +5,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-CallLogModel callLogListFromJson(String str) => CallLogModel.fromJson(json.decode(str));
+CallLogModel callLogListFromJson(String str) =>
+    CallLogModel.fromJson(json.decode(str));
 
 String callLogListToJson(CallLogModel data) => json.encode(data.toJson());
 
-String convertCallLogsToJson(String? str) =>
-    (str == null || str.isEmpty) ? "" : callLogListToJson(callLogListFromJson(str));
+String convertCallLogsToJson(String? str) => (str == null || str.isEmpty)
+    ? ""
+    : callLogListToJson(callLogListFromJson(str));
 
 class CallLogModel {
   List<CallLog>? data;
@@ -22,12 +24,16 @@ class CallLogModel {
   });
 
   factory CallLogModel.fromJson(Map<String, dynamic> json) => CallLogModel(
-        data: json["data"] == null ? [] : List<CallLog>.from(json["data"]!.map((x) => CallLog.fromJson(x))),
+        data: json["data"] == null
+            ? []
+            : List<CallLog>.from(json["data"]!.map((x) => CallLog.fromJson(x))),
         totalPages: json["total_pages"],
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data == null
+            ? []
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
         "total_pages": totalPages,
       };
 }
@@ -78,14 +84,18 @@ class CallLog {
 
   factory CallLog.fromJson(Map<String, dynamic> json) => CallLog(
       callMode: json["callMode"],
-      callState: Platform.isAndroid ? json['callState'] : getCallState(stateValue: json['callState']),
+      callState: Platform.isAndroid
+          ? json['callState']
+          : getCallState(stateValue: json['callState']),
       callTime: json["callTime"],
       callType: json["callType"],
       callerDevice: json["callerDevice"],
       endTime: json["endTime"],
       fromUser: json["fromUser"],
       groupId: json["groupId"],
-      inviteUserList: json["inviteUserList"] == null ? [] : List<String>.from(json["inviteUserList"]!.map((x) => x)),
+      inviteUserList: json["inviteUserList"] == null
+          ? []
+          : List<String>.from(json["inviteUserList"]!.map((x) => x)),
       isCarbonAnswered: json["isCarbonAnswered"],
       isDeleted: json["isDeleted"],
       isDisplay: json["isDisplay"],
@@ -95,7 +105,9 @@ class CallLog {
       sessionStatus: json["sessionStatus"],
       startTime: json["startTime"],
       toUser: json["toUser"],
-      userList: json["userList"] == null ? [] : List<String>.from(json["userList"]!.map((x) => x)),
+      userList: json["userList"] == null
+          ? []
+          : List<String>.from(json["userList"]!.map((x) => x)),
       nickName: json['nickName']);
 
   Map<String, dynamic> toJson() => {
@@ -107,7 +119,9 @@ class CallLog {
         "endTime": endTime,
         "fromUser": fromUser,
         "groupId": groupId,
-        "inviteUserList": inviteUserList == null ? [] : List<String>.from(inviteUserList!.map((x) => x)),
+        "inviteUserList": inviteUserList == null
+            ? []
+            : List<String>.from(inviteUserList!.map((x) => x)),
         "isCarbonAnswered": isCarbonAnswered,
         "isDeleted": isDeleted,
         "isDisplay": isDisplay,
@@ -117,7 +131,8 @@ class CallLog {
         "sessionStatus": sessionStatus,
         "startTime": startTime,
         "toUser": toUser,
-        "userList": userList == null ? [] : List<dynamic>.from(userList!.map((x) => x)),
+        "userList":
+            userList == null ? [] : List<dynamic>.from(userList!.map((x) => x)),
         "nickName": nickName
       };
 }

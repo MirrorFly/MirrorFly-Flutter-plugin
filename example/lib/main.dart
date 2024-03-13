@@ -10,7 +10,7 @@ Future<void> main() async {
         if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);
         } else {
-          LogMessage.d("onFailure", response.exception?.message.toString());
+          LogMessage.d("onFailure", response.errorMessage.toString());
         }
         runApp(const MyApp());
       }); //Must be same as AppGroups given in Xcode Capability

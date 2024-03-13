@@ -50,9 +50,9 @@ public class OnConnectedStreamHandler: EventStreamHandler { }
 public class OnDisconnectedStreamHandler: EventStreamHandler { }
 public class OnConnectionNotAuthorizedStreamHandler: EventStreamHandler { }
 //public class ConnectionFailedStreamHandler: EventStreamHandler { }
-public class ConnectionSuccessStreamHandler: EventStreamHandler { }
+//public class ConnectionSuccessStreamHandler: EventStreamHandler { }
 public class OnWebChatPasswordChangedStreamHandler: EventStreamHandler { }
-public class OnFailureStreamHandler: EventStreamHandler { }
+//public class OnFailureStreamHandler: EventStreamHandler { }
 public class OnProgressChangedStreamHandler: EventStreamHandler { }
 public class OnSuccessStreamHandler: EventStreamHandler { }
 
@@ -76,4 +76,6 @@ public class OnMuteStatusUpdatedStreamHandler: EventStreamHandler { }
 public class OnUserSpeakingStreamHandler: EventStreamHandler { }
 public class OnUserStoppedSpeakingStreamHandler: EventStreamHandler { }
 public class OnMissedCallStreamHandler: EventStreamHandler { }
-public class OncallLogUpdateStreamHandler: EventStreamHandler { }
+public class OnCallLogUpdateStreamHandler: EventStreamHandler { }
+public class OnCallLogDeletedStreamHandler: EventStreamHandler { }
+public class ClearAllCallLogChannelStreamHandler: EventStreamHandler { }

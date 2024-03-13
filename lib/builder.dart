@@ -39,7 +39,10 @@ class ChatBuilder {
 }
 
 class GroupConfig {
-  GroupConfig({required this.enableGroupCreation, required this.maxMembersCount, this.adminOnlyAddRemoveAccess = true});
+  GroupConfig(
+      {required this.enableGroupCreation,
+      required this.maxMembersCount,
+      this.adminOnlyAddRemoveAccess = true});
 
   bool enableGroupCreation;
   int maxMembersCount;

@@ -4,10 +4,11 @@
 
 import 'dart:convert';
 
-List<AudioDevices> audioDevicesFromJson(String str) =>
-    List<AudioDevices>.from(json.decode(str).map((x) => AudioDevices.fromJson(x)));
+List<AudioDevices> audioDevicesFromJson(String str) => List<AudioDevices>.from(
+    json.decode(str).map((x) => AudioDevices.fromJson(x)));
 
-String audioDevicesToJson(List<AudioDevices> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String audioDevicesToJson(List<AudioDevices> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class AudioDevices {
   String? id;

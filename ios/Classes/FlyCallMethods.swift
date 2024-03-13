@@ -95,7 +95,7 @@ import MirrorFlySDK
 //        NSLog("selectedAudioDevice \(selectedAudioDevice)")
 //    }
    
-    func makeCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
+    func makeVoiceCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["user_jid"] as? String ?? ""
         

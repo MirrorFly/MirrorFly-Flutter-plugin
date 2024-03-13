@@ -5,12 +5,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-ProfileModel profileDataFromJson(String str) => ProfileModel.fromJson(json.decode(str));
+ProfileModel profileDataFromJson(String str) =>
+    ProfileModel.fromJson(json.decode(str));
 
 String profileDataToJson(ProfileModel data) => json.encode(data.toJson());
 
-String convertProfileJsonFromString(String? str) =>
-    (str == null || str.isEmpty) ? "" : json.encode(profileDataFromJson(str).toJson());
+String convertProfileJsonFromString(String? str) => (str == null || str.isEmpty)
+    ? ""
+    : json.encode(profileDataFromJson(str).toJson());
 
 class ProfileModel {
   ProfileModel({
@@ -74,7 +76,9 @@ class Profile {
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
         email: json["email"],
         image: json["image"],
-        isAdminBlocked: Platform.isAndroid ? json["isAdminBlocked"] : json["isBlockedByAdmin"],
+        isAdminBlocked: Platform.isAndroid
+            ? json["isAdminBlocked"]
+            : json["isBlockedByAdmin"],
         isBlocked: json["isBlocked"],
         isBlockedMe: json["isBlockedMe"],
         isGroupAdmin: json["isGroupAdmin"],

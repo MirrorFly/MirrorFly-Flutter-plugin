@@ -1066,14 +1066,30 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun setTypingStatus(singleOrGroupJid: String, userId: String, composing: String) {
-        val map = JSONObject()
-        map.put("singleOrgroupJid", singleOrGroupJid)
-        map.put("userJid", userId)
+       /* val map = JSONObject()
         map.put("status", composing)
+        if(GroupManager.isValidGroupJid(singleOrGroupJid)){
+            map.put("groupJid", if(GroupManager.isValidGroupJid(singleOrGroupJid)) singleOrGroupJid else "")
+            map.put("userJid", userId)
+            FlyMethodConstants.updateChatSinkValue(
+                Constants.onGroupTypingStatusChannel,
+                map.toString()
+            )
+        }else {
+            map.put("userJid", singleOrGroupJid)
+            FlyMethodConstants.updateChatSinkValue(
+                Constants.onChatTypingStatusChannel,
+                map.toString()
+            )
+        }*/
+        val map2 = JSONObject()
+        map2.put("singleOrgroupJid", singleOrGroupJid)
+        map2.put("userJid", userId)
+        map2.put("status", composing)
 //        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
             Constants.setTypingStatusChannel,
-            map.toString()
+            map2.toString()
         )
     }
 
@@ -1384,11 +1400,20 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onCallLogsDeleted(isClearAll: Boolean, callIdList: ArrayList<String>) {
         LogMessage.d("deleteCallLog ", "onCallLogsDeleted Called")
-        val map = JSONObject()
-        map.put("callIdList", callIdList)
-        map.put("isClearAll", isClearAll)
-//        onCallLogsDeletedStreamHandler.onCallLogsDeleted?.success(map.toString())
-        FlyMethodConstants.updateCallSinkValue(Constants.onCallLogsDeletedChannel, map.toString())
+        if(!isClearAll) {
+            callIdList.forEach { item ->
+                FlyMethodConstants.updateCallSinkValue(
+                    Constants.onCallLogDeletedChannel,
+                    item
+                )
+            }
+        }else{
+            FlyMethodConstants.updateCallSinkValue(
+                Constants.clearAllCallLogChannel,
+                true
+            )
+        }
+
     }
 
     override fun onCallLogsUpdated() {

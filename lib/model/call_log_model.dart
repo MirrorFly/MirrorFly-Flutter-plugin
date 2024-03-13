@@ -4,7 +4,8 @@
 
 import 'dart:convert';
 
-CallLogModel callLogListFromJson(String str) => CallLogModel.fromJson(json.decode(str));
+CallLogModel callLogListFromJson(String str) =>
+    CallLogModel.fromJson(json.decode(str));
 
 String callLogListToJson(CallLogModel data) => json.encode(data.toJson());
 
@@ -18,12 +19,17 @@ class CallLogModel {
   });
 
   factory CallLogModel.fromJson(Map<String, dynamic> json) => CallLogModel(
-        data: json["data"] == null ? [] : List<CallLogData>.from(json["data"]!.map((x) => CallLogData.fromJson(x))),
+        data: json["data"] == null
+            ? []
+            : List<CallLogData>.from(
+                json["data"]!.map((x) => CallLogData.fromJson(x))),
         totalPages: json["total_pages"],
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data == null
+            ? []
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
         "total_pages": totalPages,
       };
 }
@@ -81,7 +87,9 @@ class CallLogData {
       endTime: json["endTime"],
       fromUser: json["fromUser"],
       groupId: json["groupId"],
-      inviteUserList: json["inviteUserList"] == null ? [] : List<String>.from(json["inviteUserList"]!.map((x) => x)),
+      inviteUserList: json["inviteUserList"] == null
+          ? []
+          : List<String>.from(json["inviteUserList"]!.map((x) => x)),
       isCarbonAnswered: json["isCarbonAnswered"],
       isDeleted: json["isDeleted"],
       isDisplay: json["isDisplay"],
@@ -91,7 +99,9 @@ class CallLogData {
       sessionStatus: json["sessionStatus"],
       startTime: json["startTime"],
       toUser: json["toUser"],
-      userList: json["userList"] == null ? [] : List<String>.from(json["userList"]!.map((x) => x)),
+      userList: json["userList"] == null
+          ? []
+          : List<String>.from(json["userList"]!.map((x) => x)),
       nickName: json['nickName']);
 
   Map<String, dynamic> toJson() => {
@@ -103,7 +113,9 @@ class CallLogData {
         "endTime": endTime,
         "fromUser": fromUser,
         "groupId": groupId,
-        "inviteUserList": inviteUserList == null ? [] : List<String>.from(inviteUserList!.map((x) => x)),
+        "inviteUserList": inviteUserList == null
+            ? []
+            : List<String>.from(inviteUserList!.map((x) => x)),
         "isCarbonAnswered": isCarbonAnswered,
         "isDeleted": isDeleted,
         "isDisplay": isDisplay,
@@ -113,7 +125,8 @@ class CallLogData {
         "sessionStatus": sessionStatus,
         "startTime": startTime,
         "toUser": toUser,
-        "userList": userList == null ? [] : List<dynamic>.from(userList!.map((x) => x)),
+        "userList":
+            userList == null ? [] : List<dynamic>.from(userList!.map((x) => x)),
         "nickName": nickName
       };
 }

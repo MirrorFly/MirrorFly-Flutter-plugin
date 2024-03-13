@@ -188,10 +188,14 @@ class EditMessage {
 }
 
 extension ExtractEditMessage on EditMessage {
-  Map<String, dynamic> toMap() =>
-      {'messageId': messageId, 'editedTextContent': editedTextContent, 'mentionedUsersIds': mentionedUsersIds};
+  Map<String, dynamic> toMap() => {
+        'messageId': messageId,
+        'editedTextContent': editedTextContent,
+        'mentionedUsersIds': mentionedUsersIds
+      };
 }
 
+/// Represents parameters for constructing a message.
 class MessageParams {
   String toJid;
   String? replyMessageId;
@@ -218,6 +222,7 @@ class MessageParams {
     this.topicId = "",
   });
 
+  /// Constructs a [MessageParams] object for a Text message.
   factory MessageParams.text({
     required String toJid,
     String? replyMessageId,
@@ -233,6 +238,7 @@ class MessageParams {
     );
   }
 
+  /// Constructs a [MessageParams] object for a Location message.
   factory MessageParams.location({
     required String toJid,
     String? replyMessageId,
@@ -248,6 +254,7 @@ class MessageParams {
     );
   }
 
+  /// Constructs a [MessageParams] object for a Contact message.
   factory MessageParams.contact({
     required String toJid,
     String? replyMessageId,
@@ -263,6 +270,7 @@ class MessageParams {
     );
   }
 
+  /// Constructs a [MessageParams] object for a Image message.
   factory MessageParams.image({
     required String toJid,
     String? replyMessageId,
@@ -278,6 +286,7 @@ class MessageParams {
     );
   }
 
+  /// Constructs a [MessageParams] object for a Audio message.
   factory MessageParams.audio({
     required String toJid,
     String? replyMessageId,
@@ -294,6 +303,7 @@ class MessageParams {
     );
   }
 
+  /// Constructs a [MessageParams] object for a Video message.
   factory MessageParams.video({
     required String toJid,
     String? replyMessageId,
@@ -309,6 +319,7 @@ class MessageParams {
     );
   }
 
+  /// Constructs a [MessageParams] object for a Document message.
   factory MessageParams.document({
     required String toJid,
     String? replyMessageId,

@@ -9,6 +9,9 @@ import Foundation
 
 class FLErrorCode {
     
+    ///
+    /// Reverted back to old code, waiting doe Android Error Codes to be done to match the exact same
+    ///
     /// 807, 1000, 1009
     ///  Called When the method Channel gives Fialure Response
     public static let INVALID_DATA : String = "500"//"FL-422"
@@ -101,6 +104,9 @@ class FLErrorMessage {
     public static let CREATE_TOPIC_FAILED : String = "Error while creating Topic"
     public static let FETCH_TOPIC_FAILED : String = "Error while fetching Topic List"
     public static let INVALID_LOCATION : String = "Invalid Location"
+    public static let UNFAVOURITE_MESSAGE_FAILED : String = "Error while unFavourite Messages"
+    public static let QR_LOGIN_FAILED : String = "Error while processing QR login"
+    public static let CONTACT_US_FAILED_MESSAGE : String = "Error while submitting the reponse, Please try after sometime"
     
     
     

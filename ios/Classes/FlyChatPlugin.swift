@@ -28,13 +28,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         registrar.addMethodCallDelegate(instance, channel: channel)
         instance.setupEventChannel(registrar: registrar)
         
-//        let flyCalls = FlyCall(registrar: registrar)
-//
         FlyCall.register(with: registrar)
         
-        
-//        flyCallMethods.setupMethodChannel(registrar: registrar)
-//        flyCallMethods.setupEventChannel(registrar: registrar)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -439,7 +434,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(message.messageId, forKey: "message_id")
-        jsonObject.setValue(progressPercentageString, forKey: "progress_percentage")
+        jsonObject.setValue(Int(progressPercentageString), forKey: "progress_percentage")
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onUploadDownloadProgressChangedChannel, value: jsonString)
@@ -467,13 +462,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
             let chatMessageJson = chatMessage?.toJson()
             
             self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageStatusUpdatedChannel, value: chatMessageJson)
-//            if(messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
-//                print("onMessagesDeletedforEveryone event\(String(describing: chatMessageJson))")
-//                messageStatusUpdatedStreamHandler?.onMessageStatusUpdated?(chatMessageJson)
-//
-//            }else{
-//                print("Message status Stream Handler is Nil")
-//            }
+
         }
         
     }
@@ -508,13 +497,19 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     
     public func didBlockOrUnblockGroup(groupJid: String, isBlocked: Bool) {
         
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(groupJid, forKey: "jid")
+        jsonObject.setValue("groupchat", forKey: "type")
+        jsonObject.setValue(isBlocked, forKey: "status")
+        let jsonString = pluginDictToJson(dictionary: jsonObject)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onAdminBlockedOtherUser_channel, value: jsonString)
     }
     
     public func didBlockOrUnblockContact(userJid: String, isBlocked: Bool) {
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userJid, forKey: "jid")
-        jsonObject.setValue("", forKey: "type")
+        jsonObject.setValue("chat", forKey: "type")
         jsonObject.setValue(isBlocked, forKey: "status")
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onAdminBlockedOtherUser_channel, value: jsonString)
