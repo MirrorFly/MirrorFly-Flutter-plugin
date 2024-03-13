@@ -2,6 +2,28 @@ package com.mirrorfly.mirrorfly_plugin
 
 import io.flutter.plugin.common.EventChannel
 
+
+interface FlyEventSinkProvider {
+    fun setEventSinkValue(value: Any?)
+}
+
+open class EventStreamHandler : EventChannel.StreamHandler, FlyEventSinkProvider {
+    private var eventSink: EventChannel.EventSink? = null
+
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
+        eventSink = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        eventSink = null
+    }
+
+    override fun setEventSinkValue(value: Any?) {
+        eventSink?.success(value)
+    }
+}
+
+/*
 object MessageReceivedStreamHandler : EventChannel.StreamHandler {
 
     var onMessageReceived: EventChannel.EventSink? = null
@@ -712,4 +734,4 @@ object onCallLogsDeletedStreamHandler : EventChannel.StreamHandler {
     override fun onCancel(arguments: Any?) {
         onCallLogsDeleted = null
     }
-}
+}*/

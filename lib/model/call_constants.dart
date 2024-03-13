@@ -58,17 +58,24 @@ class AudioLevel {
   static const String audioHigh = "audio_high";
   static const String audioPeak = "audio_peak";
 }
+
 extension AudioLevelExtension on num {
   String getAudioLevel() {
-    switch(this){
-      case 1: return AudioLevel.audioTooLow;
-      case 3: return AudioLevel.audioLow;
-      case 4: return AudioLevel.audioMedium;
-      case 5: return AudioLevel.audioHigh;
-      default: return AudioLevel.audioPeak;
+    switch (this) {
+      case 1:
+        return AudioLevel.audioTooLow;
+      case 3:
+        return AudioLevel.audioLow;
+      case 4:
+        return AudioLevel.audioMedium;
+      case 5:
+        return AudioLevel.audioHigh;
+      default:
+        return AudioLevel.audioPeak;
     }
   }
 }
+
 class CallStatus {
   static const String connecting = "Connecting";
   static const String ringing = "Ringing";
@@ -101,4 +108,9 @@ class CallState {
   static const int missedCall = 0;
   static const int outgoingCall = 1;
   static const int incomingCall = 2;
+}
+
+class CallDirection {
+  static const String outgoing = "Outgoing";
+  static const String incoming = "Incoming";
 }

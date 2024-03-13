@@ -1,5 +1,6 @@
 class TopicMetaData {
   TopicMetaData({this.key, this.value});
+
   String? key;
   String? value;
 }
