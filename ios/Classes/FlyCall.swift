@@ -91,22 +91,6 @@ import PushKit
             CallManager.incomingUserJidArr.removeAll()
             CallManager.disconnectCall()
             
-//            let jsonObject: NSMutableDictionary = NSMutableDictionary()
-//            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
-//            jsonObject.setValue("LOCAL_HANGUP", forKey: "callAction")
-//            if CallManager.isOneToOneCall()  {
-//                jsonObject.setValue("onetoone", forKey: "callMode")
-//            }else{
-//                jsonObject.setValue("onetomany", forKey: "callMode")
-//            }
-//            if CallManager.getCallType() == .Audio {
-//                jsonObject.setValue("audio", forKey: "callType")
-//            } else {
-//                jsonObject.setValue("video", forKey: "callType")
-//            }
-//            let callUpdate = pluginDictToJson(dictionary: jsonObject)
-//            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
-            
             result(true)
         }else{
             if (call.method == "makeVoiceCall" || call.method == "makeVideoCall" || call.method == "makeGroupVideoCall" || call.method == "makeGroupVoiceCall"){
@@ -117,10 +101,6 @@ import PushKit
                 }
 
             }
-//            if (call.method == "declineCall" || call.method == "disconnectCall"){
-//                NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
-//                factory?.clearMirrorflyView()
-//            }
             if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
                 NSLog("\(Constants.callTag) Method call \(call.method)")
                 methodHandler(call, result, factory)
@@ -217,42 +197,21 @@ import PushKit
             AudioManager.shared().audioManagerDelegate = self
         }
         
-//        if userId == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED) {
-//                        return
-//                    }
 
-        var userJID = userId
-//        if userJID == AppUtils.getMyJid() && callStatus == .DISCONNECTED{
-////            NSLog("\(Constants.callTag) SDK is empty so assigning self jid")
-//            NSLog("\(Constants.callTag) Disconnected is Called on Empty User ID so assuming self disconnect is called and not returning the Delegate")
-////            userJID = AppUtils.getMyJid()
-//            return
-//        }
 
-//        if userJID == ""{
-//            userJID = AppUtils.getMyJid()
-//        }
+        let userJID = userId
+
         
         //Added to Sync the Call log in Call Status update
         NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
         
         if(userJID != "" && callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 self.factory?.clearMirrorflyView(userJID: userJID)
-//            }
-            
         }
 
-        //Added this below condition based on the iOS Sample App.
-        //callStatus != .DISCONNECTED is added for flutter, bcz the network disconnection gives the own JID for disconnect.
-        //callStatus != .ON_HOLD && callStatus != .ON_RESUME for flutter to handle Call Hold and Resume
-//        if userJID == AppUtils.getMyJid() && (callStatus != .RECONNECTING && callStatus != .RECONNECTED && callStatus != .DISCONNECTED && callStatus != .ON_HOLD && callStatus != .ON_RESUME) {
-//            NSLog("#Mirrorfly Call not updating the Call Status for my jid")
-//            return
-//        }
-        
+
         if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
             NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
             return
@@ -276,16 +235,6 @@ import PushKit
         } else {
             jsonObject.setValue("video", forKey: "callType")
         }
-
-        
-        //This below Code is written for https://ctproduct.atlassian.net/browse/FLUTTER-1077 workaround
-        //This is open in iOS SDK. so commenting for now and planning as a feature in future.
-        
-//        if (callStatus == .RECONNECTED || callStatus == .CONNECTED) && CallManager.getCallType() == .Video {
-//            let VideoStatus = CallManager.isRemoteVideoMuted(userId)
-//            NSLog("\(Constants.callTag) Events: Call Status Updated Reconnected Checking Video Mute --> \(VideoStatus)")
-//
-//        }
         
         let callStatusUpdateJson = pluginDictToJson(dictionary: jsonObject)
             self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallStatusUpdateChannel, value: callStatusUpdateJson)
@@ -296,31 +245,12 @@ import PushKit
         NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
-        
-//        if (callAction == CallAction.ACTION_LOCAL_AUDIO_MUTE || callAction == CallAction.ACTION_LOCAL_VIDEO_MUTE || callAction == CallAction.ACTION_LOCAL_AUDIO_UNMUTE || callAction == CallAction.ACTION_LOCAL_VIDEO_UNMUTE){
-//            if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
-//                if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-//                    mirrorflyView.updateVideoTrack(userJid: userId, updateType: getMuteEvent(muteName: callAction))
-//                } else {
-//                    // Handle case when view is not found
-//                    NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> View is not Found")
-//                }
-//            } else {
-//                // Handle case when unique ID is not found
-//                NSLog("\(Constants.callTag) ACTION_REMOTE_VIDEO_MUTE --> Unique ID is not Found")
-//            }
-//            jsonObject.setValue(callAction.rawValue, forKey: "muteEvent")
-//            let muteActionJson = pluginDictToJson(dictionary: jsonObject)
-//            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMuteStatusUpdatedChannel, value: muteActionJson)
-//        }else{
-            
+
             
             jsonObject.setValue(callAction.rawValue, forKey: "callAction")
             
             if (callAction == .CHANGE_TO_AUDIO_CALL){
                 CallManager.setCallType(callType: .Audio)
-//                CallManager.muteVideo(true)
-//                CallManager.disableVideo()
                 AudioManager.shared().autoReRoute()
             }
             
@@ -345,7 +275,7 @@ import PushKit
             let callActionJson = pluginDictToJson(dictionary: jsonObject)
             
             self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callActionJson)
-//        }
+
     }
     
     func onMuteStatusUpdated(muteEvent: MirrorFlySDK.MuteEvent, userId: String) {
@@ -437,7 +367,8 @@ import PushKit
             // Handle case when unique ID is not found
         }
         
-        eventChannelInitializer.sinkValues[Constants.onUserSpeakingChannel] = userId
+//        eventChannelInitializer.sinkValues[Constants.onUserSpeakingChannel] = userId
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onUserStoppedSpeakingChannel, value: userId)
     }
     
     func onLocalVideoTrackAdded(userId: String, videoTrack: RTCVideoTrack) {
@@ -462,7 +393,11 @@ import PushKit
             NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> Unique ID is not Found")
         }
         
-        eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
+//        eventChannelInitializer.sinkValues[Constants.onLocalVideoTrackAddedChannel] = jidJson
+//        eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
+        
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onLocalVideoTrackAddedChannel, value: jidJson)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onTrackAddedChannel, value: jidJson)
     }
     
     func onRemoteVideoTrackAdded(userId: String, track: RTCVideoTrack) {
@@ -482,7 +417,12 @@ import PushKit
             // Handle case when unique ID is not found
         }
 
-        eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
+//        eventChannelInitializer.sinkValues[Constants.onRemoteVideoTrackAddedChannel] = jidJson
+//        eventChannelInitializer.sinkValues[Constants.onTrackAddedChannel] = jidJson
+        
+        
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onRemoteVideoTrackAddedChannel, value: jidJson)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onTrackAddedChannel, value: jidJson)
     }
     
     
@@ -499,9 +439,13 @@ import PushKit
         let deviceTokenString = pushCredentials.token.reduce("") { $0 + String(format: "%02X", $1) }
         NSLog("\(Constants.callTag) #token pushRegistry VT => \(deviceTokenString)")
         NSLog("\(Constants.callTag) device Token \(deviceTokenString)")
-        VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
         Utility.saveInPreference(key: Constants.voipToken, value: deviceTokenString)
-        VOIPManager.sharedInstance.updateDeviceToken()
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+            VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
+            VOIPManager.sharedInstance.updateDeviceToken()
+        }else{
+            NSLog("\(Constants.callTag) Update VOIP Token is skipped due to user is not logged in")
+        }
     }
 
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
@@ -551,23 +495,25 @@ import PushKit
         
         //Added to Sync the Call log in Missed call Event
         NSLog("\(Constants.callTag) Events: callLogUpdate in onMissedCall")
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
         
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMissedCallChannel, value: onMissedCallJson)
     }
     
     func clearAllCallLog() {
         NSLog("\(Constants.callTag) clearAllCallLog")
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.clearAllCallLogChannel, value: true)
     }
     
     func deleteCallLogs(callLogId: String) {
         NSLog("\(Constants.callTag) deleteCallLogs")
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogDeletedChannel, value: callLogId)
     }
 
     
     func onCallLogsUpdated() {
         NSLog("\(Constants.callTag) Events: callLogUpdate")
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.oncallLogUpdateChannel, value: true)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
     }
     
     func userProfileDidChange(for jid: String, profileDetails: MirrorFlySDK.ProfileDetails) {
@@ -575,80 +521,4 @@ import PushKit
     }
 
 }
-
-//extension FlyCall : MissedCallNotificationDelegate {
-//    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String]) {
-//        NSLog("\(Constants.callTag) onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(groupId) callType: \(callType) userList: \(userList)")
-//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-//        jsonObject.setValue(userJid, forKey: "userJid")
-//        jsonObject.setValue(isOneToOneCall, forKey: "isOneToOneCall")
-//        jsonObject.setValue(groupId, forKey: "groupId")
-//        jsonObject.setValue(callType, forKey: "callType")
-//        jsonObject.setValue(userList.joined(separator: ","), forKey: "userList")
-//
-//        let onMissedCallJson = pluginDictToJson(dictionary: jsonObject)
-//
-//        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onMissedCallChannel, value: onMissedCallJson)
-//    }
-//
-//
-//}
-
-//extension FlyCall : AudioManagerDelegate {
-//
-//    func audioRoutedTo(deviceName: String, audioDeviceType: MirrorFlySDK.OutputType) {
-//        NSLog("#audiomanager audioRoutedTo  CallViewController \(deviceName) \(audioDeviceType)")
-//        switch audioDeviceType {
-//        case .receiver:
-//            currentOutputDevice = .receiver
-//        case .speaker:
-//            currentOutputDevice = .speaker
-//        case .headset:
-//            currentOutputDevice = .headset
-//        case .bluetooth:
-//            currentOutputDevice = .bluetooth
-//        @unknown default:
-//            currentOutputDevice = .receiver
-//        }
-//    }
-//}
-
-//public enum MuteEvent {
-//
-//    case REMOTE_VIDEO_MUTE
-//
-//    case REMOTE_VIDEO_UN_MUTE
-//
-//    case REMOTE_AUDIO_MUTE
-//
-//    case REMOTE_AUDIO_UN_MUTE
-//
-//    case LOCAL_AUDIO_MUTE
-//
-//    case LOCAL_AUDIO_UN_MUTE
-//
-//    case LOCAL_VIDEO_MUTE
-//
-//    case LOCAL_VIDEO_UNMUTE
-//
-//}
-//
-//private func getMuteEvent(muteName : CallAction) -> MuteEvent{
-//    let muteNameMapping: [CallAction: MuteEvent] = [
-//            .ACTION_LOCAL_AUDIO_MUTE: .LOCAL_AUDIO_MUTE,
-//            .ACTION_LOCAL_VIDEO_MUTE: .LOCAL_VIDEO_MUTE,
-//            .ACTION_LOCAL_AUDIO_UNMUTE: .LOCAL_AUDIO_UN_MUTE,
-//            .ACTION_LOCAL_VIDEO_UNMUTE: .LOCAL_VIDEO_UNMUTE
-//        ]
-//
-//        guard let muteEvent = muteNameMapping[muteName] else {
-//            // Handle the case where muteName is not in the mapping
-//            // You might want to return a default value or throw an error
-//            fatalError("Invalid muteName")
-//        }
-//
-//        return muteEvent
-//
-//}
-
 

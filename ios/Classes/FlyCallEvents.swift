@@ -11,15 +11,9 @@ import Flutter
 
 public class EventStreamHandler: NSObject, FlutterStreamHandler, FlyEventSinkProvider {
     var eventSink: FlutterEventSink?
-    private var eventSinkValue: Any?
     
     func setEventSinkValue(_ value: Any?) {
-        self.eventSinkValue = value
-        updateEventSinkValue()
-    }
-    
-    private func updateEventSinkValue() {
-        eventSink?(eventSinkValue)
+        eventSink?(value)
     }
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -32,15 +26,3 @@ public class EventStreamHandler: NSObject, FlutterStreamHandler, FlyEventSinkPro
         return nil
     }
 }
-
-// public class OnCallReceivingStreamHandler: EventStreamHandler { }
-public class OnLocalVideoTrackAddedStreamHandler: EventStreamHandler { }
-public class OnRemoteVideoTrackAddedStreamHandler: EventStreamHandler { }
-public class OnTrackAddedStreamHandler: EventStreamHandler { }
-public class OnCallStatusUpdatedStreamHandler: EventStreamHandler { }
-public class OnCallActionStreamHandler: EventStreamHandler { }
-public class OnMuteStatusUpdatedStreamHandler: EventStreamHandler { }
-public class OnUserSpeakingStreamHandler: EventStreamHandler { }
-public class OnUserStoppedSpeakingStreamHandler: EventStreamHandler { }
-public class OnMissedCallStreamHandler: EventStreamHandler { }
-public class OncallLogUpdateStreamHandler: EventStreamHandler { }
