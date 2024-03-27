@@ -2,6 +2,7 @@ package com.mirrorfly.mirrorfly_plugin
 
 import android.Manifest
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -32,6 +33,13 @@ object AppUtils {
 //        intent?.putExtra(FlutterCallkitIncomingPlugin.EXTRA_CALLKIT_CALL_DATA, data)
         intent?.action = action
         return intent
+    }
+    fun getFlagPendingIntent(): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
     }
     fun showPermissionSnackBar(activity: Activity, view: View, message: String, permissions: Array<String>? = null) {
         val snackBar = Snackbar.make(
