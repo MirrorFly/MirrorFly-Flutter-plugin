@@ -84,6 +84,7 @@ class FLErrorMessage {
     public static let USER_PARAM_MISSING : String = "User Name is Empty"
     public static let PARAMS_MISSING : String = "Required parameters Missing/Invalid"
     public static let MESSAGE_SENDING_FAILED : String = "Error while sending message"
+    public static let MESSAGE_EDITING_FAILED : String = "Error while editing message"
     public static let COMPRESSION_FAILED : String = "Error while compressing media file"
     public static let SDK_INITIALISATION_ERROR : String = "Error while Initialising SDK"
     public static let INVALID_LICENSE_KEY : String = "Invalid License Key"

@@ -159,7 +159,7 @@ extension FlyChatPlugin : LocalNotificationDelegate {
 
 extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate, BackupEventDelegate, RestoreEventDelegate {
     public func onMessageEdited(message: MirrorFlySDK.ChatMessage) {
-        
+        print("Message has been edited \(message.toJson())")
     }
     
 //    public func onMessageEdited(message: MirrorFlySDK.ChatMessage, chatJid: String, editedMessageId: String) {

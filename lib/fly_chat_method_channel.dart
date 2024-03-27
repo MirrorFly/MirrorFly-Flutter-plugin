@@ -25,6 +25,7 @@ import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
+import 'edit_message_params.dart';
 import 'fly_constants.dart';
 import 'model/callback.dart';
 import 'model/chat_message_model.dart' as client;
@@ -2562,6 +2563,27 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'sendMessage', messageParams.toMap());
       var res = convertChatMessageJsonFromString(messageResponse);
       callback.call(FlyResponse(true, res, "message send successfully"));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<void> editTextMessage(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) async {
+    LogMessage.d("editMessageParams", editMessageParams.toMap());
+    String? editMessageResponse;
+    try {
+      editMessageResponse = await mirrorFlyMethodChannel.invokeMethod('editTextMessage', editMessageParams.toMap());
+      var res = convertChatMessageJsonFromString(editMessageResponse);
+      callback.call(FlyResponse(true, res, "message edited successfully"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,

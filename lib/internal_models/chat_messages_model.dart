@@ -43,6 +43,7 @@ class ChatMessage {
     required this.messageId,
     required this.messageSentTime,
     required this.messageStatus,
+    required this.isMessageEdited,
     required this.messageTextContent,
     required this.messageType,
     required this.replyParentChatMessage, //
@@ -70,6 +71,7 @@ class ChatMessage {
   String messageId;
   dynamic messageSentTime;
   String messageStatus;
+  bool isMessageEdited;
   String? messageTextContent;
   String messageType;
   ReplyParentChatMessage? replyParentChatMessage;
@@ -108,6 +110,7 @@ class ChatMessage {
       messageStatus: getMessageStatus(Platform.isAndroid
           ? json["messageStatus"]["status"]
           : json["messageStatus"]),
+      isMessageEdited : json["isMessageEdited"],
       messageTextContent: json["messageTextContent"].toString(),
       messageType: getMessageType(json["messageType"]),
       replyParentChatMessage: json["replyParentChatMessage"] == null
@@ -143,6 +146,7 @@ class ChatMessage {
         "messageId": messageId,
         "messageSentTime": messageSentTime,
         "messageStatus": messageStatus,
+        "isMessageEdited": isMessageEdited,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
         "replyParentChatMessage":

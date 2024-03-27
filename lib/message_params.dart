@@ -176,25 +176,6 @@ extension ExtractFileMessageParams on FileMessageParams {
       };
 }
 
-class EditMessage {
-  EditMessage({
-    required this.messageId,
-    required this.editedTextContent, //this.mentionedUsersIds
-  });
-
-  String messageId;
-  String editedTextContent;
-  List<String>? mentionedUsersIds;
-}
-
-extension ExtractEditMessage on EditMessage {
-  Map<String, dynamic> toMap() => {
-        'messageId': messageId,
-        'editedTextContent': editedTextContent,
-        'mentionedUsersIds': mentionedUsersIds
-      };
-}
-
 /// Represents parameters for constructing a message.
 class MessageParams {
   String toJid;

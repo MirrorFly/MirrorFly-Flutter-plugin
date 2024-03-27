@@ -1,4 +1,5 @@
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
@@ -433,6 +434,12 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   Future<void> sendMessage(
       {required MessageParams messageParams,
+      required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<void> editTextMessage(
+      {required EditMessageParams editMessageParams,
       required Function(FlyResponse response) callback}) {
     throw UnimplementedError('has not been implemented.');
   }

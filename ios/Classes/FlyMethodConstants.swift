@@ -212,5 +212,6 @@ class FlyMethodConstants {
                 "webLoginDetailsCleared": flyChatMethods.webLoginDetailsCleared,
                 "sendContactUsInfo": flyChatMethods.sendContactUsInfo,
                 "getJidFromPhoneNumber": flyChatMethods.getJidFromPhoneNumber,
+                "editTextMessage": flyChatMethods.editTextMessage,
             ] }()
 }
