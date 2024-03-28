@@ -8,6 +8,7 @@ import 'fly_chat_platform_interface.dart';
 
 class Mirrorfly {
   Mirrorfly._();
+
   @Deprecated(
       'This method is deprecated. Please refrain from using it, as the functionality has been internally managed within the plugin')
   static var isTrialLicence = true;
@@ -2835,6 +2836,21 @@ class Mirrorfly {
   ///
   static Future<bool?> appLaunchedFromMissedCall() async {
     return FlyChatFlutterPlatform.instance.appLaunchedFromMissedCall();
+  }
+
+  /// Checks if the app was launched from a Mirrorfly notification.
+  ///
+  /// This static method asynchronously checks if the app was launched from a
+  /// mirrorfly notification. It delegates the task to the underlying platform
+  /// implementation.
+  ///
+  /// Returns a [Future] that completes with a [MirrorflyNotificationAppLaunchDetails] value of
+  /// the app was launched from a mirrorfly notification:
+  ///
+  ///
+  static Future<MirrorflyNotificationAppLaunchDetails?>
+      getAppLaunchedDetails() async {
+    return FlyChatFlutterPlatform.instance.getAppLaunchedDetails();
   }
 
   /// Opens the audio file picker to select an audio file for [Platform.isAndroid].
