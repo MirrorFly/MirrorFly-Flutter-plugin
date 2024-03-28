@@ -15,6 +15,7 @@ abstract class MessageEventListeners {
   void onAvailableFeaturesUpdated(AvailableFeatures availableFeatures);
   void userCameOnline(String jid);
   void userWentOffline(String jid);
+  void onMessageEdited(ChatMessageModel chatMessage);
 }
 
 abstract class ConnectionEventListeners {

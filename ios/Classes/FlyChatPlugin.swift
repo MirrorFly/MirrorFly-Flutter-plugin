@@ -2,8 +2,6 @@ import Flutter
 import ContactsUI
 import Contacts
 import UIKit
-//import FlyCore
-//import FlyCommon
 import MirrorFlySDK
 
 
@@ -159,7 +157,8 @@ extension FlyChatPlugin : LocalNotificationDelegate {
 
 extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate, BackupEventDelegate, RestoreEventDelegate {
     public func onMessageEdited(message: MirrorFlySDK.ChatMessage) {
-        print("Message has been edited \(message.toJson())")
+        
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageEdited_channel, value: message.toJson())
     }
     
 //    public func onMessageEdited(message: MirrorFlySDK.ChatMessage, chatJid: String, editedMessageId: String) {

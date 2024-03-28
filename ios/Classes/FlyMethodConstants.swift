@@ -213,5 +213,6 @@ class FlyMethodConstants {
                 "sendContactUsInfo": flyChatMethods.sendContactUsInfo,
                 "getJidFromPhoneNumber": flyChatMethods.getJidFromPhoneNumber,
                 "editTextMessage": flyChatMethods.editTextMessage,
+                "editMediaCaption": flyChatMethods.editMediaCaption,
             ] }()
 }

@@ -81,6 +81,7 @@ struct Constants {
         static let onConnectionFailed_channel = "\(domain)/onConnectionFailed"
 
         static let getAvailableFeatures_channel = "\(domain)/onAvailableFeaturesUpdated"
+        static let onMessageEdited_channel = "\(domain)/onMessageEdited"
         
     
     static let contactSyncEnable = "contactSyncEnable"

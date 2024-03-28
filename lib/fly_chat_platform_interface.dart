@@ -444,6 +444,12 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  Future<void> editMediaCaption(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Future<String?> getRegisteredUserList({required bool server}) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -469,6 +475,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Stream<dynamic> get onMessageReceived =>
+      throw UnimplementedError('has not been implemented.');
+
+  Stream<dynamic> get onMessageEdited =>
       throw UnimplementedError('has not been implemented.');
 
   //messageOnReceivedChannel.receiveBroadcastStream().cast();

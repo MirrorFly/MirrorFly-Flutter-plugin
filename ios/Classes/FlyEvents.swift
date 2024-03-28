@@ -27,6 +27,8 @@ public class MemberMadeAsAdminStreamHandler: EventStreamHandler { }
 public class MemberRemovedAsAdminStreamHandler: EventStreamHandler { }
 public class UserWentOfflineStreamHandler: EventStreamHandler { }
 
+public class MessageEditedStreamHandler: EventStreamHandler { }
+
 public class LeftFromGroupStreamHandler: EventStreamHandler { }
 public class GroupNotificationMessageStreamHandler: EventStreamHandler { }
 public class GroupDeletedLocallyStreamHandler: EventStreamHandler { }

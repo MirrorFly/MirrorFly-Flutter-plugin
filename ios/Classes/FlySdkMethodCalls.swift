@@ -3999,7 +3999,7 @@ let ISEXPORT = true
 
         FlyMessenger.editTextMessage(editMessageParams: editMessageParams) { isSuccess, error, textMessage in
             if isSuccess {
-                print("Edit Message Success \(String(describing: textMessage))")
+                print("Edit Message Success \(String(describing: textMessage?.toJson()))")
                 let editMsgResponse = textMessage.toJson()
                 if(editMsgResponse != nil){
                     result(editMsgResponse)
@@ -4009,6 +4009,35 @@ let ISEXPORT = true
             }else{
                 print("Edit Message Failed \(String(describing: error?.description))")
                 result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_EDITING_FAILED, details: error?.localizedDescription))
+            }
+         }
+    }
+    
+    func editMediaCaption(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let messageId = args["messageId"] as? String
+        let editedTextContent = args["editedTextContent"] as? String
+        let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
+        
+        var editMessageParams = EditMessage()
+        editMessageParams.messageId = messageId
+        editMessageParams.editedTextContent = editedTextContent
+        editMessageParams.mentionedUsersIds = mentionedUsersIds
+
+        FlyMessenger.editMediaCaption(editMessageParams: editMessageParams) { isSuccess, error, textMessage in
+            if isSuccess {
+                print("Edit Message Success \(String(describing: textMessage?.toJson()))")
+                let editMsgResponse = textMessage.toJson()
+                if(editMsgResponse != nil){
+                    result(editMsgResponse)
+                } else {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.CAPTION_EDITING_FAILED, details: nil))
+                }
+            }else{
+                print("Edit Message Failed \(String(describing: error?.description))")
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.CAPTION_EDITING_FAILED, details: error?.localizedDescription))
             }
          }
     }

@@ -1399,6 +1399,14 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<void> editMediaCaption(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) {
+    //  implement editMediaCaption
+    throw UnimplementedError();
+  }
+
+  @override
   Future<String> sendTextMessage(
       String message, String jid, String replyMessageId,
       {String? topicId}) {
@@ -1745,6 +1753,10 @@ class MockFlyChatFlutterPlatform
     // implement setCallEventListener
     throw UnimplementedError();
   }
+
+  @override
+  // implement onMessageEdited
+  Stream get onMessageEdited => throw UnimplementedError();
 }
 
 void main() {
