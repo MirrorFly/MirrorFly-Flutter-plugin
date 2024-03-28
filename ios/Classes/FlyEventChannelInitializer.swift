@@ -96,6 +96,8 @@ class FlyChatEventChannelInitializer {
         (channelName: Constants.onDisconnected_channel, streamHandler: OnDisconnectedStreamHandler()),
         (channelName: Constants.onConnectionNotAuthorized_channel, streamHandler: OnConnectionNotAuthorizedStreamHandler()),
         (channelName: Constants.onMessageEdited_channel, streamHandler: MessageEditedStreamHandler()),
+        (channelName: Constants.onChatTypingStatus_channel, streamHandler: OnChatTypingStatusStreamHandler()),
+        (channelName: Constants.onGroupTypingStatus_channel, streamHandler: OnGroupTypingStatusStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
     

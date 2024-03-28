@@ -257,11 +257,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   // @visibleForTesting
   // final connectionSuccessChannel = const EventChannel('contus.mirrorfly/connectionSuccess');
   // final StreamController<dynamic> connectionSuccessStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final onWebChatPasswordChangedChannel =
-      const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
-  final StreamController<dynamic> onWebChatPasswordChangedStreamController =
-      StreamController<dynamic>.broadcast();
+  // @visibleForTesting
+  // final onWebChatPasswordChangedChannel =
+  //     const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
+  // final StreamController<dynamic> onWebChatPasswordChangedStreamController =
+  //     StreamController<dynamic>.broadcast();
   @visibleForTesting
   final setTypingStatusChannel =
       const EventChannel('contus.mirrorfly/setTypingStatus');
@@ -530,9 +530,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   // @override
   // Stream<dynamic> get connectionSuccess => connectionSuccessStreamController.stream;
 
-  @override
-  Stream<dynamic> get onWebChatPasswordChanged =>
-      onWebChatPasswordChangedStreamController.stream;
+  // @override
+  // Stream<dynamic> get onWebChatPasswordChanged =>
+  //     onWebChatPasswordChangedStreamController.stream;
 
   @override
   Stream<dynamic> get setTypingStatus => setTypingStatusStreamController.stream;
@@ -852,9 +852,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     //   connectionFailedStreamController.add(event);});
     // connectionSuccessChannel.receiveBroadcastStream().listen((event) {
     //   connectionSuccessStreamController.add(event);});
-    onWebChatPasswordChangedChannel.receiveBroadcastStream().listen((event) {
-      onWebChatPasswordChangedStreamController.add(event);
-    });
+    // onWebChatPasswordChangedChannel.receiveBroadcastStream().listen((event) {
+    //   onWebChatPasswordChangedStreamController.add(event);
+    // });
     setTypingStatusChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var singleOrGroupJid = data["singleOrgroupJid"] ?? "";

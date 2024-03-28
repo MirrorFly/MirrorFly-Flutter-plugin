@@ -1501,8 +1501,8 @@ class Mirrorfly {
 
   // static Stream<dynamic> get connectionSuccess => FlyChatFlutterPlatform.instance.connectionSuccess;
 
-  static Stream<dynamic> get onWebChatPasswordChanged =>
-      FlyChatFlutterPlatform.instance.onWebChatPasswordChanged;
+  // static Stream<dynamic> get onWebChatPasswordChanged =>
+  //     FlyChatFlutterPlatform.instance.onWebChatPasswordChanged;
 
   static Stream<dynamic> get onMessageEdited =>
       FlyChatFlutterPlatform.instance.onMessageEdited;

@@ -1211,9 +1211,9 @@ class MockFlyChatFlutterPlatform
   //  implement onUserStoppedSpeaking
   Stream get onUserStoppedSpeaking => throw UnimplementedError();
 
-  @override
-  //  implement onWebChatPasswordChanged
-  Stream get onWebChatPasswordChanged => throw UnimplementedError();
+  // @override
+  // //  implement onWebChatPasswordChanged
+  // Stream get onWebChatPasswordChanged => throw UnimplementedError();
 
   @override
   Future<String?> openAudioFilePicker() {

@@ -598,8 +598,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   // Stream<dynamic> get connectionSuccess => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onWebChatPasswordChanged =>
-      throw UnimplementedError('has not been implemented.');
+  // Stream<dynamic> get onWebChatPasswordChanged =>
+  //     throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get setTypingStatus =>
       throw UnimplementedError('has not been implemented.');

@@ -70,7 +70,7 @@ struct Constants {
         static let onConnectionNotAuthorized_channel = "\(domain)/onConnectionNotAuthorized"
     //    static let connectionFailed_channel = "\(domain)/connectionFailed"
 //        static let connectionSuccess_channel = "\(domain)/connectionSuccess"
-        static let onWebChatPasswordChanged_channel = "\(domain)/onWebChatPasswordChanged"
+//        static let onWebChatPasswordChanged_channel = "\(domain)/onWebChatPasswordChanged"
         static let setTypingStatus_channel = "\(domain)/setTypingStatus"
         static let onChatTypingStatus_channel = "\(domain)/onChatTypingStatus"
         static let onGroupTypingStatus_channel = "\(domain)/onGroupTypingStatus"
