@@ -5,6 +5,7 @@ import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:mirrorfly_plugin/model/callback.dart';
+import 'package:mirrorfly_plugin/model/notification_applaunch_details.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -33,6 +34,12 @@ class MockFlyChatFlutterPlatform
   @override
   Future<bool?> appLaunchedFromMissedCall() {
     //  implement appLaunchedFromMissedCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<MirrorflyNotificationAppLaunchDetails?> getAppLaunchedDetails() {
+    //  implement appLaunchedDetails
     throw UnimplementedError();
   }
 

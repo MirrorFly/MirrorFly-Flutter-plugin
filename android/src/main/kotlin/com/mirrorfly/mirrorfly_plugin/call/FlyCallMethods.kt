@@ -1,19 +1,12 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
-//import com.mirrorflysdk.api.CallMessenger
-import android.app.PendingIntent
-import android.content.Intent
-import androidx.core.app.NotificationCompat
 import com.mirrorfly.mirrorfly_plugin.*
 import com.mirrorflysdk.api.ChatManager
-import com.mirrorflysdk.api.MediaNotificationHelper
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.utils.NameHelper
 import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
 import com.mirrorflysdk.flycall.webrtc.api.*
-import com.mirrorflysdk.flycommons.Constants
 import com.mirrorflysdk.flycommons.LogMessage
-import com.mirrorflysdk.flycommons.PendingIntentHelper
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
@@ -21,14 +14,14 @@ import org.json.JSONObject
 import com.mirrorflysdk.api.ChatActionListener
 import com.mirrorflysdk.flycall.webrtc.*
 
-class FlyCallMethods : MissedCallListener, MediaNotificationHelper {
+class FlyCallMethods : MissedCallListener {
     val tag = "#FlutterCallEvents"
 //    var context : Context = MirrrflyFlyManager.getContext()
 
     fun initCall() {
         //CallManager.init(context)
 //        CallManager.setMissedCallListener(this)
-        ChatManager.setMediaNotificationHelper(this)
+//        ChatManager.setMediaNotificationHelper(this)
         CallManager.setCallHelper(object : CallHelper {
             override fun getNotificationContent(callDirection: String): String {
                 /*return if (BuildConfig.HIPAA_COMPLIANCE_ENABLED) {
@@ -496,30 +489,6 @@ class FlyCallMethods : MissedCallListener, MediaNotificationHelper {
         FlyMethodConstants.updateCallSinkValue(
             com.mirrorfly.mirrorfly_plugin.Constants.onMissedCall,
             json.toString()
-        )
-    }
-
-    override fun setMediaNotificationIntentAction(
-        notificationCompatBuilder: NotificationCompat.Builder, jidList: List<String>
-    ) {
-        notificationCompatBuilder.setContentIntent(getPendingIntent(jidList))
-    }
-
-    private fun getPendingIntent(toUsers: List<String>): PendingIntent {
-        val notificationIntent =
-            AppUtils.getAppIntent(MirrorFlyManager.getContext())//Intent(this, ChatManager.startActivity)
-        notificationIntent!!.flags = (Intent.FLAG_ACTIVITY_CLEAR_TASK
-                or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        notificationIntent.putExtra(Constants.IS_FROM_NOTIFICATION, true)
-        notificationIntent.putExtra(
-            "jid",
-            if (toUsers.count() == 1) toUsers.elementAt(0) else Constants.EMPTY_STRING
-        )
-        val requestID = System.currentTimeMillis().toInt()
-        return PendingIntentHelper.getActivity(
-            MirrorFlyManager.getContext(),
-            requestID,
-            notificationIntent
         )
     }
 
