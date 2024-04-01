@@ -3556,4 +3556,55 @@ class FlyChatMethods {
                 ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
     }
 
+    fun editMediaCaption(call: MethodCall, result: MethodChannel.Result) {
+        val message_id = call.argument<String>("messageId") ?: ""
+        val edited_text_content = call.argument<String>("editedTextContent") ?: ""
+        val mentioned_users_Ids = call.argument<List<String>>("mentionedUsersIds") ?: arrayListOf()
+
+        val editMessage = EditMessage().apply {
+            messageId = message_id
+            editedTextContent = edited_text_content
+            mentionedUsersIds = mentioned_users_Ids
+        }
+
+        FlyMessenger.editTextMessage(editMessage, object : SendMessageCallback {
+            override fun onResponse(isSuccess: Boolean, error: Throwable?, chatMessage: ChatMessage?) {
+                if (isSuccess) {
+                    if (chatMessage != null) {
+                        result.success(chatMessage.toJsonString())
+                    }else{
+                        result.error("500", "Error while editing message", error)
+                    }
+                }else{
+                    result.error("500", error?.message, error)
+                }
+            }
+        })
+    }
+    fun editTextMessage(call: MethodCall, result: MethodChannel.Result) {
+        val message_id = call.argument<String>("messageId") ?: ""
+        val edited_text_content = call.argument<String>("editedTextContent") ?: ""
+        val mentioned_users_Ids = call.argument<List<String>>("mentionedUsersIds") ?: arrayListOf()
+
+        val editMessage = EditMessage().apply {
+            messageId = message_id
+            editedTextContent = edited_text_content
+            mentionedUsersIds = mentioned_users_Ids
+        }
+
+        FlyMessenger.editMediaCaption(editMessage, object : SendMessageCallback {
+            override fun onResponse(isSuccess: Boolean, error: Throwable?, chatMessage: ChatMessage?) {
+                if (isSuccess) {
+                    if (chatMessage != null) {
+                        result.success(chatMessage.toJsonString())
+                    }else{
+                        result.error("500", "Error while editing caption text", error)
+                    }
+                }else{
+                    result.error("500", error?.message, error)
+                }
+            }
+        })
+    }
+
 }

@@ -35,7 +35,6 @@ import io.flutter.plugin.common.*
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import org.json.JSONObject
 import java.io.File
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -590,6 +589,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         FlyMethodConstants.updateChatSinkValue(
             Constants.onMediaStatusUpdatedChannel,
             message.toJsonString()
+        )
+    }
+
+    override fun onMessageEdited(editedMessage: ChatMessage) {
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onMessageEditedChannel,
+            editedMessage.toJsonString()
         )
     }
 

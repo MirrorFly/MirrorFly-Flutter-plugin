@@ -62,7 +62,8 @@ object FlyMethodConstants {
         Constants.onFailureChannel to EventStreamHandler(),//NI
         Constants.onProgressChangedChannel to EventStreamHandler(),//NI
         Constants.onSuccessChannel to EventStreamHandler(),//NI
-        Constants.onAvailableFeaturesUpdatedChannel to EventStreamHandler()
+        Constants.onAvailableFeaturesUpdatedChannel to EventStreamHandler(),
+        Constants.onMessageEditedChannel to EventStreamHandler(),
     )
     val chatMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "init" to flyChatMethods::buildChatSDK,
@@ -252,6 +253,8 @@ object FlyMethodConstants {
         "unFavouriteAllFavouriteMessages" to flyChatMethods::unFavouriteAllFavouriteMessages,
         "getJidFromPhoneNumber" to flyChatMethods::getJidFromPhoneNumber,
         "openAudioFilePicker" to flyChatMethods::selectAudioFileFromStorage,
+        "editTextMessage" to flyChatMethods::editTextMessage,
+        "editMediaCaption" to flyChatMethods::editMediaCaption,
     )
 
     private val callEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(

@@ -87,6 +87,7 @@ object Constants {
     val onProgressChangedChannel = "$Domain/onProgressChanged"
     const val onSuccessChannel = "$Domain/onSuccess"
     const val onAvailableFeaturesUpdatedChannel = "$Domain/onAvailableFeaturesUpdated"
+    const val onMessageEditedChannel = "$Domain/onMessageEdited"
     const val onCallLogsUpdatedChannel = "$Domain/onCallLog"
     const val onCallLogDeletedChannel = "$Domain/onCallLogDeleted"
     const val clearAllCallLogChannel = "$Domain/clearAllCallLog"
