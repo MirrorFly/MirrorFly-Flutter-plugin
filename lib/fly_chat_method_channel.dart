@@ -381,7 +381,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Stream<dynamic> get onMessageEdited =>
-      _messageOnReceivedStreamController.stream;
+      _messageOnEditedStreamController.stream;
 
   @override
   Stream<dynamic> get onMessageStatusUpdated =>
