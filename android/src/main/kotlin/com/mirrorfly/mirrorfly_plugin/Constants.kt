@@ -5,6 +5,8 @@ import java.util.regex.Pattern
 object Constants {
     //    const val TAG = "FlyChatMethods"
     const val IS_CALL_NOTIFICATION = "IS_CALL_NOTIFICATION"
+    const val IS_CHAT_NOTIFICATION = "IS_CHAT_NOTIFICATION"
+    const val JID = "JID"
     const val EMPTY_STRING = ""
     const val LOCAL_PATH = "UI Kit"
     const val FILE_LOCAL_PATH = "File"

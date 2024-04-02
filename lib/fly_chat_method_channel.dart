@@ -22,15 +22,16 @@ import 'package:mirrorfly_plugin/internal_models/user_profile_update.dart';
 import 'package:mirrorfly_plugin/internal_models/users_list_model.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
+import 'package:mirrorfly_plugin/model/notification_applaunch_details.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
 import 'edit_message_params.dart';
 import 'fly_constants.dart';
+import 'model/available_features.dart' as client;
 import 'model/callback.dart';
 import 'model/chat_message_model.dart' as client;
 import 'model/profile_model.dart' as client;
-import 'model/available_features.dart' as client;
 
 class FlyErrorCode {
   static const unHandle = "1000";
@@ -111,6 +112,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic>
       onFetchingGroupMembersCompletedStreamController =
       StreamController<dynamic>.broadcast();
+
   // @visibleForTesting
   // final onDeleteGroupChannel = const EventChannel('contus.mirrorfly/onDeleteGroup');
   // final StreamController<dynamic> onDeleteGroupStreamController = StreamController<dynamic>.broadcast();
@@ -251,6 +253,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       const EventChannel('contus.mirrorfly/onConnectionFailed');
   final StreamController<dynamic> onConnectionFailedStreamController =
       StreamController<dynamic>.broadcast();
+
   // @visibleForTesting
   // final connectionFailedChannel = const EventChannel('contus.mirrorfly/connectionFailed');
   // final StreamController<dynamic> connectionFailedStreamController = StreamController<dynamic>.broadcast();
@@ -5150,6 +5153,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           .invokeMethod<bool>('appLaunchedFromMissedCall');
       LogMessage.d('appLaunchedFromMissedCall', '$res');
       return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<MirrorflyNotificationAppLaunchDetails?> getAppLaunchedDetails() async {
+    String? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<String>('appLaunchedDetails');
+      LogMessage.d('getAppLaunchedDetails', '$res');
+      return mirrorflyNotificationAppLaunchDetailsFromJson(res ?? "");
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;

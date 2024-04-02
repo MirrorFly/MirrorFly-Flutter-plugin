@@ -6,6 +6,7 @@ import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'model/callback.dart';
+import 'model/notification_applaunch_details.dart';
 import 'model/topic_metadata.dart';
 
 abstract class FlyChatFlutterPlatform extends PlatformInterface {
@@ -1251,6 +1252,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<bool?> appLaunchedFromMissedCall() {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<MirrorflyNotificationAppLaunchDetails?> getAppLaunchedDetails() {
     throw UnimplementedError('has not been implemented.');
   }
 
