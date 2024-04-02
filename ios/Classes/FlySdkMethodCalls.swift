@@ -2148,16 +2148,38 @@ let ISEXPORT = true
         
         ChatManager.shared.exportChatConversationToEmail(jid: userJID) { chatDataModel in
             
-            var dataToShare = [Any]()
-            
-            dataToShare.append(chatDataModel.subject)
-            dataToShare.append(chatDataModel.messageContent)
-            chatDataModel.mediaAttachmentsUrl.forEach { url in
-                dataToShare.append(url)
+//            var dataToShare = [Any]()
+//            
+//            dataToShare.append(chatDataModel.subject)
+//            dataToShare.append(chatDataModel.messageContent)
+//            chatDataModel.mediaAttachmentsUrl.forEach { url in
+//                dataToShare.append(url)
+//            }
+            let mediaAttachmentUri = NSMutableArray()
+
+            if !chatDataModel.mediaAttachmentsUrl.isEmpty {
+                for item in chatDataModel.mediaAttachmentsUrl {
+                    
+                    let file = URL(fileURLWithPath: item.path)
+                    let absolutePath = self.convertToAbsolutePath(file.path)
+                    mediaAttachmentUri.add(absolutePath)
+                    
+                }
             }
+
             
+            let jsonObject: NSMutableDictionary = NSMutableDictionary()
+            jsonObject.setValue(chatDataModel.subject, forKey: "subject")
+            jsonObject.setValue(chatDataModel.messageContent, forKey: "messageContent")
+            jsonObject.setValue(mediaAttachmentUri, forKey: "mediaAttachmentsUrl")
+            
+            let jsonString = pluginDictToJson(dictionary: jsonObject)
+            result(jsonString)
         }
         
+    }
+    func convertToAbsolutePath(_ path: String) -> String {
+        return URL(fileURLWithPath: path).absoluteString
     }
     
     func getAllGroups(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -2319,6 +2341,8 @@ let ISEXPORT = true
         let limit = args["limit"] as? Int ?? 15
         
         recentChatListParams.limit = limit
+        
+        print(ChatManager.getAppConfigDetails().authtoken)
         
         if(recentChatListBuilder == nil){
             print("recentChatListBuilder is nil")
