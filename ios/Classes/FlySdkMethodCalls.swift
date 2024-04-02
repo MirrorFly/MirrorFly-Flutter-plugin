@@ -325,16 +325,17 @@ let ISEXPORT = true
     }
     
     func getCurrentAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let imageUrl = ChatManager.getImageUrl(imageName: "getAuthToken")
-        print("getCurrentAuthToken==**==imageUrl \(imageUrl)")
-        let components = imageUrl.components(separatedBy: "?mf=")
-        
-        guard components.count > 1 else {
-            result("")
-            return
-        }
-        
-        let authToken = components[1]
+//        let imageUrl = ChatManager.getImageUrl(imageName: "getAuthToken")
+//        print("getCurrentAuthToken==**==imageUrl \(imageUrl)")
+//        let components = imageUrl.components(separatedBy: "?mf=")
+//        
+//        guard components.count > 1 else {
+//            result("")
+//            return
+//        }
+//        
+//        let authToken = components[1]
+        let authToken = ChatManager.getAppConfigDetails().authtoken
         print("getCurrentAuthToken==**==\(authToken)")
         result(authToken)
     }
