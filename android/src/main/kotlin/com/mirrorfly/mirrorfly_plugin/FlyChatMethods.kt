@@ -1258,9 +1258,11 @@ class FlyChatMethods {
             )
         }
         if (messageStatus != null) {
+            val messageStatusDetail = ChatMessageStatusDetail(messageStatus.messageId,
+                messageStatus.sentTime.checkNullOrEmpty(),messageStatus.deliveredTime.checkNullOrEmpty(),messageStatus.seenTime.checkNullOrEmpty())
             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-            //DebugUtilis.v( "FlyMessenger.getMessageStatusOfASingleChatMessage", messageStatus.tojsonString() )
-            result.success(messageStatus.toJsonString())
+            LogMessage.d( "FlyMessenger.getMessageStatusOfASingleChatMessage", messageStatus.toJsonString() )
+            result.success(messageStatusDetail.toJsonString())
         } else {
             //LogMessage.d(TAG, "Message Info Error")
         }
@@ -3556,7 +3558,7 @@ class FlyChatMethods {
                 ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
     }
 
-    fun editMediaCaption(call: MethodCall, result: MethodChannel.Result) {
+    fun editTextMessage(call: MethodCall, result: MethodChannel.Result) {
         val message_id = call.argument<String>("messageId") ?: ""
         val edited_text_content = call.argument<String>("editedTextContent") ?: ""
         val mentioned_users_Ids = call.argument<List<String>>("mentionedUsersIds") ?: arrayListOf()
@@ -3581,7 +3583,7 @@ class FlyChatMethods {
             }
         })
     }
-    fun editTextMessage(call: MethodCall, result: MethodChannel.Result) {
+    fun editMediaCaption(call: MethodCall, result: MethodChannel.Result) {
         val message_id = call.argument<String>("messageId") ?: ""
         val edited_text_content = call.argument<String>("editedTextContent") ?: ""
         val mentioned_users_Ids = call.argument<List<String>>("mentionedUsersIds") ?: arrayListOf()

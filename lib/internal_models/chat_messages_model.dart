@@ -110,7 +110,7 @@ class ChatMessage {
       messageStatus: getMessageStatus(Platform.isAndroid
           ? json["messageStatus"]["status"]
           : json["messageStatus"]),
-      isMessageEdited : json["isMessageEdited"],
+      isMessageEdited : Platform.isAndroid ? json["isEdited"] : json["isMessageEdited"],
       messageTextContent: json["messageTextContent"].toString(),
       messageType: getMessageType(json["messageType"]),
       replyParentChatMessage: json["replyParentChatMessage"] == null
