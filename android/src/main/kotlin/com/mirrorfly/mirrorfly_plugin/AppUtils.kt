@@ -206,3 +206,8 @@ fun Any.toJsonString(): String {
 fun Any.toJson(): String {
     return Gson().toJson(this)
 }
+
+fun String?.checkNullOrEmpty(): String {
+    if (this == null) return Constants.EMPTY_STRING
+    return if (this == "null") Constants.EMPTY_STRING else this
+}

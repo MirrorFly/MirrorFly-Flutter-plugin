@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
@@ -1217,9 +1218,9 @@ class MockFlyChatFlutterPlatform
   //  implement onUserStoppedSpeaking
   Stream get onUserStoppedSpeaking => throw UnimplementedError();
 
-  @override
-  //  implement onWebChatPasswordChanged
-  Stream get onWebChatPasswordChanged => throw UnimplementedError();
+  // @override
+  // //  implement onWebChatPasswordChanged
+  // Stream get onWebChatPasswordChanged => throw UnimplementedError();
 
   @override
   Future<String?> openAudioFilePicker() {
@@ -1394,6 +1395,21 @@ class MockFlyChatFlutterPlatform
       {required MessageParams messageParams,
       required Function(FlyResponse response) callback}) {
     //  implement sendMessage
+    throw UnimplementedError();
+  }
+  @override
+  Future<void> editTextMessage(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) {
+    //  implement editTextMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> editMediaCaption(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) {
+    //  implement editMediaCaption
     throw UnimplementedError();
   }
 
@@ -1744,6 +1760,10 @@ class MockFlyChatFlutterPlatform
     // implement setCallEventListener
     throw UnimplementedError();
   }
+
+  @override
+  // implement onMessageEdited
+  Stream get onMessageEdited => throw UnimplementedError();
 }
 
 void main() {

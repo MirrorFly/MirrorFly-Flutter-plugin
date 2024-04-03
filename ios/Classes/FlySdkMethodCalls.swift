@@ -2148,16 +2148,38 @@ let ISEXPORT = true
         
         ChatManager.shared.exportChatConversationToEmail(jid: userJID) { chatDataModel in
             
-            var dataToShare = [Any]()
-            
-            dataToShare.append(chatDataModel.subject)
-            dataToShare.append(chatDataModel.messageContent)
-            chatDataModel.mediaAttachmentsUrl.forEach { url in
-                dataToShare.append(url)
+//            var dataToShare = [Any]()
+//            
+//            dataToShare.append(chatDataModel.subject)
+//            dataToShare.append(chatDataModel.messageContent)
+//            chatDataModel.mediaAttachmentsUrl.forEach { url in
+//                dataToShare.append(url)
+//            }
+            let mediaAttachmentUri = NSMutableArray()
+
+            if !chatDataModel.mediaAttachmentsUrl.isEmpty {
+                for item in chatDataModel.mediaAttachmentsUrl {
+                    
+                    let file = URL(fileURLWithPath: item.path)
+                    let absolutePath = self.convertToAbsolutePath(file.path)
+                    mediaAttachmentUri.add(absolutePath)
+                    
+                }
             }
+
             
+            let jsonObject: NSMutableDictionary = NSMutableDictionary()
+            jsonObject.setValue(chatDataModel.subject, forKey: "subject")
+            jsonObject.setValue(chatDataModel.messageContent, forKey: "messageContent")
+            jsonObject.setValue(mediaAttachmentUri, forKey: "mediaAttachmentsUrl")
+            
+            let jsonString = pluginDictToJson(dictionary: jsonObject)
+            result(jsonString)
         }
         
+    }
+    func convertToAbsolutePath(_ path: String) -> String {
+        return URL(fileURLWithPath: path).absoluteString
     }
     
     func getAllGroups(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -2319,6 +2341,8 @@ let ISEXPORT = true
         let limit = args["limit"] as? Int ?? 15
         
         recentChatListParams.limit = limit
+        
+        print(ChatManager.getAppConfigDetails().authtoken)
         
         if(recentChatListBuilder == nil){
             print("recentChatListBuilder is nil")
@@ -3984,8 +4008,61 @@ let ISEXPORT = true
         }
     }
     
+    func editTextMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let messageId = args["messageId"] as? String
+        let editedTextContent = args["editedTextContent"] as? String
+        let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
+        
+        var editMessageParams = EditMessage()
+        editMessageParams.messageId = messageId
+        editMessageParams.editedTextContent = editedTextContent
+        editMessageParams.mentionedUsersIds = mentionedUsersIds
+
+        FlyMessenger.editTextMessage(editMessageParams: editMessageParams) { isSuccess, error, textMessage in
+            if isSuccess {
+                print("Edit Message Success \(String(describing: textMessage?.toJson()))")
+                let editMsgResponse = textMessage.toJson()
+                if(editMsgResponse != nil){
+                    result(editMsgResponse)
+                } else {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_EDITING_FAILED, details: nil))
+                }
+            }else{
+                print("Edit Message Failed \(String(describing: error?.description))")
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_EDITING_FAILED, details: error?.localizedDescription))
+            }
+         }
+    }
     
+    func editMediaCaption(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let messageId = args["messageId"] as? String
+        let editedTextContent = args["editedTextContent"] as? String
+        let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
+        
+        var editMessageParams = EditMessage()
+        editMessageParams.messageId = messageId
+        editMessageParams.editedTextContent = editedTextContent
+        editMessageParams.mentionedUsersIds = mentionedUsersIds
+
+        FlyMessenger.editMediaCaption(editMessageParams: editMessageParams) { isSuccess, error, textMessage in
+            if isSuccess {
+                print("Edit Message Success \(String(describing: textMessage?.toJson()))")
+                let editMsgResponse = textMessage.toJson()
+                if(editMsgResponse != nil){
+                    result(editMsgResponse)
+                } else {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.CAPTION_EDITING_FAILED, details: nil))
+                }
+            }else{
+                print("Edit Message Failed \(String(describing: error?.description))")
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.CAPTION_EDITING_FAILED, details: error?.localizedDescription))
+            }
+         }
+    }
 }
-
-
-

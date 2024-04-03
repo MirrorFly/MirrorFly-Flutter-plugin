@@ -1,4 +1,5 @@
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
@@ -438,6 +439,18 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  Future<void> editTextMessage(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  Future<void> editMediaCaption(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   Future<String?> getRegisteredUserList({required bool server}) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -463,6 +476,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Stream<dynamic> get onMessageReceived =>
+      throw UnimplementedError('has not been implemented.');
+
+  Stream<dynamic> get onMessageEdited =>
       throw UnimplementedError('has not been implemented.');
 
   //messageOnReceivedChannel.receiveBroadcastStream().cast();
@@ -583,8 +599,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   // Stream<dynamic> get connectionSuccess => throw UnimplementedError('has not been implemented.');
 
-  Stream<dynamic> get onWebChatPasswordChanged =>
-      throw UnimplementedError('has not been implemented.');
+  // Stream<dynamic> get onWebChatPasswordChanged =>
+  //     throw UnimplementedError('has not been implemented.');
 
   Stream<dynamic> get setTypingStatus =>
       throw UnimplementedError('has not been implemented.');

@@ -26,6 +26,7 @@ import 'package:mirrorfly_plugin/model/notification_applaunch_details.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
+import 'edit_message_params.dart';
 import 'fly_constants.dart';
 import 'model/available_features.dart' as client;
 import 'model/callback.dart';
@@ -259,11 +260,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   // @visibleForTesting
   // final connectionSuccessChannel = const EventChannel('contus.mirrorfly/connectionSuccess');
   // final StreamController<dynamic> connectionSuccessStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final onWebChatPasswordChangedChannel =
-      const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
-  final StreamController<dynamic> onWebChatPasswordChangedStreamController =
-      StreamController<dynamic>.broadcast();
+  // @visibleForTesting
+  // final onWebChatPasswordChangedChannel =
+  //     const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
+  // final StreamController<dynamic> onWebChatPasswordChangedStreamController =
+  //     StreamController<dynamic>.broadcast();
   @visibleForTesting
   final setTypingStatusChannel =
       const EventChannel('contus.mirrorfly/setTypingStatus');
@@ -280,6 +281,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onGroupTypingStatusStreamController =
       StreamController<dynamic>.broadcast();
 
+  @visibleForTesting
+  final messageOnEditedChannel =
+  const EventChannel('contus.mirrorfly/onMessageEdited');
+  final StreamController<String> _messageOnEditedStreamController = StreamController<String>.broadcast();
   // @visibleForTesting
   // final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
   // final StreamController<dynamic> onFailureStreamController = StreamController<dynamic>.broadcast();
@@ -376,6 +381,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onMessageReceived =>
       _messageOnReceivedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMessageEdited =>
+      _messageOnEditedStreamController.stream;
 
   @override
   Stream<dynamic> get onMessageStatusUpdated =>
@@ -524,9 +533,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   // @override
   // Stream<dynamic> get connectionSuccess => connectionSuccessStreamController.stream;
 
-  @override
-  Stream<dynamic> get onWebChatPasswordChanged =>
-      onWebChatPasswordChangedStreamController.stream;
+  // @override
+  // Stream<dynamic> get onWebChatPasswordChanged =>
+  //     onWebChatPasswordChangedStreamController.stream;
 
   @override
   Stream<dynamic> get setTypingStatus => setTypingStatusStreamController.stream;
@@ -608,6 +617,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       _messageOnReceivedStreamController.add(message);
       messageEventsListener
           ?.onMessageReceived(client.sendMessageModelFromJson(message));
+    });
+    messageOnEditedChannel.receiveBroadcastStream().listen((event) {
+      var message = convertChatMessageJsonFromString(event);
+      _messageOnEditedStreamController.add(message);
+      messageEventsListener
+          ?.onMessageEdited(client.sendMessageModelFromJson(message));
     });
     messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
       var messageStatus = convertChatMessageJsonFromString(event);
@@ -840,9 +855,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     //   connectionFailedStreamController.add(event);});
     // connectionSuccessChannel.receiveBroadcastStream().listen((event) {
     //   connectionSuccessStreamController.add(event);});
-    onWebChatPasswordChangedChannel.receiveBroadcastStream().listen((event) {
-      onWebChatPasswordChangedStreamController.add(event);
-    });
+    // onWebChatPasswordChangedChannel.receiveBroadcastStream().listen((event) {
+    //   onWebChatPasswordChangedStreamController.add(event);
+    // });
     setTypingStatusChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var singleOrGroupJid = data["singleOrgroupJid"] ?? "";
@@ -2566,6 +2581,48 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'sendMessage', messageParams.toMap());
       var res = convertChatMessageJsonFromString(messageResponse);
       callback.call(FlyResponse(true, res, "message send successfully"));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<void> editTextMessage(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) async {
+    LogMessage.d("editMessageParams", editMessageParams.toMap());
+    String? editMessageResponse;
+    try {
+      editMessageResponse = await mirrorFlyMethodChannel.invokeMethod('editTextMessage', editMessageParams.toMap());
+      var res = convertChatMessageJsonFromString(editMessageResponse);
+      callback.call(FlyResponse(true, res, "Message edited successfully"));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<void> editMediaCaption(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) async {
+    LogMessage.d("editMediaCaptionParams", editMessageParams.toMap());
+    String? editMessageResponse;
+    try {
+      editMessageResponse = await mirrorFlyMethodChannel.invokeMethod('editMediaCaption', editMessageParams.toMap());
+      var res = convertChatMessageJsonFromString(editMessageResponse);
+      callback.call(FlyResponse(true, res, "Caption edited successfully"));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'event_handlers.dart';
@@ -1225,6 +1226,60 @@ class Mirrorfly {
         .sendMessage(messageParams: messageParams, callback: flyCallback);
   }
 
+  /// A method used to edit a text message sent previously.
+  ///
+  /// Parameters:
+  ///
+  /// The [editMessageParams] : An object containing parameters required for editing the message.
+  /// The [flyCallback] : A callback function to handle the response from the [editTextMessage].
+  ///
+  /// Example usage:
+  /// ```dart
+  /// await Mirrorfly.editTextMessage(
+  ///   editMessageParams: editMessageParams,
+  ///   flyCallback: (FlyResponse response) {
+  ///     if (response.isSuccess) {
+  ///       print('Message Edited successfully');
+  ///     } else {
+  ///       print('Failed to edit message: ${response.errorMessage}');
+  ///     }
+  ///   },
+  /// );
+  /// ```
+  static Future<void> editTextMessage(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance
+        .editTextMessage(editMessageParams: editMessageParams, callback: flyCallback);
+  }
+
+  /// A method used to edit a Caption Text message sent previously.
+  ///
+  /// Parameters:
+  ///
+  /// The [editMessageParams] : An object containing parameters required for editing the message.
+  /// The [flyCallback] : A callback function to handle the response from the [editTextMessage].
+  ///
+  /// Example usage:
+  /// ```dart
+  /// await Mirrorfly.editMediaCaption(
+  ///   editMessageParams: editMessageParams,
+  ///   flyCallback: (FlyResponse response) {
+  ///     if (response.isSuccess) {
+  ///       print('Message Edited successfully');
+  ///     } else {
+  ///       print('Failed to edit message: ${response.errorMessage}');
+  ///     }
+  ///   },
+  /// );
+  /// ```
+  static Future<void> editMediaCaption(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance
+        .editMediaCaption(editMessageParams: editMessageParams, callback: flyCallback);
+  }
+
   @Deprecated('Instead of use Mirrorfly.getRegisteredUsers()')
   static Future<String?> getRegisteredUserList(
       {required bool fetchFromServer}) {
@@ -1447,8 +1502,11 @@ class Mirrorfly {
 
   // static Stream<dynamic> get connectionSuccess => FlyChatFlutterPlatform.instance.connectionSuccess;
 
-  static Stream<dynamic> get onWebChatPasswordChanged =>
-      FlyChatFlutterPlatform.instance.onWebChatPasswordChanged;
+  // static Stream<dynamic> get onWebChatPasswordChanged =>
+  //     FlyChatFlutterPlatform.instance.onWebChatPasswordChanged;
+
+  static Stream<dynamic> get onMessageEdited =>
+      FlyChatFlutterPlatform.instance.onMessageEdited;
 
   @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get setTypingStatus =>

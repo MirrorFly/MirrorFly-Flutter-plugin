@@ -34,6 +34,7 @@ class ChatMessageModel {
     required this.messageId,
     required this.messageSentTime,
     required this.messageStatus,
+    required this.isMessageEdited,
     required this.messageTextContent,
     required this.messageType,
     this.replyParentChatMessage,
@@ -61,6 +62,7 @@ class ChatMessageModel {
   String messageId;
   int messageSentTime;
   String messageStatus;
+  bool isMessageEdited;
   String messageTextContent;
   String messageType;
   ReplyParentChatMessage? replyParentChatMessage;
@@ -91,6 +93,7 @@ class ChatMessageModel {
           messageId: json["messageId"],
           messageSentTime: json["messageSentTime"],
           messageStatus: json["messageStatus"],
+          isMessageEdited: json["isMessageEdited"],
           messageTextContent: json["messageTextContent"],
           messageType: json["messageType"],
           replyParentChatMessage: json["replyParentChatMessage"] == null
@@ -126,6 +129,7 @@ class ChatMessageModel {
         "messageId": messageId,
         "messageSentTime": messageSentTime,
         "messageStatus": messageStatus,
+        "isMessageEdited": isMessageEdited,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
         "replyParentChatMessage": replyParentChatMessage?.toJson(),
