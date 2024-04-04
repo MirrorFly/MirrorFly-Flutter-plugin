@@ -477,7 +477,7 @@ int getMediaUploadStatus(int mediaUploadStatus) {
     return mediaUploadStatus == 3
         ? 7
         : mediaUploadStatus == 8
-            ? 401
+            ? 0
             : mediaUploadStatus;
   } else {
     return mediaUploadStatus;
