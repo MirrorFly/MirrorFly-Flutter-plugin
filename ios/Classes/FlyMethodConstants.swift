@@ -214,5 +214,6 @@ class FlyMethodConstants {
                 "getJidFromPhoneNumber": flyChatMethods.getJidFromPhoneNumber,
                 "editTextMessage": flyChatMethods.editTextMessage,
                 "editMediaCaption": flyChatMethods.editMediaCaption,
+                "appLaunchedDetails": flyChatMethods.appLaunchedDetails,
             ] }()
 }

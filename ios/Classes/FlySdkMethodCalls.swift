@@ -4066,4 +4066,15 @@ let ISEXPORT = true
             }
          }
     }
+    
+    
+    func appLaunchedDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
+//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//        jsonObject.setValue("", forKey: "type")
+//        jsonObject.setValue("", forKey: "value")
+//        let jsonString = pluginDictToJson(dictionary: jsonObject)
+        
+     result("{}")
+    }
+    
 }
