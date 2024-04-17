@@ -1245,6 +1245,7 @@ class MockFlyChatFlutterPlatform
   Future<void> registerUser(String userIdentifier,
       {String fcmToken = "",
       bool isForceRegister = true,
+        IdentifierMetaData? identifierMetaData,
       required Function(FlyResponse response) callback}) {
     //  implement registerUser
     throw UnimplementedError();

@@ -2336,14 +2336,16 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<void> registerUser(String userIdentifier,
       {String fcmToken = FlyConstants.empty,
       bool isForceRegister = true,
+        IdentifierMetaData? identifierMetaData,
       required Function(FlyResponse response) callback}) async {
     String? registerResponse;
     try {
       registerResponse =
           await mirrorFlyMethodChannel.invokeMethod('register_user', {
-        "userIdentifier": userIdentifier,
-        "token": fcmToken,
-        "isForceRegister": isForceRegister
+            "userIdentifier": userIdentifier,
+            "token": fcmToken,
+            "isForceRegister": isForceRegister,
+            "metaData": identifierMetaData
       });
       var res = convertRegisterUserJsonFromString(registerResponse);
       callback.call(FlyResponse(true, res, "Registered Successfully"));

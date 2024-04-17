@@ -376,6 +376,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<void> registerUser(String userIdentifier,
       {String fcmToken = "",
       bool isForceRegister = true,
+      IdentifierMetaData? identifierMetaData,
       required Function(FlyResponse response) callback}) {
     throw UnimplementedError('has not been implemented.');
   }

@@ -25,10 +25,9 @@ extension ExtractTextMessage on TextMessageParams {
 }
 
 class MessageMetaData {
-  MessageMetaData({this.key, this.value});
-
-  String? key;
-  String? value;
+  MessageMetaData({required this.key, required this.value});
+  String key;
+  String value;
 }
 
 extension ExtractMessageMetaData on MessageMetaData {

@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -1079,13 +1080,16 @@ class Mirrorfly {
   ///
   /// Note: This method is a static member of the [Mirrorfly] class.
   static Future<void> login(
-      {required String userIdentifier,
-      String fcmToken = "",
-      bool isForceRegister = true,
-      required Function(FlyResponse response) flyCallback}) {
+      {
+        required String userIdentifier,
+        String fcmToken = "",
+        bool isForceRegister = true,
+        IdentifierMetaData? identifierMetaData,
+        required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
         fcmToken: fcmToken,
         isForceRegister: isForceRegister,
+        identifierMetaData: identifierMetaData,
         callback: flyCallback);
   }
 
@@ -2911,7 +2915,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getAppLaunchedDetails();
   }
 
-  /// Opens the audio file picker to select an audio file for [Platform.isAndroid].
+  /// Opens the audio file picker to select an audio file for [[Platform].isAndroid].
   ///
   /// Returns a [Future] that completes with a [String] representing the path
   /// of the selected audio file, or `null` if no file is selected.
