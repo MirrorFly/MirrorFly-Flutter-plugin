@@ -27,6 +27,7 @@ import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.api.CallActionListener
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.flycommons.exception.FlyException
 import org.json.JSONObject
 
 
@@ -281,8 +282,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         Log.d("attendCall", "onclick")
 
         CallManager.answerCall(object : CallActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                LogMessage.d(tag, "isSuccess $isSuccess message $message")
+            override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                LogMessage.d(tag, "isSuccess $isSuccess message ${flyException?.message}")
                 if (isSuccess) {
                     if (fromIntent) {
                         val json = JSONObject()
@@ -352,10 +353,12 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                         grantResult == PackageManager.PERMISSION_GRANTED -> {
                             Log.d("PermissionResult", "$permission is granted")
                         }
+
                         !ActivityCompat.shouldShowRequestPermissionRationale(this, permission) -> {
                             Log.d("PermissionResult", "$permission is permanently denied")
                             permanentlyDeniedPermissions.add(permission)
                         }
+
                         else -> {
                             Log.d("PermissionResult", "$permission is denied")
                             permissionsToCheck.add(permission)
@@ -401,6 +404,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
                 }*/
             }
+
             AppUtils.VIDEO_PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty()) {
 
                 val permissionsToCheck = mutableListOf<String>()
@@ -517,6 +521,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     finish()
                 }
             }
+
             CallConstants.ACTION_SHOW_CALL_UI -> {}
             CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED -> {}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED -> {}
@@ -529,27 +534,32 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     this.startActivity(y)
                 }
             }
+
             CallAction.ACTION_DENY_CALL -> {
                 if (CallManager.isOneToOneCall()) {
                     CallManager.disconnectCall()
                     finish()
                 }
             }
+
             CallAction.ACTION_LOCAL_HANGUP -> {
 //                if(CallManager.isOneToOneCall()){
 //                    CallManager.disconnectCall()
                 finish()
 //                }
             }
+
             CallAction.ACTION_REMOTE_HANGUP -> {
                 if (CallManager.isOneToOneCall()) {
                     CallManager.disconnectCall()
                     finish()
                 }
             }
+
             CallAction.ACTION_REMOTE_OTHER_BUSY -> {
                 updateUsersProfile()
             }
+
             CallStatus.USER_LEFT -> {
                 updateUsersProfile()
                 if (userJid != null && userJid.isNotEmpty()) {
@@ -558,6 +568,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     Toast.makeText(this, "$name Left", Toast.LENGTH_SHORT).show()
                 }
             }
+
             CallAction.ACTION_REMOTE_BUSY -> {
                 updateUsersProfile()
                 if (userJid != null && userJid.isNotEmpty()) {
@@ -566,6 +577,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     Toast.makeText(this, "$name is Busy", Toast.LENGTH_SHORT).show()
                 }
             }
+
             CallAction.ACTION_REMOTE_ENGAGED -> {
                 updateUsersProfile()
                 if (userJid != null && userJid.isNotEmpty()) {
@@ -574,6 +586,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     Toast.makeText(this, "$name is on another call", Toast.LENGTH_SHORT).show()
                 }
             }
+
             CallAction.ACTION_CALL_AGAIN -> {}
             CallAction.ACTION_CANCEL_CALL_AGAIN -> {}
             CallAction.ACTION_SWITCH_CAMERA -> {}
