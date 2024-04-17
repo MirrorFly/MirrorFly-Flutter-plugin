@@ -41,6 +41,7 @@ import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MessageMetaData
 import com.mirrorflysdk.flycommons.models.MessageType
 import com.mirrorflysdk.flycommons.models.MetaData
+import com.mirrorflysdk.flycommons.models.MetaDataUserList
 import com.mirrorflysdk.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.mirrorflysdk.media.MediaUploadHelper
 import com.mirrorflysdk.models.MediaAutoDownloadOption
@@ -65,6 +66,7 @@ import java.io.FileWriter
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class FlyChatMethods {
     val tag = "#FlyChatMethods"
@@ -2015,7 +2017,20 @@ class FlyChatMethods {
         val page = call.argument("page") ?: 1
         val perPageResultSize = call.argument("perPageResultSize") ?: 20
         val search = call.argument("search") ?: ""
-        FlyCore.getUserList(page, perPageResultSize, search) { isSuccess, throwable, data ->
+        val metaData = call.argument<Map<String, Any>>("metaData") ?: HashMap<String, Any>()
+        var extractedData = MetaDataUserList()
+        if (metaData.containsKey("key") && metaData.containsKey("value")) {
+            extractedData = MetaDataUserList(
+                key = metaData["key"] as String? ?: "",
+                value = (metaData["value"] as List<String>?) as ArrayList<String>? ?: arrayListOf()
+            )
+        }
+        FlyCore.getUserList(
+            page,
+            perPageResultSize,
+            search,
+            extractedData
+        ) { isSuccess, throwable, data ->
             data["status"] = isSuccess
             LogMessage.d("registered", "$isSuccess : $data : $throwable")
             if (isSuccess) {

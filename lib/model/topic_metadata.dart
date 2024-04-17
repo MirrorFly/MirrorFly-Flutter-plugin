@@ -9,7 +9,7 @@ extension ExtractTopicData on TopicMetaData {
   Map<String, dynamic> toMap() => {'key': key, 'value': value};
 }
 
-/*class MetaData {
+class MetaData {
   MetaData({this.key, this.value});
 
   String? key;
@@ -20,13 +20,13 @@ extension ExtractMetaData on MetaData {
   Map<String, dynamic> toMap() => {'key': key, 'value': value};
 }
 
-class MessageMetaData {
-  MessageMetaData({this.key, this.value});
+class MetaDataUserList {
+  MetaDataUserList({this.key, this.value});
 
   String? key;
-  String? value;
+  List<String>? value;
 }
 
-extension ExtractMessageMetaData on MessageMetaData {
+extension ExtractMetaDataUserList on MetaData {
   Map<String, dynamic> toMap() => {'key': key, 'value': value};
-}*/
+}
