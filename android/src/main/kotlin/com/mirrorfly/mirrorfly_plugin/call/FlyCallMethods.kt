@@ -268,7 +268,7 @@ class FlyCallMethods : MissedCallListener {
                     override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
                         LogMessage.d(
                             "makeGroupVoiceCall",
-                            "success $isSuccess message $flyException?.message"
+                            "success $isSuccess message ${flyException?.message}"
                         )
                         if (isSuccess) {
                             result.success(isSuccess)

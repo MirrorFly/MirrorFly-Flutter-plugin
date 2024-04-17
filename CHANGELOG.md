@@ -1,10 +1,18 @@
+## [1.0.1] DNS Resolver added
+
+* added DNS Resolver for android smack issue
+
 ## [1.0.0] Chat History Feature
 
 * Chat history feature is now available.
 * Profile model class has been changed to ProfileDetails.
-* FlyCallback has been incorporated for all method responses, ensuring that the output is in the form of a JSON-encoded string.
-* Collective event listeners are now available.([Learn more](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/event_listeners/connection-event-listeners/#observing-the-connection-events-collectively))
-* Some methods have been deprecated and will be removed in future releases. It is recommended to update your code accordingly, Please consider using the suggested alternatives([Learn more](https://www.mirrorfly.com/docs/chat/flutter-plugin/flutter-chat-change-log/))
+* FlyCallback has been incorporated for all method responses, ensuring that the output is in the
+  form of a JSON-encoded string.
+* Collective event listeners are now
+  available.([Learn more](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/event_listeners/connection-event-listeners/#observing-the-connection-events-collectively))
+* Some methods have been deprecated and will be removed in future releases. It is recommended to
+  update your code accordingly, Please consider using the suggested
+  alternatives([Learn more](https://www.mirrorfly.com/docs/chat/flutter-plugin/flutter-chat-change-log/))
 
 ## [0.0.13] Group Call Feature
 
