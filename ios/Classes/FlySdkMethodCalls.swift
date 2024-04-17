@@ -113,11 +113,8 @@ let ISEXPORT = true
         
         Utility.saveInPreference(key: Constants.contactSyncEnable, value: !isTrialLicenceKey)
         
-        //        FlyDefaults.chatHistoryEnabled = true
-        //        FlyDefaults.isBusyStatusEnabled = true
         ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
         
-        //        ChatManager.setRegisterDeviceType(deviceType: "android")
         
     }
     
@@ -142,7 +139,6 @@ let ISEXPORT = true
                         
                         do {
                             try CallManager.initCallSDK()
-                            //                    FlyDefaults.chatHistoryEnabled = true
                         } catch (let error ){
                             print("#FlyCall Exception : \(error.localizedDescription)")
                         }
@@ -205,7 +201,7 @@ let ISEXPORT = true
         let args = call.arguments as! Dictionary<String, Any>
         
         var userIdentifier = args["userIdentifier"] as? String ?? ""
-        let deviceToken = args["token"] as? String ?? ""
+        let deviceToken = args["token"] as? String ?? Utility.getStringFromPreference(key: Constants.googleToken) 
         let isForceRegister = args["isForceRegister"] as? Bool ?? true
         
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
@@ -216,7 +212,6 @@ let ISEXPORT = true
             return
         }
         let voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
-        //        voipToken = voipToken.isEmpty ? deviceToken : voipToken
         
         NSLog("\(Constants.tag) voipToken \(voipToken)")
         NSLog("\(Constants.tag) voipToken.isEmpty \(voipToken.isEmpty)")
