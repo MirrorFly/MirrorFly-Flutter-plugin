@@ -10,6 +10,11 @@ List<AudioDevices> audioDevicesFromJson(String str) => List<AudioDevices>.from(
 String audioDevicesToJson(List<AudioDevices> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
+///[AudioDevices] for used in Calls
+///[id] of the Audio device
+///[type] of the Audio device
+///[name] of the Audio device
+
 class AudioDevices {
   String? id;
   String? type;

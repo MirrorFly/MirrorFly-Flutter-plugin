@@ -123,7 +123,7 @@ capability`
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^1.0.0
+  mirrorfly_plugin: ^1.0.1
 ```
 
 - Run `flutter pub get` command in your project directory.
