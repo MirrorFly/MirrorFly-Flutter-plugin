@@ -1,8 +1,8 @@
 class TopicMetaData {
-  TopicMetaData({this.key, this.value});
+  TopicMetaData({required this.key, required this.value});
 
-  String? key;
-  String? value;
+  String key;
+  String value;
 }
 
 extension ExtractTopicData on TopicMetaData {
@@ -10,10 +10,10 @@ extension ExtractTopicData on TopicMetaData {
 }
 
 class MetaData {
-  MetaData({this.key, this.value});
+  MetaData({required this.key, required this.value});
 
-  String? key;
-  String? value;
+  String key;
+  String value;
 }
 
 extension ExtractMetaData on MetaData {
@@ -21,10 +21,10 @@ extension ExtractMetaData on MetaData {
 }
 
 class MetaDataUserList {
-  MetaDataUserList({this.key, this.value});
+  MetaDataUserList({required this.key, required this.value});
 
-  String? key;
-  List<String>? value;
+  String key;
+  List<String> value;
 }
 
 extension ExtractMetaDataUserList on MetaData {
