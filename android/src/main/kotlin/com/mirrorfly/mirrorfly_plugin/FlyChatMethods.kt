@@ -41,6 +41,7 @@ import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MessageMetaData
 import com.mirrorflysdk.flycommons.models.MessageType
 import com.mirrorflysdk.flycommons.models.MetaData
+import com.mirrorflysdk.flycommons.models.MetaDataMessageList
 import com.mirrorflysdk.flycommons.models.MetaDataUserList
 import com.mirrorflysdk.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.mirrorflysdk.media.MediaUploadHelper
@@ -303,6 +304,7 @@ class FlyChatMethods {
             val isForceRegister: Boolean = call.argument("isForceRegister") ?: true
             LogMessage.d("isForceRegister", isForceRegister.toString())
             val metaData = call.argument<List<Map<String, Any>>>("metaData") ?: arrayListOf()
+            LogMessage.d("registerUser", call.arguments.toString())
             val metaDataList = extractMetaData(metaData)
             if (userIdentifier != null) {
                 FlyCore.registerUser(
@@ -384,6 +386,37 @@ class FlyChatMethods {
                 }
             } else {
                 result.error("404", "User Identifier empty", "")
+            }
+        }
+    }
+
+    fun getMetaData(call: MethodCall, result: MethodChannel.Result) {
+        ChatManager.getMetaData { isSuccess, throwable, data ->
+            if (isSuccess) {
+                val metaDataList: ArrayList<MetaData> = data["data"] as ArrayList<MetaData>
+                //update the UI
+                //[{"key":"key","value":"value"}]
+                result.success(metaDataList.toJsonString())
+            } else {
+                //Fetching metaData value failed print throwable to find the exception details.
+                result.error("500", "failed to get user metaData", throwable ?: data)
+            }
+        }
+    }
+
+    fun updateMetaData(call: MethodCall, result: MethodChannel.Result) {
+        val metaData = call.argument<List<Map<String, Any>>>("metaData") ?: arrayListOf()
+        LogMessage.d("updateMetaData", call.arguments.toString())
+        val metaDataList = extractMetaData(metaData)
+        ChatManager.updateMetaData(metaDataList) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                val updatedMetaDataList: ArrayList<MetaData> = data["data"] as ArrayList<MetaData>
+                //update the UI
+                //[{"key":"key","value":"value"}]
+                result.success(updatedMetaDataList.toJsonString())
+            } else {
+                //Fetching metaData value failed print throwable to find the exception details.
+                result.error("500", "failed to get user metaData", throwable ?: data)
             }
         }
     }
@@ -1836,6 +1869,14 @@ class FlyChatMethods {
         val ascendingOrder: Boolean = call.argument("ascendingOrder") ?: true
         val limit: Int = call.argument("limit") ?: 50
         val topicId: String = call.argument("topicId") ?: ""
+        val metaData = call.argument<Map<String, Any>>("metaMessageList") ?: HashMap<String, Any>()
+        var extractedData = MetaDataMessageList()
+        if (metaData.containsKey("key") && metaData.containsKey("value")) {
+            extractedData = MetaDataMessageList(
+                key = metaData["key"] as String? ?: "",
+                value = (metaData["value"] as List<String>?) as ArrayList<String>? ?: arrayListOf()
+            )
+        }
         LogMessage.d("initializeMessageList", "${call.arguments}")
         if (ContactManager.isValidJid(chatJid)) {
             val messageListParams = FetchMessageListParams()
@@ -1847,6 +1888,7 @@ class FlyChatMethods {
             messageListParams.ascendingOrder = ascendingOrder
             messageListParams.topicId = topicId
             messageListParams.limit = limit
+            messageListParams.metaData = extractedData
 //            messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
 //            messageListParams.direction = "backward" // forward or backward
             messageListQuery = FetchMessageListQuery(messageListParams)
@@ -2017,7 +2059,7 @@ class FlyChatMethods {
         val page = call.argument("page") ?: 1
         val perPageResultSize = call.argument("perPageResultSize") ?: 20
         val search = call.argument("search") ?: ""
-        val metaData = call.argument<Map<String, Any>>("metaData") ?: HashMap<String, Any>()
+        val metaData = call.argument<Map<String, Any>>("metaDataUserList") ?: HashMap<String, Any>()
         var extractedData = MetaDataUserList()
         if (metaData.containsKey("key") && metaData.containsKey("value")) {
             extractedData = MetaDataUserList(
@@ -2025,6 +2067,7 @@ class FlyChatMethods {
                 value = (metaData["value"] as List<String>?) as ArrayList<String>? ?: arrayListOf()
             )
         }
+        LogMessage.d("getUserList", call.arguments.toString())
         FlyCore.getUserList(
             page,
             perPageResultSize,

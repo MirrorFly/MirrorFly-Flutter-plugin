@@ -1,4 +1,3 @@
-
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -1078,12 +1077,11 @@ class Mirrorfly {
   ///
   /// Note: This method is a static member of the [Mirrorfly] class.
   static Future<void> login(
-      {
-        required String userIdentifier,
-        String fcmToken = "",
-        bool isForceRegister = true,
-        IdentifierMetaData? identifierMetaData,
-        required Function(FlyResponse response) flyCallback}) {
+      {required String userIdentifier,
+      String fcmToken = "",
+      bool isForceRegister = true,
+      List<IdentifierMetaData>? identifierMetaData,
+      required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
         fcmToken: fcmToken,
         isForceRegister: isForceRegister,
@@ -1251,8 +1249,8 @@ class Mirrorfly {
   static Future<void> editTextMessage(
       {required EditMessageParams editMessageParams,
       required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance
-        .editTextMessage(editMessageParams: editMessageParams, callback: flyCallback);
+    return FlyChatFlutterPlatform.instance.editTextMessage(
+        editMessageParams: editMessageParams, callback: flyCallback);
   }
 
   /// A method used to edit a Caption Text message sent previously.
@@ -1278,8 +1276,8 @@ class Mirrorfly {
   static Future<void> editMediaCaption(
       {required EditMessageParams editMessageParams,
       required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance
-        .editMediaCaption(editMessageParams: editMessageParams, callback: flyCallback);
+    return FlyChatFlutterPlatform.instance.editMediaCaption(
+        editMessageParams: editMessageParams, callback: flyCallback);
   }
 
   @Deprecated('Instead of use Mirrorfly.getRegisteredUsers()')
@@ -1319,9 +1317,10 @@ class Mirrorfly {
       {int page = 1,
       String search = "",
       int perPageResultSize = 20,
+      MetaDataUserList? metaDataUserList,
       required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.getUserList(
-        page, search, flyCallback,
+        page, search, metaDataUserList, flyCallback,
         perPageResultSize: perPageResultSize);
   }
 
@@ -1656,6 +1655,7 @@ class Mirrorfly {
       bool exclude = true,
       bool ascendingOrder = false,
       String? topicId,
+      MetaDataMessageList? metaDataMessageList,
       int limit = 25}) {
     return FlyChatFlutterPlatform.instance.initializeMessageList(
         userJid: userJid,
@@ -1664,6 +1664,7 @@ class Mirrorfly {
         exclude: exclude,
         ascendingOrder: ascendingOrder,
         topicId: topicId,
+        metaDataMessageList: metaDataMessageList,
         limit: limit);
   }
 
@@ -3089,4 +3090,15 @@ class Mirrorfly {
   static Future reRouteAudio() async {
     return FlyChatFlutterPlatform.instance.reRouteAudio();
   }*/
+
+  static getMetaData({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.getMetaData(flyCallback);
+  }
+
+  static updateMetaData(
+      {required List<IdentifierMetaData> identifierMetaData,
+      Function(FlyResponse response)? flyCallback}) {
+    return FlyChatFlutterPlatform.instance
+        .updateMetaData(identifierMetaData, flyCallback);
+  }
 }

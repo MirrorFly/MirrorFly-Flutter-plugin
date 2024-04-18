@@ -705,7 +705,10 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<void> getUserList(
-      int page, String search, Function(FlyResponse response) callback,
+      int page,
+      String search,
+      MetaDataUserList? metaDataUserList,
+      Function(FlyResponse response) callback,
       {int perPageResultSize = 20}) {
     //  implement getUserList
     throw UnimplementedError();
@@ -791,6 +794,7 @@ class MockFlyChatFlutterPlatform
       bool? exclude,
       int limit = 25,
       String? topicId,
+      MetaDataMessageList? metaDataMessageList,
       bool ascendingOrder = true}) {
     //  implement initializeMessageList
     throw UnimplementedError();
@@ -1245,7 +1249,7 @@ class MockFlyChatFlutterPlatform
   Future<void> registerUser(String userIdentifier,
       {String fcmToken = "",
       bool isForceRegister = true,
-        IdentifierMetaData? identifierMetaData,
+      List<IdentifierMetaData>? identifierMetaData,
       required Function(FlyResponse response) callback}) {
     //  implement registerUser
     throw UnimplementedError();
@@ -1398,6 +1402,7 @@ class MockFlyChatFlutterPlatform
     //  implement sendMessage
     throw UnimplementedError();
   }
+
   @override
   Future<void> editTextMessage(
       {required EditMessageParams editMessageParams,
@@ -1765,6 +1770,19 @@ class MockFlyChatFlutterPlatform
   @override
   // implement onMessageEdited
   Stream get onMessageEdited => throw UnimplementedError();
+
+  @override
+  Future<void> getMetaData(Function(FlyResponse response)? callback) {
+    //  implement getMetaData
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateMetaData(List<IdentifierMetaData>? identifierMetaData,
+      Function(FlyResponse response)? callback) {
+    //  implement getMetaData
+    throw UnimplementedError();
+  }
 }
 
 void main() {

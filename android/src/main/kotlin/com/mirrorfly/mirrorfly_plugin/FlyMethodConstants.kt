@@ -255,6 +255,8 @@ object FlyMethodConstants {
         "openAudioFilePicker" to flyChatMethods::selectAudioFileFromStorage,
         "editTextMessage" to flyChatMethods::editTextMessage,
         "editMediaCaption" to flyChatMethods::editMediaCaption,
+        "getMetaData" to flyChatMethods::getMetaData,
+        "updateMetaData" to flyChatMethods::updateMetaData,
     )
 
     private val callEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(

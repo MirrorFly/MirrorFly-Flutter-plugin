@@ -376,7 +376,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<void> registerUser(String userIdentifier,
       {String fcmToken = "",
       bool isForceRegister = true,
-      IdentifierMetaData? identifierMetaData,
+      List<IdentifierMetaData>? identifierMetaData,
       required Function(FlyResponse response) callback}) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -457,7 +457,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   Future<void> getUserList(
-      int page, String search, Function(FlyResponse response) callback,
+      int page,
+      String search,
+      MetaDataUserList? metaDataUserList,
+      Function(FlyResponse response) callback,
       {int perPageResultSize = 20}) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -711,6 +714,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
       bool? exclude,
       int limit = 25,
       String? topicId,
+      MetaDataMessageList? metaDataMessageList,
       bool ascendingOrder = true}) {
     throw UnimplementedError('initializeMessageList has not been implemented.');
   }
@@ -1345,4 +1349,13 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future reRouteAudio() async {
     throw UnimplementedError('reRouteAudio has not been implemented.');
   }*/
+
+  getMetaData(Function(FlyResponse response) flyCallback) {
+    throw UnimplementedError('getMetaData has not been implemented.');
+  }
+
+  updateMetaData(List<IdentifierMetaData>? identifierMetaData,
+      Function(FlyResponse response)? callback) {
+    throw UnimplementedError('getMetaData has not been implemented.');
+  }
 }

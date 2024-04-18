@@ -11,11 +11,12 @@ extension ExtractTopicData on TopicMetaData {
 
 class IdentifierMetaData {
   IdentifierMetaData({required this.key, required this.value});
+
   String key;
   String value;
 }
 
-extension ExtractMetaData on IdentifierMetaData {
+extension IdentifierMetaDataListToMap on IdentifierMetaData {
   Map<String, dynamic> toMap() => {'key': key, 'value': value};
 }
 
@@ -26,6 +27,17 @@ class MetaDataUserList {
   List<String> value;
 }
 
-extension ExtractMetaDataUserList on IdentifierMetaData {
+extension MetaDataUserListToMap on MetaDataUserList {
+  Map<String, dynamic> toMap() => {'key': key, 'value': value};
+}
+
+class MetaDataMessageList {
+  MetaDataMessageList({required this.key, required this.value});
+
+  String key;
+  List<String> value;
+}
+
+extension MetaDataMessageListToMap on MetaDataMessageList {
   Map<String, dynamic> toMap() => {'key': key, 'value': value};
 }
