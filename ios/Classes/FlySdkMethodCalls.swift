@@ -699,10 +699,12 @@ let ISEXPORT = true
         let pageNumber = args["page"] as? Int ?? 1
         let searchTerm = args["search"] as? String ?? ""
         
-        let metaData = args["metaData"] as? Dictionary<String, Any> ?? [:]
+        let perPageResultSize = args["perPageResultSize"] as? Int ?? 20
+        
+        let metaData = args["metaDataUserList"] as? Dictionary<String, Any> ?? [:]
         print("metaData \(String(describing: metaData))")
         
-        ContactManager.shared.getUsersList(pageNo: pageNumber, pageSize: 20, search: searchTerm, metaData: MetaDataUserList(key: metaData["key"] as? String ?? "", value: metaData["value"] as? [String] ?? [])){ isSuccess,flyError,flyData in
+        ContactManager.shared.getUsersList(pageNo: pageNumber, pageSize: perPageResultSize, search: searchTerm, metaData: MetaDataUserList(key: metaData["key"] as? String ?? "", value: metaData["value"] as? [String] ?? [])){ isSuccess,flyError,flyData in
             if isSuccess {
                 var userList = flyData
                 
