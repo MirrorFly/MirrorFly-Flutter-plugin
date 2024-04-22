@@ -34,7 +34,7 @@ import PushKit
         }
         if !isAudioRouteMethodCall{
             let jsonObject: NSMutableDictionary = NSMutableDictionary()
-            jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
+            jsonObject.setValue(AppUtils.shared.getMyJid(), forKey: "userJid")
             jsonObject.setValue("AUDIO_DEVICE_CHANGED", forKey: "callAction")
             let callUpdate = pluginDictToJson(dictionary: jsonObject)
             self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
@@ -87,7 +87,7 @@ import PushKit
         }else if (call.method == "disconnectCall"){
             NSLog("\(Constants.callTag) Disconnecting Call")
             NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
-            factory?.clearMirrorflyView(userJID: AppUtils.getMyJid())
+            factory?.clearMirrorflyView(userJID: AppUtils.shared.getMyJid())
             CallManager.incomingUserJidArr.removeAll()
             CallManager.disconnectCall()
             
@@ -117,7 +117,7 @@ import PushKit
         if isHideNotificationContent{
             userString.append(APP_NAME)
         }else{
-            for JID in IncomingUser where JID != AppUtils.getMyJid(){
+            for JID in IncomingUser where JID != AppUtils.shared.getMyJid(){
                 NSLog("#jid \(JID)")
                 if let contact = ChatManager.getContact(jid: JID.lowercased()){
                     let contactSync = Utility.getBoolFromPreference(key: Constants.contactSyncEnable)
@@ -375,7 +375,7 @@ import PushKit
         NSLog("\(Constants.callTag) onlocal video Track --> \(userId) ---> \(videoTrack)")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(AppUtils.getMyJid(), forKey: "userJid")
+        jsonObject.setValue(AppUtils.shared.getMyJid(), forKey: "userJid")
         let jidJson = pluginDictToJson(dictionary: jsonObject)
         
         let videoTrack = CallManager.getRemoteVideoTrack(jid: userId)

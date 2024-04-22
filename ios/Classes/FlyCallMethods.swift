@@ -43,7 +43,7 @@ import MirrorFlySDK
         }
         
         let localJIDJson: [String: Any] = [
-            "userJid": AppUtils.getMyJid(),
+            "userJid": AppUtils.shared.getMyJid(),
             "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling"),
             "isAudioMuted" : CallManager.isAudioMuted(),
             "isVideoMuted" : CallManager.isVideoMuted()
@@ -73,9 +73,9 @@ import MirrorFlySDK
             CallManager.disableVideo()
         }
         
-        if let mirrorFlyViewId = factory?.getUniqueID(forString: AppUtils.getMyJid()) {
+        if let mirrorFlyViewId = factory?.getUniqueID(forString: AppUtils.shared.getMyJid()) {
             if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-                mirrorflyView.updateVideoTrack(userJid: AppUtils.getMyJid(), updateType: muteStatus ? MuteEvent.ACTION_LOCAL_VIDEO_MUTE : MuteEvent.ACTION_LOCAL_VIDEO_UN_MUTE)
+                mirrorflyView.updateVideoTrack(userJid: AppUtils.shared.getMyJid(), updateType: muteStatus ? MuteEvent.ACTION_LOCAL_VIDEO_MUTE : MuteEvent.ACTION_LOCAL_VIDEO_UN_MUTE)
             } else {
                 NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
             }
@@ -155,7 +155,7 @@ import MirrorFlySDK
     func declineCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         NSLog("\(Constants.callTag) declineCall")
         NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
-        factory?.clearMirrorflyView(userJID: AppUtils.getMyJid())
+        factory?.clearMirrorflyView(userJID: AppUtils.shared.getMyJid())
         CallManager.incomingUserJidArr.removeAll()
         CallManager.disconnectCall()
         result(true)
@@ -279,7 +279,7 @@ import MirrorFlySDK
             ]
             jsonArray.append(jsonObject)
         }
-        let availableAudioListJson = jsonArray.convertToJson()
+        let availableAudioListJson = jsonArray.toJson()
         NSLog("\(tag) availableAudioListJson \(String(describing: availableAudioListJson))")
        result(availableAudioListJson)
     }
@@ -332,7 +332,7 @@ import MirrorFlySDK
         
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["userJid"] as? String ?? ""
-        let status = (jid == AppUtils.getMyJid() || jid == "") ? CallManager.isAudioMuted() : CallManager.isRemoteAudioMuted(jid)
+        let status = (jid == AppUtils.shared.getMyJid() || jid == "") ? CallManager.isAudioMuted() : CallManager.isRemoteAudioMuted(jid)
 
         result(status)
     }
@@ -342,7 +342,7 @@ import MirrorFlySDK
         let jid = args["userJid"] as? String ?? ""
         NSLog("isUserVideoMuted jid \(jid)")
        
-        let status = (jid == AppUtils.getMyJid() || jid.isEmpty) ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(jid)
+        let status = (jid == AppUtils.shared.getMyJid() || jid.isEmpty) ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(jid)
         
 //        if let mirrorFlyViewId = factory?.getUniqueID(forString: jid.isEmpty ? AppUtils.getMyJid() : jid) {
 //                    if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
@@ -354,7 +354,7 @@ import MirrorFlySDK
 //                    NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
 //                }
         
-        NSLog("isUserVideoMuted \(jid == AppUtils.getMyJid() || jid.isEmpty)")
+        NSLog("isUserVideoMuted \(jid == AppUtils.shared.getMyJid() || jid.isEmpty)")
         NSLog("isUserVideoMuted status \(status)")
         result(status)
 

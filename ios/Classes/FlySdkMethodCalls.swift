@@ -1105,7 +1105,7 @@ let ISEXPORT = true
         let args = call.arguments as! Dictionary<String, Any>
         
         let groupJid = args["jid"] as? String ?? ""
-        let currentJid = AppUtils.getMyJid()
+        let currentJid = AppUtils.shared.getMyJid()
         let participantJid = args["userjid"] as? String ?? currentJid
         
         
@@ -1121,8 +1121,8 @@ let ISEXPORT = true
         var groupMembers = [GroupParticipantDetail]()
         
         
-        groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != AppUtils.getMyJid()})
-        let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == AppUtils.getMyJid()})
+        groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != AppUtils.shared.getMyJid()})
+        let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == AppUtils.shared.getMyJid()})
         //        if(myJid.count > 0){
         //            myJid[0].profileDetail?.nickName = "You"
         //            myJid[0].profileDetail?.name = "You"
@@ -1282,7 +1282,7 @@ let ISEXPORT = true
         let nickName = args["name"] as? String ?? ""
         let status = args["status"] as? String ?? ""
         let image = args["image"] as? String ?? nil
-        let userJid = AppUtils.getMyJid()
+        let userJid = AppUtils.shared.getMyJid()
         
         NSLog("update my profile image path --> \(String(describing: image))")
         
@@ -1367,7 +1367,7 @@ let ISEXPORT = true
     
     func saveMyJidAsContacts() {
         
-        let profileData = ProfileDetails(jid: AppUtils.getMyJid())
+        let profileData = ProfileDetails(jid: AppUtils.shared.getMyJid())
         profileData.name = ContactManager.getMyProfile().name
         profileData.nickName = ContactManager.getMyProfile().nickName
         profileData.mobileNumber  = ContactManager.getMyProfile().mobileNumber
@@ -2779,7 +2779,7 @@ let ISEXPORT = true
                 print("****sourceURL \(sourceURL)")
                 let fileName = (file as NSString).lastPathComponent
                 print("file name" + fileName)
-                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
+                if let fileUrl = AppUtils.shared.saveFile(from: sourceURL, fileName: fileName) {
                     print("File saved at: \(fileUrl)")
                     localFileUrl = fileUrl
                     
@@ -4123,6 +4123,44 @@ let ISEXPORT = true
 //        let jsonString = pluginDictToJson(dictionary: jsonObject)
         
      result("{}")
+    }
+    
+    func getMetaData(call: FlutterMethodCall, result: @escaping FlutterResult){
+        ChatManager.getMetaData { (isSuccess, flyError, resultDict) in
+            if isSuccess {
+                var flydata = resultDict
+                let metaDataResponse = flydata.getData() as? [MetaData]
+            
+                let jsonString = metaDataResponse?.toJsonString()
+                
+                result(jsonString)
+            }else{
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
+            }
+        }
+    }
+    
+    func updateMetaData(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let metaData = args["metaData"] as? [[String: Any]] ?? []
+        print("metaData \(String(describing: metaData))")
+        var metaDataArray : [MetaData] = []
+        for data in metaData {
+            let obj = MetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+            metaDataArray.append(obj)
+        }
+        ChatManager.updateMetaData(metaData: metaDataArray) { (isSuccess, flyError, resultDict) in
+          if isSuccess {
+              var flydata = resultDict
+              let metaDataResponse = flydata.getData() as? [MetaData]
+          
+              let jsonString = metaDataResponse?.toJsonString()
+              
+              result(jsonString)
+          }else{
+              result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
+          }
+      }
     }
     
 }

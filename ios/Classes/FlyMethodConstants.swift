@@ -215,5 +215,7 @@ class FlyMethodConstants {
                 "editTextMessage": flyChatMethods.editTextMessage,
                 "editMediaCaption": flyChatMethods.editMediaCaption,
                 "appLaunchedDetails": flyChatMethods.appLaunchedDetails,
+                "getMetaData": flyChatMethods.getMetaData,
+                "updateMetaData": flyChatMethods.updateMetaData,
             ] }()
 }

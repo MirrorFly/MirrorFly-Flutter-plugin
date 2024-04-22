@@ -109,6 +109,7 @@ class FLErrorMessage {
     public static let UNFAVOURITE_MESSAGE_FAILED : String = "Error while unFavourite Messages"
     public static let QR_LOGIN_FAILED : String = "Error while processing QR login"
     public static let CONTACT_US_FAILED_MESSAGE : String = "Error while submitting the reponse, Please try after sometime"
+    public static let META_DATA_FAILED_MESSAGE : String = "Error while fetching Meta Data, Please try after sometime"
     
     
     
