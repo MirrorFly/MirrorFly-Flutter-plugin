@@ -3096,9 +3096,9 @@ class Mirrorfly {
   }
 
   static updateMetaData(
-      {required List<IdentifierMetaData> identifierMetaData,
+      {required List<IdentifierMetaData> identifierMetaDataList,
       Function(FlyResponse response)? flyCallback}) {
     return FlyChatFlutterPlatform.instance
-        .updateMetaData(identifierMetaData, flyCallback);
+        .updateMetaData(identifierMetaDataList, flyCallback);
   }
 }
