@@ -1350,7 +1350,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('reRouteAudio has not been implemented.');
   }*/
 
-  getMetaData(Function(FlyResponse response) flyCallback) {
+  getMetaData(Function(FlyResponse response) callback) {
     throw UnimplementedError('getMetaData has not been implemented.');
   }
 

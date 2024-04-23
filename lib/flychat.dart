@@ -1056,6 +1056,7 @@ class Mirrorfly {
   ///
   /// The [flyCallback] function is called upon completion of the login operation,
   /// providing a [FlyResponse] object containing information about the operation's success or failure.
+  /// The [identifierMetaData] parameter is optional and represents additional metadata associated with the User.
   ///
   /// Throws an error if the [userIdentifier] is not provided.
   ///
@@ -1294,6 +1295,7 @@ class Mirrorfly {
   /// The optional [search] parameter allows filtering users based on a search query.
   /// The [perPageResultSize] parameter specifies the number of users to retrieve per page (default is 20).
   /// The [flyCallback] parameter is a callback function that handles the response from the platform.
+  /// The [metaDataUserList] parameter is optional and represents additional metadata associated with the User.
   ///
   /// Example usage:
   /// ```dart
@@ -1648,6 +1650,7 @@ class Mirrorfly {
   /// * @param [topicId] - use to get messages by topic id
   /// * @param [limit] - No of messages will be fetched for each request default 25
   /// * @param [ascendingOrder] - If true message list will be returned ascendingOrder by message time default false
+  /// * @param [metaDataMessageList] parameter is optional and represents additional metadata associated with the Messages.
   static Future<bool> initializeMessageList(
       {required String userJid,
       String? messageId,
@@ -3091,10 +3094,18 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.reRouteAudio();
   }*/
 
+  /// Provides information about the metadata of logged in with metadata .
+  ///
+  /// This method fetches the [IdentifierMetaData] from the Mirrorfly platform.
+  /// from current logged in user.
   static getMetaData({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.getMetaData(flyCallback);
   }
 
+  /// Provides information about the metadata of logged in with metadata .
+  ///
+  /// This method update the [IdentifierMetaData] from the Mirrorfly platform.
+  /// to current logged in user
   static updateMetaData(
       {required List<IdentifierMetaData> identifierMetaDataList,
       Function(FlyResponse response)? flyCallback}) {
