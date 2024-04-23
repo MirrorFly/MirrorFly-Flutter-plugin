@@ -41,8 +41,7 @@ extension IdentifierMetaDataToMap on IdentifierMetaData {
 }
 
 extension IdentifierMetaDataListToMap on List<IdentifierMetaData> {
-  String toJson() =>
-      json.encode(List<dynamic>.from(this.map((x) => x.toJson())));
+  String toJson() => json.encode(List<dynamic>.from(map((x) => x.toJson())));
 }
 
 class MetaDataUserList {
