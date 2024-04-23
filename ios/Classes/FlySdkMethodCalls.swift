@@ -2526,8 +2526,8 @@ let ISEXPORT = true
             messageListParams.topicID = topicId
         }
         
-        let metaData = args["metaData"] as? [[String: Any]] ?? []
-        print("Image MetaData \(String(describing: metaData))")
+//        let metaData = args["metaDataMessageList"] as? [String: Any] ?? [:]
+//        print("initializeMessageList MetaData \(String(describing: metaData))")
         
 //        if let metaData = args["metaData"] as? [[String: Any]] {
 //            metaData.forEach { data in
@@ -2538,10 +2538,10 @@ let ISEXPORT = true
 //        }
 
         
-        if let metaDataArray = args["metaData"] as? [[String: Any]],
-           let firstMetaData = metaDataArray.first {
-            let key = firstMetaData["key"] as? String ?? ""
-            let value = firstMetaData["value"] as? [String] ?? []
+        if let metaDataArray = args["metaDataMessageList"] as? [String: Any] {
+//           let firstMetaData = metaDataArray.first {
+            let key = metaDataArray["key"] as? String ?? ""
+            let value = metaDataArray["value"] as? [String] ?? []
             messageListParams.metaData = MetaDataMessageList(key: key, value: value)
         }
         
