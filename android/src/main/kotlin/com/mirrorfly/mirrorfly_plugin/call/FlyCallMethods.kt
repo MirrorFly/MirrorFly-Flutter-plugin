@@ -583,7 +583,12 @@ class FlyCallMethods : MissedCallListener {
         CallManager.inviteUsersToOngoingCall(jidList as ArrayList<String>,
             object : CallActionListener {
                 override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
-
+                    LogMessage.d("invite**", "$isSuccess : $flyException")
+                    if (isSuccess) {
+                        result.success(isSuccess)
+                    } else {
+                        result.error("500", flyException?.message, flyException)
+                    }
                 }
 
             })

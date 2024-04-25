@@ -45,7 +45,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
     TypingEventListener, TypingStatusListener, ActivityAware, DefaultLifecycleObserver,
     PluginRegistry.NewIntentListener, PluginRegistry.ActivityResultListener,
-    AvailableFeaturesCallback, MissedCallListener, CallLogManager.CallLogsListener,MediaNotificationHelper {
+    AvailableFeaturesCallback, MissedCallListener, CallLogManager.CallLogsListener,
+    MediaNotificationHelper {
 
     //    var instance: FlyChatPlugin = FlyChatPlugin()
     init {
@@ -73,7 +74,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             )
             MirrorFlyManager.init(flutterPluginBinding.applicationContext)
             MirrorFlyManager.setPluginBinding(flutterPluginBinding)
-            CallManager.init(flutterPluginBinding.applicationContext)
+//            CallManager.init(flutterPluginBinding.applicationContext)
             initSharedInstance(
                 flutterPluginBinding.applicationContext,
                 flutterPluginBinding.binaryMessenger
@@ -101,7 +102,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
 
         private fun initChannels(binaryMessenger: BinaryMessenger) {
-            Log.d("initChannels","FlyChatPlugin")
+            Log.d("initChannels", "FlyChatPlugin")
             val channel = MethodChannel(binaryMessenger, Constants.MirrorflyMethodChannel)
             methodChannels[binaryMessenger] = channel
             channel.setMethodCallHandler(instance)
@@ -147,18 +148,21 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             "appLaunchedDetails" -> {
                 appLaunchedDetails(result)
             }
+
             "appLaunchedFromMissedCall" -> {
                 val fromCall = instance.fromCallNotification
                 instance.fromCallNotification = false
                 Log.d("appLaunchedFromMissedCall", fromCall.toString())
                 result.success(fromCall)
             }
+
             "appLaunchedFromMediaNotification" -> {
                 val jid = instance.mediaClickedJid
                 instance.mediaClickedJid = ""
                 Log.d("appLaunchedFromMediaNotification", jid)
                 result.success(jid)
             }
+
             "init", "initializeSDK" -> {
                 ChatEventsManager.attachProfileEventsListener(instance)
                 ChatEventsManager.attachGroupEventsListener(instance)
@@ -176,6 +180,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 call.method == "getPlatformVersion" -> {
                     result.success("Android ${Build.VERSION.RELEASE}")
                 }
+
                 call.method.equals("getNonChatUsers") -> {
                     val nonchatusers = FlyCore.getNonChatUsers()
                     result.success(nonchatusers.toJsonString())
@@ -185,21 +190,26 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     val groupJid = call.argument<String>("groupJid") ?: ""
                     result.success(GroupManager.doesFetchingMembersListFromServedRequired(groupJid))
                 }
+
                 call.method.equals("getMembersCountOfGroup") -> {
                     val groupJid = call.argument<String>("groupJid") ?: ""
                     result.success(GroupManager.getMembersCountOfGroup(groupJid))
                 }
+
                 call.method.equals("getUsersListToAddMembersInOldGroup") -> {
                     val groupJid = call.argument<String>("groupJid") ?: ""
                     result.success(GroupManager.getUsersListToAddMembersInOldGroup(groupJid))
                 }
+
                 call.method.equals("getUsersListToAddMembersInNewGroup") -> {
                     result.success((GroupManager.getUsersListToAddMembersInNewGroup()).toJsonString())
                 }
+
                 call.method.equals("getGroupMessageStatusCount") -> {
                     val messageid: String = call.argument("messageid") ?: ""
                     result.success(FlyMessenger.getGroupMessageStatusCount(messageid))
                 }
+
                 call.method.equals("deleteOfflineGroup") -> {
                     val groupJid = call.argument<String>("groupJid") ?: ""
                     GroupManager.deleteOfflineGroup(groupJid)
@@ -212,40 +222,48 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 call.method.equals("getArchivedChatsFromServer") -> {
                     FlyCore.getArchivedChatsFromServer()
                 }
+
                 call.method.equals("getMessageActions") -> {
                     val messageIdlist =
                         call.argument<List<String>>("messageidlist") ?: arrayListOf()
                     result.success(ChatManager.getMessageActions(messageIdlist).toJsonString())
                 }
+
                 call.method.equals("copyTextMessages") -> {
                     val messageIdlist =
                         call.argument<List<String>>("messageidlist") ?: arrayListOf()
                     ChatManager.copyTextMessages(messageIdlist).toJsonString()
                 }
+
                 call.method.equals("setCustomValue") -> {
                     val mid = call.argument<String>("message_id") ?: ""
                     val key = call.argument<String>("key") ?: ""
                     val value = call.argument<String>("value") ?: ""
                     FlyMessenger.setCustomValue(mid, key, value)
                 }
+
                 call.method.equals("getCustomValue") -> {
                     val mid = call.argument<String>("message_id") ?: ""
                     val key = call.argument<String>("key") ?: ""
                     result.success(FlyMessenger.getCustomValue(mid, key))
                 }
+
                 call.method.equals("removeCustomValue") -> {
                     val mid = call.argument<String>("message_id") ?: ""
                     val key = call.argument<String>("key") ?: ""
                     FlyMessenger.removeCustomValue(mid, key)
                 }
+
                 call.method.equals("inviteUserViaSMS") -> {
                     val mobile_no = call.argument<String>("mobile_no") ?: ""
                     val message = call.argument<String>("message") ?: ""
                     ContactManager.inviteUserViaSMS(mobile_no, message)
                 }
+
                 call.method.equals("cancelBackup") -> {
                     BackupManager.cancelBackup()
                 }
+
                 call.method.equals("startBackup") -> {
                     BackupManager.startBackup(object : BackupListener {
                         override fun onFailure(reason: String) {
@@ -273,6 +291,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         }
                     })
                 }
+
                 call.method.equals("cancelRestore") -> {
                     val filepath = call.argument<String>("file") ?: ""
                     val file = File(filepath)
@@ -304,35 +323,43 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         })
                     }
                 }
+
                 call.method.equals("clearAllSDKData") -> {
                     FlyCore.clearAllSDKData()
                 }
+
                 call.method.equals("getLastNUnreadMessages") -> {
                     val messagescount = call.argument<Int>("messagesCount") ?: 0
                     result.success(
                         FlyMessenger.getLastNUnreadMessages(messagescount).toJsonString()
                     )
                 }
+
                 call.method.equals("getNUnreadMessagesOfEachUsers") -> {
                     val messagescount = call.argument<Int>("messagesCount") ?: 0
                     val usersWithMessage: Map<String, List<ChatMessage>> =
                         FlyMessenger.getNUnreadMessagesOfEachUsers(messagescount)
                     result.success(usersWithMessage.toJsonString())
                 }
+
                 call.method.equals("getUnreadMessagesCount") -> {
                     result.success(FlyMessenger.getUnreadMessagesCount())
                 }
+
                 call.method.equals("get_message_using_ids") -> {
 //                getMessageUsingIds(call, result)
                 }
+
                 call.method.equals("getWebLoginDetails") -> {
                     val details = WebLoginDataManager.getWebLoginDetails()
                     result.success(details.toJsonString())
                 }
+
                 call.method.equals("webLoginDetailsCleared") -> {
                     WebLoginDataManager.webLoginDetailsCleared()
                     result.success(true)
                 }
+
                 call.method.equals("logoutWebUser") -> {
                     UpDateWebPassword().upDatePassword()
                     val listWebLogin =
@@ -882,22 +909,22 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun setTypingStatus(singleOrGroupJid: String, userId: String, composing: String) {
-       /* val map = JSONObject()
-        map.put("status", composing)
-        if(GroupManager.isValidGroupJid(singleOrGroupJid)){
-            map.put("groupJid", if(GroupManager.isValidGroupJid(singleOrGroupJid)) singleOrGroupJid else "")
-            map.put("userJid", userId)
-            FlyMethodConstants.updateChatSinkValue(
-                Constants.onGroupTypingStatusChannel,
-                map.toString()
-            )
-        }else {
-            map.put("userJid", singleOrGroupJid)
-            FlyMethodConstants.updateChatSinkValue(
-                Constants.onChatTypingStatusChannel,
-                map.toString()
-            )
-        }*/
+        /* val map = JSONObject()
+         map.put("status", composing)
+         if(GroupManager.isValidGroupJid(singleOrGroupJid)){
+             map.put("groupJid", if(GroupManager.isValidGroupJid(singleOrGroupJid)) singleOrGroupJid else "")
+             map.put("userJid", userId)
+             FlyMethodConstants.updateChatSinkValue(
+                 Constants.onGroupTypingStatusChannel,
+                 map.toString()
+             )
+         }else {
+             map.put("userJid", singleOrGroupJid)
+             FlyMethodConstants.updateChatSinkValue(
+                 Constants.onChatTypingStatusChannel,
+                 map.toString()
+             )
+         }*/
         val map2 = JSONObject()
         map2.put("singleOrgroupJid", singleOrGroupJid)
         map2.put("userJid", userId)
@@ -961,8 +988,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             Log.d(TAG, "mainActivityIntent ${it.getBoolean("IS_CALL_NOTIFICATION")}")
             if (it.getBoolean(Constants.IS_CALL_NOTIFICATION)) {
                 instance.fromCallNotification = true
-            }else if(it.getBoolean(Constants.IS_CHAT_NOTIFICATION)){
-                instance.mediaClickedJid = it.getString(Constants.JID,"")
+            } else if (it.getBoolean(Constants.IS_CHAT_NOTIFICATION)) {
+                instance.mediaClickedJid = it.getString(Constants.JID, "")
             }
         }
 //        if (!launchedActivityFromHistory(mainActivityIntent)) {
@@ -988,17 +1015,18 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         instance.lifecycle.addObserver(instance)
     }
 
-    private fun appLaunchedDetails(result: MethodChannel.Result){
+    private fun appLaunchedDetails(result: MethodChannel.Result) {
         val json = JSONObject()
         instance.extras?.let {
             Log.d(TAG, "appLaunchedDetails $it")
             if (it.getBoolean(Constants.IS_CALL_NOTIFICATION)) {
-                json.put("type","MissedCall")
-                json.put("value",true)
-            }else if(it.getBoolean(Constants.IS_CHAT_NOTIFICATION)){
-                json.put("type","MediaProgress")
-                json.put("value",it.getString(Constants.JID,""))
-            } else { }
+                json.put("type", "MissedCall")
+                json.put("value", true)
+            } else if (it.getBoolean(Constants.IS_CHAT_NOTIFICATION)) {
+                json.put("type", "MediaProgress")
+                json.put("value", it.getString(Constants.JID, ""))
+            } else {
+            }
         }
         instance.extras = null
         result.success(json.toString())
@@ -1053,7 +1081,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun onNewIntent(intent: Intent): Boolean {
-        LogMessage.d("setMediaNotificationIntentAction","${intent.extras}")
+        LogMessage.d("setMediaNotificationIntentAction", "${intent.extras}")
         val res: Boolean = sendNotificationPayloadMessage(intent)
         if (res && MirrorFlyManager.getActivity() != null) {
             MirrorFlyManager.getActivity()!!.intent = intent
@@ -1240,14 +1268,14 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onCallLogsDeleted(isClearAll: Boolean, callIdList: ArrayList<String>) {
         LogMessage.d("deleteCallLog ", "onCallLogsDeleted Called")
-        if(!isClearAll) {
+        if (!isClearAll) {
             callIdList.forEach { item ->
                 FlyMethodConstants.updateCallSinkValue(
                     Constants.onCallLogDeletedChannel,
                     item
                 )
             }
-        }else{
+        } else {
             FlyMethodConstants.updateCallSinkValue(
                 Constants.clearAllCallLogChannel,
                 true
@@ -1262,19 +1290,37 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         FlyMethodConstants.updateCallSinkValue(Constants.onCallLogsUpdatedChannel, true)
     }
 
-    override fun setMediaNotificationIntentAction(notificationCompatBuilder: NotificationCompat.Builder, jidList: List<String>) {
+    override fun setMediaNotificationIntentAction(
+        notificationCompatBuilder: NotificationCompat.Builder,
+        jidList: List<String>
+    ) {
         val pendingIntent = getPendingIntent(jidList)
-        LogMessage.d("setMediaNotificationIntentAction",jidList.joinToString { "," }+" : pendingIntent : ${pendingIntent!=null}")
+        LogMessage.d(
+            "setMediaNotificationIntentAction",
+            jidList.joinToString { "," } + " : pendingIntent : ${pendingIntent != null}"
+        )
         notificationCompatBuilder.setContentIntent(getPendingIntent(jidList))
     }
 
     private fun getPendingIntent(toUsers: List<String>): PendingIntent? {
-        val notificationIntent = instance.mContext.packageManager.getLaunchIntentForPackage(instance.mContext.packageName)?.cloneFilter()
-        notificationIntent?.flags = (Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val notificationIntent =
+            instance.mContext.packageManager.getLaunchIntentForPackage(instance.mContext.packageName)
+                ?.cloneFilter()
+        notificationIntent?.flags =
+            (Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         notificationIntent?.putExtra("FROM", "setMediaNotificationIntentAction")
         notificationIntent?.putExtra(Constants.IS_CHAT_NOTIFICATION, true)
-        notificationIntent?.putExtra(Constants.JID, if (toUsers.count() == 1) toUsers.elementAt(0) else Constants.EMPTY_STRING)
+        notificationIntent?.putExtra(
+            Constants.JID,
+            if (toUsers.count() == 1) toUsers.elementAt(0) else Constants.EMPTY_STRING
+        )
         val requestID = System.currentTimeMillis().toInt()
-        return notificationIntent?.let { PendingIntentHelper.getActivity(instance.mContext, requestID, it) }
+        return notificationIntent?.let {
+            PendingIntentHelper.getActivity(
+                instance.mContext,
+                requestID,
+                it
+            )
+        }
     }
 }

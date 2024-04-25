@@ -2997,11 +2997,15 @@ class Mirrorfly {
   /// This static method sends an invitation to join an ongoing call to the users specified by their JIDs.
   /// The [jidList] parameter is a list of JIDs of the users to be invited.
   ///
-  /// Returns a Future that completes with the result of the invitation operation.
+  /// Returns:
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  static Future inviteUsersToOngoingCall(
-      {List<String> jidList = const []}) async {
-    return FlyChatFlutterPlatform.instance.inviteUsersToOngoingCall(jidList);
+  static Future<void> inviteUsersToOngoingCall(
+      {required List<String> jidList,
+      required Function(FlyResponse response) flyCallback}) async {
+    return FlyChatFlutterPlatform.instance
+        .inviteUsersToOngoingCall(jidList, flyCallback);
   }
 
   /// Retrieves a list of invited users from the Mirrorfly platform asynchronously.

@@ -832,7 +832,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future inviteUsersToOngoingCall(List<String> jidList) {
+  Future<void> inviteUsersToOngoingCall(
+      List<String> jidList, Function(FlyResponse response)? callback) {
     //  implement inviteUsersToOngoingCall
     throw UnimplementedError();
   }
