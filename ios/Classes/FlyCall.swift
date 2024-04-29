@@ -372,7 +372,7 @@ import PushKit
     }
     
     func onLocalVideoTrackAdded(userId: String, videoTrack: RTCVideoTrack) {
-        NSLog("\(Constants.callTag) onlocal video Track --> \(userId) ---> \(videoTrack)")
+        NSLog("#MirrorflyCall Events: onlocal video Track --> \(userId) ---> \(videoTrack)")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(AppUtils.shared.getMyJid(), forKey: "userJid")
@@ -401,7 +401,7 @@ import PushKit
     }
     
     func onRemoteVideoTrackAdded(userId: String, track: RTCVideoTrack) {
-        NSLog("\(Constants.callTag) onRemote video Track --> \(userId)")
+        NSLog("#MirrorflyCall Events: onRemote video Track --> \(userId)")
         NSLog("\(Constants.callTag) isRemoteVideoMuted \(CallManager.isRemoteVideoMuted(userId))")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
@@ -459,12 +459,12 @@ import PushKit
         ChatManager.setAppGroupContainerId(id: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
         
-        do {
-            try CallManager.initCallSDK()
-        }
-        catch(let error ) {
-            NSLog("\(Constants.callTag) #FlyCall Exception : \(error.localizedDescription)")
-        }
+//        do {
+//            try CallManager.initCallSDK()
+//        }
+//        catch(let error ) {
+//            NSLog("\(Constants.callTag) #FlyCall Exception : \(error.localizedDescription)")
+//        }
         
         
         NSLog("\(Constants.callTag) Push VOIP Received with Payload - %@",payload.dictionaryPayload)

@@ -99,7 +99,7 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["user_jid"] as? String ?? ""
         
-        try! CallManager.makeVoiceCall(jid) { [weak self] (isSuccess , message)  in
+        try! CallManager.makeVoiceCall(jid) {isSuccess , flyError  in
            if isSuccess  {
                if(!CallManager.isAudioCallPermissionsGranted()){
                    NSLog("MirrorflyCall Audio call permission not granted")
@@ -107,7 +107,8 @@ import MirrorFlySDK
                    return
                }
                if isSuccess == false {
-                   let errorMessage = self?.getErrorMessage(description: message)
+                   
+                   let errorMessage = flyError?.localizedDescription
                    NSLog("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
                    
                    result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
@@ -135,14 +136,15 @@ import MirrorFlySDK
             result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.CAMERA_PERMISSION_NOT_ENABLED, details: nil))
             return
         }
-        try! CallManager.makeVideoCall(jid) { isSuccess , message in
-            NSLog("call result --> \(isSuccess) messsage --> \(message)")
+        try! CallManager.makeVideoCall(jid) { isSuccess , flyError in
+            NSLog("call result --> \(isSuccess) messsage --> \(String(describing: flyError))")
             if (isSuccess){
                 NSLog("MirrorflyCall Success")
                 result(isSuccess)
             }else{
-                let errorMessage = self.getErrorMessage(description: message)
-                NSLog("MirroflyCall making call error--->\(errorMessage)")
+//                let errorMessage = self.getErrorMessage(description: message)
+                let errorMessage = flyError?.localizedDescription
+                NSLog("MirroflyCall making call error--->\(String(describing: errorMessage))")
                 result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
             
             }
@@ -184,14 +186,15 @@ import MirrorFlySDK
         
         NSLog("***making group call")
         do {
-            try CallManager.makeGroupVideoCall(jidList, groupID: groupJid) { (isSuccess, message) in
+            try CallManager.makeGroupVideoCall(jidList, groupID: groupJid) { isSuccess, flyError in
                 
                 if isSuccess{
                     NSLog("***Make Group Video Call Success")
                     result(true)
                 }else{
-                    let errorMessage = self.getErrorMessage(description: message)
-                    NSLog("MirroflyCall Group Video Call error--->\(errorMessage)")
+//                    let errorMessage = self.getErrorMessage(description: message)
+                    let errorMessage = flyError?.localizedDescription
+                    NSLog("MirroflyCall Group Video Call error--->\(String(describing: errorMessage))")
                     result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
                 }
             }
@@ -206,14 +209,14 @@ import MirrorFlySDK
         let jidList = args["jidList"] as? [String] ?? []
         
         do {
-            try CallManager.makeGroupVoiceCall(jidList, groupID: groupJid) { (isSuccess, message) in
+            try CallManager.makeGroupVoiceCall(jidList, groupID: groupJid) { isSuccess, flyError in
                 if isSuccess{
                     NSLog("***Make Group Voice Call Success")
                     result(true)
                 }else{
-                    NSLog("***Make Group Voice Call Failed \(message)")
-                    let errorMessage = self.getErrorMessage(description: message)
-                    NSLog("MirroflyCall Group Video Call error--->\(errorMessage)")
+//                    let errorMessage = self.getErrorMessage(description: message)
+                    let errorMessage = flyError?.localizedDescription
+                    NSLog("MirroflyCall Group Video Call error--->\(String(describing: errorMessage))")
                     result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
                 }
             }
@@ -227,20 +230,25 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let jidList = args["jidList"] as? [String] ?? []
         
-        CallManager.inviteUsersToOngoingCall(jidList) { isSuccess, message in
+        CallManager.inviteUsersToOngoingCall(jidList) { isSuccess, flyError in
             if isSuccess {
                 NSLog("inviteUsersToOngoingCall Success")
                 result(true)
             } else {
-                let (errorCode, errorMessage) = self.getErrorCodeWithMessage(message: message)
-                NSLog("inviteUsersToOngoingCall Error\(errorMessage) ")
-                switch errorCode {
-                case nil:
-                    result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.INVITE_FAILED_MESSAGE, details: errorMessage))
-                case String(ErrorCode.FORBIDDEN):
-                    result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: errorMessage))
-                default:
-                    result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.INVITE_FAILED_MESSAGE, details: errorMessage))
+                if !isSuccess, case let .unexpected(message, code) = flyError {
+                    switch code {
+                    case ErrorCode.XMPP_CONNECTION_ERROR,
+                        ErrorCode.JANUS_CONNECTION_ERROR,
+                        ErrorCode.SIGNAL_CONNECTION_ERROR,
+                        ErrorCode.INVITE_USER_NOT_IN_ONGOING_CALL:
+                        result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.INVITE_FAILED_MESSAGE, details: message))
+                        
+                    case ErrorCode.FORBIDDEN:
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                        
+                    default:
+                        result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.INVITE_FAILED_MESSAGE, details: message))
+                    }
                 }
 
             }

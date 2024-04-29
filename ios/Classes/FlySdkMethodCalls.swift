@@ -92,12 +92,12 @@ let ISEXPORT = true
             
             DispatchQueue.main.asyncAfter(deadline: .now()+2) {
                 
-                do {
-                    try CallManager.initCallSDK()
-                    //                    FlyDefaults.chatHistoryEnabled = true
-                } catch (let error ){
-                    print("#FlyCall Exception : \(error.localizedDescription)")
-                }
+//                do {
+//                    try CallManager.initCallSDK()
+//                    //                    FlyDefaults.chatHistoryEnabled = true
+//                } catch (let error ){
+//                    print("#FlyCall Exception : \(error.localizedDescription)")
+//                }
             }
         }
         
@@ -132,11 +132,11 @@ let ISEXPORT = true
                     
                     DispatchQueue.main.asyncAfter(deadline: .now()+2) {
                         
-                        do {
-                            try CallManager.initCallSDK()
-                        } catch (let error ){
-                            print("#FlyCall Exception : \(error.localizedDescription)")
-                        }
+//                        do {
+//                            try CallManager.initCallSDK()
+//                        } catch (let error ){
+//                            print("#FlyCall Exception : \(error.localizedDescription)")
+//                        }
                     }
                 }
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
@@ -248,12 +248,12 @@ let ISEXPORT = true
                 ChatManager.connect()
                 
                 
-                do {
-                    try CallManager.initCallSDK()
-                }
-                catch(let error ) {
-                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
-                }
+//                do {
+//                    try CallManager.initCallSDK()
+//                }
+//                catch(let error ) {
+//                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
+//                }
                 
                 VOIPManager.sharedInstance.saveVOIPToken(token: Utility.getStringFromPreference(key: Constants.voipToken))
                 VOIPManager.sharedInstance.updateDeviceToken()
@@ -4133,7 +4133,7 @@ let ISEXPORT = true
                 var flydata = resultDict
                 let metaDataResponse = flydata.getData() as? [MetaData]
             
-                let jsonString = metaDataResponse?.toJsonString()
+                let jsonString = metaDataResponse?.toJson()
                 
                 result(jsonString)
             }else{
@@ -4156,7 +4156,7 @@ let ISEXPORT = true
               var flydata = resultDict
               let metaDataResponse = flydata.getData() as? [MetaData]
           
-              let jsonString = metaDataResponse?.toJsonString()
+              let jsonString = metaDataResponse?.toJson()
               
               result(jsonString)
           }else{

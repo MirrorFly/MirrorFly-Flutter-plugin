@@ -58,34 +58,34 @@ func convertArrayToJSONString(array: [[String: Any]]) -> String? {
     }
 }
 
-// Helper function using reflection
-func metaDataToDictionary(_ metaData: MetaData) -> [String: Any] {
-    let mirror = Mirror(reflecting: metaData)
-    var dict = [String: Any]()
-
-    for child in mirror.children {
-        if let propertyName = child.label {
-            dict[propertyName] = child.value
-        }
-    }
-    return dict
-}
-
-// Extension to convert array of MetaData to JSON string
-extension Array where Element == MetaData {
-    func toJsonString() -> String {
-        let arrayDict = self.map(metaDataToDictionary)
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: arrayDict)
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                return jsonString
-            }
-        } catch {
-            print("Error converting to JSON: \(error)")
-        }
-        return "{}"
-    }
-}
+//// Helper function using reflection
+//func metaDataToDictionary(_ metaData: MetaData) -> [String: Any] {
+//    let mirror = Mirror(reflecting: metaData)
+//    var dict = [String: Any]()
+//
+//    for child in mirror.children {
+//        if let propertyName = child.label {
+//            dict[propertyName] = child.value
+//        }
+//    }
+//    return dict
+//}
+//
+//// Extension to convert array of MetaData to JSON string
+//extension Array where Element == MetaData {
+//    func toJsonString() -> String {
+//        let arrayDict = self.map(metaDataToDictionary)
+//        do {
+//            let jsonData = try JSONSerialization.data(withJSONObject: arrayDict)
+//            if let jsonString = String(data: jsonData, encoding: .utf8) {
+//                return jsonString
+//            }
+//        } catch {
+//            print("Error converting to JSON: \(error)")
+//        }
+//        return "{}"
+//    }
+//}
 
 
 
