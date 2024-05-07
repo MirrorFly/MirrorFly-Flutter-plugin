@@ -254,7 +254,7 @@ class FlyChatMethods {
 
         LogMessage.enableDebugLogging(enableSDKLog)
         Logger.enableDebugLogging(enableSDKLog)
-        CallManager.enableCallLogExport(enableSDKLog)
+//        CallManager.enableCallLogExport(false)
         ChatManager.enableChatHistory(chatHistoryEnable)
 
         FlyCallMethods().initCall()

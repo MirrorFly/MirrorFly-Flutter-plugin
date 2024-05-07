@@ -52,7 +52,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     }
 
     override fun onCallStatusUpdated(callStatus: String, userJid: String) {
-        Log.d(tag, "#onCallStatusUpdated callStatus $callStatus userJid $userJid")
+        Log.d("#CallStatusAction", "#onCallStatusUpdated callStatus $callStatus userJid $userJid")
         //Adding this condition to match the iOS, but this scenario is not occurred till now. Even though Adding this for exceptional cases.
         var userJID = userJid
         if (userJID == "") {
@@ -114,10 +114,12 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     json.getString("userJid")
                 )
             }
+
             CallStatus.INVITE_CALL_TIME_OUT -> {}
             CallStatus.OUTGOING_CALL_TIME_OUT -> {
                 json.put("callStatus", "CALL TIME OUT")
             }
+
             CallStatus.CALL_TIME_OUT -> {
                 json.put("callStatus", "CALL TIME OUT")
                 FlutterCall.callUiListener?.onShowCallUiFlutter(
@@ -125,12 +127,14 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     json.getString("userJid")
                 )
             }
+
             CallStatus.INCOMING_CALL_TIME_OUT -> {
                 FlutterCall.callUiListener?.onShowCallUiFlutter(
                     CallStatus.INCOMING_CALL_TIME_OUT,
                     json.getString("userJid")
                 )
             }
+
             CallStatus.RECONNECTING -> {}
             CallStatus.RECONNECTED -> {
                 val userJid = json.getString("userJid")
@@ -164,10 +168,12 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     }
                 }
             }
+
             CallStatus.CALLING -> {
                 //Calling status not in iOS so here we sent Trying to Connect status
                 json.put("callStatus", "Trying to Connect")
             }
+
             CallStatus.CALLING_10S -> {}
             CallStatus.CALLING_AFTER_10S -> {}
         }
@@ -178,7 +184,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     }
 
     override fun onCallAction(callAction: String, userJid: String) {
-        Log.d(tag, "#onCallAction callAction $callAction userJid $userJid")
+        Log.d("#CallStatusAction", "#onCallAction callAction $callAction userJid $userJid")
         val json = JSONObject()
         json.put(
             "callAction",
@@ -273,6 +279,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     )
                 }
             }
+
             CallAction.ACTION_REMOTE_BUSY -> {
                 if (CallManager.isOneToOneCall()) {
                     json.put("callStatus", "Disconnected")
@@ -289,7 +296,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
 
     override fun onVideoTrackAdded(userJid: String) {
         Log.d(
-            tag,
+            "#CallStatusAction",
             "#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${
                 MirrorflyViewHashMap.getMirrorflyViewId(userJid)
             } isCallConversionRequestAvailable : ${CallManager.isCallConversionRequestAvailable()} video ${
@@ -318,7 +325,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
 
     override fun onLocalVideoTrackAdded() {
         Log.d(
-            tag,
+            "#CallStatusAction",
             "#onLocalVideoTrackAdded mirrorflyViews.size ${
                 MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())
             } ${MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())}"
@@ -428,6 +435,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                         context.startActivity(t)
                     }
                 }
+
                 CallAction.ACTION_ANSWER_CALL -> {
                     LogMessage.d(
                         tag,
@@ -458,6 +466,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                         }
                     }
                 }
+
                 CallAction.CALL_REQUEST_RESPONSE -> {
                     handler.post {
                         LogMessage.d(
