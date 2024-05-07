@@ -106,17 +106,15 @@ import MirrorFlySDK
                    result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_PERMISSION_NOT_ENABLED, details: nil))
                    return
                }
-               if isSuccess == false {
-                   
-                   let errorMessage = flyError?.localizedDescription
-                   NSLog("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
-                   
-                   result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
-               }else{
-                   NSLog("MirrorflyCall Success -->")
-                   result(isSuccess)
-               }
-            }
+                  
+                result(isSuccess)
+               
+           }else{
+               let errorMessage = flyError?.localizedDescription
+               NSLog("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
+               
+               result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
+           }
          }
 //        result(true)
     }
