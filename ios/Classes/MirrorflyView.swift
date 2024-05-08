@@ -85,7 +85,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     
     private func handleUserProfileDetails(userJid: String, contact: ProfileDetails?, argument: [String: Any]) {
         
-        let muteStatus = userJid == AppUtils.getMyJid() ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(userJid)
+        let muteStatus = userJid == AppUtils.shared.getMyJid() ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(userJid)
         
 
         let userName = FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType)

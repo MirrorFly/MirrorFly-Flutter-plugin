@@ -14,7 +14,7 @@ class AppUtils: NSObject {
     //Singleton class
     static let shared = AppUtils()
     
-    class func getMyJid() -> String {
+    func getMyJid() -> String {
         guard let myJid = try? FlyUtils.getMyJid() else {
             AppUtils.shared.forceLogout()
             return emptyString()
@@ -59,5 +59,24 @@ class AppUtils: NSObject {
                 return nil
         }
         return value
+    }
+    
+    func fileExists(atPath filePath: String) -> Bool {
+        let fileManager = FileManager.default
+        return fileManager.fileExists(atPath: filePath)
+    }
+    
+    func saveFile(from sourceURL: URL, fileName: String?) -> String? {
+        let destinationURL = FlyUtils.getGroupContainerIDPath()?.appendingPathComponent(fileName!)
+        
+        do {
+            let fileManager = FileManager.default
+            try fileManager.copyItem(at: sourceURL, to: destinationURL!)
+            return destinationURL?.absoluteString
+        } catch {
+            // Error handling
+            print("Error copying file: \(error.localizedDescription)")
+            return nil
+        }
     }
 }

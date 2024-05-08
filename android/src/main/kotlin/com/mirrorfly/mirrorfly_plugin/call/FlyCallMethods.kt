@@ -13,6 +13,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import com.mirrorflysdk.api.ChatActionListener
 import com.mirrorflysdk.flycall.webrtc.*
+import com.mirrorflysdk.flycommons.exception.FlyException
 
 class FlyCallMethods : MissedCallListener {
     val tag = "#FlutterCallEvents"
@@ -113,12 +114,12 @@ class FlyCallMethods : MissedCallListener {
         )
         if (CallManager.isAudioCallPermissionsGranted(false)) {
             CallManager.makeVoiceCall(userJid, object : CallActionListener {
-                override fun onResponse(isSuccess: Boolean, message: String) {
-                    LogMessage.d("makeCall", "success $isSuccess message $message")
+                override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                    LogMessage.d("makeCall", "success $isSuccess message ${flyException?.message}")
                     if (isSuccess) {
                         result.success(true)
                     } else {
-                        result.error("500", message, "")
+                        result.error("500", flyException?.message, flyException)
                     }
                 }
             })
@@ -135,12 +136,15 @@ class FlyCallMethods : MissedCallListener {
         )
         if (CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)) {
             CallManager.makeVideoCall(userJid, object : CallActionListener {
-                override fun onResponse(isSuccess: Boolean, message: String) {
-                    LogMessage.d("makeVideoCall", "success $isSuccess message $message")
+                override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                    LogMessage.d(
+                        "makeVideoCall",
+                        "success $isSuccess message ${flyException?.message}"
+                    )
                     if (isSuccess) {
                         result.success(true)
                     } else {
-                        result.error("500", message, "")
+                        result.error("500", flyException?.message, flyException)
                     }
                 }
 
@@ -175,12 +179,12 @@ class FlyCallMethods : MissedCallListener {
             return
         }
         CallManager.answerCall(object : CallActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
-                LogMessage.d("answerCall", "success $isSuccess message $message")
+            override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                LogMessage.d("answerCall", "success $isSuccess message ${flyException?.message}")
                 if (isSuccess) {
                     result.success(isSuccess)
                 } else {
-                    result.error("500", message, "")
+                    result.error("500", flyException?.message, flyException)
                 }
             }
 
@@ -195,11 +199,11 @@ class FlyCallMethods : MissedCallListener {
     fun disconnectCall(call: MethodCall, result: MethodChannel.Result) {
 //        if (checkIsUserInCall()) {
         CallManager.disconnectCall(object : CallActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
+            override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
                 if (isSuccess) {
                     result.success(true)
                 } else {
-                    result.error("500", message, message)
+                    result.error("500", flyException?.message, flyException)
                 }
             }
 
@@ -227,7 +231,7 @@ class FlyCallMethods : MissedCallListener {
         LogMessage.d(tag, "muteVideo")
         val muteVideo = call.argument<Boolean>("muteVideo") ?: false
         CallManager.muteVideo(muteVideo, object : CallActionListener {
-            override fun onResponse(isSuccess: Boolean, message: String) {
+            override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
                 LogMessage.d(
                     tag,
                     "$muteVideo ${CallManager.getCurrentUserId()} ${
@@ -246,7 +250,7 @@ class FlyCallMethods : MissedCallListener {
                 if (isSuccess) {
                     result.success(isSuccess)
                 } else {
-                    result.error("500", message, "")
+                    result.error("500", flyException?.message, flyException)
                 }
             }
 
@@ -261,12 +265,15 @@ class FlyCallMethods : MissedCallListener {
                 jidList as ArrayList<String>,
                 groupJid,
                 object : CallActionListener {
-                    override fun onResponse(isSuccess: Boolean, message: String) {
-                        LogMessage.d("makeGroupVoiceCall", "success $isSuccess message $message")
+                    override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                        LogMessage.d(
+                            "makeGroupVoiceCall",
+                            "success $isSuccess message ${flyException?.message}"
+                        )
                         if (isSuccess) {
                             result.success(isSuccess)
                         } else {
-                            result.error("500", message, "")
+                            result.error("500", flyException?.message, flyException)
                         }
                     }
                 })
@@ -281,12 +288,15 @@ class FlyCallMethods : MissedCallListener {
             jidList as ArrayList<String>,
             groupJid,
             object : CallActionListener {
-                override fun onResponse(isSuccess: Boolean, message: String) {
-                    LogMessage.d("makeGroupVideoCall", "success $isSuccess message $message")
+                override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                    LogMessage.d(
+                        "makeGroupVideoCall",
+                        "success $isSuccess message ${flyException?.message}"
+                    )
                     if (isSuccess) {
                         result.success(isSuccess)
                     } else {
-                        result.error("500", message, "")
+                        result.error("500", flyException?.message, flyException)
                     }
                 }
 
@@ -570,7 +580,18 @@ class FlyCallMethods : MissedCallListener {
 
     fun inviteUsersToOngoingCall(call: MethodCall, result: MethodChannel.Result) {
         val jidList = call.argument<List<String>>("jidList") ?: arrayListOf()
-        CallManager.inviteUsersToOngoingCall(jidList as ArrayList<String>)
+        CallManager.inviteUsersToOngoingCall(jidList as ArrayList<String>,
+            object : CallActionListener {
+                override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                    LogMessage.d("invite**", "$isSuccess : $flyException")
+                    if (isSuccess) {
+                        result.success(isSuccess)
+                    } else {
+                        result.error("500", flyException?.message, flyException)
+                    }
+                }
+
+            })
     }
 
     fun getInvitedUsersList(call: MethodCall, result: MethodChannel.Result) {

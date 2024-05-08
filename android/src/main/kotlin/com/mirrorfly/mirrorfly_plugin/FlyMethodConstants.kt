@@ -255,6 +255,8 @@ object FlyMethodConstants {
         "openAudioFilePicker" to flyChatMethods::selectAudioFileFromStorage,
         "editTextMessage" to flyChatMethods::editTextMessage,
         "editMediaCaption" to flyChatMethods::editMediaCaption,
+        "getMetaData" to flyChatMethods::getMetaData,
+        "updateMetaData" to flyChatMethods::updateMetaData,
     )
 
     private val callEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(
@@ -338,7 +340,7 @@ object FlyMethodConstants {
         val streamHandler = chatEventListeners[channelName]
         LogMessage.d(
             "#updateChatSinkValue",
-            "$channelName : " + (streamHandler is FlyEventSinkProvider).toString()
+            "$channelName : " + value
         )
         if (streamHandler is FlyEventSinkProvider) {
             streamHandler.setEventSinkValue(value)
@@ -351,7 +353,7 @@ object FlyMethodConstants {
         val streamHandler = callEventListeners[channelName]
         LogMessage.d(
             "#updateCallSinkValue",
-            "$channelName : " + (streamHandler is FlyEventSinkProvider).toString()
+            "$channelName : " + value
         )
         if (streamHandler is FlyEventSinkProvider) {
             streamHandler.setEventSinkValue(value)

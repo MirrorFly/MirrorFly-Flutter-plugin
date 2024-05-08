@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -1058,6 +1056,7 @@ class Mirrorfly {
   ///
   /// The [flyCallback] function is called upon completion of the login operation,
   /// providing a [FlyResponse] object containing information about the operation's success or failure.
+  /// The [identifierMetaData] parameter is optional and represents additional metadata associated with the User.
   ///
   /// Throws an error if the [userIdentifier] is not provided.
   ///
@@ -1082,10 +1081,12 @@ class Mirrorfly {
       {required String userIdentifier,
       String fcmToken = "",
       bool isForceRegister = true,
+      List<IdentifierMetaData>? identifierMetaData,
       required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
         fcmToken: fcmToken,
         isForceRegister: isForceRegister,
+        identifierMetaData: identifierMetaData,
         callback: flyCallback);
   }
 
@@ -1249,8 +1250,8 @@ class Mirrorfly {
   static Future<void> editTextMessage(
       {required EditMessageParams editMessageParams,
       required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance
-        .editTextMessage(editMessageParams: editMessageParams, callback: flyCallback);
+    return FlyChatFlutterPlatform.instance.editTextMessage(
+        editMessageParams: editMessageParams, callback: flyCallback);
   }
 
   /// A method used to edit a Caption Text message sent previously.
@@ -1276,8 +1277,8 @@ class Mirrorfly {
   static Future<void> editMediaCaption(
       {required EditMessageParams editMessageParams,
       required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance
-        .editMediaCaption(editMessageParams: editMessageParams, callback: flyCallback);
+    return FlyChatFlutterPlatform.instance.editMediaCaption(
+        editMessageParams: editMessageParams, callback: flyCallback);
   }
 
   @Deprecated('Instead of use Mirrorfly.getRegisteredUsers()')
@@ -1294,6 +1295,7 @@ class Mirrorfly {
   /// The optional [search] parameter allows filtering users based on a search query.
   /// The [perPageResultSize] parameter specifies the number of users to retrieve per page (default is 20).
   /// The [flyCallback] parameter is a callback function that handles the response from the platform.
+  /// The [metaDataUserList] parameter is optional and represents additional metadata associated with the User.
   ///
   /// Example usage:
   /// ```dart
@@ -1317,9 +1319,10 @@ class Mirrorfly {
       {int page = 1,
       String search = "",
       int perPageResultSize = 20,
+      MetaDataUserList? metaDataUserList,
       required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.getUserList(
-        page, search, flyCallback,
+        page, search, metaDataUserList, flyCallback,
         perPageResultSize: perPageResultSize);
   }
 
@@ -1647,6 +1650,7 @@ class Mirrorfly {
   /// * @param [topicId] - use to get messages by topic id
   /// * @param [limit] - No of messages will be fetched for each request default 25
   /// * @param [ascendingOrder] - If true message list will be returned ascendingOrder by message time default false
+  /// * @param [metaDataMessageList] parameter is optional and represents additional metadata associated with the Messages.
   static Future<bool> initializeMessageList(
       {required String userJid,
       String? messageId,
@@ -1654,6 +1658,7 @@ class Mirrorfly {
       bool exclude = true,
       bool ascendingOrder = false,
       String? topicId,
+      MetaDataMessageList? metaDataMessageList,
       int limit = 25}) {
     return FlyChatFlutterPlatform.instance.initializeMessageList(
         userJid: userJid,
@@ -1662,6 +1667,7 @@ class Mirrorfly {
         exclude: exclude,
         ascendingOrder: ascendingOrder,
         topicId: topicId,
+        metaDataMessageList: metaDataMessageList,
         limit: limit);
   }
 
@@ -2911,7 +2917,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getAppLaunchedDetails();
   }
 
-  /// Opens the audio file picker to select an audio file for [Platform.isAndroid].
+  /// Opens the audio file picker to select an audio file for [[Platform].isAndroid].
   ///
   /// Returns a [Future] that completes with a [String] representing the path
   /// of the selected audio file, or `null` if no file is selected.
@@ -2991,11 +2997,15 @@ class Mirrorfly {
   /// This static method sends an invitation to join an ongoing call to the users specified by their JIDs.
   /// The [jidList] parameter is a list of JIDs of the users to be invited.
   ///
-  /// Returns a Future that completes with the result of the invitation operation.
+  /// Returns:
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
   ///
-  static Future inviteUsersToOngoingCall(
-      {List<String> jidList = const []}) async {
-    return FlyChatFlutterPlatform.instance.inviteUsersToOngoingCall(jidList);
+  static Future<void> inviteUsersToOngoingCall(
+      {required List<String> jidList,
+      required Function(FlyResponse response) flyCallback}) async {
+    return FlyChatFlutterPlatform.instance
+        .inviteUsersToOngoingCall(jidList, flyCallback);
   }
 
   /// Retrieves a list of invited users from the Mirrorfly platform asynchronously.
@@ -3087,4 +3097,23 @@ class Mirrorfly {
   static Future reRouteAudio() async {
     return FlyChatFlutterPlatform.instance.reRouteAudio();
   }*/
+
+  /// Provides information about the metadata of logged in with metadata .
+  ///
+  /// This method fetches the [IdentifierMetaData] from the Mirrorfly platform.
+  /// from current logged in user.
+  static getMetaData({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.getMetaData(flyCallback);
+  }
+
+  /// Provides information about the metadata of logged in with metadata .
+  ///
+  /// This method update the [IdentifierMetaData] from the Mirrorfly platform.
+  /// to current logged in user
+  static updateMetaData(
+      {required List<IdentifierMetaData> identifierMetaDataList,
+      Function(FlyResponse response)? flyCallback}) {
+    return FlyChatFlutterPlatform.instance
+        .updateMetaData(identifierMetaDataList, flyCallback);
+  }
 }

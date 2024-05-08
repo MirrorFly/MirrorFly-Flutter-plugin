@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../message_params.dart' show MessageMetaData;
+
 List<ChatMessageModel> chatMessageModelFromJson(String str) =>
     List<ChatMessageModel>.from(
         json.decode(str).map((x) => ChatMessageModel.fromJson(x)));
@@ -37,6 +39,7 @@ class ChatMessageModel {
     required this.isMessageEdited,
     required this.messageTextContent,
     required this.messageType,
+    this.metaData = const [],
     this.replyParentChatMessage,
     required this.senderNickName,
     required this.senderUserJid,
@@ -65,6 +68,7 @@ class ChatMessageModel {
   bool isMessageEdited;
   String messageTextContent;
   String messageType;
+  List<MessageMetaData>? metaData;
   ReplyParentChatMessage? replyParentChatMessage;
   String senderNickName;
   String senderUserJid;
@@ -96,6 +100,10 @@ class ChatMessageModel {
           isMessageEdited: json["isMessageEdited"],
           messageTextContent: json["messageTextContent"],
           messageType: json["messageType"],
+          metaData: json["metaData"] == null
+              ? []
+              : List<MessageMetaData>.from(
+                  json["metaData"].map((x) => MessageMetaData.fromJson(x))),
           replyParentChatMessage: json["replyParentChatMessage"] == null
               ? null
               : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -132,6 +140,9 @@ class ChatMessageModel {
         "isMessageEdited": isMessageEdited,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
+        "metaData": metaData == null
+            ? null
+            : List<dynamic>.from(metaData!.map((x) => x.toJson())),
         "replyParentChatMessage": replyParentChatMessage?.toJson(),
         "senderNickName": senderNickName,
         "senderUserJid": senderUserJid,
