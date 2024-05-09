@@ -256,6 +256,7 @@ let ISEXPORT = true
                             
                             switch status {
                             case "connected":
+                                self.removeObserver()
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
                                     NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
@@ -263,14 +264,16 @@ let ISEXPORT = true
                                 }else{
                                     result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
                                 }
+                                
                             case "failed":
+                                self.removeObserver()
                                 let errorMessage = userInfo["error"] as? String
                                 print("#ChatManager Connection Error: \(errorMessage ?? "Connection Failed")")
                                 result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.CHATMANAGER_CONNECTION_FAILED_MESSAGE,details: errorMessage))
                             default:
                                 print("#ChatManager Connection Default Status: \(status)")
                             }
-                            self.removeObserver()
+                           
                         }else{
                             print("---Error in Chat Manager Connect Status")
                         }
