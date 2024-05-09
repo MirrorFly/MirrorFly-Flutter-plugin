@@ -399,6 +399,17 @@ enum MessageType {
   // meet('MEET'),
   // autoText('AUTO_TEXT'),
   // chatSummary('CHAT_SUMMARY');
+
+  static const isText = "TEXT";
+  static const isImage = "IMAGE";
+  static const isAudio = "AUDIO";
+  static const isAudioRecorded = "AUDIO_RECORDED";
+  static const isVideo = "VIDEO";
+  static const isContact = "CONTACT";
+  static const isDocument = "DOCUMENT";
+  static const isLocation = "LOCATION";
+  static const isNotification = "NOTIFICATION";
+
   const MessageType(this.value);
 
   final String value;
@@ -412,6 +423,13 @@ enum MediaDownloadStatus {
   mediaDownloadFailed(401),
   storageNotEnough(8);
 
+  static const isMediaDownloading = 3;
+  static const isMediaDownloaded = 4;
+  static const isMediaNotDownloaded = 5;
+  static const isMediaDownloadedNotAvailable = 6;
+  static const isMediaDownloadFailed = 401;
+  static const isStorageNotEnough = 8;
+
   const MediaDownloadStatus(this.value);
 
   final int value;
@@ -421,10 +439,22 @@ enum MediaUploadStatus {
   mediaNotUploaded(0),
   mediaUploading(1),
   mediaUploaded(2),
-  mediaUploadedNotAvailable(7),
-  mediaUploadFailed(401);
+  mediaUploadedNotAvailable(7);
+  // mediaUploadFailed(401);
+
+  static const isMediaNotUploaded = 0;
+  static const isMediaUploading = 1;
+  static const isMediaUploaded = 2;
+  static const isMediaUploadedNotAvailable = 7;
+  // static const isMediaUploadFailed = 401;
 
   const MediaUploadStatus(this.value);
 
   final int value;
+}
+
+class ChatType {
+  static const String singleChat = "chat";
+  static const String groupChat = "groupchat";
+  static const String broadcastChat = "broadcast";
 }
