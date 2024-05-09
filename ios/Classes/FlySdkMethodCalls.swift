@@ -42,6 +42,8 @@ let ISEXPORT = true
     var topicChatListParams = TopicChatListParams(limit: 15)
     var topicChatListBuilder : TopicChatListBuilder?
     
+    var observerToken: NSObjectProtocol?
+    
     func buildChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult) {
         
         let args = call.arguments as! Dictionary<String, Any>
@@ -247,6 +249,33 @@ let ISEXPORT = true
                 
                 ChatManager.connect()
                 
+                self.observerToken = NotificationCenter.default.addObserver(forName: .connectionStatusChanged, object: nil, queue: nil) { notification in
+                        guard let userInfo = notification.userInfo else { return }
+                        if let status = userInfo["status"] as? String {
+                            print("#ChatManager Connection Status: \(status)")
+                            
+                            switch status {
+                            case "connected":
+                                let resp = registerResponse.dictToJson()
+                                if(resp != nil){
+                                    NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
+                                    result(resp)
+                                }else{
+                                    result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
+                                }
+                            case "failed":
+                                let errorMessage = userInfo["error"] as? String
+                                print("#ChatManager Connection Error: \(errorMessage ?? "Connection Failed")")
+                                result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.CHATMANAGER_CONNECTION_FAILED_MESSAGE,details: errorMessage))
+                            default:
+                                print("#ChatManager Connection Default Status: \(status)")
+                            }
+                            self.removeObserver()
+                        }else{
+                            print("---Error in Chat Manager Connect Status")
+                        }
+                       
+                    }
                 
 //                do {
 //                    try CallManager.initCallSDK()
@@ -258,17 +287,6 @@ let ISEXPORT = true
                 VOIPManager.sharedInstance.saveVOIPToken(token: Utility.getStringFromPreference(key: Constants.voipToken))
                 VOIPManager.sharedInstance.updateDeviceToken()
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-                    
-                    let resp = registerResponse.dictToJson()
-                    if(resp != nil){
-                        NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
-                        result(resp)
-                    }else{
-                        result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
-                    }
-                    
-                }
             }else{
                 let err = flyError?.description ?? ""
                 let error = err.contains("405") ? err : data.getMessage()
@@ -303,6 +321,19 @@ let ISEXPORT = true
                 
             }
         }
+    }
+    
+    private func removeObserver() {
+        print("---removeObserver")
+        if let token = observerToken {
+            NotificationCenter.default.removeObserver(token)
+            observerToken = nil
+        }
+    }
+
+    deinit {
+        print("---deinit FlySDKMethodCalls")
+        removeObserver()
     }
     
     func refreshAndGetAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -4133,9 +4164,9 @@ let ISEXPORT = true
                 var flydata = resultDict
                 let metaDataResponse = flydata.getData() as? [MetaData]
             
-                let jsonString = metaDataResponse?.toJson()
+//                let jsonString = metaDataResponse?.toJson()
                 
-                result(jsonString)
+                result("jsonString")
             }else{
                 result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
             }
@@ -4156,9 +4187,9 @@ let ISEXPORT = true
               var flydata = resultDict
               let metaDataResponse = flydata.getData() as? [MetaData]
           
-              let jsonString = metaDataResponse?.toJson()
+//              let jsonString = metaDataResponse?.toJson()
               
-              result(jsonString)
+              result("jsonString")
           }else{
               result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
           }
