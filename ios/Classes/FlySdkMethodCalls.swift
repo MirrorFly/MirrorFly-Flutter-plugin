@@ -224,6 +224,10 @@ let ISEXPORT = true
             metaDataArray.append(obj)
         }
         
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+            ChatManager.disconnect()
+        }
+        
         try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: userType, metaData: metaDataArray, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
@@ -246,8 +250,10 @@ let ISEXPORT = true
                 
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
                 
-                
                 ChatManager.connect()
+                
+                VOIPManager.sharedInstance.saveVOIPToken(token: Utility.getStringFromPreference(key: Constants.voipToken))
+                VOIPManager.sharedInstance.updateDeviceToken()
                 
                 self.observerToken = NotificationCenter.default.addObserver(forName: .connectionStatusChanged, object: nil, queue: nil) { notification in
                         guard let userInfo = notification.userInfo else { return }
@@ -257,6 +263,14 @@ let ISEXPORT = true
                             switch status {
                             case "connected":
                                 self.removeObserver()
+                                
+                                //                do {
+                                //                    try CallManager.initCallSDK()
+                                //                }
+                                //                catch(let error ) {
+                                //                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
+                                //                }
+                                
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
                                     NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
@@ -280,15 +294,6 @@ let ISEXPORT = true
                        
                     }
                 
-//                do {
-//                    try CallManager.initCallSDK()
-//                }
-//                catch(let error ) {
-//                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
-//                }
-                
-                VOIPManager.sharedInstance.saveVOIPToken(token: Utility.getStringFromPreference(key: Constants.voipToken))
-                VOIPManager.sharedInstance.updateDeviceToken()
                 
             }else{
                 let err = flyError?.description ?? ""
@@ -4167,9 +4172,9 @@ let ISEXPORT = true
                 var flydata = resultDict
                 let metaDataResponse = flydata.getData() as? [MetaData]
             
-//                let jsonString = metaDataResponse?.toJson()
+                let jsonString = metaDataResponse?.toJson()
                 
-                result("jsonString")
+                result(jsonString)
             }else{
                 result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
             }
@@ -4190,9 +4195,9 @@ let ISEXPORT = true
               var flydata = resultDict
               let metaDataResponse = flydata.getData() as? [MetaData]
           
-//              let jsonString = metaDataResponse?.toJson()
+              let jsonString = metaDataResponse?.toJson()
               
-              result("jsonString")
+              result(jsonString)
           }else{
               result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
           }
