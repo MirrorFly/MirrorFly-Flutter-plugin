@@ -42,6 +42,8 @@ let ISEXPORT = true
     var topicChatListParams = TopicChatListParams(limit: 15)
     var topicChatListBuilder : TopicChatListBuilder?
     
+    var observerToken: NSObjectProtocol?
+    
     func buildChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult) {
         
         let args = call.arguments as! Dictionary<String, Any>
@@ -222,6 +224,10 @@ let ISEXPORT = true
             metaDataArray.append(obj)
         }
         
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+            ChatManager.disconnect()
+        }
+        
         try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: userType, metaData: metaDataArray, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
@@ -244,31 +250,51 @@ let ISEXPORT = true
                 
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
                 
-                
                 ChatManager.connect()
-                
-                
-//                do {
-//                    try CallManager.initCallSDK()
-//                }
-//                catch(let error ) {
-//                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
-//                }
                 
                 VOIPManager.sharedInstance.saveVOIPToken(token: Utility.getStringFromPreference(key: Constants.voipToken))
                 VOIPManager.sharedInstance.updateDeviceToken()
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-                    
-                    let resp = registerResponse.dictToJson()
-                    if(resp != nil){
-                        NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
-                        result(resp)
-                    }else{
-                        result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
+                self.observerToken = NotificationCenter.default.addObserver(forName: .connectionStatusChanged, object: nil, queue: nil) { notification in
+                        guard let userInfo = notification.userInfo else { return }
+                        if let status = userInfo["status"] as? String {
+                            print("#ChatManager Connection Status: \(status)")
+                            
+                            switch status {
+                            case "connected":
+                                self.removeObserver()
+                                
+                                //                do {
+                                //                    try CallManager.initCallSDK()
+                                //                }
+                                //                catch(let error ) {
+                                //                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
+                                //                }
+                                
+                                let resp = registerResponse.dictToJson()
+                                if(resp != nil){
+                                    NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
+                                    result(resp)
+                                }else{
+                                    result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
+                                }
+                                
+                            case "failed":
+                                self.removeObserver()
+                                let errorMessage = userInfo["error"] as? String
+                                print("#ChatManager Connection Error: \(errorMessage ?? "Connection Failed")")
+                                result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.CHATMANAGER_CONNECTION_FAILED_MESSAGE,details: errorMessage))
+                            default:
+                                print("#ChatManager Connection Default Status: \(status)")
+                            }
+                           
+                        }else{
+                            print("---Error in Chat Manager Connect Status")
+                        }
+                       
                     }
-                    
-                }
+                
+                
             }else{
                 let err = flyError?.description ?? ""
                 let error = err.contains("405") ? err : data.getMessage()
@@ -303,6 +329,19 @@ let ISEXPORT = true
                 
             }
         }
+    }
+    
+    private func removeObserver() {
+        print("---removeObserver")
+        if let token = observerToken {
+            NotificationCenter.default.removeObserver(token)
+            observerToken = nil
+        }
+    }
+
+    deinit {
+        print("---deinit FlySDKMethodCalls")
+        removeObserver()
     }
     
     func refreshAndGetAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){

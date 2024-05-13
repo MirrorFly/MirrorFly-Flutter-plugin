@@ -79,6 +79,7 @@ class FLErrorMessage {
     /// General Error Messages in Chat
     ///
     public static let REGISTRATION_FAILED_MESSAGE : String = "Error while Registering the User"
+    public static let CHATMANAGER_CONNECTION_FAILED_MESSAGE : String = "Error while Connecting to Chat Manager"
     public static let AUTHTOKEN_REFRESH_FAILED_MESSAGE : String = "Error while refreshing Auth Token"
     public static let JID_FETCH_FAILED : String = "Error while fetching JID"
     public static let USER_PARAM_MISSING : String = "User Name is Empty"

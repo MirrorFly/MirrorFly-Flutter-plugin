@@ -307,6 +307,9 @@ class FlyChatMethods {
             LogMessage.d("registerUser", call.arguments.toString())
             val metaDataList = extractMetaData(metaData)
             if (userIdentifier != null) {
+                if (SharedPreferenceManager.instance.getBoolean(SharedPreferenceManager.IS_LOGGED_IN)) {
+                    ChatManager.disconnect()
+                }
                 FlyCore.registerUser(
                     userIdentifier,
                     token, isForceRegister,
