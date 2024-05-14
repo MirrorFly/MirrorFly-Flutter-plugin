@@ -11,6 +11,10 @@ import Flutter
 
 
 class FlyEventChannelInitializer {
+    static let shared = FlyEventChannelInitializer()  // Singleton instance
+        
+    private init() {} 
+
     static let callEventChannels: [(channelName: String, streamHandler: NSObjectProtocol & FlutterStreamHandler)] = [
         (channelName: Constants.onLocalVideoTrackAddedChannel, streamHandler: OnLocalVideoTrackAddedStreamHandler()),
         (channelName: Constants.onRemoteVideoTrackAddedChannel, streamHandler: OnRemoteVideoTrackAddedStreamHandler()),

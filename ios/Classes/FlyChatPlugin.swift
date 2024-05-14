@@ -182,6 +182,9 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func onConnectionFailed(error: MirrorFlySDK.FlyError) {
         
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onConnectionFailed_channel, value: error.localizedDescription)
+        flyChatUserDelegate?.chatManagerStatus(status: ConnectionStatus.connectionfailed(error: error.localizedDescription))
+        
+        NotificationCenter.default.post(name: .connectionStatusChanged, object: nil, userInfo: ["status": "failed", "error": error.localizedDescription])
         
     }
     
@@ -613,13 +616,17 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     
     public func onConnected() {
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onConnected_channel, value: true)
+        flyChatUserDelegate?.chatManagerStatus(status: ConnectionStatus.connected)
+        NotificationCenter.default.post(name: .connectionStatusChanged, object: nil, userInfo: ["status": "connected"])
     }
     
     public func onDisconnected() {
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onDisconnected_channel, value: true)
+        flyChatUserDelegate?.chatManagerStatus(status: ConnectionStatus.disconnected)
     }
     
     public func onConnectionNotAuthorized() {
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onConnectionNotAuthorized_channel, value: true)
+        flyChatUserDelegate?.chatManagerStatus(status: ConnectionStatus.notAuthorized)
     }
 }

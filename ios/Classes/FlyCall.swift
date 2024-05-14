@@ -11,6 +11,10 @@ import Flutter
 import PushKit
 
 @objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate, CallLogDelegate {
+    func chatManagerStatus(status: ConnectionStatus) {
+        print("--- chatManagerStatus delegate \(status)")
+    }
+    
     
     var selectedAudioRouteDevice : String = "receiver"
     var isAudioRouteMethodCall : Bool = false
@@ -46,7 +50,8 @@ import PushKit
     private var methodChannel: FlutterMethodChannel?
     private var registrar: FlutterPluginRegistrar?
     private var eventChannel : FlutterEventChannel?
-    private var eventChannelInitializer: FlyEventChannelInitializer = FlyEventChannelInitializer()
+//    private var eventChannelInitializer: FlyEventChannelInitializer = FlyEventChannelInitializer()
+    private let eventChannelInitializer = FlyEventChannelInitializer.shared
     private var factory : MirrorflyViewFactory?
     
     var currentOutputDevice : OutputType = .receiver
@@ -71,6 +76,8 @@ import PushKit
         AudioManager.shared().audioManagerDelegate = self
         CallManager.missedCallNotificationDelegate = self
         CallManager.callLogDelegate = self
+        
+//        CallManager.enableDebugLogs(enable : true)
         
 //        AudioManager.sharedInstance.audioManagerDelegate = self
         NSLog("\(Constants.callTag) audioManagerDelegate")
