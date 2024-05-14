@@ -94,6 +94,7 @@ class CallStatus {
   static const String calling10s = "Calling... \n Trying to Connect";
   static const String callingAfter10s =
       "User Seems to be Offline, Trying to Connect";
+  static const String callFailed = "Call_Failed";
 }
 
 class AudioDeviceType {

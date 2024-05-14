@@ -15,7 +15,9 @@ import MirrorFlySDK
     let tag = "#MirrorFlyCall"
     let callLogManager = CallLogManager()
     var callLogArray = [CallLog]()
-    
+    var observerToken: NSObjectProtocol?
+    private let eventChannelInitializer = FlyEventChannelInitializer.shared
+
     func getCallUsersList(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
         let userListStatus = CallManager.getCallUsersWithStatus()
@@ -27,8 +29,7 @@ import MirrorFlySDK
         
         var jsonArray: [[String: Any]] = []
         
-        
-            
+
         for (memberJid,status) in CallManager.getCallUsersWithStatus() {
             NSLog("\(tag) \(memberJid) \(status)")
             let jsonObject: [String: Any] = [
@@ -89,35 +90,28 @@ import MirrorFlySDK
     func getAudioDevices(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
            
     }
-    //Moved to FlyCall Class to get from Delegate
-//    func selectedAudioDevice(call: FlutterMethodCall, result: @escaping FlutterResult) {
-//
-//        NSLog("selectedAudioDevice \(selectedAudioDevice)")
-//    }
-   
+
     func makeVoiceCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["user_jid"] as? String ?? ""
         
-        try! CallManager.makeVoiceCall(jid) {isSuccess , flyError  in
-           if isSuccess  {
-               if(!CallManager.isAudioCallPermissionsGranted()){
-                   NSLog("MirrorflyCall Audio call permission not granted")
-                   result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_PERMISSION_NOT_ENABLED, details: nil))
-                   return
-               }
-                  
-                result(isSuccess)
-               
-           }else{
-               let errorMessage = flyError?.localizedDescription
-               NSLog("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
-               
-               result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
-           }
-         }
-//        result(true)
+        if(!CallManager.isAudioCallPermissionsGranted()){
+            NSLog("#CALL CHECK MirrorflyCall Audio call permission not granted")
+            result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_PERMISSION_NOT_ENABLED, details: nil))
+            return
+        }
+        result(true)
+
+        guard ChatManager.isChatServerConnected() else {
+            print("#CALL CHECK isChatServerConnected false")
+            addObserverForConnectionStatus(jid: jid, callType: "voice")
+            return
+        }
+
+        print("#CALL CHECK isChatServerConnected true")
+        initiateVoiceCall(jid: jid)
     }
+
     func makeVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["user_jid"] as? String ?? ""
@@ -134,24 +128,18 @@ import MirrorFlySDK
             result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.CAMERA_PERMISSION_NOT_ENABLED, details: nil))
             return
         }
-        try! CallManager.makeVideoCall(jid) { isSuccess , flyError in
-            NSLog("call result --> \(isSuccess) messsage --> \(String(describing: flyError))")
-            if (isSuccess){
-                NSLog("MirrorflyCall Success")
-                result(isSuccess)
-            }else{
-//                let errorMessage = self.getErrorMessage(description: message)
-                let errorMessage = flyError?.localizedDescription
-                NSLog("MirroflyCall making call error--->\(String(describing: errorMessage))")
-                result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
-            
-            }
+
+        result(true)
+
+        guard ChatManager.isChatServerConnected() else {
+            print("#CALL CHECK isChatServerConnected false")
+            addObserverForConnectionStatus(jid: jid, callType: "video")
+            return
         }
-//        result(true)
-    }
-    func answerCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
+        self.initiateVideoCall(jid: jid)
         
     }
+
     func declineCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         NSLog("\(Constants.callTag) declineCall")
         NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
@@ -168,61 +156,55 @@ import MirrorFlySDK
         NSLog("\(Constants.callTag) Calling the Audio Delegate")
         result(true)
     }
-    func isVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        
-    }
-    func isRemoteVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        
-    }
-    func isRemoteVideoPaused(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-        
-    }
+
     func makeGroupVideoCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let groupJid = args["groupJid"] as? String ?? ""
         let jidList = args["jidList"] as? [String] ?? []
         
-        NSLog("***making group call")
-        do {
-            try CallManager.makeGroupVideoCall(jidList, groupID: groupJid) { isSuccess, flyError in
-                
-                if isSuccess{
-                    NSLog("***Make Group Video Call Success")
-                    result(true)
-                }else{
-//                    let errorMessage = self.getErrorMessage(description: message)
-                    let errorMessage = flyError?.localizedDescription
-                    NSLog("MirroflyCall Group Video Call error--->\(String(describing: errorMessage))")
-                    result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
-                }
-            }
-        }catch(let error ) {
-            NSLog("***makeGroupVideoCall Error \(error.localizedDescription)")
-            result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: error.localizedDescription))
+        if(!CallManager.isAudioCallPermissionsGranted()){
+            NSLog("MirrorflyCall Audio call permission not granted")
+            result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_PERMISSION_NOT_ENABLED, details: nil))
+            return
+
         }
+        if(!CallManager.isVideoCallPermissionsGranted()){
+            NSLog("MirrorflyCall Video call permission not granted")
+            result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.CAMERA_PERMISSION_NOT_ENABLED, details: nil))
+            return
+        }
+
+        result(true)
+
+        guard ChatManager.isChatServerConnected() else {
+            print("#CALL CHECK isChatServerConnected false")
+            addObserverForConnectionStatus(jidList: jidList, groupJid: groupJid, callType: "video")
+            return
+        }
+        self.initiateGroupVideoCall(jidList: jidList, groupJid: groupJid)
+
     }
+
     func makeGroupVoiceCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
         let groupJid = args["groupJid"] as? String ?? ""
         let jidList = args["jidList"] as? [String] ?? []
         
-        do {
-            try CallManager.makeGroupVoiceCall(jidList, groupID: groupJid) { isSuccess, flyError in
-                if isSuccess{
-                    NSLog("***Make Group Voice Call Success")
-                    result(true)
-                }else{
-//                    let errorMessage = self.getErrorMessage(description: message)
-                    let errorMessage = flyError?.localizedDescription
-                    NSLog("MirroflyCall Group Video Call error--->\(String(describing: errorMessage))")
-                    result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
-                }
-            }
-        }catch(let error ) {
-            NSLog("***makeGroupVideoCall Error \(error.localizedDescription)")
-            result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: error.localizedDescription))
+        if(!CallManager.isAudioCallPermissionsGranted()){
+            NSLog("MirrorflyCall Audio call permission not granted")
+            result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_PERMISSION_NOT_ENABLED, details: nil))
+            return
+
         }
-        
+        result(true)
+
+        guard ChatManager.isChatServerConnected() else {
+            print("#CALL CHECK isChatServerConnected false")
+            addObserverForConnectionStatus(jidList: jidList, groupJid: groupJid, callType: "video")
+            return
+        }
+        self.initiateGroupVoiceCall(jidList: jidList, groupJid: groupJid)
+
     }
     func inviteUsersToOngoingCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
@@ -386,7 +368,7 @@ import MirrorFlySDK
     func getErrorMessage(description: String) -> String {
         
         let split = description.components(separatedBy: "ErrorCode")
-        let errorMessage = split.isEmpty ? description : split[0].replacingOccurrences(of: " ", with: "").replacingOccurrences(of: ":", with: "")
+        let errorMessage = split.isEmpty ? description : split[0].replacingOccurrences(of: ":", with: "")
         return errorMessage
     }
         
@@ -450,13 +432,11 @@ import MirrorFlySDK
         callLogManager.getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
             
             var flyData = data
-//            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
             print("\(Constants.callTag) getCallLogsList plugin \(String(describing: flyData))")
            
     
             
             if isSuccess{
-//                result(callLogList.)
                 if flyData["data"] is [String : Any]{
                     
                     guard let data = flyData["data"] as? [String: Any] else {
@@ -498,7 +478,6 @@ import MirrorFlySDK
                 }else{
                     
                     result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyData.getMessage()))
-//                    result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
                 }
             }else{
                 if case let .unexpected(message, _) = error {
@@ -524,7 +503,6 @@ import MirrorFlySDK
         print("\(Constants.callTag) getLocalCallLogs \(String(describing: callLogArray))")
         if callLogArray.isEmpty{
             result("{\"data\" : [], \"total_pages\" : 0}");
-//            result(FlutterError(code: "500", message: "Call Log Filter List Fetch Failed", details: nil))
         }else{
             
             let callListConverted = getCallLogs(callList: callLogArray, totalPages: 0)
@@ -532,45 +510,9 @@ import MirrorFlySDK
             let callListJson = callListConverted.dictToJson()
             print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
             result(callListJson)
-//            if callLogArray["data"] is [String : Any]{
-//
-//                let callListConverted = getCallLogs(flyData: callLogArray)
-//                print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
-//                let callListJson = callListConverted.dictToJson()
-//                print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
-//                result(callListJson)
-//
-//            }else{
-//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
-//            }
+
         }
-        
-        
-//        CallLogManager().getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
-//
-//            var flyData = data
-////            NSLog("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
-//            print("\(Constants.callTag) getCallLogsList \(String(describing: flyData))")
-//
-//
-//
-//            if isSuccess{
-////                result(callLogList.)
-//                if flyData["data"] is [String : Any]{
-//
-//                    let callListConverted = getCallLogs(flyData: flyData)
-//                    print("\(Constants.callTag) getCallLogsList converted \(callListConverted)")
-//                    let callListJson = callListConverted.dictToJson()
-//                    print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
-//                    result(callListJson)
-//
-//                }else{
-//                    result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
-//                }
-//            }else{
-//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
-//            }
-//        }
+
     }
     
     func deleteCallLog(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
@@ -651,4 +593,139 @@ import MirrorFlySDK
 //    func reRouteAudio(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
 //        AudioManager.shared().autoReRoute()
 //    }
+
+
+    private func handleCallFailure(flyError: FlyError? = nil, customError: String? = nil) {
+        let errorMessage: String
+
+        if let flyError = flyError {
+            errorMessage = getErrorMessage(description: flyError.description)
+        } else if let customError = customError {
+            errorMessage = customError
+        } else {
+            errorMessage = "Unknown error occurred"
+        }
+
+        print("#CALL CHECK failed \(errorMessage)")
+        NSLog("MirroflyCall making call error--->\(errorMessage)")
+
+        let jsonObject: NSMutableDictionary = [
+            "callStatus": "Call_Failed",
+            "userJid": AppUtils.shared.getMyJid(),
+            "callMode": "onetoone",
+            "callType": "audio",
+            "error": errorMessage
+        ]
+
+        let callStatusUpdateJson = pluginDictToJson(dictionary: jsonObject)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallStatusUpdateChannel, value: callStatusUpdateJson)
+        }
+    }
+
+    private func addObserverForConnectionStatus(jid: String? = nil, jidList: [String]? = nil, groupJid: String? = nil, callType: String) {
+        guard jid != nil || (jidList != nil && groupJid != nil) else {
+           print("Either jid or jidList or groupJid must be provided")
+           return
+        }
+        print("#CALL CHECK Adding observer")
+        self.observerToken = NotificationCenter.default.addObserver(forName: .connectionStatusChanged, object: nil, queue: nil) { notification in
+            guard let status = notification.userInfo?["status"] as? String else { return }
+            print("#CALL CHECK Connection Status: \(status)")
+
+            if status == "connected" {
+                self.removeObserver()
+
+                if let jid = jid {
+                    if (callType == "voice"){
+                        self.initiateVoiceCall(jid: jid)
+                    }else if(callType == "video"){
+                        self.initiateVideoCall(jid: jid)
+                    }
+                } else if let jidList = jidList {
+                    if (callType == "voice"){
+                        self.initiateGroupVoiceCall(jidList: jidList, groupJid: groupJid ?? "")
+                    }else if(callType == "video"){
+                        self.initiateGroupVideoCall(jidList: jidList, groupJid: groupJid ?? "")
+                    }
+                }
+
+
+            } else if status == "failed" {
+                self.removeObserver()
+            } else {
+                print("#ChatManager Connection Default Status: \(status)")
+            }
+        }
+    }
+
+    private func removeObserver() {
+        if let observerToken = observerToken {
+            NotificationCenter.default.removeObserver(observerToken)
+            self.observerToken = nil
+        }
+    }
+
+    private func initiateVoiceCall(jid: String) {
+        print("#CALL CHECK Calling makeVoiceCall")
+
+        try! CallManager.makeVoiceCall(jid) { isSuccess, flyError in
+            if isSuccess {
+                print("#CALL CHECK make call success")
+            } else {
+                self.handleCallFailure(flyError: flyError)
+            }
+        }
+    }
+
+    private func initiateVideoCall(jid: String) {
+        print("#CALL CHECK Calling makeVoiceCall")
+
+        try! CallManager.makeVideoCall(jid) { isSuccess , flyError in
+            NSLog("call result --> \(isSuccess) messsage --> \(String(describing: flyError))")
+            if (isSuccess){
+                NSLog("MirrorflyCall Success")
+                print("#CALL CHECK make video call success")
+            }else{
+                self.handleCallFailure(flyError: flyError)
+
+            }
+        }
+    }
+
+    private func initiateGroupVideoCall(jidList: [String], groupJid: String){
+        do {
+            try CallManager.makeGroupVideoCall(jidList, groupID: groupJid) { isSuccess, flyError in
+
+                if isSuccess{
+                    print("#CALL CHECK make Group Video call success")
+                }else{
+                    let errorMessage = flyError?.localizedDescription
+                    NSLog("MirroflyCall Group Video Call error--->\(String(describing: errorMessage))")
+
+                    self.handleCallFailure(flyError: flyError)
+                }
+            }
+        }catch(let error ) {
+            NSLog("***makeGroupVideoCall Error \(error.localizedDescription)")
+            self.handleCallFailure(customError: error.localizedDescription)
+        }
+    }
+
+    private func initiateGroupVoiceCall(jidList: [String], groupJid: String){
+        do {
+            try CallManager.makeGroupVoiceCall(jidList, groupID: groupJid) { isSuccess, flyError in
+                if isSuccess{
+                    print("#CALL CHECK make Group Voice call success")
+                }else{
+                    let errorMessage = flyError?.localizedDescription
+                    NSLog("MirroflyCall Group Video Call error--->\(String(describing: errorMessage))")
+                    self.handleCallFailure(flyError: flyError)
+                }
+            }
+        }catch(let error ) {
+            NSLog("***makeGroupVideoCall Error \(error.localizedDescription)")
+            self.handleCallFailure(customError: error.localizedDescription)
+        }
+    }
 }
