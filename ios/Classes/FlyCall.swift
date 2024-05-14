@@ -50,7 +50,8 @@ import PushKit
     private var methodChannel: FlutterMethodChannel?
     private var registrar: FlutterPluginRegistrar?
     private var eventChannel : FlutterEventChannel?
-    private var eventChannelInitializer: FlyEventChannelInitializer = FlyEventChannelInitializer()
+//    private var eventChannelInitializer: FlyEventChannelInitializer = FlyEventChannelInitializer()
+    private let eventChannelInitializer = FlyEventChannelInitializer.shared
     private var factory : MirrorflyViewFactory?
     
     var currentOutputDevice : OutputType = .receiver
