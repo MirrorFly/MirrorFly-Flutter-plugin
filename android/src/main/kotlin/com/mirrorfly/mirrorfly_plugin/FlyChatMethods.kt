@@ -1060,7 +1060,6 @@ class FlyChatMethods {
                 result.error("500", throwable?.message.toString(), throwable)
             }
         }
-        result.success(true)
     }
 
     fun enableDisableBusyStatus(call: MethodCall, result: MethodChannel.Result) {
