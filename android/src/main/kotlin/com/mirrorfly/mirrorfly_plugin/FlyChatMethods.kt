@@ -354,6 +354,9 @@ class FlyChatMethods {
                             ChatManager.setConnectionListener(object : ChatConnectionListener {
                                 override fun onConnected() {
                                     LogMessage.d("RegisterUser", "Chat Manager onConnected")
+                                    FlyCore.getBusySettingsStatusFromServer()
+                                    FlyCore.getArchivedSettingsStatusFromServer()
+                                    FlyCore.getArchivedChatsFromServer()
 //                                    Handler(Looper.getMainLooper()).postDelayed({
                                         result.success(response)
 //                                    }, 500)
