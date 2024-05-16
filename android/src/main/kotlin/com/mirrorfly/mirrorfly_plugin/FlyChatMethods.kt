@@ -51,6 +51,7 @@ import com.mirrorflysdk.models.TopicChatListParams
 import com.mirrorflysdk.utils.ThumbSize
 import com.mirrorflysdk.utils.Utils
 import com.mirrorflysdk.utils.VideoRecUtils
+import com.mirrorflysdk.xmpp.FlyXMPP
 import com.mirrorflysdk.xmpp.chat.models.CreateGroupModel
 import com.mirrorflysdk.xmpp.chat.models.Profile
 import io.flutter.Log
@@ -307,7 +308,7 @@ class FlyChatMethods {
             LogMessage.d("registerUser", call.arguments.toString())
             val metaDataList = extractMetaData(metaData)
             if (userIdentifier != null) {
-                if (SharedPreferenceManager.instance.getBoolean(SharedPreferenceManager.IS_LOGGED_IN)) {
+                if (FlyXMPP.isConnected()) {
                     ChatManager.disconnect()
                 }
                 FlyCore.registerUser(
@@ -346,37 +347,39 @@ class FlyChatMethods {
                         ChatManager.setAvailableFeaturesCallback(instance)
                         CallManager.setMissedCallListener(instance)*/
                         SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
-                        ChatManager.setConnectionListener(object : ChatConnectionListener {
-                            override fun onConnected() {
-                                LogMessage.d(tag, "onConnected")
-                                FlyMethodConstants.updateChatSinkValue(
-                                    Constants.onConnectedChannel,
-                                    true
-                                )
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    result.success(response)
-                                }, 500)
+                        if(FlyXMPP.isConnected()) {
+                            LogMessage.d("RegisterUser", "Chat Manager connected and authenticated")
+                            result.success(response)
+                        }else{
+                            ChatManager.setConnectionListener(object : ChatConnectionListener {
+                                override fun onConnected() {
+                                    LogMessage.d("RegisterUser", "Chat Manager onConnected")
+//                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        result.success(response)
+//                                    }, 500)
 
-                            }
+                                }
 
-                            override fun onConnectionFailed(e: FlyException) {
-                                LogMessage.d(tag, "Chat Manager onConnectionFailed")
-                                result.error(
-                                    "500",
-                                    e.message,
-                                    null
-                                )
-                            }
+                                override fun onConnectionFailed(e: FlyException) {
+                                    LogMessage.d("RegisterUser", "Chat Manager onConnectionFailed")
+//                                FlutterChatConnection.setListener(null)
+                                    result.error(
+                                        "500",
+                                        e.message,
+                                        null
+                                    )
+                                }
 
-                            override fun onDisconnected() {
-                                LogMessage.d(tag, "Chat Manager Disconnected")
-                            }
+                                override fun onDisconnected() {
+                                    LogMessage.d("RegisterUser", "Chat Manager Disconnected")
+                                }
 
-                            override fun onReconnecting() {
-                                LogMessage.d(tag, "Chat Manager onReconnecting")
-                            }
+                                override fun onReconnecting() {
+                                    LogMessage.d("RegisterUser", "Chat Manager onReconnecting")
+                                }
 
-                        })
+                            })
+                        }
                     } else {
                         if (data["http_status_code"] == 403) {
                             result.error("403", throwable?.message.toString(), null)
@@ -2311,12 +2314,16 @@ class FlyChatMethods {
         ContactManager.getUserProfile(
             jid, server, saveasfriend
         ) { isSuccess, throwable, data ->
-            //ContactManager.shared.getUserProfileDetails
-            //LogMessage.d("RESPONSE_CAPTURE", "===========================")
-            //DebugUtilis.v("getUserProfile", data.tojsonString())
-            data["status"] = isSuccess
-            LogMessage.d(tag, "getProfile => " + data.toJsonString())
-            result.success(data.toJsonString())
+            if (isSuccess) {
+                //ContactManager.shared.getUserProfileDetails
+                //LogMessage.d("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("getUserProfile", data.tojsonString())
+                data["status"] = isSuccess
+                LogMessage.d(tag, "getProfile => " + data.toJsonString())
+                result.success(data.toJsonString())
+            } else {
+                result.error("500", throwable?.message, data)
+            }
         }
     }
 
