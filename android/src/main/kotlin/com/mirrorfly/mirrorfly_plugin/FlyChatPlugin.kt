@@ -94,6 +94,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             instance.mContext = context
             initChannels(binaryMessenger)
             FlyCallPlugin().init()
+            ChatConnectionManager.addChatConnectionListener(instance)
             CallManager.setMissedCallListener(instance)
             ChatEventsManager.setupMessageEventListener(instance)
             ChatManager.setMediaNotificationHelper(instance)
