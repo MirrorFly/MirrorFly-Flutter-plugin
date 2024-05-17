@@ -460,8 +460,8 @@ import PushKit
         let licenseKey = Utility.getStringFromPreference(key: Constants.licenseKey)
         let containerID = Utility.getStringFromPreference(key: Constants.containerID)
         
-        NSLog("#VOIP licenseKey \(licenseKey)")
-        NSLog("#VOIP containerID \(containerID)")
+        NSLog("\(Constants.callTag) #VOIP licenseKey \(licenseKey)")
+        NSLog("\(Constants.callTag) #VOIP containerID \(containerID)")
         
         ChatManager.setAppGroupContainerId(id: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
