@@ -1052,7 +1052,7 @@ class Mirrorfly {
   ///
   /// This static method initiates the login process for a user with the specified [userIdentifier] to the Mirrorfly platform.
   /// Optionally, you can provide the [fcmToken] for Firebase Cloud Messaging (FCM) integration,
-  /// and specify whether to forcefully register the user if not already registered with [isForceRegister].
+  /// and specify whether to forcefully register the user if not already registered with [isForceRegister].to specify the app user type use [userType].
   ///
   /// The [flyCallback] function is called upon completion of the login operation,
   /// providing a [FlyResponse] object containing information about the operation's success or failure.
@@ -1064,6 +1064,7 @@ class Mirrorfly {
   ///   await Mirrorfly.login(
   ///     userIdentifier: 'example_user_id',
   ///     fcmToken: 'example_fcm_token',
+  ///     userType: 'd'
   ///     isForceRegister: true,
   ///     flyCallback: (FlyResponse response) {
   ///       if (response.success) {
@@ -1079,10 +1080,12 @@ class Mirrorfly {
   static Future<void> login(
       {required String userIdentifier,
       String fcmToken = "",
+        String userType = "d",
       bool isForceRegister = true,
       required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
         fcmToken: fcmToken,
+        userType: userType,
         isForceRegister: isForceRegister,
         callback: flyCallback);
   }
