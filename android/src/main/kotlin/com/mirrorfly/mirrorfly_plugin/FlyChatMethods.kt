@@ -297,12 +297,13 @@ class FlyChatMethods {
         } else {
             val userIdentifier: String? = call.argument("userIdentifier")
             val token: String = call.argument("token") ?: ""
+            val userType: String = call.argument("userType") ?: ""
             val isForceRegister: Boolean = call.argument("isForceRegister") ?: true
             LogMessage.d("isForceRegister", isForceRegister.toString())
             if (userIdentifier != null) {
                 FlyCore.registerUser(
                         userIdentifier,
-                        token, isForceRegister
+                        token, isForceRegister, userType = userType
                 ) { isSuccess: Boolean, throwable: Throwable?, data: HashMap<String?, Any?> ->
                     if (isSuccess) {
 

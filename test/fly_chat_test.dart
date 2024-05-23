@@ -1236,6 +1236,7 @@ class MockFlyChatFlutterPlatform
   @override
   Future<void> registerUser(String userIdentifier,
       {String fcmToken = "",
+      String userType = "",
       bool isForceRegister = true,
       required Function(FlyResponse response) callback}) {
     //  implement registerUser

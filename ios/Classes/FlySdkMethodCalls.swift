@@ -51,19 +51,18 @@ let ISEXPORT = true
         
         let args = call.arguments as! Dictionary<String, Any>
         
+        let domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
         let licenseKey = args["licenseKey"] as? String ?? ""
-        _ = args["enableMobileNumberLogin"] as? Bool ?? true
         isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
-        chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
-        _ = args["enableSDKLog"] as? Bool ?? false
-        _ = args["maximumRecentChatPin"] as? Int ?? 3
         
-        
-        
-        _ = args["ivKey"] as? String ?? ""
         let containerID = args["iOSContainerID"] as? String ?? ""
         
-        print("buildChatSDK \(containerID)")
+        
+        chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
+        
+        
+        Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
+        Utility.saveInPreference(key: Constants.containerID, value: containerID)
         
         let groupConfig = args["groupConfig"] as? [String : Any]
         
@@ -71,27 +70,21 @@ let ISEXPORT = true
         let adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
         let maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
         
-        print("groupCreationEnable \(groupCreationEnable)")
         let sdkGroupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: groupCreationEnable)
             .onlyAdminCanAddOrRemoveMembers(adminOnly: adminOnlyAddRemoveAccess)
             .setMaximumMembersInAGroup(membersCount: maxMembersCount)
             .build()
         assert(sdkGroupConfig != nil)
         
-        Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
-        Utility.saveInPreference(key: Constants.containerID, value: containerID)
+        try? ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
+            .setLicenseKey(key: licenseKey)
+            .isTrialLicense(isTrial: isTrialLicenceKey)
+            .setDomainBaseUrl(baseUrl: domainBaseUrl)
+            .setGroupConfiguration(groupConfig: sdkGroupConfig!)
+            .buildAndInitialize()
         
-        ChatManager.setAppGroupContainerId(id: containerID)
-        ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
-            if isSuccess {
-                print("SDK INITIALISED")
-            }else{
-                print("SDK FAILED TO INITIALISE \(String(describing: flyError))")
-            }
-        }
+        ChatManager.disableLocalNotification()
         
-        
-        print("ChatManager.enableChatHistory \(chatHistoryEnable)")
         
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
             
@@ -99,25 +92,15 @@ let ISEXPORT = true
                 
                 do {
                     try CallManager.initCallSDK()
-                    //                    FlyDefaults.chatHistoryEnabled = true
                 } catch (let error ){
                     print("#FlyCall Exception : \(error.localizedDescription)")
                 }
             }
         }
         
-        
-        //        ChatManager.disableLocalNotification()
-        
         //        ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
         
-        Utility.saveInPreference(key: Constants.contactSyncEnable, value: !isTrialLicenceKey)
-        
-        //        FlyDefaults.chatHistoryEnabled = true
-        //        FlyDefaults.isBusyStatusEnabled = true
         ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
-        
-        //        ChatManager.setRegisterDeviceType(deviceType: "android")
         
     }
     
@@ -206,6 +189,7 @@ let ISEXPORT = true
         
         var userIdentifier = args["userIdentifier"] as? String ?? ""
         let deviceToken = args["token"] as? String ?? ""
+        let userType = args["userType"] as? String ?? ""
         let isForceRegister = args["isForceRegister"] as? Bool ?? true
         
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
@@ -223,8 +207,9 @@ let ISEXPORT = true
         
         NSLog("\(Constants.tag) Register Device Token \(deviceToken)")
         NSLog("\(Constants.tag) ISEXPORT \(ISEXPORT)")
+        print("\(Constants.tag) userType \(userType)")
         
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: "d", pushServerType: .firebase) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: userType, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
