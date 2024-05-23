@@ -1080,7 +1080,7 @@ class Mirrorfly {
   static Future<void> login(
       {required String userIdentifier,
       String fcmToken = "",
-        String userType = "d",
+      String userType = "d",
       bool isForceRegister = true,
       required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
