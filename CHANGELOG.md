@@ -1,3 +1,7 @@
+## [1.0.2] User Type Added
+
+* The user type has been added to the login function to accommodate different packages and achieve unified push notifications between the apps from the server.
+
 ## [1.0.1] DNS Resolver added
 
 * added DNS Resolver for android smack issue
