@@ -106,11 +106,11 @@ import MirrorFlySDK
         if checkXMPPConnection {
             result(true)
             
-            guard ChatManager.isChatServerConnected() else {
-                print("#CALL CHECK isChatServerConnected false")
-                addObserverForConnectionStatus(jid: jid, callType: "voice")
-                return
-            }
+//            guard ChatManager.isChatServerConnected() else {
+//                print("#CALL CHECK isChatServerConnected false")
+//                addObserverForConnectionStatus(jid: jid, callType: "voice")
+//                return
+//            }
             
             print("#CALL CHECK isChatServerConnected true")
             initiateVoiceCall(jid: jid)
@@ -150,11 +150,11 @@ import MirrorFlySDK
         if checkXMPPConnection {
             result(true)
             
-            guard ChatManager.isChatServerConnected() else {
-                print("#CALL CHECK isChatServerConnected false")
-                addObserverForConnectionStatus(jid: jid, callType: "video")
-                return
-            }
+//            guard ChatManager.isChatServerConnected() else {
+//                print("#CALL CHECK isChatServerConnected false")
+//                addObserverForConnectionStatus(jid: jid, callType: "video")
+//                return
+//            }
             self.initiateVideoCall(jid: jid)
         }else{
             
@@ -210,11 +210,11 @@ import MirrorFlySDK
         if checkXMPPConnection {
             result(true)
             
-            guard ChatManager.isChatServerConnected() else {
-                print("#CALL CHECK isChatServerConnected false")
-                addObserverForConnectionStatus(jidList: jidList, groupJid: groupJid, callType: "video")
-                return
-            }
+//            guard ChatManager.isChatServerConnected() else {
+//                print("#CALL CHECK isChatServerConnected false")
+//                addObserverForConnectionStatus(jidList: jidList, groupJid: groupJid, callType: "video")
+//                return
+//            }
             self.initiateGroupVideoCall(jidList: jidList, groupJid: groupJid)
         }else{
             
@@ -253,11 +253,11 @@ import MirrorFlySDK
         if checkXMPPConnection {
             result(true)
             
-            guard ChatManager.isChatServerConnected() else {
-                print("#CALL CHECK isChatServerConnected false")
-                addObserverForConnectionStatus(jidList: jidList, groupJid: groupJid, callType: "video")
-                return
-            }
+//            guard ChatManager.isChatServerConnected() else {
+//                print("#CALL CHECK isChatServerConnected false")
+//                addObserverForConnectionStatus(jidList: jidList, groupJid: groupJid, callType: "video")
+//                return
+//            }
             self.initiateGroupVoiceCall(jidList: jidList, groupJid: groupJid)
         }else{
             do {

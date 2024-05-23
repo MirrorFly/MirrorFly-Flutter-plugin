@@ -98,6 +98,8 @@ import PushKit
             CallManager.incomingUserJidArr.removeAll()
             CallManager.disconnectCall()
             
+            sendLocalHangupDelegate()
+            
             result(true)
         }else{
             if (call.method == "makeVoiceCall" || call.method == "makeVideoCall" || call.method == "makeGroupVideoCall" || call.method == "makeGroupVoiceCall"){
@@ -115,6 +117,30 @@ import PushKit
                 result(FlutterMethodNotImplemented)
             }
         }
+    }
+    
+    private func sendLocalHangupDelegate() {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(AppUtils.shared.getMyJid(), forKey: "userJid")
+        
+        
+        jsonObject.setValue(CallAction.ACTION_LOCAL_HANGUP.rawValue, forKey: "callAction")
+        
+        
+        if CallManager.isOneToOneCall()  {
+            jsonObject.setValue("onetoone", forKey: "callMode")
+        }else{
+            jsonObject.setValue("onetomany", forKey: "callMode")
+        }
+        if CallManager.getCallType() == .Audio {
+            jsonObject.setValue("audio", forKey: "callType")
+        } else {
+            jsonObject.setValue("video", forKey: "callType")
+        }
+        
+        let callActionJson = pluginDictToJson(dictionary: jsonObject)
+        
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callActionJson)
     }
     
     
@@ -250,6 +276,14 @@ import PushKit
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
         NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId)")
+        
+        ///Work Around till sdk is fixed
+        
+        if callAction == .ACTION_LOCAL_HANGUP {
+            NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId) :==> rejecting local hangup to send to the user")
+            return
+        }
+            
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
 
