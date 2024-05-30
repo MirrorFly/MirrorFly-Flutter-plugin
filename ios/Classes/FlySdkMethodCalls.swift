@@ -199,7 +199,7 @@ let ISEXPORT = true
         var userIdentifier = args["userIdentifier"] as? String ?? ""
         let deviceToken = args["token"] as? String ?? Utility.getStringFromPreference(key: Constants.googleToken) 
         let isForceRegister = args["isForceRegister"] as? Bool ?? true
-        let userType = args["userType"] as? String ?? "d"
+        let userType = args["userType"] as? String ?? ""
         
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
         

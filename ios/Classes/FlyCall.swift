@@ -11,6 +11,9 @@ import Flutter
 import PushKit
 
 @objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate, CallLogDelegate {
+    
+    var usersInCall: [String: MirrorFlySDK.CALLSTATUS] = [:]
+    
     func chatManagerStatus(status: ConnectionStatus) {
         print("--- chatManagerStatus delegate \(status)")
     }
@@ -94,10 +97,15 @@ import PushKit
         }else if (call.method == "disconnectCall"){
             NSLog("\(Constants.callTag) Disconnecting Call")
             NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
-            factory?.clearMirrorflyView(userJID: AppUtils.shared.getMyJid())
+            let localUserJid = AppUtils.shared.getMyJid()
+            factory?.clearMirrorflyView(userJID: localUserJid)
             CallManager.incomingUserJidArr.removeAll()
             CallManager.disconnectCall()
-            
+            /// Call Status Duplicate Handle Code Start
+            if isUserExists(userId: localUserJid) {
+                usersInCall.removeValue(forKey: localUserJid)
+            }
+            /// Call Status Duplicate Handle Code End
             sendLocalHangupDelegate()
             
             result(true)
@@ -218,8 +226,11 @@ import PushKit
         }
     }
     
-    
-    
+    /// Call Status Duplicate Handle Code Start
+    func isUserExists(userId: String) -> Bool {
+        return usersInCall.keys.contains(userId)
+    }
+    /// Call Status Duplicate Handle Code End
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         NSLog("#MirrorflyCall Events: Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
@@ -230,10 +241,37 @@ import PushKit
             AudioManager.shared().audioManagerDelegate = self
         }
         
-
-
+        /// Call Status Duplicate Handle Code Start
+        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING){
+            usersInCall.removeAll()
+            usersInCall = CallManager.getCallUsersWithStatus()
+            if !isUserExists(userId: AppUtils.shared.getMyJid()){
+                usersInCall[AppUtils.shared.getMyJid()] = .CONNECTED
+            }
+            print("\(Constants.callTag) Events: usersInCall: \(usersInCall)")
+        }
+        
+        
+        if usersInCall.count <= 1 {
+            NSLog("\(Constants.callTag) Events: Userlist Have only one user so call will be disconnected already sent so ignoring the status")
+            return
+        }
+        
         let userJID = userId
-
+        
+        if (callStatus == .DISCONNECTED && !isUserExists(userId: userJID)){
+            NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
+            return
+        }
+        
+        if ((callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && isUserExists(userId: userJID)) {
+            NSLog("\(Constants.callTag) Events: User exists so forwarding the status")
+            usersInCall.removeValue(forKey: userJID)
+        }else if !(callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && !isUserExists(userId: userJID){
+            NSLog("\(Constants.callTag) Events: User not exists so adding the user")
+            usersInCall[userJID] = .CONNECTED
+        }
+        /// Call Status Duplicate Handle Code End
         
         //Added to Sync the Call log in Call Status update
         NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
