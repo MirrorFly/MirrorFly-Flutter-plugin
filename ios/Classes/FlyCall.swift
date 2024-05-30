@@ -251,6 +251,10 @@ import PushKit
             print("\(Constants.callTag) Events: usersInCall: \(usersInCall)")
         }
         
+        if (callStatus == .ATTENDED && userId != AppUtils.shared.getMyJid()){
+            NSLog("\(Constants.callTag) Events: Attended Received for remote user so ignoring it")
+            return
+        }
         
         if usersInCall.count <= 1 {
             NSLog("\(Constants.callTag) Events: Userlist Have only one user so call will be disconnected already sent so ignoring the status")
