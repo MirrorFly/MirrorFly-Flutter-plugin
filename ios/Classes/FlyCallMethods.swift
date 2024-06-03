@@ -255,7 +255,7 @@ import MirrorFlySDK
             
             guard ChatManager.isChatServerConnected() else {
                 print("#CALL CHECK isChatServerConnected false")
-                addObserverForConnectionStatus(jidList: jidList, groupJid: groupJid, callType: "video")
+                addObserverForConnectionStatus(jidList: jidList, groupJid: groupJid, callType: "voice")
                 return
             }
             self.initiateGroupVoiceCall(jidList: jidList, groupJid: groupJid)
