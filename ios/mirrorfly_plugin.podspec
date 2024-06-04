@@ -18,12 +18,12 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency 'libPhoneNumber-iOS','0.9.15'
-  s.dependency 'Alamofire','5.5'
+  s.dependency 'Alamofire', '5.9.1'
   s.dependency 'SocketRocket'
   s.dependency 'Socket.IO-Client-Swift', '16.0.1'
   s.dependency 'Starscream', '4.0.4'
   s.dependency 'XMPPFramework/Swift'
-  s.dependency 'RealmSwift' , '10.43.0'
+  s.dependency 'RealmSwift', '~> 10.49.2'
   s.dependency 'GoogleWebRTC','1.1.31999'
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16'
