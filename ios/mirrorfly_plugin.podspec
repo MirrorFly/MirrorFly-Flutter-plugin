@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency 'libPhoneNumber-iOS','0.9.15'
-  s.dependency 'Alamofire', '5.9.1'
+  s.dependency 'Alamofire','5.9.1'
   s.dependency 'SocketRocket'
   s.dependency 'Socket.IO-Client-Swift', '16.0.1'
   s.dependency 'Starscream', '4.0.4'
@@ -26,8 +26,8 @@ Pod::Spec.new do |s|
   s.dependency 'RealmSwift', '~> 10.49.2'
   s.dependency 'GoogleWebRTC','1.1.31999'
   s.dependency 'SDWebImage'
-  s.dependency 'IDZSwiftCommonCrypto', '~> 0.16'
-  s.dependency 'MirrorFlySDK', '5.15.7'
+  s.dependency 'IDZSwiftCommonCrypto', '~> 0.16.1'
+#   s.dependency 'MirrorFlySDK', '5.16.7'
 
 #    s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
