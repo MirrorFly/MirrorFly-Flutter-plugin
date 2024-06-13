@@ -115,6 +115,10 @@ let ISEXPORT = true
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
+                NSLog("SDK INITIALISE Success")
+                if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
+                    ChatManager.connect()
+                }
                 result(true)
             }else{
                 NSLog("SDK FAILED TO INITIALISE \(String(describing: flyError?.localizedDescription))")
