@@ -106,51 +106,65 @@ class FlyCallMethods : MissedCallListener {
     }
 
     fun makeVoiceCall(call: MethodCall, result: MethodChannel.Result) {
-        val userJid: String = call.argument("user_jid") ?: ""
-        println("permission ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}")
-        LogMessage.d(
-            "makeVoiceCall",
-            "permission granted ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}"
-        )
-        if (CallManager.isAudioCallPermissionsGranted(false)) {
-            CallManager.makeVoiceCall(userJid, object : CallActionListener {
-                override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
-                    LogMessage.d("makeCall", "success $isSuccess message ${flyException?.message}")
-                    if (isSuccess) {
-                        result.success(true)
-                    } else {
-                        result.error("500", flyException?.message, flyException)
+        try {
+            val userJid: String = call.argument("user_jid") ?: ""
+            println("permission ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}")
+            LogMessage.d(
+                "makeVoiceCall",
+                "permission granted ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}"
+            )
+            if (CallManager.isAudioCallPermissionsGranted(false)) {
+                CallManager.makeVoiceCall(userJid, object : CallActionListener {
+                    override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                        LogMessage.d("makeCall", "success $isSuccess message ${flyException?.message}")
+                        if (isSuccess) {
+                            result.success(true)
+                        } else {
+                            result.error("500", flyException?.message, flyException)
+                        }
                     }
-                }
-            })
-        } else {
-            result.error("500", "Audio call permissions not granted", "")
+                })
+            } else {
+                result.error("500", "Audio call permissions not granted", "")
+            }
+        }catch(exception: Exception){
+            if (exception is FlyException) {
+                exception as FlyException
+                result.error("500", exception.message, exception)
+            }
         }
     }
 
     fun makeVideoCall(call: MethodCall, result: MethodChannel.Result) {
-        val userJid: String = call.argument("user_jid") ?: ""
-        LogMessage.d(
-            "makeVideoCall",
-            "permission granted ${CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)}"
-        )
-        if (CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)) {
-            CallManager.makeVideoCall(userJid, object : CallActionListener {
-                override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
-                    LogMessage.d(
-                        "makeVideoCall",
-                        "success $isSuccess message ${flyException?.message}"
-                    )
-                    if (isSuccess) {
-                        result.success(true)
-                    } else {
-                        result.error("500", flyException?.message, flyException)
+        try {
+            val userJid: String = call.argument("user_jid") ?: ""
+            LogMessage.d(
+                "makeVideoCall",
+                "permission granted ${CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)}"
+            )
+            if (CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)) {
+                CallManager.makeVideoCall(userJid, object : CallActionListener {
+                    override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                        LogMessage.d(
+                            "makeVideoCall",
+                            "success $isSuccess message ${flyException?.message}"
+                        )
+                        if (isSuccess) {
+                            result.success(true)
+                        } else {
+                            result.error("500", flyException?.message, flyException)
+                        }
                     }
-                }
 
-            })
-        } else {
-            result.error("500", "Video call permissions not granted", "")
+                })
+            } else {
+                result.error("500", "Video call permissions not granted", "")
+            }
+        }catch(exception: Exception){
+            if (exception is FlyException) {
+                exception as FlyException
+                result.error("500", exception.message, exception)
+            }
         }
     }
 
@@ -258,16 +272,48 @@ class FlyCallMethods : MissedCallListener {
     }
 
     fun makeGroupVoiceCall(call: MethodCall, result: MethodChannel.Result) {
-        if (CallManager.isAudioCallPermissionsGranted(false)) {
+        try {
+//            if (CallManager.isAudioCallPermissionsGranted(false)) {
+                val groupJid = call.argument<String>("groupJid") ?: ""
+                val jidList = call.argument<List<String>>("jidList")
+                CallManager.makeGroupVoiceCall(
+                        jidList as ArrayList<String>,
+                        groupJid,
+                        object : CallActionListener {
+                            override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                                LogMessage.d(
+                                        "makeGroupVoiceCall",
+                                        "success $isSuccess message ${flyException?.message}"
+                                )
+                                if (isSuccess) {
+                                    result.success(true)
+                                } else {
+                                    result.error("500", flyException?.message, flyException)
+                                }
+                            }
+                        })
+            result.success(true)
+//            }
+        }catch(exception: Exception){
+            if (exception is FlyException) {
+                exception as FlyException
+                result.error("500", exception.message, exception)
+            }
+        }
+    }
+
+    fun makeGroupVideoCall(call: MethodCall, result: MethodChannel.Result) {
+        try {
+            LogMessage.d(tag, "muteVideo")
             val groupJid = call.argument<String>("groupJid") ?: ""
             val jidList = call.argument<List<String>>("jidList")
-            CallManager.makeGroupVoiceCall(
+            CallManager.makeGroupVideoCall(
                 jidList as ArrayList<String>,
                 groupJid,
                 object : CallActionListener {
                     override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
                         LogMessage.d(
-                            "makeGroupVoiceCall",
+                            "makeGroupVideoCall",
                             "success $isSuccess message ${flyException?.message}"
                         )
                         if (isSuccess) {
@@ -276,31 +322,15 @@ class FlyCallMethods : MissedCallListener {
                             result.error("500", flyException?.message, flyException)
                         }
                     }
+
                 })
+            result.success(true)
+        }catch(exception: Exception){
+            if (exception is FlyException) {
+                exception as FlyException
+                result.error("500", exception.message, exception)
+            }
         }
-    }
-
-    fun makeGroupVideoCall(call: MethodCall, result: MethodChannel.Result) {
-        LogMessage.d(tag, "muteVideo")
-        val groupJid = call.argument<String>("groupJid") ?: ""
-        val jidList = call.argument<List<String>>("jidList")
-        CallManager.makeGroupVideoCall(
-            jidList as ArrayList<String>,
-            groupJid,
-            object : CallActionListener {
-                override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
-                    LogMessage.d(
-                        "makeGroupVideoCall",
-                        "success $isSuccess message ${flyException?.message}"
-                    )
-                    if (isSuccess) {
-                        result.success(isSuccess)
-                    } else {
-                        result.error("500", flyException?.message, flyException)
-                    }
-                }
-
-            })
     }
 
     fun isUserAudioMuted(call: MethodCall, result: MethodChannel.Result) {

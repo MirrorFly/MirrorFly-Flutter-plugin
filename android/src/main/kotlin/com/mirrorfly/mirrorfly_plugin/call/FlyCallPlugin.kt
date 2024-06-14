@@ -402,11 +402,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     }
 
     override fun getCallAcceptPendingIntent(): PendingIntent {
-        val intentTransparent = Intent(context, CallKitUiActivity::class.java)/*TransparentActivity.getIntent(
-            context,
-            Constants.ACTION_CALL_ACCEPT,
-            null
-        )*/
+        val intentTransparent = Intent(context, CallKitUiActivity::class.java)
         intentTransparent.action = CallConstants.ACCEPT_CALL
         intentTransparent.putExtra(CallConstants.ACCEPT_CALL, true)
         intentTransparent.putExtra("FROM", CallConstants.ACCEPT_CALL)

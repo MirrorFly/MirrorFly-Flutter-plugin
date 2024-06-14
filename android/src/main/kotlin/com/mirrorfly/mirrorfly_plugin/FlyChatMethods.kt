@@ -32,6 +32,7 @@ import com.mirrorflysdk.api.network.FlyNetwork
 import com.mirrorflysdk.api.notification.NotificationEventListener
 import com.mirrorflysdk.api.notification.PushNotificationManager
 import com.mirrorflysdk.api.utils.NameHelper
+import com.mirrorflysdk.flycall.webrtc.CallLogger
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
@@ -255,6 +256,7 @@ class FlyChatMethods {
 
         LogMessage.enableDebugLogging(enableSDKLog)
         Logger.enableDebugLogging(enableSDKLog)
+        CallManager.enableDebugLogs(true)
 //        CallManager.enableCallLogExport(false)
         ChatManager.enableChatHistory(chatHistoryEnable)
 
