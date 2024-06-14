@@ -292,7 +292,7 @@ class FlyCallMethods : MissedCallListener {
                                 }
                             }
                         })
-            result.success(true)
+//            result.success(true)
 //            }
         }catch(exception: Exception){
             if (exception is FlyException) {
@@ -324,7 +324,7 @@ class FlyCallMethods : MissedCallListener {
                     }
 
                 })
-            result.success(true)
+//            result.success(true)
         }catch(exception: Exception){
             if (exception is FlyException) {
                 exception as FlyException
