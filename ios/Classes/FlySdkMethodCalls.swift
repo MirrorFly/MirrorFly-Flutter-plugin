@@ -45,75 +45,61 @@ let ISEXPORT = true
     var observerToken: NSObjectProtocol?
     
     func buildChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
-        let args = call.arguments as! Dictionary<String, Any>
-        
-        let licenseKey = args["licenseKey"] as? String ?? ""
-        _ = args["enableMobileNumberLogin"] as? Bool ?? true
-        isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
-        chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
-        _ = args["enableSDKLog"] as? Bool ?? false
-        _ = args["maximumRecentChatPin"] as? Int ?? 3
-        
-        
-        
-        _ = args["ivKey"] as? String ?? ""
-        let containerID = args["iOSContainerID"] as? String ?? ""
-        
-        print("buildChatSDK \(containerID)")
-        
-        let groupConfig = args["groupConfig"] as? [String : Any]
-        
-        let groupCreationEnable = groupConfig?["enableGroup"] as? Bool ?? true
-        let adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
-        let maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
-        
-        print("groupCreationEnable \(groupCreationEnable)")
-        let sdkGroupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: groupCreationEnable)
-            .onlyAdminCanAddOrRemoveMembers(adminOnly: adminOnlyAddRemoveAccess)
-            .setMaximumMembersInAGroup(membersCount: maxMembersCount)
-            .build()
-        assert(sdkGroupConfig != nil)
-        
-        Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
-        Utility.saveInPreference(key: Constants.containerID, value: containerID)
-        
-        ChatManager.setAppGroupContainerId(id: containerID)
-        ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
-            if isSuccess {
-                print("SDK INITIALISED")
-            }else{
-                print("SDK FAILED TO INITIALISE \(String(describing: flyError))")
-            }
-        }
-        
-        
-        print("ChatManager.enableChatHistory \(chatHistoryEnable)")
-        
-        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
             
-            DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+            let args = call.arguments as! Dictionary<String, Any>
+            
+            let domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
+            let licenseKey = args["licenseKey"] as? String ?? ""
+            isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
+            
+            let containerID = args["iOSContainerID"] as? String ?? ""
+            
+            
+            chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
+            
+            
+            Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
+            Utility.saveInPreference(key: Constants.containerID, value: containerID)
+            
+            let groupConfig = args["groupConfig"] as? [String : Any]
+            
+            let groupCreationEnable = groupConfig?["enableGroup"] as? Bool ?? true
+            let adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
+            let maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
+            
+            let sdkGroupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: groupCreationEnable)
+                .onlyAdminCanAddOrRemoveMembers(adminOnly: adminOnlyAddRemoveAccess)
+                .setMaximumMembersInAGroup(membersCount: maxMembersCount)
+                .build()
+            assert(sdkGroupConfig != nil)
+            
+            try? ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
+                .setLicenseKey(key: licenseKey)
+                .isTrialLicense(isTrial: isTrialLicenceKey)
+                .setDomainBaseUrl(baseUrl: domainBaseUrl)
+                .setGroupConfiguration(groupConfig: sdkGroupConfig!)
+                .buildAndInitialize()
+            
+            ChatManager.disableLocalNotification()
+            
+            /// Moved Inside SDK
+            /*if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
                 
-//                do {
-//                    try CallManager.initCallSDK()
-//                    //                    FlyDefaults.chatHistoryEnabled = true
-//                } catch (let error ){
-//                    print("#FlyCall Exception : \(error.localizedDescription)")
-//                }
-            }
+                DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+                    
+                    do {
+                        try CallManager.initCallSDK()
+                    } catch (let error ){
+                        print("#FlyCall Exception : \(error.localizedDescription)")
+                    }
+                }
+            }*/
+            
+            //        ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
+            
+            ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
+            
         }
-        
-        
-        //        ChatManager.disableLocalNotification()
-        
-        //        ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
-        
-        Utility.saveInPreference(key: Constants.contactSyncEnable, value: !isTrialLicenceKey)
-        
-        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
-        
-        
-    }
     
     func initializeSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -123,25 +109,16 @@ let ISEXPORT = true
         let containerID = args["iOSContainerID"] as? String ?? ""
         _ = args["enableSDKLog"] as? Bool ?? false
         
-        
         ChatManager.setAppGroupContainerId(id: containerID)
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
-                NSLog("SDK INITIALISED")
-                if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now()+2) {
-                        
-//                        do {
-//                            try CallManager.initCallSDK()
-//                        } catch (let error ){
-//                            print("#FlyCall Exception : \(error.localizedDescription)")
-//                        }
-                    }
-                }
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
+                NSLog("SDK INITIALISE Success")
+                if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
+                    ChatManager.connect()
+                }
                 result(true)
             }else{
                 NSLog("SDK FAILED TO INITIALISE \(String(describing: flyError?.localizedDescription))")
@@ -273,7 +250,7 @@ let ISEXPORT = true
                                 
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
-                                    NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
+                                    NSLog("\(Constants.tag) ChatManager.registerApiService \(resp)")
                                     result(resp)
                                 }else{
                                     result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
@@ -2658,7 +2635,11 @@ let ISEXPORT = true
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
             return
         }
-        
+//        let messages = FlyMessenger.getMessagesOf(jid: "")
+//                print("#Test \(messages.count)")
+//                for item in messages {
+//                    print("#Test \(item.messageTextContent)")
+//        }
         messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in
             var data  = flyData
             if (isSuccess) {
@@ -3208,6 +3189,10 @@ let ISEXPORT = true
                 //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
                 ChatManager.disconnect()
                 ChatManager.shared.resetFlyDefaults()
+                self.recentChatListBuilder = nil
+//                self.recentChatListParams = nil
+                self.messageListParams = FetchMessageListParams()
+                self.messageListQuery = nil
                 //Utility.clearUserDefaults()
                 Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
