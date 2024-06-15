@@ -17,6 +17,7 @@ export 'model/group_media_model.dart';
 export 'model/group_members_model.dart';
 export 'model/message_delivered_model.dart';
 export 'model/message_object.dart';
+export 'model/notification_applaunch_details.dart';
 export 'model/profile_model.dart';
 export 'model/profile_update.dart';
 export 'model/recent_chat.dart';

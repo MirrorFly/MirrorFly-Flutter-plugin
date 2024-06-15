@@ -5,6 +5,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import '../message_params.dart' show MessageMetaData;
+
 List<ChatMessage> chatMessageFromJson(String str) => List<ChatMessage>.from(
     json.decode(str).map((x) => ChatMessage.fromJson(x)));
 
@@ -43,8 +45,10 @@ class ChatMessage {
     required this.messageId,
     required this.messageSentTime,
     required this.messageStatus,
+    required this.isMessageEdited,
     required this.messageTextContent,
     required this.messageType,
+    this.metaData = const [],
     required this.replyParentChatMessage, //
     required this.senderNickName,
     required this.senderUserJid,
@@ -70,8 +74,10 @@ class ChatMessage {
   String messageId;
   dynamic messageSentTime;
   String messageStatus;
+  bool isMessageEdited;
   String? messageTextContent;
   String messageType;
+  List<MessageMetaData>? metaData;
   ReplyParentChatMessage? replyParentChatMessage;
   String senderNickName;
   String senderUserJid;
@@ -108,8 +114,14 @@ class ChatMessage {
       messageStatus: getMessageStatus(Platform.isAndroid
           ? json["messageStatus"]["status"]
           : json["messageStatus"]),
+      isMessageEdited:
+          Platform.isAndroid ? json["isEdited"] : json["isMessageEdited"],
       messageTextContent: json["messageTextContent"].toString(),
       messageType: getMessageType(json["messageType"]),
+      metaData: json["metaData"] == null
+          ? []
+          : List<MessageMetaData>.from(
+              json["metaData"].map((x) => MessageMetaData.fromJson(x))),
       replyParentChatMessage: json["replyParentChatMessage"] == null
           ? null
           : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -143,8 +155,12 @@ class ChatMessage {
         "messageId": messageId,
         "messageSentTime": messageSentTime,
         "messageStatus": messageStatus,
+        "isMessageEdited": isMessageEdited,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
+        "metaData": metaData == null
+            ? null
+            : List<dynamic>.from(metaData!.map((x) => x.toJson())),
         "replyParentChatMessage":
             replyParentChatMessage ?? replyParentChatMessage?.toJson(),
         "senderNickName": senderNickName,
@@ -158,6 +174,24 @@ class ChatMessage {
         "topicId": topicId
       };
 }
+
+/*class MessageMetaData {
+  MessageMetaData({required this.key, required this.value});
+
+  String key;
+  String value;
+
+  factory MessageMetaData.fromJson(Map<String, dynamic> json) =>
+      MessageMetaData(
+        key: json["key"],
+        value: json["value"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "key": key,
+        "value": value,
+      };
+}*/
 
 class ContactChatMessage {
   ContactChatMessage({
@@ -473,7 +507,7 @@ int getMediaUploadStatus(int mediaUploadStatus) {
     return mediaUploadStatus == 3
         ? 7
         : mediaUploadStatus == 8
-            ? 401
+            ? 0
             : mediaUploadStatus;
   } else {
     return mediaUploadStatus;

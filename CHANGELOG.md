@@ -1,10 +1,31 @@
+## [1.0.3] Edit Message and Meta Data Feature
+
+* Edit Message Feature Added
+* Meta Data Feature Added
+* iOS SDK Updated to 5.17.1
+* Android SDK Updated to 7.13.1
+* Bug Fixes
+* Performance Improvement
+
+## [1.0.2] User Type Added
+
+* The user type has been added to the login function to accommodate different packages and achieve unified push notifications between the apps from the server.
+
+## [1.0.1] DNS Resolver added
+
+* added DNS Resolver for android smack issue
+
 ## [1.0.0] Chat History Feature
 
 * Chat history feature is now available.
 * Profile model class has been changed to ProfileDetails.
-* FlyCallback has been incorporated for all method responses, ensuring that the output is in the form of a JSON-encoded string.
-* Collective event listeners are now available.([Learn more](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/event_listeners/connection-event-listeners/#observing-the-connection-events-collectively))
-* Some methods have been deprecated and will be removed in future releases. It is recommended to update your code accordingly, Please consider using the suggested alternatives([Learn more](https://www.mirrorfly.com/docs/chat/flutter-plugin/flutter-chat-change-log/))
+* FlyCallback has been incorporated for all method responses, ensuring that the output is in the
+  form of a JSON-encoded string.
+* Collective event listeners are now
+  available.([Learn more](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/event_listeners/connection-event-listeners/#observing-the-connection-events-collectively))
+* Some methods have been deprecated and will be removed in future releases. It is recommended to
+  update your code accordingly, Please consider using the suggested
+  alternatives([Learn more](https://www.mirrorfly.com/docs/chat/flutter-plugin/flutter-chat-change-log/))
 
 ## [0.0.13] Group Call Feature
 
