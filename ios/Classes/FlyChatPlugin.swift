@@ -61,11 +61,9 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         BackupManager.shared.backupDelegate = self
         BackupManager.shared.restoreDelegate = self
         ChatManager.shared.localNotificationDelegate = self
-        ChatManager.isTrialLicense()
     }
     
     func prepareMethodHandler(methodCall: FlutterMethodCall, result: @escaping FlutterResult){
-//        FlyCall.handleMethodCall(call: call, result: result)
         
         if methodCall.method == "syncContacts"{
             let args = methodCall.arguments as! Dictionary<String, Any>
@@ -115,14 +113,22 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         }else if methodCall.method == "contactSyncStateValue"{
             contactSyncStateValue(call: methodCall, result: result)
         } else{
-            if methodCall.method == "init" || methodCall.method == "initializeSDK"{
-                initializeEventListeners()
-            }
+            
             if let methodHandler = FlyMethodConstants.chatMethodHandlers[methodCall.method] {
                 NSLog("\(Constants.tag) Method call \(methodCall.method)")
                 methodHandler(methodCall, result)
             } else {
                 result(FlutterMethodNotImplemented)
+            }
+            
+            if methodCall.method == "init" || methodCall.method == "initializeSDK"{
+                NSLog("\(Constants.tag) Method call initializeEventListeners")
+                print("Method call initializeEventListeners")
+                DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+                    self.initializeEventListeners()
+                }
+               
+                
             }
         }
     }
@@ -368,6 +374,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.setTypingStatus_channel, value: jsonString)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onChatTypingStatus_channel, value: jsonString)
         
     }
     
@@ -380,6 +387,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.setTypingStatus_channel, value: jsonString)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onGroupTypingStatus_channel, value: jsonString)
         
     }
     

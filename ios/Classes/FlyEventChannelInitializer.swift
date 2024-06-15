@@ -12,8 +12,8 @@ import Flutter
 
 class FlyEventChannelInitializer {
     static let shared = FlyEventChannelInitializer()  // Singleton instance
-        
-    private init() {} 
+
+    private init() {}
 
     static let callEventChannels: [(channelName: String, streamHandler: NSObjectProtocol & FlutterStreamHandler)] = [
         (channelName: Constants.onLocalVideoTrackAddedChannel, streamHandler: OnLocalVideoTrackAddedStreamHandler()),
@@ -99,9 +99,10 @@ class FlyChatEventChannelInitializer {
         (channelName: Constants.onConnected_channel, streamHandler: OnConnectedStreamHandler()),
         (channelName: Constants.onDisconnected_channel, streamHandler: OnDisconnectedStreamHandler()),
         (channelName: Constants.onConnectionNotAuthorized_channel, streamHandler: OnConnectionNotAuthorizedStreamHandler()),
-        (channelName: Constants.onMessageEdited_channel, streamHandler: MessageEditedStreamHandler()),
+//        (channelName: Constants.onWebChatPasswordChanged_channel, streamHandler: OnWebChatPasswordChangedStreamHandler()),
         (channelName: Constants.onChatTypingStatus_channel, streamHandler: OnChatTypingStatusStreamHandler()),
         (channelName: Constants.onGroupTypingStatus_channel, streamHandler: OnGroupTypingStatusStreamHandler()),
+        (channelName: Constants.onMessageEdited_channel, streamHandler: MessageEditedStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
     

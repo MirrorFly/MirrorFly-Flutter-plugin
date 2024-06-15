@@ -64,14 +64,16 @@ extension AudioLevelExtension on num {
     switch (this) {
       case 1:
         return AudioLevel.audioTooLow;
-      case 3:
+      case 2:
         return AudioLevel.audioLow;
-      case 4:
+      case 3:
         return AudioLevel.audioMedium;
-      case 5:
+      case 4:
         return AudioLevel.audioHigh;
-      default:
+      case 5:
         return AudioLevel.audioPeak;
+      default:
+        return AudioLevel.audioTooLow;
     }
   }
 }

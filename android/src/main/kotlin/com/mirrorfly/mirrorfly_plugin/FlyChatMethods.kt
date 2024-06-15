@@ -32,6 +32,7 @@ import com.mirrorflysdk.api.network.FlyNetwork
 import com.mirrorflysdk.api.notification.NotificationEventListener
 import com.mirrorflysdk.api.notification.PushNotificationManager
 import com.mirrorflysdk.api.utils.NameHelper
+import com.mirrorflysdk.flycall.webrtc.CallLogger
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
@@ -255,6 +256,7 @@ class FlyChatMethods {
 
         LogMessage.enableDebugLogging(enableSDKLog)
         Logger.enableDebugLogging(enableSDKLog)
+        CallManager.enableDebugLogs(enableSDKLog)
 //        CallManager.enableCallLogExport(false)
         ChatManager.enableChatHistory(chatHistoryEnable)
 
@@ -301,8 +303,8 @@ class FlyChatMethods {
         } else {
             val userIdentifier: String? = call.argument("userIdentifier")
             val token: String = call.argument("token") ?: ""
-            val userType: String = call.argument("userType") ?: ""
             val isForceRegister: Boolean = call.argument("isForceRegister") ?: true
+            val userType: String = call.argument("userType") ?: ""
             LogMessage.d("isForceRegister", isForceRegister.toString())
             val metaData = call.argument<List<Map<String, Any>>>("metaData") ?: arrayListOf()
             LogMessage.d("registerUser", call.arguments.toString())

@@ -11,6 +11,9 @@ import Flutter
 import PushKit
 
 @objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate, CallLogDelegate {
+    
+    var usersInCall: [String: MirrorFlySDK.CALLSTATUS] = [:]
+    
     func chatManagerStatus(status: ConnectionStatus) {
         print("--- chatManagerStatus delegate \(status)")
     }
@@ -94,9 +97,16 @@ import PushKit
         }else if (call.method == "disconnectCall"){
             NSLog("\(Constants.callTag) Disconnecting Call")
             NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
-            factory?.clearMirrorflyView(userJID: AppUtils.shared.getMyJid())
+            let localUserJid = AppUtils.shared.getMyJid()
+            factory?.clearMirrorflyView(userJID: localUserJid)
             CallManager.incomingUserJidArr.removeAll()
             CallManager.disconnectCall()
+            /// Call Status Duplicate Handle Code Start
+            if isUserExists(userId: localUserJid) {
+                usersInCall.removeValue(forKey: localUserJid)
+            }
+            /// Call Status Duplicate Handle Code End
+            sendLocalHangupDelegate()
             
             result(true)
         }else{
@@ -115,6 +125,30 @@ import PushKit
                 result(FlutterMethodNotImplemented)
             }
         }
+    }
+    
+    private func sendLocalHangupDelegate() {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(AppUtils.shared.getMyJid(), forKey: "userJid")
+        
+        
+        jsonObject.setValue(CallAction.ACTION_LOCAL_HANGUP.rawValue, forKey: "callAction")
+        
+        
+        if CallManager.isOneToOneCall()  {
+            jsonObject.setValue("onetoone", forKey: "callMode")
+        }else{
+            jsonObject.setValue("onetomany", forKey: "callMode")
+        }
+        if CallManager.getCallType() == .Audio {
+            jsonObject.setValue("audio", forKey: "callType")
+        } else {
+            jsonObject.setValue("video", forKey: "callType")
+        }
+        
+        let callActionJson = pluginDictToJson(dictionary: jsonObject)
+        
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callActionJson)
     }
     
     
@@ -192,8 +226,11 @@ import PushKit
         }
     }
     
-    
-    
+    /// Call Status Duplicate Handle Code Start
+    func isUserExists(userId: String) -> Bool {
+        return usersInCall.keys.contains(userId)
+    }
+    /// Call Status Duplicate Handle Code End
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         NSLog("#MirrorflyCall Events: Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
@@ -204,10 +241,41 @@ import PushKit
             AudioManager.shared().audioManagerDelegate = self
         }
         
-
-
+        /// Call Status Duplicate Handle Code Start
+        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING){
+            usersInCall.removeAll()
+            usersInCall = CallManager.getCallUsersWithStatus()
+            if !isUserExists(userId: AppUtils.shared.getMyJid()){
+                usersInCall[AppUtils.shared.getMyJid()] = .CONNECTED
+            }
+            print("\(Constants.callTag) Events: usersInCall: \(usersInCall)")
+        }
+        
+        if (callStatus == .ATTENDED && userId != AppUtils.shared.getMyJid()){
+            NSLog("\(Constants.callTag) Events: Attended Received for remote user so ignoring it")
+            return
+        }
+        
+        if usersInCall.count <= 1 {
+            NSLog("\(Constants.callTag) Events: Userlist Have only one user so call will be disconnected already sent so ignoring the status")
+            return
+        }
+        
         let userJID = userId
-
+        
+        if (callStatus == .DISCONNECTED && !isUserExists(userId: userJID)){
+            NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
+            return
+        }
+        
+        if ((callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && isUserExists(userId: userJID)) {
+            NSLog("\(Constants.callTag) Events: User exists so forwarding the status")
+            usersInCall.removeValue(forKey: userJID)
+        }else if !(callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && !isUserExists(userId: userJID){
+            NSLog("\(Constants.callTag) Events: User not exists so adding the user")
+            usersInCall[userJID] = .CONNECTED
+        }
+        /// Call Status Duplicate Handle Code End
         
         //Added to Sync the Call log in Call Status update
         NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
@@ -250,6 +318,14 @@ import PushKit
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
         NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId)")
+        
+        ///Work Around till sdk is fixed
+        
+        if callAction == .ACTION_LOCAL_HANGUP {
+            NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId) :==> rejecting local hangup to send to the user")
+            return
+        }
+            
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
 
@@ -460,8 +536,8 @@ import PushKit
         let licenseKey = Utility.getStringFromPreference(key: Constants.licenseKey)
         let containerID = Utility.getStringFromPreference(key: Constants.containerID)
         
-        NSLog("#VOIP licenseKey \(licenseKey)")
-        NSLog("#VOIP containerID \(containerID)")
+        NSLog("\(Constants.callTag) #VOIP licenseKey \(licenseKey)")
+        NSLog("\(Constants.callTag) #VOIP containerID \(containerID)")
         
         ChatManager.setAppGroupContainerId(id: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }

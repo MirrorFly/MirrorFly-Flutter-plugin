@@ -79,4 +79,8 @@ class AppUtils: NSObject {
             return nil
         }
     }
+    
+    func debugLog(tag: String, log: String){
+        NSLog("\(tag): %@", log)
+    }
 }

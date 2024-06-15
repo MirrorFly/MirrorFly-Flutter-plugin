@@ -41,79 +41,65 @@ let ISEXPORT = true
     //Need to alter this below two lines based on RecentChat list
     var topicChatListParams = TopicChatListParams(limit: 15)
     var topicChatListBuilder : TopicChatListBuilder?
-    
+
     var observerToken: NSObjectProtocol?
     
     func buildChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
-        let args = call.arguments as! Dictionary<String, Any>
-        
-        let licenseKey = args["licenseKey"] as? String ?? ""
-        _ = args["enableMobileNumberLogin"] as? Bool ?? true
-        isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
-        chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
-        _ = args["enableSDKLog"] as? Bool ?? false
-        _ = args["maximumRecentChatPin"] as? Int ?? 3
-        
-        
-        
-        _ = args["ivKey"] as? String ?? ""
-        let containerID = args["iOSContainerID"] as? String ?? ""
-        
-        print("buildChatSDK \(containerID)")
-        
-        let groupConfig = args["groupConfig"] as? [String : Any]
-        
-        let groupCreationEnable = groupConfig?["enableGroup"] as? Bool ?? true
-        let adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
-        let maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
-        
-        print("groupCreationEnable \(groupCreationEnable)")
-        let sdkGroupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: groupCreationEnable)
-            .onlyAdminCanAddOrRemoveMembers(adminOnly: adminOnlyAddRemoveAccess)
-            .setMaximumMembersInAGroup(membersCount: maxMembersCount)
-            .build()
-        assert(sdkGroupConfig != nil)
-        
-        Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
-        Utility.saveInPreference(key: Constants.containerID, value: containerID)
-        
-        ChatManager.setAppGroupContainerId(id: containerID)
-        ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
-            if isSuccess {
-                print("SDK INITIALISED")
-            }else{
-                print("SDK FAILED TO INITIALISE \(String(describing: flyError))")
-            }
+
+            let args = call.arguments as! Dictionary<String, Any>
+
+            let domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
+            let licenseKey = args["licenseKey"] as? String ?? ""
+            isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
+
+            let containerID = args["iOSContainerID"] as? String ?? ""
+
+
+            chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
+
+
+            Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
+            Utility.saveInPreference(key: Constants.containerID, value: containerID)
+
+            let groupConfig = args["groupConfig"] as? [String : Any]
+
+            let groupCreationEnable = groupConfig?["enableGroup"] as? Bool ?? true
+            let adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
+            let maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
+
+            let sdkGroupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: groupCreationEnable)
+                .onlyAdminCanAddOrRemoveMembers(adminOnly: adminOnlyAddRemoveAccess)
+                .setMaximumMembersInAGroup(membersCount: maxMembersCount)
+                .build()
+            assert(sdkGroupConfig != nil)
+
+            try? ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
+                .setLicenseKey(key: licenseKey)
+                .isTrialLicense(isTrial: isTrialLicenceKey)
+                .setDomainBaseUrl(baseUrl: domainBaseUrl)
+                .setGroupConfiguration(groupConfig: sdkGroupConfig!)
+                .buildAndInitialize()
+
+            ChatManager.disableLocalNotification()
+
+            /// Moved Inside SDK
+            /*if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+
+                DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+
+                    do {
+                        try CallManager.initCallSDK()
+                    } catch (let error ){
+                        print("#FlyCall Exception : \(error.localizedDescription)")
+                    }
+                }
+            }*/
+
+            //        ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
+
+            ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
+
         }
-        
-        
-        print("ChatManager.enableChatHistory \(chatHistoryEnable)")
-        
-        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
-            
-            DispatchQueue.main.asyncAfter(deadline: .now()+2) {
-                
-//                do {
-//                    try CallManager.initCallSDK()
-//                    //                    FlyDefaults.chatHistoryEnabled = true
-//                } catch (let error ){
-//                    print("#FlyCall Exception : \(error.localizedDescription)")
-//                }
-            }
-        }
-        
-        
-        //        ChatManager.disableLocalNotification()
-        
-        //        ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
-        
-        Utility.saveInPreference(key: Constants.contactSyncEnable, value: !isTrialLicenceKey)
-        
-        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
-        
-        
-    }
     
     func initializeSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -122,26 +108,17 @@ let ISEXPORT = true
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         let containerID = args["iOSContainerID"] as? String ?? ""
         _ = args["enableSDKLog"] as? Bool ?? false
-        
-        
+
         ChatManager.setAppGroupContainerId(id: containerID)
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
-                NSLog("SDK INITIALISED")
-                if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now()+2) {
-                        
-//                        do {
-//                            try CallManager.initCallSDK()
-//                        } catch (let error ){
-//                            print("#FlyCall Exception : \(error.localizedDescription)")
-//                        }
-                    }
-                }
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
+                NSLog("SDK INITIALISE Success")
+                if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
+                    ChatManager.connect()
+                }
                 result(true)
             }else{
                 NSLog("SDK FAILED TO INITIALISE \(String(describing: flyError?.localizedDescription))")
@@ -197,10 +174,10 @@ let ISEXPORT = true
         let args = call.arguments as! Dictionary<String, Any>
         
         var userIdentifier = args["userIdentifier"] as? String ?? ""
-        let deviceToken = args["token"] as? String ?? Utility.getStringFromPreference(key: Constants.googleToken) 
+        let deviceToken = args["token"] as? String ?? Utility.getStringFromPreference(key: Constants.googleToken)
         let isForceRegister = args["isForceRegister"] as? Bool ?? true
-        let userType = args["userType"] as? String ?? "d"
-        
+        let userType = args["userType"] as? String ?? ""
+
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
         
         if(userIdentifier.isEmpty){
@@ -223,11 +200,11 @@ let ISEXPORT = true
             let obj = MetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
             metaDataArray.append(obj)
         }
-        
+
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
             ChatManager.disconnect()
         }
-        
+
         try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: userType, metaData: metaDataArray, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
@@ -249,9 +226,9 @@ let ISEXPORT = true
                 ChatManager.updateAppLoggedIn(isLoggedin: true)
                 
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
-                
+
                 ChatManager.connect()
-                
+
                 VOIPManager.sharedInstance.saveVOIPToken(token: Utility.getStringFromPreference(key: Constants.voipToken))
                 VOIPManager.sharedInstance.updateDeviceToken()
                 
@@ -259,26 +236,26 @@ let ISEXPORT = true
                         guard let userInfo = notification.userInfo else { return }
                         if let status = userInfo["status"] as? String {
                             print("#ChatManager Connection Status: \(status)")
-                            
+
                             switch status {
                             case "connected":
                                 self.removeObserver()
-                                
+
                                 //                do {
                                 //                    try CallManager.initCallSDK()
                                 //                }
                                 //                catch(let error ) {
                                 //                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
                                 //                }
-                                
+
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
-                                    NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
+                                    NSLog("\(Constants.tag) ChatManager.registerApiService \(resp)")
                                     result(resp)
                                 }else{
                                     result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
                                 }
-                                
+
                             case "failed":
                                 self.removeObserver()
                                 let errorMessage = userInfo["error"] as? String
@@ -287,14 +264,14 @@ let ISEXPORT = true
                             default:
                                 print("#ChatManager Connection Default Status: \(status)")
                             }
-                           
+
                         }else{
                             print("---Error in Chat Manager Connect Status")
                         }
-                       
+
                     }
-                
-                
+
+
             }else{
                 let err = flyError?.description ?? ""
                 let error = err.contains("405") ? err : data.getMessage()
@@ -343,7 +320,7 @@ let ISEXPORT = true
         print("---deinit FlySDKMethodCalls")
         removeObserver()
     }
-    
+
     func refreshAndGetAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
         ChatManager.refreshToken { (isSuccess, flyError, resultDict) in
             if (isSuccess) {
@@ -739,10 +716,10 @@ let ISEXPORT = true
         let searchTerm = args["search"] as? String ?? ""
         
         let perPageResultSize = args["perPageResultSize"] as? Int ?? 20
-        
+
         let metaData = args["metaDataUserList"] as? Dictionary<String, Any> ?? [:]
         print("metaData \(String(describing: metaData))")
-        
+
         ContactManager.shared.getUsersList(pageNo: pageNumber, pageSize: perPageResultSize, search: searchTerm, metaData: MetaDataUserList(key: metaData["key"] as? String ?? "", value: metaData["value"] as? [String] ?? [])){ isSuccess,flyError,flyData in
             if isSuccess {
                 var userList = flyData
@@ -2186,20 +2163,20 @@ let ISEXPORT = true
 
             if !chatDataModel.mediaAttachmentsUrl.isEmpty {
                 for item in chatDataModel.mediaAttachmentsUrl {
-                    
+
                     let file = URL(fileURLWithPath: item.path)
                     let absolutePath = self.convertToAbsolutePath(file.path)
                     mediaAttachmentUri.add(absolutePath)
-                    
+
                 }
             }
 
-            
+
             let jsonObject: NSMutableDictionary = NSMutableDictionary()
             jsonObject.setValue(chatDataModel.subject, forKey: "subject")
             jsonObject.setValue(chatDataModel.messageContent, forKey: "messageContent")
             jsonObject.setValue(mediaAttachmentUri, forKey: "mediaAttachmentsUrl")
-            
+
             let jsonString = pluginDictToJson(dictionary: jsonObject)
             result(jsonString)
         }
@@ -2370,7 +2347,7 @@ let ISEXPORT = true
         recentChatListParams.limit = limit
         
         print(ChatManager.getAppConfigDetails().authtoken)
-        
+
         if(recentChatListBuilder == nil){
             print("recentChatListBuilder is nil")
             recentChatListBuilder =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
@@ -2567,7 +2544,7 @@ let ISEXPORT = true
         
 //        let metaData = args["metaDataMessageList"] as? [String: Any] ?? [:]
 //        print("initializeMessageList MetaData \(String(describing: metaData))")
-        
+
 //        if let metaData = args["metaData"] as? [[String: Any]] {
 //            metaData.forEach { data in
 //                let key = data["key"] as? String ?? ""
@@ -2576,14 +2553,14 @@ let ISEXPORT = true
 //            }
 //        }
 
-        
+
         if let metaDataArray = args["metaDataMessageList"] as? [String: Any] {
 //           let firstMetaData = metaDataArray.first {
             let key = metaDataArray["key"] as? String ?? ""
             let value = metaDataArray["value"] as? [String] ?? []
             messageListParams.metaData = MetaDataMessageList(key: key, value: value)
         }
-        
+
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
         
         result(true)
@@ -2658,7 +2635,11 @@ let ISEXPORT = true
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
             return
         }
-        
+//        let messages = FlyMessenger.getMessagesOf(jid: "")
+//                print("#Test \(messages.count)")
+//                for item in messages {
+//                    print("#Test \(item.messageTextContent)")
+//        }
         messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in
             var data  = flyData
             if (isSuccess) {
@@ -3208,6 +3189,10 @@ let ISEXPORT = true
                 //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
                 ChatManager.disconnect()
                 ChatManager.shared.resetFlyDefaults()
+                self.recentChatListBuilder = nil
+//                self.recentChatListParams = nil
+                self.messageListParams = FetchMessageListParams()
+                self.messageListQuery = nil
                 //Utility.clearUserDefaults()
                 Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
@@ -3652,7 +3637,7 @@ let ISEXPORT = true
                     let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
                     metaDataArray.append(obj)
                 }
-                
+
                 let imagefileUrl = URL(fileURLWithPath: filePathArg)
                 
                 
@@ -3666,7 +3651,7 @@ let ISEXPORT = true
                 }else{
                     print("Selected Image Data is null")
                 }
-                
+
                 MediaUtils.compressImageFile(imageData:  selectedImageData! as Data, mediaQuality: .medium) { isSuccess, data, fileName, localFilePath, fileKey, fileSize, errorMessage  in
                     if isSuccess{
                         
@@ -3699,7 +3684,7 @@ let ISEXPORT = true
                     let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
                     metaDataArray.append(obj)
                 }
-                
+
                 let videoFileUrl = URL(fileURLWithPath: filePathArg)
                 
                 var thumbnail : UIImage?
@@ -3747,7 +3732,7 @@ let ISEXPORT = true
                     let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
                     metaDataArray.append(obj)
                 }
-                
+
                 let audiofileUrl = URL(fileURLWithPath: filePathArg)
                 
                 MediaUtils.processAudioFile(url: audiofileUrl) { isSuccess, fileName ,localPath, fileSize, duration, fileKey, errorMessage  in
@@ -3776,7 +3761,7 @@ let ISEXPORT = true
                     let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
                     metaDataArray.append(obj)
                 }
-                
+
                 let contactMessageParams = FileMessage(toId: receiverJID!, messageType: .contact, contactMessage: ContactMessageParams(name: contactName, numbers: contactNumbers), replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
                 
                 sendContact(contactMessageParams: contactMessageParams, call: call, result: result)
@@ -3793,7 +3778,7 @@ let ISEXPORT = true
                     let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
                     metaDataArray.append(obj)
                 }
-                
+
                 let documentFileUrl = URL(fileURLWithPath: filePathArg)
                 
                 /// As of now, SDK allows only upto 2GB
@@ -3827,7 +3812,7 @@ let ISEXPORT = true
                     let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
                     metaDataArray.append(obj)
                 }
-                
+
                 let locationMessageParams = FileMessage(toId: receiverJID!, messageType: .location, locationMessage: LocationMessageParams(latitude: latitude, longitude: longitude), replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
                 
                 sendLocation(locationMessageParams: locationMessageParams, call: call, result: result)
@@ -4099,13 +4084,13 @@ let ISEXPORT = true
     }
     
     func editTextMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+
         let args = call.arguments as! Dictionary<String, Any>
-        
+
         let messageId = args["messageId"] as? String
         let editedTextContent = args["editedTextContent"] as? String
         let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
-        
+
         var editMessageParams = EditMessage()
         editMessageParams.messageId = messageId
         editMessageParams.editedTextContent = editedTextContent
@@ -4126,15 +4111,15 @@ let ISEXPORT = true
             }
          }
     }
-    
+
     func editMediaCaption(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+
         let args = call.arguments as! Dictionary<String, Any>
-        
+
         let messageId = args["messageId"] as? String
         let editedTextContent = args["editedTextContent"] as? String
         let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
-        
+
         var editMessageParams = EditMessage()
         editMessageParams.messageId = messageId
         editMessageParams.editedTextContent = editedTextContent
@@ -4155,32 +4140,32 @@ let ISEXPORT = true
             }
          }
     }
-    
-    
+
+
     func appLaunchedDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
 //        let jsonObject: NSMutableDictionary = NSMutableDictionary()
 //        jsonObject.setValue("", forKey: "type")
 //        jsonObject.setValue("", forKey: "value")
 //        let jsonString = pluginDictToJson(dictionary: jsonObject)
-        
+
      result("{}")
     }
-    
+
     func getMetaData(call: FlutterMethodCall, result: @escaping FlutterResult){
         ChatManager.getMetaData { (isSuccess, flyError, resultDict) in
             if isSuccess {
                 var flydata = resultDict
                 let metaDataResponse = flydata.getData() as? [MetaData]
-            
+
                 let jsonString = metaDataResponse?.toJson()
-                
+
                 result(jsonString)
             }else{
                 result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
             }
         }
     }
-    
+
     func updateMetaData(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let metaData = args["metaData"] as? [[String: Any]] ?? []
@@ -4194,14 +4179,14 @@ let ISEXPORT = true
           if isSuccess {
               var flydata = resultDict
               let metaDataResponse = flydata.getData() as? [MetaData]
-          
+
               let jsonString = metaDataResponse?.toJson()
-              
+
               result(jsonString)
           }else{
               result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
           }
       }
     }
-    
+
 }

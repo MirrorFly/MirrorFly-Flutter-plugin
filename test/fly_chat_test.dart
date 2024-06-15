@@ -1249,6 +1249,7 @@ class MockFlyChatFlutterPlatform
   @override
   Future<void> registerUser(String userIdentifier,
       {String fcmToken = "",
+      String userType = "",
       bool isForceRegister = true,
       List<IdentifierMetaData>? identifierMetaData,
       required Function(FlyResponse response) callback}) {

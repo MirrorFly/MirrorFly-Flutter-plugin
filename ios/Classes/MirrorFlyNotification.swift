@@ -27,7 +27,15 @@ import MirrorFlySDK
         NSLog("#Mirrorfly containerID1 \(containerID)")
         
         ChatManager.setAppGroupContainerId(id: containerID)
-        ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
+//        ChatManager.initializeSDK(licenseKey: licenseKey) { _, _, _ in }
+        ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
+            if isSuccess {
+                NSLog("#Mirrorfly Notification : initializeSDK Success")
+            }else{
+                NSLog("#Mirrorfly Notification : initializeSDK Failed -> \(flyError?.localizedDescription)")
+            }
+        }
+        
 
         print("#push-api withContentHandler received")
         
