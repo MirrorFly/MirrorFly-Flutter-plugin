@@ -49,179 +49,10 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             Log.d(tag, "Method call ${call.method}")
             methodHandler.invoke(call, result)
         }
-        /*when (call.method) {
-            "getCallDirection"-> {
-                val direction = if(CallDirection.INCOMING_CALL == CallManager.getCallDirection()) "Incoming" else "Outgoing"
-                result.success(direction)
-            }
-            "isOnGoingCall"-> {
-                result.success(CallManager.isOnGoingCall())
-            }
-            "isOnGoingAudioCall"-> {
-                result.success(CallManager.isOnGoingAudioCall())
-            }
-            "isOnGoingVideoCall"-> {
-                result.success(CallManager.isOnGoingVideoCall())
-            }
-            "getCallUsersList"-> {
-                sdk.getCallUsersList(call,result)
-            }
-            "getAllAvailableAudioInput"-> {
-                sdk.getAllAvailableAudioInput(result)
-            }
-            "selectedAudioDevice" -> {
-                val type = when(CallAudioManager.getInstance(context).selectedAudioDevice){
-                    AudioDevice.EARPIECE->"receiver"
-                    AudioDevice.SPEAKER_PHONE->"speaker"
-                    AudioDevice.BLUETOOTH-> "bluetooth"
-                    AudioDevice.WIRED_HEADSET-> "headset"
-                    else -> "none"
-                }
-                result.success(type)
-            }
-            "routeAudioTo" ->{
-                sdk.routeTo(call,result)
-            }
-            "makeVoiceCall" -> {
-                sdk.makeVoiceCall(call,result)
-            }
-            "makeVideoCall" -> {
-                sdk.makeVideoCall(call,result)
-            }
-            "answerCall" -> {
-                sdk.answerCall(result)
-            }
-            "declineCall" -> {
-                sdk.declineCall()
-            }
-            "disconnectCall" -> {
-                sdk.disconnectCall(result)
-            }
-            "muteAudio" -> {
-                sdk.muteAudio(call,result)
-            }
-            "isAudioMuted"->{
-                result.success(CallManager.isAudioMuted())
-            }
-            "muteVideo" -> {
-                sdk.muteVideo(call, result)
-            }
-            "isVideoMuted" -> {
-                result.success(CallManager.isVideoMuted())
-            }
-            "isRemoteVideoMuted" -> {
-                val userJid: String = call.argument("user_jid") ?: ""
-                result.success(CallManager.isRemoteVideoMuted(userJid))
-            }
-            "isRemoteVideoPaused" -> {
-                val userJid: String = call.argument("user_jid") ?: ""
-                result.success(CallManager.isRemoteVideoPaused(userJid))
-            }
-            "makeGroupVoiceCall"->{
-                sdk.makeGroupVoiceCall(call,result)
-            }
-            "makeGroupVideoCall"->{
-                sdk.makeGroupVideoCall(call,result)
-            }
-            "switchCamera" -> {
-                CallManager.switchCamera()
-                result.success(true)
-            }
-            "isCallOnHold"->{
-                result.success(CallManager.isCallOnHold())
-            }
-            "isOneToOneCall"->{
-                result.success(CallManager.isOneToOneCall())
-            }
-            "getGroupID"->{
-                result.success(CallManager.getGroupID())
-            }
-            "getCallType"->{
-                result.success(CallManager.getCallType())
-            }
-            "isCallConnected"->{
-                result.success(CallManager.isCallConnected())
-            }
-            "isVideoCall"->{
-                result.success(CallManager.getCallType() == CallType.VIDEO_CALL)
-            }
-            "isAudioCall"->{
-                result.success(CallManager.getCallType() == CallType.AUDIO_CALL)
-            }
-            "isCallNotConnected"->{
-                result.success(!CallManager.isCallConnected() && !CallManager.isCallAnswered())
-            }
-            "isUserAudioMuted"->{
-                sdk.isUserAudioMuted(call,result)
-            }
-            "isUserVideoMuted"->{
-                sdk.isUserVideoMuted(call,result)
-            }
-            "getOnGoingCallDisplayStatus"->{
-                result.success(CallManager.getOnGoingCallStatus(context))
-            }
-            "getUnreadMissedCallCount" -> {
-                if(!ChatManager.getBaseURL().isNullOrEmpty()){
-                    result.success(CallLogManager.getUnreadMissedCallCount())
-                }else{
-                    result.error("500","SDK not isInitialised",null)
-                }
-
-            }
-            "requestVideoCallSwitch" -> {
-                sdk.requestVideoCallSwitch(call, result)
-            }
-            "cancelVideoCallSwitch" -> {
-                sdk.cancelVideoCallSwitch(call, result)
-            }
-            "acceptVideoCallSwitchRequest" -> {
-                sdk.acceptVideoCallSwitchRequest(call, result)
-            }
-            "declineVideoCallSwitchRequest" -> {
-                sdk.declineVideoCallSwitchRequest(call, result)
-            }
-            "getMaxCallUsersCount" -> {
-                result.success(CallManager.getMaxCallUsersCount())
-            }
-            "inviteUsersToOngoingCall" -> {
-                sdk.inviteUsersToOngoingCall(call,result)
-            }
-            "getInvitedUsersList" -> {
-                sdk.getInvitedUsersList(call,result)
-            }
-            "isOnTelephonyCall" -> {
-                result.success(CallManager.isOnTelephonyCall(context))
-            }
-            "getCallLogsList" -> {
-                sdk.getCallLogsList(call,result)
-            }
-            "getLocalCallLogs" -> {
-                sdk.getLocalCallLogs(call,result)
-            }
-            "deleteCallLog" -> {
-                sdk.deleteCallLog(call,result)
-            }
-            "markAllUnreadMissedCallsAsRead" -> {
-                if(!ChatManager.getBaseURL().isNullOrEmpty()) {
-                    CallLogManager.markAllUnreadMissedCallsAsRead()
-                    LogMessage.d("markAllUnreadMissedCallsAsRead","called")
-                    result.success(true)
-                }else{
-                    result.error("500","SDK not isInitialised",null)
-                }
-            }
-            "syncCallLogs" -> {
-                sdk.syncCallLogs(call, result)
-            }
-            "isCallConversionRequestAvailable" -> {
-                result.success(CallManager.isCallConversionRequestAvailable())
-
-
-        }*/
     }
 
     override fun onCallStatusUpdated(callStatus: String, userJid: String) {
-        Log.d(tag, "#onCallStatusUpdated callStatus $callStatus userJid $userJid")
+        Log.d("#CallStatusAction", "#onCallStatusUpdated callStatus $callStatus userJid $userJid")
         //Adding this condition to match the iOS, but this scenario is not occurred till now. Even though Adding this for exceptional cases.
         var userJID = userJid
         if (userJID == "") {
@@ -283,10 +114,12 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     json.getString("userJid")
                 )
             }
+
             CallStatus.INVITE_CALL_TIME_OUT -> {}
             CallStatus.OUTGOING_CALL_TIME_OUT -> {
                 json.put("callStatus", "CALL TIME OUT")
             }
+
             CallStatus.CALL_TIME_OUT -> {
                 json.put("callStatus", "CALL TIME OUT")
                 FlutterCall.callUiListener?.onShowCallUiFlutter(
@@ -294,12 +127,14 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     json.getString("userJid")
                 )
             }
+
             CallStatus.INCOMING_CALL_TIME_OUT -> {
                 FlutterCall.callUiListener?.onShowCallUiFlutter(
                     CallStatus.INCOMING_CALL_TIME_OUT,
                     json.getString("userJid")
                 )
             }
+
             CallStatus.RECONNECTING -> {}
             CallStatus.RECONNECTED -> {
                 val userJid = json.getString("userJid")
@@ -333,10 +168,12 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     }
                 }
             }
+
             CallStatus.CALLING -> {
                 //Calling status not in iOS so here we sent Trying to Connect status
                 json.put("callStatus", "Trying to Connect")
             }
+
             CallStatus.CALLING_10S -> {}
             CallStatus.CALLING_AFTER_10S -> {}
         }
@@ -347,7 +184,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     }
 
     override fun onCallAction(callAction: String, userJid: String) {
-        Log.d(tag, "#onCallAction callAction $callAction userJid $userJid")
+        Log.d("#CallStatusAction", "#onCallAction callAction $callAction userJid $userJid")
         val json = JSONObject()
         json.put(
             "callAction",
@@ -442,6 +279,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     )
                 }
             }
+
             CallAction.ACTION_REMOTE_BUSY -> {
                 if (CallManager.isOneToOneCall()) {
                     json.put("callStatus", "Disconnected")
@@ -458,7 +296,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
 
     override fun onVideoTrackAdded(userJid: String) {
         Log.d(
-            tag,
+            "#CallStatusAction",
             "#onVideoTrackAdded userJid $userJid  ${MirrorflyViewHashMap.getMirrorflyView(userJid)} ${
                 MirrorflyViewHashMap.getMirrorflyViewId(userJid)
             } isCallConversionRequestAvailable : ${CallManager.isCallConversionRequestAvailable()} video ${
@@ -487,7 +325,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
 
     override fun onLocalVideoTrackAdded() {
         Log.d(
-            tag,
+            "#CallStatusAction",
             "#onLocalVideoTrackAdded mirrorflyViews.size ${
                 MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())
             } ${MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())}"
@@ -552,7 +390,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     override fun getCallAttendedPendingIntent(): PendingIntent {
         val intent: Intent? = AppUtils.getAppIntent(context)
 //        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
-        return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
+        return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
     }
 
     override fun getCallNotAttendedPendingIntent(): PendingIntent {
@@ -560,15 +398,11 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
         intent.action = CallConstants.ACTION_SHOW_CALL_UI
         intent.putExtra(CallConstants.ACCEPT_CALL, false)
         intent.putExtra("FROM", "getCallNotAttendedPendingIntent")
-        return PendingIntent.getActivity(context, 0, intent, getFlagPendingIntent())
+        return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
     }
 
     override fun getCallAcceptPendingIntent(): PendingIntent {
-        val intentTransparent = Intent(context, CallKitUiActivity::class.java)/*TransparentActivity.getIntent(
-            context,
-            Constants.ACTION_CALL_ACCEPT,
-            null
-        )*/
+        val intentTransparent = Intent(context, CallKitUiActivity::class.java)
         intentTransparent.action = CallConstants.ACCEPT_CALL
         intentTransparent.putExtra(CallConstants.ACCEPT_CALL, true)
         intentTransparent.putExtra("FROM", CallConstants.ACCEPT_CALL)
@@ -576,16 +410,8 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             context,
             AppUtils.CALL_REQUEST,
             intentTransparent,
-            getFlagPendingIntent()
+            AppUtils.getFlagPendingIntent()
         )
-    }
-
-    private fun getFlagPendingIntent(): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
-        }
     }
 
 
@@ -605,6 +431,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                         context.startActivity(t)
                     }
                 }
+
                 CallAction.ACTION_ANSWER_CALL -> {
                     LogMessage.d(
                         tag,
@@ -635,6 +462,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                         }
                     }
                 }
+
                 CallAction.CALL_REQUEST_RESPONSE -> {
                     handler.post {
                         LogMessage.d(

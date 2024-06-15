@@ -8,21 +8,6 @@
 import Foundation
 import MirrorFlySDK
 
-//class JSONConverter {
-//    static func convertObjectToJSON(_ jsonObjectToConvert: Any) -> String? {
-//        let jsonEncoder = JSONEncoder()
-//        jsonEncoder.outputFormatting = .prettyPrinted
-//        do {
-//            let jsonData = try jsonEncoder.encode(jsonObjectToConvert)
-//            let jsonString = String(data: jsonData, encoding: .utf8)
-//            return jsonString
-//        } catch {
-//            print("Error converting object to JSON: \(error)")
-//            return nil
-//        }
-//    }
-//}
-
 
 extension Encodable {
     func toJson() -> String? {
@@ -36,17 +21,6 @@ extension Encodable {
             return nil
         }
     }
-    
-    func convertToJson() -> String? {
-            do {
-                let jsonData = try JSONEncoder().encode(self)
-                return String(data: jsonData, encoding: .utf8)
-            } catch {
-                print("Error converting object to JSON: \(error)")
-                return nil
-            }
-        }
-    
    
 }
 
@@ -74,10 +48,6 @@ extension Dictionary where Key == String, Value == Any {
     }
 }
 
-
-enum JSONParsingError: Error {
-    case extractionError
-}
 func convertArrayToJSONString(array: [[String: Any]]) -> String? {
     do {
         let jsonData = try JSONSerialization.data(withJSONObject: array, options: [])
@@ -88,25 +58,55 @@ func convertArrayToJSONString(array: [[String: Any]]) -> String? {
     }
 }
 
+//// Helper function using reflection
+//func metaDataToDictionary(_ metaData: MetaData) -> [String: Any] {
+//    let mirror = Mirror(reflecting: metaData)
+//    var dict = [String: Any]()
+//
+//    for child in mirror.children {
+//        if let propertyName = child.label {
+//            dict[propertyName] = child.value
+//        }
+//    }
+//    return dict
+//}
+//
+//// Extension to convert array of MetaData to JSON string
+//extension Array where Element == MetaData {
+//    func toJsonString() -> String {
+//        let arrayDict = self.map(metaDataToDictionary)
+//        do {
+//            let jsonData = try JSONSerialization.data(withJSONObject: arrayDict)
+//            if let jsonString = String(data: jsonData, encoding: .utf8) {
+//                return jsonString
+//            }
+//        } catch {
+//            print("Error converting to JSON: \(error)")
+//        }
+//        return "{}"
+//    }
+//}
 
-func extractData(from jsonString: String) -> [String: Any]? {
-    guard let jsonData = jsonString.data(using: .utf8) else {
-        return nil
-    }
 
-    do {
-        let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: [])
 
-        if let jsonDict = jsonObject as? [String: Any], let data = jsonDict["data"] as? [String: Any] {
-            return data
-        } else {
-            return nil
-        }
-    } catch {
-        print("Error extracting data JSON object: \(error)")
-        return nil
-    }
-}
+//func extractData(from jsonString: String) -> [String: Any]? {
+//    guard let jsonData = jsonString.data(using: .utf8) else {
+//        return nil
+//    }
+//
+//    do {
+//        let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: [])
+//
+//        if let jsonDict = jsonObject as? [String: Any], let data = jsonDict["data"] as? [String: Any] {
+//            return data
+//        } else {
+//            return nil
+//        }
+//    } catch {
+//        print("Error extracting data JSON object: \(error)")
+//        return nil
+//    }
+//}
 
 func pluginDictToJson(dictionary: NSMutableDictionary) -> String? {
     do {
@@ -119,75 +119,6 @@ func pluginDictToJson(dictionary: NSMutableDictionary) -> String? {
     }
 }
 
-enum FileHelper {
-//    static func saveInDirectory(fileUrl: String?) -> String? {
-//        let fileManager = FileManager.default
-//        let fileURL = URL(fileURLWithPath: fileUrl!)
-//        let fileData = getFileData(from: fileURL)
-//        guard let localFilePath = FlyUtils.getGroupContainerIDPath()?.appendingPathComponent(fileUrl!) else {
-//            return nil
-//        }
-//
-//        if let value = fileData {
-//            do {
-//                try value.write(to: localFilePath)
-//                return localFilePath.absoluteString
-//            } catch let error {
-//                print("#write: compressAndSaveImage catch \(error.localizedDescription)")
-//            }
-//        }
-//
-//        return nil
-//    }
-    
-    
-
-}
-
-func saveInDirectory(with data: Data?, fileName: String?) -> String? {
-        //let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).map(\.path)
-        let localFilePath = FlyUtils.getGroupContainerIDPath()?.appendingPathComponent(fileName!)
-    print("localFilePath\(String(describing: localFilePath))")
-        if let value = data, let url = localFilePath {
-            do {
-                try value.write(to: url)
-            }catch let error {
-                print("#write : compressAndSaveImage catch \(error.localizedDescription)")
-            }
-        }
-        return localFilePath?.absoluteString
-    }
-
-func saveFile(from sourceURL: URL, fileName: String?) -> String? {
-    let destinationURL = FlyUtils.getGroupContainerIDPath()?.appendingPathComponent(fileName!)
-    
-    do {
-        let fileManager = FileManager.default
-        try fileManager.copyItem(at: sourceURL, to: destinationURL!)
-        return destinationURL?.absoluteString
-    } catch {
-        // Error handling
-        print("Error copying file: \(error.localizedDescription)")
-        return nil
-    }
-}
-
-func getFileData(from fileURL: URL) -> Data? {
-    do {
-        let fileData = try Data(contentsOf: fileURL)
-        return fileData
-    } catch {
-        print("Error reading file data: \(error)")
-        return nil
-    }
-}
-
-//}
-
-func fileExists(atPath filePath: String) -> Bool {
-    let fileManager = FileManager.default
-    return fileManager.fileExists(atPath: filePath)
-}
 
 func getCallLogs(callList: [Any], totalPages: Any?) -> [String: Any]{
 
@@ -227,7 +158,7 @@ func getCallLogs(callList: [Any], totalPages: Any?) -> [String: Any]{
                 "startTime": startTime,
                 "toUser": toUser,
                 "nickName": displayName,
-                "userList": userList.filter { $0 != AppUtils.getMyJid() && !$0.isEmpty }
+                "userList": userList.filter { $0 != AppUtils.shared.getMyJid() && !$0.isEmpty }
             ]
         }
 
@@ -236,14 +167,8 @@ func getCallLogs(callList: [Any], totalPages: Any?) -> [String: Any]{
             "total_pages": totalPages ?? 0
         ]
         return result
-//    return callListData
 }
 
-//extension String {
-//    func extractJSONObject() -> Any? {
-//        return JSONExtractor.extractJSONObject(from: self)
-//    }
-//}
 
 
 

@@ -2,8 +2,6 @@ import Flutter
 import ContactsUI
 import Contacts
 import UIKit
-//import FlyCore
-//import FlyCommon
 import MirrorFlySDK
 
 
@@ -63,11 +61,9 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         BackupManager.shared.backupDelegate = self
         BackupManager.shared.restoreDelegate = self
         ChatManager.shared.localNotificationDelegate = self
-        ChatManager.isTrialLicense()
     }
     
     func prepareMethodHandler(methodCall: FlutterMethodCall, result: @escaping FlutterResult){
-//        FlyCall.handleMethodCall(call: call, result: result)
         
         if methodCall.method == "syncContacts"{
             let args = methodCall.arguments as! Dictionary<String, Any>
@@ -117,14 +113,22 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         }else if methodCall.method == "contactSyncStateValue"{
             contactSyncStateValue(call: methodCall, result: result)
         } else{
-            if methodCall.method == "init" || methodCall.method == "initializeSDK"{
-                initializeEventListeners()
-            }
+            
             if let methodHandler = FlyMethodConstants.chatMethodHandlers[methodCall.method] {
                 NSLog("\(Constants.tag) Method call \(methodCall.method)")
                 methodHandler(methodCall, result)
             } else {
                 result(FlutterMethodNotImplemented)
+            }
+            
+            if methodCall.method == "init" || methodCall.method == "initializeSDK"{
+                NSLog("\(Constants.tag) Method call initializeEventListeners")
+                print("Method call initializeEventListeners")
+                DispatchQueue.main.asyncAfter(deadline: .now()+1) {
+                    self.initializeEventListeners()
+                }
+               
+                
             }
         }
     }
@@ -160,6 +164,7 @@ extension FlyChatPlugin : LocalNotificationDelegate {
 extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate, BackupEventDelegate, RestoreEventDelegate {
     public func onMessageEdited(message: MirrorFlySDK.ChatMessage) {
         
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageEdited_channel, value: message.toJson())
     }
     
 //    public func onMessageEdited(message: MirrorFlySDK.ChatMessage, chatJid: String, editedMessageId: String) {
@@ -183,6 +188,9 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func onConnectionFailed(error: MirrorFlySDK.FlyError) {
         
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onConnectionFailed_channel, value: error.localizedDescription)
+        flyChatUserDelegate?.chatManagerStatus(status: ConnectionStatus.connectionfailed(error: error.localizedDescription))
+        
+        NotificationCenter.default.post(name: .connectionStatusChanged, object: nil, userInfo: ["status": "failed", "error": error.localizedDescription])
         
     }
     
@@ -616,13 +624,17 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     
     public func onConnected() {
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onConnected_channel, value: true)
+        flyChatUserDelegate?.chatManagerStatus(status: ConnectionStatus.connected)
+        NotificationCenter.default.post(name: .connectionStatusChanged, object: nil, userInfo: ["status": "connected"])
     }
     
     public func onDisconnected() {
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onDisconnected_channel, value: true)
+        flyChatUserDelegate?.chatManagerStatus(status: ConnectionStatus.disconnected)
     }
     
     public func onConnectionNotAuthorized() {
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onConnectionNotAuthorized_channel, value: true)
+        flyChatUserDelegate?.chatManagerStatus(status: ConnectionStatus.notAuthorized)
     }
 }

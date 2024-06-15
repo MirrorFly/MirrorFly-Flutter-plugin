@@ -25,10 +25,21 @@ extension ExtractTextMessage on TextMessageParams {
 }
 
 class MessageMetaData {
-  MessageMetaData({this.key, this.value});
+  MessageMetaData({required this.key, required this.value});
 
-  String? key;
-  String? value;
+  String key;
+  String value;
+
+  factory MessageMetaData.fromJson(Map<String, dynamic> json) =>
+      MessageMetaData(
+        key: json["key"],
+        value: json["value"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "key": key,
+        "value": value,
+      };
 }
 
 extension ExtractMessageMetaData on MessageMetaData {
@@ -176,25 +187,6 @@ extension ExtractFileMessageParams on FileMessageParams {
       };
 }
 
-class EditMessage {
-  EditMessage({
-    required this.messageId,
-    required this.editedTextContent, //this.mentionedUsersIds
-  });
-
-  String messageId;
-  String editedTextContent;
-  List<String>? mentionedUsersIds;
-}
-
-extension ExtractEditMessage on EditMessage {
-  Map<String, dynamic> toMap() => {
-        'messageId': messageId,
-        'editedTextContent': editedTextContent,
-        'mentionedUsersIds': mentionedUsersIds
-      };
-}
-
 /// Represents parameters for constructing a message.
 class MessageParams {
   String toJid;
@@ -202,7 +194,7 @@ class MessageParams {
   MessageType messageType;
 
   // List<String>? mentionedUsersIds;
-  // List<MessageMetaData> metaData;
+  List<MessageMetaData> metaData;
   TextMessageParams? textMessageParams;
   LocationMessageParams? locationMessageParams;
   ContactMessageParams? contactMessageParams;
@@ -214,7 +206,7 @@ class MessageParams {
     this.replyMessageId,
     required this.messageType,
     // this.mentionedUsersIds,
-    // this.metaData = const [],
+    this.metaData = const [],
     this.textMessageParams,
     this.locationMessageParams,
     this.contactMessageParams,
@@ -227,6 +219,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     required TextMessageParams textMessageParams,
+    List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
     return MessageParams._(
@@ -234,6 +227,7 @@ class MessageParams {
       replyMessageId: replyMessageId,
       messageType: MessageType.text,
       textMessageParams: textMessageParams,
+      metaData: metaData,
       topicId: topicId,
     );
   }
@@ -243,6 +237,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     required LocationMessageParams locationMessageParams,
+    List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
     return MessageParams._(
@@ -250,6 +245,7 @@ class MessageParams {
       replyMessageId: replyMessageId,
       messageType: MessageType.location,
       locationMessageParams: locationMessageParams,
+      metaData: metaData,
       topicId: topicId,
     );
   }
@@ -259,6 +255,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     required ContactMessageParams contactMessageParams,
+    List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
     return MessageParams._(
@@ -266,6 +263,7 @@ class MessageParams {
       replyMessageId: replyMessageId,
       messageType: MessageType.contact,
       contactMessageParams: contactMessageParams,
+      metaData: metaData,
       topicId: topicId,
     );
   }
@@ -275,6 +273,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
+    List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
     return MessageParams._(
@@ -282,6 +281,7 @@ class MessageParams {
       replyMessageId: replyMessageId,
       messageType: MessageType.image,
       fileMessageParams: fileMessageParams,
+      metaData: metaData,
       topicId: topicId,
     );
   }
@@ -291,6 +291,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
+    List<MessageMetaData> metaData = const [],
     required bool isRecorded,
     String topicId = "",
   }) {
@@ -299,6 +300,7 @@ class MessageParams {
       replyMessageId: replyMessageId,
       messageType: isRecorded ? MessageType.audioRecorded : MessageType.audio,
       fileMessageParams: fileMessageParams,
+      metaData: metaData,
       topicId: topicId,
     );
   }
@@ -308,6 +310,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
+    List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
     return MessageParams._(
@@ -315,6 +318,7 @@ class MessageParams {
       replyMessageId: replyMessageId,
       messageType: MessageType.video,
       fileMessageParams: fileMessageParams,
+      metaData: metaData,
       topicId: topicId,
     );
   }
@@ -324,6 +328,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     required FileMessageParams fileMessageParams,
+    List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
     return MessageParams._(
@@ -331,6 +336,7 @@ class MessageParams {
       replyMessageId: replyMessageId,
       messageType: MessageType.document,
       fileMessageParams: fileMessageParams,
+      metaData: metaData,
       topicId: topicId,
     );
   }
@@ -368,8 +374,9 @@ extension ExtractMessageParams on MessageParams {
         'toJid': toJid,
         'replyMessageId': replyMessageId,
         'messageType': messageType.value,
-        'mentionedUsersIds': null, //mentionedUsersIds,
-        'metaData': null, //List<dynamic>.from(metaData.map((x) => x.toMap())),
+        'mentionedUsersIds': null,
+        //List<String>.from(mentionedUsersIds.map((x) => x)),
+        'metaData': List<dynamic>.from(metaData.map((x) => x.toMap())),
         'textMessage': textMessageParams?.toMap(),
         'locationMessage': locationMessageParams?.toMap(),
         'contactMessage': contactMessageParams?.toMap(),
@@ -392,6 +399,17 @@ enum MessageType {
   // meet('MEET'),
   // autoText('AUTO_TEXT'),
   // chatSummary('CHAT_SUMMARY');
+
+  static const isText = "TEXT";
+  static const isImage = "IMAGE";
+  static const isAudio = "AUDIO";
+  static const isAudioRecorded = "AUDIO_RECORDED";
+  static const isVideo = "VIDEO";
+  static const isContact = "CONTACT";
+  static const isDocument = "DOCUMENT";
+  static const isLocation = "LOCATION";
+  static const isNotification = "NOTIFICATION";
+
   const MessageType(this.value);
 
   final String value;
@@ -405,6 +423,13 @@ enum MediaDownloadStatus {
   mediaDownloadFailed(401),
   storageNotEnough(8);
 
+  static const isMediaDownloading = 3;
+  static const isMediaDownloaded = 4;
+  static const isMediaNotDownloaded = 5;
+  static const isMediaDownloadedNotAvailable = 6;
+  static const isMediaDownloadFailed = 401;
+  static const isStorageNotEnough = 8;
+
   const MediaDownloadStatus(this.value);
 
   final int value;
@@ -414,10 +439,22 @@ enum MediaUploadStatus {
   mediaNotUploaded(0),
   mediaUploading(1),
   mediaUploaded(2),
-  mediaUploadedNotAvailable(7),
-  mediaUploadFailed(401);
+  mediaUploadedNotAvailable(7);
+  // mediaUploadFailed(401);
+
+  static const isMediaNotUploaded = 0;
+  static const isMediaUploading = 1;
+  static const isMediaUploaded = 2;
+  static const isMediaUploadedNotAvailable = 7;
+  // static const isMediaUploadFailed = 401;
 
   const MediaUploadStatus(this.value);
 
   final int value;
+}
+
+class ChatType {
+  static const String singleChat = "chat";
+  static const String groupChat = "groupchat";
+  static const String broadcastChat = "broadcast";
 }

@@ -79,11 +79,14 @@ class FLErrorMessage {
     /// General Error Messages in Chat
     ///
     public static let REGISTRATION_FAILED_MESSAGE : String = "Error while Registering the User"
+    public static let CHATMANAGER_CONNECTION_FAILED_MESSAGE : String = "Error while Connecting to Chat Manager"
     public static let AUTHTOKEN_REFRESH_FAILED_MESSAGE : String = "Error while refreshing Auth Token"
     public static let JID_FETCH_FAILED : String = "Error while fetching JID"
     public static let USER_PARAM_MISSING : String = "User Name is Empty"
     public static let PARAMS_MISSING : String = "Required parameters Missing/Invalid"
     public static let MESSAGE_SENDING_FAILED : String = "Error while sending message"
+    public static let MESSAGE_EDITING_FAILED : String = "Error while editing message"
+    public static let CAPTION_EDITING_FAILED : String = "Error while editing caption text"
     public static let COMPRESSION_FAILED : String = "Error while compressing media file"
     public static let SDK_INITIALISATION_ERROR : String = "Error while Initialising SDK"
     public static let INVALID_LICENSE_KEY : String = "Invalid License Key"
@@ -107,6 +110,7 @@ class FLErrorMessage {
     public static let UNFAVOURITE_MESSAGE_FAILED : String = "Error while unFavourite Messages"
     public static let QR_LOGIN_FAILED : String = "Error while processing QR login"
     public static let CONTACT_US_FAILED_MESSAGE : String = "Error while submitting the reponse, Please try after sometime"
+    public static let META_DATA_FAILED_MESSAGE : String = "Error while fetching Meta Data, Please try after sometime"
     
     
     

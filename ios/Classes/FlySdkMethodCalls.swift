@@ -6,11 +6,8 @@
 //
 
 import Foundation
-//import FlyCore
-//import FlyCommon
 import Flutter
 import Photos
-//import FlyDatabase
 import Contacts
 import ContactsUI
 import MirrorFlySDK
@@ -44,65 +41,65 @@ let ISEXPORT = true
     //Need to alter this below two lines based on RecentChat list
     var topicChatListParams = TopicChatListParams(limit: 15)
     var topicChatListBuilder : TopicChatListBuilder?
-    //let messageListParams = FetchMessageListParams()
-    //    let topicMessageListQuery =  FetchMessageListQuery(fetchMessageListParams: messageListParams)
+
+    var observerToken: NSObjectProtocol?
     
     func buildChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
-        let args = call.arguments as! Dictionary<String, Any>
-        
-        let domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
-        let licenseKey = args["licenseKey"] as? String ?? ""
-        isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
-        
-        let containerID = args["iOSContainerID"] as? String ?? ""
-        
-        
-        chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
-        
-        
-        Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
-        Utility.saveInPreference(key: Constants.containerID, value: containerID)
-        
-        let groupConfig = args["groupConfig"] as? [String : Any]
-        
-        let groupCreationEnable = groupConfig?["enableGroup"] as? Bool ?? true
-        let adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
-        let maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
-        
-        let sdkGroupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: groupCreationEnable)
-            .onlyAdminCanAddOrRemoveMembers(adminOnly: adminOnlyAddRemoveAccess)
-            .setMaximumMembersInAGroup(membersCount: maxMembersCount)
-            .build()
-        assert(sdkGroupConfig != nil)
-        
-        try? ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
-            .setLicenseKey(key: licenseKey)
-            .isTrialLicense(isTrial: isTrialLicenceKey)
-            .setDomainBaseUrl(baseUrl: domainBaseUrl)
-            .setGroupConfiguration(groupConfig: sdkGroupConfig!)
-            .buildAndInitialize()
-        
-        ChatManager.disableLocalNotification()
-        
-        
-        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
-            
-            DispatchQueue.main.asyncAfter(deadline: .now()+2) {
-                
-                do {
-                    try CallManager.initCallSDK()
-                } catch (let error ){
-                    print("#FlyCall Exception : \(error.localizedDescription)")
+
+            let args = call.arguments as! Dictionary<String, Any>
+
+            let domainBaseUrl = args["domainBaseUrl"] as? String ?? ""
+            let licenseKey = args["licenseKey"] as? String ?? ""
+            isTrialLicenceKey = args["isTrialLicenceKey"] as? Bool ?? true
+
+            let containerID = args["iOSContainerID"] as? String ?? ""
+
+
+            chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
+
+
+            Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
+            Utility.saveInPreference(key: Constants.containerID, value: containerID)
+
+            let groupConfig = args["groupConfig"] as? [String : Any]
+
+            let groupCreationEnable = groupConfig?["enableGroup"] as? Bool ?? true
+            let adminOnlyAddRemoveAccess = groupConfig?["adminOnlyAddRemoveAccess"] as? Bool ?? true
+            let maxMembersCount = groupConfig?["maxMembersCount"] as? Int ?? 200
+
+            let sdkGroupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: groupCreationEnable)
+                .onlyAdminCanAddOrRemoveMembers(adminOnly: adminOnlyAddRemoveAccess)
+                .setMaximumMembersInAGroup(membersCount: maxMembersCount)
+                .build()
+            assert(sdkGroupConfig != nil)
+
+            try? ChatSDK.Builder.setAppGroupContainerID(containerID: containerID)
+                .setLicenseKey(key: licenseKey)
+                .isTrialLicense(isTrial: isTrialLicenceKey)
+                .setDomainBaseUrl(baseUrl: domainBaseUrl)
+                .setGroupConfiguration(groupConfig: sdkGroupConfig!)
+                .buildAndInitialize()
+
+            ChatManager.disableLocalNotification()
+
+            /// Moved Inside SDK
+            /*if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+
+                DispatchQueue.main.asyncAfter(deadline: .now()+2) {
+
+                    do {
+                        try CallManager.initCallSDK()
+                    } catch (let error ){
+                        print("#FlyCall Exception : \(error.localizedDescription)")
+                    }
                 }
-            }
+            }*/
+
+            //        ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
+
+            ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
+
         }
-        
-        //        ChatManager.enableContactSync(isEnable: !isTrialLicenceKey)
-        
-        ChatManager.enableChatHistory(isEnable: chatHistoryEnable)
-        
-    }
     
     func initializeSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -111,27 +108,17 @@ let ISEXPORT = true
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         let containerID = args["iOSContainerID"] as? String ?? ""
         _ = args["enableSDKLog"] as? Bool ?? false
-        
-        
+
         ChatManager.setAppGroupContainerId(id: containerID)
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
-                NSLog("SDK INITIALISED")
-                if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now()+2) {
-                        
-                        do {
-                            try CallManager.initCallSDK()
-                            //                    FlyDefaults.chatHistoryEnabled = true
-                        } catch (let error ){
-                            print("#FlyCall Exception : \(error.localizedDescription)")
-                        }
-                    }
-                }
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
+                NSLog("SDK INITIALISE Success")
+                if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
+                    ChatManager.connect()
+                }
                 result(true)
             }else{
                 NSLog("SDK FAILED TO INITIALISE \(String(describing: flyError?.localizedDescription))")
@@ -175,7 +162,6 @@ let ISEXPORT = true
         if let value = infoDict[key] as? String {
             result(value)
         } else {
-            //            print("App version not found in Info.plist.")
             result(FlutterError(code: FLErrorCode.FILE_DATA_NOT_AVAILABLE,
                                 message: FLErrorMessage.FILE_DATA_NOT_AVAILABLE_MESSAGE,
                                 details: "\(key) key not found in Info plist"))
@@ -188,10 +174,10 @@ let ISEXPORT = true
         let args = call.arguments as! Dictionary<String, Any>
         
         var userIdentifier = args["userIdentifier"] as? String ?? ""
-        let deviceToken = args["token"] as? String ?? ""
-        let userType = args["userType"] as? String ?? ""
+        let deviceToken = args["token"] as? String ?? Utility.getStringFromPreference(key: Constants.googleToken)
         let isForceRegister = args["isForceRegister"] as? Bool ?? true
-        
+        let userType = args["userType"] as? String ?? ""
+
         userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
         
         if(userIdentifier.isEmpty){
@@ -200,16 +186,26 @@ let ISEXPORT = true
             return
         }
         let voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
-        //        voipToken = voipToken.isEmpty ? deviceToken : voipToken
         
         NSLog("\(Constants.tag) voipToken \(voipToken)")
         NSLog("\(Constants.tag) voipToken.isEmpty \(voipToken.isEmpty)")
         
         NSLog("\(Constants.tag) Register Device Token \(deviceToken)")
         NSLog("\(Constants.tag) ISEXPORT \(ISEXPORT)")
-        print("\(Constants.tag) userType \(userType)")
         
-        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: userType, pushServerType: .firebase) { isSuccess, flyError, flyData in
+        let metaData = args["metaData"] as? [[String: Any]] ?? []
+        print("metaData \(String(describing: metaData))")
+        var metaDataArray : [MetaData] = []
+        for data in metaData {
+            let obj = MetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+            metaDataArray.append(obj)
+        }
+
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+            ChatManager.disconnect()
+        }
+
+        try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: userType, metaData: metaDataArray, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
@@ -230,32 +226,52 @@ let ISEXPORT = true
                 ChatManager.updateAppLoggedIn(isLoggedin: true)
                 
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
-                
-                
+
                 ChatManager.connect()
-                
-                
-                do {
-                    try CallManager.initCallSDK()
-                }
-                catch(let error ) {
-                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
-                }
-                
+
                 VOIPManager.sharedInstance.saveVOIPToken(token: Utility.getStringFromPreference(key: Constants.voipToken))
                 VOIPManager.sharedInstance.updateDeviceToken()
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-                    
-                    let resp = registerResponse.dictToJson()
-                    if(resp != nil){
-                        NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
-                        result(resp)
-                    }else{
-                        result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
+                self.observerToken = NotificationCenter.default.addObserver(forName: .connectionStatusChanged, object: nil, queue: nil) { notification in
+                        guard let userInfo = notification.userInfo else { return }
+                        if let status = userInfo["status"] as? String {
+                            print("#ChatManager Connection Status: \(status)")
+
+                            switch status {
+                            case "connected":
+                                self.removeObserver()
+
+                                //                do {
+                                //                    try CallManager.initCallSDK()
+                                //                }
+                                //                catch(let error ) {
+                                //                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
+                                //                }
+
+                                let resp = registerResponse.dictToJson()
+                                if(resp != nil){
+                                    NSLog("\(Constants.tag) ChatManager.registerApiService \(resp)")
+                                    result(resp)
+                                }else{
+                                    result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
+                                }
+
+                            case "failed":
+                                self.removeObserver()
+                                let errorMessage = userInfo["error"] as? String
+                                print("#ChatManager Connection Error: \(errorMessage ?? "Connection Failed")")
+                                result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.CHATMANAGER_CONNECTION_FAILED_MESSAGE,details: errorMessage))
+                            default:
+                                print("#ChatManager Connection Default Status: \(status)")
+                            }
+
+                        }else{
+                            print("---Error in Chat Manager Connect Status")
+                        }
+
                     }
-                    
-                }
+
+
             }else{
                 let err = flyError?.description ?? ""
                 let error = err.contains("405") ? err : data.getMessage()
@@ -292,6 +308,19 @@ let ISEXPORT = true
         }
     }
     
+    private func removeObserver() {
+        print("---removeObserver")
+        if let token = observerToken {
+            NotificationCenter.default.removeObserver(token)
+            observerToken = nil
+        }
+    }
+
+    deinit {
+        print("---deinit FlySDKMethodCalls")
+        removeObserver()
+    }
+
     func refreshAndGetAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
         ChatManager.refreshToken { (isSuccess, flyError, resultDict) in
             if (isSuccess) {
@@ -310,16 +339,8 @@ let ISEXPORT = true
     }
     
     func getCurrentAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let imageUrl = ChatManager.getImageUrl(imageName: "getAuthToken")
-        print("getCurrentAuthToken==**==imageUrl \(imageUrl)")
-        let components = imageUrl.components(separatedBy: "?mf=")
-        
-        guard components.count > 1 else {
-            result("")
-            return
-        }
-        
-        let authToken = components[1]
+
+        let authToken = ChatManager.getAppConfigDetails().authtoken
         print("getCurrentAuthToken==**==\(authToken)")
         result(authToken)
     }
@@ -694,7 +715,12 @@ let ISEXPORT = true
         let pageNumber = args["page"] as? Int ?? 1
         let searchTerm = args["search"] as? String ?? ""
         
-        ContactManager.shared.getUsersList(pageNo: pageNumber, pageSize: 20, search: searchTerm){ isSuccess,flyError,flyData in
+        let perPageResultSize = args["perPageResultSize"] as? Int ?? 20
+
+        let metaData = args["metaDataUserList"] as? Dictionary<String, Any> ?? [:]
+        print("metaData \(String(describing: metaData))")
+
+        ContactManager.shared.getUsersList(pageNo: pageNumber, pageSize: perPageResultSize, search: searchTerm, metaData: MetaDataUserList(key: metaData["key"] as? String ?? "", value: metaData["value"] as? [String] ?? [])){ isSuccess,flyError,flyData in
             if isSuccess {
                 var userList = flyData
                 
@@ -1097,7 +1123,7 @@ let ISEXPORT = true
         let args = call.arguments as! Dictionary<String, Any>
         
         let groupJid = args["jid"] as? String ?? ""
-        let currentJid = AppUtils.getMyJid()
+        let currentJid = AppUtils.shared.getMyJid()
         let participantJid = args["userjid"] as? String ?? currentJid
         
         
@@ -1113,8 +1139,8 @@ let ISEXPORT = true
         var groupMembers = [GroupParticipantDetail]()
         
         
-        groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != AppUtils.getMyJid()})
-        let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == AppUtils.getMyJid()})
+        groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != AppUtils.shared.getMyJid()})
+        let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == AppUtils.shared.getMyJid()})
         //        if(myJid.count > 0){
         //            myJid[0].profileDetail?.nickName = "You"
         //            myJid[0].profileDetail?.name = "You"
@@ -1274,7 +1300,7 @@ let ISEXPORT = true
         let nickName = args["name"] as? String ?? ""
         let status = args["status"] as? String ?? ""
         let image = args["image"] as? String ?? nil
-        let userJid = AppUtils.getMyJid()
+        let userJid = AppUtils.shared.getMyJid()
         
         NSLog("update my profile image path --> \(String(describing: image))")
         
@@ -1359,7 +1385,7 @@ let ISEXPORT = true
     
     func saveMyJidAsContacts() {
         
-        let profileData = ProfileDetails(jid: AppUtils.getMyJid())
+        let profileData = ProfileDetails(jid: AppUtils.shared.getMyJid())
         profileData.name = ContactManager.getMyProfile().name
         profileData.nickName = ContactManager.getMyProfile().nickName
         profileData.mobileNumber  = ContactManager.getMyProfile().mobileNumber
@@ -2133,16 +2159,31 @@ let ISEXPORT = true
         
         ChatManager.shared.exportChatConversationToEmail(jid: userJID) { chatDataModel in
             
-            var dataToShare = [Any]()
-            
-            dataToShare.append(chatDataModel.subject)
-            dataToShare.append(chatDataModel.messageContent)
-            chatDataModel.mediaAttachmentsUrl.forEach { url in
-                dataToShare.append(url)
+            let mediaAttachmentUri = NSMutableArray()
+
+            if !chatDataModel.mediaAttachmentsUrl.isEmpty {
+                for item in chatDataModel.mediaAttachmentsUrl {
+
+                    let file = URL(fileURLWithPath: item.path)
+                    let absolutePath = self.convertToAbsolutePath(file.path)
+                    mediaAttachmentUri.add(absolutePath)
+
+                }
             }
-            
+
+
+            let jsonObject: NSMutableDictionary = NSMutableDictionary()
+            jsonObject.setValue(chatDataModel.subject, forKey: "subject")
+            jsonObject.setValue(chatDataModel.messageContent, forKey: "messageContent")
+            jsonObject.setValue(mediaAttachmentUri, forKey: "mediaAttachmentsUrl")
+
+            let jsonString = pluginDictToJson(dictionary: jsonObject)
+            result(jsonString)
         }
         
+    }
+    func convertToAbsolutePath(_ path: String) -> String {
+        return URL(fileURLWithPath: path).absoluteString
     }
     
     func getAllGroups(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -2305,6 +2346,8 @@ let ISEXPORT = true
         
         recentChatListParams.limit = limit
         
+        print(ChatManager.getAppConfigDetails().authtoken)
+
         if(recentChatListBuilder == nil){
             print("recentChatListBuilder is nil")
             recentChatListBuilder =  RecentChatListBuilder(recentChatListParams: recentChatListParams)
@@ -2499,6 +2542,25 @@ let ISEXPORT = true
             messageListParams.topicID = topicId
         }
         
+//        let metaData = args["metaDataMessageList"] as? [String: Any] ?? [:]
+//        print("initializeMessageList MetaData \(String(describing: metaData))")
+
+//        if let metaData = args["metaData"] as? [[String: Any]] {
+//            metaData.forEach { data in
+//                let key = data["key"] as? String ?? ""
+//                let value = data["value"] as? [String] ?? []
+//                messageListParams.metaData = MetaDataMessageList(key: key, value: value)
+//            }
+//        }
+
+
+        if let metaDataArray = args["metaDataMessageList"] as? [String: Any] {
+//           let firstMetaData = metaDataArray.first {
+            let key = metaDataArray["key"] as? String ?? ""
+            let value = metaDataArray["value"] as? [String] ?? []
+            messageListParams.metaData = MetaDataMessageList(key: key, value: value)
+        }
+
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
         
         result(true)
@@ -2573,7 +2635,11 @@ let ISEXPORT = true
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
             return
         }
-        
+//        let messages = FlyMessenger.getMessagesOf(jid: "")
+//                print("#Test \(messages.count)")
+//                for item in messages {
+//                    print("#Test \(item.messageTextContent)")
+//        }
         messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in
             var data  = flyData
             if (isSuccess) {
@@ -2735,7 +2801,7 @@ let ISEXPORT = true
                 print("****sourceURL \(sourceURL)")
                 let fileName = (file as NSString).lastPathComponent
                 print("file name" + fileName)
-                if let fileUrl = saveFile(from: sourceURL, fileName: fileName) {
+                if let fileUrl = AppUtils.shared.saveFile(from: sourceURL, fileName: fileName) {
                     print("File saved at: \(fileUrl)")
                     localFileUrl = fileUrl
                     
@@ -3123,6 +3189,10 @@ let ISEXPORT = true
                 //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
                 ChatManager.disconnect()
                 ChatManager.shared.resetFlyDefaults()
+                self.recentChatListBuilder = nil
+//                self.recentChatListParams = nil
+                self.messageListParams = FetchMessageListParams()
+                self.messageListQuery = nil
                 //Utility.clearUserDefaults()
                 Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
@@ -3537,7 +3607,14 @@ let ISEXPORT = true
                 (AppUtils.shared.getValueForKey(dictionary: args["textMessage"] as? Dictionary<String, Any>, key: "messageText") as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
                 messageParams.replyMessageId = replyMessageID
                 messageParams.mentionedUsersIds = mentionedUsersIds
-                //            messageParams.metaData = META_DATA
+                let metaData = args["metaData"] as? [[String: Any]] ?? []
+                print("Text MetaData \(String(describing: metaData))")
+                var metaDataArray : [MessageMetaData] = []
+                for data in metaData {
+                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+                    metaDataArray.append(obj)
+                }
+                messageParams.metaData = metaDataArray
                 messageParams.topicID = topicId
                 
                 self.sendText(textMessageParams: messageParams, call: call, result: result)
@@ -3553,11 +3630,14 @@ let ISEXPORT = true
                 let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
-                //                guard let phFileAsset = AppUtils.shared.getPHAsset(from: filePathArg)
-                //                else {
-                //                    print("sendMessage phFileAsset Conversion Error")
-                //                    return
-                //                }
+                let metaData = args["metaData"] as? [[String: Any]] ?? []
+                print("Image MetaData \(String(describing: metaData))")
+                var metaDataArray : [MessageMetaData] = []
+                for data in metaData {
+                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+                    metaDataArray.append(obj)
+                }
+
                 let imagefileUrl = URL(fileURLWithPath: filePathArg)
                 
                 
@@ -3571,17 +3651,13 @@ let ISEXPORT = true
                 }else{
                     print("Selected Image Data is null")
                 }
-                
-                //                if let (fileName, data, size, image, thumbImage,isVideo) = MediaUtils.getAssetsImageInfo(asset: phFileAsset), let fileExtension =  URL(string: fileName)?.pathExtension{
-                
-                //                    if MediaUtils.checkMediaFileFormat(format:fileExtension){
-                //                        print("#media : ImageEditController getAssetsImageInfo IMAGE \(fileName) ")
+
                 MediaUtils.compressImageFile(imageData:  selectedImageData! as Data, mediaQuality: .medium) { isSuccess, data, fileName, localFilePath, fileKey, fileSize, errorMessage  in
                     if isSuccess{
                         
                         let mediaParams = FileMessageParams(fileUrl: localFilePath!, fileName: fileNameArg == "" ? fileName : fileNameArg,  caption : fileCaptionArg, fileSize: fileSize, duration: 0.0, thumbImage: fileThumbImageArg == "" ? MediaUtils.convertImageToBase64String(img: selectedImage!) : fileThumbImageArg, fileKey: fileKey)
                         
-                        let imageFileMessage = FileMessage(toId: receiverJID!, messageType: .image, fileMessage : mediaParams, replyMessageId : replyMessageID, mentionedUsersIds: mentionedUsersIds)
+                        let imageFileMessage = FileMessage(toId: receiverJID!, messageType: .image, fileMessage : mediaParams, replyMessageId : replyMessageID, mentionedUsersIds: mentionedUsersIds, metaData: metaDataArray)
                         
                         self.sendImage(imageMessageParams: imageFileMessage, call: call, result: result)
                         
@@ -3590,8 +3666,6 @@ let ISEXPORT = true
                         result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: errorMessage?.description))
                     }
                 }
-                //                    }
-                //                }
                 break;
                 
             case .VIDEO:
@@ -3603,6 +3677,14 @@ let ISEXPORT = true
                 let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
+                let metaData = args["metaData"] as? [[String: Any]] ?? []
+                print("Image MetaData \(String(describing: metaData))")
+                var metaDataArray : [MessageMetaData] = []
+                for data in metaData {
+                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+                    metaDataArray.append(obj)
+                }
+
                 let videoFileUrl = URL(fileURLWithPath: filePathArg)
                 
                 var thumbnail : UIImage?
@@ -3622,7 +3704,7 @@ let ISEXPORT = true
                     if let compressedURL = url,  isSuccess{
                         
                         let mediaParams = FileMessageParams(fileUrl: compressedURL, fileName: fileName, caption: fileCaptionArg, fileSize: fileSize, duration: duration, thumbImage: base64Img, fileKey: fileKey)
-                        let videoFileMessage = FileMessage(toId: receiverJID!, messageType: .video, fileMessage : mediaParams, replyMessageId: replyMessageID, mentionedUsersIds: mentionedUsersIds)
+                        let videoFileMessage = FileMessage(toId: receiverJID!, messageType: .video, fileMessage : mediaParams, replyMessageId: replyMessageID, mentionedUsersIds: mentionedUsersIds, metaData: metaDataArray)
                         
                         self.sendVideo(videoMessageParams: videoFileMessage, call: call, result: result)
                         
@@ -3643,12 +3725,20 @@ let ISEXPORT = true
                 let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
+                let metaData = args["metaData"] as? [[String: Any]] ?? []
+                print("Image MetaData \(String(describing: metaData))")
+                var metaDataArray : [MessageMetaData] = []
+                for data in metaData {
+                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+                    metaDataArray.append(obj)
+                }
+
                 let audiofileUrl = URL(fileURLWithPath: filePathArg)
                 
                 MediaUtils.processAudioFile(url: audiofileUrl) { isSuccess, fileName ,localPath, fileSize, duration, fileKey, errorMessage  in
                     if let localPathURL = localPath, isSuccess{
                         let audioParams = FileMessageParams (fileUrl: localPathURL, fileName: fileName,fileSize: fileSize, duration: duration, fileKey: fileKey)
-                        let audioFileMessage = FileMessage(toId: receiverJID ?? emptyString(), messageType: sendingMessageType == .AUDIO_RECORDED ? .audioRecorded : .audio, fileMessage : audioParams, replyMessageId: replyMessageID ?? emptyString())
+                        let audioFileMessage = FileMessage(toId: receiverJID ?? emptyString(), messageType: sendingMessageType == .AUDIO_RECORDED ? .audioRecorded : .audio, fileMessage : audioParams, replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
                         self.sendAudio(audioMessageParams: audioFileMessage, call: call, result: result)
                         
                     } else {
@@ -3664,7 +3754,15 @@ let ISEXPORT = true
                 let contactName = AppUtils.shared.getValueForKey(dictionary: contactDict, key: "name") as? String ?? ""
                 let contactNumbers = AppUtils.shared.getValueForKey(dictionary: contactDict, key: "numbers") as? [String] ?? []
                 
-                let contactMessageParams = FileMessage(toId: receiverJID!, messageType: .contact, contactMessage: ContactMessageParams(name: contactName, numbers: contactNumbers), replyMessageId: replyMessageID ?? emptyString())
+                let metaData = args["metaData"] as? [[String: Any]] ?? []
+                print("Image MetaData \(String(describing: metaData))")
+                var metaDataArray : [MessageMetaData] = []
+                for data in metaData {
+                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+                    metaDataArray.append(obj)
+                }
+
+                let contactMessageParams = FileMessage(toId: receiverJID!, messageType: .contact, contactMessage: ContactMessageParams(name: contactName, numbers: contactNumbers), replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
                 
                 sendContact(contactMessageParams: contactMessageParams, call: call, result: result)
                 break;
@@ -3673,6 +3771,14 @@ let ISEXPORT = true
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
                 
+                let metaData = args["metaData"] as? [[String: Any]] ?? []
+                print("Image MetaData \(String(describing: metaData))")
+                var metaDataArray : [MessageMetaData] = []
+                for data in metaData {
+                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+                    metaDataArray.append(obj)
+                }
+
                 let documentFileUrl = URL(fileURLWithPath: filePathArg)
                 
                 /// As of now, SDK allows only upto 2GB
@@ -3680,7 +3786,7 @@ let ISEXPORT = true
                     if let localPathURL = localPath, isSuccess {
                         
                         let documentParams = FileMessageParams(fileUrl: localPathURL, fileName: fileName)
-                        let documentMsg = FileMessage(toId: receiverJID!, messageType: .document, fileMessage: documentParams, replyMessageId: replyMessageID ?? emptyString())
+                        let documentMsg = FileMessage(toId: receiverJID!, messageType: .document, fileMessage: documentParams, replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
                         
                         self.sendDocument(documentMessageParams: documentMsg, call: call, result: result)
                         
@@ -3699,7 +3805,15 @@ let ISEXPORT = true
                 let latitude = AppUtils.shared.getValueForKey(dictionary: locationDict, key: "latitude") as? Double ?? 0.0
                 let longitude = AppUtils.shared.getValueForKey(dictionary: locationDict, key: "longitude") as? Double ?? 0.0
                 
-                let locationMessageParams = FileMessage(toId: receiverJID!, messageType: .location, locationMessage: LocationMessageParams(latitude: latitude, longitude: longitude), replyMessageId: replyMessageID ?? emptyString())
+                let metaData = args["metaData"] as? [[String: Any]] ?? []
+                print("Image MetaData \(String(describing: metaData))")
+                var metaDataArray : [MessageMetaData] = []
+                for data in metaData {
+                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+                    metaDataArray.append(obj)
+                }
+
+                let locationMessageParams = FileMessage(toId: receiverJID!, messageType: .location, locationMessage: LocationMessageParams(latitude: latitude, longitude: longitude), replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
                 
                 sendLocation(locationMessageParams: locationMessageParams, call: call, result: result)
                 
@@ -3969,8 +4083,110 @@ let ISEXPORT = true
         }
     }
     
-    
+    func editTextMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+
+        let args = call.arguments as! Dictionary<String, Any>
+
+        let messageId = args["messageId"] as? String
+        let editedTextContent = args["editedTextContent"] as? String
+        let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
+
+        var editMessageParams = EditMessage()
+        editMessageParams.messageId = messageId
+        editMessageParams.editedTextContent = editedTextContent
+        editMessageParams.mentionedUsersIds = mentionedUsersIds
+
+        FlyMessenger.editTextMessage(editMessageParams: editMessageParams) { isSuccess, error, textMessage in
+            if isSuccess {
+                print("Edit Message Success \(String(describing: textMessage?.toJson()))")
+                let editMsgResponse = textMessage.toJson()
+                if(editMsgResponse != nil){
+                    result(editMsgResponse)
+                } else {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_EDITING_FAILED, details: nil))
+                }
+            }else{
+                print("Edit Message Failed \(String(describing: error?.description))")
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_EDITING_FAILED, details: error?.localizedDescription))
+            }
+         }
+    }
+
+    func editMediaCaption(call: FlutterMethodCall, result: @escaping FlutterResult){
+
+        let args = call.arguments as! Dictionary<String, Any>
+
+        let messageId = args["messageId"] as? String
+        let editedTextContent = args["editedTextContent"] as? String
+        let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
+
+        var editMessageParams = EditMessage()
+        editMessageParams.messageId = messageId
+        editMessageParams.editedTextContent = editedTextContent
+        editMessageParams.mentionedUsersIds = mentionedUsersIds
+
+        FlyMessenger.editMediaCaption(editMessageParams: editMessageParams) { isSuccess, error, textMessage in
+            if isSuccess {
+                print("Edit Message Success \(String(describing: textMessage?.toJson()))")
+                let editMsgResponse = textMessage.toJson()
+                if(editMsgResponse != nil){
+                    result(editMsgResponse)
+                } else {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.CAPTION_EDITING_FAILED, details: nil))
+                }
+            }else{
+                print("Edit Message Failed \(String(describing: error?.description))")
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.CAPTION_EDITING_FAILED, details: error?.localizedDescription))
+            }
+         }
+    }
+
+
+    func appLaunchedDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
+//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//        jsonObject.setValue("", forKey: "type")
+//        jsonObject.setValue("", forKey: "value")
+//        let jsonString = pluginDictToJson(dictionary: jsonObject)
+
+     result("{}")
+    }
+
+    func getMetaData(call: FlutterMethodCall, result: @escaping FlutterResult){
+        ChatManager.getMetaData { (isSuccess, flyError, resultDict) in
+            if isSuccess {
+                var flydata = resultDict
+                let metaDataResponse = flydata.getData() as? [MetaData]
+
+                let jsonString = metaDataResponse?.toJson()
+
+                result(jsonString)
+            }else{
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
+            }
+        }
+    }
+
+    func updateMetaData(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let metaData = args["metaData"] as? [[String: Any]] ?? []
+        print("metaData \(String(describing: metaData))")
+        var metaDataArray : [MetaData] = []
+        for data in metaData {
+            let obj = MetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+            metaDataArray.append(obj)
+        }
+        ChatManager.updateMetaData(metaData: metaDataArray) { (isSuccess, flyError, resultDict) in
+          if isSuccess {
+              var flydata = resultDict
+              let metaDataResponse = flydata.getData() as? [MetaData]
+
+              let jsonString = metaDataResponse?.toJson()
+
+              result(jsonString)
+          }else{
+              result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
+          }
+      }
+    }
+
 }
-
-
-
