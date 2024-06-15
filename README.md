@@ -62,6 +62,13 @@ Installing the Mirrorfly Plugin is a simple process. Follow the steps mentioned 
 
 ```
 post_install do |installer|
+  installer.aggregate_targets.each do |target|
+           target.xcconfigs.each do |variant, xcconfig|
+           xcconfig_path = target.client_root + target.xcconfig_relative_path(variant)
+           IO.write(xcconfig_path, IO.read(xcconfig_path).gsub("DT_TOOLCHAIN_DIR", "TOOLCHAIN_DIR"))
+           end
+       end
+  
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
@@ -69,7 +76,18 @@ post_install do |installer|
       config.build_settings['ENABLE_BITCODE'] = 'NO'
       config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
       config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
-      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"      
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = 'arm64'
+      
+      shell_script_path = "Pods/Target Support Files/#{target.name}/#{target.name}-frameworks.sh"
+            if File::exist?(shell_script_path)
+              shell_script_input_lines = File.readlines(shell_script_path)
+              shell_script_output_lines = shell_script_input_lines.map { |line| line.sub("source=\"$(readlink \"${source}\")\"", "source=\"$(readlink -f \"${source}\")\"") }
+              File.open(shell_script_path, 'w') do |f|
+                shell_script_output_lines.each do |line|
+                  f.write line
+                end
+              end
+            end
      end
   end
 end
@@ -93,7 +111,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^1.0.2
+  mirrorfly_plugin: ^1.0.3
 ```
 
 - Run `flutter pub get` command in your project directory.

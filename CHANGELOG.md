@@ -1,3 +1,12 @@
+## [1.0.3] Edit Message and Meta Data Feature
+
+* Edit Message Feature Added
+* Meta Data Feature Added
+* iOS SDK Updated to 5.17.1
+* Android SDK Updated to 7.13.1
+* Bug Fixes
+* Performance Improvement
+
 ## [1.0.2] User Type Added
 
 * The user type has been added to the login function to accommodate different packages and achieve unified push notifications between the apps from the server.
