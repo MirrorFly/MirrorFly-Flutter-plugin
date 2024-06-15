@@ -374,6 +374,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.setTypingStatus_channel, value: jsonString)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onChatTypingStatus_channel, value: jsonString)
         
     }
     
@@ -386,6 +387,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         let jsonString = pluginDictToJson(dictionary: jsonObject)
         
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.setTypingStatus_channel, value: jsonString)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onGroupTypingStatus_channel, value: jsonString)
         
     }
     

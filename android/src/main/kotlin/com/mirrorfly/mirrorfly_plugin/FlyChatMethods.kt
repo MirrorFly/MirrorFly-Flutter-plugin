@@ -303,7 +303,6 @@ class FlyChatMethods {
         } else {
             val userIdentifier: String? = call.argument("userIdentifier")
             val token: String = call.argument("token") ?: ""
-            val userType: String = call.argument("userType") ?: ""
             val isForceRegister: Boolean = call.argument("isForceRegister") ?: true
             LogMessage.d("isForceRegister", isForceRegister.toString())
             val metaData = call.argument<List<Map<String, Any>>>("metaData") ?: arrayListOf()
