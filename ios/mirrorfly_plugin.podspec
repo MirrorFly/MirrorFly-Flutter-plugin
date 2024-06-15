@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'mirrorfly_plugin'
-  s.version          = '1.0.0'
+  s.version          = '1.0.3'
   s.summary          = 'A Mirrorfly Flutter Plugin'
   s.description      = 'A Mirrorfly Flutter plugin to Experience an outstanding real time messaging solution. The powerful communication that adds an extra mileage to build your chat app.'
 
@@ -17,20 +17,18 @@ Pod::Spec.new do |s|
   s.platform = :ios, '12.1'
   s.requires_arc = true
 
-  s.dependency 'libPhoneNumber-iOS'
-  s.dependency 'Alamofire'
+  s.dependency 'libPhoneNumber-iOS','0.9.15'
+  s.dependency 'Alamofire','5.9.1'
   s.dependency 'SocketRocket'
-  #s.dependency 'Socket.IO-Client-Swift', '~> 15.2.0'
   s.dependency 'Socket.IO-Client-Swift', '16.0.1'
   s.dependency 'Starscream', '4.0.4'
   s.dependency 'XMPPFramework/Swift'
-  s.dependency 'RealmSwift' , '10.43.0'
-  s.dependency 'GoogleWebRTC'
+  s.dependency 'RealmSwift', '~> 10.49.2'
+  s.dependency 'GoogleWebRTC','1.1.31999'
   s.dependency 'SDWebImage'
-  s.dependency 'IDZSwiftCommonCrypto', '~> 0.16'
-  s.dependency 'MirrorFlySDK', '5.15.7'
+  s.dependency 'IDZSwiftCommonCrypto', '~> 0.16.1'
+  s.dependency 'MirrorFlySDK', '5.17.1'
 
-#    s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
 
 

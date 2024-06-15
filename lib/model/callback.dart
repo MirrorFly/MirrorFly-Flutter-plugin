@@ -63,18 +63,14 @@ class FlyResponse {
   /// otherwise, returns an empty string.
   String get errorMessage => exception?.message ?? "";
 
+  /// Retrieves the error message details associated with the error message.
+  ///
+  /// Returns the error message if an exception is thrown during the operation;
+  /// otherwise, returns an null.
+  dynamic get errorDetails => exception?.throwable;
+
   @override
   String toString() {
     return "isSuccess : $isSuccess, data: $data, message: $message, exception: {${exception.toString()}}";
-  }
-}
-
-// Anonymous class implementing FlyCallback
-class FlyCallback implements Callback {
-  Function(FlyResponse response) onResponse = (FlyResponse response) {};
-
-  @override
-  void onSuccessful(FlyResponse response) {
-    onResponse(response);
   }
 }

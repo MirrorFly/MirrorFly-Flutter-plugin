@@ -4,32 +4,34 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:mirrorfly_plugin/event_handlers.dart';
-import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
-import 'package:mirrorfly_plugin/internal_models/audio_devices_model.dart';
-import 'package:mirrorfly_plugin/internal_models/available_features_model.dart';
-import 'package:mirrorfly_plugin/internal_models/call_logs_model.dart';
-import 'package:mirrorfly_plugin/internal_models/chat_message_status_detail.dart';
-import 'package:mirrorfly_plugin/internal_models/chat_messages_model.dart';
-import 'package:mirrorfly_plugin/internal_models/export_chat_model.dart';
-import 'package:mirrorfly_plugin/internal_models/get_user_profile_model.dart';
-import 'package:mirrorfly_plugin/internal_models/internal_status_model.dart';
-import 'package:mirrorfly_plugin/internal_models/message_delivered_status_model.dart';
-import 'package:mirrorfly_plugin/internal_models/profile_detail_model.dart';
-import 'package:mirrorfly_plugin/internal_models/recent_chat_model.dart';
-import 'package:mirrorfly_plugin/internal_models/register_user_model.dart';
-import 'package:mirrorfly_plugin/internal_models/user_profile_update.dart';
-import 'package:mirrorfly_plugin/internal_models/users_list_model.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
-import 'package:mirrorfly_plugin/message_params.dart';
-import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 
 import 'builder.dart';
+import 'edit_message_params.dart';
+import 'event_handlers.dart';
+import 'fly_chat_platform_interface.dart';
 import 'fly_constants.dart';
+import 'internal_models/audio_devices_model.dart';
+import 'internal_models/available_features_model.dart';
+import 'internal_models/call_logs_model.dart';
+import 'internal_models/chat_message_status_detail.dart';
+import 'internal_models/chat_messages_model.dart';
+import 'internal_models/export_chat_model.dart';
+import 'internal_models/get_user_profile_model.dart';
+import 'internal_models/internal_status_model.dart';
+import 'internal_models/message_delivered_status_model.dart';
+import 'internal_models/profile_detail_model.dart';
+import 'internal_models/recent_chat_model.dart';
+import 'internal_models/register_user_model.dart';
+import 'internal_models/user_profile_update.dart';
+import 'internal_models/users_list_model.dart';
+import 'logmessage.dart';
+import 'message_params.dart';
+import 'model/available_features.dart' as client;
 import 'model/callback.dart';
 import 'model/chat_message_model.dart' as client;
+import 'model/notification_applaunch_details.dart';
 import 'model/profile_model.dart' as client;
-import 'model/available_features.dart' as client;
+import 'model/topic_metadata.dart';
 
 class FlyErrorCode {
   static const unHandle = "1000";
@@ -110,6 +112,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic>
       onFetchingGroupMembersCompletedStreamController =
       StreamController<dynamic>.broadcast();
+
   // @visibleForTesting
   // final onDeleteGroupChannel = const EventChannel('contus.mirrorfly/onDeleteGroup');
   // final StreamController<dynamic> onDeleteGroupStreamController = StreamController<dynamic>.broadcast();
@@ -250,17 +253,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       const EventChannel('contus.mirrorfly/onConnectionFailed');
   final StreamController<dynamic> onConnectionFailedStreamController =
       StreamController<dynamic>.broadcast();
+
   // @visibleForTesting
   // final connectionFailedChannel = const EventChannel('contus.mirrorfly/connectionFailed');
   // final StreamController<dynamic> connectionFailedStreamController = StreamController<dynamic>.broadcast();
   // @visibleForTesting
   // final connectionSuccessChannel = const EventChannel('contus.mirrorfly/connectionSuccess');
   // final StreamController<dynamic> connectionSuccessStreamController = StreamController<dynamic>.broadcast();
-  @visibleForTesting
-  final onWebChatPasswordChangedChannel =
-      const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
-  final StreamController<dynamic> onWebChatPasswordChangedStreamController =
-      StreamController<dynamic>.broadcast();
+  // @visibleForTesting
+  // final onWebChatPasswordChangedChannel =
+  //     const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
+  // final StreamController<dynamic> onWebChatPasswordChangedStreamController =
+  //     StreamController<dynamic>.broadcast();
   @visibleForTesting
   final setTypingStatusChannel =
       const EventChannel('contus.mirrorfly/setTypingStatus');
@@ -276,6 +280,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       const EventChannel('contus.mirrorfly/onGroupTypingStatus');
   final StreamController<dynamic> onGroupTypingStatusStreamController =
       StreamController<dynamic>.broadcast();
+
+  @visibleForTesting
+  final messageOnEditedChannel =
+      const EventChannel('contus.mirrorfly/onMessageEdited');
+  final StreamController<String> _messageOnEditedStreamController =
+      StreamController<String>.broadcast();
+
   // @visibleForTesting
   // final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
   // final StreamController<dynamic> onFailureStreamController = StreamController<dynamic>.broadcast();
@@ -372,6 +383,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onMessageReceived =>
       _messageOnReceivedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onMessageEdited =>
+      _messageOnEditedStreamController.stream;
 
   @override
   Stream<dynamic> get onMessageStatusUpdated =>
@@ -520,9 +535,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   // @override
   // Stream<dynamic> get connectionSuccess => connectionSuccessStreamController.stream;
 
-  @override
-  Stream<dynamic> get onWebChatPasswordChanged =>
-      onWebChatPasswordChangedStreamController.stream;
+  // @override
+  // Stream<dynamic> get onWebChatPasswordChanged =>
+  //     onWebChatPasswordChangedStreamController.stream;
 
   @override
   Stream<dynamic> get setTypingStatus => setTypingStatusStreamController.stream;
@@ -604,6 +619,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       _messageOnReceivedStreamController.add(message);
       messageEventsListener
           ?.onMessageReceived(client.sendMessageModelFromJson(message));
+    });
+    messageOnEditedChannel.receiveBroadcastStream().listen((event) {
+      var message = convertChatMessageJsonFromString(event);
+      _messageOnEditedStreamController.add(message);
+      messageEventsListener
+          ?.onMessageEdited(client.sendMessageModelFromJson(message));
     });
     messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
       var messageStatus = convertChatMessageJsonFromString(event);
@@ -836,9 +857,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     //   connectionFailedStreamController.add(event);});
     // connectionSuccessChannel.receiveBroadcastStream().listen((event) {
     //   connectionSuccessStreamController.add(event);});
-    onWebChatPasswordChangedChannel.receiveBroadcastStream().listen((event) {
-      onWebChatPasswordChangedStreamController.add(event);
-    });
+    // onWebChatPasswordChangedChannel.receiveBroadcastStream().listen((event) {
+    //   onWebChatPasswordChangedStreamController.add(event);
+    // });
     setTypingStatusChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var singleOrGroupJid = data["singleOrgroupJid"] ?? "";
@@ -2317,6 +2338,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<void> registerUser(String userIdentifier,
       {String fcmToken = FlyConstants.empty,
       bool isForceRegister = true,
+      String userType = "",
+      List<IdentifierMetaData>? identifierMetaData,
       required Function(FlyResponse response) callback}) async {
     String? registerResponse;
     try {
@@ -2324,7 +2347,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           await mirrorFlyMethodChannel.invokeMethod('register_user', {
         "userIdentifier": userIdentifier,
         "token": fcmToken,
-        "isForceRegister": isForceRegister
+        "userType": userType,
+        "isForceRegister": isForceRegister,
+        "metaData": identifierMetaData != null
+            ? List<dynamic>.from(identifierMetaData.map((x) => x.toMap()))
+            : null
       });
       var res = convertRegisterUserJsonFromString(registerResponse);
       callback.call(FlyResponse(true, res, "Registered Successfully"));
@@ -2574,6 +2601,50 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<void> editTextMessage(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) async {
+    LogMessage.d("editMessageParams", editMessageParams.toMap());
+    String? editMessageResponse;
+    try {
+      editMessageResponse = await mirrorFlyMethodChannel.invokeMethod(
+          'editTextMessage', editMessageParams.toMap());
+      var res = convertChatMessageJsonFromString(editMessageResponse);
+      callback.call(FlyResponse(true, res, "Message edited successfully"));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<void> editMediaCaption(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) async {
+    LogMessage.d("editMediaCaptionParams", editMessageParams.toMap());
+    String? editMessageResponse;
+    try {
+      editMessageResponse = await mirrorFlyMethodChannel.invokeMethod(
+          'editMediaCaption', editMessageParams.toMap());
+      var res = convertChatMessageJsonFromString(editMessageResponse);
+      callback.call(FlyResponse(true, res, "Caption edited successfully"));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
   Future<String> getRegisteredUserList({required bool server}) async {
     //getRegisteredUserList
     String? messageResp;
@@ -2592,14 +2663,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<void> getUserList(
-      int page, String search, Function(FlyResponse response)? callback,
+      int page,
+      String search,
+      MetaDataUserList? metaDataUserList,
+      Function(FlyResponse response)? callback,
       {int perPageResultSize = 20}) async {
     String? re;
     try {
       re = await mirrorFlyMethodChannel.invokeMethod("get_user_list", {
         "page": page,
         "search": search,
-        "perPageResultSize": perPageResultSize
+        "perPageResultSize": perPageResultSize,
+        "metaDataUserList": metaDataUserList?.toMap()
       });
       var res = convertUsersDataJsonFromString(re);
       callback?.call(FlyResponse(true, res, "users list fetched"));
@@ -2779,6 +2854,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       bool? exclude,
       int limit = 25,
       String? topicId,
+      MetaDataMessageList? metaDataMessageList,
       bool ascendingOrder = true}) async {
     bool initializeResponse;
     try {
@@ -2790,7 +2866,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         "exclude": exclude,
         "limit": limit,
         "ascendingOrder": ascendingOrder,
-        "topicId": topicId
+        "topicId": topicId,
+        "metaDataMessageList": metaDataMessageList?.toMap()
       });
       LogMessage.d("initializeMessageList", "$initializeResponse");
       return initializeResponse;
@@ -5102,6 +5179,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<MirrorflyNotificationAppLaunchDetails?> getAppLaunchedDetails() async {
+    String? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<String>('appLaunchedDetails');
+      LogMessage.d('getAppLaunchedDetails', '$res');
+      return mirrorflyNotificationAppLaunchDetailsFromJson(res ?? "");
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
   Future<String?> openAudioFilePicker() async {
     String? res;
     try {
@@ -5203,17 +5297,21 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future inviteUsersToOngoingCall(List<String>? jidList) async {
+  Future<void> inviteUsersToOngoingCall(
+      List<String>? jidList, Function(FlyResponse response)? callback) async {
     try {
       LogMessage.d('inviteUsersToOngoingCall :', " jidList : $jidList");
       await mirrorFlyCallMethodChannel
-          .invokeMethod('inviteUsersToOngoingCall', {"jidList": jidList});
+          .invokeMethod<bool>('inviteUsersToOngoingCall', {"jidList": jidList});
+      callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      rethrow;
-    } on Exception catch (error) {
-      LogMessage.d("Exception ", " $error");
-      rethrow;
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
     }
   }
 
@@ -5337,5 +5435,50 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   void setCallEventListener(CallEventListeners callEventsListener) {
     this.callEventsListener = callEventsListener;
+  }
+
+  @override
+  Future<void> getMetaData(Function(FlyResponse response)? callback) async {
+    String? val = FlyConstants.empty;
+    try {
+      val = await mirrorFlyMethodChannel.invokeMethod('getMetaData');
+      LogMessage.d('getMetaData', ' $val');
+      callback?.call(
+          FlyResponse(true, val ?? FlyConstants.empty, FlyConstants.empty));
+      // return val;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<void> updateMetaData(List<IdentifierMetaData>? identifierMetaData,
+      Function(FlyResponse response)? callback) async {
+    String? val = FlyConstants.empty;
+    try {
+      val = await mirrorFlyMethodChannel.invokeMethod('updateMetaData', {
+        "metaData": identifierMetaData != null
+            ? List<dynamic>.from(identifierMetaData.map((x) => x.toMap()))
+            : null
+      });
+      LogMessage.d('updateMetaData', ' $val');
+      callback?.call(
+          FlyResponse(true, val ?? FlyConstants.empty, FlyConstants.empty));
+      // return val;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
   }
 }

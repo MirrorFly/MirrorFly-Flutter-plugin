@@ -62,7 +62,8 @@ object FlyMethodConstants {
         Constants.onFailureChannel to EventStreamHandler(),//NI
         Constants.onProgressChangedChannel to EventStreamHandler(),//NI
         Constants.onSuccessChannel to EventStreamHandler(),//NI
-        Constants.onAvailableFeaturesUpdatedChannel to EventStreamHandler()
+        Constants.onAvailableFeaturesUpdatedChannel to EventStreamHandler(),
+        Constants.onMessageEditedChannel to EventStreamHandler(),
     )
     val chatMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "init" to flyChatMethods::buildChatSDK,
@@ -252,6 +253,10 @@ object FlyMethodConstants {
         "unFavouriteAllFavouriteMessages" to flyChatMethods::unFavouriteAllFavouriteMessages,
         "getJidFromPhoneNumber" to flyChatMethods::getJidFromPhoneNumber,
         "openAudioFilePicker" to flyChatMethods::selectAudioFileFromStorage,
+        "editTextMessage" to flyChatMethods::editTextMessage,
+        "editMediaCaption" to flyChatMethods::editMediaCaption,
+        "getMetaData" to flyChatMethods::getMetaData,
+        "updateMetaData" to flyChatMethods::updateMetaData,
     )
 
     private val callEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(
@@ -335,7 +340,7 @@ object FlyMethodConstants {
         val streamHandler = chatEventListeners[channelName]
         LogMessage.d(
             "#updateChatSinkValue",
-            "$channelName : " + (streamHandler is FlyEventSinkProvider).toString()
+            "$channelName : " + value
         )
         if (streamHandler is FlyEventSinkProvider) {
             streamHandler.setEventSinkValue(value)
@@ -348,7 +353,7 @@ object FlyMethodConstants {
         val streamHandler = callEventListeners[channelName]
         LogMessage.d(
             "#updateCallSinkValue",
-            "$channelName : " + (streamHandler is FlyEventSinkProvider).toString()
+            "$channelName : " + value
         )
         if (streamHandler is FlyEventSinkProvider) {
             streamHandler.setEventSinkValue(value)

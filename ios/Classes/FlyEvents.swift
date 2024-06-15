@@ -27,6 +27,8 @@ public class MemberMadeAsAdminStreamHandler: EventStreamHandler { }
 public class MemberRemovedAsAdminStreamHandler: EventStreamHandler { }
 public class UserWentOfflineStreamHandler: EventStreamHandler { }
 
+public class MessageEditedStreamHandler: EventStreamHandler { }
+
 public class LeftFromGroupStreamHandler: EventStreamHandler { }
 public class GroupNotificationMessageStreamHandler: EventStreamHandler { }
 public class GroupDeletedLocallyStreamHandler: EventStreamHandler { }
@@ -51,7 +53,7 @@ public class OnDisconnectedStreamHandler: EventStreamHandler { }
 public class OnConnectionNotAuthorizedStreamHandler: EventStreamHandler { }
 //public class ConnectionFailedStreamHandler: EventStreamHandler { }
 //public class ConnectionSuccessStreamHandler: EventStreamHandler { }
-public class OnWebChatPasswordChangedStreamHandler: EventStreamHandler { }
+//public class OnWebChatPasswordChangedStreamHandler: EventStreamHandler { }
 //public class OnFailureStreamHandler: EventStreamHandler { }
 public class OnProgressChangedStreamHandler: EventStreamHandler { }
 public class OnSuccessStreamHandler: EventStreamHandler { }

@@ -1,10 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirrorfly_plugin/builder.dart';
+import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
 import 'package:mirrorfly_plugin/fly_chat_method_channel.dart';
 import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:mirrorfly_plugin/model/callback.dart';
+import 'package:mirrorfly_plugin/model/notification_applaunch_details.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -33,6 +35,12 @@ class MockFlyChatFlutterPlatform
   @override
   Future<bool?> appLaunchedFromMissedCall() {
     //  implement appLaunchedFromMissedCall
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<MirrorflyNotificationAppLaunchDetails?> getAppLaunchedDetails() {
+    //  implement appLaunchedDetails
     throw UnimplementedError();
   }
 
@@ -697,7 +705,10 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<void> getUserList(
-      int page, String search, Function(FlyResponse response) callback,
+      int page,
+      String search,
+      MetaDataUserList? metaDataUserList,
+      Function(FlyResponse response) callback,
       {int perPageResultSize = 20}) {
     //  implement getUserList
     throw UnimplementedError();
@@ -783,6 +794,7 @@ class MockFlyChatFlutterPlatform
       bool? exclude,
       int limit = 25,
       String? topicId,
+      MetaDataMessageList? metaDataMessageList,
       bool ascendingOrder = true}) {
     //  implement initializeMessageList
     throw UnimplementedError();
@@ -820,7 +832,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future inviteUsersToOngoingCall(List<String> jidList) {
+  Future<void> inviteUsersToOngoingCall(
+      List<String> jidList, Function(FlyResponse response)? callback) {
     //  implement inviteUsersToOngoingCall
     throw UnimplementedError();
   }
@@ -1210,9 +1223,9 @@ class MockFlyChatFlutterPlatform
   //  implement onUserStoppedSpeaking
   Stream get onUserStoppedSpeaking => throw UnimplementedError();
 
-  @override
-  //  implement onWebChatPasswordChanged
-  Stream get onWebChatPasswordChanged => throw UnimplementedError();
+  // @override
+  // //  implement onWebChatPasswordChanged
+  // Stream get onWebChatPasswordChanged => throw UnimplementedError();
 
   @override
   Future<String?> openAudioFilePicker() {
@@ -1236,7 +1249,9 @@ class MockFlyChatFlutterPlatform
   @override
   Future<void> registerUser(String userIdentifier,
       {String fcmToken = "",
+      String userType = "",
       bool isForceRegister = true,
+      List<IdentifierMetaData>? identifierMetaData,
       required Function(FlyResponse response) callback}) {
     //  implement registerUser
     throw UnimplementedError();
@@ -1387,6 +1402,22 @@ class MockFlyChatFlutterPlatform
       {required MessageParams messageParams,
       required Function(FlyResponse response) callback}) {
     //  implement sendMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> editTextMessage(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) {
+    //  implement editTextMessage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> editMediaCaption(
+      {required EditMessageParams editMessageParams,
+      required Function(FlyResponse response) callback}) {
+    //  implement editMediaCaption
     throw UnimplementedError();
   }
 
@@ -1735,6 +1766,23 @@ class MockFlyChatFlutterPlatform
   @override
   setCallEventListener(CallEventListeners callEventListeners) {
     // implement setCallEventListener
+    throw UnimplementedError();
+  }
+
+  @override
+  // implement onMessageEdited
+  Stream get onMessageEdited => throw UnimplementedError();
+
+  @override
+  Future<void> getMetaData(Function(FlyResponse response)? callback) {
+    //  implement getMetaData
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateMetaData(List<IdentifierMetaData>? identifierMetaData,
+      Function(FlyResponse response)? callback) {
+    //  implement getMetaData
     throw UnimplementedError();
   }
 }

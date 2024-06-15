@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:mirrorfly_plugin/message_params.dart' show MessageMetaData;
+
 RecentChat recentChatFromJson(String str) =>
     RecentChat.fromJson(json.decode(str));
 
@@ -65,36 +67,37 @@ class RecentChatData {
   String? profileName;
   int? unreadMessageCount;
   String? topicId;
+  List<MessageMetaData>? metaData;
 
-  RecentChatData({
-    this.contactType,
-    this.isAdminBlocked,
-    this.isBlocked,
-    this.isBlockedMe,
-    this.isBroadCast,
-    this.isChatArchived,
-    this.isPrivateChat,
-    this.isChatPinned,
-    this.isConversationUnRead,
-    this.isGroup,
-    this.isGroupInOfflineMode,
-    this.isItSavedContact,
-    this.isLastMessageRecalledByUser,
-    this.isLastMessageSentByMe,
-    this.isMuted,
-    this.isSelected,
-    this.jid,
-    this.lastMessageContent,
-    this.lastMessageId,
-    this.lastMessageStatus,
-    this.lastMessageTime,
-    this.lastMessageType,
-    this.nickName,
-    this.profileImage,
-    this.profileName,
-    this.unreadMessageCount,
-    this.topicId,
-  });
+  RecentChatData(
+      {this.contactType,
+      this.isAdminBlocked,
+      this.isBlocked,
+      this.isBlockedMe,
+      this.isBroadCast,
+      this.isChatArchived,
+      this.isPrivateChat,
+      this.isChatPinned,
+      this.isConversationUnRead,
+      this.isGroup,
+      this.isGroupInOfflineMode,
+      this.isItSavedContact,
+      this.isLastMessageRecalledByUser,
+      this.isLastMessageSentByMe,
+      this.isMuted,
+      this.isSelected,
+      this.jid,
+      this.lastMessageContent,
+      this.lastMessageId,
+      this.lastMessageStatus,
+      this.lastMessageTime,
+      this.lastMessageType,
+      this.nickName,
+      this.profileImage,
+      this.profileName,
+      this.unreadMessageCount,
+      this.topicId,
+      this.metaData});
 
   factory RecentChatData.fromJson(Map<String, dynamic> json) => RecentChatData(
         contactType: json["contactType"],
@@ -124,6 +127,10 @@ class RecentChatData {
         profileName: json["profileName"],
         unreadMessageCount: json["unreadMessageCount"],
         topicId: json["topicId"],
+        metaData: json["metaData"] == null
+            ? []
+            : List<MessageMetaData>.from(
+                json["metaData"].map((x) => MessageMetaData.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -154,5 +161,8 @@ class RecentChatData {
         "profileName": profileName,
         "unreadMessageCount": unreadMessageCount,
         "topicId": topicId,
+        "metaData": metaData == null
+            ? null
+            : List<dynamic>.from(metaData!.map((x) => x.toJson())),
       };
 }
