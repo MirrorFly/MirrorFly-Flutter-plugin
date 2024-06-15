@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'fly_chat_method_channel.dart';
 
 class LogMessage {
-
   static void d(String tag, dynamic message) {
     if (MethodChannelFlyChatFlutter.enableDebugLog && kDebugMode) {
       // print("MirrorFly : $tag ==> $msg");

@@ -91,7 +91,10 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
       throw Exception("remoteUserJid must not be empty");
     }
     return Stack(
-      children: [buildHybridCompositionView(), InkWell(splashColor: Colors.transparent,onTap: widget.onClick)],
+      children: [
+        buildHybridCompositionView(),
+        InkWell(splashColor: Colors.transparent, onTap: widget.onClick)
+      ],
     );
   }
 

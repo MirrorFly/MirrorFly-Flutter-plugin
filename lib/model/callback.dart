@@ -74,4 +74,3 @@ class FlyResponse {
     return "isSuccess : $isSuccess, data: $data, message: $message, exception: {${exception.toString()}}";
   }
 }
-
