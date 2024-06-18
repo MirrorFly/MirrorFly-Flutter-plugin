@@ -2896,6 +2896,8 @@ class FlyChatMethods {
             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
             //DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
             result.success(recent.toJsonString())
+        }else{
+            result.success(null)
         }
     }
 

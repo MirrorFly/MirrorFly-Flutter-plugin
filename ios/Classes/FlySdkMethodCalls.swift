@@ -2942,7 +2942,7 @@ let ISEXPORT = true
                 let chatMessages = mediaData.getData() as? [[ChatMessage]]
                 
                 if(chatMessages!.isEmpty){
-                    result(nil)
+                    result("[]")
                 }else{
                     var mediaMsgJson = chatMessages?.toJson()
                     mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "[[", with: "[")
@@ -2978,7 +2978,7 @@ let ISEXPORT = true
                 var flydata = data
                 let mediaMessages : [[ChatMessage]] = flydata.getData() as? [[ChatMessage]] ?? []
                 if (mediaMessages.isEmpty){
-                    result(nil)
+                    result("[]")
                 }else{
                     var mediaMsgJson = mediaMessages.toJson()
                     mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "[[", with: "[")
@@ -3013,7 +3013,7 @@ let ISEXPORT = true
                 let mediaLinkMessages = flydata.getData() as? [[LinkMessage]] ?? []
                 
                 if (mediaLinkMessages.isEmpty){
-                    result(nil)
+                    result("[]")
                 }else{
                     var viewAllMediaLinkMessages: String = "["
                     
