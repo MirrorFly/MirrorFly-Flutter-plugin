@@ -1,13 +1,13 @@
-///Used as a Builder class for FlyChat
+/// `ChatBuilder` is a class used to build a chat configuration.
 ///
-/// @property apiKey for the SDK
-/// @property enableMobileNumberLogin to enable login via mobile number
-/// @property isTrialLicenceKey to provide trial/live register and contact sync
-/// @property domainBaseUrl provides the base url for making api calls
-/// @property storageFolderName provides the Local Storage Folder Name
-/// @property iOSContainerID provides the App Group of the iOS Project
-/// @property licenseKey provides the License Key
-/// @property groupConfig provides the data required for group implementation
+/// @property domainBaseUrl The base URL for making API calls.
+/// @property storageFolderName The name of the local storage folder.
+/// @property iOSContainerID The ID of the iOS container.
+/// @property licenseKey The license key.
+/// @property enableMobileNumberLogin A flag to enable login via mobile number.
+/// @property isTrialLicenceKey A flag to indicate whether the license key is a trial key.
+/// @property chatHistoryEnable A flag to enable chat history.
+/// @property enableDebugLog A flag to enable debug logging.
 class ChatBuilder {
   ChatBuilder(
       {required this.domainBaseUrl,
@@ -38,6 +38,15 @@ class ChatBuilder {
   bool enableDebugLog;
 }
 
+
+/// `GroupConfig` is a class used to configure group chat functionality.
+///
+/// These properties include flags to enable group creation and admin-only add/remove access,
+/// and a property to set the maximum number of members in a group.
+///
+/// @property enableGroupCreation A flag to enable group creation.
+/// @property maxMembersCount The maximum number of members in a group.
+/// @property adminOnlyAddRemoveAccess A flag to enable admin-only add/remove access.
 class GroupConfig {
   GroupConfig(
       {required this.enableGroupCreation,
@@ -49,6 +58,10 @@ class GroupConfig {
   bool adminOnlyAddRemoveAccess;
 }
 
+/// `BuilderParsing` is an extension on `ChatBuilder` that provides a method to build a map
+/// from the properties of a `ChatBuilder` instance.
+///
+/// The map can be used to easily access the properties of the `ChatBuilder` instance.
 extension BuilderParsing on ChatBuilder {
   Map build() {
     return {
@@ -68,6 +81,11 @@ extension BuilderParsing on ChatBuilder {
   }
 }
 
+/// `GroupConfigParsing` is an extension on `GroupConfig` that provides a method to build a map
+/// from the properties of a `GroupConfig` instance.
+///
+/// The map can be used to easily access the properties of the `GroupConfig` instance.
+///
 extension GroupConfigParsing on GroupConfig? {
   Map? build() {
     if (this != null) {
@@ -81,6 +99,15 @@ extension GroupConfigParsing on GroupConfig? {
     }
   }
 }
+
+/// `InitializeSDKBuilder` is a class used to build a configuration for initializing the SDK.
+///
+/// @property storageFolderName The name of the local storage folder.
+/// @property iOSContainerID The ID of the iOS container.
+/// @property licenseKey The license key.
+/// @property enableMobileNumberLogin A flag to enable login via mobile number.
+/// @property chatHistoryEnable A flag to enable chat history.
+/// @property enableDebugLog A flag to enable debug logging.
 
 class InitializeSDKBuilder {
   InitializeSDKBuilder(
@@ -98,6 +125,11 @@ class InitializeSDKBuilder {
   bool? chatHistoryEnable;
   bool enableDebugLog;
 }
+
+/// `InitializeSDKBuilderParsing` is an extension on `InitializeSDKBuilder` that provides a method
+/// to build a map from the properties of an `InitializeSDKBuilder` instance.
+///
+/// The map can be used to easily access the properties of the `InitializeSDKBuilder` instance.
 
 extension InitializeSDKBuilderParsing on InitializeSDKBuilder {
   Map build() {
