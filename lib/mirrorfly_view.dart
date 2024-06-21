@@ -7,24 +7,29 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
+/// The next ID to be assigned to a `MirrorFlyView` instance.
 int _nextViewCreationId = 0;
 
+/// Enum representing the different types of scaling that can be applied to a `MirrorFlyView`.
 enum ScalingType {
   scaleAspectFIT,
   scaleAspectFILL,
   scaleAspectBALANCED;
 }
 
+/// Enum representing the different positions that a profile picture can be aligned to in a `MirrorFlyView`.
 enum HorizontalGravity { top, center, bottom }
 
+/// A widget that displays a view for audio/video calls in the MirrorFly application.
+///
+/// @property [mirror] Whether to mirror the view. Must be a Boolean.
+/// @property [userJid] The JID of the call participant.
+/// @property [viewBgColor] The color for the view (optional). Random color by default.
+/// @property [alignProfilePictureCenter] The alignment of the profile picture in an audio call. Can be CENTER or TOP.
+/// @property [profileSize] The size of the profile picture. Default is 60.
+/// @property [showSpeakingRipple] Whether to show a ripple effect in the profile view background when the user is speaking.
+
 class MirrorFlyView extends StatefulWidget {
-  /// MirrorFly View for Audio/Video View
-  /// * @property [mirror] - Mirror the view Must be a Boolean
-  /// * @property [userJid] - Call participant JID
-  /// * @property [viewBgColor] - Color for the View (optional). Random Color by Default
-  /// * @property [alignProfilePictureCenter] - Alignment of the profile Picture in Audio Call CENTER or TOP
-  /// * @property [profileSize] - Size of the profile picture. 60 by Default
-  /// * @property [showSpeakingRipple] - to show Speaking Ripple effect in Profile view background
   const MirrorFlyView(
       {Key? key,
       this.mirror = true,
@@ -57,6 +62,7 @@ class MirrorFlyView extends StatefulWidget {
   State<MirrorFlyView> createState() => _MirrorFlyViewState();
 }
 
+/// The state for a `MirrorFlyView` widget.
 class _MirrorFlyViewState extends State<MirrorFlyView> {
   final int _viewId = _nextViewCreationId++;
   final nativeViewType = "mirrorfly_view";
@@ -202,6 +208,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
 // }
 }
 
+/// An extension on `MirrorFlyView` that provides a method to set the border radius of the view.
 extension ExtensionMirrorflyView on MirrorFlyView {
   setBorderRadius(BorderRadiusGeometry radius) {
     return ClipRRect(
@@ -213,27 +220,26 @@ extension ExtensionMirrorflyView on MirrorFlyView {
   }
 }
 
+/// A class that represents the position of a profile view in a `MirrorFlyView`.
+///
+/// @property [left] The distance from the left edge of the `MirrorFlyView`.
+/// @property [top] The distance from the top edge of the `MirrorFlyView`.
+/// @property [right] The distance from the right edge of the `MirrorFlyView`.
+/// @property [bottom] The distance from the bottom edge of the `MirrorFlyView`.
+/// @property [width] The width of the profile view.
+/// @property [height] The height of the profile view.
 class ProfileViewPositioned {
-  /// The distance that the child's left edge is inset from the left of the [MirrorFlyView].
 
   final int? left;
 
-  /// The distance that the child's top edge is inset from the top of the [MirrorFlyView].
-
   final int? top;
-
-  /// The distance that the child's right edge is inset from the right of the [MirrorFlyView].
 
   final int? right;
 
-  /// The distance that the child's bottom edge is inset from the bottom of the [MirrorFlyView].
-
   final int? bottom;
 
-  /// The child's width.
   final int? width;
 
-  /// The child's height.
   final int? height;
 
   ProfileViewPositioned(
