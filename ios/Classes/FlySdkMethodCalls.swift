@@ -3196,6 +3196,8 @@ let ISEXPORT = true
                 //Utility.clearUserDefaults()
                 Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
+                /* Workaround for OnLoggedOut delegate, will be removed once the SDK handles this */
+                FlyChatEventChannelInitializer.shared.updateSinkValue(forChannel: Constants.onLoggedOut_channel, value: true)
                 result(isSuccess)
             }else{
                 if case let .invalid_data(message, _) = flyError {

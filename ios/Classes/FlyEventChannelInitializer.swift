@@ -59,6 +59,14 @@ protocol FlyEventSinkProvider {
 
 class FlyChatEventChannelInitializer {
     
+    // Static shared instance for singleton
+    static let shared = FlyChatEventChannelInitializer()
+    
+    // Private initializer
+    private init() {}
+    
+    // Event channels and their handlers
+    
     static let chatEventChannels: [(channelName: String, streamHandler: NSObjectProtocol & FlutterStreamHandler)] = [
         (channelName: Constants.onContactSyncComplete_channel, streamHandler: OnContactSyncCompleteStreamHandler()),
         (channelName: Constants.getAvailableFeatures_channel, streamHandler: OnGetAvailableFeaturesStreamHandler()),
