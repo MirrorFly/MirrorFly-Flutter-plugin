@@ -82,10 +82,8 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   @override
   void dispose() {
     LogMessage.d("MirrorFlyView", "dispose");
-    if (Platform.isAndroid) {
-      if (androidViewController != null) {
-        androidViewController?.dispose();
-      }
+    if (Platform.isAndroid && androidViewController != null) {
+      androidViewController?.dispose();
     }
     super.dispose();
   }
@@ -180,7 +178,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
           },
         );
       case TargetPlatform.iOS:
-        debugPrint("build params ${buildParams()}");
+        // debugPrint("build params ${buildParams()}");
         debugPrint("#Mirrorfly Call iOS Platform");
         return UiKitView(
           key: widget.key,
