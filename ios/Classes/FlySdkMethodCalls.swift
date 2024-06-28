@@ -2276,9 +2276,13 @@ let ISEXPORT = true
             if isSuccess {
                 let lastseenSeconds = data.getData() as? String
                 if let seconds = Int(lastseenSeconds ?? "0") {
-                    let timestamp = self.subtractSecondsAndGetTimestamp(seconds: TimeInterval(seconds))
-                    
-                    result(String(Int(timestamp)))
+                    if (seconds == 0){
+                        result("0")
+                    }else{
+                        let timestamp = self.subtractSecondsAndGetTimestamp(seconds: TimeInterval(seconds))
+                        
+                        result(String(Int(timestamp)))
+                    }
                 }
                 
             } else{
