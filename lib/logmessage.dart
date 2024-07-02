@@ -4,7 +4,6 @@ import 'fly_chat_method_channel.dart';
 
 /// `LogMessage` is a class that provides a static method for logging messages.
 class LogMessage {
-
   /// Logs a debug message if debug logging is enabled and the application is in debug mode.
   ///
   /// The `d` method accepts a `tag` and a `message` as parameters. The `tag` is a string that
@@ -19,7 +18,6 @@ class LogMessage {
   /// @param message the message to be logged. This can be of any type.
   static void d(String tag, dynamic message) {
     if (MethodChannelFlyChatFlutter.enableDebugLog && kDebugMode) {
-
       // Create a regular expression pattern that matches up to 800 characters.
       final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
 

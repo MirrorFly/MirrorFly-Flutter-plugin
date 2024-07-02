@@ -808,6 +808,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<bool> isPrivateStorageEnabledOrNot() {
+    //  implement isPrivateStorageEnabled
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool?> insertBusyStatus(String busyStatus) {
     //  implement insertBusyStatus
     throw UnimplementedError();

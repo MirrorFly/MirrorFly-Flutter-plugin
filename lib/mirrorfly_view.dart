@@ -82,10 +82,8 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   @override
   void dispose() {
     LogMessage.d("MirrorFlyView", "dispose");
-    if (Platform.isAndroid) {
-      if (androidViewController != null) {
-        androidViewController?.dispose();
-      }
+    if (Platform.isAndroid && androidViewController != null) {
+      androidViewController?.dispose();
     }
     super.dispose();
   }
@@ -180,7 +178,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
           },
         );
       case TargetPlatform.iOS:
-        debugPrint("build params ${buildParams()}");
+        // debugPrint("build params ${buildParams()}");
         debugPrint("#Mirrorfly Call iOS Platform");
         return UiKitView(
           key: widget.key,
@@ -229,7 +227,6 @@ extension ExtensionMirrorflyView on MirrorFlyView {
 /// @property [width] The width of the profile view.
 /// @property [height] The height of the profile view.
 class ProfileViewPositioned {
-
   final int? left;
 
   final int? top;

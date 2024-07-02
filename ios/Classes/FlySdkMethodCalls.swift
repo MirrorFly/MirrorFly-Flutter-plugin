@@ -108,6 +108,7 @@ let ISEXPORT = true
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         let containerID = args["iOSContainerID"] as? String ?? ""
         _ = args["enableSDKLog"] as? Bool ?? false
+        let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
         ChatManager.setAppGroupContainerId(id: containerID)
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
@@ -115,6 +116,7 @@ let ISEXPORT = true
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
+                ChatManager.enablePrivateStorage(enable: enablePrivateStorage)
                 NSLog("SDK INITIALISE Success")
                 if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
                     ChatManager.connect()
@@ -2276,9 +2278,13 @@ let ISEXPORT = true
             if isSuccess {
                 let lastseenSeconds = data.getData() as? String
                 if let seconds = Int(lastseenSeconds ?? "0") {
-                    let timestamp = self.subtractSecondsAndGetTimestamp(seconds: TimeInterval(seconds))
-                    
-                    result(String(Int(timestamp)))
+                    if (seconds == 0){
+                        result("0")
+                    }else{
+                        let timestamp = self.subtractSecondsAndGetTimestamp(seconds: TimeInterval(seconds))
+                        
+                        result(String(Int(timestamp)))
+                    }
                 }
                 
             } else{
@@ -4189,6 +4195,10 @@ let ISEXPORT = true
               result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
           }
       }
+    }
+    
+    func isPrivateStorageEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
+        result(ChatManager.isPrivateStorageEnabled())
     }
 
 }

@@ -38,7 +38,6 @@ class ChatBuilder {
   bool enableDebugLog;
 }
 
-
 /// `GroupConfig` is a class used to configure group chat functionality.
 ///
 /// These properties include flags to enable group creation and admin-only add/remove access,
@@ -108,15 +107,18 @@ extension GroupConfigParsing on GroupConfig? {
 /// @property enableMobileNumberLogin A flag to enable login via mobile number.
 /// @property chatHistoryEnable A flag to enable chat history.
 /// @property enableDebugLog A flag to enable debug logging.
+/// @property enablePrivateStorage A flag to enable private Storage.
 
 class InitializeSDKBuilder {
-  InitializeSDKBuilder(
-      {this.storageFolderName,
-      required this.iOSContainerID,
-      required this.licenseKey,
-      this.enableMobileNumberLogin = false,
-      this.chatHistoryEnable,
-      this.enableDebugLog = false});
+  InitializeSDKBuilder({
+    this.storageFolderName,
+    required this.iOSContainerID,
+    required this.licenseKey,
+    this.enableMobileNumberLogin = false,
+    this.chatHistoryEnable,
+    this.enableDebugLog = false,
+    this.enablePrivateStorage = false,
+  });
 
   String? storageFolderName;
   String iOSContainerID;
@@ -124,6 +126,7 @@ class InitializeSDKBuilder {
   bool enableMobileNumberLogin;
   bool? chatHistoryEnable;
   bool enableDebugLog;
+  bool enablePrivateStorage;
 }
 
 /// `InitializeSDKBuilderParsing` is an extension on `InitializeSDKBuilder` that provides a method
@@ -140,6 +143,7 @@ extension InitializeSDKBuilderParsing on InitializeSDKBuilder {
       "enableMobileNumberLogin": enableMobileNumberLogin,
       "chatHistoryEnable": chatHistoryEnable,
       "enableDebugLog": enableDebugLog,
+      "enablePrivateStorage": enablePrivateStorage,
     };
   }
 }
