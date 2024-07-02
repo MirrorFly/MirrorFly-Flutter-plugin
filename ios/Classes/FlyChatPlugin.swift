@@ -13,7 +13,7 @@ let isHideNotificationContent = false
 public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDelegate {
     
     
-    private var chatEventInitializer: FlyChatEventChannelInitializer = FlyChatEventChannelInitializer()
+    private var chatEventInitializer: FlyChatEventChannelInitializer = FlyChatEventChannelInitializer.shared
     
     var flyChatUserDelegate : FlyChatUserDelegate? = nil
     

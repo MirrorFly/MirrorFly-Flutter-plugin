@@ -217,5 +217,6 @@ class FlyMethodConstants {
                 "appLaunchedDetails": flyChatMethods.appLaunchedDetails,
                 "getMetaData": flyChatMethods.getMetaData,
                 "updateMetaData": flyChatMethods.updateMetaData,
+                "isPrivateStorageEnabled": flyChatMethods.isPrivateStorageEnabled,
             ] }()
 }

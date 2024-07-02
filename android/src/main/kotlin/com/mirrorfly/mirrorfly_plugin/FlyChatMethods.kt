@@ -246,6 +246,7 @@ class FlyChatMethods {
         val storageFolderName: String? = call.argument("storageFolderName")
         val enableMobileNumberLogin: Boolean? = call.argument("enableMobileNumberLogin")
         val enableSDKLog: Boolean = call.argument("enableDebugLog") ?: false
+        val enablePrivateStorage: Boolean = call.argument("enablePrivateStorage") ?: false
 
         if (storageFolderName != null) {
             ChatManager.setMediaFolderName(storageFolderName)
@@ -257,8 +258,8 @@ class FlyChatMethods {
         LogMessage.enableDebugLogging(enableSDKLog)
         Logger.enableDebugLogging(enableSDKLog)
         CallManager.enableDebugLogs(enableSDKLog)
-//        CallManager.enableCallLogExport(false)
         ChatManager.enableChatHistory(chatHistoryEnable)
+        ChatManager.enablePrivateStorage(enablePrivateStorage)
 
         FlyCallMethods().initCall()
 
@@ -271,6 +272,10 @@ class FlyChatMethods {
                 result.error("500", "SDK failed to Initialize", throwable)
             }
         }
+    }
+
+    fun privateStorageEnabled(call: MethodCall, result: MethodChannel.Result){
+        result.success(ChatManager.isPrivateStorageEnable())
     }
 
     private var fromCallNotification: Boolean = false
@@ -2896,6 +2901,8 @@ class FlyChatMethods {
             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
             //DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
             result.success(recent.toJsonString())
+        }else{
+            result.success(null)
         }
     }
 
