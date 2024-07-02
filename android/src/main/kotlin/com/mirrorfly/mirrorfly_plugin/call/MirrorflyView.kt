@@ -3,6 +3,7 @@ package com.mirrorfly.mirrorfly_plugin.call
 import android.content.Context
 import android.graphics.Color
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -87,7 +88,7 @@ class MirrorflyView(
             getTextureViewByTag(jid)?.visibility = View.VISIBLE
             getImageViewByTag(jid)?.visibility = View.GONE
             CallManager.getLocalProxyVideoSink()?.setTarget(getTextureViewByTag(jid))
-//        Logger.d("#FlutterCall","getLocalTarget ${CallManager.getLocalProxyVideoSink()?.getTarget()}")
+            LogMessage.d(tag,"Local Target set $id $jid ${CallManager.getLocalProxyVideoSink()} ${CallManager.isVideoMuted()} ${getTextureViewByTag(jid)}")
         }else{
             setProfileView(jid)
         }

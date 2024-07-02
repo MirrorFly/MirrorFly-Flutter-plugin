@@ -108,6 +108,7 @@ let ISEXPORT = true
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         let containerID = args["iOSContainerID"] as? String ?? ""
         _ = args["enableSDKLog"] as? Bool ?? false
+        let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
         ChatManager.setAppGroupContainerId(id: containerID)
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
@@ -115,6 +116,7 @@ let ISEXPORT = true
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
+                ChatManager.enablePrivateStorage(enable: enablePrivateStorage)
                 NSLog("SDK INITIALISE Success")
                 if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
                     ChatManager.connect()
@@ -2276,9 +2278,13 @@ let ISEXPORT = true
             if isSuccess {
                 let lastseenSeconds = data.getData() as? String
                 if let seconds = Int(lastseenSeconds ?? "0") {
-                    let timestamp = self.subtractSecondsAndGetTimestamp(seconds: TimeInterval(seconds))
-                    
-                    result(String(Int(timestamp)))
+                    if (seconds == 0){
+                        result("0")
+                    }else{
+                        let timestamp = self.subtractSecondsAndGetTimestamp(seconds: TimeInterval(seconds))
+                        
+                        result(String(Int(timestamp)))
+                    }
                 }
                 
             } else{
@@ -2942,7 +2948,7 @@ let ISEXPORT = true
                 let chatMessages = mediaData.getData() as? [[ChatMessage]]
                 
                 if(chatMessages!.isEmpty){
-                    result(nil)
+                    result("[]")
                 }else{
                     var mediaMsgJson = chatMessages?.toJson()
                     mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "[[", with: "[")
@@ -2978,7 +2984,7 @@ let ISEXPORT = true
                 var flydata = data
                 let mediaMessages : [[ChatMessage]] = flydata.getData() as? [[ChatMessage]] ?? []
                 if (mediaMessages.isEmpty){
-                    result(nil)
+                    result("[]")
                 }else{
                     var mediaMsgJson = mediaMessages.toJson()
                     mediaMsgJson = mediaMsgJson?.replacingOccurrences(of: "[[", with: "[")
@@ -3013,7 +3019,7 @@ let ISEXPORT = true
                 let mediaLinkMessages = flydata.getData() as? [[LinkMessage]] ?? []
                 
                 if (mediaLinkMessages.isEmpty){
-                    result(nil)
+                    result("[]")
                 }else{
                     var viewAllMediaLinkMessages: String = "["
                     
@@ -3196,6 +3202,8 @@ let ISEXPORT = true
                 //Utility.clearUserDefaults()
                 Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
+                /* Workaround for OnLoggedOut delegate, will be removed once the SDK handles this */
+                FlyChatEventChannelInitializer.shared.updateSinkValue(forChannel: Constants.onLoggedOut_channel, value: true)
                 result(isSuccess)
             }else{
                 if case let .invalid_data(message, _) = flyError {
@@ -4187,6 +4195,10 @@ let ISEXPORT = true
               result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
           }
       }
+    }
+    
+    func isPrivateStorageEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
+        result(ChatManager.isPrivateStorageEnabled())
     }
 
 }

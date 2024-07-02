@@ -111,7 +111,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^1.0.3
+  mirrorfly_plugin: ^1.0.4
 ```
 
 - Run `flutter pub get` command in your project directory.
@@ -144,6 +144,8 @@ void main() {
   Mirrorfly.initializeSDK(
       licenseKey: 'your license key',
       iOSContainerID: 'your app group id',
+      chatHistoryEnable: false, // true to enable chat history, default is false
+      enablePrivateStorage: false, // true to enable private storage, default is false
       flyCallback: (FlyResponse response) {
         if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);

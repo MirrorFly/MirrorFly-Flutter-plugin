@@ -325,6 +325,11 @@ import PushKit
             NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId) :==> rejecting local hangup to send to the user")
             return
         }
+        
+        if (callAction == .ACTION_REMOTE_BUSY && isUserExists(userId: userId)) {
+            NSLog("\(Constants.callTag) Events: User exists in Call Action so forwarding the status")
+            usersInCall.removeValue(forKey: userId)
+        }
             
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
