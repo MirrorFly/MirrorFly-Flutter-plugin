@@ -108,6 +108,7 @@ let ISEXPORT = true
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         let containerID = args["iOSContainerID"] as? String ?? ""
         _ = args["enableSDKLog"] as? Bool ?? false
+        let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
         ChatManager.setAppGroupContainerId(id: containerID)
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
@@ -115,6 +116,7 @@ let ISEXPORT = true
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
+                ChatManager.enablePrivateStorage(enable: enablePrivateStorage)
                 NSLog("SDK INITIALISE Success")
                 if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
                     ChatManager.connect()
@@ -4193,6 +4195,10 @@ let ISEXPORT = true
               result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.META_DATA_FAILED_MESSAGE, details: flyError?.localizedDescription))
           }
       }
+    }
+    
+    func isPrivateStorageEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
+        result(ChatManager.isPrivateStorageEnabled())
     }
 
 }

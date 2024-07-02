@@ -1,3 +1,9 @@
+## [1.0.4] Private Storage Feature
+* Private Storage Feature Added
+* iOS SDK Updated to 5.17.3
+* Android SDK Updated to 7.13.3
+* Performance Improvement
+
 ## [1.0.3] Edit Message and Meta Data Feature
 
 * Edit Message Feature Added
