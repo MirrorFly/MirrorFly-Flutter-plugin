@@ -12,6 +12,8 @@ class Mirrorfly {
       'This method is deprecated. Please refrain from using it, as the functionality has been internally managed within the plugin')
   static var isTrialLicence = true;
   static var isChatHistoryEnabled = false;
+  /// isPrivateStorageEnabled to check the private storage is enabled or not
+  static var isPrivateStorageEnabled = false;
 
   ///Used as a initChat class for [Mirrorfly]
   ///
@@ -64,6 +66,7 @@ class Mirrorfly {
   ///   - [chatHistoryEnable]: Flag indicating whether chat history should be enabled. Defaults to false.
   ///   - [enableMobileNumberLogin]: Flag indicating whether mobile number login should be enabled. Defaults to true.
   ///   - [enableDebugLog]: Flag indicating whether debug logs should be enabled. Defaults to false.
+  ///   - [enablePrivateStorage]: Flag indicating whether private storage should be enable. Defaults to false.
   ///   - [flyCallback]: A callback function to handle the response from the SDK initialization. Must not be null.
   ///
   /// Returns:
@@ -96,6 +99,7 @@ class Mirrorfly {
       bool chatHistoryEnable = false,
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false,
+      bool enablePrivateStorage = false,
       required Function(FlyResponse response) flyCallback}) {
     var builder = InitializeSDKBuilder(
         iOSContainerID: iOSContainerID,
@@ -103,9 +107,15 @@ class Mirrorfly {
         storageFolderName: storageFolderName,
         chatHistoryEnable: chatHistoryEnable,
         enableMobileNumberLogin: enableMobileNumberLogin,
-        enableDebugLog: enableDebugLog);
+        enableDebugLog: enableDebugLog,enablePrivateStorage: enablePrivateStorage);
     isChatHistoryEnabled = chatHistoryEnable;
+    isPrivateStorageEnabled = enablePrivateStorage;
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);
+  }
+
+  /// isPrivateStorageEnabledOrNot to check the private storage is enabled or not
+  static Future<bool> isPrivateStorageEnabledOrNot() {
+    return FlyChatFlutterPlatform.instance.isPrivateStorageEnabledOrNot();
   }
 
   /*static Future<String?> getPlatformVersion() {

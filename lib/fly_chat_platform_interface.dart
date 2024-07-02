@@ -39,6 +39,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('build() has not been implemented.');
   }
 
+  Future<bool> isPrivateStorageEnabledOrNot() {
+    throw UnimplementedError('isPrivateStorageEnabled() has not been implemented.');
+  }
+
   /*Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }*/
