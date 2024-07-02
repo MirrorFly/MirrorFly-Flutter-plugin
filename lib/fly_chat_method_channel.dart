@@ -1020,8 +1020,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<bool> isPrivateStorageEnabledOrNot() async {
     bool? res;
     try {
-      res = await mirrorFlyMethodChannel.invokeMethod<bool>(
-          'isPrivateStorageEnabled');
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('isPrivateStorageEnabled');
       LogMessage.d("isPrivateStorageEnabled", res);
       return res ?? false;
     } on PlatformException catch (e) {

@@ -12,6 +12,7 @@ class Mirrorfly {
       'This method is deprecated. Please refrain from using it, as the functionality has been internally managed within the plugin')
   static var isTrialLicence = true;
   static var isChatHistoryEnabled = false;
+
   /// isPrivateStorageEnabled to check the private storage is enabled or not
   static var isPrivateStorageEnabled = false;
 
@@ -107,7 +108,8 @@ class Mirrorfly {
         storageFolderName: storageFolderName,
         chatHistoryEnable: chatHistoryEnable,
         enableMobileNumberLogin: enableMobileNumberLogin,
-        enableDebugLog: enableDebugLog,enablePrivateStorage: enablePrivateStorage);
+        enableDebugLog: enableDebugLog,
+        enablePrivateStorage: enablePrivateStorage);
     isChatHistoryEnabled = chatHistoryEnable;
     isPrivateStorageEnabled = enablePrivateStorage;
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);

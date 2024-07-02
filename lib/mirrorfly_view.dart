@@ -227,7 +227,6 @@ extension ExtensionMirrorflyView on MirrorFlyView {
 /// @property [width] The width of the profile view.
 /// @property [height] The height of the profile view.
 class ProfileViewPositioned {
-
   final int? left;
 
   final int? top;

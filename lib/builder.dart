@@ -38,7 +38,6 @@ class ChatBuilder {
   bool enableDebugLog;
 }
 
-
 /// `GroupConfig` is a class used to configure group chat functionality.
 ///
 /// These properties include flags to enable group creation and admin-only add/remove access,
@@ -111,15 +110,15 @@ extension GroupConfigParsing on GroupConfig? {
 /// @property enablePrivateStorage A flag to enable private Storage.
 
 class InitializeSDKBuilder {
-  InitializeSDKBuilder(
-      {this.storageFolderName,
-      required this.iOSContainerID,
-      required this.licenseKey,
-      this.enableMobileNumberLogin = false,
-      this.chatHistoryEnable,
-      this.enableDebugLog = false,
-      this.enablePrivateStorage = false,
-      });
+  InitializeSDKBuilder({
+    this.storageFolderName,
+    required this.iOSContainerID,
+    required this.licenseKey,
+    this.enableMobileNumberLogin = false,
+    this.chatHistoryEnable,
+    this.enableDebugLog = false,
+    this.enablePrivateStorage = false,
+  });
 
   String? storageFolderName;
   String iOSContainerID;
