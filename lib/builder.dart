@@ -1,14 +1,16 @@
-/// `ChatBuilder` is a class used to build a chat configuration.
+
+/// Initializes a new instance of the `ChatBuilder` class.
 ///
-/// @property domainBaseUrl The base URL for making API calls.
-/// @property storageFolderName The name of the local storage folder.
-/// @property iOSContainerID The ID of the iOS container.
-/// @property licenseKey The license key.
-/// @property enableMobileNumberLogin A flag to enable login via mobile number.
-/// @property isTrialLicenceKey A flag to indicate whether the license key is a trial key.
-/// @property chatHistoryEnable A flag to enable chat history.
-/// @property enableDebugLog A flag to enable debug logging.
+/// @param domainBaseUrl The base URL for making API calls.
+/// @param storageFolderName The name of the local storage folder (optional).
+/// @param iOSContainerID The ID of the iOS container.
+/// @param licenseKey The license key for authentication.
+/// @param enableMobileNumberLogin Determines if login via mobile number is enabled (default is false).
+/// @param isTrialLicenceKey Indicates if the provided license key is a trial key (default is true).
+/// @param chatHistoryEnable Determines if chat history should be enabled (optional).
+/// @param enableDebugLog Determines if debug logging is enabled (default is false).
 class ChatBuilder {
+
   ChatBuilder(
       {required this.domainBaseUrl,
       this.storageFolderName,
