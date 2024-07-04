@@ -1,21 +1,24 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
 import com.mirrorfly.mirrorfly_plugin.*
+import com.mirrorflysdk.api.ChatActionListener
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.utils.NameHelper
+import com.mirrorflysdk.flycall.call.joincall.JoinCallListener
 import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
+import com.mirrorflysdk.flycall.webrtc.*
 import com.mirrorflysdk.flycall.webrtc.api.*
+import com.mirrorflysdk.flycommons.Error
 import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.flycommons.exception.FlyException
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
 import org.json.JSONObject
-import com.mirrorflysdk.api.ChatActionListener
-import com.mirrorflysdk.flycall.webrtc.*
-import com.mirrorflysdk.flycommons.exception.FlyException
+import org.webrtc.VideoTrack
 
-class FlyCallMethods : MissedCallListener {
+class FlyCallMethods : MissedCallListener,JoinCallListener {
     val tag = "#FlutterCallEvents"
 //    var context : Context = MirrrflyFlyManager.getContext()
 
@@ -707,5 +710,92 @@ class FlyCallMethods : MissedCallListener {
         CallLogManager.uploadUnSyncedCallLogs()
         result.success(true)
     }
+
+    //#Meet Link Starts Here
+    fun createMeetLink(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.createMeetLink { isSuccess, throwable, data ->
+            if (isSuccess) {
+                val meetLink = data["data"]
+                result.success(meetLink)
+            } else {
+                result.error("500", throwable?.message.toString(), throwable)
+            }
+        }
+    }
+
+    fun getCallLink(call: MethodCall, result: MethodChannel.Result) {
+        result.success(CallManager.getCallLink())
+    }
+
+    fun joinCall(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.joinCall(object : JoinCallActionListener {
+            override fun onFailure(error: Error) {
+                result.error(error.code.toString(), error.description, error)
+            }
+
+            override fun onSuccess() {
+                result.success(true)
+            }
+        })
+    }
+
+    fun initializeMeet(call: MethodCall, result: MethodChannel.Result) {
+        if(!CallManager.isOnJoinCallViaLink()) {
+            CallManager.setupJoinCallViaLink()
+            CallManager.setJoinCallEventsListener(this)
+        }
+        startVideoCapture(call)
+        subscribeCallEvents(call,result)
+    }
+
+    private fun subscribeCallEvents(call: MethodCall, result: MethodChannel.Result) {
+        val callLink = call.argument<String>("callLink") ?: ""
+        val userName = call.argument<String>("userName") ?: ""
+        CallManager.subscribeCallEvents(callLink,userName,object : JoinCallActionListener {
+            override fun onFailure(error: Error) {
+               result.error(error.code.toString(), error.description, error)
+            }
+
+            override fun onSuccess() {
+                result.success(true)
+            }
+        })
+    }
+
+    private fun startVideoCapture(call: MethodCall) {
+        CallManager.startVideoCapture()
+//        result.success(true)
+    }
+
+    fun disposePreview(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.cleanUpJoinCallViaLink()
+        result.success(true)
+    }
+
+    fun getUserName(call: MethodCall, result: MethodChannel.Result) {
+        val userJid = call.argument<String>("userJid") ?: ""
+        result.success(CallManager.getUserName(userJid))
+    }
+
+    override fun onSubscribeSuccess() {
+        //enable join call UI button here
+    }
+
+    override fun onConnectedToSignalServer() {
+    }
+
+    override fun onError(error: Error) {
+        //show error message in ui
+    }
+
+    override fun onLocalTrack(videoTrack: VideoTrack?) {
+        videoTrack?.addSink(CallManager.getLocalProxyVideoSink())
+    }
+
+    override fun onUsersUpdated(usersList: List<String>) {
+        // update the users list in ui here
+    }
+
+    //#Meet Link Ends Here
 
 }
