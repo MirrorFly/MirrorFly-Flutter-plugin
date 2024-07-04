@@ -33,82 +33,137 @@ import 'model/notification_applaunch_details.dart';
 import 'model/profile_model.dart' as client;
 import 'model/topic_metadata.dart';
 
+/// A Error code class to categorize the error codes.
 class FlyErrorCode {
+
+  /// Error code for unhandled errors.
   static const unHandle = "1000";
 }
 
+/// A Error message class to categorize the error messages for the error codes.
 class FlyErrorMessage {
+
+  /// Error message for unhandled errors.
   static const unHandle = "Unexpected Error";
 }
 
-/// An implementation of UikitFlutterPlatform that uses method channels.
+/// A class to handle the platform specific methods and events.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
-  /// The method channel used to interact with the native platform.
-  ///
 
+  /// A Event channel to communicate chat related events with the native platform.
   MessageEventListeners? messageEventsListener;
+
+  /// A Event channel to communicate call related events with the native platform.
   CallEventListeners? callEventsListener;
+
+  /// A Event channel to communicate connection related events with the native platform.
   ConnectionEventListeners? connectionEventsListener;
+
+  /// A Event channel to communicate profile related events with the native platform.
   ProfileEventListeners? profileEventsListener;
+
+  /// A Event channel to communicate group related events with the native platform.
   GroupEventListeners? groupEventsListener;
 
+  /// A method channel to communicate chat related methods with the native platform.
   @visibleForTesting
   final mirrorFlyMethodChannel =
       const MethodChannel('contus.mirrorfly/flyChat');
+
+  /// A method channel to communicate call related methods with the native platform.
   @visibleForTesting
   final mirrorFlyCallMethodChannel =
       const MethodChannel('contus.mirrorfly/flyCall');
 
   //Event Channels
+  /// A event channel for message listening events.
   @visibleForTesting
   final messageOnReceivedChannel =
       const EventChannel('contus.mirrorfly/onMessageReceived');
+
+  /// A broadcast stream controller for message listening events.
   final StreamController<String> _messageOnReceivedStreamController =
       StreamController<String>.broadcast();
+
+  /// A event channel for message status update events.
   @visibleForTesting
   final messageStatusUpdatedChanel =
       const EventChannel('contus.mirrorfly/onMessageStatusUpdated');
+
+  /// A broadcast stream controller for message status update events.
   final StreamController<dynamic> messageStatusUpdateStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for media status update events.
   @visibleForTesting
   final mediaStatusUpdatedChannel =
       const EventChannel('contus.mirrorfly/onMediaStatusUpdated');
+
+  /// A broadcast stream controller for media status update events.
   final StreamController<dynamic> mediaStatusUpdatedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for upload/download progress update events.
   @visibleForTesting
   final uploadDownloadProgressChangedChannel =
       const EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
+
+  /// A broadcast stream controller for upload/download progress update events.
   final StreamController<dynamic>
       uploadDownloadProgressChangedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for group profile fetched events.
   @visibleForTesting
   final onGroupProfileFetchedChannel =
       const EventChannel('contus.mirrorfly/onGroupProfileFetched');
+
+  /// A broadcast stream controller for group profile fetched events.
   final StreamController<dynamic> onGroupProfileFetchedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for new group created events.
   @visibleForTesting
   final onNewGroupCreatedChannel =
       const EventChannel('contus.mirrorfly/onNewGroupCreated');
+
+  /// A broadcast stream controller for new group created events.
   final StreamController<dynamic> onNewGroupCreatedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for group profile updated events.
   @visibleForTesting
   final onGroupProfileUpdatedChannel =
       const EventChannel('contus.mirrorfly/onGroupProfileUpdated');
+
+  /// A broadcast stream controller for group profile updated events.
   final StreamController<dynamic> onGroupProfileUpdatedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for new member added to group events.
   @visibleForTesting
   final onNewMemberAddedToGroupChannel =
       const EventChannel('contus.mirrorfly/onNewMemberAddedToGroup');
+
+  /// A broadcast stream controller for new member added to group events.
   final StreamController<dynamic> onNewMemberAddedToGroupStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for member removed from group events.
   @visibleForTesting
   final onMemberRemovedFromGroupChannel =
       const EventChannel('contus.mirrorfly/onMemberRemovedFromGroup');
+
+  /// A broadcast stream controller for member removed from group events.
   final StreamController<dynamic> onMemberRemovedFromGroupStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for fetching group members completed events.
   @visibleForTesting
   final onFetchingGroupMembersCompletedChannel =
       const EventChannel('contus.mirrorfly/onFetchingGroupMembersCompleted');
+
+  /// A broadcast stream controller for fetching group members completed events.
   final StreamController<dynamic>
       onFetchingGroupMembersCompletedStreamController =
       StreamController<dynamic>.broadcast();
@@ -119,138 +174,241 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   // @visibleForTesting
   // final onFetchingGroupListCompletedChannel = const EventChannel('contus.mirrorfly/onFetchingGroupListCompleted');
   // final StreamController<dynamic> onFetchingGroupListCompletedStreamController = StreamController<dynamic>.broadcast();
+
+  /// A event channel for member made as admin events.
   @visibleForTesting
   final onMemberMadeAsAdminChannel =
       const EventChannel('contus.mirrorfly/onMemberMadeAsAdmin');
+
+  /// A broadcast stream controller for member made as admin events.
   final StreamController<dynamic> onMemberMadeAsAdminStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for member removed as admin events.
   @visibleForTesting
   final onMemberRemovedAsAdminChannel =
       const EventChannel('contus.mirrorfly/onMemberRemovedAsAdmin');
+
+  /// A broadcast stream controller for member removed as admin events.
   final StreamController<dynamic> onMemberRemovedAsAdminStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for left from group events.
   @visibleForTesting
   final onLeftFromGroupChannel =
       const EventChannel('contus.mirrorfly/onLeftFromGroup');
+
+  /// A broadcast stream controller for left from group events.
   final StreamController<dynamic> onLeftFromGroupStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for group notification message events.
   @visibleForTesting
   final onGroupNotificationMessageChannel =
       const EventChannel('contus.mirrorfly/onGroupNotificationMessage');
+
+  /// A broadcast stream controller for group notification message events.
   final StreamController<dynamic> onGroupNotificationMessageStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for show or update or cancel notification events.
   @visibleForTesting
   final showOrUpdateOrCancelNotificationChannel =
       const EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
+
+  /// A broadcast stream controller for show or update or cancel notification events.
   final StreamController<String>
       showOrUpdateOrCancelNotificationStreamController =
       StreamController<String>.broadcast();
+
+  /// A event channel for group deleted locally events.
   @visibleForTesting
   final onGroupDeletedLocallyChannel =
       const EventChannel('contus.mirrorfly/onGroupDeletedLocally');
+
+  /// A broadcast stream controller for group deleted locally events.
   final StreamController<dynamic> onGroupDeletedLocallyStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for blocked this user events.
   @visibleForTesting
   final blockedThisUserChannel =
       const EventChannel('contus.mirrorfly/blockedThisUser');
+
+  /// A broadcast stream controller for blocked this user events.
   final StreamController<dynamic> blockedThisUserStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for my profile updated events.
   @visibleForTesting
   final myProfileUpdatedChannel =
       const EventChannel('contus.mirrorfly/myProfileUpdated');
+
+  /// A broadcast stream controller for my profile updated events.
   final StreamController<dynamic> myProfileUpdatedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for on admin blocked other user events.
   @visibleForTesting
   final onAdminBlockedOtherUserChannel =
       const EventChannel('contus.mirrorfly/onAdminBlockedOtherUser');
+
+  /// A broadcast stream controller for on admin blocked other user events.
   final StreamController<dynamic> onAdminBlockedOtherUserStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for on admin blocked user events.
   @visibleForTesting
   final onAdminBlockedUserChannel =
       const EventChannel('contus.mirrorfly/onAdminBlockedUser');
+
+  /// A broadcast stream controller for on admin blocked user events.
   final StreamController<dynamic> onAdminBlockedUserStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for on contact sync complete events.
   @visibleForTesting
   final onContactSyncCompleteChannel =
       const EventChannel('contus.mirrorfly/onContactSyncComplete');
+
+  /// A broadcast stream controller for on contact sync complete events.
   final StreamController<dynamic> onContactSyncCompleteStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for on logged out events.
   @visibleForTesting
   final onLoggedOutChannel = const EventChannel('contus.mirrorfly/onLoggedOut');
+
+  /// A broadcast stream controller for on logged out events.
   final StreamController<dynamic> onLoggedOutStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for unblocked this user events.
   @visibleForTesting
   final unblockedThisUserChannel =
       const EventChannel('contus.mirrorfly/unblockedThisUser');
+
+  /// A broadcast stream controller for unblocked this user events.
   final StreamController<dynamic> unblockedThisUserStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for user blocked me events.
   @visibleForTesting
   final userBlockedMeChannel =
       const EventChannel('contus.mirrorfly/userBlockedMe');
+
+  /// A broadcast stream controller for user blocked me events.
   final StreamController<dynamic> userBlockedMeStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for user came online events.
   @visibleForTesting
   final userCameOnlineChannel =
       const EventChannel('contus.mirrorfly/userCameOnline');
+
+  /// A broadcast stream controller for user came online events.
   final StreamController<dynamic> userCameOnlineStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for user deleted his profile events.
   @visibleForTesting
   final userDeletedHisProfileChannel =
       const EventChannel('contus.mirrorfly/userDeletedHisProfile');
+
+  /// A broadcast stream controller for user deleted his profile events.
   final StreamController<dynamic> userDeletedHisProfileStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for user profile fetched events.
   @visibleForTesting
   final userProfileFetchedChannel =
       const EventChannel('contus.mirrorfly/userProfileFetched');
+
+  /// A broadcast stream controller for user profile fetched events.
   final StreamController<dynamic> userProfileFetchedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for user unblocked me events.
   @visibleForTesting
   final userUnBlockedMeChannel =
       const EventChannel('contus.mirrorfly/userUnBlockedMe');
+
+  /// A broadcast stream controller for user unblocked me events.
   final StreamController<dynamic> userUnBlockedMeStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for user updated his profile events.
   @visibleForTesting
   final userUpdatedHisProfileChannel =
       const EventChannel('contus.mirrorfly/userUpdatedHisProfile');
+
+  /// A broadcast stream controller for user updated his profile events.
   final StreamController<dynamic> userUpdatedHisProfileStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for user went offline events.
   @visibleForTesting
   final userWentOfflineChannel =
       const EventChannel('contus.mirrorfly/userWentOffline');
+
+  /// A broadcast stream controller for user went offline events.
   final StreamController<dynamic> userWentOfflineStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for users I blocked list fetched events.
   @visibleForTesting
   final usersIBlockedListFetchedChannel =
       const EventChannel('contus.mirrorfly/usersIBlockedListFetched');
+
+  /// A broadcast stream controller for users I blocked list fetched events.
   final StreamController<dynamic> usersIBlockedListFetchedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for users profiles fetched events.
   @visibleForTesting
   final usersProfilesFetchedChannel =
       const EventChannel('contus.mirrorfly/usersProfilesFetched');
+
+  /// A broadcast stream controller for users profiles fetched events.
   final StreamController<dynamic> usersProfilesFetchedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for users who blocked me list fetched events.
   @visibleForTesting
   final usersWhoBlockedMeListFetchedChannel =
       const EventChannel('contus.mirrorfly/usersWhoBlockedMeListFetched');
+
+  /// A broadcast stream controller for users who blocked me list fetched events.
   final StreamController<dynamic> usersWhoBlockedMeListFetchedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for connected events.
   @visibleForTesting
   final onConnectedChannel = const EventChannel('contus.mirrorfly/onConnected');
+
+  /// A broadcast stream controller for connected events.
   final StreamController<dynamic> onConnectedStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for disconnected events.
   @visibleForTesting
   final onDisconnectedChannel =
       const EventChannel('contus.mirrorfly/onDisconnected');
+
+  /// A broadcast stream controller for disconnected events.
   final StreamController<dynamic> onDisconnectedStreamController =
       StreamController<dynamic>.broadcast();
 
   /*@visibleForTesting
   final onConnectionNotAuthorizedChannel =
       const EventChannel('contus.mirrorfly/onConnectionNotAuthorized');*/
+
+  /// A event channel for connection failed events.
   @visibleForTesting
   final onConnectionFailedChannel =
       const EventChannel('contus.mirrorfly/onConnectionFailed');
+
+  /// A broadcast stream controller for connection failed events.
   final StreamController<dynamic> onConnectionFailedStreamController =
       StreamController<dynamic>.broadcast();
 
@@ -265,25 +423,40 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   //     const EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
   // final StreamController<dynamic> onWebChatPasswordChangedStreamController =
   //     StreamController<dynamic>.broadcast();
+
+  /// A event channel for set typing status events.
   @visibleForTesting
   final setTypingStatusChannel =
       const EventChannel('contus.mirrorfly/setTypingStatus');
+
+  /// A broadcast stream controller for set typing status events.
   final StreamController<dynamic> setTypingStatusStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for chat typing status events.
   @visibleForTesting
   final onChatTypingStatusChannel =
       const EventChannel('contus.mirrorfly/onChatTypingStatus');
+
+  /// A broadcast stream controller for chat typing status events.
   final StreamController<dynamic> onChatTypingStatusStreamController =
       StreamController<dynamic>.broadcast();
+
+  /// A event channel for group typing status events.
   @visibleForTesting
   final onGroupTypingStatusChannel =
       const EventChannel('contus.mirrorfly/onGroupTypingStatus');
+
+  /// A broadcast stream controller for group typing status events.
   final StreamController<dynamic> onGroupTypingStatusStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for message edited events.
   @visibleForTesting
   final messageOnEditedChannel =
       const EventChannel('contus.mirrorfly/onMessageEdited');
+
+  /// A broadcast stream controller for message edited events.
   final StreamController<String> _messageOnEditedStreamController =
       StreamController<String>.broadcast();
 
@@ -302,81 +475,120 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   // final onCallReceivingChannel = const EventChannel('contus.mirrorfly/onCallReceiving');
   // final StreamController<dynamic> onCallReceivingStreamController = StreamController<dynamic>.broadcast();
 
+  /// A event channel for local video track added events.
   @visibleForTesting
   final onLocalVideoTrackAddedChannel =
       const EventChannel('contus.mirrorfly/onLocalVideoTrackAdded');
+
+  /// A broadcast stream controller for local video track added events.
   final StreamController<dynamic> onLocalVideoTrackAddedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for remote video track added events.
   @visibleForTesting
   final onRemoteVideoTrackAddedChannel =
       const EventChannel('contus.mirrorfly/onRemoteVideoTrackAdded');
+
+  /// A broadcast stream controller for remote video track added events.
   final StreamController<dynamic> onRemoteVideoTrackAddedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for track added events.
   @visibleForTesting
   final onTrackAddedChannel =
       const EventChannel('contus.mirrorfly/onTrackAdded');
+
+  /// A broadcast stream controller for track added events.
   final StreamController<dynamic> onTrackAddedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for call status updated events.
   @visibleForTesting
   final onCallStatusUpdatedChannel =
       const EventChannel('contus.mirrorfly/onCallStatusUpdated');
+
+  /// A broadcast stream controller for call status updated events.
   final StreamController<dynamic> onCallStatusUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for call Action events.
   @visibleForTesting
   final onCallActionChannel =
       const EventChannel('contus.mirrorfly/onCallAction');
+
+  /// A broadcast stream controller for call Action events.
   final StreamController<dynamic> onCallActionStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for on mute status updated events.
   @visibleForTesting
   final onMuteStatusUpdatedChannel =
       const EventChannel('contus.mirrorfly/onMuteStatusUpdated');
+
+  /// A broadcast stream controller for on mute status updated events.
   final StreamController<dynamic> onMuteStatusUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for on user speaking events.
   @visibleForTesting
   final onUserSpeakingChannel =
       const EventChannel('contus.mirrorfly/onUserSpeaking');
+
+  /// A broadcast stream controller for on user speaking events.
   final StreamController<dynamic> onUserSpeakingStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for on user stopped speaking events.
   @visibleForTesting
   final onUserStoppedSpeakingChannel =
       const EventChannel('contus.mirrorfly/onUserStoppedSpeaking');
+
+  /// A broadcast stream controller for on user stopped speaking events.
   final StreamController<dynamic> onUserStoppedSpeakingStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for missed call events.
   @visibleForTesting
   final onMissedCallChannel =
       const EventChannel('contus.mirrorfly/onMissedCall');
+
+  /// A broadcast stream controller for missed call events.
   final StreamController<dynamic> onMissedCallStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for available features updated events.
   @visibleForTesting
   final onAvailableFeaturesUpdatedChannel =
       const EventChannel('contus.mirrorfly/onAvailableFeaturesUpdated');
+
+  /// A broadcast stream controller for available features updated events.
   final StreamController<dynamic> onAvailableFeaturesUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for call logs updated events.
   @visibleForTesting
   final onCallLogsUpdatedChannel =
       const EventChannel('contus.mirrorfly/onCallLog');
+
+  /// A broadcast stream controller for call logs updated events.
   final StreamController<dynamic> onCallLogsUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for call log deleted events.
   @visibleForTesting
   final onCallLogDeletedChannel =
       const EventChannel('contus.mirrorfly/onCallLogDeleted');
+
+  /// A broadcast stream controller for call log deleted events.
   final StreamController<dynamic> onCallLogDeletedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for call logs cleared events.
   @visibleForTesting
   final onClearAllCallLogChannel =
       const EventChannel('contus.mirrorfly/clearAllCallLog');
+
+  /// A broadcast stream controller for call logs cleared events.
   final StreamController<dynamic> onClearAllCallLogStreamController =
       StreamController<dynamic>.broadcast();
 
@@ -974,6 +1186,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     await mirrorFlyMethodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }*/
+
+  /// A variable to store the enableDebugLog value, default value is false.
   static bool enableDebugLog = false;
 
   @override
@@ -1051,22 +1265,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $e");
       callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
           FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
-    }
-  }
-
-  @override
-  Future<String?> getSendData() async {
-    String? response;
-    try {
-      response = await mirrorFlyMethodChannel.invokeMethod<String>('sendData');
-      LogMessage.d("sendData Result ", " $response");
-      return response;
-    } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception =", " $e");
-      rethrow;
-    } on Exception catch (error) {
-      LogMessage.d("Exception ", " $error");
-      rethrow;
     }
   }
 
@@ -1709,7 +1907,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   setCustomValue(String messageId, String key, String value) async {
     try {
       await mirrorFlyMethodChannel.invokeMethod('setCustomValue',
@@ -1830,7 +2028,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
   Future<void> clearAllConversation(
@@ -2773,7 +2971,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+ /* @override
   Future<String?> imagePath(String imgurl) async {
     try {
       final result = await mirrorFlyMethodChannel
@@ -2784,7 +2982,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("er", "$e");
       rethrow;
     }
-  }
+  }*/
 
   /*@override
   Future<dynamic> saveProfile(String name, String email) async {
@@ -2802,7 +3000,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }*/
 
-  @override
+/*  @override
   Future<String> sentFileMessage(String? file, String jid) async {
     String? res;
     try {
@@ -2813,7 +3011,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("er", "$e");
       return convertChatMessageJsonFromString(res);
     }
-  }
+  }*/
 
   @override
   Future<void> getRecentChatList(
@@ -3813,7 +4011,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
+  /*@override
   Future<String?> showCustomTones() async {
     String? response;
     try {
@@ -3934,7 +4132,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }
+  }*/
 
   @override
   Future<void> updateFavouriteStatus(

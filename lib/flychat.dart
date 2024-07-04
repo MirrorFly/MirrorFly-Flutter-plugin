@@ -331,7 +331,7 @@ class Mirrorfly {
         .setLastSeenVisibility(enable, flyCallBack);
   }
 
-  /// Checks whether the busy status feature is enabled in the Mirrorfly chat platform.
+  /// Checks whether the busy status feature is enabled for the current user.
   ///
   /// Returns a [Future] that resolves to a boolean value indicating whether
   /// the busy status feature is enabled. If the feature is enabled, the future
@@ -346,6 +346,7 @@ class Mirrorfly {
   ///   print('Unable to determine busy status feature status.');
   /// }
   /// ```
+  ///
   static Future<bool> isBusyStatusEnabled() {
     return FlyChatFlutterPlatform.instance.isBusyStatusEnabled();
   }

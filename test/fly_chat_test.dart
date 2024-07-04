@@ -61,11 +61,11 @@ class MockFlyChatFlutterPlatform
   //  implement blockedThisUser
   Stream get blockedThisUser => throw UnimplementedError();
 
-  @override
+  /*@override
   cancelBackup() {
     //  implement cancelBackup
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   cancelMediaUploadOrDownload(String messageId) {
@@ -73,11 +73,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   cancelRestore() {
     //  implement cancelRestore
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<bool> cancelVideoCallSwitch() {
@@ -91,11 +91,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+ /* @override
   clearAllSDKData() {
     //  implement clearAllSDKData
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<void> clearChat(String jid, String chatType, bool clearExceptStarred,
@@ -192,12 +192,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future deleteMessages(
       String jid, List<String> messageIds, bool isDeleteForEveryOne) {
     //  implement deleteMessages
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<void> deleteMessagesForEveryone(
@@ -387,11 +387,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future<String?> getCustomValue(String messageId, String key) {
     //  implement getCustomValue
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<String?> getDefaultNotificationUri() {
@@ -646,7 +646,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+ /* @override
   Future<String?> getRingtoneName() {
     //  implement getRingtoneName
     throw UnimplementedError();
@@ -656,13 +656,8 @@ class MockFlyChatFlutterPlatform
   getRoster() {
     //  implement getRoster
     throw UnimplementedError();
-  }
+  }*/
 
-  @override
-  Future<String?> getSendData() {
-    //  implement getSendData
-    throw UnimplementedError();
-  }
 
   @override
   Future<void> getTopics(
@@ -743,11 +738,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future getWebLoginDetails() {
     //  implement getWebLoginDetails
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<void> handleReceivedMessage(
@@ -768,7 +763,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+ /* @override
   Future<bool?> iOSFileExist(String filePath) {
     //  implement iOSFileExist
     throw UnimplementedError();
@@ -778,7 +773,7 @@ class MockFlyChatFlutterPlatform
   Future<String?> imagePath(String imgurl) {
     //  implement imagePath
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   init(ChatBuilder builder) {
@@ -831,11 +826,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   inviteUserViaSMS(String mobileNo, String message) {
     //  implement inviteUserViaSMS
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<void> inviteUsersToOngoingCall(
@@ -923,7 +918,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future listenGroupChatEvents() {
     //  implement listenGroupChatEvents
     throw UnimplementedError();
@@ -933,7 +928,7 @@ class MockFlyChatFlutterPlatform
   Future listenMessageEvents() {
     //  implement listenMessageEvents
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<void> loadMessages(Function(FlyResponse response) callback) {
@@ -953,12 +948,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future<void> loginWebChatViaQRCode(
       String barcode, Function(FlyResponse response)? callback) {
     //  implement loginWebChatViaQRCode
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<void> logoutOfChatSDK(Function(FlyResponse response)? callback) {
@@ -966,11 +961,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future<bool?> logoutWebUser(List<String> logins) {
     //  implement logoutWebUser
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<void> makeAdmin(String groupjid, String userjid,
@@ -1263,11 +1258,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   removeCustomValue(String messageId, String key) {
     //  implement removeCustomValue
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future<void> removeGroupProfileImage(
@@ -1458,7 +1453,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future<String?> sentFileMessage(String? file, String jid) {
     //  implement sentFileMessage
     throw UnimplementedError();
@@ -1468,7 +1463,7 @@ class MockFlyChatFlutterPlatform
   setCustomValue(String messageId, String key, String value) {
     //  implement setCustomValue
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future setDefaultNotificationSound() {
@@ -1548,21 +1543,21 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future<String?> showCustomTones() {
     //  implement showCustomTones
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   //  implement showOrUpdateOrCancelNotification
   Stream get showOrUpdateOrCancelNotification => throw UnimplementedError();
 
-  @override
+  /*@override
   startBackup() {
     //  implement startBackup
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   Future switchCamera() {
@@ -1738,11 +1733,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
-  @override
+  /*@override
   Future<bool?> webLoginDetailsCleared() {
     //  implement webLoginDetailsCleared
     throw UnimplementedError();
-  }
+  }*/
 
   @override
   setMessageEventListener(MessageEventListeners messageEventListeners) {
