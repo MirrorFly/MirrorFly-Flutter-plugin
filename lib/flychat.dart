@@ -5,12 +5,21 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'event_handlers.dart';
 import 'fly_chat_platform_interface.dart';
 
+/// The main class for the MirrorFly Flutter plugin.
+/// This class provides static methods to interact with the MirrorFly platform.
+/// It serves as the entry point for the plugin and provides methods to initialize the SDK,
+/// send messages, and perform other operations.
+/// The class is implemented as a singleton, and its methods are accessed through static calls.
+/// To use the plugin, import the `mirrorfly_plugin` package and call the methods on the `Mirrorfly` class.
 class Mirrorfly {
   Mirrorfly._();
 
+  /// isTrialLicence to check the trial or live licence
   @Deprecated(
       'This method is deprecated. Please refrain from using it, as the functionality has been internally managed within the plugin')
   static var isTrialLicence = true;
+
+  /// isChatHistoryEnabled to check the chat history is enabled or not
   static var isChatHistoryEnabled = false;
 
   /// isPrivateStorageEnabled to check the private storage is enabled or not
@@ -61,14 +70,14 @@ class Mirrorfly {
   /// It is an asynchronous operation that returns a [Future] that completes with [void] once the initialization is complete.
   ///
   /// Parameters:
-  ///   - [licenseKey]: The license key used for SDK initialization. Must not be null.
-  ///   - [iOSContainerID]: The iOSContainerID represents App Group ID for iOS app sharing data between app extensions and containing apps. Must not be null for iOS.
-  ///   - [storageFolderName]: The name of the storage folder to be used by the SDK. Defaults to "Mirrorfly".
-  ///   - [chatHistoryEnable]: Flag indicating whether chat history should be enabled. Defaults to false.
-  ///   - [enableMobileNumberLogin]: Flag indicating whether mobile number login should be enabled. Defaults to true.
-  ///   - [enableDebugLog]: Flag indicating whether debug logs should be enabled. Defaults to false.
-  ///   - [enablePrivateStorage]: Flag indicating whether private storage should be enable. Defaults to false.
-  ///   - [flyCallback]: A callback function to handle the response from the SDK initialization. Must not be null.
+  ///   - [licenseKey] : The license key used for SDK initialization. Must not be null.
+  ///   - [iOSContainerID] : The iOSContainerID represents App Group ID for iOS app sharing data between app extensions and containing apps. Must not be null for iOS.
+  ///   - [storageFolderName] : The name of the storage folder to be used by the SDK. Defaults to "Mirrorfly".
+  ///   - [chatHistoryEnable] : Flag indicating whether chat history should be enabled. Defaults to false.
+  ///   - [enableMobileNumberLogin] : Flag indicating whether mobile number login should be enabled. Defaults to true.
+  ///   - [enableDebugLog] : Flag indicating whether debug logs should be enabled. Defaults to false.
+  ///   - [enablePrivateStorage] : Flag indicating whether private storage should be enable. Defaults to false.
+  ///   - [flyCallback] : A callback function to handle the response from the SDK initialization. Must not be null.
   ///
   /// Returns:
   ///   A [Future] that completes with [void] once the initialization is complete.
@@ -157,6 +166,14 @@ class Mirrorfly {
         .syncContacts(isFirstTime, flyCallBack);
   }
 
+  /// Checks the current state of contact synchronization.
+///
+/// This method queries the current state of contact synchronization with the Mirrorfly platform.
+/// It returns a [Future<bool>] indicating the synchronization state.
+///
+/// Returns:
+/// - `true` if contacts are currently being synchronized.
+/// - `false` if contacts are not currently being synchronized.
   static Future<bool> contactSyncStateValue() {
     return FlyChatFlutterPlatform.instance.contactSyncStateValue();
   }
@@ -164,6 +181,17 @@ class Mirrorfly {
   /*static Future<dynamic> contactSyncState() {
     return FlyChatFlutterPlatform.instance.contactSyncState();
   }*/
+
+  /// Revokes the contact synchronization process.
+  ///
+  /// This method is used to revoke or cancel the ongoing contact synchronization process with the Mirrorfly platform.
+  /// It can be useful in scenarios where the app needs to stop the synchronization process due to user action or any other condition.
+  ///
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
+  /// Throws:
+  ///   - [PlatformException] if there is an issue with revoking the contact sync process.
 
   static Future<void> revokeContactSync(
       {required Function(FlyResponse response) flyCallBack}) {
@@ -301,6 +329,7 @@ class Mirrorfly {
         .enableDisableBusyStatus(enable, flyCallBack);
   }
 
+  /// Retrieves the last seen status of the current user.
   @Deprecated('Instead of use Mirrorfly.setLastSeenVisibility()')
   static Future<bool?> enableDisableHideLastSeen(bool enable) async {
     return FlyChatFlutterPlatform.instance.enableDisableHideLastSeen(enable);
@@ -351,6 +380,30 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.isBusyStatusEnabled();
   }
 
+  /// Deletes a profile status.
+///
+/// This method asynchronously deletes a profile status identified by [id], [status], and [isCurrentStatus].
+/// Parameters:
+/// The [id] parameter specifies the unique identifier of the status to be deleted.
+/// The [status] parameter specifies the status message to be deleted.
+/// The [isCurrentStatus] parameter indicates whether the status to be deleted is the current status.
+///
+/// Returns:
+///   A [Future<bool?>] that completes with `true` if the deletion was successful, `false` if unsuccessful, or `null` if an error occurred.
+///
+/// Example usage:
+/// ```dart
+/// bool? isDeleted = await Mirrorfly.deleteProfileStatus(
+///   id: "statusId",
+///   status: "Busy",
+///   isCurrentStatus: true,
+/// );
+/// if (isDeleted == true) {
+///   print("Status deleted successfully");
+/// } else {
+///   print("Failed to delete status");
+/// }
+/// ```
   static Future<bool?> deleteProfileStatus(
       {required String id,
       required String status,
@@ -359,6 +412,31 @@ class Mirrorfly {
         .deleteProfileStatus(id, status, isCurrentStatus);
   }
 
+  /// Deletes a busy status.
+///
+/// This method asynchronously deletes a busy status identified by [id], [status], and [isCurrentStatus].
+/// Parameters:
+/// The [id] parameter specifies the unique identifier of the busy status to be deleted.
+/// The [status] parameter specifies the busy status message to be deleted.
+/// The [isCurrentStatus] parameter indicates whether the busy status to be deleted is the current status.
+///
+/// Returns:
+///   A [Future<bool?>] that completes with `true` if the deletion was successful, `false` if unsuccessful, or `null` if an error occurred.
+///
+/// Example usage:
+/// ```dart
+/// bool? isDeleted = await Mirrorfly.deleteBusyStatus(
+///   id: "busyStatusId",
+///   status: "In a meeting",
+  ///   isCurrentStatus: true,
+  ///   );
+  ///   if (isDeleted == true) {
+  ///   print("Busy status deleted successfully");
+  ///   } else {
+  ///   print("Failed to delete busy status");
+  ///   }
+  ///   ```
+  ///
   static Future<bool?> deleteBusyStatus(
       {required String id,
       required String status,
@@ -447,6 +525,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.doesFetchingMembersListFromServedRequired(groupJid);
   }*/
 
+  /// Checks whether the last seen status is hidden from other users.
   @Deprecated('Instead of use Mirrorfly.isLastSeenVisible()')
   static Future<bool?> isHideLastSeenEnabled() {
     return FlyChatFlutterPlatform.instance.isHideLastSeenEnabled();
@@ -553,6 +632,7 @@ class Mirrorfly {
         .updateRecentChatPinStatus(jid, pinStatus);
   }
 
+  /// Deletes recent chats for the specified JID.
   @Deprecated('Instead of use Mirrorfly.deleteRecentChats()')
   static deleteRecentChat(String jid) {
     return FlyChatFlutterPlatform.instance.deleteRecentChat(jid, null);
@@ -562,6 +642,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.setTypingStatusListener();
   }*/
 
+  /// Checks if a chat is unarchived based on their JID.
   @Deprecated('Instead of use Mirrorfly.isChatUnArchived(jid: ' ')')
   static Future<bool?> isUserUnArchived(String jid) {
     return FlyChatFlutterPlatform.instance.isUserUnArchived(jid);
@@ -716,6 +797,7 @@ class Mirrorfly {
         .updateFcmToken(firebaseToken, flyCallBack);
   }
 
+  /// Checks if a chat is muted for the given JID.
   @Deprecated('Instead of use Mirrorfly.isChatMuted()')
   static Future<bool?> isMuted(String jid) {
     return FlyChatFlutterPlatform.instance.isMuted(jid);
@@ -801,6 +883,7 @@ class Mirrorfly {
         .enableDisableArchivedSettings(enable, flyCallBack);
   }
 
+  /// Provides functionality to set the archived status of a chat.
   @Deprecated('Instead of use Mirrorfly.setChatArchived()')
   static Future<bool?> updateArchiveUnArchiveChat(
       String jid, bool isArchived) async {
@@ -851,12 +934,13 @@ class Mirrorfly {
         .getUnreadMessageCountExceptMutedChat();
   }
 
+  /// Retrieves the count of recent chats that are pinned.
   @Deprecated('Instead of use Mirrorfly.getRecentChatPinnedCount()')
   static Future<int?> recentChatPinnedCount() {
     return FlyChatFlutterPlatform.instance.recentChatPinnedCount();
   }
 
-  // Retrieves the count of recent chats that are pinned.
+  /// Retrieves the count of recent chats that are pinned.
   ///
   /// Returns a [Future] that completes with an [int] representing the count of recent chats that are pinned.
   ///
@@ -1049,6 +1133,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.authToken();
   }
 
+  /// Provides functionality to register the user to the Mirrorfly platform.
   @Deprecated('Instead of use Mirrorfly.login()')
   static Future<void> registerUser(
       {required String userIdentifier,
@@ -1106,6 +1191,7 @@ class Mirrorfly {
         callback: flyCallback);
   }
 
+  /// This method is used to refresh the Auth Token.
   @Deprecated('This method is deprecated. Please refrain from using it')
   static Future<String?> verifyToken(String userName, String token) {
     return FlyChatFlutterPlatform.instance.verifyToken(userName, token);
@@ -1132,6 +1218,21 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getJid(username);
   }
 
+
+  /// Sends a text message to a specified JID.
+  ///
+  /// This method sends a text message to the user or group identified by the [jid].
+  /// The [message] parameter contains the text of the message to be sent.
+  /// The [replyMessageId] parameter is optional and specifies the ID of the message being replied to, if any.
+  ///
+  /// Parameters:
+  ///   - [jid]: The JID of the recipient.
+  ///   - [message]: The text message to send.
+  ///   - [replyMessageId]: The ID of the message being replied to (optional).
+  ///
+  /// Returns a [Future<String>] containing the ID of the sent message.
+  ///
+  /// Throws an [ArgumentError] if [jid] or [message] is null.
   @Deprecated(
       'Instead of use Mirrorfly.sendMessage(messageParams: MessageParams.text())')
   static Future<String> sendTextMessage(
@@ -1141,6 +1242,21 @@ class Mirrorfly {
         .sendTextMessage(message, jid, replyMessageId, topicId: topicId);
   }
 
+  /// Sends a location message to a specified JID.
+  ///
+  /// This method sends a location message, including latitude and longitude, to the user or group identified by the [jid].
+  /// The [latitude] and [longitude] parameters specify the location's coordinates.
+  /// The [replyMessageId] parameter is optional and specifies the ID of the message being replied to, if any.
+  ///
+  /// Parameters:
+  ///   - [jid]: The JID of the recipient.
+  ///   - [latitude]: The latitude of the location.
+  ///   - [longitude]: The longitude of the location.
+  ///   - [replyMessageId]: The ID of the message being replied to (optional).
+  ///
+  /// Returns a [Future<String>] containing the ID of the sent message.
+  ///
+  /// Throws an [ArgumentError] if [jid], [latitude], or [longitude] is null.
   @Deprecated(
       'Instead of use Mirrorfly.sendMessage(messageParams: MessageParams.location())')
   static Future<String> sendLocationMessage(
@@ -1151,6 +1267,20 @@ class Mirrorfly {
         topicId: topicId);
   }
 
+  /// Sends an image message to a specified JID.
+  ///
+  /// This method sends an image message to the user or group identified by the [jid].
+  /// The [imagePath] parameter specifies the local path of the image to be sent.
+  /// The [replyMessageId] parameter is optional and specifies the ID of the message being replied to, if any.
+  ///
+  /// Parameters:
+  ///   - [jid]: The JID of the recipient.
+  ///   - [imagePath]: The local path of the image.
+  ///   - [replyMessageId]: The ID of the message being replied to (optional).
+  ///
+  /// Returns a [Future<String>] containing the ID of the sent message.
+  ///
+  /// Throws an [ArgumentError] if [jid] or [imagePath] is null.
   @Deprecated(
       'Instead of use Mirrorfly.sendMessage(messageParams: MessageParams.image())')
   static Future<String> sendImageMessage(
@@ -1161,6 +1291,13 @@ class Mirrorfly {
         imageFileUrl: imageFileUrl, topicId: topicId);
   }
 
+  /// Sends a video message to a specified JID.
+  ///
+  /// This method allows you to send a video message to a user or group identified by the [jid].
+  /// The [filePath] parameter specifies the local path of the video file to be sent.
+  /// The [caption] parameter allows you to add a text caption to the video message (optional).
+  /// The [replyMessageID] parameter is used if the message is a reply to a previous message (optional).
+  /// Additional parameters such as [imageFileUrl] and [topicId] can be used for further customization (optional).
   @Deprecated(
       'Instead of use Mirrorfly.sendMessage(messageParams: MessageParams.video())')
   static Future<String> sendVideoMessage(
@@ -1177,6 +1314,13 @@ class Mirrorfly {
         topicId: topicId);
   }
 
+  /// Sends a document message to a specified JID.
+  ///
+  /// This method allows you to send a document message to a user or group identified by the [jid].
+  /// The [documentPath] parameter specifies the local path of the document to be sent.
+  /// The [replyMessageId] parameter is used if the message is a reply to a previous message (optional).
+  /// Additional parameters such as [documentName] and [mimeType] can be used for further customization (optional).
+  ///
   @Deprecated(
       'Instead of use Mirrorfly.sendMessage(messageParams: MessageParams.document())')
   static Future<String> sendDocumentMessage(
@@ -1187,6 +1331,14 @@ class Mirrorfly {
         fileUrl: fileUrl, topicId: topicId);
   }
 
+  /// Sends an audio message to a specified JID.
+  ///
+  /// This method allows you to send an audio message to a user or group identified by the [jid].
+  /// The [filePath] parameter specifies the local path of the audio file to be sent.
+  /// The [isRecorded] parameter indicates whether the audio message is a recorded message (true) or not (false).
+  /// The [duration] parameter specifies the duration of the audio message in seconds.
+  /// The [replyMessageId] parameter is used if the message is a reply to a previous message (optional).
+  /// Additional parameters such as [audioFileUrl] and [topicId] can be used for further customization (optional).
   @Deprecated(
       'Instead of use Mirrorfly.sendMessage(messageParams: MessageParams.audio())')
   static Future<String> sendAudioMessage(String jid, String filePath,
@@ -1197,6 +1349,14 @@ class Mirrorfly {
         audioFileUrl: audioFileUrl, topicId: topicId);
   }
 
+  /// Sends a contact message to a specified JID.
+  ///
+  /// This method allows you to send a contact message to a user or group identified by the [jid].
+  /// The [contactList] parameter is a list of strings, each representing a contact's unique identifier.
+  /// The [contactName] parameter specifies the name of the contact being sent.
+  /// The [replyMessageId] parameter is used if the message is a reply to a previous message (optional).
+  /// Additional parameters such as [contactFileUrl] and [topicId] can be used for further customization (optional).
+  ///
   @Deprecated(
       'Instead of use Mirrorfly.sendMessage(messageParams: MessageParams.contact())')
   static Future<String> sendContactMessage(List<String> contactList, String jid,
@@ -1297,6 +1457,7 @@ class Mirrorfly {
         editMessageParams: editMessageParams, callback: flyCallback);
   }
 
+  /// A method used to get the list of registered users from the Mirrorfly platform.
   @Deprecated('Instead of use Mirrorfly.getRegisteredUsers()')
   static Future<String?> getRegisteredUserList(
       {required bool fetchFromServer}) {
@@ -1401,33 +1562,167 @@ class Mirrorfly {
         .deleteCallLog(jidList, isClearAll, flyCallBack);
   }
 
+  /// A stream that emits events when a message is received.
+  ///
+  /// This stream listens for incoming messages from the Mirrorfly platform. Each event
+  /// contains the data of the received message. Use this stream to update your UI or
+  /// perform actions upon receiving a new message.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMessageReceived.listen((messageData) {
+  ///   // Handle the received message
+  ///   print("New message received: $messageData");
+  /// });
+  /// ```
   static Stream<dynamic> get onMessageReceived =>
       FlyChatFlutterPlatform.instance.onMessageReceived;
 
+  /// A stream that emits events when the status of a message is updated.
+  ///
+  /// This stream listens for updates to the status of messages, such as when a message
+  /// is read or delivered. Each event contains the updated status information. Use this
+  /// stream to update message status indicators in your UI.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMessageStatusUpdated.listen((statusUpdate) {
+  ///   // Handle the message status update
+  ///   print("Message status updated: $statusUpdate");
+  /// });
+  /// ```
   static Stream<dynamic> get onMessageStatusUpdated =>
       FlyChatFlutterPlatform.instance.onMessageStatusUpdated;
 
+  /// A stream that emits events when the status of a media message is updated.
+  ///
+  /// This stream listens for updates related to media messages, such as when a media
+  /// message is successfully uploaded, downloaded, or fails to transfer. Each event
+  /// contains the updated status information of the media message. Use this stream
+  /// to update your UI or perform actions upon receiving a media status update.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMediaStatusUpdated.listen((mediaStatusUpdate) {
+  ///   // Handle the media status update
+  ///   print("Media status updated: $mediaStatusUpdate");
+  /// });
+  /// ```
   static Stream<dynamic> get onMediaStatusUpdated =>
       FlyChatFlutterPlatform.instance.onMediaStatusUpdated;
 
+  /// A stream that emits events when there is a change in upload or download progress
+  /// of a media file.
+  ///
+  /// This stream provides updates on the progress of media file uploads or downloads.
+  /// Each event contains information about the current progress, including the percentage
+  /// completed. This can be used to display progress indicators in your UI.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onUploadDownloadProgressChanged.listen((progressUpdate) {
+  ///   // Update progress indicator
+  ///   print("Upload/Download progress: $progressUpdate");
+  /// });
+  /// ```
   static Stream<dynamic> get onUploadDownloadProgressChanged =>
       FlyChatFlutterPlatform.instance.onUploadDownloadProgressChanged;
 
+  /// A stream that emits events when a group profile is fetched.
+  ///
+  /// This stream listens for events indicating that a group profile has been successfully
+  /// fetched from the server. Each event contains the data of the fetched group profile.
+  /// Use this stream to update your UI or perform actions upon receiving a group profile.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onGroupProfileFetched.listen((groupProfileData) {
+  ///   // Handle the fetched group profile
+  ///   print("Group profile fetched: $groupProfileData");
+  /// });
+  /// ```
   static Stream<dynamic> get onGroupProfileFetched =>
       FlyChatFlutterPlatform.instance.onGroupProfileFetched;
 
+  /// A stream that emits events when a new group is created.
+  ///
+  /// This stream listens for events indicating that a new group has been successfully
+  /// created on the Mirrorfly platform. Each event contains the data of the newly created
+  /// group. Use this stream to update your UI or perform actions upon the creation of a new group.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onNewGroupCreated.listen((newGroupData) {
+  ///   // Handle the new group creation
+  ///   print("New group created: $newGroupData");
+  /// });
+  /// ```
   static Stream<dynamic> get onNewGroupCreated =>
       FlyChatFlutterPlatform.instance.onNewGroupCreated;
 
+  /// A stream that emits events when a group profile is updated.
+  ///
+  /// This stream listens for events indicating that a group profile has been updated
+  /// on the Mirrorfly platform. Each event contains the updated data of the group profile.
+  /// Use this stream to refresh group profile information in your UI or perform other actions
+  /// when a group profile is updated.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onGroupProfileUpdated.listen((updatedGroupProfile) {
+  ///   // Handle the group profile update
+  ///   print("Group profile updated: $updatedGroupProfile");
+  /// });
+  /// ```
   static Stream<dynamic> get onGroupProfileUpdated =>
       FlyChatFlutterPlatform.instance.onGroupProfileUpdated;
 
+  /// A stream that emits events when a new member is added to a group.
+  ///
+  /// This stream listens for events indicating that a new member has been added to a group
+  /// on the Mirrorfly platform. Each event contains information about the group and the new member.
+  /// Use this stream to update your UI or perform actions upon the addition of a new member to a group.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onNewMemberAddedToGroup.listen((newMemberData) {
+  ///   // Handle the addition of a new member to the group
+  ///   print("New member added to group: $newMemberData");
+  /// });
   static Stream<dynamic> get onNewMemberAddedToGroup =>
       FlyChatFlutterPlatform.instance.onNewMemberAddedToGroup;
 
+  /// A stream that emits events when a member is removed from a group.
+  ///
+  /// This stream listens for events indicating that a member has been removed from a group
+  /// on the Mirrorfly platform. Each event contains information about the group and the member
+  /// who was removed. Use this stream to update your UI or perform actions upon the removal
+  /// of a member from a group.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMemberRemovedFromGroup.listen((memberRemovedData) {
+  ///   // Handle the removal of a member from the group
+  ///   print("Member removed from group: $memberRemovedData");
+  /// });
+  /// ```
   static Stream<dynamic> get onMemberRemovedFromGroup =>
       FlyChatFlutterPlatform.instance.onMemberRemovedFromGroup;
 
+  /// A stream that emits events when the fetching of group members is completed.
+  ///
+  /// This stream listens for events indicating that the process of fetching group members
+  /// from the server has been completed. Each event contains information about the group
+  /// and its members. Use this stream to update your UI or perform actions upon the completion
+  /// of fetching group members.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onFetchingGroupMembersCompleted.listen((groupMembersData) {
+  ///   // Handle the completion of fetching group members
+  ///   print("Fetching group members completed: $groupMembersData");
+  /// });
+  /// ```
   static Stream<dynamic> get onFetchingGroupMembersCompleted =>
       FlyChatFlutterPlatform.instance.onFetchingGroupMembersCompleted;
 
@@ -1436,86 +1731,427 @@ class Mirrorfly {
   // static Stream<dynamic> get onFetchingGroupListCompleted =>
   //     FlyChatFlutterPlatform.instance.onFetchingGroupListCompleted;
 
+  /// A stream that emits events when a member is made as an admin of a group.
+  ///
+  /// This stream listens for events indicating that a member has been granted admin privileges
+  /// in a group on the Mirrorfly platform. Each event contains information about the group and the member
+  /// who was made an admin. Use this stream to update your UI or perform actions upon the change in group admin status.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMemberMadeAsAdmin.listen((adminData) {
+  ///   // Handle the event when a member is made an admin
+  ///   print("Member made as admin: $adminData");
+  /// });
+  /// ```
   static Stream<dynamic> get onMemberMadeAsAdmin =>
       FlyChatFlutterPlatform.instance.onMemberMadeAsAdmin;
 
+  /// A stream that emits events when a member is removed as an admin from a group.
+  ///
+  /// This stream listens for events indicating that a member's admin privileges have been revoked
+  /// in a group on the Mirrorfly platform. Each event contains information about the group and the member
+  /// who was removed as an admin. Use this stream to update your UI or perform actions upon the change in group admin status.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMemberRemovedAsAdmin.listen((adminData) {
+  ///   // Handle the event when a member is removed as an admin
+  ///   print("Member removed as admin: $adminData");
+  /// });
+  /// ```
   static Stream<dynamic> get onMemberRemovedAsAdmin =>
       FlyChatFlutterPlatform.instance.onMemberRemovedAsAdmin;
 
+  /// A stream that emits events when a member leaves a group.
+  ///
+  /// This stream listens for events indicating that a member has left a group on the Mirrorfly platform.
+  /// Each event contains information about the group and the member who left. Use this stream to update your UI
+  /// or perform actions upon the departure of a member from a group.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onLeftFromGroup.listen((leftData) {
+  ///   // Handle the event when a member leaves a group
+  ///   print("Member left from group: $leftData");
+  /// });
+  /// ```
   static Stream<dynamic> get onLeftFromGroup =>
       FlyChatFlutterPlatform.instance.onLeftFromGroup;
 
+  /// A stream that emits events related to group notifications.
+  ///
+  /// This stream listens for group notification messages on the Mirrorfly platform. Each event
+  /// contains the data of the group notification message. Use this stream to update your UI or perform
+  /// actions upon receiving a group notification message.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onGroupNotificationMessage.listen((notificationData) {
+  ///   // Handle group notification messages
+  ///   print("Group notification message: $notificationData");
+  /// });
+  /// ```
   static Stream<dynamic> get onGroupNotificationMessage =>
       FlyChatFlutterPlatform.instance.onGroupNotificationMessage;
 
+  /// A stream that emits events for showing, updating, or canceling notifications.
+  ///
+  /// This stream provides updates related to the operation of showing, updating, or canceling
+  /// notifications on the Mirrorfly platform. Each event contains information about the notification
+  /// operation. Use this stream to manage notifications in your UI.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.showOrUpdateOrCancelNotification.listen((notificationOperation) {
+  ///   // Handle notification operations
+  ///   print("Notification operation: $notificationOperation");
+  /// });
+  /// ```
   static Stream<dynamic> get showOrUpdateOrCancelNotification =>
       FlyChatFlutterPlatform.instance.showOrUpdateOrCancelNotification;
 
+  /// A stream that emits events when a group is deleted locally.
+  ///
+  /// This stream listens for events indicating that a group has been deleted locally
+  /// on the Mirrorfly platform. Use this stream to update your UI or perform actions
+  /// upon the local deletion of a group.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onGroupDeletedLocally.listen((groupData) {
+  ///   // Handle the local deletion of a group
+  ///   print("Group deleted locally: $groupData");
+  /// });
+  /// ```
   static Stream<dynamic> get onGroupDeletedLocally =>
       FlyChatFlutterPlatform.instance.onGroupDeletedLocally;
 
+  /// A stream that emits events when a user is blocked.
+  ///
+  /// This stream listens for events indicating that a user has been blocked
+  /// on the Mirrorfly platform. Each event contains information about the user
+  /// who was blocked. Use this stream to update your UI or perform actions upon
+  /// blocking a user.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.blockedThisUser.listen((userData) {
+  ///   // Handle the event of blocking a user
+  ///   print("User blocked: $userData");
+  /// });
+  /// ```
   static Stream<dynamic> get blockedThisUser =>
       FlyChatFlutterPlatform.instance.blockedThisUser;
 
+  /// A stream that emits events when the user's profile is updated.
+  ///
+  /// This stream listens for events indicating that the user's profile has been updated
+  /// on the Mirrorfly platform. Each event contains the updated data of the user's profile.
+  /// Use this stream to refresh user profile information in your UI or perform other actions
+  /// when a user's profile is updated.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.myProfileUpdated.listen((profileData) {
+  ///   // Handle the user profile update
+  ///   print("My profile updated: $profileData");
+  /// });
+  /// ```
   static Stream<dynamic> get myProfileUpdated =>
       FlyChatFlutterPlatform.instance.myProfileUpdated;
 
+  /// A stream that emits events when an admin blocks another user.
+  ///
+  /// This stream listens for events indicating that an admin has blocked another user on the platform.
+  /// Each event contains information about the admin and the user who was blocked. Use this stream
+  /// to update your UI or perform actions upon the blocking of a user by an admin.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onAdminBlockedOtherUser.listen((blockEventData) {
+  ///   // Handle the event when an admin blocks another user
+  ///   print("Admin blocked another user: $blockEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get onAdminBlockedOtherUser =>
       FlyChatFlutterPlatform.instance.onAdminBlockedOtherUser;
 
+  /// A stream that emits events when a user is blocked by an admin.
+  ///
+  /// This stream listens for events indicating that an admin has blocked a user on the platform.
+  /// Each event contains information about the user who was blocked. Use this stream
+  /// to update your UI or perform actions upon the blocking of a user by an admin.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onAdminBlockedUser.listen((blockEventData) {
+  ///   // Handle the event when a user is blocked by an admin
+  ///   print("User blocked by admin: $blockEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get onAdminBlockedUser =>
       FlyChatFlutterPlatform.instance.onAdminBlockedUser;
 
+  /// A stream that emits events when contact synchronization is complete.
+  ///
+  /// This stream listens for events indicating that the contact synchronization process has completed on the platform.
+  /// Use this stream to update your UI or perform actions upon the completion of contact synchronization.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onContactSyncComplete.listen((syncEventData) {
+  ///   // Handle the event when contact synchronization is complete
+  ///   print("Contact sync complete: $syncEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get onContactSyncComplete =>
       FlyChatFlutterPlatform.instance.onContactSyncComplete;
 
+  /// A stream that emits events when a user is logged out.
+  ///
+  /// This stream listens for events indicating that a user has logged out from the SDK.
+  /// Each event contains information about the logout event. Use this stream
+  /// to update your UI or perform actions upon user logout.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onLoggedOut.listen((logoutEventData) {
+  ///   // Handle the event when a user logs out
+  ///   print("User logged out: $logoutEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get onLoggedOut =>
       FlyChatFlutterPlatform.instance.onLoggedOut;
 
+  /// A stream that emits events when a user is unblocked.
+  ///
+  /// This stream listens for events indicating that a user has been unblocked on the platform.
+  /// Each event contains information about the user who was unblocked. Use this stream
+  /// to update your UI or perform actions upon user unblocking.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.unblockedThisUser.listen((unblockEventData) {
+  ///   // Handle the event when a user is unblocked
+  ///   print("User unblocked: $unblockEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get unblockedThisUser =>
       FlyChatFlutterPlatform.instance.unblockedThisUser;
 
+  /// A stream that emits events when a user blocks the current user.
+  ///
+  /// This stream listens for events indicating that a user has blocked the current user on the platform.
+  /// Each event contains information about the user who blocked the current user. Use this stream
+  /// to update your UI or perform actions upon being blocked by a user.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.userBlockedMe.listen((blockEventData) {
+  ///   // Handle the event when a user blocks the current user
+  ///   print("User blocked me: $blockEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get userBlockedMe =>
       FlyChatFlutterPlatform.instance.userBlockedMe;
 
+  /// A stream that emits events when a user comes online.
+  ///
+  /// This stream listens for events indicating that a user has come online on the platform.
+  /// Each event contains information about the user who came online. Use this stream
+  /// to update your UI or perform actions upon user coming online.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.userCameOnline.listen((onlineEventData) {
+  ///   // Handle the event when a user comes online
+  ///   print("User came online: $onlineEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get userCameOnline =>
       FlyChatFlutterPlatform.instance.userCameOnline;
 
+  /// A stream that emits events when a user deletes his profile.
+  ///
+  /// This stream listens for events indicating that a user has deleted their profile on the platform.
+  /// Each event contains information about the user who deleted their profile. Use this stream
+  /// to update your UI or perform actions upon user profile deletion.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.userDeletedHisProfile.listen((deleteEventData) {
+  ///   // Handle the event when a user deletes their profile
+  ///   print("User deleted their profile: $deleteEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get userDeletedHisProfile =>
       FlyChatFlutterPlatform.instance.userDeletedHisProfile;
 
+  /// A stream that emits events when multiple user profiles are fetched.
+  ///
+  /// This stream listens for events indicating that multiple user profiles have been fetched on the platform.
+  /// Each event contains information about the fetched user profiles. Use this stream
+  /// to update your UI or perform actions upon fetching multiple user profiles.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.usersProfilesFetched.listen((profilesEventData) {
+  ///   // Handle the event when multiple user profiles are fetched
+  ///   print("User profiles fetched: $profilesEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get usersProfilesFetched =>
       FlyChatFlutterPlatform.instance.usersProfilesFetched;
 
+  /// A stream that emits events when a single user profile is fetched.
+  ///
+  /// This stream listens for events indicating that a single user profile has been fetched on the platform.
+  /// Each event contains information about the fetched user profile. Use this stream
+  /// to update your UI or perform actions upon fetching a user profile.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.userProfileFetched.listen((profileEventData) {
+  ///   // Handle the event when a user profile is fetched
+  ///   print("User profile fetched: $profileEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get userProfileFetched =>
       FlyChatFlutterPlatform.instance.userProfileFetched;
 
+  /// A stream that emits events when a user unblocks the current user.
+  ///
+  /// This stream listens for events indicating that a user has unblocked the current user on the platform.
+  /// Each event contains information about the user who unblocked the current user. Use this stream
+  /// to update your UI or perform actions upon being unblocked by a user.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.userUnBlockedMe.listen((unblockEventData) {
+  ///   // Handle the event when a user unblocks the current user
+  ///   print("User unblocked me: $unblockEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get userUnBlockedMe =>
       FlyChatFlutterPlatform.instance.userUnBlockedMe;
 
+  /// A stream that emits events when a user updates his profile.
+  ///
+  /// This stream listens for events indicating that a user has updated his profile on the platform.
+  /// Each event contains information about the updated user profile. Use this stream
+  /// to update your UI or perform actions upon user profile update.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.userUpdatedHisProfile.listen((updateEventData) {
+  ///   // Handle the event when a user updates their profile
+  ///   print("User updated their profile: $updateEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get userUpdatedHisProfile =>
       FlyChatFlutterPlatform.instance.userUpdatedHisProfile;
 
+  /// A stream that emits events when a user goes offline.
+  ///
+  /// This stream listens for events indicating that a user has gone offline on the platform.
+  /// Each event contains information about the user who went offline. Use this stream
+  /// to update your UI or perform actions upon user going offline.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.userWentOffline.listen((offlineEventData) {
+  ///   // Handle the event when a user goes offline
+  ///   print("User went offline: $offlineEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get userWentOffline =>
       FlyChatFlutterPlatform.instance.userWentOffline;
 
+  /// A stream that emits events when the list of users the current user has blocked is fetched.
+  ///
+  /// This stream listens for events indicating that the list of users blocked by the current user has been fetched on the platform.
+  /// Each event contains information about the blocked users list. Use this stream
+  /// to update your UI or perform actions upon fetching the blocked users list.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.usersIBlockedListFetched.listen((blockedListEventData) {
+  ///   // Handle the event when the blocked users list is fetched
+  ///   print("Blocked users list fetched: $blockedListEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get usersIBlockedListFetched =>
       FlyChatFlutterPlatform.instance.usersIBlockedListFetched;
 
+  /// A stream that emits events when the list of users who blocked the current user is fetched.
+  ///
+  /// This stream listens for events indicating that the list of users who blocked the current user has been fetched on the platform.
+  /// Each event contains information about the users who blocked the current user. Use this stream
+  /// to update your UI or perform actions upon fetching the list of users who blocked the current user.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.usersWhoBlockedMeListFetched.listen((blockedMeListEventData) {
+  ///   // Handle the event when the list of users who blocked the current user is fetched
+  ///   print("Users who blocked me list fetched: $blockedMeListEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get usersWhoBlockedMeListFetched =>
       FlyChatFlutterPlatform.instance.usersWhoBlockedMeListFetched;
 
+  /// A stream that emits events when the chat service is connected.
+  ///
+  /// This stream listens for events indicating that the chat service has established a connection.
+  /// Each event contains information about the connection state. Use this stream
+  /// to update your UI or perform actions upon chat service connection.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onConnected.listen((connectedEventData) {
+  ///   // Handle the event when the platform is connected
+  ///   print("Platform connected: $connectedEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get onConnected =>
       FlyChatFlutterPlatform.instance.onConnected;
 
+  /// A stream that emits events when the chat service is disconnected.
+  ///
+  /// This stream listens for events indicating that the chat service has lost connection.
+  /// Each event contains information about the disconnection state. Use this stream
+  /// to update your UI or perform actions upon chat service disconnection.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onDisconnected.listen((disconnectedEventData) {
+  ///   // Handle the event when the platform is disconnected
+  ///   print("Platform disconnected: $disconnectedEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get onDisconnected =>
       FlyChatFlutterPlatform.instance.onDisconnected;
+
 
   /*static Stream<dynamic> get onConnectionNotAuthorized =>
       FlyChatFlutterPlatform.instance.onConnectionNotAuthorized;*/
 
+  /// A stream that emits events when the chat service connection fails.
+  ///
+  /// This stream listens for events indicating that the chat service has failed to establish a connection.
+  /// Each event contains information about the connection failure. Use this stream
+  /// to update your UI or perform actions upon connection failure.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onConnectionFailed.listen((failureEventData) {
+  ///   // Handle the event when the platform connection fails
+  ///   print("Platform connection failed: $failureEventData");
+  /// });
+  /// ```
   static Stream<dynamic> get onConnectionFailed =>
       FlyChatFlutterPlatform.instance.onConnectionFailed;
+
 
   // static Stream<dynamic> get connectionFailed => FlyChatFlutterPlatform.instance.connectionFailed;
 
@@ -1524,23 +2160,85 @@ class Mirrorfly {
   // static Stream<dynamic> get onWebChatPasswordChanged =>
   //     FlyChatFlutterPlatform.instance.onWebChatPasswordChanged;
 
+  /// A stream that emits events when a message is edited.
+  ///
+  /// This stream listens for events indicating that a message has been edited.
+  /// Each event contains information about the edited message. Use this stream
+  /// to update your UI or perform actions upon message editing.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMessageEdited.listen((editedMessageData) {
+  ///   // Handle the event when a message is edited
+  ///   print("Message edited: $editedMessageData");
+  /// });
+  /// ```
   static Stream<dynamic> get onMessageEdited =>
       FlyChatFlutterPlatform.instance.onMessageEdited;
 
+  /// A stream to set the typing status of a user.
+  ///
+  /// This stream allows setting the typing status of a user. Note that this is deprecated
+  /// and it is recommended to use `Mirrorfly.typingStatus` instead.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.setTypingStatus.listen((typingStatusData) {
+  ///   // Handle the event to set the typing status
+  ///   print("Set typing status: $typingStatusData");
+  /// });
+  /// ```
   @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get setTypingStatus =>
       FlyChatFlutterPlatform.instance.setTypingStatus;
 
+  /// A stream that emits typing status events.
+  ///
+  /// This stream listens for typing status events on the platform. Each event contains information
+  /// about the typing status of a user. Use this stream to update your UI based on typing status.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.typingStatus.listen((typingStatusData) {
+  ///   // Handle the event for typing status
+  ///   print("Typing status: $typingStatusData");
+  /// });
+  /// ```
   static Stream<dynamic> get typingStatus =>
       FlyChatFlutterPlatform.instance.setTypingStatus;
 
+  /// A stream that emits chat typing status events.
+  ///
+  /// This stream listens for chat typing status events. Note that this is deprecated
+  /// and it is recommended to use `Mirrorfly.typingStatus` instead.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onChatTypingStatus.listen((chatTypingStatusData) {
+  ///   // Handle the event for chat typing status
+  ///   print("Chat typing status: $chatTypingStatusData");
+  /// });
+  /// ```
   @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get onChatTypingStatus =>
       FlyChatFlutterPlatform.instance.onChatTypingStatus;
 
+  /// A stream that emits group typing status events.
+  ///
+  /// This stream listens for group typing status events. Note that this is deprecated
+  /// and it is recommended to use `Mirrorfly.typingStatus` instead.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onGroupTypingStatus.listen((groupTypingStatusData) {
+  ///   // Handle the event for group typing status
+  ///   print("Group typing status: $groupTypingStatusData");
+  /// });
+  /// ```
   @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get onGroupTypingStatus =>
       FlyChatFlutterPlatform.instance.onGroupTypingStatus;
+
 
   // static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
@@ -1551,44 +2249,214 @@ class Mirrorfly {
   // static Stream<dynamic> get onCallReceiving =>
   //     FlyChatFlutterPlatform.instance.onCallReceiving;
 
+  /// A stream that emits events when a local video track is added.
+  ///
+  /// This stream listens for events indicating that a local video track has been added to the Mirrorfly View
+  /// Each event contains information about the added video track. Use this stream
+  /// to update your UI or perform actions upon local video track addition.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onLocalVideoTrackAdded.listen((videoTrackData) {
+  ///   // Handle the event when a local video track is added
+  ///   print("Local video track added: $videoTrackData");
+  /// });
+  /// ```
   static Stream<dynamic> get onLocalVideoTrackAdded =>
       FlyChatFlutterPlatform.instance.onLocalVideoTrackAdded;
 
+  /// A stream that emits events when a remote video track is added.
+  ///
+  /// This stream listens for events indicating that a remote video track has been added to the Mirrorfly View
+  /// Each event contains information about the added video track. Use this stream
+  /// to update your UI or perform actions upon remote video track addition.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onRemoteVideoTrackAdded.listen((videoTrackData) {
+  ///   // Handle the event when a remote video track is added
+  ///   print("Remote video track added: $videoTrackData");
+  /// });
+  /// ```
   static Stream<dynamic> get onRemoteVideoTrackAdded =>
       FlyChatFlutterPlatform.instance.onRemoteVideoTrackAdded;
 
+  /// A stream that emits events when any track is added.
+  ///
+  /// This stream listens for events indicating that any track (audio or video) has been added.
+  /// Each event contains information about the added track. Use this stream
+  /// to update your UI or perform actions upon track addition.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onTrackAdded.listen((trackData) {
+  ///   // Handle the event when any track is added
+  ///   print("Track added: $trackData");
+  /// });
+  /// ```
   static Stream<dynamic> get onTrackAdded =>
       FlyChatFlutterPlatform.instance.onTrackAdded;
 
+  /// A stream that emits events when call status is updated.
+  ///
+  /// This stream listens for events indicating that the status of a call has been updated.
+  /// Each event contains information about the updated call status. Use this stream
+  /// to update your UI or perform actions upon call status update.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onCallStatusUpdated.listen((callStatusData) {
+  ///   // Handle the event when call status is updated
+  ///   print("Call status updated: $callStatusData");
+  /// });
+  /// ```
   static Stream<dynamic> get onCallStatusUpdated =>
       FlyChatFlutterPlatform.instance.onCallStatusUpdated;
 
+  /// A stream that emits events for call actions.
+  ///
+  /// This stream listens for events indicating various call actions.
+  /// Each event contains information about the call action. Use this stream
+  /// to update your UI or perform actions upon call actions.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onCallAction.listen((callActionData) {
+  ///   // Handle the event for call actions
+  ///   print("Call action: $callActionData");
+  /// });
+  /// ```
   static Stream<dynamic> get onCallAction =>
       FlyChatFlutterPlatform.instance.onCallAction;
 
+  /// A stream that emits events when mute status is updated.
+  ///
+  /// This stream listens for events indicating that the mute status of a user has been updated.
+  /// Each event contains information about the updated mute status. Use this stream
+  /// to update your UI or perform actions upon mute status update.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMuteStatusUpdated.listen((muteStatusData) {
+  ///   // Handle the event when mute status is updated
+  ///   print("Mute status updated: $muteStatusData");
+  /// });
+  /// ```
   static Stream<dynamic> get onMuteStatusUpdated =>
       FlyChatFlutterPlatform.instance.onMuteStatusUpdated;
 
+  /// A stream that emits events when a user starts speaking.
+  ///
+  /// This stream listens for events indicating that a user has started speaking.
+  /// Each event contains information about the user who started speaking. Use this stream
+  /// to update your UI or perform actions upon user speaking.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onUserSpeaking.listen((userSpeakingData) {
+  ///   // Handle the event when a user starts speaking
+  ///   print("User started speaking: $userSpeakingData");
+  /// });
+  /// ```
   static Stream<dynamic> get onUserSpeaking =>
       FlyChatFlutterPlatform.instance.onUserSpeaking;
 
+  /// A stream that emits events when a user stops speaking.
+  ///
+  /// This stream listens for events indicating that a user has stopped speaking.
+  /// Each event contains information about the user who stopped speaking. Use this stream
+  /// to update your UI or perform actions upon user stopping speaking.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onUserStoppedSpeaking.listen((userStoppedSpeakingData) {
+  ///   // Handle the event when a user stops speaking
+  ///   print("User stopped speaking: $userStoppedSpeakingData");
+  /// });
+  /// ```
   static Stream<dynamic> get onUserStoppedSpeaking =>
       FlyChatFlutterPlatform.instance.onUserStoppedSpeaking;
 
+  /// A stream that emits events for missed calls.
+  ///
+  /// This stream listens for events indicating that a call was missed.
+  /// Each event contains information about the missed call. Use this stream
+  /// to update your UI or perform actions upon missed calls.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMissedCall.listen((missedCallData) {
+  ///   // Handle the event for missed calls
+  ///   print("Missed call: $missedCallData");
+  /// });
+  /// ```
   static Stream<dynamic> get onMissedCall =>
       FlyChatFlutterPlatform.instance.onMissedCall;
 
+  /// A stream that emits events when available features are updated.
+  ///
+  /// This stream listens for events indicating that the available features have been updated.
+  /// Each event contains information about the updated features. Use this stream
+  /// to update your UI or perform actions upon feature updates.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onAvailableFeaturesUpdated.listen((featuresData) {
+  ///   // Handle the event when available features are updated
+  ///   print("Available features updated: $featuresData");
+  /// });
+  /// ```
   static Stream<dynamic> get onAvailableFeaturesUpdated =>
       FlyChatFlutterPlatform.instance.onAvailableFeaturesUpdated;
 
+  /// A stream that emits events when call logs are updated.
+  ///
+  /// This stream listens for events indicating that the call logs have been updated.
+  /// Each event contains information about the updated call logs. Use this stream
+  /// to update your UI or perform actions upon call log updates.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onCallLogsUpdated.listen((callLogsData) {
+  ///   // Handle the event when call logs are updated
+  ///   print("Call logs updated: $callLogsData");
+  /// });
+  /// ```
   static Stream<dynamic> get onCallLogsUpdated =>
       FlyChatFlutterPlatform.instance.onCallLogsUpdated;
 
+  /// A stream that emits events when a call log is deleted.
+  ///
+  /// This stream listens for events indicating that a call log has been deleted.
+  /// Each event contains information about the deleted call log. Use this stream
+  /// to update your UI or perform actions upon call log deletion.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onCallLogDeleted.listen((callLogDeletedData) {
+  ///   // Handle the event when a call log is deleted
+  ///   print("Call log deleted: $callLogDeletedData");
+  /// });
+  /// ```
   static Stream<dynamic> get onCallLogDeleted =>
       FlyChatFlutterPlatform.instance.onCallLogDeleted;
 
+  /// A stream that emits events when all call logs are cleared.
+  ///
+  /// This stream listens for events indicating that all call logs have been cleared.
+  /// Each event contains information about the cleared call logs. Use this stream
+  /// to update your UI or perform actions upon clearing all call logs.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onCallLogsCleared.listen((callLogsClearedData) {
+  ///   // Handle the event when all call logs are cleared
+  ///   print("All call logs cleared: $callLogsClearedData");
+  /// });
+  /// ```
   static Stream<dynamic> get onCallLogsCleared =>
       FlyChatFlutterPlatform.instance.onClearAllCallLog;
+
 
   /*static Future<String?> imagePath({required String imgUrl}) {
     return FlyChatFlutterPlatform.instance.imagePath(imgUrl);
@@ -1727,10 +2595,45 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.loadNextMessages(flyCallback);
   }
 
+  /// Retrieves a list of profile statuses.
+  ///
+  /// This method asynchronously fetches a list of profile statuses from the Mirrorfly platform.
+  /// It returns a [Future<String?>] that resolves to a JSON string representing the list of statuses,
+  /// or `null` if an error occurs during the fetch operation.
+  ///
+  /// Returns:
+  ///   A [Future<String?>] containing the JSON string of profile statuses or `null` in case of an error.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// String? profileStatusList = await Mirrorfly.getProfileStatusList();
+  /// if (profileStatusList != null) {
+  ///   print("Profile Status List: $profileStatusList");
+  /// } else {
+  ///   print("Failed to fetch profile status list");
+  /// }
+  /// ```
   static Future<String?> getProfileStatusList() {
     return FlyChatFlutterPlatform.instance.getProfileStatusList();
   }
 
+  /// Inserts a default status.
+  ///
+  /// This method asynchronously inserts a default status into the Mirrorfly platform.
+  /// The [status] parameter is required and specifies the status message to be inserted.
+  ///
+  /// Returns:
+  ///   A [Future<bool?>] that completes with `true` if the insertion was successful,
+  ///   `false` if unsuccessful, or `null` if an error occurred during the operation.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// bool? isInserted = await Mirrorfly.insertDefaultStatus(status: "Available");
+  /// if (isInserted == true) {
+  ///   print("Default status inserted successfully");
+  /// } else {
+  ///   print("Failed to insert default status");
+  /// }
   static Future<bool?> insertDefaultStatus({required String status}) {
     return FlyChatFlutterPlatform.instance.insertDefaultStatus(status);
   }
@@ -1835,6 +2738,29 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getProfileLocal(jid, fetchFromServer);
   }*/
 
+  /// Sets the user's profile status.
+  /// Parameters:
+  ///   [status] - The new status message to set.
+  ///   [statusId] - The ID of the status to be updated.
+  ///   [flyCallBack] - A callback function that is called with a [FlyResponse] object upon completion.
+  ///
+  /// Returns:
+  ///   A [Future<void>] that completes when the operation is finished.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// await Mirrorfly.setMyProfileStatus(
+  ///   status: "Available",
+  ///   statusId: "status123",
+  ///   flyCallBack: (response) {
+  ///     if (response.isSuccess) {
+  ///       print("Profile status updated successfully");
+  ///     } else {
+  ///       print("Failed to update profile status");
+  ///     }
+  ///   },
+  /// );
+  /// ```
   static Future<void> setMyProfileStatus(
       {required String status,
       required String statusId,
@@ -1843,6 +2769,26 @@ class Mirrorfly {
         .setMyProfileStatus(status, statusId, flyCallBack);
   }
 
+  /// Inserts a new profile status.
+  ///
+  /// This method adds a new status message to the user's profile on the Mirrorfly platform.
+  ///
+  /// Parameters:
+  ///   [status] - The status message to add.
+  ///
+  /// Returns:
+  ///   A [Future<bool?>] that completes with `true` if the insertion was successful,
+  ///   `false` if unsuccessful, or `null` if an error occurred during the operation.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// bool? isInserted = await Mirrorfly.insertNewProfileStatus(status: "Busy");
+  /// if (isInserted == true) {
+  ///   print("New profile status inserted successfully");
+  /// } else {
+  ///   print("Failed to insert new profile status");
+  /// }
+  /// ```
   static Future<bool?> insertNewProfileStatus({required String status}) {
     return FlyChatFlutterPlatform.instance.insertNewProfileStatus(status);
   }
@@ -1855,11 +2801,50 @@ class Mirrorfly {
         .updateMyProfileImage(image, flyCallback);
   }
 
+  /// Removes the profile image of the current user.
+///
+/// This method asynchronously removes the profile image of the current user on the Mirrorfly platform.
+/// Upon completion, the provided callback function [flyCallBack] is invoked with a [FlyResponse] object,
+/// which contains information about the success or failure of the operation.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.removeProfileImage(flyCallBack: (response) {
+///   if (response.isSuccess) {
+///     print("Profile image removed successfully");
+///   } else {
+///     print("Failed to remove profile image");
+///   }
+/// });
+/// ```
   static Future<void> removeProfileImage(
       {required Function(FlyResponse response) flyCallBack}) {
     return FlyChatFlutterPlatform.instance.removeProfileImage(flyCallBack);
   }
 
+  /// Removes the profile image of a group.
+///
+/// This method asynchronously removes the profile image of a specified group on the Mirrorfly platform.
+/// The [jid] parameter specifies the unique identifier of the group whose profile image is to be removed.
+/// Upon completion, the provided callback function [flyCallBack] is invoked with a [FlyResponse] object,
+/// which contains information about the success or failure of the operation.
+///
+/// Parameters:
+///   [jid] - The JID of the group whose profile image is to be removed.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.removeGroupProfileImage(
+///   jid: "group jid",
+///   flyCallBack: (response) {
+///     if (response.isSuccess) {
+///       print("Group profile image removed successfully");
+///     } else {
+///       print("Failed to remove group profile image");
+///     }
+///   },
+/// );
+/// ```
   static Future<void> removeGroupProfileImage(
       {required String jid,
       required Function(FlyResponse response) flyCallBack}) {
@@ -1923,6 +2908,26 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getMedia(mid);
   }*/
 
+
+/// This method is used to mark all messages as read up to the most recent message received in a chat identified by [jid].
+/// It also removes the unread message separator that visually distinguishes unread messages from read messages in the chat interface.
+///
+/// Parameters:
+///   [jid] - The JID (Jabber ID) of the chat for which messages should be marked as read and the unread separator deleted.
+///
+/// Returns:
+///   A [Future<bool?>] that completes with `true` if the operation was successful,
+///   `false` if unsuccessful, or `null` if an error occurred during the operation.
+///
+/// Example usage:
+/// ```dart
+/// bool? isSuccess = await Mirrorfly.markAsReadDeleteUnreadSeparator(jid: "user123@example.com");
+/// if (isSuccess == true) {
+///   print("Messages marked as read and unread separator deleted successfully");
+/// } else {
+///   print("Failed to mark messages as read or delete unread separator");
+/// }
+/// ```
   static Future<bool?> markAsReadDeleteUnreadSeparator({required String jid}) {
     return FlyChatFlutterPlatform.instance.markAsReadDeleteUnreadSeparator(jid);
   }
@@ -1980,10 +2985,48 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.openFile(filePath);
   }*/
 
+/// Retrieves a list of recent chats including archived ones.
+///
+/// This method fetches a list of recent chats, including those that have been archived.
+///
+/// Returns:
+///   A [Future<String>] that completes with a JSON string representing the list of recent chats, including archived ones.
+///
+/// Example usage:
+/// ```dart
+/// String recentChats = await Mirrorfly.getRecentChatListIncludingArchived();
+/// print("Recent chats including archived: $recentChats");
+/// ```
   static Future<String> getRecentChatListIncludingArchived() {
     return FlyChatFlutterPlatform.instance.getRecentChatListIncludingArchived();
   }
 
+///
+/// This method searches for conversations that match the given [searchKey].
+///
+/// Parameters:
+///   [searchKey] - The key used for searching conversations.
+///   [jidForSearch] - The JID (Jabber ID) of the user to limit the search to. If null, the search is not limited to a specific user.
+///   [globalSearch] - A boolean value that determines the scope of the search. If true, the search is global across all conversations. If false, the search is limited to the current conversation. Defaults to true.
+///
+  /// Returns:
+///   A [Future<void>] that completes when the search operation is finished.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.searchConversation(
+///   searchKey: "query",
+///   jidForSearch: "user123@example.com",
+///   globalSearch: true,
+///   flyCallBack: (response) {
+///     if (response.isSuccess) {
+///       print("Search successful: ${response.data}");
+///     } else {
+///       print("Search failed: ${response.errorMessage}");
+///     }
+///   },
+/// );
+/// ```
   static Future<void> searchConversation(
       {required String searchKey,
       String? jidForSearch,
@@ -1993,6 +3036,27 @@ class Mirrorfly {
         .searchConversation(searchKey, jidForSearch, globalSearch, flyCallBack);
   }
 
+/// This method fetches the list of users registered on the Mirrorfly platform under the license key.
+///
+/// Parameters:
+///   [fetchFromServer] - A boolean value that determines the source of the user list.
+  ///   If `true`, the list is fetched from the server. If `false`, the list is fetched from the local.
+/// Returns:
+///   A [Future<void>] that completes when the operation is finished.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.getRegisteredUsers(
+///   fetchFromServer: true,
+///   flyCallback: (response) {
+///     if (response.isSuccess) {
+///       print("Successfully fetched registered users: ${response.data}");
+///     } else {
+///       print("Failed to fetch registered users: ${response.errorMessage}");
+///     }
+///   },
+/// );
+/// ```
   static Future<void> getRegisteredUsers(
       {required bool fetchFromServer,
       required Function(FlyResponse response) flyCallback}) {
@@ -2000,14 +3064,73 @@ class Mirrorfly {
         .getRegisteredUsers(fetchFromServer, flyCallback);
   }
 
+/// This method fetches the details of a message identified by its unique [messageId].
+/// It returns a [Future<String?>] that completes with the message details as a JSON string,
+/// or `null` if the message cannot be found or an error occurs.
+///
+/// Parameters:
+///   [messageId] - The unique identifier of the message whose details are to be retrieved.
+///
+/// Returns:
+///   A [Future<String?>] that completes with the message details as a JSON string or `null`.
+///
+/// Example usage:
+/// ```dart
+/// String? messageDetails = await Mirrorfly.getMessageOfId(messageId: "message_id");
+/// if (messageDetails != null) {
+///   print("Message details: $messageDetails");
+/// } else {
+///   print("Message not found or error occurred");
+/// }
+/// ```
   static Future<String?> getMessageOfId({required String messageId}) {
     return FlyChatFlutterPlatform.instance.getMessageOfId(messageId);
   }
 
+/// This method fetches the details of the most recent chat for a user or group identified by [jid].
+///
+/// Parameters:
+///   [jid] - The JID (Jabber ID) of the user or group whose most recent chat details are to be retrieved.
+///
+/// Returns:
+///   A [Future<String>] that completes with the most recent chat details as a JSON string.
+///
+/// Example usage:
+/// ```dart
+/// String recentChatDetails = await Mirrorfly.getRecentChatOf(jid: "user_or_group_jid");
+/// print("Recent chat details: $recentChatDetails");
+/// ```
   static Future<String> getRecentChatOf({required String jid}) {
     return FlyChatFlutterPlatform.instance.getRecentChatOf(jid);
   }
 
+
+/// This method clears the chat history for the chat identified by [jid] and [chatType].
+/// It can optionally preserve starred messages if [clearExceptStarred] is set to true.
+///
+/// Parameters:
+///   [jid] - The JID (Jabber ID) of the user or group whose chat history is to be cleared.
+///   [chatType] - The type of chat (e.g., "single", "group") to specify which chat's history to clear.
+///   [clearExceptStarred] - A boolean value indicating whether to clear all messages except starred ones.
+///
+/// Returns:
+///   A [Future<void>] that completes when the operation is finished.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.clearChat(
+///   jid: "user123@example.com",
+///   chatType: "groupchat" or "chat",
+///   clearExceptStarred: false,
+///   flyCallBack: (response) {
+///     if (response.isSuccess) {
+///       print("Chat cleared successfully");
+///     } else {
+///       print("Failed to clear chat: ${response.errorMessage}");
+///     }
+///   },
+/// );
+/// ```
   static Future<void> clearChat(
       {required String jid,
       required String chatType,
@@ -2021,11 +3144,58 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.reportChatOrUser(jid, chatType, messageId);
   }*/
 
+/// This method fetches messages based on a list of message IDs provided. It returns a [Future<String?>]
+/// that completes with the message details as a JSON string, or `null` if an error occurs.
+///
+/// Parameters:
+///   [messageIds] - A list of message IDs for which the details are to be retrieved.
+///
+/// Returns:
+///   A [Future<String?>] that completes with the message details as a JSON string or `null`.
+///
+/// Example usage:
+/// ```dart
+/// String? messages = await Mirrorfly.getMessagesUsingIds(messageIds: ["id1", "id2", "id3"]);
+/// if (messages != null) {
+///   print("Messages: $messages");
+/// } else {
+///   print("Failed to fetch messages or error occurred");
+/// }
+/// ```
   static Future<String?> getMessagesUsingIds(
       {required List<String> messageIds}) {
     return FlyChatFlutterPlatform.instance.getMessagesUsingIds(messageIds);
   }
 
+
+/// This method deletes specified messages for the current user but not for other users in the chat.
+/// It can optionally delete associated media files if [isMediaDelete] is set to true.
+///
+/// Parameters:
+///   [jid] - The JID (Jabber ID) of the user or group from which messages are to be deleted.
+///   [chatType] - The type of chat (e.g., "groupchat" or "chat") to specify which chat's messages to delete.
+///   [messageIds] - A list of message IDs to be deleted.
+///   [isMediaDelete] - A boolean value indicating whether to delete associated media files.
+///
+/// Returns:
+  ///   [flyCallBack] - A callback function that is called with a [FlyResponse] object upon completion.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.deleteMessagesForMe(
+///   jid: "user123@example.com",
+///   chatType: "groupchat" or "chat",
+///   messageIds: ["messageId1", "messageId2"],
+///   isMediaDelete: true,
+///   flyCallBack: (response) {
+///     if (response.isSuccess) {
+///       print("Messages deleted successfully");
+///     } else {
+///       print("Failed to delete messages: ${response.errorMessage}");
+///     }
+///   },
+/// );
+/// ```
   static Future<void> deleteMessagesForMe(
       {required String jid,
       required String chatType,
@@ -2036,6 +3206,34 @@ class Mirrorfly {
         jid, chatType, messageIds, isMediaDelete, flyCallBack);
   }
 
+  /// This method deletes specified messages for all users in a chat, optionally including associated media files.
+  /// Upon completion, [flyCallBack] is invoked with a [FlyResponse] object containing the result of the operation.
+  ///
+  /// Parameters:
+  ///   [jid] - The JID (Jabber ID) of the user or group from which messages are to be deleted.
+  ///   [chatType] - The type of chat (e.g., "groupchat" or "chat") to specify which chat's messages to delete.
+  ///   [messageIds] - A list of message IDs to be deleted.
+  ///   [isMediaDelete] - A boolean value indicating whether to delete associated media files.
+  ///
+  /// Returns:
+  ///   [flyCallBack] - A callback function that is called with a [FlyResponse] object upon completion.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// await Mirrorfly.deleteMessagesForEveryone(
+  ///   jid: "user123@example.com",
+  ///   chatType: "groupchat",
+  ///   messageIds: ["messageId1", "messageId2"],
+  ///   isMediaDelete: true,
+  ///   flyCallBack: (response) {
+  ///     if (response.isSuccess) {
+  ///       print("Messages deleted for everyone successfully");
+  ///     } else {
+  ///       print("Failed to delete messages for everyone: ${response.errorMessage}");
+  ///     }
+  ///   },
+  /// );
+  /// ```
   static Future<void> deleteMessagesForEveryone(
       {required String jid,
       required String chatType,
@@ -2051,6 +3249,26 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.deleteMessages(jid, messageIds, isDeleteForEveryOne);
   }*/
 
+  /// This method fetches the list of recipients who have received the specified group message.
+  /// Note that this method is deprecated and it is recommended to use
+  /// `Mirrorfly.getGroupMessageDeliveredRecipients()` instead.
+  ///
+  /// Params:
+  /// - [messageId]: The ID of the message.
+  /// - [jid]: The JID of the group.
+  ///
+  /// Returns:
+  /// - A `Future<String>` that completes with the list of recipients.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// String messageId = "your_message_id";
+  /// String jid = "your_jid";
+  /// Mirrorfly.getGroupMessageDeliveredToList(messageId, jid).then((recipientsList) {
+  ///   // Handle the list of recipients to whom the group message was delivered
+  ///   print("Group message delivered to: $recipientsList");
+  /// });
+  /// ```
   @Deprecated('Instead of use Mirrorfly.getGroupMessageDeliveredRecipients()')
   static Future<String> getGroupMessageDeliveredToList(
       String messageId, String jid) async {
@@ -2076,6 +3294,29 @@ class Mirrorfly {
         .getGroupMessageDeliveredRecipients(messageId, groupJid, flyCallBack);
   }
 
+  /// This method fetches the list of recipients who have received the specified group message.
+  /// Note that this method is deprecated and it is recommended to use
+  /// `Mirrorfly.getGroupMessageDeliveredRecipients()` instead.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// String messageId = "your_message_id";
+  /// String jid = "your_jid";
+  /// Mirrorfly.getGroupMessageDeliveredToList(messageId, jid).then((recipientsList) {
+  ///   // Handle the list of recipients to whom the group message was delivered
+  ///   print("Group message delivered to: $recipientsList");
+  /// });
+  /// ```
+  ///
+  /// Params:
+  /// - [messageId]: The ID of the message.
+  /// - [jid]: The JID of the group.
+  ///
+  /// Returns:
+  /// - A `Future<String>` that completes with the list of recipients.
+  ///
+  /// Deprecated:
+  /// - Use `Mirrorfly.getGroupMessageDeliveredRecipients()` instead.
   @Deprecated('Instead of use Mirrorfly.getGroupMessageSeenRecipients()')
   static Future<String> getGroupMessageReadByList(
       String messageId, String jid) async {
@@ -2101,6 +3342,25 @@ class Mirrorfly {
         .getGroupMessageSeenRecipients(messageId, groupJid, flyCallBack);
   }
 
+
+  /// This method fetches the status of the specified single chat message.
+  /// Note that this method is deprecated and it is recommended to use
+  /// `Mirrorfly.getMessageStatusOf()` instead.
+  ///
+  /// Params:
+  /// - [messageID]: The ID of the message.
+  ///
+  /// Returns:
+  /// - A `Future<String>` that completes with the status of the message.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// String messageID = "your_message_id";
+  /// Mirrorfly.getMessageStatusOfASingleChatMessage(messageID).then((messageStatus) {
+  ///   // Handle the status of the single chat message
+  ///   print("Message status: $messageStatus");
+  /// });
+  /// ```
   @Deprecated('Instead of use Mirrorfly.getMessageStatusOf()')
   static Future<String> getMessageStatusOfASingleChatMessage(String messageID) {
     return FlyChatFlutterPlatform.instance
@@ -2120,12 +3380,60 @@ class Mirrorfly {
         .getMessageStatusOfASingleChatMessage(messageId);
   }
 
+
+  /// This method sends a request to block a user identified by [userJid]. Upon completion,
+  /// the [flyCallBack] function is invoked with a [FlyResponse] object, which contains
+  /// information about the success or failure of the operation.
+  ///
+  /// Parameters:
+  ///   [userJid] - The JID (Jabber ID) of the user to be blocked.
+  ///
+  /// Returns:
+  ///   [flyCallBack] - A callback function that is called with a [FlyResponse] object upon completion.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// await Mirrorfly.blockUser(
+  ///   userJid: "user123@example.com",
+  ///   flyCallBack: (response) {
+  ///     if (response.isSuccess) {
+  ///       print("User blocked successfully");
+  ///     } else {
+  ///       print("Failed to block user: ${response.errorMessage}");
+  ///     }
+  ///   },
+  /// );
+  /// ```
   static Future<void> blockUser(
       {required String userJid,
       required Function(FlyResponse response) flyCallBack}) {
     return FlyChatFlutterPlatform.instance.blockUser(userJid, flyCallBack);
   }
 
+  /// This method sends a request to unblock a user identified by [userJid]. Upon completion,
+/// the [flyCallBack] function is invoked with a [FlyResponse] object, which contains
+/// information about the success or failure of the operation.
+///
+/// Parameters:
+///   [userJid] - The JID (Jabber ID) of the user to be unblocked.
+///
+/// Returns:
+
+  ///   [flyCallBack] - A callback function that is called with a [FlyResponse] object upon completion.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.unblockUser(
+///   userJid: "user123@example.com",
+///   flyCallBack: (response) {
+///     if (response.isSuccess) {
+///       print("User unblocked successfully");
+///     } else {
+///       print("Failed to unblock user: ${response.errorMessage}");
+///     }
+///   },
+/// );
+/// ```
   static Future<void> unblockUser(
       {required String userJid,
       required Function(FlyResponse response) flyCallBack}) {
@@ -2161,6 +3469,37 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getWebLoginDetails();
   }*/
 
+
+/// This method updates the favourite status of a specific message for a chat user. The favourite status
+/// can be set to true or false. Upon completion, the [flyCallBack] function is invoked with a [FlyResponse]
+/// object, which contains information about the success or failure of the operation.
+///
+/// Parameters:
+///   [messageId] - The unique identifier of the message whose favourite status is to be updated.
+///   [chatUserJid] - The JID (Jabber ID) of the chat user for whom the message's favourite status is updated.
+///   [isFavourite] - A boolean value indicating the new favourite status of the message.
+///   [chatType] - The type of chat (e.g., "groupchat" or "chat") to specify in which chat's context the operation is performed.
+
+///
+/// Returns:
+  ///   [flyCallBack] - A callback function that is called with a [FlyResponse] object upon completion.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.updateFavouriteStatus(
+///   messageId: "messageId123",
+///   chatUserJid: "user123@example.com",
+///   isFavourite: true,
+///   chatType: "chat",
+///   flyCallBack: (response) {
+///     if (response.isSuccess) {
+///       print("Message favourite status updated successfully");
+///     } else {
+///       print("Failed to update message favourite status: ${response.errorMessage}");
+///     }
+///   },
+/// );
+/// ```
   static Future<void> updateFavouriteStatus(
       {required String messageId,
       required String chatUserJid,
@@ -2171,6 +3510,31 @@ class Mirrorfly {
         messageId, chatUserJid, isFavourite, chatType, flyCallBack);
   }
 
+
+/// This method forwards a list of messages to multiple users. Upon completion, the [flyCallBack] function
+/// is invoked with a [FlyResponse] object, which contains information about the success or failure of the operation.
+///
+/// Parameters:
+///   [messageIds] - A list of message IDs that are to be forwarded.
+///   [userList] - A list of JIDs (Jabber IDs) of the users to whom the messages are to be forwarded.
+///
+/// Returns:
+  ///   [flyCallBack] - A callback function that is called with a [FlyResponse] object upon completion.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.forwardMessagesToMultipleUsers(
+///   messageIds: ["messageId1", "messageId2"],
+///   userList: ["user123@example.com", "user456@example.com"],
+///   flyCallBack: (response) {
+///     if (response.isSuccess) {
+///       print("Messages forwarded successfully");
+///     } else {
+///       print("Failed to forward messages: ${response.errorMessage}");
+///     }
+///   },
+/// );
+/// ```
   static Future<void> forwardMessagesToMultipleUsers(
       {required List<String> messageIds,
       required List<String> userList,
@@ -2183,6 +3547,33 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.forwardMessages(messageIds, tojid, chattype);
   }*/
 
+/// This method creates a new group with the specified name, user list, and group image. Upon completion,
+/// the [flyCallBack] function is invoked with a [FlyResponse] object, which contains
+/// information about the success or failure of the operation.
+///
+/// Parameters:
+///   [groupName] - The name of the group to be created.
+///   [userList] - A list of JIDs of the users to be added to the group.
+///   [image] - A file path or URL of the image to be used as the group's profile picture.
+///
+/// Returns:
+  ///   [flyCallBack] - A callback function that is called with a [FlyResponse] object upon completion.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.createGroup(
+///   groupName: "My Group",
+///   userList: ["user123@example.com", "user456@example.com"],
+///   image: "path/to/image.png",
+///   flyCallBack: (response) {
+///     if (response.isSuccess) {
+///       print("Group created successfully");
+///     } else {
+///       print("Failed to create group: ${response.errorMessage}");
+///     }
+///   },
+/// );
+/// ```
   static Future<void> createGroup(
       {required String groupName,
       required List<String> userList,
@@ -2192,6 +3583,29 @@ class Mirrorfly {
         .createGroup(groupName, userList, image, flyCallBack);
   }
 
+  /// Adds users to a group.
+  ///
+  /// This method adds the specified users to a group.
+  ///
+  /// Params:
+  /// - [jid] : The JID of the group.
+  /// - [userList] : A list of user JIDs to be added to the group.
+  ///
+  /// Returns:
+  ///
+  /// - [flyCallBack] : A callback function that is called with a [FlyResponse] object upon completion.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.addUsersToGroup(
+  ///   jid: "group_jid",
+  ///   userList: ["user1_jid", "user2_jid"],
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("Users added to group: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> addUsersToGroup(
       {required String jid,
       required List<String> userList,
@@ -2200,6 +3614,28 @@ class Mirrorfly {
         .addUsersToGroup(jid, userList, flyCallBack);
   }
 
+  /// Retrieves the list of group members.
+  ///
+  /// This method fetches the list of members in the specified group.
+  ///
+  /// Params:
+  /// - [jid] : The JID of the group.
+  /// - [fetchFromServer] : Whether to fetch the list from the server. Defaults to `false`.
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with a [FlyResponse] object upon completion.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.getGroupMembersList(
+  ///   jid: "group_jid",
+  ///   fetchFromServer: true,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("Group members list: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> getGroupMembersList(
       {required String jid,
       bool? fetchFromServer,
@@ -2208,6 +3644,26 @@ class Mirrorfly {
         .getGroupMembersList(jid, fetchFromServer, flyCallBack);
   }
 
+  /// Retrieves the list of users blocked by the current user.
+  ///
+  /// This method fetches the list of users that the current user has blocked.
+  ///
+  /// Params:
+  /// - [fetchFromServer] : Whether to fetch the list from the server. Defaults to `false`.
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with a [FlyResponse] object upon completion.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.getUsersIBlocked(
+  ///   fetchFromServer: true,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("Blocked users list: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> getUsersIBlocked(
       {bool fetchFromServer = false,
       required Function(FlyResponse response) flyCallBack}) {
@@ -2215,18 +3671,93 @@ class Mirrorfly {
         .getUsersIBlocked(fetchFromServer, flyCallBack);
   }
 
+  /// Retrieves media messages for a specific JID.
+  ///
+  /// This method fetches media messages (e.g., images, videos) for the specified JID.
+  ///
+  /// Params:
+  /// - [jid] : The JID to fetch media messages for.
+  ///
+  /// Returns:
+  /// - A `Future<String?>` that completes with the media messages.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// String jid = "user_jid";
+  /// Mirrorfly.getMediaMessages(jid: jid).then((mediaMessages) {
+  ///   // Handle the media messages
+  ///   print("Media messages: $mediaMessages");
+  /// });
+  /// ```
   static Future<String?> getMediaMessages({required String jid}) {
     return FlyChatFlutterPlatform.instance.getMediaMessages(jid);
   }
 
+  /// Retrieves document messages for a specific JID.
+  ///
+  /// This method fetches document messages (e.g., PDFs, DOCs) for the specified JID.
+  ///
+  /// Params:
+  /// - [jid] : The JID to fetch document messages for.
+  ///
+  /// Returns:
+  /// - A `Future<String?>` that completes with the document messages.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// String jid = "user_jid";
+  /// Mirrorfly.getDocsMessages(jid: jid).then((docsMessages) {
+  ///   // Handle the document messages
+  ///   print("Document messages: $docsMessages");
+  /// });
+  /// ```
   static Future<String?> getDocsMessages({required String jid}) {
     return FlyChatFlutterPlatform.instance.getDocsMessages(jid);
   }
 
+  /// Retrieves link messages for a specific JID.
+  ///
+  /// This method fetches link messages (e.g., URLs) for the specified JID.
+  ///
+  /// Params:
+  /// - [jid] : The JID to fetch link messages for.
+  ///
+  /// Returns:
+  /// - A `Future<String?>` that completes with the link messages.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// String jid = "user_jid";
+  /// Mirrorfly.getLinkMessages(jid: jid).then((linkMessages) {
+  ///   // Handle the link messages
+  ///   print("Link messages: $linkMessages");
+  /// });
+  /// ```
   static Future<String?> getLinkMessages({required String jid}) {
     return FlyChatFlutterPlatform.instance.getLinkMessages(jid);
   }
 
+  /// Exports chat conversation to email.
+  ///
+  /// This method exports the chat conversation of the specified JID to email.
+  ///
+  /// Params:
+  /// - [jid] : The JID of the chat to be exported.
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with the response.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// String jid = "user_jid";
+  /// Mirrorfly.exportChatConversationToEmail(
+  ///   jid: jid,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("Chat exported to email: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> exportChatConversationToEmail(
       {required String jid,
       required Function(FlyResponse response) flyCallBack}) {
@@ -2234,6 +3765,30 @@ class Mirrorfly {
         .exportChatConversationToEmail(jid, flyCallBack);
   }
 
+  /// Reports a user or messages.
+  ///
+  /// This method reports a user or specific messages of the specified JID.
+  ///
+  /// Params:
+  /// - [jid] : The JID of the user or messages to be reported.
+  /// - [type] : The type of report (e.g., user, message).
+  /// - [messageId] : The ID of the message to be reported (optional).
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with the response.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.reportUserOrMessages(
+  ///   jid: jid,
+  ///   type: type,
+  ///   messageId: messageId,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("User or messages reported: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> reportUserOrMessages(
       {required String jid,
       required String type,
@@ -2243,6 +3798,28 @@ class Mirrorfly {
         .reportUserOrMessages(jid, type, messageId, flyCallBack);
   }
 
+  /// Makes a user an admin of a group.
+  ///
+  /// This method promotes a user to be an admin of the specified group.
+  ///
+  /// Params:
+  /// - [groupJid] : The JID of the group.
+  /// - [userJid] : The JID of the user to be made admin.
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with the response.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.makeAdmin(
+  ///   groupJid: groupJid,
+  ///   userJid: userJid,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("User made admin: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> makeAdmin(
       {required String groupJid,
       required String userJid,
@@ -2251,6 +3828,28 @@ class Mirrorfly {
         .makeAdmin(groupJid, userJid, flyCallBack);
   }
 
+  /// Removes a member from a group.
+  ///
+  /// This method removes the specified user from the specified group.
+  ///
+  /// Params:
+  /// - [groupJid] : The JID of the group.
+  /// - [userJid] : The JID of the user to be removed.
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with the response.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.removeMemberFromGroup(
+  ///   groupJid: groupJid,
+  ///   userJid: userJid,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("User removed from group: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> removeMemberFromGroup(
       {required String groupJid,
       required String userJid,
@@ -2259,6 +3858,29 @@ class Mirrorfly {
         .removeMemberFromGroup(groupJid, userJid, flyCallBack);
   }
 
+
+  /// User Leaves from a group.
+  ///
+  /// This method allows the specified user to leave the specified group.
+  ///
+  /// Params:
+  /// - [userJid] : The JID of the user leaving the group.
+  /// - [groupJid] : The JID of the group.
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with the response.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.leaveFromGroup(
+  ///   userJid: userJid,
+  ///   groupJid: groupJid,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("User left group: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> leaveFromGroup(
       {required String userJid,
       required String groupJid,
@@ -2267,22 +3889,113 @@ class Mirrorfly {
         .leaveFromGroup(userJid, groupJid, flyCallBack);
   }
 
+  /// Deletes a group.
+  ///
+  /// This method deletes the specified group.
+  ///
+  /// Params:
+  /// - [jid] : The JID of the group to be deleted.
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with the response.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.deleteGroup(
+  ///   jid: jid,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("Group deleted: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> deleteGroup(
       {required String jid,
       required Function(FlyResponse response) flyCallBack}) {
     return FlyChatFlutterPlatform.instance.deleteGroup(jid, flyCallBack);
   }
 
+  /// Checks if a user is an admin of a group.
+  ///
+  /// This method checks whether the specified user is an admin of the specified group.
+  /// Note that this method is deprecated and it is recommended to use
+  /// `Mirrorfly.isGroupAdmin()` instead.
+  ///
+  /// Params:
+  /// - [userJid] : The JID of the user to check.
+  /// - [groupJID] : The JID of the group.
+  ///
+  /// Returns:
+  /// - A `Future<bool?>` that completes with `true` if the user is an admin, `false` otherwise.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.isAdmin(userJid, groupJID).then((isAdmin) {
+  ///   // Handle the result
+  ///   if (isAdmin == true) {
+  ///     print("User is an admin of the group");
+  ///   } else {
+  ///     print("User is not an admin of the group");
+  ///   }
+  /// });
+  /// ```
   @Deprecated('Instead of use Mirrorfly.isGroupAdmin()')
   static Future<bool?> isAdmin(String userJid, String groupJID) {
     return FlyChatFlutterPlatform.instance.isAdmin(userJid, groupJID);
   }
 
+  /// Checks if a user is an admin of a group.
+  ///
+  /// This method checks whether the specified user is an admin of the specified group.
+  ///
+  /// Params:
+  /// - [userJid] : The JID of the user to check.
+  /// - [groupJid] : The JID of the group.
+  ///
+  /// Returns:
+  /// - A `Future<bool?>` that completes with `true` if the user is an admin, `false` otherwise.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.isGroupAdmin(userJid: userJid, groupJid: groupJid).then((isAdmin) {
+  ///   // Handle the result
+  ///   if (isAdmin == true) {
+  ///     print("User is an admin of the group");
+  ///   } else {
+  ///     print("User is not an admin of the group");
+  ///   }
+  /// });
+  /// ```
   static Future<bool?> isGroupAdmin(
       {required String userJid, required String groupJid}) {
     return FlyChatFlutterPlatform.instance.isAdmin(userJid, groupJid);
   }
 
+  /// Updates the profile image of a group.
+  ///
+  /// This method updates the profile image of the specified group.
+  ///
+  /// Params:
+  /// - [jid] : The JID of the group.
+  /// - [file] : The file path of the new profile image.
+
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with with a [FlyResponse].
+  ///
+  /// Usage example:
+  /// ```dart
+  /// String jid = "group_jid";
+  /// String file = "path/to/image.jpg";
+  /// Mirrorfly.updateGroupProfileImage(
+  ///   jid: jid,
+  ///   file: file,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("Group profile image updated: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> updateGroupProfileImage(
       {required String jid,
       required String file,
@@ -2291,6 +4004,28 @@ class Mirrorfly {
         .updateGroupProfileImage(jid, file, flyCallBack);
   }
 
+  /// Updates the name of a group.
+  ///
+  /// This method updates the name of the specified group.
+  ///
+  /// Params:
+  /// - [jid] : The JID of the group.
+  /// - [name] : The new name for the group.
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with with a [FlyResponse].
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.updateGroupName(
+  ///   jid: jid,
+  ///   name: name,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("Group name updated: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> updateGroupName(
       {required String jid,
       required String name,
@@ -2299,11 +4034,55 @@ class Mirrorfly {
         .updateGroupName(jid, name, flyCallBack);
   }
 
+  /// Checks if a user is a member of a group.
+  ///
+  /// This method checks whether the specified user is a member of the specified group.
+  ///
+  /// Params:
+  /// - [userJid] : The JID of the user to check.
+  /// - [groupJid] : The JID of the group.
+  ///
+  /// Returns:
+  /// - A `Future<bool?>` that completes with `true` if the user is a member, `false` otherwise.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.isMemberOfGroup(userJid: userJid, groupJid: groupJid).then((isMember) {
+  ///   // Handle the result
+  ///   if (isMember == true) {
+  ///     print("User is a member of the group");
+  ///   } else {
+  ///     print("User is not a member of the group");
+  ///   }
+  /// });
+  /// ```
   static Future<bool?> isMemberOfGroup(
       {required String userJid, required String groupJid}) {
     return FlyChatFlutterPlatform.instance.isMemberOfGroup(groupJid, userJid);
   }
 
+  /// Sends contact us information.
+  ///
+  /// This method sends contact us information with the specified title and description.
+  ///
+  /// Params:
+  /// - [title] : The title of the contact us information.
+  /// - [description] : The description of the contact us information.
+  ///
+  /// Returns:
+  /// - [flyCallBack] : A callback function that is called with with a [FlyResponse].
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.sendContactUsInfo(
+  ///   title: title,
+  ///   description: description,
+  ///   flyCallBack: (response) {
+  ///     // Handle the response
+  ///     print("Contact us info sent: $response");
+  ///   },
+  /// );
+  /// ```
   static Future<void> sendContactUsInfo(
       {required String title,
       required String description,
@@ -2316,6 +4095,25 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.copyTextMessages(messageIds);
   }*/
 
+  /// Saves an unsent message for a specific user or group.
+///
+/// This method stores a message that could not be sent at the moment. It can be used to save messages
+/// temporarily until they can be sent. The message is associated with the JID of the user or group.
+///
+/// Parameters:
+///   [jid] - The JID (Jabber ID) of the user or group to which the message was intended.
+///   [message] - The message text that was not sent.
+///
+/// Returns:
+///   A [Future] that completes when the operation is finished.
+///
+/// Example usage:
+/// ```dart
+/// await Mirrorfly.saveUnsentMessage(
+///   jid: "user123@example.com",
+///   message: "Hello, this message couldn't be sent earlier!",
+/// );
+/// ```
   static saveUnsentMessage({required String jid, required String message}) {
     return FlyChatFlutterPlatform.instance.saveUnsentMessage(jid, message);
   }
@@ -2478,6 +4276,32 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.setMediaAutoDownload(enable);
   }
 
+  /// Retrieves the JID associated with a given phone number.
+///
+/// This method queries the Mirrorfly to find the JID associated with the specified
+/// mobile number and country code. It is useful for converting a user's phone number into
+/// their JID, which is required for various operations within the Mirrorfly platform.
+///
+/// Parameters:
+///   [mobileNumber] - The mobile number of the user whose JID is to be retrieved.
+///   [countryCode] - The country code of the user's mobile number.
+///
+/// Returns:
+///   A [Future<String?>] that completes with the JID associated with the given phone number
+///   or `null` if the JID cannot be found or an error occurs.
+///
+/// Example usage:
+/// ```dart
+/// String? jid = await Mirrorfly.getJidFromPhoneNumber(
+///   mobileNumber: "1234567890",
+///   countryCode: "+1",
+/// );
+/// if (jid != null) {
+///   print("JID: $jid");
+/// } else {
+///   print("JID not found or error occurred");
+/// }
+/// ```
   static Future<String?> getJidFromPhoneNumber(
       {required String mobileNumber, required String countryCode}) async {
     return FlyChatFlutterPlatform.instance
@@ -2501,6 +4325,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.insertBusyStatus(busyStatus);
   }
 
+  /// This method is used to check if the user is a trail user or not.
   @Deprecated(
       'This method is deprecated. Please refrain from using it, as the functionality has been internally managed within the plugin')
   static Future<bool?> isTrailLicence() async {
@@ -2511,6 +4336,29 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getNonChatUsers();
   }*/
 
+/// This method adds a contact with the specified phone number and name to the user's contact list.
+/// It is an asynchronous operation that returns a [Future<bool?>] indicating the success or failure of the contact addition.
+///
+/// Parameters:
+///   [number] - The phone number of the contact to be added.
+///   [name] - The name of the contact to be added.
+///
+/// Returns:
+///   A [Future<bool?>] that completes with `true` if the contact was successfully added,
+///   `false` if the operation failed, or `null` if an error occurred.
+///
+/// Example usage:
+/// ```dart
+/// bool? isSuccess = await Mirrorfly.addContact(
+///   number: "1234567890",
+///   name: "John Doe",
+/// );
+/// if (isSuccess == true) {
+///   print("Contact added successfully");
+/// } else {
+///   print("Failed to add contact");
+/// }
+/// ```
   static Future<bool?> addContact(
       {required String number, required String name}) async {
     return FlyChatFlutterPlatform.instance.addContact(number, name);
@@ -3075,27 +4923,62 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.syncCallLogs();
   }
 
+  /// Sets the message event listener.
+///
+/// Registers a listener for message events. This listener will be notified of various message-related events.
+///
+/// Parameters:
+///   [messageEventListeners] - The listener to be registered for message events.
+///
   static setMessageEventListener(MessageEventListeners messageEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setMessageEventListener(messageEventListeners);
   }
 
+/// Sets the connection event listener.
+///
+/// Registers a listener for connection events. This listener will be notified of changes in the connection status,
+/// such as when the connection is established, lost, or when reconnection attempts are made.
+///
+/// Parameters:
+///   [connectionEventListeners] - The listener to be registered for connection events.
   static setConnectionEventListener(
       ConnectionEventListeners connectionEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setConnectionEventListener(connectionEventListeners);
   }
 
+/// Sets the profile event listener.
+///
+/// Registers a listener for profile events. This listener will be notified of changes to user profiles,
+/// such as profile updates.
+///
+/// Parameters:
+///   [profileEventListeners] - The listener to be registered for profile events.
+///
   static setProfileEventListener(ProfileEventListeners profileEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setProfileEventsListener(profileEventListeners);
   }
 
+/// Sets the group event listener.
+///
+/// Registers a listener for group events. This listener will be notified of various group-related events.
+///
+/// Parameters:
+///   [groupEventListeners] - The listener to be registered for group events.
+///
   static setGroupEventListener(GroupEventListeners groupEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setGroupEventsListener(groupEventListeners);
   }
 
+/// Sets the call event listener.
+///
+/// Registers a listener for call events. This listener will be notified of call-related events.
+///
+/// Parameters:
+///   [callEventListeners] - The listener to be registered for call events.
   static setCallEventListener(CallEventListeners callEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setCallEventListener(callEventListeners);
@@ -3133,17 +5016,40 @@ class Mirrorfly {
         .updateMetaData(identifierMetaDataList, flyCallback);
   }
 
-  //create Meet link
+  /// Creates a meeting link.
+///
+/// This method initiates the creation of a meeting link. Upon completion,
+/// the provided callback function [flyCallback] is invoked with a [FlyResponse] object,
+/// which contains information about the success or failure of the operation.
+///
+/// Returns:
+///   [flyCallback] - A function that is called upon completion of the operation.
   Future<void> createMeetLink({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.createMeetLink(flyCallback);
   }
 
-  //get Call link
+/// Retrieves the call link.
+///
+/// This method fetches the call link that can be used to join a meeting.
+///
+/// Returns:
+///   A [Future<String>] that completes with the call link.
   Future<String> getCallLink() {
     return FlyChatFlutterPlatform.instance.getCallLink();
   }
 
-  //initialize meet
+/// Initializes a meeting with the specified call link and user name.
+///
+/// This method sets up a meeting using the provided call link and user name. Upon completion,
+/// the provided callback function [flyCallback] is invoked with a [FlyResponse] object,
+/// which contains information about the success or failure of the operation.
+///
+/// Parameters:
+///   [callLink] - The call link for the meeting.
+///   [userName] - The user name to be used in the meeting.
+///
+/// Returns:
+  ///   [flyCallback] - A function that is called upon completion of the operation.
   Future<void> initializeMeet(
       {required String callLink,
       required String userName,
@@ -3151,17 +5057,38 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.initializeMeet(callLink,userName,flyCallback);
   }
 
-  //dispose Meet Preview
+/// Disposes of the meeting preview.
+///
+/// This method cleans up resources used for the meeting preview. It should be called
+/// when the preview is no longer needed.
+///
+/// Returns:
+///   A [Future<void>] that completes when the operation is finished.
   Future<void> disposePreview() {
     return FlyChatFlutterPlatform.instance.disposePreview();
   }
 
-  //join call
+/// Joins a call.
+///
+/// This method initiates the process of joining a call. Upon completion,
+/// the provided callback function [flyCallback] is invoked with a [FlyResponse] object,
+/// which contains information about the success or failure of the operation.
+///
+/// Returns:
+///   [flyCallback] - A function that is called upon completion of the operation.
   Future<void> joinCall({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.joinCall(flyCallback);
   }
 
-  //getMeetUsername
+/// Retrieves the meeting username for a given user JID.
+///
+/// This method fetches the username used in meetings for the specified user JID.
+///
+/// Parameters:
+///   [userJid] - The JID (Jabber ID) of the user whose meeting username is to be retrieved.
+///
+/// Returns:
+///   A [Future<String>] that completes with the meeting username.
   Future<String> getMeetUsername({required String userJid}) {
     return FlyChatFlutterPlatform.instance.getMeetUsername(userJid);
   }

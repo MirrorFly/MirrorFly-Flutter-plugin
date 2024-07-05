@@ -7,28 +7,80 @@ import 'dart:io';
 
 import '../message_params.dart' show MessageMetaData;
 
+/// Converts a JSON string into a list of [ChatMessage] objects.
+///
+/// This function decodes the provided JSON string into a list of maps,
+/// and then maps each item to a [ChatMessage] object using the [ChatMessage.fromJson] factory constructor.
+///
+/// [str]: The JSON string to be decoded.
+///
+/// Returns a list of [ChatMessage] objects.
 List<ChatMessage> chatMessageFromJson(String str) => List<ChatMessage>.from(
     json.decode(str).map((x) => ChatMessage.fromJson(x)));
 
+/// Converts a list of [ChatMessage] objects into a JSON string.
+///
+/// This function takes each [ChatMessage] object in the provided list,
+/// converts it to a JSON map using the [toJson] method, and then encodes the list of maps as a JSON string.
+///
+/// [data]: The list of [ChatMessage] objects to be converted.
+///
+/// Returns a JSON string representation of the list of chat messages.
 String chatMessageToJson(List<ChatMessage> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
+/// Converts a JSON string into a single [ChatMessage] object.
+///
+/// This function decodes the provided JSON string into a map,
+/// and then uses the [ChatMessage.fromJson] factory constructor to create a [ChatMessage] object.
+///
+/// [str]: The JSON string to be decoded.
+///
+/// Returns a [ChatMessage] object.
 ChatMessage sendMessageModelFromJson(String str) =>
     ChatMessage.fromJson(json.decode(str));
 
+/// Converts a single [ChatMessage] object into a JSON string.
+///
+/// This function takes the provided [ChatMessage] object,
+/// converts it to a JSON map using the [toJson] method, and then encodes the map as a JSON string.
+///
+/// [data]: The [ChatMessage] object to be converted.
+///
+/// Returns a JSON string representation of the chat message.
 String sendMessageModelToJson(ChatMessage data) => json.encode(data.toJson());
 
+/// Converts a nullable JSON string into a non-nullable JSON string representing a list of chat messages.
+///
+/// If the input string is null or empty, this function returns an empty string.
+/// Otherwise, it decodes the string into a list of [ChatMessage] objects using [chatMessageFromJson],
+/// and then serializes the list back into a JSON string using [chatMessageToJson].
+///
+/// [str]: The nullable JSON string to convert.
+///
+/// Returns a non-nullable JSON string.
 String convertChatMessagesJsonFromString(String? str) =>
     (str == null || str.isEmpty)
         ? ""
         : chatMessageToJson(chatMessageFromJson(str));
 
+/// Converts a nullable JSON string into a non-nullable JSON string representing a single chat message.
+///
+/// If the input string is null or empty, this function returns an empty string.
+/// Otherwise, it decodes the string into a [ChatMessage] object using [sendMessageModelFromJson],
+/// and then serializes the object back into a JSON string using [sendMessageModelToJson].
+///
+/// [str]: The nullable JSON string to convert.
+///
+/// Returns a non-nullable JSON string.
 String convertChatMessageJsonFromString(String? str) =>
     (str == null || str.isEmpty)
         ? ""
         : sendMessageModelToJson(sendMessageModelFromJson(str));
 
+/// Represents a chat message with various properties.
 class ChatMessage {
+  /// Constructs an instance of [ChatMessage].
   ChatMessage({
     required this.chatUserJid,
     required this.contactType,
@@ -49,44 +101,73 @@ class ChatMessage {
     required this.messageTextContent,
     required this.messageType,
     this.metaData = const [],
-    required this.replyParentChatMessage, //
+    required this.replyParentChatMessage,
     required this.senderNickName,
     required this.senderUserJid,
     required this.senderUserName,
-    required this.contactChatMessage, //
-    required this.mediaChatMessage, //
-    required this.locationChatMessage, //
-    required this.topicId, //
+    required this.contactChatMessage,
+    required this.mediaChatMessage,
+    required this.locationChatMessage,
+    required this.topicId,
   });
 
+
+/// The JID of the user involved in the chat.
   String chatUserJid;
+/// The type of contact (e.g., live, local, deleted). Nullable.
   String? contactType;
+/// Indicates if the message is a carbon copy. Nullable.
   bool? isItCarbonMessage;
+/// Indicates if the contact is saved in the user's contacts. Nullable.
   bool? isItSavedContact;
+/// Indicates if the message has been deleted.
   bool isMessageDeleted;
+/// Indicates if the message has been recalled.
   bool isMessageRecalled;
+/// Indicates if the message was sent by the current user.
   bool isMessageSentByMe;
+/// Indicates if the message is starred.
   bool isMessageStarred;
+/// Indicates if the message is selected in the UI.
   bool isSelected;
+/// Indicates if this message is a reply to another message.
   bool isThisAReplyMessage;
+/// The type of chat (e.g., single chat, group chat).
   String messageChatType;
+/// A map of custom fields attached to the message.
   Map<String, dynamic> messageCustomField;
+  /// The unique identifier of the message.
   String messageId;
+  /// The time the message was sent. Can be of various types.
   dynamic messageSentTime;
+  /// The status of the message (e.g., sent, delivered, seen).
   String messageStatus;
+  /// Indicates if the message has been edited.
   bool isMessageEdited;
+  /// The text content of the message. Nullable.
   String? messageTextContent;
+  /// The type of message (e.g., text, image, video).
   String messageType;
+  /// A list of metadata associated with the message. Nullable.
   List<MessageMetaData>? metaData;
+  /// Information about the parent message if this is a reply. Nullable.
   ReplyParentChatMessage? replyParentChatMessage;
+  /// The nickname of the sender.
   String senderNickName;
+  /// The JID of the sender.
   String senderUserJid;
+  /// The username of the sender.
   String senderUserName;
+  /// Details of the contact shared in the message. Nullable.
   ContactChatMessage? contactChatMessage;
+  /// Details of the media shared in the message. Nullable.
   MediaChatMessage? mediaChatMessage;
+  /// Details of the location shared in the message. Nullable.
   LocationChatMessage? locationChatMessage;
+  /// The topic ID associated with the message. Nullable.
   String? topicId;
 
+  /// Creates a [ChatMessage] instance from a JSON map.
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
       chatUserJid: json["chatUserJid"] ?? "",
       contactType: getContactType(json),
@@ -139,6 +220,7 @@ class ChatMessage {
           : LocationChatMessage.fromJson(json["locationChatMessage"]),
       topicId: Platform.isIOS ? json["topicID"] : json["topicId"]);
 
+  /// Converts a [ChatMessage] instance to a JSON map.
   Map<String, dynamic> toJson() => {
         "chatUserJid": chatUserJid,
         "contactType": contactType,
@@ -193,7 +275,10 @@ class ChatMessage {
       };
 }*/
 
+/// Represents a contact shared in a chat message.
 class ContactChatMessage {
+
+  /// Constructs an instance of [ContactChatMessage].
   ContactChatMessage({
     required this.contactName,
     required this.contactPhoneNumbers,
@@ -201,11 +286,16 @@ class ContactChatMessage {
     required this.messageId,
   });
 
+  /// The name of the contact.
   String contactName;
+  /// The phone numbers of the contact.
   List<String> contactPhoneNumbers;
+  /// Indicates if the contact is a user of the chat app.
   List<bool> isChatAppUser;
+  /// The unique identifier of the message.
   String messageId;
 
+  /// Creates a [ContactChatMessage] instance from a JSON map.
   factory ContactChatMessage.fromJson(Map<String, dynamic> json) =>
       ContactChatMessage(
         contactName: json["contactName"],
@@ -217,6 +307,7 @@ class ContactChatMessage {
         messageId: json["messageId"],
       );
 
+  /// Converts a [ContactChatMessage] instance to a JSON map.
   Map<String, dynamic> toJson() => {
         "contactName": contactName,
         "contactPhoneNumbers":
@@ -226,7 +317,10 @@ class ContactChatMessage {
       };
 }
 
+/// Represents a location shared in a chat message.
 class LocationChatMessage {
+
+  /// Constructs an instance of [LocationChatMessage].
   LocationChatMessage({
     required this.latitude,
     required this.longitude,
@@ -234,11 +328,16 @@ class LocationChatMessage {
     required this.messageId,
   });
 
+  /// The latitude of the location.
   double latitude;
+  /// The longitude of the location.
   double longitude;
+  /// The URL of the location on a map.
   String mapLocationUrl;
+  /// The unique identifier of the message.
   String messageId;
 
+  /// Creates a [LocationChatMessage] instance from a JSON map.
   factory LocationChatMessage.fromJson(Map<String, dynamic> json) =>
       LocationChatMessage(
         latitude: json["latitude"].toDouble(),
@@ -247,6 +346,7 @@ class LocationChatMessage {
         messageId: json["messageId"],
       );
 
+  /// Converts a [LocationChatMessage] instance to a JSON map.
   Map<String, dynamic> toJson() => {
         "latitude": latitude,
         "longitude": longitude,
@@ -255,7 +355,10 @@ class LocationChatMessage {
       };
 }
 
+/// Represents a media shared in a chat message.
 class MediaChatMessage {
+
+  /// Constructs an instance of [MediaChatMessage].
   MediaChatMessage({
     required this.isAudioRecorded,
     required this.mediaCaptionText,
@@ -271,19 +374,32 @@ class MediaChatMessage {
     required this.messageType,
   });
 
+  /// Indicates if the audio is recorded.
   bool isAudioRecorded;
+  /// The caption text of the media.
   String mediaCaptionText;
+  /// The download status of the media.
   int mediaDownloadStatus;
+  /// The duration of the media.
   int mediaDuration;
+  /// The name of the media file.
   String mediaFileName;
+  /// The size of the media file.
   int mediaFileSize;
+  /// The local storage path of the media file.
   String mediaLocalStoragePath;
+  /// The progress status of the media.
   int mediaProgressStatus;
+  /// The thumbnail image of the media.
   String mediaThumbImage;
+  /// The upload status of the media.
   int mediaUploadStatus;
+  /// The unique identifier of the message.
   String messageId;
+  /// The type of the message.
   String messageType;
 
+  /// Creates a [MediaChatMessage] instance from a JSON map.
   factory MediaChatMessage.fromJson(Map<String, dynamic> json) =>
       MediaChatMessage(
         isAudioRecorded: Platform.isAndroid
@@ -310,6 +426,7 @@ class MediaChatMessage {
         messageType: getMediaMessageType(json["messageType"]),
       );
 
+  /// Converts a [MediaChatMessage] instance to a JSON map.
   Map<String, dynamic> toJson() => {
         "isAudioRecorded": isAudioRecorded,
         "mediaCaptionText": mediaCaptionText,
@@ -326,32 +443,46 @@ class MediaChatMessage {
       };
 }
 
+/// Represents a custom field attached to a message.
 class MessageCustomField {
+
+  /// Constructs an instance of [MessageCustomField].
   MessageCustomField();
 
+  /// Creates a [MessageCustomField] instance from a JSON map.
   factory MessageCustomField.fromJson(Map<String, dynamic> json) =>
       MessageCustomField();
 
+  /// Converts a [MessageCustomField] instance to a JSON map.
   Map<String, dynamic> toJson() => {};
 }
 
+/// Represents the status of a message.
 class MessageStatus {
+
+  /// Constructs an instance of [MessageStatus].
   MessageStatus({
     required this.status,
   });
 
+  /// The status of the message.
   String status;
 
+  /// Creates a [MessageStatus] instance from a JSON map.
   factory MessageStatus.fromJson(Map<String, dynamic> json) => MessageStatus(
         status: json["status"],
       );
 
+  /// Converts a [MessageStatus] instance to a JSON map.
   Map<String, dynamic> toJson() => {
         "status": status,
       };
 }
 
+/// Represents a parent message that is being replied to.
 class ReplyParentChatMessage {
+
+  /// Constructs an instance of [ReplyParentChatMessage].
   ReplyParentChatMessage({
     required this.chatUserJid,
     required this.isMessageDeleted,
@@ -369,21 +500,36 @@ class ReplyParentChatMessage {
     required this.mediaChatMessage,
   });
 
+  /// The JID of the user involved in the chat.
   String chatUserJid;
+  /// Indicates if the message has been deleted.
   bool isMessageDeleted;
+  /// Indicates if the message has been recalled.
   bool isMessageRecalled;
+  /// Indicates if the message was sent by the current user.
   bool isMessageSentByMe;
+  /// Indicates if the message is starred.
   bool isMessageStarred;
+  /// The unique identifier of the message.
   String messageId;
+  /// The time the message was sent.
   int messageSentTime;
+  /// The text content of the message.
   String? messageTextContent;
+  /// The type of message (e.g., text, image, video).
   String messageType;
+  /// The nickname of the sender.
   String senderNickName;
+  /// The username of the sender.
   String senderUserName;
+  /// Details of the location shared in the message. Nullable.
   LocationChatMessage? locationChatMessage;
+  /// Details of the contact shared in the message. Nullable.
   ContactChatMessage? contactChatMessage;
+  /// Details of the media shared in the message. Nullable.
   MediaChatMessage? mediaChatMessage;
 
+  /// Creates a [ReplyParentChatMessage] instance from a JSON map.
   factory ReplyParentChatMessage.fromJson(Map<String, dynamic> json) =>
       ReplyParentChatMessage(
         chatUserJid: json["chatUserJid"],
@@ -408,6 +554,7 @@ class ReplyParentChatMessage {
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
       );
 
+  /// Converts a [ReplyParentChatMessage] instance to a JSON map.
   Map<String, dynamic> toJson() => {
         "chatUserJid": chatUserJid,
         "isMessageDeleted": isMessageDeleted,
@@ -428,6 +575,15 @@ class ReplyParentChatMessage {
       };
 }
 
+/// Determines the contact type based on the provided JSON map.
+///
+/// This method checks the platform (Android or iOS) and the `contactType` field within the JSON map to determine the contact type.
+/// For Android, it directly uses the `contactType` value with specific cases for "unknown", "live", "local", and "deleted" contacts.
+/// For iOS, it infers the contact type based on other fields such as `isSavedContact` and `isDeletedUser`.
+///
+/// [json]: The JSON map containing contact information.
+///
+/// Returns a string representing the contact type.
 String getContactType(Map<String, dynamic> json) {
   if (Platform.isAndroid) {
     switch (json["contactType"]) {
@@ -456,6 +612,7 @@ String getContactType(Map<String, dynamic> json) {
   }
 }
 
+/// Determines the message status based on the provided status value.
 String getMessageStatus(dynamic status) {
   if (Platform.isAndroid) {
     return status;
@@ -475,6 +632,7 @@ String getMessageStatus(dynamic status) {
   }
 }
 
+/// Determines the message type based on the provided type value.
 String getMessageType(dynamic type) {
   if (type == null) {
     return "";
@@ -484,6 +642,10 @@ String getMessageType(dynamic type) {
       : type.toString().toUpperCase();
 }
 
+/// Determines the media download status for a given status code.
+///
+/// Returns an integer representing the unified download status code.
+///
 int getMediaDownloadStatus(int mediaDownloadStatus) {
   if (Platform.isIOS) {
     return mediaDownloadStatus == 4
@@ -502,6 +664,7 @@ int getMediaDownloadStatus(int mediaDownloadStatus) {
   }
 }
 
+/// Determines the media upload status for a given status code.
 int getMediaUploadStatus(int mediaUploadStatus) {
   if (Platform.isIOS) {
     return mediaUploadStatus == 3
@@ -514,12 +677,14 @@ int getMediaUploadStatus(int mediaUploadStatus) {
   }
 }
 
+/// Determines the media message type based on the provided type value.
 String getMediaMessageType(String type) {
   return type.toString().toUpperCase() == "FILE"
       ? "DOCUMENT"
       : type.toString().toUpperCase();
 }
 
+/// Determines the reply message type based on the provided JSON map.
 String getReplyMessageType(dynamic json) {
   if (Platform.isAndroid) {
     return json["messageType"].toString().toUpperCase();
@@ -542,36 +707,4 @@ String getReplyMessageType(dynamic json) {
       return "";
     }
   }
-}
-
-abstract class MMessageStatus {
-  final String status;
-
-  const MMessageStatus._(this.status); // Private constructor
-
-  static const MMessageStatus sent = _Sent(); // Instances of subclasses
-  static const MMessageStatus acknowledged = _Acknowledged();
-  static const MMessageStatus delivered = _Delivered();
-  static const MMessageStatus seen = _Seen();
-  static const MMessageStatus received = _Received();
-}
-
-class _Sent extends MMessageStatus {
-  const _Sent() : super._("N");
-}
-
-class _Acknowledged extends MMessageStatus {
-  const _Acknowledged() : super._("A");
-}
-
-class _Delivered extends MMessageStatus {
-  const _Delivered() : super._("D");
-}
-
-class _Seen extends MMessageStatus {
-  const _Seen() : super._("S");
-}
-
-class _Received extends MMessageStatus {
-  const _Received() : super._("R");
 }
