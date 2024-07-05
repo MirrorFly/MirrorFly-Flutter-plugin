@@ -1786,6 +1786,42 @@ class MockFlyChatFlutterPlatform
     //  implement getMetaData
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> createMeetLink(Function(FlyResponse response)? callback) {
+    // TODO: implement createMeetLink
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> disposePreview() {
+    // TODO: implement disposePreview
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getCallLink() {
+    // TODO: implement getCallLink
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getMeetUsername(String jid) {
+    // TODO: implement getMeetUsername
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> initializeMeet(String callLink, String userName,Function(FlyResponse response)? callback) {
+    // TODO: implement initializeMeet
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> joinCall(Function(FlyResponse response)? callback) {
+    // TODO: implement joinCall
+    throw UnimplementedError();
+  }
 }
 
 void main() {

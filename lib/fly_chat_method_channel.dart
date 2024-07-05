@@ -5696,4 +5696,111 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
     }
   }
+
+  @override
+  Future<void> createMeetLink(Function(FlyResponse response)? callback) async {
+    String? val = FlyConstants.empty;
+    try {
+      val = await mirrorFlyMethodChannel.invokeMethod<String>('createMeetLink');
+      LogMessage.d('createMeetLink', ' $val');
+      callback?.call(
+          FlyResponse(true, val ?? FlyConstants.empty, FlyConstants.empty));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<String> getCallLink() async {
+    String? val = FlyConstants.empty;
+    try {
+      val = await mirrorFlyMethodChannel.invokeMethod<String>('getCallLink');
+      LogMessage.d('getCallLink', ' $val');
+      return val ?? FlyConstants.empty;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      return FlyConstants.empty;
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      return FlyConstants.empty;
+    }
+  }
+
+  @override
+  Future<void> initializeMeet(String callLink,String userName,Function(FlyResponse response)? callback) async {
+    String? val = FlyConstants.empty;
+    try {
+      val = await mirrorFlyMethodChannel.invokeMethod('initializeMeet',{"callLink":callLink,"userName":userName});
+      LogMessage.d('initializeMeet', ' $val');
+      callback?.call(
+          FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<void> disposePreview() async {
+    String? val = FlyConstants.empty;
+    try {
+      val = await mirrorFlyMethodChannel.invokeMethod('disposePreview');
+      LogMessage.d('disposePreview', ' $val');
+      return;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> joinCall(Function(FlyResponse response)? callback) async {
+    String? val = FlyConstants.empty;
+    try {
+      val = await mirrorFlyMethodChannel.invokeMethod('joinCall');
+      LogMessage.d('joinCall', ' $val');
+      callback?.call(
+          FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<String> getMeetUsername(String jid) async {
+    String? val = FlyConstants.empty;
+    try {
+      val = await mirrorFlyMethodChannel.invokeMethod<String>('getMeetUsername',{'userJid':jid});
+      LogMessage.d('getMeetUsername', ' $val');
+      return val ?? FlyConstants.empty;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      return FlyConstants.empty;
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      return FlyConstants.empty;
+    }
+  }
+
+
 }

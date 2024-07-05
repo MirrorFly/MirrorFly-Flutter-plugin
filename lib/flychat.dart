@@ -3132,4 +3132,37 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance
         .updateMetaData(identifierMetaDataList, flyCallback);
   }
+
+  //create Meet link
+  Future<void> createMeetLink({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.createMeetLink(flyCallback);
+  }
+
+  //get Call link
+  Future<String> getCallLink() {
+    return FlyChatFlutterPlatform.instance.getCallLink();
+  }
+
+  //initialize meet
+  Future<void> initializeMeet(
+      {required String callLink,
+      required String userName,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.initializeMeet(callLink,userName,flyCallback);
+  }
+
+  //dispose Meet Preview
+  Future<void> disposePreview() {
+    return FlyChatFlutterPlatform.instance.disposePreview();
+  }
+
+  //join call
+  Future<void> joinCall({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.joinCall(flyCallback);
+  }
+
+  //getMeetUsername
+  Future<String> getMeetUsername({required String userJid}) {
+    return FlyChatFlutterPlatform.instance.getMeetUsername(userJid);
+  }
 }
