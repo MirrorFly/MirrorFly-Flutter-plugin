@@ -2,7 +2,6 @@ import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-import 'event_handlers.dart';
 import 'fly_chat_platform_interface.dart';
 
 /// The main class for the MirrorFly Flutter plugin.
@@ -5016,6 +5015,7 @@ class Mirrorfly {
         .updateMetaData(identifierMetaDataList, flyCallback);
   }
 
+  /// This listener is set to listen the call link events.
   static void setCallLinkEventListener(CallLinkEventListeners callLinkEventsListener){
     return FlyChatFlutterPlatform.instance.setCallLinkEventListener(callLinkEventsListener);
   }

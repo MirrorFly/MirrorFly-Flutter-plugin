@@ -1675,6 +1675,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getMetaData has not been implemented.');
   }
 
+  /// This listener is set to listen the call link events.
   void setCallLinkEventListener(CallLinkEventListeners callLinkEventsListener){
     throw UnimplementedError('setCallLinkEventListener has not been implemented.');
   }
