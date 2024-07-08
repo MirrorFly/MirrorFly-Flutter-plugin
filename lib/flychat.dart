@@ -3134,17 +3134,17 @@ class Mirrorfly {
   }
 
   //create Meet link
-  Future<void> createMeetLink({required Function(FlyResponse response) flyCallback}) {
+  static Future<void> createMeetLink({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.createMeetLink(flyCallback);
   }
 
   //get Call link
-  Future<String> getCallLink() {
+  static Future<String> getCallLink() {
     return FlyChatFlutterPlatform.instance.getCallLink();
   }
 
   //initialize meet
-  Future<void> initializeMeet(
+  static Future<void> initializeMeet(
       {required String callLink,
       required String userName,
       required Function(FlyResponse response) flyCallback}) {
@@ -3152,17 +3152,17 @@ class Mirrorfly {
   }
 
   //dispose Meet Preview
-  Future<void> disposePreview() {
+  static Future<void> disposePreview() {
     return FlyChatFlutterPlatform.instance.disposePreview();
   }
 
   //join call
-  Future<void> joinCall({required Function(FlyResponse response) flyCallback}) {
+  static Future<void> joinCall({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.joinCall(flyCallback);
   }
 
   //getMeetUsername
-  Future<String> getMeetUsername({required String userJid}) {
+  static Future<String> getMeetUsername({required String userJid}) {
     return FlyChatFlutterPlatform.instance.getMeetUsername(userJid);
   }
 }
