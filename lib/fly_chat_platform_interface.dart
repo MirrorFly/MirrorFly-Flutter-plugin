@@ -1675,6 +1675,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getMetaData has not been implemented.');
   }
 
+  void setCallLinkEventListener(CallLinkEventListeners callLinkEventsListener){
+    throw UnimplementedError('setCallLinkEventListener has not been implemented.');
+  }
+
   /// This method is used to create the meet link.
   Future<void> createMeetLink(Function(FlyResponse response)? callback) {
     throw UnimplementedError('createMeetLink has not been implemented.');
@@ -1704,4 +1708,14 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<String> getMeetUsername(String jid) {
     throw UnimplementedError('getMeetUsername has not been implemented.');
   }
+
+  /// Stream that emits events when the call link subscribed success.
+  Stream<dynamic> get onSubscribeSuccess => throw UnimplementedError('onSubscribeSuccess has not been implemented');
+
+  /// Stream that emits events when the call link subscribe error
+  Stream<dynamic> get onError => throw UnimplementedError('onError has not been implemented');
+
+  /// Stream that emits events when the call link users are updated
+  Stream<dynamic> get onUsersUpdated => throw UnimplementedError('onUsersUpdated has not been implemented');
+
 }

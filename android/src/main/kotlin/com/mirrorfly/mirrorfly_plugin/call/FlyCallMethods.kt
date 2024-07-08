@@ -12,6 +12,7 @@ import com.mirrorflysdk.flycall.webrtc.api.*
 import com.mirrorflysdk.flycommons.Error
 import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.flycommons.exception.FlyException
+import io.flutter.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
@@ -695,7 +696,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d("deleteCallLog : ", "Response $isSuccess")
                 if (isSuccess) {
-                    result.success(isSuccess)
+                    result.success(true)
                 } else {
                     result.error("400", "deleteCallLog error", message)
                 }
@@ -744,7 +745,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
             CallManager.setupJoinCallViaLink()
             CallManager.setJoinCallEventsListener(this)
         }
-        startVideoCapture(call)
+        startVideoCapture()
         subscribeCallEvents(call,result)
     }
 
@@ -762,7 +763,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         })
     }
 
-    private fun startVideoCapture(call: MethodCall) {
+    private fun startVideoCapture() {
         CallManager.startVideoCapture()
 //        result.success(true)
     }
@@ -779,21 +780,56 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
 
     override fun onSubscribeSuccess() {
         //enable join call UI button here
+        FlyMethodConstants.updateCallSinkValue(
+               Constants.onSubscribeSuccess,
+                true
+        )
     }
 
     override fun onConnectedToSignalServer() {
+//        FlyMethodConstants.updateCallSinkValue(
+//                Constants.onConnectedToSignalServer,
+//                true
+//        )
     }
 
     override fun onError(error: Error) {
         //show error message in ui
+        val json = JSONObject()
+        json.put("code", error.code)
+        json.put("description", error.description)
+        FlyMethodConstants.updateCallSinkValue(
+                Constants.onError,
+                json.toString()
+        )
     }
 
     override fun onLocalTrack(videoTrack: VideoTrack?) {
         videoTrack?.addSink(CallManager.getLocalProxyVideoSink())
+        Log.d(
+                "#CallLink",
+                "#onLocalTrack mirrorflyViews.size ${
+                    MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())
+                } ${MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())}"
+        )
+        val json = JSONObject()
+        json.put("userJid", ChatManager.getCurrentUserJid())
+        FlyMethodConstants.updateCallSinkValue(Constants.onLocalVideoTrackAdded, json.toString())
+        if (MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid()) != null) {
+            MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())?.setLocalTarget()
+        } else {
+            Log.d(tag, "#onVideoTrackAdded view not created")
+        }
+        FlyMethodConstants.updateCallSinkValue(Constants.onTrackAdded, json.toString())
+//        FlyMethodConstants.updateCallSinkValue(Constants.onLocalTrack, json.toString())
     }
 
     override fun onUsersUpdated(usersList: List<String>) {
         // update the users list in ui here
+        FlyMethodConstants.updateCallSinkValue(
+                Constants.onUsersUpdated,
+                usersList.toJsonString()
+        )
     }
 
     //#Meet Link Ends Here

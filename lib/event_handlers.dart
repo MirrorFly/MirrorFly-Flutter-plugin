@@ -1,5 +1,6 @@
 import 'package:mirrorfly_plugin/model/available_features.dart';
 
+import 'model/callback.dart';
 import 'model/chat_message_model.dart';
 import 'model/profile_model.dart';
 
@@ -209,4 +210,20 @@ abstract class CallEventListeners {
 
   /// This listener is triggered whenever the User stopped speaking in the call.
   void onUserStoppedSpeaking(String userJid);
+}
+
+/// A class that provides a set of callback methods that can be used to listen for Call Link Events in the MirrorFly Flutter Plugin.
+abstract class CallLinkEventListeners {
+
+  /// This listener is triggered when the call link is Subscribed success.
+  void onSubscribeSuccess();
+
+  /// This listener is triggered whenever the error occurred in the call link subscription.
+  void onError(FlyException error);
+
+  /// This Listener is triggered when the local video track added.
+  void onLocalVideoTrackAdded(String userJid);
+
+  /// This Listener is triggered whenever the user list updated.
+  void onUsersUpdated(List<String> users);
 }

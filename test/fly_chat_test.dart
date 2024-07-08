@@ -1788,6 +1788,11 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  void setCallLinkEventListener(CallLinkEventListeners callLinkEventsListener){
+    throw UnimplementedError();
+  }
+
+  @override
   Future<void> createMeetLink(Function(FlyResponse response)? callback) {
     // TODO: implement createMeetLink
     throw UnimplementedError();
@@ -1822,6 +1827,16 @@ class MockFlyChatFlutterPlatform
     // TODO: implement joinCall
     throw UnimplementedError();
   }
+
+  @override
+  Stream get onSubscribeSuccess => throw UnimplementedError();
+
+  @override
+  Stream get onError => throw UnimplementedError();
+
+  @override
+  Stream get onUsersUpdated => throw UnimplementedError();
+
 }
 
 void main() {

@@ -5016,6 +5016,10 @@ class Mirrorfly {
         .updateMetaData(identifierMetaDataList, flyCallback);
   }
 
+  static void setCallLinkEventListener(CallLinkEventListeners callLinkEventsListener){
+    return FlyChatFlutterPlatform.instance.setCallLinkEventListener(callLinkEventsListener);
+  }
+
   /// Creates a meeting link.
   ///
   /// This method initiates the creation of a meeting link. Upon completion,
@@ -5045,16 +5049,16 @@ class Mirrorfly {
   /// which contains information about the success or failure of the operation.
   ///
   /// Parameters:
-  ///   [callLink] - The call link for the meeting.
+  ///   [callLinkId] - The call link id for the meeting.
   ///   [userName] - The user name to be used in the meeting.
   ///
   /// Returns:
   ///   [flyCallback] - A function that is called upon completion of the operation.
   static Future<void> initializeMeet(
-      {required String callLink,
+      {required String callLinkId,
       required String userName,
       required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance.initializeMeet(callLink,userName,flyCallback);
+    return FlyChatFlutterPlatform.instance.initializeMeet(callLinkId,userName,flyCallback);
   }
 
   /// Disposes of the meeting preview.
@@ -5092,4 +5096,14 @@ class Mirrorfly {
   static Future<String> getMeetUsername({required String userJid}) {
     return FlyChatFlutterPlatform.instance.getMeetUsername(userJid);
   }
+
+  /// Stream that emits events when the call link subscribed success.
+  static Stream<dynamic> get onSubscribeSuccess => FlyChatFlutterPlatform.instance.onSubscribeSuccess;
+
+  /// Stream that emits events when the call link subscribe error
+  static Stream<dynamic> get onError => FlyChatFlutterPlatform.instance.onError;
+
+  /// Stream that emits events when the call link users are updated
+  static Stream<dynamic> get onUsersUpdated => FlyChatFlutterPlatform.instance.onUsersUpdated;
+
 }

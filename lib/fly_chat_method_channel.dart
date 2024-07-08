@@ -53,6 +53,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   /// A Event channel to communicate chat related events with the native platform.
   MessageEventListeners? messageEventsListener;
 
+  /// A Event channel to communicate call link related events with the native platform.
+  CallLinkEventListeners? callLinkEventsListener;
+
   /// A Event channel to communicate call related events with the native platform.
   CallEventListeners? callEventsListener;
 
@@ -592,6 +595,33 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onClearAllCallLogStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for call link subscribe success events.
+  @visibleForTesting
+  final onSubscribeSuccessChannel =
+      const EventChannel('contus.mirrorfly/onSubscribeSuccess');
+
+  /// A event channel for call link subscribe success events.
+  final StreamController<dynamic> onSubscribeSuccessStreamController =
+      StreamController<dynamic>.broadcast();
+
+  /// A event channel for call link subscribe onError events.
+  @visibleForTesting
+  final onErrorChannel =
+      const EventChannel('contus.mirrorfly/onError');
+
+  /// A event channel for call link subscribe onError events.
+  final StreamController<dynamic> onErrorStreamController =
+      StreamController<dynamic>.broadcast();
+
+  /// A event channel for call link users are update events.
+  @visibleForTesting
+  final onUsersUpdatedChannel =
+      const EventChannel('contus.mirrorfly/onUsersUpdated');
+
+  /// A event channel for call link users are update events.
+  final StreamController<dynamic> onUsersUpdatedStreamController =
+      StreamController<dynamic>.broadcast();
+
   @override
   Stream<dynamic> get onMessageReceived =>
       _messageOnReceivedStreamController.stream;
@@ -1099,6 +1129,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       var userJid = data["userJid"] ?? "";
       onLocalVideoTrackAddedStreamController.add(event);
       callEventsListener?.onLocalVideoTrackAdded(userJid);
+      callLinkEventsListener?.onLocalVideoTrackAdded(userJid);
     });
     onRemoteVideoTrackAddedChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
@@ -1178,6 +1209,26 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onClearAllCallLogStreamController.add(event);
       callEventsListener?.onCallLogsCleared();
     });
+    onSubscribeSuccessChannel.receiveBroadcastStream().listen((event) {
+      debugPrint("onSubscribeSuccessChannel event = $event");
+      onSubscribeSuccessStreamController.add(event);
+      callLinkEventsListener?.onSubscribeSuccess();
+    });
+    onErrorChannel.receiveBroadcastStream().listen((event) {
+      debugPrint("onErrorChannel event = $event");
+      onErrorStreamController.add(event);
+      var data = json.decode(event.toString());
+      var code = data["code"];
+      var description = data["description"];
+      callLinkEventsListener?.onError(FlyException(code, description, null));
+    });
+    onUsersUpdatedChannel.receiveBroadcastStream().listen((event) {
+      debugPrint("onUsersUpdatedChannel event = $event");
+      onUsersUpdatedStreamController.add(event);
+      var data = json.decode(event.toString());
+      callLinkEventsListener?.onUsersUpdated(List<String>.from(data ?? ''));
+    });
+
   }
 
   /*@override
@@ -5698,10 +5749,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  void setCallLinkEventListener(CallLinkEventListeners callLinkEventsListener) {
+    this.callLinkEventsListener = callLinkEventsListener;
+  }
+
+  @override
   Future<void> createMeetLink(Function(FlyResponse response)? callback) async {
     String? val = FlyConstants.empty;
     try {
-      val = await mirrorFlyMethodChannel.invokeMethod<String>('createMeetLink');
+      val = await mirrorFlyCallMethodChannel.invokeMethod<String>('createMeetLink');
       LogMessage.d('createMeetLink', ' $val');
       callback?.call(
           FlyResponse(true, val ?? FlyConstants.empty, FlyConstants.empty));
@@ -5720,7 +5776,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<String> getCallLink() async {
     String? val = FlyConstants.empty;
     try {
-      val = await mirrorFlyMethodChannel.invokeMethod<String>('getCallLink');
+      val = await mirrorFlyCallMethodChannel.invokeMethod<String>('getCallLink');
       LogMessage.d('getCallLink', ' $val');
       return val ?? FlyConstants.empty;
     } on PlatformException catch (e) {
@@ -5734,9 +5790,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<void> initializeMeet(String callLink,String userName,Function(FlyResponse response)? callback) async {
-    String? val = FlyConstants.empty;
+    bool? val = false;
     try {
-      val = await mirrorFlyMethodChannel.invokeMethod('initializeMeet',{"callLink":callLink,"userName":userName});
+      val = await mirrorFlyCallMethodChannel.invokeMethod('initializeMeet',{"callLink":callLink,"userName":userName});
       LogMessage.d('initializeMeet', ' $val');
       callback?.call(
           FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
@@ -5753,9 +5809,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<void> disposePreview() async {
-    String? val = FlyConstants.empty;
+    bool? val = false;
     try {
-      val = await mirrorFlyMethodChannel.invokeMethod('disposePreview');
+      val = await mirrorFlyCallMethodChannel.invokeMethod('disposePreview');
       LogMessage.d('disposePreview', ' $val');
       return;
     } on PlatformException catch (e) {
@@ -5769,9 +5825,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<void> joinCall(Function(FlyResponse response)? callback) async {
-    String? val = FlyConstants.empty;
+    bool? val = false;
     try {
-      val = await mirrorFlyMethodChannel.invokeMethod('joinCall');
+      val = await mirrorFlyCallMethodChannel.invokeMethod('joinCall');
       LogMessage.d('joinCall', ' $val');
       callback?.call(
           FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
@@ -5790,7 +5846,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<String> getMeetUsername(String jid) async {
     String? val = FlyConstants.empty;
     try {
-      val = await mirrorFlyMethodChannel.invokeMethod<String>('getMeetUsername',{'userJid':jid});
+      val = await mirrorFlyCallMethodChannel.invokeMethod<String>('getMeetUsername',{'userJid':jid});
       LogMessage.d('getMeetUsername', ' $val');
       return val ?? FlyConstants.empty;
     } on PlatformException catch (e) {
