@@ -1675,32 +1675,32 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getMetaData has not been implemented.');
   }
 
-  //create Meet link
+  /// This method is used to create the meet link.
   Future<void> createMeetLink(Function(FlyResponse response)? callback) {
     throw UnimplementedError('createMeetLink has not been implemented.');
   }
 
-  //get Call link
+  /// This method is used to get the ongoing call link.
   Future<String> getCallLink() {
     throw UnimplementedError('getCallLink has not been implemented.');
   }
 
-  //initialize meet
+  /// This method is used to initialize the meet.
   Future<void> initializeMeet(String callLink,String userName,Function(FlyResponse response)? callback) {
     throw UnimplementedError('initializeMeet has not been implemented.');
   }
 
-  //dispose Meet Preview
+  /// This method is used to clear the resources observers.
   Future<void> disposePreview() {
     throw UnimplementedError('disposePreview has not been implemented.');
   }
 
-  //join call
+  /// This method is used to join the call.
   Future<void> joinCall(Function(FlyResponse response)? callback) {
     throw UnimplementedError('joinCall has not been implemented.');
   }
 
-  //getMeetUsername
+  /// This method is used to get the Meet username.
   Future<String> getMeetUsername(String jid) {
     throw UnimplementedError('getMeetUsername has not been implemented.');
   }
