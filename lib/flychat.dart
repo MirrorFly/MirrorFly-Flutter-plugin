@@ -5017,79 +5017,79 @@ class Mirrorfly {
   }
 
   /// Creates a meeting link.
-///
-/// This method initiates the creation of a meeting link. Upon completion,
-/// the provided callback function [flyCallback] is invoked with a [FlyResponse] object,
-/// which contains information about the success or failure of the operation.
-///
-/// Returns:
-///   [flyCallback] - A function that is called upon completion of the operation.
-  Future<void> createMeetLink({required Function(FlyResponse response) flyCallback}) {
+  ///
+  /// This method initiates the creation of a meeting link. Upon completion,
+  /// the provided callback function [flyCallback] is invoked with a [FlyResponse] object,
+  /// which contains information about the success or failure of the operation.
+  ///
+  /// Returns:
+  ///   [flyCallback] - A function that is called upon completion of the operation.
+  static Future<void> createMeetLink({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.createMeetLink(flyCallback);
   }
 
-/// Retrieves the call link.
-///
-/// This method fetches the call link that can be used to join a meeting.
-///
-/// Returns:
-///   A [Future<String>] that completes with the call link.
-  Future<String> getCallLink() {
+  /// Retrieves the call link.
+  ///
+  /// This method fetches the call link that can be used to join a meeting.
+  ///
+  /// Returns:
+  ///   A [Future<String>] that completes with the call link.
+  static Future<String> getCallLink() {
     return FlyChatFlutterPlatform.instance.getCallLink();
   }
 
-/// Initializes a meeting with the specified call link and user name.
-///
-/// This method sets up a meeting using the provided call link and user name. Upon completion,
-/// the provided callback function [flyCallback] is invoked with a [FlyResponse] object,
-/// which contains information about the success or failure of the operation.
-///
-/// Parameters:
-///   [callLink] - The call link for the meeting.
-///   [userName] - The user name to be used in the meeting.
-///
-/// Returns:
+  /// Initializes a meeting with the specified call link and user name.
+  ///
+  /// This method sets up a meeting using the provided call link and user name. Upon completion,
+  /// the provided callback function [flyCallback] is invoked with a [FlyResponse] object,
+  /// which contains information about the success or failure of the operation.
+  ///
+  /// Parameters:
+  ///   [callLink] - The call link for the meeting.
+  ///   [userName] - The user name to be used in the meeting.
+  ///
+  /// Returns:
   ///   [flyCallback] - A function that is called upon completion of the operation.
-  Future<void> initializeMeet(
+  static Future<void> initializeMeet(
       {required String callLink,
       required String userName,
       required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.initializeMeet(callLink,userName,flyCallback);
   }
 
-/// Disposes of the meeting preview.
-///
-/// This method cleans up resources used for the meeting preview. It should be called
-/// when the preview is no longer needed.
-///
-/// Returns:
-///   A [Future<void>] that completes when the operation is finished.
-  Future<void> disposePreview() {
+  /// Disposes of the meeting preview.
+  ///
+  /// This method cleans up resources used for the meeting preview. It should be called
+  /// when the preview is no longer needed.
+  ///
+  /// Returns:
+  ///   A [Future<void>] that completes when the operation is finished.
+  static Future<void> disposePreview() {
     return FlyChatFlutterPlatform.instance.disposePreview();
   }
 
-/// Joins a call.
-///
-/// This method initiates the process of joining a call. Upon completion,
-/// the provided callback function [flyCallback] is invoked with a [FlyResponse] object,
-/// which contains information about the success or failure of the operation.
-///
-/// Returns:
-///   [flyCallback] - A function that is called upon completion of the operation.
-  Future<void> joinCall({required Function(FlyResponse response) flyCallback}) {
+  /// Joins a call.
+  ///
+  /// This method initiates the process of joining a call. Upon completion,
+  /// the provided callback function [flyCallback] is invoked with a [FlyResponse] object,
+  /// which contains information about the success or failure of the operation.
+  ///
+  /// Returns:
+  ///   [flyCallback] - A function that is called upon completion of the operation.
+  static Future<void> joinCall({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.joinCall(flyCallback);
   }
 
-/// Retrieves the meeting username for a given user JID.
-///
-/// This method fetches the username used in meetings for the specified user JID.
-///
-/// Parameters:
-///   [userJid] - The JID (Jabber ID) of the user whose meeting username is to be retrieved.
-///
-/// Returns:
-///   A [Future<String>] that completes with the meeting username.
-  Future<String> getMeetUsername({required String userJid}) {
+  /// Retrieves the meeting username for a given user JID.
+  ///
+  /// This method fetches the username used in meetings for the specified user JID.
+  ///
+  /// Parameters:
+  ///   [userJid] - The JID (Jabber ID) of the user whose meeting username is to be retrieved.
+  ///
+  /// Returns:
+  ///   A [Future<String>] that completes with the meeting username.
+  static Future<String> getMeetUsername({required String userJid}) {
     return FlyChatFlutterPlatform.instance.getMeetUsername(userJid);
   }
 }
