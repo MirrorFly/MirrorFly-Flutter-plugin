@@ -330,7 +330,7 @@ object FlyMethodConstants {
         "joinCall" to flyCallMethods::joinCall,
         "initializeMeet" to flyCallMethods::initializeMeet,
         "disposePreview" to flyCallMethods::disposePreview,
-        "getUserName" to flyCallMethods::getUserName,
+        "getMeetUsername" to flyCallMethods::getMeetUsername,
     )
 
 

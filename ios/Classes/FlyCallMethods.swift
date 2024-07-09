@@ -15,24 +15,24 @@ import MirrorFlySDK
     let tag = "#MirrorFlyCall"
     let callLogManager = CallLogManager()
     var callLogArray = [CallLog]()
-
+    
     /// A token for the observer, used to manage and remove the observer when no longer needed.
     var observerToken: NSObjectProtocol?
-
+    
     /// Singleton instance of FlyEventChannelInitializer, used to initialize and manage event channels.
     private let eventChannelInitializer = FlyEventChannelInitializer.shared
-
-
-
+    
+    private var factory : MirrorflyViewFactory?
+    
     /// This boolean indicates whether to check for the XMPP connection before making a call.
     /// This feature ensures that a call is made only after the server is reconnected during permission popups.
     let checkXMPPConnection = true
-
-
+    
+    
     func getCallUsersList(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-
+        
         var jsonArray: [[String: Any]] = []
-
+        
         for (memberJid,status) in CallManager.getCallUsersWithStatus() {
             NSLog("\(tag) \(memberJid) \(status)")
             let jsonObject: [String: Any] = [
@@ -40,7 +40,7 @@ import MirrorFlySDK
                 "callStatus": status.rawValue,
                 "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid),
                 "isVideoMuted" : CallManager.isRemoteVideoMuted(memberJid)
-//                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid)
+                //                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid)
             ]
             NSLog("#MirrorflyCall Call Status Updated--> Appending CallUsersList \(jsonObject)")
             jsonArray.append(jsonObject)
@@ -51,7 +51,7 @@ import MirrorFlySDK
             "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling"),
             "isAudioMuted" : CallManager.isAudioMuted(),
             "isVideoMuted" : CallManager.isVideoMuted()
-//            "isAudioMuted" : CallManager.isAudioMuted()
+            //            "isAudioMuted" : CallManager.isAudioMuted()
         ]
         
         jsonArray.append(localJIDJson)
@@ -59,7 +59,7 @@ import MirrorFlySDK
         
         let userListJson = convertArrayToJSONString(array: jsonArray)
         NSLog("\(tag) getCallUsersWithStatus \(String(describing: userListJson))")
-       result(userListJson)
+        result(userListJson)
     }
     
     func muteVideo(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
@@ -91,7 +91,7 @@ import MirrorFlySDK
     }
     
     func getAudioDevices(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
-           
+        
     }
     
     func makeVoiceCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
@@ -105,13 +105,13 @@ import MirrorFlySDK
         }
         if checkXMPPConnection {
             result(true)
-
+            
             guard ChatManager.isChatServerConnected() else {
                 print("#CALL CHECK isChatServerConnected false")
                 addObserverForConnectionStatus(jid: jid, callType: "voice")
                 return
             }
-
+            
             print("#CALL CHECK isChatServerConnected true")
             initiateVoiceCall(jid: jid)
         }else{
@@ -122,9 +122,9 @@ import MirrorFlySDK
                 } else {
                     let errorMessage = flyError?.localizedDescription
                     NSLog("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
-
+                    
                     result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
-
+                    
                 }
             }
         }
@@ -139,7 +139,7 @@ import MirrorFlySDK
             NSLog("MirrorflyCall Audio call permission not granted")
             result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_PERMISSION_NOT_ENABLED, details: nil))
             return
-
+            
         }
         if(!CallManager.isVideoCallPermissionsGranted()){
             NSLog("MirrorflyCall Video call permission not granted")
@@ -149,7 +149,7 @@ import MirrorFlySDK
         
         if checkXMPPConnection {
             result(true)
-
+            
             guard ChatManager.isChatServerConnected() else {
                 print("#CALL CHECK isChatServerConnected false")
                 addObserverForConnectionStatus(jid: jid, callType: "video")
@@ -157,7 +157,7 @@ import MirrorFlySDK
             }
             self.initiateVideoCall(jid: jid)
         }else{
-
+            
             try! CallManager.makeVideoCall(jid) { isSuccess , flyError in
                 NSLog("call result --> \(isSuccess) messsage --> \(String(describing: flyError))")
                 if (isSuccess){
@@ -166,11 +166,11 @@ import MirrorFlySDK
                     let errorMessage = flyError?.localizedDescription
                     NSLog("MirroflyCall making call error--->\(errorMessage ?? "make voice call error")")
                     result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: errorMessage))
-
+                    
                 }
             }
         }
-
+        
     }
     
     func declineCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
@@ -180,7 +180,7 @@ import MirrorFlySDK
         CallManager.incomingUserJidArr.removeAll()
         CallManager.disconnectCall()
         result(true)
-       
+        
     }
     func muteAudio(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         let args = call.arguments as! Dictionary<String, Any>
@@ -199,7 +199,7 @@ import MirrorFlySDK
             NSLog("MirrorflyCall Audio call permission not granted")
             result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_PERMISSION_NOT_ENABLED, details: nil))
             return
-
+            
         }
         if(!CallManager.isVideoCallPermissionsGranted()){
             NSLog("MirrorflyCall Video call permission not granted")
@@ -209,7 +209,7 @@ import MirrorFlySDK
         
         if checkXMPPConnection {
             result(true)
-
+            
             guard ChatManager.isChatServerConnected() else {
                 print("#CALL CHECK isChatServerConnected false")
                 addObserverForConnectionStatus(jidList: jidList, groupJid: groupJid, callType: "video")
@@ -217,10 +217,10 @@ import MirrorFlySDK
             }
             self.initiateGroupVideoCall(jidList: jidList, groupJid: groupJid)
         }else{
-
+            
             do {
                 try CallManager.makeGroupVideoCall(jidList, groupID: groupJid) { isSuccess, flyError in
-
+                    
                     if isSuccess{
                         NSLog("***Make Group Video Call Success")
                         result(true)
@@ -235,7 +235,7 @@ import MirrorFlySDK
                 result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.CALL_FAILED_MESSAGE, details: error.localizedDescription))
             }
         }
-
+        
     }
     
     func makeGroupVoiceCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
@@ -247,12 +247,12 @@ import MirrorFlySDK
             NSLog("MirrorflyCall Audio call permission not granted")
             result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_PERMISSION_NOT_ENABLED, details: nil))
             return
-
+            
         }
-
+        
         if checkXMPPConnection {
             result(true)
-
+            
             guard ChatManager.isChatServerConnected() else {
                 print("#CALL CHECK isChatServerConnected false")
                 addObserverForConnectionStatus(jidList: jidList, groupJid: groupJid, callType: "voice")
@@ -301,7 +301,7 @@ import MirrorFlySDK
                         result(FlutterError(code: FLErrorCode.CALL_FAILED, message: FLErrorMessage.INVITE_FAILED_MESSAGE, details: message))
                     }
                 }
-
+                
             }
         };
     }
@@ -340,7 +340,7 @@ import MirrorFlySDK
         }
         let availableAudioListJson = jsonArray.toJson()
         NSLog("\(tag) availableAudioListJson \(String(describing: availableAudioListJson))")
-       result(availableAudioListJson)
+        result(availableAudioListJson)
     }
     
     func routeAudioTo(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
@@ -348,31 +348,31 @@ import MirrorFlySDK
         let routeType = args["routeType"] as? String ?? ""
         NSLog("triggerDelegateForOutputs route Type \(routeType)")
         switch (routeType) {
-          case "bluetooth":
+        case "bluetooth":
             NSLog("****triggerDelegateForOutputs routed to bluetooth")
             AudioManager.shared().routeAudioTo(device: .bluetooth, force: true);
             break;
-          case "headset":
+        case "headset":
             NSLog("****triggerDelegateForOutputs routed to headset")
             AudioManager.shared().routeAudioTo(device: .headset, force: true);
             break;
-          case "receiver":
+        case "receiver":
             NSLog("****triggerDelegateForOutputs routed to receiver")
             AudioManager.shared().routeAudioTo(device: .receiver, force: true);
             break;
-          case "speaker":
+        case "speaker":
             NSLog("****triggerDelegateForOutputs routed to speaker")
             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
-          default:
+        default:
             NSLog("****triggerDelegateForOutputs routed to default speaker")
             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
             break;
-//           default:
-//             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
-//             break;
+            //           default:
+            //             AudioManager.shared().routeAudioTo(device: .speaker, force: true);
+            //             break;
         }
-
+        
         result(true)
     }
     func isCallConnected(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
@@ -392,7 +392,7 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["userJid"] as? String ?? ""
         let status = (jid == AppUtils.shared.getMyJid() || jid == "") ? CallManager.isAudioMuted() : CallManager.isRemoteAudioMuted(jid)
-
+        
         result(status)
     }
     func isUserVideoMuted(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
@@ -400,39 +400,39 @@ import MirrorFlySDK
         let args = call.arguments as! Dictionary<String, Any>
         let jid = args["userJid"] as? String ?? ""
         NSLog("isUserVideoMuted jid \(jid)")
-       
+        
         let status = (jid == AppUtils.shared.getMyJid() || jid.isEmpty) ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(jid)
         
-//        if let mirrorFlyViewId = factory?.getUniqueID(forString: jid.isEmpty ? AppUtils.getMyJid() : jid) {
-//                    if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
-//                        mirrorflyView.updateVideoTrack(userJid: jid.isEmpty ? AppUtils.getMyJid() : jid, updateType: status ? MuteEvent.REMOTE_VIDEO_MUTE : MuteEvent.REMOTE_VIDEO_UN_MUTE)
-//                    } else {
-//                        NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
-//                    }
-//                } else {
-//                    NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
-//                }
+        //        if let mirrorFlyViewId = factory?.getUniqueID(forString: jid.isEmpty ? AppUtils.getMyJid() : jid) {
+        //                    if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+        //                        mirrorflyView.updateVideoTrack(userJid: jid.isEmpty ? AppUtils.getMyJid() : jid, updateType: status ? MuteEvent.REMOTE_VIDEO_MUTE : MuteEvent.REMOTE_VIDEO_UN_MUTE)
+        //                    } else {
+        //                        NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> View is not Found")
+        //                    }
+        //                } else {
+        //                    NSLog("\(Constants.callTag) ACTION_LOCAL_VIDEO_MUTE --> Unique ID is not Found")
+        //                }
         
         NSLog("isUserVideoMuted \(jid == AppUtils.shared.getMyJid() || jid.isEmpty)")
         NSLog("isUserVideoMuted status \(status)")
         result(status)
-
+        
     }
     
     func isOnGoingCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-//        //Method Needed for Android inorder to Launch Ongoing Call Screen
-//        result(false)
+        //        //Method Needed for Android inorder to Launch Ongoing Call Screen
+        //        result(false)
         result(CallManager.isOngoingCall())
     }
     
-//    func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-//        NSLog("\(Constants.callTag) Disconnecting Call")
-//        NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
-//        factory?.clearMirrorflyView(userJID: AppUtils.getMyJid())
-//        CallManager.incomingUserJidArr.removeAll()
-//        CallManager.disconnectCall()
-//        result(true)
-//    }
+    //    func disconnectCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+    //        NSLog("\(Constants.callTag) Disconnecting Call")
+    //        NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
+    //        factory?.clearMirrorflyView(userJID: AppUtils.getMyJid())
+    //        CallManager.incomingUserJidArr.removeAll()
+    //        CallManager.disconnectCall()
+    //        result(true)
+    //    }
     
     
     
@@ -442,7 +442,7 @@ import MirrorFlySDK
         let errorMessage = split.isEmpty ? description : split[0].replacingOccurrences(of: ":", with: "")
         return errorMessage
     }
-        
+    
     func getErrorCodeWithMessage(message: String) -> (errorCode: String?, errorMessage: String) {
         let split = description.components(separatedBy: "ErrorCode")
         let errorMessage = split.isEmpty ? description : split.first
@@ -504,22 +504,22 @@ import MirrorFlySDK
             
             var flyData = data
             print("\(Constants.callTag) getCallLogsList plugin \(String(describing: flyData))")
-           
-    
+            
+            
             
             if isSuccess{
                 if flyData["data"] is [String : Any]{
                     
                     guard let data = flyData["data"] as? [String: Any] else {
                         print("Error: Unable to extract 'data' from originalData.")
-//                        result "{\"data\" : [], \"total_pages\" : 0}";
+                        //                        result "{\"data\" : [], \"total_pages\" : 0}";
                         return
                     }
-
+                    
                     guard let callList = data["callList"] as? [CallLog] else {
                         print("Error: Unable to extract 'callList' from 'data'.")
                         print("Error: data: \(data)")
-//                        return [:]
+                        //                        return [:]
                         return
                     }
                     var callListConverted: [String: Any]?
@@ -564,7 +564,7 @@ import MirrorFlySDK
                 }else{
                     result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error?.localizedDescription))
                 }
-//                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
+                //                result(FlutterError(code: "500", message: "Call Log List Fetch Failed", details: flyData.getMessage()))
             }
         }
     }
@@ -581,7 +581,7 @@ import MirrorFlySDK
             let callListJson = callListConverted.dictToJson()
             print("\(Constants.callTag) getCallLogsList converted json\(String(describing: callListJson))")
             result(callListJson)
-
+            
         }
         
     }
@@ -591,7 +591,7 @@ import MirrorFlySDK
         let isClearAll = args["isClearAll"] as? Bool ?? false
         let jidList = args["jidList"] as? [String] ?? []
         NSLog("\(Constants.tag) deleteCallLog isClearAll \(isClearAll)")
-
+        
         
         ChatManager.deleteCallLog(isClearAll: isClearAll, callLogIds: jidList) { isSuccess, error, data in
             var flyData = data
@@ -613,7 +613,7 @@ import MirrorFlySDK
         CallLogManager().syncCallLogs { isSuccess, error, data in
             
             if isSuccess {
-                  var flyData = data
+                var flyData = data
                 _ = flyData.getMessage() as? String
                 _ = flyData.getData() as? [CallLog]
                 result(isSuccess)
@@ -642,28 +642,28 @@ import MirrorFlySDK
         CallLogManager.resetUnreadMissedCallCount()
         result(true)
     }
-//    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-//        let args = call.arguments as! Dictionary<String, Any>
-//        let callType = args["callType"] as? String ?? ""
-//        print("***callType \(callType)")
-//        if callType == "video"{
-//
-//            CallManager.setCallType(callType: .Video)
-//            CallManager.muteVideo(false)
-//            CallManager.enableVideo()
-//            AudioManager.shared().autoReRoute()
-//        }else{
-//            CallManager.setCallType(callType: .Audio)
-//            CallManager.muteVideo(true)
-//            CallManager.disableVideo()
-//            AudioManager.shared().autoReRoute()
-//        }
-//        result(true)
-//    }
-//
-//    func reRouteAudio(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-//        AudioManager.shared().autoReRoute()
-//    }
+    //    func changeCallType(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+    //        let args = call.arguments as! Dictionary<String, Any>
+    //        let callType = args["callType"] as? String ?? ""
+    //        print("***callType \(callType)")
+    //        if callType == "video"{
+    //
+    //            CallManager.setCallType(callType: .Video)
+    //            CallManager.muteVideo(false)
+    //            CallManager.enableVideo()
+    //            AudioManager.shared().autoReRoute()
+    //        }else{
+    //            CallManager.setCallType(callType: .Audio)
+    //            CallManager.muteVideo(true)
+    //            CallManager.disableVideo()
+    //            AudioManager.shared().autoReRoute()
+    //        }
+    //        result(true)
+    //    }
+    //
+    //    func reRouteAudio(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+    //        AudioManager.shared().autoReRoute()
+    //    }
     
     
     private func handleCallFailure(flyError: FlyError? = nil, customError: String? = nil) {
@@ -679,7 +679,7 @@ import MirrorFlySDK
         
         print("#CALL CHECK failed \(errorMessage)")
         NSLog("MirroflyCall making call error--->\(errorMessage)")
-
+        
         let jsonObject: NSMutableDictionary = [
             "callStatus": "Call_Failed",
             "userJid": AppUtils.shared.getMyJid(),
@@ -687,23 +687,23 @@ import MirrorFlySDK
             "callType": "audio",
             "error": errorMessage
         ]
-
+        
         let callStatusUpdateJson = pluginDictToJson(dictionary: jsonObject)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallStatusUpdateChannel, value: callStatusUpdateJson)
         }
     }
-
+    
     private func addObserverForConnectionStatus(jid: String? = nil, jidList: [String]? = nil, groupJid: String? = nil, callType: String) {
         guard jid != nil || (jidList != nil && groupJid != nil) else {
-           print("Either jid or jidList or groupJid must be provided")
-           return
+            print("Either jid or jidList or groupJid must be provided")
+            return
         }
         print("#CALL CHECK Adding observer")
         self.observerToken = NotificationCenter.default.addObserver(forName: .connectionStatusChanged, object: nil, queue: nil) { notification in
             guard let status = notification.userInfo?["status"] as? String else { return }
             print("#CALL CHECK Connection Status: \(status)")
-
+            
             if status == "connected" {
                 self.removeObserver()
                 
@@ -729,14 +729,14 @@ import MirrorFlySDK
             }
         }
     }
-
+    
     private func removeObserver() {
         if let observerToken = observerToken {
             NotificationCenter.default.removeObserver(observerToken)
             self.observerToken = nil
         }
     }
-
+    
     private func initiateVoiceCall(jid: String) {
         print("#CALL CHECK Calling makeVoiceCall")
         
@@ -759,7 +759,7 @@ import MirrorFlySDK
                 print("#CALL CHECK make video call success")
             }else{
                 self.handleCallFailure(flyError: flyError)
-            
+                
             }
         }
     }
@@ -773,7 +773,7 @@ import MirrorFlySDK
                 }else{
                     let errorMessage = flyError?.localizedDescription
                     NSLog("MirroflyCall Group Video Call error--->\(String(describing: errorMessage))")
-                
+                    
                     self.handleCallFailure(flyError: flyError)
                 }
             }
@@ -799,4 +799,93 @@ import MirrorFlySDK
             self.handleCallFailure(customError: error.localizedDescription)
         }
     }
+    
+    func createMeetLink(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.createMeetLink { isSuccess, error, response in
+            if isSuccess{
+                var link = response
+                var meetLink = link.getData() as? String ?? emptyString()
+                result(meetLink)
+            }else{
+                if case let .unexpected(message, code) = error {
+                    result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: message))
+                }else {
+                    result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: error?.localizedDescription))
+                }
+            }
+        }
+    }
+    
+    func initializeMeet(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let callLink = args["callLink"] as? String ?? ""
+        let userName = args["userName"] as? String ?? ""
+        
+        
+        
+        if !CallManager.isConnectedToLinkServer(){
+            CallManager.setupJoinCallViaLink()
+        }
+        
+        CallManager.startVideoCapture()
+        
+        CallManager.subscribeToCallEvents(link: callLink, name: userName) { isSuccess, flyError in
+            if isSuccess{
+                result(isSuccess)
+            }else{
+                if case let .unexpected(message, code) = flyError {
+                    if code == ErrorCode.NO_NETWORK{
+                        result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                    }else if code == ErrorCode.ARGUMENTS_EMPTY_OR_NIL_OR_INVALID{
+                        result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: message))
+                    }
+                }else if case let .invalid_call_link(message, code) = flyError {
+                    result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: flyError?.localizedDescription))
+                }
+            }
+        }
+    }
+    
+    func getCallLink(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        result(CallManager.getCallLink())
+    }
+    
+    func disposePreview(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.cleanUpJoinCallViaLink()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            result(true)
+        }
+    }
+    
+    
+    func getMeetUsername(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+     
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let userJid = args["userJid"] as? String ?? ""
+        
+        result(CallManager.getUserName(userId: userJid))
+        
+    }
+    
+    
+    func joinCall(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        
+        CallManager.joinCall{ isSuccess, flyError in
+          if isSuccess {
+             result(isSuccess)
+          }else{
+//              if let error = flyError {
+                  result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: nil))
+//              }
+              
+          }
+        }
+    }
+    
 }

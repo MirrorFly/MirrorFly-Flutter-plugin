@@ -10,7 +10,7 @@ import MirrorFlySDK
 import Flutter
 import PushKit
 
-@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate, CallLogDelegate {
+@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate, CallLogDelegate, JoinCallDelegate {
     
     var usersInCall: [String: MirrorFlySDK.CALLSTATUS] = [:]
     
@@ -117,6 +117,9 @@ import PushKit
                     AudioManager.shared().audioManagerDelegate = self
                 }
 
+            }
+            if (call.method == "initializeMeet"){
+                CallManager.setJoinCallDelegate(delegate: self)
             }
             if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
                 NSLog("\(Constants.callTag) Method call \(call.method)")
@@ -599,6 +602,48 @@ import PushKit
     
     func userProfileDidChange(for jid: String, profileDetails: MirrorFlySDK.ProfileDetails) {
         NSLog("\(Constants.callTag) Fly Call userProfileDidChange")
+    }
+    
+    ///Meet delegates
+    
+    func onSubscribeSuccess() {
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onSubscribeSuccess, value: true)
+    }
+    
+    func onUsersUpdated(usersList: [String]) {
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onUsersUpdated, value: usersList.toJson())
+    }
+    
+    func onLocalTrack(videoTrack: RTCVideoTrack?) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(AppUtils.shared.getMyJid(), forKey: "userJid")
+        let jidJson = pluginDictToJson(dictionary: jsonObject)
+        
+        let currentJid = AppUtils.shared.getMyJid()
+        let videoTrack = CallManager.getRemoteVideoTrack(jid: currentJid)
+        NSLog("\(Constants.callTag) delegate videoTrack--> \(String(describing: videoTrack))")
+        
+        if let mirrorFlyViewId = factory?.getUniqueID(forString: currentJid) {
+            if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                mirrorflyView.updateVideoTrack(userJid: currentJid, updateType: MuteEvent.ACTION_LOCAL_VIDEO_UN_MUTE)
+            } else {
+                // Handle case when view is not found
+                NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> View is not Found")
+            }
+        } else {
+            // Handle case when unique ID is not found
+            NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> Unique ID is not Found")
+        }
+        
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onLocalVideoTrackAddedChannel, value: jidJson)
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onTrackAddedChannel, value: jidJson)
+    }
+    
+    func onError(reason: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue("500", forKey: "code")
+        jsonObject.setValue(reason, forKey: "description")
+        let jsonString = pluginDictToJson(dictionary: jsonObject)
     }
 
 }

@@ -55,6 +55,10 @@ class FlyMethodConstants {
             "isCallConversionRequestAvailable": flyCallMethods.isCallConversionRequestAvailable,
             "getLocalCallLogs": flyCallMethods.getLocalCallLogs,
             "markAllUnreadMissedCallsAsRead": flyCallMethods.markAllUnreadMissedCallsAsRead,
+            "createMeetLink": flyCallMethods.createMeetLink,
+            "initializeMeet": flyCallMethods.initializeMeet,
+            "getCallLink": flyCallMethods.getCallLink,
+            "disposePreview": flyCallMethods.disposePreview,
             
         ]
     }()

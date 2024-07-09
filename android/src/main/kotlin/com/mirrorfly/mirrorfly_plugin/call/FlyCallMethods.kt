@@ -773,7 +773,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         result.success(true)
     }
 
-    fun getUserName(call: MethodCall, result: MethodChannel.Result) {
+    fun getMeetUsername(call: MethodCall, result: MethodChannel.Result) {
         val userJid = call.argument<String>("userJid") ?: ""
         result.success(CallManager.getUserName(userJid))
     }

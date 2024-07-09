@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MirrorFlySDK
 
 class FLErrorCode {
     
@@ -57,6 +58,8 @@ class FLErrorCode {
     
     /// PERMISSION_DENIED, PERMISSION_NOT_GRANTED
     public static let PERMISSION_NOT_GRANTED : String = "500" //"FL-785"
+    
+    public static let MEET_INITIALIZATION_FAILED : String = "500" 
     
     
 }
@@ -111,6 +114,8 @@ class FLErrorMessage {
     public static let QR_LOGIN_FAILED : String = "Error while processing QR login"
     public static let CONTACT_US_FAILED_MESSAGE : String = "Error while submitting the reponse, Please try after sometime"
     public static let META_DATA_FAILED_MESSAGE : String = "Error while fetching Meta Data, Please try after sometime"
+    public static let MEET_INITIALIZATION_FAILED_MESSAGE : String = "Error while initialising meet"
+    public static let LINK_SERVER_ERROR_MESSAGE : String = "Error while connecting to Signal Server"
     
     
     
