@@ -804,16 +804,22 @@ import MirrorFlySDK
         CallManager.createMeetLink { isSuccess, error, response in
             if isSuccess{
                 var link = response
-                var meetLink = link.getData() as? String ?? emptyString()
+                let meetLink = link.getData() as? String ?? emptyString()
                 result(meetLink)
             }else{
-                if case let .unexpected(message, code) = error {
+                if case let .unexpected(message, _) = error {
                     result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: message))
                 }else {
                     result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: error?.localizedDescription))
                 }
             }
         }
+    }
+    
+    
+    func startVideoCapture(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
+        CallManager.startVideoCapture()
+        result(true)
     }
     
     func initializeMeet(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
@@ -823,12 +829,13 @@ import MirrorFlySDK
         let userName = args["userName"] as? String ?? ""
         
         
-        
         if !CallManager.isConnectedToLinkServer(){
             CallManager.setupJoinCallViaLink()
         }
         
-        CallManager.startVideoCapture()
+        if(CallManager.isVideoCallPermissionsGranted()){
+            CallManager.startVideoCapture()
+        }
         
         CallManager.subscribeToCallEvents(link: callLink, name: userName) { isSuccess, flyError in
             if isSuccess{
@@ -842,7 +849,7 @@ import MirrorFlySDK
                     }else{
                         result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: message))
                     }
-                }else if case let .invalid_call_link(message, code) = flyError {
+                }else if case let .invalid_call_link(message, _) = flyError {
                     result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: message))
                 }else{
                     result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: flyError?.localizedDescription))

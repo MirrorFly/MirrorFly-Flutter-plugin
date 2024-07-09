@@ -59,6 +59,8 @@ class FlyMethodConstants {
             "initializeMeet": flyCallMethods.initializeMeet,
             "getCallLink": flyCallMethods.getCallLink,
             "disposePreview": flyCallMethods.disposePreview,
+            "joinCall": flyCallMethods.joinCall,
+            "startVideoCapture": flyCallMethods.startVideoCapture,
             
         ]
     }()
