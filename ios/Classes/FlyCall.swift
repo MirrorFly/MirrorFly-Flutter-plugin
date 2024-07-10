@@ -393,8 +393,10 @@ import PushKit
             jsonObject.setValue("LOCAL_AUDIO_UN_MUTE", forKey: "muteEvent")
             break;
         case .ACTION_LOCAL_VIDEO_MUTE:
+            jsonObject.setValue("LOCAL_VIDEO_MUTE", forKey: "muteEvent")
             break;
         case .ACTION_LOCAL_VIDEO_UN_MUTE:
+            jsonObject.setValue("LOCAL_VIDEO_UN_MUTE", forKey: "muteEvent")
             break;
         @unknown default:
             jsonObject.setValue("unknown", forKey: "muteEvent")
