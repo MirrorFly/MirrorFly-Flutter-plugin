@@ -357,36 +357,51 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         LogMessage.d(tag, "getCallUsersList : " + CallManager.getCallUsersList().toJsonString())
         val json = JSONArray()
         val users = CallManager.getCallUsersList()
-        users.forEachIndexed { index, jid ->
-            var obj = JSONObject()
-            obj.put("userJid", jid)
-            //Calling status not in iOS so here we sent Trying to Connect status
-            obj.put(
-                "callStatus",
-                if (CallManager.getCallStatus(jid) == CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(
-                    jid
-                )
-            )
-            obj.put("isAudioMuted", CallManager.isRemoteAudioMuted(jid))
-            obj.put("isVideoMuted", CallManager.isRemoteVideoMuted(jid))
-            json.put(obj)
-            if (index == users.lastIndex) {
-                if (!users.contains(CallManager.getCurrentUserId()) && CallManager.getCurrentUserId()
-                        .isNotEmpty()
-                ) {
-                    obj = JSONObject()
-                    obj.put("userJid", CallManager.getCurrentUserId())
-                    obj.put(
+        if (users.isNotEmpty()) {
+            users.forEachIndexed { index, jid ->
+                var obj = JSONObject()
+                obj.put("userJid", jid)
+                //Calling status not in iOS so here we sent Trying to Connect status
+                obj.put(
                         "callStatus",
-                        if (CallManager.getCallStatus(CallManager.getCurrentUserId()) == CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(
-                            CallManager.getCurrentUserId()
+                        if (CallManager.getCallStatus(jid) == CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(
+                                jid
                         )
-                    )
-                    obj.put("isAudioMuted", CallManager.isAudioMuted())
-                    obj.put("isVideoMuted", CallManager.isVideoMuted())
-                    json.put(obj)
+                )
+                obj.put("isAudioMuted", CallManager.isRemoteAudioMuted(jid))
+                obj.put("isVideoMuted", CallManager.isRemoteVideoMuted(jid))
+                json.put(obj)
+                if (index == users.lastIndex) {
+                    if (!users.contains(CallManager.getCurrentUserId()) && CallManager.getCurrentUserId()
+                                    .isNotEmpty()
+                    ) {
+                        obj = JSONObject()
+                        obj.put("userJid", CallManager.getCurrentUserId())
+                        obj.put(
+                                "callStatus",
+                                if (CallManager.getCallStatus(CallManager.getCurrentUserId()) == CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(
+                                        CallManager.getCurrentUserId()
+                                )
+                        )
+                        obj.put("isAudioMuted", CallManager.isAudioMuted())
+                        obj.put("isVideoMuted", CallManager.isVideoMuted())
+                        json.put(obj)
+                    }
                 }
             }
+        }else{
+            //added for call link join call
+            val obj = JSONObject()
+            obj.put("userJid", CallManager.getCurrentUserId())
+            obj.put(
+                    "callStatus",
+                    if (CallManager.getCallStatus(CallManager.getCurrentUserId()) == CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(
+                            CallManager.getCurrentUserId()
+                    )
+            )
+            obj.put("isAudioMuted", CallManager.isAudioMuted())
+            obj.put("isVideoMuted", CallManager.isVideoMuted())
+            json.put(obj)
         }
 
         result.success(json.toString())
@@ -745,7 +760,9 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
             CallManager.setupJoinCallViaLink()
             CallManager.setJoinCallEventsListener(this)
         }
-        startVideoCapture()
+//        if(CallManager.isVideoCallPermissionsGranted(true)){
+//            startVideoCapture()
+//        }
         subscribeCallEvents(call,result)
     }
 
@@ -763,9 +780,13 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         })
     }
 
-    private fun startVideoCapture() {
-        CallManager.startVideoCapture()
-//        result.success(true)
+    fun startVideoCapture(call: MethodCall? = null, result: MethodChannel.Result? = null) {
+        if(CallManager.isVideoCallPermissionsGranted()) {
+            CallManager.startVideoCapture()
+            result?.success(true)
+        }else{
+            result?.error("500", "Video call permissions not granted", "")
+        }
     }
 
     fun disposePreview(call: MethodCall, result: MethodChannel.Result) {

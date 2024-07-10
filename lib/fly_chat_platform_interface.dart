@@ -1705,6 +1705,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('joinCall has not been implemented.');
   }
 
+  /// This method is used to start the video capture in joined via link call.
+  Future<void> startVideoCapture(Function(FlyResponse response)? callback) {
+    throw UnimplementedError('startVideoCapture has not been implemented.');
+  }
+
   /// This method is used to get the Meet username.
   Future<String> getMeetUsername(String jid) {
     throw UnimplementedError('getMeetUsername has not been implemented.');

@@ -5084,6 +5084,31 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.joinCall(flyCallback);
   }
 
+  /// Start Video Capture in joined via link call.
+  ///
+  /// This method starts the video capture process for a call that has been joined via a link.
+  /// It is useful for enabling video transmission after joining a call in audio-only mode or
+  /// when video capture needs to be started at a specific point during the call.
+  ///
+  /// The method takes a callback function [flyCallback] as a parameter. This callback is invoked
+  /// upon the completion of the operation, providing a [FlyResponse] object that contains
+  /// information about the success or failure of the operation.
+  ///
+  /// Parameters:
+  ///   [flyCallback] - A function that is called upon completion of the operation.
+  /// Example usage:
+  /// ```dart
+  /// Mirrorfly.startVideoCapture(flyCallback: (response) {
+  ///   if (response.isSuccess) {
+  ///     print("Video capture started successfully");
+  ///   } else {
+  ///     print("Failed to start video capture: ${response.errorMessage}");
+  ///   }
+  /// });
+  static Future<void> startVideoCapture({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.startVideoCapture(flyCallback);
+  }
+
   /// Retrieves the meeting username for a given user JID.
   ///
   /// This method fetches the username used in meetings for the specified user JID.

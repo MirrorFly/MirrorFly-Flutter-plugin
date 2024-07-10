@@ -818,8 +818,12 @@ import MirrorFlySDK
     
     
     func startVideoCapture(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-        CallManager.startVideoCapture()
-        result(true)
+        if(CallManager.isVideoCallPermissionsGranted()){
+            CallManager.startVideoCapture()
+            result(true)
+        }else{
+            result(FlutterError(code: "500", message: "Video call permissions not granted", details: nil))
+        }
     }
     
     func initializeMeet(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
@@ -833,9 +837,9 @@ import MirrorFlySDK
             CallManager.setupJoinCallViaLink()
         }
         
-        if(CallManager.isVideoCallPermissionsGranted()){
-            CallManager.startVideoCapture()
-        }
+//         if(CallManager.isVideoCallPermissionsGranted()){
+//             CallManager.startVideoCapture()
+//         }
         
         CallManager.subscribeToCallEvents(link: callLink, name: userName) { isSuccess, flyError in
             if isSuccess{

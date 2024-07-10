@@ -329,6 +329,7 @@ object FlyMethodConstants {
         "getCallLink" to flyCallMethods::getCallLink,
         "joinCall" to flyCallMethods::joinCall,
         "initializeMeet" to flyCallMethods::initializeMeet,
+        "startVideoCapture" to flyCallMethods::startVideoCapture,
         "disposePreview" to flyCallMethods::disposePreview,
         "getMeetUsername" to flyCallMethods::getMeetUsername,
     )

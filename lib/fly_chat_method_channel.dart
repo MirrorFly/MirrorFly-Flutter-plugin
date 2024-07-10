@@ -5843,6 +5843,25 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<void> startVideoCapture(Function(FlyResponse response)? callback) async {
+    bool? val = false;
+    try {
+      val = await mirrorFlyCallMethodChannel.invokeMethod('startVideoCapture');
+      LogMessage.d('startVideoCapture', ' $val');
+      callback?.call(
+          FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
   Future<String> getMeetUsername(String jid) async {
     String? val = FlyConstants.empty;
     try {

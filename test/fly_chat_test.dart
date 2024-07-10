@@ -1829,6 +1829,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<void> startVideoCapture(Function(FlyResponse response)? callback) {
+    // TODO: implement startVideoCapture
+    throw UnimplementedError();
+  }
+
+  @override
   Stream get onSubscribeSuccess => throw UnimplementedError();
 
   @override
