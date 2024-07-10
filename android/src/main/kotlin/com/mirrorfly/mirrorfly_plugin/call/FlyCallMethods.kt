@@ -1,5 +1,8 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import com.mirrorfly.mirrorfly_plugin.*
 import com.mirrorflysdk.api.ChatActionListener
 import com.mirrorflysdk.api.ChatManager
@@ -12,6 +15,7 @@ import com.mirrorflysdk.flycall.webrtc.api.*
 import com.mirrorflysdk.flycommons.Error
 import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.flycommons.exception.FlyException
+import com.mirrorflysdk.helpers.Permissions
 import io.flutter.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -796,11 +800,11 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
     }
 
     fun startVideoCapture(call: MethodCall? = null, result: MethodChannel.Result? = null) {
-        if(CallManager.isVideoCallPermissionsGranted()) {
+        if(CallManager.isVideoCallPermissionsGranted()){
             CallManager.startVideoCapture()
             result?.success(true)
         }else{
-            result?.error("500", "Video call permissions not granted", "")
+            result?.error("500", "Camera and Microphone Permission is not granted", "")
         }
     }
 
