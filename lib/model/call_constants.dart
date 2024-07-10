@@ -105,6 +105,18 @@ class CallAction {
 ///
 class MuteStatus {
 
+  /// Represents the status when the local participant's audio is un muted.
+  static const String localAudioUnMute = "LOCAL_AUDIO_UN_MUTE";
+
+  /// Represents the status when the local participant's audio is muted.
+  static const String localAudioMute = "LOCAL_AUDIO_MUTE";
+
+  /// Represents the status when the local participant's video is un muted.
+  static const String localVideoMute = "LOCAL_VIDEO_MUTE";
+
+  /// Represents the status when the local participant's video is muted.
+  static const String localVideoUnMute = "LOCAL_VIDEO_UN_MUTE";
+
   /// Represents the status when the remote participant's audio is un muted.
   static const String remoteAudioUnMute = "REMOTE_AUDIO_UN_MUTE";
 
