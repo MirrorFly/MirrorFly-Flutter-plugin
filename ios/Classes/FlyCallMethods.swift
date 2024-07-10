@@ -818,11 +818,11 @@ import MirrorFlySDK
     
     
     func startVideoCapture(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?){
-        if(CallManager.isVideoCallPermissionsGranted()){
+        if(CallManager.isVideoCallPermissionsGranted() && CallManager.isAudioCallPermissionsGranted()){
             CallManager.startVideoCapture()
             result(true)
         }else{
-            result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.CAMERA_PERMISSION_NOT_ENABLED, details: nil))
+            result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.MICROPHONE_CAMERA_PERMISSION_NOT_ENABLED, details: nil))
         }
     }
     

@@ -120,8 +120,9 @@ class FLErrorMessage {
     
     
     /// General Error Messages in Calls
-    public static let MICROPHONE_PERMISSION_NOT_ENABLED : String = "Microphone Permission is not enabled"
-    public static let CAMERA_PERMISSION_NOT_ENABLED : String = "Camera Permission is not enabled"
+    public static let MICROPHONE_PERMISSION_NOT_ENABLED : String = "Microphone Permission is not granted"
+    public static let CAMERA_PERMISSION_NOT_ENABLED : String = "Camera Permission is not granted"
+    public static let MICROPHONE_CAMERA_PERMISSION_NOT_ENABLED : String = "Camera and Microphone Permission is not granted"
     public static let CALL_FAILED_MESSAGE : String = "Error while making the call"
     public static let INVITE_FAILED_MESSAGE : String = "Error while inviting users"
     public static let SWITCH_FAILED_MESSAGE : String = "Error while switching call"
