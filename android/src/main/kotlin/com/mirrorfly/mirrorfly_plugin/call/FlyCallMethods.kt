@@ -800,11 +800,11 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
     }
 
     fun startVideoCapture(call: MethodCall? = null, result: MethodChannel.Result? = null) {
-        if(ContextCompat.checkSelfPermission(MirrorFlyManager.getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+        if(CallManager.isVideoCallPermissionsGranted()){
             CallManager.startVideoCapture()
             result?.success(true)
         }else{
-            result?.error("500", "Camera Permission is not enabled", "")
+            result?.error("500", "Camera and Microphone Permission is not granted", "")
         }
     }
 
