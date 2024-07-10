@@ -822,7 +822,7 @@ import MirrorFlySDK
             CallManager.startVideoCapture()
             result(true)
         }else{
-            result(FlutterError(code: "500", message: "Video call permissions not granted", details: nil))
+            result(FlutterError(code: FLErrorCode.PERMISSION_NOT_GRANTED, message: FLErrorMessage.CAMERA_PERMISSION_NOT_ENABLED, details: nil))
         }
     }
     
