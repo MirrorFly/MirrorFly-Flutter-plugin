@@ -243,6 +243,29 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         val muteAudio = call.argument<Boolean>("muteAudio") ?: false
         CallManager.muteAudio(muteAudio)
         result.success(true)
+        sentMuteStatus(if(muteAudio) "LOCAL_AUDIO_MUTE" else "LOCAL_AUDIO_UN_MUTE")
+    }
+
+    private fun sentMuteStatus(muteEvent: String){
+        val userJid =CallManager.getCurrentUserId()
+        when (muteEvent){
+            "LOCAL_VIDEO_MUTE" ->{
+                if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
+                    MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)
+                }
+            }
+            "LOCAL_VIDEO_UN_MUTE" ->{
+                if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
+                    MirrorflyViewHashMap.getMirrorflyView(userJid)?.setLocalTarget()
+                }
+            }
+        }
+        val json = JSONObject()
+        json.put("muteEvent", muteEvent)
+        json.put("userJid", userJid)
+
+//        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
+        FlyMethodConstants.updateCallSinkValue(Constants.onMuteStatusUpdated, json.toString())
     }
 
     fun muteVideo(call: MethodCall, result: MethodChannel.Result) {
@@ -256,17 +279,9 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
                         MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
                     }"
                 )
-                if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId()) != null && isSuccess) {
-                    if (muteVideo) {
-                        MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
-                            ?.setProfileView(CallManager.getCurrentUserId())
-                    } else {
-                        MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
-                            ?.setLocalTarget()
-                    }
-                }
                 if (isSuccess) {
-                    result.success(isSuccess)
+                    sentMuteStatus(if(muteVideo) "LOCAL_VIDEO_MUTE" else "LOCAL_VIDEO_UN_MUTE")
+                    result.success(true)
                 } else {
                     result.error("500", flyException?.message, flyException)
                 }
