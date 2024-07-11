@@ -1178,7 +1178,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val json = JSONObject()
         json.put("isOneToOneCall", isOneToOneCall)
         json.put("userJid", userJid)
-        json.put("groupId", groupId)
+        json.put("groupId", groupId ?: "")
         json.put("callType", callType)
         json.put("userList", userList.joinToString(","))
         /*
