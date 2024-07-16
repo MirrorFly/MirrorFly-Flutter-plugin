@@ -763,7 +763,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
     fun joinCall(call: MethodCall, result: MethodChannel.Result) {
         CallManager.joinCall(object : JoinCallActionListener {
             override fun onFailure(error: Error) {
-                result.error(error.code.toString(), error.description, error)
+                result.error(error.code.toString(), error.description, error.toJsonString())
             }
 
             override fun onSuccess() {
