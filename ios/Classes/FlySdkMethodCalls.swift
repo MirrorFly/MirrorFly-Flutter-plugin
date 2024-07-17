@@ -2717,6 +2717,9 @@ let ISEXPORT = true
     
     func setFirstMessage(messageID: String? = nil){
         messageListQuery?.setFirstMessage(messageId: messageID ?? firstMessageID)
+        if messageID != nil {
+            firstMessageID = messageID ?? emptyString()
+        }
     }
     
     
