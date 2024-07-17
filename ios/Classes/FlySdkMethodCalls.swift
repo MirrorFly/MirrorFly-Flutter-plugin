@@ -44,6 +44,18 @@ let ISEXPORT = true
 
     var observerToken: NSObjectProtocol?
     
+    var firstMessageID : String = emptyString()
+    var lastMessageID : String = emptyString()
+    
+    
+    // Singleton instance
+    static let shared = FlySdkMethodCalls()
+    
+    // Private initializer to prevent creating new instances
+    private override init() {
+        super.init()
+    }
+    
     func buildChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult) {
 
             let args = call.arguments as! Dictionary<String, Any>
@@ -136,8 +148,6 @@ let ISEXPORT = true
                 
             }
         }
-        
-        
     }
     
     func getPlistValue(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -252,7 +262,7 @@ let ISEXPORT = true
 
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
-                                    NSLog("\(Constants.tag) ChatManager.registerApiService \(resp)")
+                                    NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
                                     result(resp)
                                 }else{
                                     result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.REGISTRATION_FAILED_MESSAGE,details: nil))
@@ -270,10 +280,7 @@ let ISEXPORT = true
                         }else{
                             print("---Error in Chat Manager Connect Status")
                         }
-
                     }
-
-
             }else{
                 let err = flyError?.description ?? ""
                 let error = err.contains("405") ? err : data.getMessage()
@@ -2524,6 +2531,12 @@ let ISEXPORT = true
         
         if let messageId = args["messageId"] as? String {
             messageListParams.messageId = messageId
+            
+            ///setting this value for loading previos and next messages properly
+            firstMessageID = messageListParams.messageId
+        }else{
+            messageListParams.messageId = emptyString()
+            firstMessageID = emptyString()
         }
         
         if let chatId = args["userJid"] as? String {
@@ -2586,6 +2599,12 @@ let ISEXPORT = true
             var data  = flyData
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
+                
+                self.lastMessageID = messageList?.last?.messageId ?? emptyString()
+                self.setLastMessage()
+                self.firstMessageID = messageList?.first?.messageId ?? emptyString()
+                self.setFirstMessage()
+                
                 if let chatJson = messageList.toJson() {
                     NSLog("\(Constants.tag) Initial Message List ios \(chatJson)")
                     print("\(Constants.tag) Initial Message List ios print \(chatJson)")
@@ -2613,15 +2632,30 @@ let ISEXPORT = true
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_PROCESSING))
             
         }
+        
+        if (!(messageListQuery?.hasPreviousMessages() ?? false)){
+            result("[]")
+        }
+        
+        messageListQuery?.setFirstMessage(messageId: firstMessageID)
         messageListQuery?.loadPreviousMessages { isSuccess, flyError, flyData in
             var data  = flyData
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
+                
+                if (!(messageList?.isEmpty ?? true)) {
+                    /// Changing the first message ID here, bcz the new set will be inserted at top of the chat array list,
+                    /// so we need to update the first message ID to fetch the previous set of messages again from this message ID
+                    self.firstMessageID = messageList?.first?.messageId ?? emptyString()
+                    self.setFirstMessage()
+                }else{
+                    print("\(Constants.tag) Next Message List previous message id is not setting as the list is empty")
+                }
+                
                 if let chatJson = messageList.toJson() {
                     print("\(Constants.tag) Previous Message List \(chatJson)")
-                    //                    if !(messageList?.isEmpty ?? true){
+                    
                     result(chatJson)
-                    //                    }
                     
                 } else {
                     NSLog("\(Constants.tag) Previous Message List Load Failed")
@@ -2641,19 +2675,27 @@ let ISEXPORT = true
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
             return
         }
-//        let messages = FlyMessenger.getMessagesOf(jid: "")
-//                print("#Test \(messages.count)")
-//                for item in messages {
-//                    print("#Test \(item.messageTextContent)")
-//        }
+        
+        if (!(messageListQuery?.hasNextMessages() ?? false)){
+            result("[]")
+        }
+        
         messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in
             var data  = flyData
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
+                
+                if (!(messageList?.isEmpty ?? true)){
+                    /// Changing the last message ID here, bcz the new set will be appended to the chat array list,
+                    /// so we need to update the last message ID to fetch the next set of messages again from this message ID
+                    self.lastMessageID = messageList?.last?.messageId ?? emptyString()
+                    self.setLastMessage()
+                }else{
+                    print("\(Constants.tag) Next Message List last message id is not setting as the list is empty")
+                }
+                
                 if let chatJson = messageList.toJson() {
                     print("\(Constants.tag) Next Message List \(chatJson)")
-                    //                  NSLog("\(Constants.tag) Next Message List \(chatJson)")
-                    
                     result(chatJson)
                 } else {
                     NSLog("\(Constants.tag) Next Message List Load Failed")
@@ -2666,6 +2708,16 @@ let ISEXPORT = true
         }
     }
     
+    func setLastMessage(messageID: String? = nil){
+        messageListQuery?.setLastMessage(messageId: messageID ?? lastMessageID)
+        if messageID != nil {
+            lastMessageID = messageID ?? emptyString()
+        }
+    }
+    
+    func setFirstMessage(messageID: String? = nil){
+        messageListQuery?.setFirstMessage(messageId: messageID ?? firstMessageID)
+    }
     
     
     func getRecentChatListIncludingArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -3832,18 +3884,18 @@ let ISEXPORT = true
                 break;
             }
         }else{
-            
+            result(FlutterError(code: FLErrorCode.MISSING_PARAMS,message: FLErrorMessage.INVALID_MESSAGE_TYPE,details: nil))
         }
-        
-        
     }
     
     private func sendText(textMessageParams: TextMessage, call: FlutterMethodCall, result: @escaping FlutterResult){
+        
         FlyMessenger.sendTextMessage(messageParams: textMessageParams){ isSuccess, error, chatMessage in
             
             if isSuccess {
                 let textMsgResponse = chatMessage.toJson()
                 if(textMsgResponse != nil){
+//                    self.setLastMessage(messageID: chatMessage?.messageId)
                     result(textMsgResponse)
                 } else {
                     result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: nil))
@@ -3869,6 +3921,7 @@ let ISEXPORT = true
         FlyMessenger.sendMediaFileMessage(messageParams: imageMessageParams) { isSuccess, error, sendMessage in
             if isSuccess{
                 let response = sendMessage?.toJson()
+                self.setLastMessage(messageID: sendMessage?.messageId)
                 result(response)
             }else{
                 if case let .invalid_data(message, _) = error {
@@ -3899,6 +3952,7 @@ let ISEXPORT = true
             if isSuccess{
                 if let chatMessage = message {
                     let sendVideoResponse = chatMessage.toJson()
+                    self.setLastMessage(messageID: chatMessage.messageId)
                     print("FlyMessenger.sendVideoMessage==**==\(String(describing: sendVideoResponse))")
                     result(sendVideoResponse)
                     
@@ -3931,6 +3985,7 @@ let ISEXPORT = true
             if (isSuccess) {
                 let contactMessageResponse = message?.toJson()
                 print("FlyMessenger.sendContactMessage==**==\(String(describing: contactMessageResponse))")
+                self.setLastMessage(messageID: message?.messageId)
                 result(contactMessageResponse)
                 return
             }else {
@@ -3961,6 +4016,7 @@ let ISEXPORT = true
         FlyMessenger.sendMediaFileMessage(messageParams: audioMessageParams) { isSuccess,error,message in
             if isSuccess{
                 let audioResponse = message?.toJson()
+                self.setLastMessage(messageID: message?.messageId)
                 result(audioResponse)
             }else{
                 if case let .invalid_data(message, _) = error {
@@ -3993,6 +4049,7 @@ let ISEXPORT = true
                     
                     if let chatMessage = message , isSuccess{
                         let documentMessageResponse = chatMessage.toJson()
+                        self.setLastMessage(messageID: chatMessage.messageId)
                         result(documentMessageResponse)
                     }else{
                         if case let .invalid_data(message, _) = error {
@@ -4025,6 +4082,7 @@ let ISEXPORT = true
         FlyMessenger.sendMediaFileMessage(messageParams: locationMessageParams){ isSuccess,error,chatMessage in
             if (isSuccess) {
                 let locationResponse = chatMessage?.toJson()
+                self.setLastMessage(messageID: chatMessage?.messageId)
                 print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
                 result(locationResponse)
             }else{

@@ -395,6 +395,8 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
         let messageReceivedJson = message.toJson()
         
+        FlySdkMethodCalls.shared.setLastMessage(messageID: message.messageId)
+        
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageReceivedChannel, value: messageReceivedJson)
         
     }
