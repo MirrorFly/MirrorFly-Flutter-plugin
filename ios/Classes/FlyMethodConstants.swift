@@ -55,11 +55,17 @@ class FlyMethodConstants {
             "isCallConversionRequestAvailable": flyCallMethods.isCallConversionRequestAvailable,
             "getLocalCallLogs": flyCallMethods.getLocalCallLogs,
             "markAllUnreadMissedCallsAsRead": flyCallMethods.markAllUnreadMissedCallsAsRead,
+            "createMeetLink": flyCallMethods.createMeetLink,
+            "initializeMeet": flyCallMethods.initializeMeet,
+            "getCallLink": flyCallMethods.getCallLink,
+            "disposePreview": flyCallMethods.disposePreview,
+            "joinCall": flyCallMethods.joinCall,
+            "startVideoCapture": flyCallMethods.startVideoCapture,
             
         ]
     }()
     
-    static let flyChatMethods = FlySdkMethodCalls()
+    static let flyChatMethods = FlySdkMethodCalls.shared
         
         static let chatMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult) -> Void] = {
             return [

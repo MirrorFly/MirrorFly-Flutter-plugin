@@ -107,6 +107,12 @@ object Constants {
     const val onUserSpeaking = "$Domain/onUserSpeaking"
     const val onUserStoppedSpeaking = "$Domain/onUserStoppedSpeaking"
     const val onMissedCall = "$Domain/onMissedCall"
+    // call Linking channel
+    const val onSubscribeSuccess = "$Domain/onSubscribeSuccess"
+    const val onConnectedToSignalServer = "$Domain/onConnectedToSignalServer"
+    const val onError = "$Domain/onError"
+//    const val onLocalTrack = "$Domain/onLocalTrack"
+    const val onUsersUpdated = "$Domain/onUsersUpdated"
 
     const val ACTION_CALL_INCOMING =
         "com.mirrorfly.mirrorfly_plugin.ACTION_CALL_INCOMING"

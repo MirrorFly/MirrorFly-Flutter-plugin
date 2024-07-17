@@ -28,6 +28,12 @@ class FlyEventChannelInitializer {
         (channelName: Constants.onCallLogUpdateChannel, streamHandler: OnCallLogUpdateStreamHandler()),
         (channelName: Constants.onCallLogDeletedChannel, streamHandler: OnCallLogDeletedStreamHandler()),
         (channelName: Constants.clearAllCallLogChannel, streamHandler: ClearAllCallLogChannelStreamHandler()),
+        
+        /// For Meet Link
+        (channelName: Constants.onSubscribeSuccess, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
+        (channelName: Constants.onConnectedToSignalServer, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
+        (channelName: Constants.onError, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
+        (channelName: Constants.onUsersUpdated, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
     
