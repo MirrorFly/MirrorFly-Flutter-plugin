@@ -65,7 +65,7 @@ class FlyMethodConstants {
         ]
     }()
     
-    static let flyChatMethods = FlySdkMethodCalls()
+    static let flyChatMethods = FlySdkMethodCalls.shared
         
         static let chatMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult) -> Void] = {
             return [

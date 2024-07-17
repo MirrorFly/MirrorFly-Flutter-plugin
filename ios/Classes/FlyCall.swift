@@ -155,7 +155,7 @@ import PushKit
     }
     
     
-    func getDisplayName(IncomingUser: [String], incomingUserName: String) {
+    func getDisplayName(IncomingUser: [String], incomingUserName: String, metaData: [MirrorFlySDK.CallMetadata]) -> [String] { //) {
         //    func getDisplayName(IncomingUser: [String]) {
         var userString = [String]()
         if isHideNotificationContent{
@@ -182,6 +182,8 @@ import PushKit
             NSLog("#names \(userString)")
         }
         CallManager.getContactNames(IncomingUserName: userString)
+        
+        return userString
     }
     
     func getUserName(jid : String, name : String , nickName : String, contactType : ContactType) -> String {
@@ -560,7 +562,7 @@ import PushKit
         
     }
     
-    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String]) {
+    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String], metaData: [MirrorFlySDK.CallMetadata]) {
         NSLog("\(Constants.callTag) Events: onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(String(describing: groupId)) callType: \(callType) userList: \(userList)")
         NSLog("\(Constants.callTag) Events: FlyConstants.isLoaclNotificationEnabled \(FlyConstants.isLoaclNotificationEnabled)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
