@@ -1,9 +1,29 @@
 import 'dart:convert';
 
+/// Converts a JSON string into a [MirrorflyNotificationAppLaunchDetails] object.
+///
+/// This function decodes the given JSON string and uses the [fromJson] constructor
+/// of the [MirrorflyNotificationAppLaunchDetails] class to create an instance.
+///
+/// Parameters:
+///   [str] - A JSON string representation of a [MirrorflyNotificationAppLaunchDetails] object.
+///
+/// Returns:
+///   An instance of [MirrorflyNotificationAppLaunchDetails] populated with data from the given JSON string.
 MirrorflyNotificationAppLaunchDetails
     mirrorflyNotificationAppLaunchDetailsFromJson(String str) =>
         MirrorflyNotificationAppLaunchDetails.fromJson(json.decode(str));
 
+/// Converts a [MirrorflyNotificationAppLaunchDetails] object into a JSON string.
+///
+/// This function takes a [MirrorflyNotificationAppLaunchDetails] object, converts it into a map
+/// using the [toJson] method, and then encodes this map as a JSON string.
+///
+/// Parameters:
+///   [data] - The [MirrorflyNotificationAppLaunchDetails] object to be converted into a JSON string.
+///
+/// Returns:
+///   A JSON string representation of the [MirrorflyNotificationAppLaunchDetails] object.
 String mirrorflyNotificationAppLaunchDetailsToJson(
         MirrorflyNotificationAppLaunchDetails data) =>
     json.encode(data.toJson());
@@ -38,6 +58,7 @@ class MirrorflyNotificationAppLaunchDetails {
   /// Contains details of the notification that launched the app.
   Map<String, dynamic> response() => {'type': type, 'value': value};
 
+  /// Converts a JSON object into a [MirrorflyNotificationAppLaunchDetails] instance.
   factory MirrorflyNotificationAppLaunchDetails.fromJson(
           Map<String, dynamic> json) =>
       MirrorflyNotificationAppLaunchDetails(

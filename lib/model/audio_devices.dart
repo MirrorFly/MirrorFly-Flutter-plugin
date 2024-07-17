@@ -34,11 +34,6 @@ String audioDevicesToJson(List<AudioDevices> data) =>
 
 /// A class representing audio devices used in calls.
 ///
-/// The [AudioDevices] class contains the following properties:
-/// - [id]: The ID of the audio device.
-/// - [type]: The type of the audio device.
-/// - [name]: The name of the audio device.
-///
 /// Example usage:
 ///
 /// ```dart
@@ -46,8 +41,14 @@ String audioDevicesToJson(List<AudioDevices> data) =>
 /// ```
 
 class AudioDevices {
+  /// The [AudioDevices] class contains the following properties:
+  /// - [id]: The ID of the audio device.
   String? id;
+
+  /// - [type]: The type of the audio device.
   String? type;
+
+  /// - [name]: The name of the audio device.
   String? name;
 
   /// Creates an instance of [AudioDevices].

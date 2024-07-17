@@ -27,6 +27,7 @@ import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
+import com.mirrorflysdk.flycommons.models.CallMetaData
 import com.mirrorflysdk.utils.*
 import com.mirrorflysdk.xmpp.chat.listener.TypingStatusListener
 import io.flutter.Log
@@ -1169,7 +1170,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         userJid: String,
         groupId: String?,
         callType: String,
-        userList: ArrayList<String>
+        userList: ArrayList<String>, callMeta: Array<CallMetaData>?
     ) {
         Log.d(
             "onMissedCall",
@@ -1178,7 +1179,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val json = JSONObject()
         json.put("isOneToOneCall", isOneToOneCall)
         json.put("userJid", userJid)
-        json.put("groupId", groupId)
+        json.put("groupId", groupId ?: "")
         json.put("callType", callType)
         json.put("userList", userList.joinToString(","))
         /*

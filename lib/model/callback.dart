@@ -1,4 +1,13 @@
+/// Represents a callback interface for handling successful operations.
+///
+/// This abstract class defines a callback method [onSuccessful] that is invoked when an operation
+/// completes successfully. Implementers of this class should provide the logic to handle the successful
+/// completion of an operation, using the [FlyResponse] provided.
+///
+/// Parameters:
+///   [response] - A [FlyResponse] object containing the details of the successful operation.
 abstract class Callback {
+  /// Invoked when an operation completes successfully.
   void onSuccessful(FlyResponse response);
 }
 

@@ -1,21 +1,30 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import com.mirrorfly.mirrorfly_plugin.*
+import com.mirrorflysdk.api.ChatActionListener
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.utils.NameHelper
+import com.mirrorflysdk.flycall.call.joincall.JoinCallListener
 import com.mirrorflysdk.flycall.call.utils.CallNotificationHelper
+import com.mirrorflysdk.flycall.webrtc.*
 import com.mirrorflysdk.flycall.webrtc.api.*
+import com.mirrorflysdk.flycommons.Error
 import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.flycommons.exception.FlyException
+import com.mirrorflysdk.flycommons.models.CallMetaData
+import com.mirrorflysdk.helpers.Permissions
+import io.flutter.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
 import org.json.JSONObject
-import com.mirrorflysdk.api.ChatActionListener
-import com.mirrorflysdk.flycall.webrtc.*
-import com.mirrorflysdk.flycommons.exception.FlyException
+import org.webrtc.VideoTrack
 
-class FlyCallMethods : MissedCallListener {
+class FlyCallMethods : MissedCallListener,JoinCallListener {
     val tag = "#FlutterCallEvents"
 //    var context : Context = MirrrflyFlyManager.getContext()
 
@@ -24,7 +33,7 @@ class FlyCallMethods : MissedCallListener {
 //        CallManager.setMissedCallListener(this)
 //        ChatManager.setMediaNotificationHelper(this)
         CallManager.setCallHelper(object : CallHelper {
-            override fun getNotificationContent(callDirection: String): String {
+            override fun getNotificationContent(callDirection: String,callMetaDataArray: Array<CallMetaData>?): String {
                 /*return if (BuildConfig.HIPAA_COMPLIANCE_ENABLED) {
                     when (callDirection) {
                         CallDirection.INCOMING_CALL -> resources.getString(R.string.new_incoming_call)
@@ -51,7 +60,7 @@ class FlyCallMethods : MissedCallListener {
 
         })
         CallManager.setCallNameHelper(object : CallNameHelper {
-            override fun getDisplayName(jid: String): String {
+            override fun getDisplayName(jid: String,callMetaDataArray: Array<CallMetaData>?): String {
                 return ContactManager.getProfileDetails(jid)
                     .getDisplayName()//ContactManager.getDisplayName(jid)
             }
@@ -114,7 +123,7 @@ class FlyCallMethods : MissedCallListener {
                 "permission granted ${CallManager.isAudioCallPermissionsGranted(skipBlueToothPermission = false)}"
             )
             if (CallManager.isAudioCallPermissionsGranted(false)) {
-                CallManager.makeVoiceCall(userJid, object : CallActionListener {
+                CallManager.makeVoiceCall(calleeJid = userJid, listener = object : CallActionListener {
                     override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
                         LogMessage.d("makeCall", "success $isSuccess message ${flyException?.message}")
                         if (isSuccess) {
@@ -143,7 +152,7 @@ class FlyCallMethods : MissedCallListener {
                 "permission granted ${CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)}"
             )
             if (CallManager.isVideoCallPermissionsGranted(skipBlueToothPermission = false)) {
-                CallManager.makeVideoCall(userJid, object : CallActionListener {
+                CallManager.makeVideoCall(calleeJid = userJid, listener = object : CallActionListener {
                     override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
                         LogMessage.d(
                             "makeVideoCall",
@@ -239,6 +248,29 @@ class FlyCallMethods : MissedCallListener {
         val muteAudio = call.argument<Boolean>("muteAudio") ?: false
         CallManager.muteAudio(muteAudio)
         result.success(true)
+        sentMuteStatus(if(muteAudio) "LOCAL_AUDIO_MUTE" else "LOCAL_AUDIO_UN_MUTE")
+    }
+
+    private fun sentMuteStatus(muteEvent: String){
+        val userJid =CallManager.getCurrentUserId()
+        when (muteEvent){
+            "LOCAL_VIDEO_MUTE" ->{
+                if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
+                    MirrorflyViewHashMap.getMirrorflyView(userJid)?.setProfileView(userJid)
+                }
+            }
+            "LOCAL_VIDEO_UN_MUTE" ->{
+                if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
+                    MirrorflyViewHashMap.getMirrorflyView(userJid)?.setLocalTarget()
+                }
+            }
+        }
+        val json = JSONObject()
+        json.put("muteEvent", muteEvent)
+        json.put("userJid", userJid)
+
+//        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
+        FlyMethodConstants.updateCallSinkValue(Constants.onMuteStatusUpdated, json.toString())
     }
 
     fun muteVideo(call: MethodCall, result: MethodChannel.Result) {
@@ -252,17 +284,9 @@ class FlyCallMethods : MissedCallListener {
                         MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
                     }"
                 )
-                if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId()) != null && isSuccess) {
-                    if (muteVideo) {
-                        MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
-                            ?.setProfileView(CallManager.getCurrentUserId())
-                    } else {
-                        MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())
-                            ?.setLocalTarget()
-                    }
-                }
                 if (isSuccess) {
-                    result.success(isSuccess)
+                    sentMuteStatus(if(muteVideo) "LOCAL_VIDEO_MUTE" else "LOCAL_VIDEO_UN_MUTE")
+                    result.success(true)
                 } else {
                     result.error("500", flyException?.message, flyException)
                 }
@@ -277,9 +301,9 @@ class FlyCallMethods : MissedCallListener {
                 val groupJid = call.argument<String>("groupJid") ?: ""
                 val jidList = call.argument<List<String>>("jidList")
                 CallManager.makeGroupVoiceCall(
-                        jidList as ArrayList<String>,
-                        groupJid,
-                        object : CallActionListener {
+                        jidList = jidList as ArrayList<String>,
+                        groupId = groupJid,
+                        listener = object : CallActionListener {
                             override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
                                 LogMessage.d(
                                         "makeGroupVoiceCall",
@@ -308,9 +332,9 @@ class FlyCallMethods : MissedCallListener {
             val groupJid = call.argument<String>("groupJid") ?: ""
             val jidList = call.argument<List<String>>("jidList")
             CallManager.makeGroupVideoCall(
-                jidList as ArrayList<String>,
-                groupJid,
-                object : CallActionListener {
+                jidList = jidList as ArrayList<String>,
+                groupId = groupJid,
+                listener = object : CallActionListener {
                     override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
                         LogMessage.d(
                             "makeGroupVideoCall",
@@ -353,36 +377,51 @@ class FlyCallMethods : MissedCallListener {
         LogMessage.d(tag, "getCallUsersList : " + CallManager.getCallUsersList().toJsonString())
         val json = JSONArray()
         val users = CallManager.getCallUsersList()
-        users.forEachIndexed { index, jid ->
-            var obj = JSONObject()
-            obj.put("userJid", jid)
-            //Calling status not in iOS so here we sent Trying to Connect status
-            obj.put(
-                "callStatus",
-                if (CallManager.getCallStatus(jid) == CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(
-                    jid
-                )
-            )
-            obj.put("isAudioMuted", CallManager.isRemoteAudioMuted(jid))
-            obj.put("isVideoMuted", CallManager.isRemoteVideoMuted(jid))
-            json.put(obj)
-            if (index == users.lastIndex) {
-                if (!users.contains(CallManager.getCurrentUserId()) && CallManager.getCurrentUserId()
-                        .isNotEmpty()
-                ) {
-                    obj = JSONObject()
-                    obj.put("userJid", CallManager.getCurrentUserId())
-                    obj.put(
+        if (users.isNotEmpty()) {
+            users.forEachIndexed { index, jid ->
+                var obj = JSONObject()
+                obj.put("userJid", jid)
+                //Calling status not in iOS so here we sent Trying to Connect status
+                obj.put(
                         "callStatus",
-                        if (CallManager.getCallStatus(CallManager.getCurrentUserId()) == CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(
-                            CallManager.getCurrentUserId()
+                        if (CallManager.getCallStatus(jid) == CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(
+                                jid
                         )
-                    )
-                    obj.put("isAudioMuted", CallManager.isAudioMuted())
-                    obj.put("isVideoMuted", CallManager.isVideoMuted())
-                    json.put(obj)
+                )
+                obj.put("isAudioMuted", CallManager.isRemoteAudioMuted(jid))
+                obj.put("isVideoMuted", CallManager.isRemoteVideoMuted(jid))
+                json.put(obj)
+                if (index == users.lastIndex) {
+                    if (!users.contains(CallManager.getCurrentUserId()) && CallManager.getCurrentUserId()
+                                    .isNotEmpty()
+                    ) {
+                        obj = JSONObject()
+                        obj.put("userJid", CallManager.getCurrentUserId())
+                        obj.put(
+                                "callStatus",
+                                if (CallManager.getCallStatus(CallManager.getCurrentUserId()) == CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(
+                                        CallManager.getCurrentUserId()
+                                )
+                        )
+                        obj.put("isAudioMuted", CallManager.isAudioMuted())
+                        obj.put("isVideoMuted", CallManager.isVideoMuted())
+                        json.put(obj)
+                    }
                 }
             }
+        }else{
+            //added for call link join call
+            val obj = JSONObject()
+            obj.put("userJid", CallManager.getCurrentUserId())
+            obj.put(
+                    "callStatus",
+                    if (CallManager.getCallStatus(CallManager.getCurrentUserId()) == CallStatus.CALLING) "Trying to Connect" else CallManager.getCallStatus(
+                            CallManager.getCurrentUserId()
+                    )
+            )
+            obj.put("isAudioMuted", CallManager.isAudioMuted())
+            obj.put("isVideoMuted", CallManager.isVideoMuted())
+            json.put(obj)
         }
 
         result.success(json.toString())
@@ -495,7 +534,7 @@ class FlyCallMethods : MissedCallListener {
         userJid: String,
         groupId: String?,
         callType: String,
-        userList: ArrayList<String>
+        userList: ArrayList<String>, callMeta: Array<CallMetaData>?
     ) {
         val notificationContent =
             getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList)
@@ -692,13 +731,10 @@ class FlyCallMethods : MissedCallListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d("deleteCallLog : ", "Response $isSuccess")
                 if (isSuccess) {
-                    result.success(isSuccess)
+                    result.success(true)
                 } else {
                     result.error("400", "deleteCallLog error", message)
                 }
-                /*
-                * No Implementation needed
-                */
             }
         })
     }
@@ -707,5 +743,133 @@ class FlyCallMethods : MissedCallListener {
         CallLogManager.uploadUnSyncedCallLogs()
         result.success(true)
     }
+
+    //#Meet Link Starts Here
+    fun createMeetLink(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.createMeetLink { isSuccess, throwable, data ->
+            if (isSuccess) {
+                val meetLink = data["data"]
+                result.success(meetLink)
+            } else {
+                result.error("500", throwable?.message.toString(), throwable)
+            }
+        }
+    }
+
+    fun getCallLink(call: MethodCall, result: MethodChannel.Result) {
+        result.success(CallManager.getCallLink())
+    }
+
+    fun joinCall(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.joinCall(object : JoinCallActionListener {
+            override fun onFailure(error: Error) {
+                result.error(error.code.toString(), error.description, error.toJsonString())
+            }
+
+            override fun onSuccess() {
+                result.success(true)
+            }
+        })
+    }
+
+    fun initializeMeet(call: MethodCall, result: MethodChannel.Result) {
+        if(!CallManager.isOnJoinCallViaLink()) {
+            CallManager.setupJoinCallViaLink()
+            CallManager.setJoinCallEventsListener(this)
+        }
+//        if(CallManager.isVideoCallPermissionsGranted(true)){
+//            startVideoCapture()
+//        }
+        subscribeCallEvents(call,result)
+    }
+
+    private fun subscribeCallEvents(call: MethodCall, result: MethodChannel.Result) {
+        val callLink = call.argument<String>("callLink") ?: ""
+        val userName = call.argument<String>("userName") ?: ""
+        CallManager.subscribeCallEvents(callLink,userName,object : JoinCallActionListener {
+            override fun onFailure(error: Error) {
+               result.error(error.code.toString(), error.description, error.toJsonString())
+            }
+
+            override fun onSuccess() {
+                result.success(true)
+            }
+        })
+    }
+
+    fun startVideoCapture(call: MethodCall? = null, result: MethodChannel.Result? = null) {
+        if(CallManager.isVideoCallPermissionsGranted()){
+            CallManager.startVideoCapture()
+            result?.success(true)
+        }else{
+            result?.error("500", "Camera and Microphone Permission is not granted", "")
+        }
+    }
+
+    fun disposePreview(call: MethodCall, result: MethodChannel.Result) {
+        CallManager.cleanUpJoinCallViaLink()
+        result.success(true)
+    }
+
+    fun getMeetUsername(call: MethodCall, result: MethodChannel.Result) {
+        val userJid = call.argument<String>("userJid") ?: ""
+        result.success(CallManager.getUserName(userJid))
+    }
+
+    override fun onSubscribeSuccess() {
+        //enable join call UI button here
+        FlyMethodConstants.updateCallSinkValue(
+               Constants.onSubscribeSuccess,
+                true
+        )
+    }
+
+    override fun onConnectedToSignalServer() {
+//        FlyMethodConstants.updateCallSinkValue(
+//                Constants.onConnectedToSignalServer,
+//                true
+//        )
+    }
+
+    override fun onError(error: Error) {
+        //show error message in ui
+        val json = JSONObject()
+        json.put("code", error.code)
+        json.put("description", error.description)
+        FlyMethodConstants.updateCallSinkValue(
+                Constants.onError,
+                json.toString()
+        )
+    }
+
+    override fun onLocalTrack(videoTrack: VideoTrack?) {
+        videoTrack?.addSink(CallManager.getLocalProxyVideoSink())
+        Log.d(
+                "#CallLink",
+                "#onLocalTrack mirrorflyViews.size ${
+                    MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())
+                } ${MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())}"
+        )
+        val json = JSONObject()
+        json.put("userJid", ChatManager.getCurrentUserJid())
+        FlyMethodConstants.updateCallSinkValue(Constants.onLocalVideoTrackAdded, json.toString())
+        if (MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid()) != null) {
+            MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())?.setLocalTarget()
+        } else {
+            Log.d(tag, "#onVideoTrackAdded view not created")
+        }
+        FlyMethodConstants.updateCallSinkValue(Constants.onTrackAdded, json.toString())
+//        FlyMethodConstants.updateCallSinkValue(Constants.onLocalTrack, json.toString())
+    }
+
+    override fun onUsersUpdated(usersList: List<String>) {
+        // update the users list in ui here
+        FlyMethodConstants.updateCallSinkValue(
+                Constants.onUsersUpdated,
+                usersList.toJsonString()
+        )
+    }
+
+    //#Meet Link Ends Here
 
 }
