@@ -3,6 +3,7 @@
 //     final statusData = statusDataFromJson(jsonString);
 
 import 'dart:convert';
+
 /// Converts a JSON string into a [Status] object.
 ///
 /// This function decodes the provided JSON string into a map,
@@ -72,7 +73,6 @@ String convertStatusListFromJson(String? str) => (str == null || str.isEmpty)
 
 /// Represents a status model with an ID, current status flag, and status message.
 class Status {
-
   /// Constructs an instance of [Status].
   Status({
     this.id,
@@ -82,8 +82,10 @@ class Status {
 
   /// The ID of the status.
   String? id;
+
   /// The current status flag.
   bool? isCurrentStatus;
+
   /// The status message.
   String? status;
 

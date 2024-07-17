@@ -44,7 +44,6 @@ String profileDataToJson(ProfileModel data) => json.encode(data.toJson());
 
 /// Represents the profile data.
 class ProfileModel {
-
   /// Initializes a new instance of the [ProfileModel] class.
   ProfileModel({
     this.data,
@@ -72,7 +71,6 @@ class ProfileModel {
 
 /// Represents the profile data.
 class ProfileData {
-
   /// Initializes a new instance of the [ProfileData] class.
   ProfileData({
     this.email,

@@ -40,7 +40,6 @@ String registerModelToJson(RegisterModel data) => json.encode(data.toJson());
 ///   [isNewUser] - A boolean indicating if the user is new.
 ///   [message] - A message associated with the registration.
 class RegisterModel {
-
   /// The Jabber ID of the user.
   String? userJid;
 
@@ -440,7 +439,6 @@ class Config {
 
 /// Represents the TURN server details.
 class Turn {
-
   /// The TURN server.
   String? turn;
 

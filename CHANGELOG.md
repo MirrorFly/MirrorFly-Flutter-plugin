@@ -1,3 +1,9 @@
+## [1.0.5] Private Storage Feature
+* iOS SDK Updated to 5.17.5 
+* Android SDK Updated to 7.13.5
+* Performance Improvement
+* Bug Fixes
+
 ## [1.0.4] Private Storage Feature
 * Private Storage Feature Added
 * iOS SDK Updated to 5.17.3

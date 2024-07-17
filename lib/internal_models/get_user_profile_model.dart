@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+
 /// Converts a JSON string into a [ProfileModel] object.
 ///
 /// This function decodes the provided JSON string into a map,
@@ -40,7 +41,6 @@ String convertProfileJsonFromString(String? str) => (str == null || str.isEmpty)
 
 /// Represents a profile model with user data.
 class ProfileModel {
-
   /// Constructs an instance of [ProfileModel].
   ProfileModel({
     this.data,
@@ -49,6 +49,7 @@ class ProfileModel {
 
   /// The user data.
   Profile? data;
+
   /// The status of the user data.
   bool? status;
 
@@ -67,7 +68,6 @@ class ProfileModel {
 
 /// Represents a profile with user data.
 class Profile {
-
   /// Constructs an instance of [Profile].
   Profile({
     this.email,
@@ -91,36 +91,52 @@ class Profile {
 
   /// The email address of the user.
   String? email;
+
   /// The image URL of the user.
   String? image;
+
   /// Whether the user is blocked by an admin.
   bool? isAdminBlocked;
+
   /// Whether the user is blocked.
   bool? isBlocked;
+
   /// Whether the user has blocked the current user.
   bool? isBlockedMe;
+
   /// Whether the user is a group admin.
   bool? isGroupAdmin;
+
   /// Whether the group is in offline mode.
   bool? isGroupInOfflineMode;
+
   /// Whether the profile is a group profile.
   bool? isGroupProfile;
+
   /// Whether the contact is saved.
   bool? isItSavedContact;
+
   /// Whether the user is muted.
   bool? isMuted;
+
   /// Whether the user is selected.
   bool? isSelected;
+
   /// The JID of the user.
   String? jid;
+
   /// The mobile number of the user.
   String? mobileNumber;
+
   /// The name of the user.
   String? name;
+
   /// The nickname of the user.
   String? nickName;
+
   /// The status of the user.
   String? status;
+
   /// The thumbnail image URL of the user.
   String? thumbImage;
 

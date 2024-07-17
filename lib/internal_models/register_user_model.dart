@@ -61,7 +61,6 @@ String convertRegisterUserJsonFromString(String? str) =>
 ///   [RegisterModel] - Initializes a new instance of the [RegisterModel] class with optional parameters for user JID,
 ///                     registration data, new user flag, and message.
 class RegisterModel {
-
   /// The Jabber ID (JID) of the user.
   String? userJid;
 
@@ -101,7 +100,6 @@ class RegisterModel {
 
 /// Represents the data model for a user registration.
 class Data {
-
   /// The user's token.
   String? token;
 
@@ -153,7 +151,6 @@ class Data {
 
 /// Represents the configuration data for a user.
 class Config {
-
   /// The domain of the user.
   String? domain;
 
@@ -463,7 +460,6 @@ class Config {
 
 /// Represents the TURN server data for a user.
 class Turn {
-
   /// The TURN server.
   String? turn;
 

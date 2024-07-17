@@ -45,7 +45,6 @@ String availableFeaturesMapToJson(String str) =>
 
 /// Represents the available features in a chat application.
 class AvailableFeatures {
-
   /// Indicates whether location attachment is available.
   bool? isLocationAttachmentAvailable;
 

@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:mirrorfly_plugin/message_params.dart' show MessageMetaData;
+
 /// Converts a JSON string into a [RecentChat] object.
 ///
 /// This function decodes the provided JSON string into a map and then uses the [RecentChat.fromJson]
@@ -145,20 +146,20 @@ class RecentChatData {
   ///
   /// Returns a [RecentChatData] object.
   factory RecentChatData.fromJson(Map<String, dynamic> json) => RecentChatData(
-    data: json["data"] == null
-        ? null
-        : List<RecentChat>.from(
-        json["data"].map((x) => RecentChat.fromJson(x))),
-  );
+        data: json["data"] == null
+            ? null
+            : List<RecentChat>.from(
+                json["data"].map((x) => RecentChat.fromJson(x))),
+      );
 
   /// Converts the RecentChatData object to a JSON map.
   ///
   /// Returns a [Map<String, dynamic>] representing the JSON data.
   Map<String, dynamic> toJson() => {
-    "data": data == null
-        ? null
-        : List<dynamic>.from(data!.map((x) => x.toJson())),
-  };
+        "data": data == null
+            ? null
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
+      };
 }
 
 /// A class that represents a recent chat.

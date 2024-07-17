@@ -42,8 +42,10 @@ String convertExportJsonFromString(String? str) => (str == null || str.isEmpty)
 class ExportModel {
   /// The subject of the export.
   String? subject;
+
   /// The content of the message.
   String? messageContent;
+
   /// The URLs of the media attachments.
   List<String>? mediaAttachmentsUrl;
 

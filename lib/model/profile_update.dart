@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 /// Converts a JSON string into a [ProfileUpdate] object.
 ///
 /// This function decodes the given JSON string and uses the [fromJson] constructor

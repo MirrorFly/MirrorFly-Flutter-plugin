@@ -21,7 +21,6 @@ class TopicMetaData {
 /// instances to be easily converted to a map structure for JSON serialization
 /// or other uses.
 extension ExtractTopicData on TopicMetaData {
-
   /// Converts a [TopicMetaData] instance to a map.
   Map<String, dynamic> toMap() => {'key': key, 'value': value};
 }
@@ -107,7 +106,6 @@ class IdentifierMetaData {
 /// instances to be easily converted to a map structure for JSON serialization
 /// or other uses.
 extension IdentifierMetaDataToMap on IdentifierMetaData {
-
   /// Converts an [IdentifierMetaData] instance to a map.
   Map<String, dynamic> toMap() => {'key': key, 'value': value};
 }
@@ -119,7 +117,6 @@ extension IdentifierMetaDataToMap on IdentifierMetaData {
 /// multiple identifiable metadata instances into a JSON format for storage or
 /// transmission.
 extension IdentifierMetaDataListToMap on List<IdentifierMetaData> {
-
   /// Converts a list of [IdentifierMetaData] to a JSON string.
   String toJson() => json.encode(List<dynamic>.from(map((x) => x.toJson())));
 }
@@ -129,7 +126,6 @@ extension IdentifierMetaDataListToMap on List<IdentifierMetaData> {
 /// This class holds a key-value pair where the key identifies the metadata,
 /// and the value is a list of strings representing user-related data.
 class MetaDataUserList {
-
   /// Initializes a new instance of the [MetaDataUserList] class.
   MetaDataUserList({required this.key, required this.value});
 
@@ -146,7 +142,6 @@ class MetaDataUserList {
 /// instances to be easily converted to a map structure for JSON serialization
 /// or other uses.
 extension MetaDataUserListToMap on MetaDataUserList {
-
   /// Converts a [MetaDataUserList] instance to a map.
   Map<String, dynamic> toMap() => {'key': key, 'value': value};
 }
@@ -156,7 +151,6 @@ extension MetaDataUserListToMap on MetaDataUserList {
 /// This class holds a key-value pair where the key identifies the metadata,
 /// and the value is a list of strings representing message-related data.
 class MetaDataMessageList {
-
   /// Initializes a new instance of the [MetaDataMessageList] class.
   MetaDataMessageList({required this.key, required this.value});
 
@@ -173,7 +167,6 @@ class MetaDataMessageList {
 /// instances to be easily converted to a map structure for JSON serialization
 /// or other uses.
 extension MetaDataMessageListToMap on MetaDataMessageList {
-
   /// Converts a [MetaDataMessageList] instance to a map.
   Map<String, dynamic> toMap() => {'key': key, 'value': value};
 }

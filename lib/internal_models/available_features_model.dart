@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+
 /// Converts a JSON string into an [AvailableFeatures] object.
 ///
 /// This function decodes a JSON string to a Map, and then creates an

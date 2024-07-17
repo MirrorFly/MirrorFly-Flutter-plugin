@@ -70,7 +70,6 @@ class CallLogModel {
         totalPages: json["total_pages"],
       );
 
-
   /// Converts a [CallLogModel] instance to a JSON map.
   ///
   /// This method serializes the [CallLogModel] instance into a JSON map,

@@ -37,23 +37,21 @@ String convertChatMessageStatusDetailToJson(String? str) =>
         ? ""
         : chatMessageStatusDetailToJson(chatMessageStatusDetailFromJson(str));
 
-
 ///
 /// This class holds information about the times a chat message was sent, delivered, and seen.
 ///
 /// Attributes:
 class ChatMessageStatusDetail {
-
-/// The time at which the message was delivered.
+  /// The time at which the message was delivered.
   String? deliveredTime;
 
-///  The unique identifier of the message.
+  ///  The unique identifier of the message.
   String? messageId;
 
-///  The time at which the message was seen.
+  ///  The time at which the message was seen.
   String? seenTime;
 
-///  The time at which the message was sent.
+  ///  The time at which the message was sent.
   String? sentTime;
 
   /// Constructs an instance of [ChatMessageStatusDetail].
@@ -77,7 +75,6 @@ class ChatMessageStatusDetail {
         seenTime: json["seenTime"],
         sentTime: json["sentTime"],
       );
-
 
   /// Converts a [ChatMessageStatusDetail] instance to a JSON map.
   ///

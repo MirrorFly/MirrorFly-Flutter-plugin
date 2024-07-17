@@ -62,7 +62,6 @@ class ProfileUpdate {
     this.status,
   });
 
-
   /// The updated data for the profile.
   ProData? data;
 
@@ -89,7 +88,6 @@ class ProfileUpdate {
 
 /// Represents the updated data for a user profile.
 class ProData {
-
   /// Initializes a new instance of the [ProData] class.
   ProData({
     this.email,

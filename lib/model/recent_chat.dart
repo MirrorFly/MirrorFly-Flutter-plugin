@@ -60,7 +60,6 @@ String recentChatToJson(RecentChat data) => json.encode(data.toJson());
 
 /// Represents the recent chat data.
 class RecentChat {
-
   /// Initializes a new instance of the [RecentChat] class.
   List<RecentChatData>? data;
 
@@ -87,7 +86,6 @@ class RecentChat {
 
 /// Represents the recent chat data.
 class RecentChatData {
-
   /// The type of contact.
   String? contactType;
 

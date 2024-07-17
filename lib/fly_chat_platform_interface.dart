@@ -292,7 +292,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
-
   /*setCustomValue(String messageId, String key, String value) {
     throw UnimplementedError('has not been implemented.');
   }
@@ -844,7 +843,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onClearAllCallLog =>
       throw UnimplementedError('onClearAllCallLog has not been implemented.');
 
-
   /*Future<String?> imagePath(String imgurl) {
     throw UnimplementedError('has not been implemented.');
   }*/
@@ -984,7 +982,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<String?> getMessagesOfJid(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
-
 
   /*Future<dynamic> listenMessageEvents() {
     throw UnimplementedError('has not been implemented.');
@@ -1139,7 +1136,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
       String userJID, Function(FlyResponse response)? callback) {
     throw UnimplementedError('has not been implemented.');
   }
-
 
   /*Future<String?> showCustomTones() {
     throw UnimplementedError('has not been implemented.');
@@ -1676,8 +1672,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// This listener is set to listen the call link events.
-  void setCallLinkEventListener(CallLinkEventListeners callLinkEventsListener){
-    throw UnimplementedError('setCallLinkEventListener has not been implemented.');
+  void setCallLinkEventListener(CallLinkEventListeners callLinkEventsListener) {
+    throw UnimplementedError(
+        'setCallLinkEventListener has not been implemented.');
   }
 
   /// This method is used to create the meet link.
@@ -1691,7 +1688,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// This method is used to initialize the meet.
-  Future<void> initializeMeet(String callLink,String userName,Function(FlyResponse response)? callback) {
+  Future<void> initializeMeet(String callLink, String userName,
+      Function(FlyResponse response)? callback) {
     throw UnimplementedError('initializeMeet has not been implemented.');
   }
 
@@ -1716,12 +1714,14 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// Stream that emits events when the call link subscribed success.
-  Stream<dynamic> get onSubscribeSuccess => throw UnimplementedError('onSubscribeSuccess has not been implemented');
+  Stream<dynamic> get onSubscribeSuccess =>
+      throw UnimplementedError('onSubscribeSuccess has not been implemented');
 
   /// Stream that emits events when the call link subscribe error
-  Stream<dynamic> get onError => throw UnimplementedError('onError has not been implemented');
+  Stream<dynamic> get onError =>
+      throw UnimplementedError('onError has not been implemented');
 
   /// Stream that emits events when the call link users are updated
-  Stream<dynamic> get onUsersUpdated => throw UnimplementedError('onUsersUpdated has not been implemented');
-
+  Stream<dynamic> get onUsersUpdated =>
+      throw UnimplementedError('onUsersUpdated has not been implemented');
 }

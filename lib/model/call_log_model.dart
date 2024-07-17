@@ -34,7 +34,6 @@ String callLogListToJson(CallLogModel data) => json.encode(data.toJson());
 /// This class holds the data for call logs, including a list of [CallLogData] and the total number of pages.
 ///
 class CallLogModel {
-
   /// A list of [CallLogData] objects representing individual call logs.
   List<CallLogData>? data;
 
@@ -67,7 +66,6 @@ class CallLogModel {
 
 /// Represents the model for call log data.
 class CallLogData {
-
   /// Represents the mode of the call.
   String? callMode;
 

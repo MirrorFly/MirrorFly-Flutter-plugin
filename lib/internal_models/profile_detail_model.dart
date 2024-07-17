@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+
 /// Converts a JSON string into a list of [ProfileDetails] objects.
 ///
 /// This function decodes the provided JSON string into a list of maps,
@@ -90,7 +91,6 @@ String convertProfileDetailJsonFromString(String? str) =>
 
 /// A class representing a profile detail.
 class ProfileDetails {
-
   /// Constructor for the [ProfileDetails] class.
   ProfileDetails({
     this.contactType,

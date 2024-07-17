@@ -12,7 +12,6 @@ int _nextViewCreationId = 0;
 
 /// Enum representing the different types of scaling that can be applied to a `MirrorFlyView`.
 enum ScalingType {
-
   /// Scale the view to fit the aspect ratio of the video, with black bars on the sides or top and bottom.
   scaleAspectFIT,
 
@@ -32,7 +31,8 @@ enum HorizontalGravity {
   center,
 
   /// Align the profile picture to the bottom of the view.
-  bottom }
+  bottom
+}
 
 /// A widget that displays a view for audio/video calls in the MirrorFly application.
 ///
@@ -44,7 +44,6 @@ enum HorizontalGravity {
 /// @property [showSpeakingRipple] Whether to show a ripple effect in the profile view background when the user is speaking.
 
 class MirrorFlyView extends StatefulWidget {
-
   /// Constructor for the [MirrorFlyView] class.
   const MirrorFlyView(
       {Key? key,
@@ -261,7 +260,6 @@ extension ExtensionMirrorflyView on MirrorFlyView {
 /// @property [width] The width of the profile view.
 /// @property [height] The height of the profile view.
 class ProfileViewPositioned {
-
   /// The distance from the left edge of the `MirrorFlyView`.
   final int? left;
 
@@ -279,7 +277,6 @@ class ProfileViewPositioned {
 
   /// The height of the profile view.
   final int? height;
-
 
   /// Constructor for the [ProfileViewPositioned] class.
   ProfileViewPositioned(

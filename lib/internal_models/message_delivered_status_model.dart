@@ -100,7 +100,6 @@ class MessageStatusDetail {
   /// A list of participants with detailed information about each participant.
   List<ParticipantList> participantList;
 
-
   /// Creates a new [MessageStatusDetail] object from a JSON map.
   factory MessageStatusDetail.fromJson(Map<String, dynamic> json) =>
       MessageStatusDetail(
@@ -155,10 +154,10 @@ class ParticipantList {
   ///
   /// Returns a [Map<String, dynamic>] representing the JSON data.
   Map<String, dynamic> toJson() => {
-    "profileDetails": profileDetails?.toJson(),
-    "messageId": messageId,
-    "time": time,
-  };
+        "profileDetails": profileDetails?.toJson(),
+        "messageId": messageId,
+        "time": time,
+      };
 }
 
 /// A class that represents the profile details of a member.
@@ -277,8 +276,8 @@ class MemberProfileDetails {
         isGroupProfile: Platform.isAndroid
             ? json["isGroupProfile"]
             : json["profileChatType"].toString().toLowerCase() == "singlechat"
-            ? false
-            : true,
+                ? false
+                : true,
         isItSavedContact: json["isItSavedContact"],
         isMuted: json["isMuted"],
         isSelected: json["isSelected"],
@@ -296,29 +295,29 @@ class MemberProfileDetails {
   ///
   /// Returns a [Map<String, dynamic>] representing the JSON data.
   Map<String, dynamic> toJson() => {
-    "contactType": contactType,
-    "email": email,
-    "groupCreatedTime": groupCreatedTime,
-    "image": image,
-    "imagePrivacyFlag": imagePrivacyFlag,
-    "isAdminBlocked": isAdminBlocked,
-    "isBlocked": isBlocked,
-    "isBlockedMe": isBlockedMe,
-    "isGroupAdmin": isGroupAdmin,
-    "isGroupInOfflineMode": isGroupInOfflineMode,
-    "isGroupProfile": isGroupProfile,
-    "isItSavedContact": isItSavedContact,
-    "isMuted": isMuted,
-    "isSelected": isSelected,
-    "jid": jid,
-    "lastSeenPrivacyFlag": lastSeenPrivacyFlag,
-    "mobileNUmberPrivacyFlag": mobileNUmberPrivacyFlag,
-    "mobileNumber": mobileNumber,
-    "name": name,
-    "nickName": nickName,
-    "status": status,
-    "thumbImage": thumbImage,
-  };
+        "contactType": contactType,
+        "email": email,
+        "groupCreatedTime": groupCreatedTime,
+        "image": image,
+        "imagePrivacyFlag": imagePrivacyFlag,
+        "isAdminBlocked": isAdminBlocked,
+        "isBlocked": isBlocked,
+        "isBlockedMe": isBlockedMe,
+        "isGroupAdmin": isGroupAdmin,
+        "isGroupInOfflineMode": isGroupInOfflineMode,
+        "isGroupProfile": isGroupProfile,
+        "isItSavedContact": isItSavedContact,
+        "isMuted": isMuted,
+        "isSelected": isSelected,
+        "jid": jid,
+        "lastSeenPrivacyFlag": lastSeenPrivacyFlag,
+        "mobileNUmberPrivacyFlag": mobileNUmberPrivacyFlag,
+        "mobileNumber": mobileNumber,
+        "name": name,
+        "nickName": nickName,
+        "status": status,
+        "thumbImage": thumbImage,
+      };
 }
 
 /// Converts the contact type string to a more descriptive string.
@@ -340,4 +339,3 @@ String getContactType(String contactType) {
       return contactType;
   }
 }
-

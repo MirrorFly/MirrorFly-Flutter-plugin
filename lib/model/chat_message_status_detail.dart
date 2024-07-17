@@ -31,7 +31,6 @@ String chatMessageStatusDetailToJson(ChatMessageStatusDetail data) =>
 /// This class holds information about the times when a chat message was sent, delivered, and seen.
 ///
 class ChatMessageStatusDetail {
-
   /// The time when the message was delivered.
   String? deliveredTime;
 

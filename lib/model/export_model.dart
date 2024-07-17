@@ -31,7 +31,6 @@ String exportModelToJson(ExportModel data) => json.encode(data.toJson());
 
 /// Represents the data to be exported.
 class ExportModel {
-
   /// The subject of the message.
   String? subject;
 

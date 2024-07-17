@@ -1,4 +1,3 @@
-
 /// Initializes a new instance of the `ChatBuilder` class.
 ///
 /// @param domainBaseUrl The base URL for making API calls.
@@ -10,7 +9,6 @@
 /// @param chatHistoryEnable Determines if chat history should be enabled (optional).
 /// @param enableDebugLog Determines if debug logging is enabled (default is false).
 class ChatBuilder {
-
   /// A builder class for creating chat configurations.
   ///
   /// This class allows for the configuration of various chat-related settings,
@@ -70,7 +68,6 @@ class ChatBuilder {
 /// @property maxMembersCount The maximum number of members in a group.
 /// @property adminOnlyAddRemoveAccess A flag to enable admin-only add/remove access.
 class GroupConfig {
-
   /// Allows customization of group chat features, including enabling group creation,
   /// setting a maximum number of members, and specifying admin-only permissions for
   /// adding or removing members.
@@ -107,7 +104,6 @@ class GroupConfig {
 ///
 /// The map can be used to easily access the properties of the `ChatBuilder` instance.
 extension BuilderParsing on ChatBuilder {
-
   /// Builds a map from the properties of a `ChatBuilder` instance.
   ///
   /// This method converts the configuration settings of a chat builder into a map,
@@ -179,6 +175,7 @@ class InitializeSDKBuilder {
     this.enableDebugLog = false,
     this.enablePrivateStorage = false,
   });
+
   /// The name of the local storage folder. Optional for Android platforms.
   String? storageFolderName;
 
@@ -204,7 +201,6 @@ class InitializeSDKBuilder {
 /// `InitializeSDKBuilderParsing` is an extension on `InitializeSDKBuilder` that provides a method to build a map
 /// from the properties of an `InitializeSDKBuilder` instance.
 extension InitializeSDKBuilderParsing on InitializeSDKBuilder {
-
   /// Builds a map from the properties of an `InitializeSDKBuilder` instance.
   ///
   /// This method converts the configuration settings of the SDK initialization process into a map,

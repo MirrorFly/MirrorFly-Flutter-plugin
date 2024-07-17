@@ -1,7 +1,5 @@
-
 /// Encapsulates the information necessary for performing an edit operation on a message.
 class EditMessageParams {
-
   /// Constructs an instance of [EditMessageParams].
   EditMessageParams({
     required this.messageId,

@@ -111,59 +111,84 @@ class ChatMessage {
     required this.topicId,
   });
 
-
-/// The JID of the user involved in the chat.
+  /// The JID of the user involved in the chat.
   String chatUserJid;
-/// The type of contact (e.g., live, local, deleted). Nullable.
+
+  /// The type of contact (e.g., live, local, deleted). Nullable.
   String? contactType;
-/// Indicates if the message is a carbon copy. Nullable.
+
+  /// Indicates if the message is a carbon copy. Nullable.
   bool? isItCarbonMessage;
-/// Indicates if the contact is saved in the user's contacts. Nullable.
+
+  /// Indicates if the contact is saved in the user's contacts. Nullable.
   bool? isItSavedContact;
-/// Indicates if the message has been deleted.
+
+  /// Indicates if the message has been deleted.
   bool isMessageDeleted;
-/// Indicates if the message has been recalled.
+
+  /// Indicates if the message has been recalled.
   bool isMessageRecalled;
-/// Indicates if the message was sent by the current user.
+
+  /// Indicates if the message was sent by the current user.
   bool isMessageSentByMe;
-/// Indicates if the message is starred.
+
+  /// Indicates if the message is starred.
   bool isMessageStarred;
-/// Indicates if the message is selected in the UI.
+
+  /// Indicates if the message is selected in the UI.
   bool isSelected;
-/// Indicates if this message is a reply to another message.
+
+  /// Indicates if this message is a reply to another message.
   bool isThisAReplyMessage;
-/// The type of chat (e.g., single chat, group chat).
+
+  /// The type of chat (e.g., single chat, group chat).
   String messageChatType;
-/// A map of custom fields attached to the message.
+
+  /// A map of custom fields attached to the message.
   Map<String, dynamic> messageCustomField;
+
   /// The unique identifier of the message.
   String messageId;
+
   /// The time the message was sent. Can be of various types.
   dynamic messageSentTime;
+
   /// The status of the message (e.g., sent, delivered, seen).
   String messageStatus;
+
   /// Indicates if the message has been edited.
   bool isMessageEdited;
+
   /// The text content of the message. Nullable.
   String? messageTextContent;
+
   /// The type of message (e.g., text, image, video).
   String messageType;
+
   /// A list of metadata associated with the message. Nullable.
   List<MessageMetaData>? metaData;
+
   /// Information about the parent message if this is a reply. Nullable.
   ReplyParentChatMessage? replyParentChatMessage;
+
   /// The nickname of the sender.
   String senderNickName;
+
   /// The JID of the sender.
   String senderUserJid;
+
   /// The username of the sender.
   String senderUserName;
+
   /// Details of the contact shared in the message. Nullable.
   ContactChatMessage? contactChatMessage;
+
   /// Details of the media shared in the message. Nullable.
   MediaChatMessage? mediaChatMessage;
+
   /// Details of the location shared in the message. Nullable.
   LocationChatMessage? locationChatMessage;
+
   /// The topic ID associated with the message. Nullable.
   String? topicId;
 
@@ -277,7 +302,6 @@ class ChatMessage {
 
 /// Represents a contact shared in a chat message.
 class ContactChatMessage {
-
   /// Constructs an instance of [ContactChatMessage].
   ContactChatMessage({
     required this.contactName,
@@ -288,10 +312,13 @@ class ContactChatMessage {
 
   /// The name of the contact.
   String contactName;
+
   /// The phone numbers of the contact.
   List<String> contactPhoneNumbers;
+
   /// Indicates if the contact is a user of the chat app.
   List<bool> isChatAppUser;
+
   /// The unique identifier of the message.
   String messageId;
 
@@ -319,7 +346,6 @@ class ContactChatMessage {
 
 /// Represents a location shared in a chat message.
 class LocationChatMessage {
-
   /// Constructs an instance of [LocationChatMessage].
   LocationChatMessage({
     required this.latitude,
@@ -330,10 +356,13 @@ class LocationChatMessage {
 
   /// The latitude of the location.
   double latitude;
+
   /// The longitude of the location.
   double longitude;
+
   /// The URL of the location on a map.
   String mapLocationUrl;
+
   /// The unique identifier of the message.
   String messageId;
 
@@ -357,7 +386,6 @@ class LocationChatMessage {
 
 /// Represents a media shared in a chat message.
 class MediaChatMessage {
-
   /// Constructs an instance of [MediaChatMessage].
   MediaChatMessage({
     required this.isAudioRecorded,
@@ -376,26 +404,37 @@ class MediaChatMessage {
 
   /// Indicates if the audio is recorded.
   bool isAudioRecorded;
+
   /// The caption text of the media.
   String mediaCaptionText;
+
   /// The download status of the media.
   int mediaDownloadStatus;
+
   /// The duration of the media.
   int mediaDuration;
+
   /// The name of the media file.
   String mediaFileName;
+
   /// The size of the media file.
   int mediaFileSize;
+
   /// The local storage path of the media file.
   String mediaLocalStoragePath;
+
   /// The progress status of the media.
   int mediaProgressStatus;
+
   /// The thumbnail image of the media.
   String mediaThumbImage;
+
   /// The upload status of the media.
   int mediaUploadStatus;
+
   /// The unique identifier of the message.
   String messageId;
+
   /// The type of the message.
   String messageType;
 
@@ -445,7 +484,6 @@ class MediaChatMessage {
 
 /// Represents a custom field attached to a message.
 class MessageCustomField {
-
   /// Constructs an instance of [MessageCustomField].
   MessageCustomField();
 
@@ -459,7 +497,6 @@ class MessageCustomField {
 
 /// Represents the status of a message.
 class MessageStatus {
-
   /// Constructs an instance of [MessageStatus].
   MessageStatus({
     required this.status,
@@ -481,7 +518,6 @@ class MessageStatus {
 
 /// Represents a parent message that is being replied to.
 class ReplyParentChatMessage {
-
   /// Constructs an instance of [ReplyParentChatMessage].
   ReplyParentChatMessage({
     required this.chatUserJid,
@@ -502,30 +538,43 @@ class ReplyParentChatMessage {
 
   /// The JID of the user involved in the chat.
   String chatUserJid;
+
   /// Indicates if the message has been deleted.
   bool isMessageDeleted;
+
   /// Indicates if the message has been recalled.
   bool isMessageRecalled;
+
   /// Indicates if the message was sent by the current user.
   bool isMessageSentByMe;
+
   /// Indicates if the message is starred.
   bool isMessageStarred;
+
   /// The unique identifier of the message.
   String messageId;
+
   /// The time the message was sent.
   int messageSentTime;
+
   /// The text content of the message.
   String? messageTextContent;
+
   /// The type of message (e.g., text, image, video).
   String messageType;
+
   /// The nickname of the sender.
   String senderNickName;
+
   /// The username of the sender.
   String senderUserName;
+
   /// Details of the location shared in the message. Nullable.
   LocationChatMessage? locationChatMessage;
+
   /// Details of the contact shared in the message. Nullable.
   ContactChatMessage? contactChatMessage;
+
   /// Details of the media shared in the message. Nullable.
   MediaChatMessage? mediaChatMessage;
 

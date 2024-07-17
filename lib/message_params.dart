@@ -329,7 +329,6 @@ extension ExtractFileMessageParams on FileMessageParams {
 
 /// Represents parameters for constructing a message.
 class MessageParams {
-
   /// The Jabber ID (JID) of the recipient.
   String toJid;
 
@@ -551,7 +550,6 @@ extension ExtractMessageParams on MessageParams {
 /// This enum defines the various types of messages that can be sent or received within the application.
 /// Each message type is associated with a specific string value that represents the type in a more readable format.
 enum MessageType {
-
   /// Represents a text message.
   text('TEXT'),
 
@@ -615,7 +613,6 @@ enum MessageType {
   /// The enum constructor takes a [value] parameter which is the string representation of the message type.
   final String value;
 }
-
 
 /// An enumeration of media download statuses.
 ///

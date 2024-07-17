@@ -40,7 +40,6 @@ String messageDeliveredStatusToJson(MessageStatusDetail data) =>
 
 /// A class that represents the details of a message status.
 class MessageStatusDetail {
-
   /// The number of participants.
   String? count;
 
@@ -80,7 +79,6 @@ class MessageStatusDetail {
 
 /// A class that represents the details of a participant.
 class ParticipantList {
-
   /// The profile details of the participant.
   ProfileDetails? profileDetails;
 

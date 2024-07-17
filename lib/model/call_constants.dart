@@ -5,7 +5,6 @@
 /// within the application.
 ///
 class CallAction {
-
   /// Represents an action to invite users to a call.
   static const String inviteUsers = "INVITE_USERS";
 
@@ -104,7 +103,6 @@ class CallAction {
 /// in a call. These statuses are used to control and indicate the mute state of the remote participant's audio and video.
 ///
 class MuteStatus {
-
   /// Represents the status when the local participant's audio is un muted.
   static const String localAudioUnMute = "LOCAL_AUDIO_UN_MUTE";
 
@@ -150,7 +148,6 @@ class CallMode {
 
 /// Represents the call state for a call session.
 class AudioLevel {
-
   /// Represents the audio level when the audio is too low.
   static const String audioTooLow = "audio_too_low";
 
@@ -178,7 +175,6 @@ class AudioLevel {
 ///   in the [AudioLevel] class, such as "audio_too_low", "audio_low", "audio_medium", "audio_high", or "audio_peak".
 ///   If the numeric value does not match any case, it defaults to "audio_too_low".
 extension AudioLevelExtension on num {
-
   /// Returns the audio level description based on the numeric value.
   String getAudioLevel() {
     switch (this) {
@@ -200,7 +196,6 @@ extension AudioLevelExtension on num {
 
 /// Represents the call state for a call session.
 class CallStatus {
-
   /// Represents the call state when the call is connecting.
   static const String connecting = "Connecting";
 
@@ -256,7 +251,6 @@ class CallStatus {
 
 /// Represents the call state for a call session.
 class AudioDeviceType {
-
   /// Represents the audio device type when no audio device is connected.
   static const String none = "none";
 
@@ -275,7 +269,6 @@ class AudioDeviceType {
 
 /// Represents the call state for a call session.
 class CallState {
-
   /// Represents the call state when the call is connecting.
   static const int missedCall = 0;
 
@@ -288,7 +281,6 @@ class CallState {
 
 /// Represents the call state for a call session.
 class CallDirection {
-
   /// Represents the call direction when the call is outgoing.
   static const String outgoing = "Outgoing";
 

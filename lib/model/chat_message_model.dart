@@ -253,7 +253,6 @@ class ChatMessageModel {
 
 /// Represents a contact chat message.
 class ContactChatMessage {
-
   /// The name of the contact.
   String contactName;
 
@@ -299,7 +298,6 @@ class ContactChatMessage {
 
 /// Represents a location chat message.
 class LocationChatMessage {
-
   /// The latitude of the location.
   double latitude;
 
@@ -340,7 +338,6 @@ class LocationChatMessage {
 
 /// Represents a media chat message.
 class MediaChatMessage {
-
   /// Indicates whether the audio is recorded.
   bool isAudioRecorded;
 
@@ -376,7 +373,6 @@ class MediaChatMessage {
 
   /// The type of message.
   String messageType;
-
 
   /// Constructs a [MediaChatMessage] instance.
   MediaChatMessage({
@@ -430,7 +426,6 @@ class MediaChatMessage {
 
 /// Represents a custom field of a message.
 class MessageCustomField {
-
   /// Constructs a [MessageCustomField] instance.
   MessageCustomField();
 
@@ -444,7 +439,6 @@ class MessageCustomField {
 
 /// Represents a parent chat message for a reply message.
 class ReplyParentChatMessage {
-
   /// The JID of the chat user.
   String chatUserJid;
 
@@ -547,7 +541,6 @@ class ReplyParentChatMessage {
 
 /// Represents the status of a message.
 abstract class MessageStatus {
-
   /// The status of the message.
   final String status;
 

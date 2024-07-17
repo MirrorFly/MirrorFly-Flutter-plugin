@@ -6,7 +6,6 @@ import 'model/profile_model.dart';
 
 /// A class that provides a set of callback methods that can be used to listen for Message Events in the MirrorFly Flutter Plugin.
 abstract class MessageEventListeners {
-
   /// This listener is triggered whenever a new chat message arrives. Listen to this method to handle
   /// the incoming message, such as updating the UI or storing the message in a database.
   ///
@@ -171,7 +170,6 @@ abstract class GroupEventListeners {
 
 /// A class that provides a set of callback methods that can be used to listen for Call Events in the MirrorFly Flutter Plugin.
 abstract class CallEventListeners {
-
   /// This listener is triggered whenever the call is synced with call logs. listen to this method and update the UI.
   void onCallLogsUpdated();
 
@@ -214,7 +212,6 @@ abstract class CallEventListeners {
 
 /// A class that provides a set of callback methods that can be used to listen for Call Link Events in the MirrorFly Flutter Plugin.
 abstract class CallLinkEventListeners {
-
   /// This listener is triggered when the call link is Subscribed success.
   void onSubscribeSuccess();
 
