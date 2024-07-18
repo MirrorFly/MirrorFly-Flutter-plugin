@@ -81,3 +81,9 @@ public class OnMissedCallStreamHandler: EventStreamHandler { }
 public class OnCallLogUpdateStreamHandler: EventStreamHandler { }
 public class OnCallLogDeletedStreamHandler: EventStreamHandler { }
 public class ClearAllCallLogChannelStreamHandler: EventStreamHandler { }
+
+/// Meet link
+public class OnSubscribeSuccessChannelStreamHandler: EventStreamHandler { }
+public class OnConnectedToSignalServerChannelStreamHandler: EventStreamHandler { }
+public class OnErrorChannelStreamHandler: EventStreamHandler { }
+public class OnUsersUpdatedChannelStreamHandler: EventStreamHandler { }

@@ -397,6 +397,40 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         return _baseView
     }
     
+    func updatePreviewVideoTrack(track: RTCVideoTrack?, updateType: MuteEvent) {
+        NSLog("\(Constants.callTag) Update Video Track viewId\(viewId) videoTrack\(String(describing: videoTrack))")
+        
+        if(updateType == .ACTION_REMOTE_VIDEO_UN_MUTE || updateType == .ACTION_LOCAL_VIDEO_UN_MUTE){
+            if let track = track {
+                NSLog("\(Constants.callTag) get remote track for : \(track)")
+                if videoView == nil{
+                    videoView = getVideoView()
+                }
+                
+                track.add(videoView as! RTCVideoRenderer)
+                DispatchQueue.main.async {
+                    self._baseView.addSubview(self.videoView!)
+                    
+                    
+                    NSLayoutConstraint.activate([
+                        self.videoView!.leadingAnchor.constraint(equalTo: self._baseView.leadingAnchor),
+                        self.videoView!.trailingAnchor.constraint(equalTo: self._baseView.trailingAnchor),
+                        self.videoView!.topAnchor.constraint(equalTo: self._baseView.topAnchor),
+                        self.videoView!.bottomAnchor.constraint(equalTo: self._baseView.bottomAnchor)
+                    ])
+                    
+                    self.audioView?.removeFromSuperview()
+                }
+            }else{
+                NSLog("\(Constants.callTag) video track is null for video preview")
+                
+            }
+            
+        }
+            
+    }
+    
+    
     func updateVideoTrack(userJid: String, updateType: MuteEvent) {
         NSLog("\(Constants.callTag) Update Video Track viewId\(viewId) userJid\(userJid) updateType\(updateType)")
         

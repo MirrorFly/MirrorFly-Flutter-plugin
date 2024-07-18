@@ -273,6 +273,11 @@ object FlyMethodConstants {
         Constants.onCallLogsUpdatedChannel to EventStreamHandler(),
         Constants.onCallLogDeletedChannel to EventStreamHandler(),
         Constants.clearAllCallLogChannel to EventStreamHandler(),
+        Constants.onSubscribeSuccess to EventStreamHandler(),
+        Constants.onConnectedToSignalServer to EventStreamHandler(),
+        Constants.onError to EventStreamHandler(),
+//        Constants.onLocalTrack to EventStreamHandler(),
+        Constants.onUsersUpdated to EventStreamHandler(),
     )
     val callMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "getCallUsersList" to flyCallMethods::getCallUsersList,
@@ -320,6 +325,13 @@ object FlyMethodConstants {
         "isCallConversionRequestAvailable" to flyCallMethods::isCallConversionRequestAvailable,
         "getLocalCallLogs" to flyCallMethods::getLocalCallLogs,
         "markAllUnreadMissedCallsAsRead" to flyCallMethods::markAllUnreadMissedCallsAsRead,
+        "createMeetLink" to flyCallMethods::createMeetLink,
+        "getCallLink" to flyCallMethods::getCallLink,
+        "joinCall" to flyCallMethods::joinCall,
+        "initializeMeet" to flyCallMethods::initializeMeet,
+        "startVideoCapture" to flyCallMethods::startVideoCapture,
+        "disposePreview" to flyCallMethods::disposePreview,
+        "getMeetUsername" to flyCallMethods::getMeetUsername,
     )
 
 
