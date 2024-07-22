@@ -1,4 +1,7 @@
-## [1.0.5] Private Storage Feature
+## [1.0.6] Bug Fix
+* Chat History Bug Fix
+
+## [1.0.5] SDK Updates
 * iOS SDK Updated to 5.17.5 
 * Android SDK Updated to 7.13.5
 * Performance Improvement
