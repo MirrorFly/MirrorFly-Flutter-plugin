@@ -2653,7 +2653,7 @@ let ISEXPORT = true
                     print("\(Constants.tag) prev message -> Next Message List previous message id is not setting as the list is empty")
                 }
                 
-                if (messageList?.count == 1 && messageList?.first?.messageId == self.lastMessageID){
+                if (messageList?.count == 1 && messageList?.first?.messageId == self.firstMessageID){
                     
                     result("[]");
                     return;
