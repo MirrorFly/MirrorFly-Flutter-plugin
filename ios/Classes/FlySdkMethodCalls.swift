@@ -2581,13 +2581,13 @@ let ISEXPORT = true
         }
 
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
-        
+
         result(true)
         
     }
     
     func loadMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+
         if(messageListQuery == nil){
             NSLog("\(Constants.tag) Message List Not Initialized")
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
@@ -2599,7 +2599,7 @@ let ISEXPORT = true
             var data  = flyData
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
-                
+
                 self.lastMessageID = messageList?.last?.messageId ?? emptyString()
                 self.setLastMessage()
                 self.firstMessageID = messageList?.first?.messageId ?? emptyString()
@@ -2635,21 +2635,29 @@ let ISEXPORT = true
         
         if (!(messageListQuery?.hasPreviousMessages() ?? false)){
             result("[]")
+            return
         }
-        
+
         messageListQuery?.setFirstMessage(messageId: firstMessageID)
         messageListQuery?.loadPreviousMessages { isSuccess, flyError, flyData in
             var data  = flyData
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
-                
+
                 if (!(messageList?.isEmpty ?? true)) {
                     /// Changing the first message ID here, bcz the new set will be inserted at top of the chat array list,
                     /// so we need to update the first message ID to fetch the previous set of messages again from this message ID
                     self.firstMessageID = messageList?.first?.messageId ?? emptyString()
                     self.setFirstMessage()
                 }else{
-                    print("\(Constants.tag) Next Message List previous message id is not setting as the list is empty")
+                    print("\(Constants.tag) prev message -> Next Message List previous message id is not setting as the list is empty")
+                }
+                
+                if (messageList?.count == 1 && messageList?.first?.messageId == self.lastMessageID){
+                    
+                    result("[]");
+                    return;
+                   
                 }
                 
                 if let chatJson = messageList.toJson() {
@@ -2667,7 +2675,7 @@ let ISEXPORT = true
             }
         }
     }
-    
+
     func loadNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         if(messageListQuery == nil){
@@ -2678,6 +2686,7 @@ let ISEXPORT = true
         
         if (!(messageListQuery?.hasNextMessages() ?? false)){
             result("[]")
+            return
         }
         
         messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in
@@ -3924,7 +3933,7 @@ let ISEXPORT = true
         FlyMessenger.sendMediaFileMessage(messageParams: imageMessageParams) { isSuccess, error, sendMessage in
             if isSuccess{
                 let response = sendMessage?.toJson()
-                self.setLastMessage(messageID: sendMessage?.messageId)
+//                self.setLastMessage(messageID: sendMessage?.messageId)
                 result(response)
             }else{
                 if case let .invalid_data(message, _) = error {
@@ -3955,7 +3964,7 @@ let ISEXPORT = true
             if isSuccess{
                 if let chatMessage = message {
                     let sendVideoResponse = chatMessage.toJson()
-                    self.setLastMessage(messageID: chatMessage.messageId)
+//                    self.setLastMessage(messageID: chatMessage.messageId)
                     print("FlyMessenger.sendVideoMessage==**==\(String(describing: sendVideoResponse))")
                     result(sendVideoResponse)
                     
@@ -3988,7 +3997,7 @@ let ISEXPORT = true
             if (isSuccess) {
                 let contactMessageResponse = message?.toJson()
                 print("FlyMessenger.sendContactMessage==**==\(String(describing: contactMessageResponse))")
-                self.setLastMessage(messageID: message?.messageId)
+//                self.setLastMessage(messageID: message?.messageId)
                 result(contactMessageResponse)
                 return
             }else {
@@ -4019,7 +4028,7 @@ let ISEXPORT = true
         FlyMessenger.sendMediaFileMessage(messageParams: audioMessageParams) { isSuccess,error,message in
             if isSuccess{
                 let audioResponse = message?.toJson()
-                self.setLastMessage(messageID: message?.messageId)
+//                self.setLastMessage(messageID: message?.messageId)
                 result(audioResponse)
             }else{
                 if case let .invalid_data(message, _) = error {
@@ -4052,7 +4061,7 @@ let ISEXPORT = true
                     
                     if let chatMessage = message , isSuccess{
                         let documentMessageResponse = chatMessage.toJson()
-                        self.setLastMessage(messageID: chatMessage.messageId)
+//                        self.setLastMessage(messageID: chatMessage.messageId)
                         result(documentMessageResponse)
                     }else{
                         if case let .invalid_data(message, _) = error {
@@ -4085,7 +4094,7 @@ let ISEXPORT = true
         FlyMessenger.sendMediaFileMessage(messageParams: locationMessageParams){ isSuccess,error,chatMessage in
             if (isSuccess) {
                 let locationResponse = chatMessage?.toJson()
-                self.setLastMessage(messageID: chatMessage?.messageId)
+//                self.setLastMessage(messageID: chatMessage?.messageId)
                 print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
                 result(locationResponse)
             }else{

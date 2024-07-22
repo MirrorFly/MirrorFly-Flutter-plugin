@@ -247,14 +247,14 @@ import PushKit
         }
         
         /// Call Status Duplicate Handle Code Start
-        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING){
+//        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING){
             usersInCall.removeAll()
             usersInCall = CallManager.getCallUsersWithStatus()
             if !isUserExists(userId: AppUtils.shared.getMyJid()){
                 usersInCall[AppUtils.shared.getMyJid()] = .CONNECTED
             }
             print("\(Constants.callTag) Events: usersInCall: \(usersInCall)")
-        }
+//        }
         
         if (callStatus == .ATTENDED && userId != AppUtils.shared.getMyJid()){
             NSLog("\(Constants.callTag) Events: Attended Received for remote user so ignoring it")
