@@ -824,12 +824,12 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         )
     }
 
-    override fun onConnectedToSignalServer() {
+//    override fun onConnectedToSignalServer() {
 //        FlyMethodConstants.updateCallSinkValue(
 //                Constants.onConnectedToSignalServer,
 //                true
 //        )
-    }
+//    }
 
     override fun onError(error: Error) {
         //show error message in ui
