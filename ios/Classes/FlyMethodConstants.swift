@@ -9,8 +9,8 @@ import Foundation
 import Flutter
 
 class FlyMethodConstants {
-    
-    static let flyCallMethods = FlyCallMethods()
+
+    static let flyCallMethods = FlyCallMethods.shared
     static let callMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult, MirrorflyViewFactory?) -> Void] = {
         return [
             "getCallUsersList": flyCallMethods.getCallUsersList,

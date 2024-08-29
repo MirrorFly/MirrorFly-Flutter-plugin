@@ -92,6 +92,14 @@ let ISEXPORT = true
                 .setGroupConfiguration(groupConfig: sdkGroupConfig!)
                 .buildAndInitialize()
 
+        // *** DON'T REMOVE THIS LINE ======================
+        // *** USED TO INITIALISE THE CHAT MANAGER IN NEW SDK=========
+
+        _ = ChatManager.shared
+
+        // *** =============================================
+
+        ChatManager.disableLocalNotification()
             ChatManager.disableLocalNotification()
 
             /// Moved Inside SDK
@@ -3258,6 +3266,10 @@ let ISEXPORT = true
             if isSuccess {
                 //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
                 ChatManager.disconnect()
+                if (CallManager.isCallConnected() || CallManager.isOngoingCall()){
+                    CallManager.disconnectCall()
+                    CallManager.disconnectCallServers()
+                }
                 ChatManager.shared.resetFlyDefaults()
                 self.recentChatListBuilder = nil
 //                self.recentChatListParams = nil
@@ -3517,11 +3529,15 @@ let ISEXPORT = true
         let args = call.arguments as! Dictionary<String, Any>
         let token = args["token"] as? String ?? ""
         
-        VOIPManager.sharedInstance.savePushToken(token: token)
-        Utility.saveInPreference(key: Constants.googleToken, value: token)
-        VOIPManager.sharedInstance.updateDeviceToken()
-        
-        result(true)
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+            VOIPManager.sharedInstance.savePushToken(token: token)
+            Utility.saveInPreference(key: Constants.googleToken, value: token)
+            VOIPManager.sharedInstance.updateDeviceToken()
+
+            result(true)
+        }else {
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.NOT_LOGGED_IN_MESSAGE, details: nil))
+        }
     }
     
     func handleReceivedMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
