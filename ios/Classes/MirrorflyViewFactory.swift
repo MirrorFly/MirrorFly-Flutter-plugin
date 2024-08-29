@@ -38,28 +38,48 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
         var mirrorflyView : MirrorflyView?
         
         if let jidForUniqID = userJid {
-//            uniqueID = generateUniqueID(from: userJid!)
-            generateUniqueID(from: jidForUniqID) { uniqueID in
+//             generateUniqueID(from: jidForUniqID) { uniqueID in
+//                 NSLog("\(Constants.callTag) MirrorflyViewFactory Unique ID generated \(String(describing: uniqueID))")
+//                 if let generatedUniqueID = uniqueID {
+//                     viewUniqueID = generatedUniqueID
+//                     if (self.mirrorflyViews.keys.contains(generatedUniqueID)){
+//                         if let (_, mirrorflyView) = self.mirrorflyViews[generatedUniqueID] {
+//                             NSLog("\(Constants.callTag) MirrorflyViewFactory View Already Exists so disposing \(generatedUniqueID)")
+//                             mirrorflyView.dispose()
+//                             self.mirrorflyViews.removeValue(forKey: generatedUniqueID)
+//                             NSLog("\(Constants.callTag) MirrorflyViewFactory View disposed \(generatedUniqueID)")
+//                         } else {
+//                             // Handle case when view is not found
+//                             NSLog("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed \(generatedUniqueID)")
+//                         }
+//                     }
+//                     mirrorflyView = MirrorflyView(
+//                         frame: frame,
+//                         viewIdentifier: generatedUniqueID,
+//                         arguments: args,
+//                         binaryMessenger: self.messenger)
+//                 }else{
+//                     NSLog("\(Constants.callTag) MirrorflyViewFactory Failed to generate uniqueID.")
+//                 }
+//             }
+              generateUniqueID(from: jidForUniqID) { uniqueID in
                 NSLog("\(Constants.callTag) MirrorflyViewFactory Unique ID generated \(String(describing: uniqueID))")
                 if let generatedUniqueID = uniqueID {
                     viewUniqueID = generatedUniqueID
-                    if (self.mirrorflyViews.keys.contains(generatedUniqueID)){
-                        if let (_, mirrorflyView) = self.mirrorflyViews[generatedUniqueID] {
-                            NSLog("\(Constants.callTag) MirrorflyViewFactory View Already Exists so disposing \(generatedUniqueID)")
-                            mirrorflyView.dispose()
-                            self.mirrorflyViews.removeValue(forKey: generatedUniqueID)
-                            NSLog("\(Constants.callTag) MirrorflyViewFactory View disposed \(generatedUniqueID)")
-                        } else {
-                            // Handle case when view is not found
-                            NSLog("\(Constants.callTag) MirrorflyViewFactory View Cannot be disposed \(generatedUniqueID)")
-                        }
+                    if let (existingID, existingMirrorflyView) = self.mirrorflyViews[generatedUniqueID] {
+                        // Reuse the existing view
+                        NSLog("\(Constants.callTag) MirrorflyViewFactory View Already Exists \(generatedUniqueID)")
+                        mirrorflyView = existingMirrorflyView
+                    } else {
+                        // Create a new view if it doesn't exist
+                        mirrorflyView = MirrorflyView(
+                            frame: frame,
+                            viewIdentifier: generatedUniqueID,
+                            arguments: args,
+                            binaryMessenger: self.messenger)
+                        NSLog("\(Constants.callTag) MirrorflyViewFactory View Created \(generatedUniqueID)")
                     }
-                    mirrorflyView = MirrorflyView(
-                        frame: frame,
-                        viewIdentifier: generatedUniqueID,
-                        arguments: args,
-                        binaryMessenger: self.messenger)
-                }else{
+                } else {
                     NSLog("\(Constants.callTag) MirrorflyViewFactory Failed to generate uniqueID.")
                 }
             }
@@ -129,6 +149,14 @@ class MirrorflyViewFactory: NSObject, FlutterPlatformViewFactory {
             NSLog("\(Constants.callTag) MirrorflyViewFactory View --> Unique ID is not Found")
         }
     }
+
+     public func clearAllMirrorflyView() -> Void {
+            for(uniqueID, (userJID, mirrorflyView)) in mirrorflyViews {
+                NSLog("\(Constants.callTag) clearMirrorflyView userJID \(userJID)")
+                clearMirrorflyView(userJID: userJID)
+            }
+
+        }
 
 
     public func getUniqueID(forString string: String) -> Int64? {

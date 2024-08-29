@@ -393,6 +393,12 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
         return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
     }
 
+//    override fun getCallConnectingPendingIntent(): PendingIntent {
+//        val intent: Intent? = AppUtils.getAppIntent(context)
+////        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
+//        return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
+//    }
+
     override fun getCallNotAttendedPendingIntent(): PendingIntent {
         val intent = Intent(context, CallKitUiActivity::class.java)
         intent.action = CallConstants.ACTION_SHOW_CALL_UI
