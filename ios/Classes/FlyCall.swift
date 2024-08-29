@@ -107,7 +107,7 @@ import PushKit
                 usersInCall.removeValue(forKey: localUserJid)
             }
             /// Call Status Duplicate Handle Code End
-            sendLocalHangupDelegate()
+//            sendLocalHangupDelegate()
             
             result(true)
         }else{
@@ -329,7 +329,7 @@ import PushKit
         
         ///Work Around till sdk is fixed
         
-        if callAction == .ACTION_LOCAL_HANGUP {
+        if callAction == .ACTION_LOCAL_HANGUP && AppUtils.shared.getMyJid() != userId {
             NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId) :==> rejecting local hangup to send to the user")
             return
         }
