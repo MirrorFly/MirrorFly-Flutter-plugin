@@ -98,7 +98,8 @@ import PushKit
             NSLog("\(Constants.callTag) Disconnecting Call")
             NSLog("\(Constants.callTag) clearing Mirrorfly Views in method call")
             let localUserJid = AppUtils.shared.getMyJid()
-            factory?.clearMirrorflyView(userJID: localUserJid)
+//             factory?.clearMirrorflyView(userJID: localUserJid)
+            factory?.clearAllMirrorflyView()
             CallManager.incomingUserJidArr.removeAll()
             CallManager.disconnectCall()
             /// Call Status Duplicate Handle Code Start
@@ -106,7 +107,7 @@ import PushKit
                 usersInCall.removeValue(forKey: localUserJid)
             }
             /// Call Status Duplicate Handle Code End
-            sendLocalHangupDelegate()
+//            sendLocalHangupDelegate()
             
             result(true)
         }else{
@@ -240,23 +241,25 @@ import PushKit
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         NSLog("#MirrorflyCall Events: Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
         NSLog("#MirrorflyCall Call Status Updated calling--> \(CALLSTATUS.CALLING.rawValue)")
-        
+
+        let selfJID = AppUtils.shared.getMyJid()
+
         if AudioManager.shared().audioManagerDelegate == nil  && callStatus != .DISCONNECTED{
             NSLog("\(Constants.callTag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
             AudioManager.shared().audioManagerDelegate = self
         }
         
         /// Call Status Duplicate Handle Code Start
-        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING){
+//        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING){
             usersInCall.removeAll()
             usersInCall = CallManager.getCallUsersWithStatus()
-            if !isUserExists(userId: AppUtils.shared.getMyJid()){
-                usersInCall[AppUtils.shared.getMyJid()] = .CONNECTED
+            if !isUserExists(userId: selfJID){
+                usersInCall[selfJID] = .CONNECTED
             }
             print("\(Constants.callTag) Events: usersInCall: \(usersInCall)")
-        }
+//        }
         
-        if (callStatus == .ATTENDED && userId != AppUtils.shared.getMyJid()){
+        if (callStatus == .ATTENDED && userId != selfJID){
             NSLog("\(Constants.callTag) Events: Attended Received for remote user so ignoring it")
             return
         }
@@ -326,7 +329,7 @@ import PushKit
         
         ///Work Around till sdk is fixed
         
-        if callAction == .ACTION_LOCAL_HANGUP {
+        if callAction == .ACTION_LOCAL_HANGUP && AppUtils.shared.getMyJid() != userId {
             NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId) :==> rejecting local hangup to send to the user")
             return
         }

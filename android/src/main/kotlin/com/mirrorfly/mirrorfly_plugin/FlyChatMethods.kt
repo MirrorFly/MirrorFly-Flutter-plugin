@@ -1903,7 +1903,7 @@ class FlyChatMethods {
             messageListParams.ascendingOrder = ascendingOrder
             messageListParams.topicId = topicId
             messageListParams.limit = limit
-            messageListParams.metaData = extractedData
+//            messageListParams.metaData = extractedData
 //            messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
 //            messageListParams.direction = "backward" // forward or backward
             messageListQuery = FetchMessageListQuery(messageListParams)
