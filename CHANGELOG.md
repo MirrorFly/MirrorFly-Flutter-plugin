@@ -1,3 +1,10 @@
+## [1.0.7-beta] Bug Fix
+* Android Gradle Issue Fixed
+* iOS SDK Updated to 5.17.9
+* Android SDK Updated to 7.13.6
+* Bug Fixes
+
+
 ## [1.0.6] Bug Fix
 * Chat History Bug Fix
 
