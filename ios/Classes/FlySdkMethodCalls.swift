@@ -3318,7 +3318,7 @@ let ISEXPORT = true
                 print(flydata.getData())
                 
                 let archiveData = flydata.getData() as? [RecentChat] ?? []
-                print("Archive chat list get")
+
                 if(archiveData.isEmpty){
                     result("{\"data\": [] }")
                 }else{
@@ -3334,7 +3334,6 @@ let ISEXPORT = true
                 result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
             }
         }
-        result(true)
     }
     
     func getProfileDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
