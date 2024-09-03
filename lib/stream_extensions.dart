@@ -57,7 +57,7 @@ extension StreamWithKeyExtension<T> on Stream<T> {
   ///
   /// Parameters:
   ///   [key] - The unique key identifying the listener to cancel.
-  void cancelListener(String key) {
+  void cancelListener({required String key}) {
     if (_subscriptions.containsKey(this) && _subscriptions[this]!.containsKey(key)) {
       _subscriptions[this]![key]!.cancel();
       _subscriptions[this]!.remove(key);
@@ -66,8 +66,8 @@ extension StreamWithKeyExtension<T> on Stream<T> {
 
   /// Method to cancel all listeners for this stream
   ///
-  /// This method cancels all listeners associated with this stream.
-  void cancelAllListeners() {
+  /// This method cancels all listeners with keys associated with this stream.
+  void cancelAllListenersWithKeys() {
     if (_subscriptions.containsKey(this)) {
       _subscriptions[this]!.forEach((key, subscription) {
         subscription.cancel();

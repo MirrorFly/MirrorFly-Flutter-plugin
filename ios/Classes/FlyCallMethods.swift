@@ -898,8 +898,9 @@ import MirrorFlySDK
           if isSuccess {
              result(isSuccess)
           }else{
+              
 //              if let error = flyError {
-                  result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: nil))
+              result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: flyError?.localizedDescription))
 //              }
               
           }
