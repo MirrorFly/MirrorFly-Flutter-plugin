@@ -2569,24 +2569,12 @@ let ISEXPORT = true
             messageListParams.topicID = topicId
         }
         
-//        let metaData = args["metaDataMessageList"] as? [String: Any] ?? [:]
-//        print("initializeMessageList MetaData \(String(describing: metaData))")
 
-//        if let metaData = args["metaData"] as? [[String: Any]] {
-//            metaData.forEach { data in
-//                let key = data["key"] as? String ?? ""
-//                let value = data["value"] as? [String] ?? []
-//                messageListParams.metaData = MetaDataMessageList(key: key, value: value)
-//            }
+//        if let metaDataArray = args["metaDataMessageList"] as? [String: Any] {
+//            let key = metaDataArray["key"] as? String ?? ""
+//            let value = metaDataArray["value"] as? [String] ?? []
+//            messageListParams.metaData = MetaDataMessageList(key: key, value: value)
 //        }
-
-
-        if let metaDataArray = args["metaDataMessageList"] as? [String: Any] {
-//           let firstMetaData = metaDataArray.first {
-            let key = metaDataArray["key"] as? String ?? ""
-            let value = metaDataArray["value"] as? [String] ?? []
-            messageListParams.metaData = MetaDataMessageList(key: key, value: value)
-        }
 
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
 

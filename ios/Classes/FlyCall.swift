@@ -241,7 +241,7 @@ import PushKit
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         NSLog("#MirrorflyCall Events: Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
         NSLog("#MirrorflyCall Call Status Updated calling--> \(CALLSTATUS.CALLING.rawValue)")
-
+        let userJID = userId
         let selfJID = AppUtils.shared.getMyJid()
 
         if AudioManager.shared().audioManagerDelegate == nil  && callStatus != .DISCONNECTED{
@@ -259,6 +259,14 @@ import PushKit
             print("\(Constants.callTag) Events: usersInCall: \(usersInCall)")
 //        }
         
+        
+        if(userJID != "" && (callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT)){
+            NSLog("\(Constants.callTag) clearing Mirrorfly Views")
+            self.factory?.clearMirrorflyView(userJID: userJID)
+        }else{
+            NSLog("\(Constants.callTag) unable to clear Mirrorfly Views \(userJID) callstatus \(callStatus.rawValue)")
+        }
+        
         if (callStatus == .ATTENDED && userId != selfJID){
             NSLog("\(Constants.callTag) Events: Attended Received for remote user so ignoring it")
             return
@@ -269,7 +277,7 @@ import PushKit
             return
         }
         
-        let userJID = userId
+       
         
         if (callStatus == .DISCONNECTED && !isUserExists(userId: userJID)){
             NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
@@ -288,11 +296,6 @@ import PushKit
         //Added to Sync the Call log in Call Status update
         NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
-        
-        if(userJID != "" && callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT){
-            NSLog("\(Constants.callTag) clearing Mirrorfly Views")
-            self.factory?.clearMirrorflyView(userJID: userJID)
-        }
         
         
         if callStatus == .RECONNECTED && !CallManager.isCallConnected(){

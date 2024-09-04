@@ -2528,7 +2528,6 @@ class Mirrorfly {
   /// * @param [topicId] - use to get messages by topic id
   /// * @param [limit] - No of messages will be fetched for each request default 25
   /// * @param [ascendingOrder] - If true message list will be returned ascendingOrder by message time default false
-  /// * @param [metaDataMessageList] parameter is optional and represents additional metadata associated with the Messages.
   static Future<bool> initializeMessageList(
       {required String userJid,
       String? messageId,
@@ -2536,6 +2535,7 @@ class Mirrorfly {
       bool exclude = true,
       bool ascendingOrder = false,
       String? topicId,
+        @Deprecated("Meta data is no longer supported in this version")
       MetaDataMessageList? metaDataMessageList,
       int limit = 25}) {
     return FlyChatFlutterPlatform.instance.initializeMessageList(
