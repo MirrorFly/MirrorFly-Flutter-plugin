@@ -259,13 +259,13 @@ let ISEXPORT = true
                                     NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
                                     CallLogManager().deleteCallLogs()
                                     
-                                    GroupManager.shared.getGroups(fetchFromServer: true) { isSuccess, flyError, flyData in
-                                        if isSuccess {
-                                            NSLog("\(Constants.tag) Fetched All groups for new login")
-                                        }else{
-                                            print("getGroups flyError \(String(describing: flyError?.localizedDescription))")
-                                        }
-                                    }
+//                                    GroupManager.shared.getGroups(fetchFromServer: true) { isSuccess, flyError, flyData in
+//                                        if isSuccess {
+//                                            NSLog("\(Constants.tag) Fetched All groups for new login")
+//                                        }else{
+//                                            print("getGroups flyError \(String(describing: flyError?.localizedDescription))")
+//                                        }
+//                                    }
                                     
                                 }
                                 

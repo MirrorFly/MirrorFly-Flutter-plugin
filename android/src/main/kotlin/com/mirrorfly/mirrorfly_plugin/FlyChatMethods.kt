@@ -356,7 +356,6 @@ class FlyChatMethods {
                         SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
                         if(FlyXMPP.isConnected()) {
                             LogMessage.d("RegisterUser", "Chat Manager connected and authenticated")
-                            GroupManager.getAllGroups(true) { isSuccess, throwable, data -> }
                             result.success(response)
                         }else{
                             ChatManager.setConnectionListener(object : ChatConnectionListener {
@@ -365,8 +364,6 @@ class FlyChatMethods {
                                     FlyCore.getBusySettingsStatusFromServer()
                                     FlyCore.getArchivedSettingsStatusFromServer()
                                     FlyCore.getArchivedChatsFromServer()
-                                    GroupManager.getAllGroups(true) { isSuccess, throwable, data ->
-                                    }
 //                                    Handler(Looper.getMainLooper()).postDelayed({
                                         result.success(response)
 //                                    }, 500)
