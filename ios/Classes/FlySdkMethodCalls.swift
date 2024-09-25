@@ -127,7 +127,7 @@ let ISEXPORT = true
         let licenseKey = args["licenseKey"] as? String ?? ""
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         let containerID = args["iOSContainerID"] as? String ?? ""
-        _ = args["enableSDKLog"] as? Bool ?? false
+        let enableSDKLog = args["enableDebugLog"] as? Bool ?? false
         let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
         ChatManager.setAppGroupContainerId(id: containerID)
@@ -137,6 +137,7 @@ let ISEXPORT = true
             if isSuccess {
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
                 ChatManager.enablePrivateStorage(enable: enablePrivateStorage)
+                CallManager.enableDebugLogs(enable : enableSDKLog)
                 NSLog("SDK INITIALISE Success")
                 if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
                     ChatManager.connect()
