@@ -1039,8 +1039,12 @@ class Mirrorfly {
   ///   },
   /// );
   /// ```
-  static Future<void> getGroupProfile({required String groupJid, bool fetchFromServer = false, required Function(FlyResponse response) flyCallBack}) {
-    return FlyChatFlutterPlatform.instance.getGroupProfile(groupJid, fetchFromServer, flyCallBack);
+  static Future<void> getGroupProfile(
+      {required String groupJid,
+      bool fetchFromServer = false,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance
+        .getGroupProfile(groupJid, fetchFromServer, flyCallBack);
   }
 
   /*static updateMediaDownloadStatus({required String mediaMessageId,
@@ -2563,7 +2567,7 @@ class Mirrorfly {
       bool exclude = true,
       bool ascendingOrder = false,
       String? topicId,
-        @Deprecated("Meta data is no longer supported in this version")
+      @Deprecated("Meta data is no longer supported in this version")
       MetaDataMessageList? metaDataMessageList,
       int limit = 25}) {
     return FlyChatFlutterPlatform.instance.initializeMessageList(
@@ -5154,7 +5158,6 @@ class Mirrorfly {
   static Stream<dynamic> get onUsersUpdated =>
       FlyChatFlutterPlatform.instance.onUsersUpdated;
 
-
   /// Validates a group JID (Jabber ID) for a group.
   ///
   /// This method checks if the provided [groupJid] is a valid group JID. A valid group JID must:
@@ -5186,32 +5189,36 @@ class Mirrorfly {
     if (groupJid.isNotEmpty && groupJid.contains("@mix")) {
       int atIndex = groupJid.indexOf('@');
       if (atIndex == -1) {
-        LogMessage.d("isValidGroupJid", "Invalid Group JID: '$groupJid' does not contain a '@' character.");
+        LogMessage.d("isValidGroupJid",
+            "Invalid Group JID: '$groupJid' does not contain a '@' character.");
         return false;
       } else if (groupJid.indexOf('@', atIndex + 1) != -1) {
-        LogMessage.d("isValidGroupJid", "Invalid Group JID: '$groupJid' contains multiple '@' characters.");
+        LogMessage.d("isValidGroupJid",
+            "Invalid Group JID: '$groupJid' contains multiple '@' characters.");
         return false;
       }
 
       String localPart = groupJid.split('@')[0];
       if (localPart.isEmpty) {
-        LogMessage.d("isValidGroupJid", "Invalid Group JID: '$groupJid' has an empty localPart.");
+        LogMessage.d("isValidGroupJid",
+            "Invalid Group JID: '$groupJid' has an empty localPart.");
         return false;
       }
 
       String domainPart = groupJid.split('@')[1];
       if (domainPart.isEmpty || !domainPart.contains("mix")) {
-        LogMessage.d("isValidGroupJid", "Invalid Group JID: '$groupJid' has an invalid domain part (does not contain 'mix').");
+        LogMessage.d("isValidGroupJid",
+            "Invalid Group JID: '$groupJid' has an invalid domain part (does not contain 'mix').");
         return false;
       }
 
       return true;
     }
 
-    LogMessage.d("isValidGroupJid", "Invalid Group JID: '$groupJid' is empty or does not contain '@mix'.");
+    LogMessage.d("isValidGroupJid",
+        "Invalid Group JID: '$groupJid' is empty or does not contain '@mix'.");
     return false;
   }
-
 
   /// Validates a user JID (Jabber ID).
   ///
@@ -5241,22 +5248,26 @@ class Mirrorfly {
   static bool isValidUserJid({required String userJid}) {
     int atIndex = userJid.indexOf('@');
     if (atIndex == -1) {
-      LogMessage.d("isValidUserJid", "Invalid JID: '$userJid' does not contain a '@' character.");
+      LogMessage.d("isValidUserJid",
+          "Invalid JID: '$userJid' does not contain a '@' character.");
       return false;
     } else if (userJid.indexOf('@', atIndex + 1) != -1) {
-      LogMessage.d("isValidUserJid", "Invalid JID: '$userJid' contains multiple '@' characters.");
+      LogMessage.d("isValidUserJid",
+          "Invalid JID: '$userJid' contains multiple '@' characters.");
       return false;
     }
 
     String localPart = userJid.split('@')[0];
     if (localPart.isEmpty) {
-      LogMessage.d("isValidUserJid", "Invalid JID: '$userJid' has an empty localPart.");
+      LogMessage.d(
+          "isValidUserJid", "Invalid JID: '$userJid' has an empty localPart.");
       return false;
     }
 
     String domainPart = userJid.split('@')[1];
     if (domainPart.isEmpty) {
-      LogMessage.d("isValidUserJid", "Invalid JID: '$userJid' has an empty domainPart.");
+      LogMessage.d(
+          "isValidUserJid", "Invalid JID: '$userJid' has an empty domainPart.");
       return false;
     }
     return true;
