@@ -1,7 +1,6 @@
 ## [1.0.7] Bug Fix
 * iOS SDK Updated to 5.17.10
 * Bug Fixes
-* Group Fetch added to login
 
 ## [1.0.7-beta] Bug Fix
 * Android Gradle Issue Fixed
