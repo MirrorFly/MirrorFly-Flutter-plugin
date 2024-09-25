@@ -1011,9 +1011,37 @@ class Mirrorfly {
   }*/
 
   //cross checked with Android and iOS SDK both response is from different model
-  /*static Future<String?> getGroupProfile({required String groupJid, bool fetchFromServer = false}) {
-    return FlyChatFlutterPlatform.instance.getGroupProfile(groupJid, fetchFromServer);
-  }*/
+
+  /// Retrieves the profile of a group.
+  ///
+  /// This method fetches the profile information of a group identified by the given [groupJid].
+  /// The profile can be fetched either from the server or from the local cache, based on the value of [fetchFromServer].
+  ///
+  /// Parameters:
+  ///   - [groupJid]: The unique identifier of the group whose profile is to be retrieved. This parameter is required.
+  ///   - [fetchFromServer]: A boolean flag indicating whether to fetch the profile from the server (`true`) or from the local cache (`false`). Defaults to `false`.
+  ///   - [flyCallBack]: A callback function that will be called upon completion of the operation. It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
+  /// Returns:
+  ///   A [Future] that completes when the profile retrieval operation is finished.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// Mirrorfly.getGroupProfile(
+  ///   groupJid: 'group_jid',
+  ///   fetchFromServer: true,
+  ///   flyCallBack: (response) {
+  ///     if (response.isSuccess) {
+  ///       print('Group profile retrieved successfully');
+  ///     } else {
+  ///       print('Failed to retrieve group profile: ${response.errorMessage}');
+  ///     }
+  ///   },
+  /// );
+  /// ```
+  static Future<void> getGroupProfile({required String groupJid, bool fetchFromServer = false, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.getGroupProfile(groupJid, fetchFromServer, flyCallBack);
+  }
 
   /*static updateMediaDownloadStatus({required String mediaMessageId,
     required int progress,

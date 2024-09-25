@@ -101,6 +101,7 @@ class FlyMethodConstants {
                 "deleteAllMessages": flyChatMethods.deleteAllMessages,
                 "getGroupJid": flyChatMethods.getGroupJid,
                 "getProfileDetails": flyChatMethods.getProfileDetails,
+                "getGroupProfile": flyChatMethods.getGroupProfile,
                 "getProfileStatusList": flyChatMethods.getProfileStatusList,
                 
                 "insertDefaultStatus": flyChatMethods.insertDefaultStatus,
