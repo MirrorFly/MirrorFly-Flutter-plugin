@@ -204,7 +204,7 @@ abstract class CallEventListeners {
   void onMuteStatusUpdated(String userJid, String muteEvent);
 
   /// This listener is triggered whenever the User is speaking in the call, with the audio level.
-  void onUserSpeaking(String userJid, String audioLevel);
+  void onUserSpeaking(String userJid, int audioLevel);
 
   /// This listener is triggered whenever the User stopped speaking in the call.
   void onUserStoppedSpeaking(String userJid);

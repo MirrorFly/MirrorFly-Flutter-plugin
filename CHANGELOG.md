@@ -1,3 +1,7 @@
+## [1.0.7] Bug Fix
+* iOS SDK Updated to 5.17.10
+* Bug Fixes
+
 ## [1.0.7-beta] Bug Fix
 * Android Gradle Issue Fixed
 * iOS SDK Updated to 5.17.9
