@@ -29,3 +29,4 @@ export 'model/topic_metadata.dart';
 export 'model/user_list_model.dart';
 export 'model/web_login_model.dart';
 export 'event_handlers.dart';
+export 'stream_extensions.dart';
