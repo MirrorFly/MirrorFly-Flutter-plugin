@@ -111,7 +111,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^1.0.7-beta
+  mirrorfly_plugin: ^1.0.7
 ```
 
 - Run `flutter pub get` command in your project directory.
@@ -182,9 +182,9 @@ Mirrorfly.login(userIdentifier,flyCallback: (FlyResponse response) {
 });
 ```
 
-> **Note**: After registering, make sure to update the profile of the registered user [Update Profile](https://www.mirrorfly.com/docs/chat/flutter-plugin/profile-module/#update-user-profile).
+> **Note**: After registering, make sure to update the profile of the registered user [Update Profile](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/user/set-update-user-profile-data/).
 
-> **Note**: You need to re-login when the [onLoggedOut](https://www.mirrorfly.com/docs/chat/flutter-plugin/callback-listeners/#logged-out)event is triggered.
+> **Note**: You need to re-login when the [onLoggedOut](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/event_listeners/connection-event-listeners/#event-listener-for-logged-out-updates)event is triggered.
 
 > **Note**: It is recommended to disallow users to backup an app if it contains sensitive data. Having access to backup files (i.e. when `android:allowBackup="true"`), it is possible to modify/read the content of an app even on a non-rooted device.
 
@@ -222,7 +222,7 @@ Mirrorfly.sendMessage(messageParams: MessageParams.Text(toJid: "",
 
 ## Receive a One-to-One Message
 
-Here the listeners would be called only when a new message is received from other user. To get more details please visit this [callback listeners](https://www.mirrorfly.com/docs/chat/flutter_plugin/callback-listeners)
+Here the listeners would be called only when a new message is received from other user. To get more details please visit this [callback listeners](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/event_listeners/message-event-listeners/)
 
 ```
 Mirrorfly.onMessageReceived.listen(result){
@@ -296,5 +296,5 @@ The fastest way to test Mirrorfly Plugin for Flutter is to build your chat app o
 
 ## Getting Help
 
-Check out the Official Mirrorfly [Flutter docs](https://www.mirrorfly.com/docs/chat/flutter_plugin/quick-start)
+Check out the Official Mirrorfly [Flutter docs](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/quick-start)
 
