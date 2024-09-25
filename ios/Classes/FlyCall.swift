@@ -80,8 +80,6 @@ import PushKit
         CallManager.missedCallNotificationDelegate = self
         CallManager.callLogDelegate = self
         
-        //        CallManager.enableDebugLogs(enable : true)
-        
         //        AudioManager.sharedInstance.audioManagerDelegate = self
         NSLog("\(Constants.callTag) audioManagerDelegate")
     }

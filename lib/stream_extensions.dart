@@ -1,7 +1,8 @@
 import 'dart:async';
 
 // Global map to hold subscriptions keyed by Stream and key
-final Map<Stream<dynamic>, Map<String, StreamSubscription<dynamic>>> _subscriptions = {};
+final Map<Stream<dynamic>, Map<String, StreamSubscription<dynamic>>>
+    _subscriptions = {};
 
 /// Extension to add key-based listeners to streams
 extension StreamWithKeyExtension<T> on Stream<T> {
@@ -58,7 +59,8 @@ extension StreamWithKeyExtension<T> on Stream<T> {
   /// Parameters:
   ///   [key] - The unique key identifying the listener to cancel.
   void cancelListener({required String key}) {
-    if (_subscriptions.containsKey(this) && _subscriptions[this]!.containsKey(key)) {
+    if (_subscriptions.containsKey(this) &&
+        _subscriptions[this]!.containsKey(key)) {
       _subscriptions[this]![key]!.cancel();
       _subscriptions[this]!.remove(key);
     }

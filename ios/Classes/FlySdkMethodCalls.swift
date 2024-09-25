@@ -127,7 +127,7 @@ let ISEXPORT = true
         let licenseKey = args["licenseKey"] as? String ?? ""
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         let containerID = args["iOSContainerID"] as? String ?? ""
-        _ = args["enableSDKLog"] as? Bool ?? false
+        let enableSDKLog = args["enableDebugLog"] as? Bool ?? false
         let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
         ChatManager.setAppGroupContainerId(id: containerID)
@@ -137,6 +137,7 @@ let ISEXPORT = true
             if isSuccess {
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
                 ChatManager.enablePrivateStorage(enable: enablePrivateStorage)
+                CallManager.enableDebugLogs(enable : enableSDKLog)
                 NSLog("SDK INITIALISE Success")
                 if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
                     ChatManager.connect()
@@ -235,22 +236,9 @@ let ISEXPORT = true
                     "message" : "Register Trial API Success"
                 ] as [String : Any]
                 
-                if  data["newLogin"] as? Bool ?? false{
-                    NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
-                    CallLogManager().deleteCallLogs()
-                    //                    ChatManager.deleteAllChatTags()
-                    //                    iCloudmanager().deleteLoaclBackup()
-                    
-                }
-                
-                ChatManager.updateAppLoggedIn(isLoggedin: true)
-                
+                print("Register user new login data \(data)")
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
-
                 ChatManager.connect()
-
-                VOIPManager.sharedInstance.saveVOIPToken(token: Utility.getStringFromPreference(key: Constants.voipToken))
-                VOIPManager.sharedInstance.updateDeviceToken()
                 
                 self.observerToken = NotificationCenter.default.addObserver(forName: .connectionStatusChanged, object: nil, queue: nil) { notification in
                         guard let userInfo = notification.userInfo else { return }
@@ -267,7 +255,37 @@ let ISEXPORT = true
                                 //                catch(let error ) {
                                 //                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
                                 //                }
+                                
+                                if  data["newLogin"] as? Bool ?? false{
+                                    NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
+                                    CallLogManager().deleteCallLogs()
+                                    
+//                                    GroupManager.shared.getGroups(fetchFromServer: true) { isSuccess, flyError, flyData in
+//                                        if isSuccess {
+//                                            NSLog("\(Constants.tag) Fetched All groups for new login")
+//                                        }else{
+//                                            print("getGroups flyError \(String(describing: flyError?.localizedDescription))")
+//                                        }
+//                                    }
+                                    
+                                }
+                                
+                                ChatManager.updateAppLoggedIn(isLoggedin: true)
 
+                                let voipToken = Utility.getStringFromPreference(key: Constants.voipToken);
+                                
+//                                if !voipToken.isEmpty {
+                                    
+                                    VOIPManager.sharedInstance.saveVOIPToken(token: voipToken)
+                                    
+//                                }
+                                
+//                                if !deviceToken.isEmpty {
+                                    VOIPManager.sharedInstance.savePushToken(token: deviceToken)
+//                                }
+                                
+                                VOIPManager.sharedInstance.updateDeviceToken()
+                                
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
                                     NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
@@ -1158,16 +1176,10 @@ let ISEXPORT = true
         
         groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != AppUtils.shared.getMyJid()})
         let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == AppUtils.shared.getMyJid()})
-        //        if(myJid.count > 0){
-        //            myJid[0].profileDetail?.nickName = "You"
-        //            myJid[0].profileDetail?.name = "You"
-        //        }
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
         if(myJid.count > 0){
             groupMembers.append(contentsOf: myJid)
         }
-        
-        
         var groupMemberProfile: String = "["
         
         groupMembers.forEach{ groupMember in
@@ -1177,9 +1189,12 @@ let ISEXPORT = true
                 
                 groupMemberProfile = groupMemberProfile + (profileDetailJson ?? "") + ","
             }
-            
         }
-        groupMemberProfile = groupMemberProfile.dropLast() + "]"
+        if groupMembers.count > 0 {
+            groupMemberProfile = groupMemberProfile.dropLast() + "]"
+        }else{
+            groupMemberProfile = groupMemberProfile + "]"
+        }
         
         print("getGroupMembersList==**== \(String(describing: groupMemberProfile))")
         
@@ -3322,6 +3337,28 @@ let ISEXPORT = true
                 result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
             }
         }
+    }
+    
+    func getGroupProfile(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let groupJid = args["groupJid"] as? String ?? ""
+        let fromServer = args["server"] as? Bool ?? false
+        do {
+            try GroupManager.shared.getGroupProfile(groupJid: groupJid, fetchFromServer: fromServer) { isSuccess, flyError, flyData in
+                if isSuccess {
+                    var resp = flyData
+                    let profileData = resp.getData() as? ProfileDetails
+                    print("ContactManager.shared.getUserProfile==**==\(String(describing: profileData?.toJson()))")
+                    result(profileData?.toJson())
+                } else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
+            }
+        }catch{
+            print("Error while calling Group Profile Details")
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: nil))
+        }
+        
     }
     
     func getProfileDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
