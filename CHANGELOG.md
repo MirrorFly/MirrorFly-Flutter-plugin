@@ -1,3 +1,8 @@
+## [1.0.8-beta] Bug Fix
+* iOS SDK Updated to 5.18.0
+* Xcode 16 Support Added
+* Direct message sending support added without fetching all groups.
+
 ## [1.0.7] Bug Fix
 * iOS SDK Updated to 5.17.10
 * Bug Fixes
