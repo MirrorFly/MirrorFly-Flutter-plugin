@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'mirrorfly_plugin'
-  s.version          = '1.0.6'
+  s.version          = '1.0.8-Beta'
   s.summary          = 'A Mirrorfly Flutter Plugin'
   s.description      = 'A Mirrorfly Flutter plugin to Experience an outstanding real time messaging solution. The powerful communication that adds an extra mileage to build your chat app.'
 
@@ -27,8 +27,7 @@ Pod::Spec.new do |s|
   s.dependency 'GoogleWebRTC','1.1.31999'
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16.1'
-  s.dependency 'MirrorFlySDK', '5.17.10'
-
+  s.dependency 'MirrorFlySDK', '5.18.0'
 
 
   # Flutter.framework does not contain a i386 slice.
