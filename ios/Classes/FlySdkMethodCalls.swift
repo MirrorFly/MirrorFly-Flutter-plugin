@@ -92,6 +92,14 @@ let ISEXPORT = true
                 .setGroupConfiguration(groupConfig: sdkGroupConfig!)
                 .buildAndInitialize()
 
+        // *** DON'T REMOVE THIS LINE ======================
+        // *** USED TO INITIALISE THE CHAT MANAGER IN NEW SDK=========
+
+        _ = ChatManager.shared
+
+        // *** =============================================
+
+        ChatManager.disableLocalNotification()
             ChatManager.disableLocalNotification()
 
             /// Moved Inside SDK
@@ -119,7 +127,7 @@ let ISEXPORT = true
         let licenseKey = args["licenseKey"] as? String ?? ""
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         let containerID = args["iOSContainerID"] as? String ?? ""
-        _ = args["enableSDKLog"] as? Bool ?? false
+        let enableSDKLog = args["enableDebugLog"] as? Bool ?? false
         let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
         ChatManager.setAppGroupContainerId(id: containerID)
@@ -129,6 +137,7 @@ let ISEXPORT = true
             if isSuccess {
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
                 ChatManager.enablePrivateStorage(enable: enablePrivateStorage)
+                CallManager.enableDebugLogs(enable : enableSDKLog)
                 NSLog("SDK INITIALISE Success")
                 if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
                     ChatManager.connect()
@@ -227,22 +236,9 @@ let ISEXPORT = true
                     "message" : "Register Trial API Success"
                 ] as [String : Any]
                 
-                if  data["newLogin"] as? Bool ?? false{
-                    NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
-                    CallLogManager().deleteCallLogs()
-                    //                    ChatManager.deleteAllChatTags()
-                    //                    iCloudmanager().deleteLoaclBackup()
-                    
-                }
-                
-                ChatManager.updateAppLoggedIn(isLoggedin: true)
-                
+                print("Register user new login data \(data)")
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
-
                 ChatManager.connect()
-
-                VOIPManager.sharedInstance.saveVOIPToken(token: Utility.getStringFromPreference(key: Constants.voipToken))
-                VOIPManager.sharedInstance.updateDeviceToken()
                 
                 self.observerToken = NotificationCenter.default.addObserver(forName: .connectionStatusChanged, object: nil, queue: nil) { notification in
                         guard let userInfo = notification.userInfo else { return }
@@ -259,7 +255,37 @@ let ISEXPORT = true
                                 //                catch(let error ) {
                                 //                    NSLog("\(Constants.callTag) #Init CallManager Exception : \(error.localizedDescription)")
                                 //                }
+                                
+                                if  data["newLogin"] as? Bool ?? false{
+                                    NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
+                                    CallLogManager().deleteCallLogs()
+                                    
+//                                    GroupManager.shared.getGroups(fetchFromServer: true) { isSuccess, flyError, flyData in
+//                                        if isSuccess {
+//                                            NSLog("\(Constants.tag) Fetched All groups for new login")
+//                                        }else{
+//                                            print("getGroups flyError \(String(describing: flyError?.localizedDescription))")
+//                                        }
+//                                    }
+                                    
+                                }
+                                
+                                ChatManager.updateAppLoggedIn(isLoggedin: true)
 
+                                let voipToken = Utility.getStringFromPreference(key: Constants.voipToken);
+                                
+//                                if !voipToken.isEmpty {
+                                    
+                                    VOIPManager.sharedInstance.saveVOIPToken(token: voipToken)
+                                    
+//                                }
+                                
+//                                if !deviceToken.isEmpty {
+                                    VOIPManager.sharedInstance.savePushToken(token: deviceToken)
+//                                }
+                                
+                                VOIPManager.sharedInstance.updateDeviceToken()
+                                
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
                                     NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
@@ -1150,16 +1176,10 @@ let ISEXPORT = true
         
         groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != AppUtils.shared.getMyJid()})
         let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == AppUtils.shared.getMyJid()})
-        //        if(myJid.count > 0){
-        //            myJid[0].profileDetail?.nickName = "You"
-        //            myJid[0].profileDetail?.name = "You"
-        //        }
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
         if(myJid.count > 0){
             groupMembers.append(contentsOf: myJid)
         }
-        
-        
         var groupMemberProfile: String = "["
         
         groupMembers.forEach{ groupMember in
@@ -1169,9 +1189,12 @@ let ISEXPORT = true
                 
                 groupMemberProfile = groupMemberProfile + (profileDetailJson ?? "") + ","
             }
-            
         }
-        groupMemberProfile = groupMemberProfile.dropLast() + "]"
+        if groupMembers.count > 0 {
+            groupMemberProfile = groupMemberProfile.dropLast() + "]"
+        }else{
+            groupMemberProfile = groupMemberProfile + "]"
+        }
         
         print("getGroupMembersList==**== \(String(describing: groupMemberProfile))")
         
@@ -2561,33 +2584,21 @@ let ISEXPORT = true
             messageListParams.topicID = topicId
         }
         
-//        let metaData = args["metaDataMessageList"] as? [String: Any] ?? [:]
-//        print("initializeMessageList MetaData \(String(describing: metaData))")
 
-//        if let metaData = args["metaData"] as? [[String: Any]] {
-//            metaData.forEach { data in
-//                let key = data["key"] as? String ?? ""
-//                let value = data["value"] as? [String] ?? []
-//                messageListParams.metaData = MetaDataMessageList(key: key, value: value)
-//            }
+//        if let metaDataArray = args["metaDataMessageList"] as? [String: Any] {
+//            let key = metaDataArray["key"] as? String ?? ""
+//            let value = metaDataArray["value"] as? [String] ?? []
+//            messageListParams.metaData = MetaDataMessageList(key: key, value: value)
 //        }
 
-
-        if let metaDataArray = args["metaDataMessageList"] as? [String: Any] {
-//           let firstMetaData = metaDataArray.first {
-            let key = metaDataArray["key"] as? String ?? ""
-            let value = metaDataArray["value"] as? [String] ?? []
-            messageListParams.metaData = MetaDataMessageList(key: key, value: value)
-        }
-
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
-        
+
         result(true)
         
     }
     
     func loadMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+
         if(messageListQuery == nil){
             NSLog("\(Constants.tag) Message List Not Initialized")
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
@@ -2599,7 +2610,7 @@ let ISEXPORT = true
             var data  = flyData
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
-                
+
                 self.lastMessageID = messageList?.last?.messageId ?? emptyString()
                 self.setLastMessage()
                 self.firstMessageID = messageList?.first?.messageId ?? emptyString()
@@ -2635,21 +2646,29 @@ let ISEXPORT = true
         
         if (!(messageListQuery?.hasPreviousMessages() ?? false)){
             result("[]")
+            return
         }
-        
+
         messageListQuery?.setFirstMessage(messageId: firstMessageID)
         messageListQuery?.loadPreviousMessages { isSuccess, flyError, flyData in
             var data  = flyData
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
-                
+
                 if (!(messageList?.isEmpty ?? true)) {
                     /// Changing the first message ID here, bcz the new set will be inserted at top of the chat array list,
                     /// so we need to update the first message ID to fetch the previous set of messages again from this message ID
                     self.firstMessageID = messageList?.first?.messageId ?? emptyString()
                     self.setFirstMessage()
                 }else{
-                    print("\(Constants.tag) Next Message List previous message id is not setting as the list is empty")
+                    print("\(Constants.tag) prev message -> Next Message List previous message id is not setting as the list is empty")
+                }
+                
+                if (messageList?.count == 1 && messageList?.first?.messageId == self.firstMessageID){
+                    
+                    result("[]");
+                    return;
+                   
                 }
                 
                 if let chatJson = messageList.toJson() {
@@ -2667,7 +2686,7 @@ let ISEXPORT = true
             }
         }
     }
-    
+
     func loadNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         if(messageListQuery == nil){
@@ -2678,6 +2697,7 @@ let ISEXPORT = true
         
         if (!(messageListQuery?.hasNextMessages() ?? false)){
             result("[]")
+            return
         }
         
         messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in
@@ -3249,6 +3269,10 @@ let ISEXPORT = true
             if isSuccess {
                 //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
                 ChatManager.disconnect()
+                if (CallManager.isCallConnected() || CallManager.isOngoingCall()){
+                    CallManager.disconnectCall()
+                    CallManager.disconnectCallServers()
+                }
                 ChatManager.shared.resetFlyDefaults()
                 self.recentChatListBuilder = nil
 //                self.recentChatListParams = nil
@@ -3297,7 +3321,7 @@ let ISEXPORT = true
                 print(flydata.getData())
                 
                 let archiveData = flydata.getData() as? [RecentChat] ?? []
-                print("Archive chat list get")
+
                 if(archiveData.isEmpty){
                     result("{\"data\": [] }")
                 }else{
@@ -3313,7 +3337,28 @@ let ISEXPORT = true
                 result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
             }
         }
-        result(true)
+    }
+    
+    func getGroupProfile(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let groupJid = args["groupJid"] as? String ?? ""
+        let fromServer = args["server"] as? Bool ?? false
+        do {
+            try GroupManager.shared.getGroupProfile(groupJid: groupJid, fetchFromServer: fromServer) { isSuccess, flyError, flyData in
+                if isSuccess {
+                    var resp = flyData
+                    let profileData = resp.getData() as? ProfileDetails
+                    print("ContactManager.shared.getUserProfile==**==\(String(describing: profileData?.toJson()))")
+                    result(profileData?.toJson())
+                } else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                }
+            }
+        }catch{
+            print("Error while calling Group Profile Details")
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: nil))
+        }
+        
     }
     
     func getProfileDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -3508,11 +3553,15 @@ let ISEXPORT = true
         let args = call.arguments as! Dictionary<String, Any>
         let token = args["token"] as? String ?? ""
         
-        VOIPManager.sharedInstance.savePushToken(token: token)
-        Utility.saveInPreference(key: Constants.googleToken, value: token)
-        VOIPManager.sharedInstance.updateDeviceToken()
-        
-        result(true)
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+            VOIPManager.sharedInstance.savePushToken(token: token)
+            Utility.saveInPreference(key: Constants.googleToken, value: token)
+            VOIPManager.sharedInstance.updateDeviceToken()
+
+            result(true)
+        }else {
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.NOT_LOGGED_IN_MESSAGE, details: nil))
+        }
     }
     
     func handleReceivedMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -3649,16 +3698,70 @@ let ISEXPORT = true
     func sendMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        let messageType = args["messageType"] as? String
         let receiverJID = args["toJid"] as? String
-        let replyMessageID = args["replyMessageId"] as? String
-        let topicId = args["topicId"] as? String
-        let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
         
         if receiverJID == "" || receiverJID == nil{
             result(FlutterError(code: FLErrorCode.MISSING_PARAMS,message: FLErrorMessage.INVALID_JID,details: nil))
             return
         }
+        
+        /// When a user logs in and sends a message without loading Recent Chats or Groups,
+        /// the message won't be sent if the profile details for the particular JID do not exist in the local database.
+        /// To handle this, we first try to fetch the profile details locally.
+        /// If the profile response is nil, we fetch the profile details from the server, which will store them in the database.
+        /// Once the profile details are retrieved and stored, the message can be sent without any issue.
+
+        let profileResponse = ContactManager.shared.getUserProfileDetails(for: receiverJID!)
+        
+        print("Send Message Profile Response \(String(describing: profileResponse))")
+        
+        if profileResponse == nil {
+            print("Profile does not exist locally, so fetching it from server")
+            if receiverJID!.contains("@mix") {
+                do {
+                    try GroupManager.shared.getGroupProfile(groupJid: receiverJID!, fetchFromServer: true) { isSuccess, flyError, flyData in
+                        if isSuccess {
+                            GroupManager.shared.getParticipants(groupJID: receiverJID!)
+                            print("Group Profile Fetching Success from server")
+                            self.processAndSendMessage(args: args, call: call, result: result)
+                        } else{
+                            print("Group Profile Fetching Error \(String(describing: flyError?.localizedDescription))")
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: flyError?.localizedDescription))
+                        }
+                    }
+                }catch let error {
+                    print("Group Profile Fetching Error \(error.localizedDescription)")
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error.localizedDescription))
+                }
+            } else {
+                do {
+                    try ContactManager.shared.getUserProfile(for: receiverJID!, fetchFromServer: true, saveAsFriend: true){ isSuccess, flyError, flyData in
+                        
+                        if isSuccess {
+                            print("Profile Fetching Success from server")
+                            self.processAndSendMessage(args: args, call: call, result: result)
+                        } else{
+                            print("Profile Fetching Error \(String(describing: flyError?.localizedDescription))")
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: flyError?.localizedDescription))
+                        }
+                    }
+                }catch let error {
+                    print("Group Profile Fetching Error \(error.localizedDescription)")
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error.localizedDescription))
+                }
+            }
+        }else{
+            processAndSendMessage(args: args, call: call, result: result)
+        }
+    }
+    
+    private func processAndSendMessage(args : Dictionary<String, Any>, call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        let messageType = args["messageType"] as? String
+        let receiverJID = args["toJid"] as? String
+        let replyMessageID = args["replyMessageId"] as? String
+        let topicId = args["topicId"] as? String
+        let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
         
         if let sendingMessageType = FlyMessageType.fromString(messageType ?? "") {
             print("\(Constants.tag) sendMessage -> Messsage Type \(sendingMessageType)")
@@ -3924,7 +4027,7 @@ let ISEXPORT = true
         FlyMessenger.sendMediaFileMessage(messageParams: imageMessageParams) { isSuccess, error, sendMessage in
             if isSuccess{
                 let response = sendMessage?.toJson()
-                self.setLastMessage(messageID: sendMessage?.messageId)
+//                self.setLastMessage(messageID: sendMessage?.messageId)
                 result(response)
             }else{
                 if case let .invalid_data(message, _) = error {
@@ -3955,7 +4058,7 @@ let ISEXPORT = true
             if isSuccess{
                 if let chatMessage = message {
                     let sendVideoResponse = chatMessage.toJson()
-                    self.setLastMessage(messageID: chatMessage.messageId)
+//                    self.setLastMessage(messageID: chatMessage.messageId)
                     print("FlyMessenger.sendVideoMessage==**==\(String(describing: sendVideoResponse))")
                     result(sendVideoResponse)
                     
@@ -3988,7 +4091,7 @@ let ISEXPORT = true
             if (isSuccess) {
                 let contactMessageResponse = message?.toJson()
                 print("FlyMessenger.sendContactMessage==**==\(String(describing: contactMessageResponse))")
-                self.setLastMessage(messageID: message?.messageId)
+//                self.setLastMessage(messageID: message?.messageId)
                 result(contactMessageResponse)
                 return
             }else {
@@ -4019,7 +4122,7 @@ let ISEXPORT = true
         FlyMessenger.sendMediaFileMessage(messageParams: audioMessageParams) { isSuccess,error,message in
             if isSuccess{
                 let audioResponse = message?.toJson()
-                self.setLastMessage(messageID: message?.messageId)
+//                self.setLastMessage(messageID: message?.messageId)
                 result(audioResponse)
             }else{
                 if case let .invalid_data(message, _) = error {
@@ -4052,7 +4155,7 @@ let ISEXPORT = true
                     
                     if let chatMessage = message , isSuccess{
                         let documentMessageResponse = chatMessage.toJson()
-                        self.setLastMessage(messageID: chatMessage.messageId)
+//                        self.setLastMessage(messageID: chatMessage.messageId)
                         result(documentMessageResponse)
                     }else{
                         if case let .invalid_data(message, _) = error {
@@ -4085,7 +4188,7 @@ let ISEXPORT = true
         FlyMessenger.sendMediaFileMessage(messageParams: locationMessageParams){ isSuccess,error,chatMessage in
             if (isSuccess) {
                 let locationResponse = chatMessage?.toJson()
-                self.setLastMessage(messageID: chatMessage?.messageId)
+//                self.setLastMessage(messageID: chatMessage?.messageId)
                 print("FlyMessenger.sendLocationMessage==**==\(String(describing: locationResponse))")
                 result(locationResponse)
             }else{

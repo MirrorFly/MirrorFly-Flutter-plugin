@@ -91,7 +91,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
- /* @override
+  /* @override
   clearAllSDKData() {
     //  implement clearAllSDKData
     throw UnimplementedError();
@@ -646,7 +646,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
- /* @override
+  /* @override
   Future<String?> getRingtoneName() {
     //  implement getRingtoneName
     throw UnimplementedError();
@@ -657,7 +657,6 @@ class MockFlyChatFlutterPlatform
     //  implement getRoster
     throw UnimplementedError();
   }*/
-
 
   @override
   Future<void> getTopics(
@@ -763,7 +762,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
- /* @override
+  /* @override
   Future<bool?> iOSFileExist(String filePath) {
     //  implement iOSFileExist
     throw UnimplementedError();
@@ -1788,7 +1787,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  void setCallLinkEventListener(CallLinkEventListeners callLinkEventsListener){
+  void setCallLinkEventListener(CallLinkEventListeners callLinkEventsListener) {
     throw UnimplementedError();
   }
 
@@ -1817,7 +1816,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> initializeMeet(String callLink, String userName,Function(FlyResponse response)? callback) {
+  Future<void> initializeMeet(String callLink, String userName,
+      Function(FlyResponse response)? callback) {
     // TODO: implement initializeMeet
     throw UnimplementedError();
   }
@@ -1842,7 +1842,6 @@ class MockFlyChatFlutterPlatform
 
   @override
   Stream get onUsersUpdated => throw UnimplementedError();
-
 }
 
 void main() {

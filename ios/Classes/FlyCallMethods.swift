@@ -11,7 +11,9 @@ import MirrorFlySDK
 
 
 @objc class FlyCallMethods : NSObject{
-    
+
+    static let shared = FlyCallMethods()
+
     let tag = "#MirrorFlyCall"
     let callLogManager = CallLogManager()
     var callLogArray = [CallLog]()
@@ -307,6 +309,11 @@ import MirrorFlySDK
     }
     func switchCamera(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         CallManager.switchCamera {
+            let jsonObject: NSMutableDictionary = NSMutableDictionary()
+            jsonObject.setValue(AppUtils.shared.getMyJid(), forKey: "userJid")
+            jsonObject.setValue("CAMERA_SWITCH_SUCCESS", forKey: "callAction")
+            let callUpdate = pluginDictToJson(dictionary: jsonObject)
+            self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
             result(true)
         }
     }
@@ -891,8 +898,9 @@ import MirrorFlySDK
           if isSuccess {
              result(isSuccess)
           }else{
+              
 //              if let error = flyError {
-                  result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: nil))
+              result(FlutterError(code: FLErrorCode.MEET_INITIALIZATION_FAILED, message: FLErrorMessage.MEET_INITIALIZATION_FAILED_MESSAGE, details: flyError?.localizedDescription))
 //              }
               
           }

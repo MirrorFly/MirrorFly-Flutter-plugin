@@ -117,6 +117,8 @@ class FLErrorMessage {
     public static let MEET_INITIALIZATION_FAILED_MESSAGE : String = "Error while initialising meet"
     public static let LINK_SERVER_ERROR_MESSAGE : String = "Error while connecting to Signal Server"
     public static let INVALID_MESSAGE_TYPE : String = "Invalid Message Type"
+    public static let NOT_LOGGED_IN_MESSAGE : String = "User Not logged-in"
+
     
     
     /// General Error Messages in Calls

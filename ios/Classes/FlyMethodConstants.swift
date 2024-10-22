@@ -9,8 +9,8 @@ import Foundation
 import Flutter
 
 class FlyMethodConstants {
-    
-    static let flyCallMethods = FlyCallMethods()
+
+    static let flyCallMethods = FlyCallMethods.shared
     static let callMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult, MirrorflyViewFactory?) -> Void] = {
         return [
             "getCallUsersList": flyCallMethods.getCallUsersList,
@@ -101,6 +101,7 @@ class FlyMethodConstants {
                 "deleteAllMessages": flyChatMethods.deleteAllMessages,
                 "getGroupJid": flyChatMethods.getGroupJid,
                 "getProfileDetails": flyChatMethods.getProfileDetails,
+                "getGroupProfile": flyChatMethods.getGroupProfile,
                 "getProfileStatusList": flyChatMethods.getProfileStatusList,
                 
                 "insertDefaultStatus": flyChatMethods.insertDefaultStatus,

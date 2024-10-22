@@ -149,6 +149,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         when (call.method) {
             "appLaunchedDetails" -> {
                 appLaunchedDetails(result)
+                return
             }
 
             "appLaunchedFromMissedCall" -> {
@@ -156,6 +157,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 instance.fromCallNotification = false
                 Log.d("appLaunchedFromMissedCall", fromCall.toString())
                 result.success(fromCall)
+                return
             }
 
             "appLaunchedFromMediaNotification" -> {
@@ -163,6 +165,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 instance.mediaClickedJid = ""
                 Log.d("appLaunchedFromMediaNotification", jid)
                 result.success(jid)
+                return
             }
 
             "init", "initializeSDK" -> {

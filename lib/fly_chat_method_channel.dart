@@ -857,34 +857,53 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       _messageOnReceivedStreamController.add(message);
       messageEventsListener
           ?.onMessageReceived(client.sendMessageModelFromJson(message));
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on message received: $error");
+      _messageOnReceivedStreamController.addError(error);
     });
+
     messageOnEditedChannel.receiveBroadcastStream().listen((event) {
       var message = convertChatMessageJsonFromString(event);
       _messageOnEditedStreamController.add(message);
       messageEventsListener
           ?.onMessageEdited(client.sendMessageModelFromJson(message));
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on message edited: $error");
+      _messageOnEditedStreamController.addError(error);
     });
+
     messageStatusUpdatedChanel.receiveBroadcastStream().listen((event) {
       var messageStatus = convertChatMessageJsonFromString(event);
       messageStatusUpdateStreamController.add(messageStatus);
       messageEventsListener?.onMessageStatusUpdated(
           client.sendMessageModelFromJson(messageStatus));
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on message status updated: $error");
+      messageStatusUpdateStreamController.addError(error);
     });
+
     mediaStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
       var mediaStatus = convertChatMessageJsonFromString(event);
       mediaStatusUpdatedStreamController.add(mediaStatus);
       messageEventsListener
           ?.onMediaStatusUpdated(client.sendMessageModelFromJson(mediaStatus));
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on media status updated: $error");
+      mediaStatusUpdatedStreamController.addError(error);
     });
+
     onGroupNotificationMessageChannel.receiveBroadcastStream().listen((event) {
       var groupNotification = convertChatMessageJsonFromString(event);
       onGroupNotificationMessageStreamController.add(groupNotification);
       groupEventsListener?.onGroupNotificationMessage(
           client.sendMessageModelFromJson(groupNotification));
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on group notification: $error");
+      onGroupNotificationMessageStreamController.addError(error);
     });
-    showOrUpdateOrCancelNotificationChannel
-        .receiveBroadcastStream()
-        .listen((event) {
+
+    showOrUpdateOrCancelNotificationChannel.receiveBroadcastStream().listen(
+        (event) {
       var data = json.decode(event.toString());
       var jid = data["jid"];
       var chatMessage = convertChatMessageJsonFromString(data["chatMessage"]);
@@ -893,29 +912,49 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       showOrUpdateOrCancelNotificationStreamController.add(notification);
       messageEventsListener?.showOrUpdateOrCancelNotification(
           jid, client.sendMessageModelFromJson(chatMessage));
+    }, onError: (error) {
+      LogMessage.d(
+          "MirrorFly", "Error on show/update/cancel notification: $error");
+      showOrUpdateOrCancelNotificationStreamController.addError(error);
     });
-    uploadDownloadProgressChangedChannel
-        .receiveBroadcastStream()
-        .listen((event) {
+
+    uploadDownloadProgressChangedChannel.receiveBroadcastStream().listen(
+        (event) {
       var data = json.decode(event.toString());
       var messageId = data["message_id"] ?? "";
       var progressPercentage = data["progress_percentage"] ?? 0;
       uploadDownloadProgressChangedStreamController.add(event);
       messageEventsListener?.onUploadDownloadProgressChanged(
           messageId, progressPercentage);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on upload/download progress: $error");
+      uploadDownloadProgressChangedStreamController.addError(error);
     });
+
     onGroupProfileFetchedChannel.receiveBroadcastStream().listen((groupJid) {
       onGroupProfileFetchedStreamController.add(groupJid);
       groupEventsListener?.onGroupProfileFetched(groupJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on group profile fetched: $error");
+      onGroupProfileFetchedStreamController.addError(error);
     });
+
     onNewGroupCreatedChannel.receiveBroadcastStream().listen((groupJid) {
       onNewGroupCreatedStreamController.add(groupJid);
       groupEventsListener?.onNewGroupCreated(groupJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on new group created: $error");
+      onNewGroupCreatedStreamController.addError(error);
     });
+
     onGroupProfileUpdatedChannel.receiveBroadcastStream().listen((groupJid) {
       onGroupProfileUpdatedStreamController.add(groupJid);
       groupEventsListener?.onGroupProfileUpdated(groupJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on group profile updated: $error");
+      onGroupProfileUpdatedStreamController.addError(error);
     });
+
     onNewMemberAddedToGroupChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var groupJid = data["groupJid"] ?? "";
@@ -924,7 +963,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onNewMemberAddedToGroupStreamController.add(event);
       groupEventsListener?.onNewMemberAddedToGroup(
           groupJid, newMemberJid, addedByMemberJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on new member added to group: $error");
+      onNewMemberAddedToGroupStreamController.addError(error);
     });
+
     onMemberRemovedFromGroupChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var groupJid = data["groupJid"] ?? "";
@@ -933,13 +976,21 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onMemberRemovedFromGroupStreamController.add(event);
       groupEventsListener?.onMemberRemovedFromGroup(
           groupJid, removedMemberJid, removedByMemberJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on member removed from group: $error");
+      onMemberRemovedFromGroupStreamController.addError(error);
     });
-    onFetchingGroupMembersCompletedChannel
-        .receiveBroadcastStream()
-        .listen((groupJid) {
+
+    onFetchingGroupMembersCompletedChannel.receiveBroadcastStream().listen(
+        (groupJid) {
       onFetchingGroupMembersCompletedStreamController.add(groupJid);
       groupEventsListener?.onFetchingGroupMembersCompleted(groupJid);
+    }, onError: (error) {
+      LogMessage.d(
+          "MirrorFly", "Error on fetching group members completed: $error");
+      onFetchingGroupMembersCompletedStreamController.addError(error);
     });
+
     // onDeleteGroupChannel.receiveBroadcastStream().listen((event) {
     //   onDeleteGroupStreamController.add(event);
     //   groupEventsListener?.onDeleteGroup(event);
@@ -956,7 +1007,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onMemberMadeAsAdminStreamController.add(event);
       groupEventsListener?.onMemberMadeAsAdmin(
           groupJid, newAdminMemberJid, madeByMemberJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on member made as admin: $error");
+      onMemberMadeAsAdminStreamController.addError(error);
     });
+
     onMemberRemovedAsAdminChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var groupJid = data["groupJid"] ?? "";
@@ -965,29 +1020,48 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onMemberRemovedAsAdminStreamController.add(event);
       groupEventsListener?.onMemberRemovedAsAdmin(
           groupJid, removedAdminMemberJid, removedByMemberJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on member removed as admin: $error");
+      onMemberRemovedAsAdminStreamController.addError(error);
     });
+
     onLeftFromGroupChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var groupJid = data["groupJid"] ?? "";
       var leftUserJid = data["leftUserJid"] ?? "";
       onLeftFromGroupStreamController.add(event);
       groupEventsListener?.onLeftFromGroup(groupJid, leftUserJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on left from group: $error");
+      onLeftFromGroupStreamController.addError(error);
     });
 
     onGroupDeletedLocallyChannel.receiveBroadcastStream().listen((groupJid) {
       onGroupDeletedLocallyStreamController.add(groupJid);
       groupEventsListener?.onGroupDeletedLocally(groupJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on group deleted locally: $error");
+      onGroupDeletedLocallyStreamController.addError(error);
     });
+
     blockedThisUserChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var userJid = data["jid"] ?? "";
       blockedThisUserStreamController.add(event);
       profileEventsListener?.blockedThisUser(userJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on blocked this user: $error");
+      blockedThisUserStreamController.addError(error);
     });
+
     myProfileUpdatedChannel.receiveBroadcastStream().listen((event) {
       myProfileUpdatedStreamController.add(event);
       profileEventsListener?.myProfileUpdated();
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on my profile updated: $error");
+      myProfileUpdatedStreamController.addError(error);
     });
+
     onAdminBlockedOtherUserChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"] ?? "";
@@ -995,46 +1069,78 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       var isBlocked = data["status"] ?? "";
       onAdminBlockedOtherUserStreamController.add(event);
       profileEventsListener?.onAdminBlockedOtherUser(jid, chatType, isBlocked);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on admin blocked other user: $error");
+      onAdminBlockedOtherUserStreamController.addError(error);
     });
+
     onAdminBlockedUserChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"] ?? "";
       var isBlocked = data["status"] ?? "";
       onAdminBlockedUserStreamController.add(event);
       profileEventsListener?.onAdminBlockedUser(jid, isBlocked);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on admin blocked user: $error");
+      onAdminBlockedUserStreamController.addError(error);
     });
+
     onContactSyncCompleteChannel.receiveBroadcastStream().listen((isSuccess) {
       onContactSyncCompleteStreamController.add(isSuccess);
       profileEventsListener?.onContactSyncComplete(isSuccess);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on contact sync complete: $error");
+      onContactSyncCompleteStreamController.addError(error);
     });
+
     onLoggedOutChannel.receiveBroadcastStream().listen((event) {
       onLoggedOutStreamController.add(event);
       connectionEventsListener?.onLoggedOut();
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on logged out: $error");
+      onLoggedOutStreamController.addError(error);
     });
+
     unblockedThisUserChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"] ?? "";
       unblockedThisUserStreamController.add(event);
       profileEventsListener?.unblockedThisUser(jid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on unblocking user: $error");
+      unblockedThisUserStreamController.addError(error);
     });
+
     userBlockedMeChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"] ?? "";
       userBlockedMeStreamController.add(event);
       profileEventsListener?.userBlockedMe(jid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on user blocked me: $error");
+      userBlockedMeStreamController.addError(error);
     });
+
     userCameOnlineChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"] ?? "";
       userCameOnlineStreamController.add(event);
       messageEventsListener?.userCameOnline(jid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on user came online: $error");
+      userCameOnlineStreamController.addError(error);
     });
+
     userDeletedHisProfileChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"] ?? "";
       userDeletedHisProfileStreamController.add(event);
       profileEventsListener?.userDeletedHisProfile(jid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on user deleted his profile: $error");
+      userDeletedHisProfileStreamController.addError(error);
     });
+
     userProfileFetchedChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"] ?? "";
@@ -1042,55 +1148,96 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       client.ProfileData profileData = client.profileData(profileDetails);
       userProfileFetchedStreamController.add(event);
       profileEventsListener?.userProfileFetched(jid, profileData);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on user profile fetched: $error");
+      userProfileFetchedStreamController.addError(error);
     });
+
     userUnBlockedMeChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"] ?? "";
       userUnBlockedMeStreamController.add(event);
       profileEventsListener?.userUnBlockedMe(jid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on user unblocked me: $error");
+      userUnBlockedMeStreamController.addError(error);
     });
+
     userUpdatedHisProfileChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"] ?? "";
       userUpdatedHisProfileStreamController.add(event);
       profileEventsListener?.userUpdatedHisProfile(jid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on user updated his profile: $error");
+      userUpdatedHisProfileStreamController.addError(error);
     });
+
     userWentOfflineChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"] ?? "";
       userWentOfflineStreamController.add(event);
       messageEventsListener?.userWentOffline(jid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on user went offline: $error");
+      userWentOfflineStreamController.addError(error);
     });
+
     usersIBlockedListFetchedChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var jidList = data["jidlist"] ?? "";
       usersIBlockedListFetchedStreamController.add(event);
       profileEventsListener?.usersIBlockedListFetched(jidList);
+    }, onError: (error) {
+      LogMessage.d(
+          "MirrorFly", "Error on users I blocked list fetched: $error");
+      usersIBlockedListFetchedStreamController.addError(error);
     });
+
     usersProfilesFetchedChannel.receiveBroadcastStream().listen((event) {
       usersProfilesFetchedStreamController.add(event);
       profileEventsListener?.usersProfilesFetched();
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on users profiles fetched: $error");
+      usersProfilesFetchedStreamController.addError(error);
     });
-    usersWhoBlockedMeListFetchedChannel
-        .receiveBroadcastStream()
-        .listen((event) {
+
+    usersWhoBlockedMeListFetchedChannel.receiveBroadcastStream().listen(
+        (event) {
       var data = json.decode(event.toString());
       var jidList = data["jidlist"] ?? "";
       usersWhoBlockedMeListFetchedStreamController.add(event);
       profileEventsListener?.usersWhoBlockedMeListFetched(jidList);
+    }, onError: (error) {
+      LogMessage.d(
+          "MirrorFly", "Error on users who blocked me list fetched: $error");
+      usersWhoBlockedMeListFetchedStreamController.addError(error);
     });
+
     onConnectedChannel.receiveBroadcastStream().listen((event) {
       onConnectedStreamController.add(event);
       connectionEventsListener?.onConnected();
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on connected: $error");
+      onConnectedStreamController.addError(error);
     });
+
     onDisconnectedChannel.receiveBroadcastStream().listen((event) {
       onDisconnectedStreamController.add(event);
       connectionEventsListener?.onDisconnected();
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on disconnected: $error");
+      onDisconnectedStreamController.addError(error);
     });
+
     onConnectionFailedChannel.receiveBroadcastStream().listen((event) {
       onConnectionFailedStreamController.add(event);
       connectionEventsListener?.onConnectionFailed(event);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on connection failed: $error");
+      onConnectionFailedStreamController.addError(error);
     });
+
     // connectionFailedChannel.receiveBroadcastStream().listen((event) {
     //   connectionFailedStreamController.add(event);});
     // connectionSuccessChannel.receiveBroadcastStream().listen((event) {
@@ -1098,6 +1245,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     // onWebChatPasswordChangedChannel.receiveBroadcastStream().listen((event) {
     //   onWebChatPasswordChangedStreamController.add(event);
     // });
+
     setTypingStatusChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var singleOrGroupJid = data["singleOrgroupJid"] ?? "";
@@ -1105,13 +1253,25 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       var status = data["status"] ?? "";
       setTypingStatusStreamController.add(event);
       messageEventsListener?.setTypingStatus(singleOrGroupJid, userJid, status);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on set typing status: $error");
+      setTypingStatusStreamController.addError(error);
     });
+
     onChatTypingStatusChannel.receiveBroadcastStream().listen((event) {
       onChatTypingStatusStreamController.add(event);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on chat typing status: $error");
+      onChatTypingStatusStreamController.addError(error);
     });
+
     onGroupTypingStatusChannel.receiveBroadcastStream().listen((event) {
       onGroupTypingStatusStreamController.add(event);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on group typing status: $error");
+      onGroupTypingStatusStreamController.addError(error);
     });
+
     // onFailureChannel.receiveBroadcastStream().listen((event) {
     //   onFailureStreamController.add(event);});
     // onProgressChangedChannel.receiveBroadcastStream().listen((event) {
@@ -1120,25 +1280,38 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     //   onSuccessStreamController.add(event);});
     // onCallReceivingChannel.receiveBroadcastStream().listen((event) {
     //   onCallReceivingStreamController.add(event);});
+
     onLocalVideoTrackAddedChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var userJid = data["userJid"] ?? "";
       onLocalVideoTrackAddedStreamController.add(event);
       callEventsListener?.onLocalVideoTrackAdded(userJid);
       callLinkEventsListener?.onLocalVideoTrackAdded(userJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on local video track added: $error");
+      onLocalVideoTrackAddedStreamController.addError(error);
     });
+
     onRemoteVideoTrackAddedChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var userJid = data["userJid"] ?? "";
       onRemoteVideoTrackAddedStreamController.add(event);
       callEventsListener?.onRemoteVideoTrackAdded(userJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on remote video track added: $error");
+      onRemoteVideoTrackAddedStreamController.addError(error);
     });
+
     onTrackAddedChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var userJid = data["userJid"] ?? "";
       onTrackAddedStreamController.add(event);
       callEventsListener?.onTrackAdded(userJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on track added: $error");
+      onTrackAddedStreamController.addError(error);
     });
+
     onCallStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
       var statusUpdateReceived = jsonDecode(event);
       var callMode = statusUpdateReceived["callMode"].toString();
@@ -1148,7 +1321,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onCallStatusUpdatedStreamController.add(event);
       callEventsListener?.onCallStatusUpdated(
           userJid, callMode, callType, callStatus);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on call status updated: $error");
+      onCallStatusUpdatedStreamController.addError(error);
     });
+
     onCallActionChannel.receiveBroadcastStream().listen((event) {
       var actionReceived = jsonDecode(event);
       var callAction = actionReceived["callAction"].toString();
@@ -1157,25 +1334,41 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       var callType = actionReceived["callType"].toString();
       onCallActionStreamController.add(event);
       callEventsListener?.onCallAction(userJid, callMode, callType, callAction);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on call action: $error");
+      onCallActionStreamController.addError(error);
     });
+
     onMuteStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
       var muteStatus = jsonDecode(event);
       var muteEvent = muteStatus["muteEvent"].toString();
       var userJid = muteStatus["userJid"].toString();
       onMuteStatusUpdatedStreamController.add(event);
       callEventsListener?.onMuteStatusUpdated(userJid, muteEvent);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on mute status updated: $error");
+      onMuteStatusUpdatedStreamController.addError(error);
     });
+
     onUserSpeakingChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var audioLevel = data["audioLevel"];
       var userJid = data["userJid"];
       onUserSpeakingStreamController.add(event);
       callEventsListener?.onUserSpeaking(userJid, audioLevel);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on user speaking: $error");
+      onUserSpeakingStreamController.addError(error);
     });
+
     onUserStoppedSpeakingChannel.receiveBroadcastStream().listen((userJid) {
       onUserStoppedSpeakingStreamController.add(userJid);
       callEventsListener?.onUserStoppedSpeaking(userJid);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on user stopped speaking: $error");
+      onUserStoppedSpeakingStreamController.addError(error);
     });
+
     onMissedCallChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var isOneToOneCall = data["isOneToOneCall"];
@@ -1186,30 +1379,54 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onMissedCallStreamController.add(event);
       callEventsListener?.onMissedCall(
           userJid, groupId, isOneToOneCall, callType, userList);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on missed call: $error");
+      onMissedCallStreamController.addError(error);
     });
+
     onAvailableFeaturesUpdatedChannel.receiveBroadcastStream().listen((event) {
       client.AvailableFeatures availableFeatures =
           client.availableFeaturesFromJson(event.toString());
       onAvailableFeaturesUpdatedStreamController.add(event);
       messageEventsListener?.onAvailableFeaturesUpdated(availableFeatures);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on available features updated: $error");
+      onAvailableFeaturesUpdatedStreamController.addError(error);
     });
+
     onCallLogsUpdatedChannel.receiveBroadcastStream().listen((event) {
       onCallLogsUpdatedStreamController.add(event);
       callEventsListener?.onCallLogsUpdated();
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on call logs updated: $error");
+      onCallLogsUpdatedStreamController.addError(error);
     });
+
     onCallLogDeletedChannel.receiveBroadcastStream().listen((callLogId) {
       onCallLogDeletedStreamController.add(callLogId);
       callEventsListener?.onCallLogDeleted(callLogId);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on call log deleted: $error");
+      onCallLogDeletedStreamController.addError(error);
     });
+
     onClearAllCallLogChannel.receiveBroadcastStream().listen((event) {
       onClearAllCallLogStreamController.add(event);
       callEventsListener?.onCallLogsCleared();
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on clear all call log: $error");
+      onClearAllCallLogStreamController.addError(error);
     });
+
     onSubscribeSuccessChannel.receiveBroadcastStream().listen((event) {
       debugPrint("onSubscribeSuccessChannel event = $event");
       onSubscribeSuccessStreamController.add(event);
       callLinkEventsListener?.onSubscribeSuccess();
+    }, onError: (error) {
+      debugPrint("onSubscribeSuccessChannel error = $error");
+      onSubscribeSuccessStreamController.addError(error);
     });
+
     onErrorChannel.receiveBroadcastStream().listen((event) {
       debugPrint("onErrorChannel event = $event");
       onErrorStreamController.add(event);
@@ -1217,12 +1434,19 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       var code = data["code"];
       var description = data["description"];
       callLinkEventsListener?.onError(FlyException(code, description, null));
+    }, onError: (error) {
+      debugPrint("onErrorChannel error = $error");
+      onErrorStreamController.addError(error);
     });
+
     onUsersUpdatedChannel.receiveBroadcastStream().listen((event) {
       debugPrint("onUsersUpdatedChannel event = $event");
       onUsersUpdatedStreamController.add(event);
       var data = json.decode(event.toString());
       callLinkEventsListener?.onUsersUpdated(List<String>.from(data ?? ''));
+    }, onError: (error) {
+      debugPrint("onUsersUpdatedChannel error = $error");
+      onUsersUpdatedStreamController.addError(error);
     });
   }
 
@@ -4974,10 +5198,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       }
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      rethrow;
+      // rethrow;
+      return FlyConstants.empty;
     } on Exception catch (error) {
       LogMessage.d("Exception ", " $error");
-      rethrow;
+      // rethrow;
+      return FlyConstants.empty;
     }
   }
 

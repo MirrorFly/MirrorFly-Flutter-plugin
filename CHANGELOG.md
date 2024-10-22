@@ -1,4 +1,23 @@
-## [1.0.5] Private Storage Feature
+## [1.0.8-beta] Bug Fix
+* iOS SDK Updated to 5.18.0
+* Xcode 16 Support Added
+* Direct message sending support added without fetching all groups.
+
+## [1.0.7] Bug Fix
+* iOS SDK Updated to 5.17.10
+* Bug Fixes
+
+## [1.0.7-beta] Bug Fix
+* Android Gradle Issue Fixed
+* iOS SDK Updated to 5.17.9
+* Android SDK Updated to 7.13.6
+* Bug Fixes
+
+
+## [1.0.6] Bug Fix
+* Chat History Bug Fix
+
+## [1.0.5] SDK Updates
 * iOS SDK Updated to 5.17.5 
 * Android SDK Updated to 7.13.5
 * Performance Improvement
