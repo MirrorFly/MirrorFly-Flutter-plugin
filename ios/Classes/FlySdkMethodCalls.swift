@@ -127,7 +127,7 @@ let ISEXPORT = true
         let licenseKey = args["licenseKey"] as? String ?? ""
         chatHistoryEnable = args["chatHistoryEnable"] as? Bool ?? true
         let containerID = args["iOSContainerID"] as? String ?? ""
-        _ = args["enableSDKLog"] as? Bool ?? false
+        let enableSDKLog = args["enableDebugLog"] as? Bool ?? false
         let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
         ChatManager.setAppGroupContainerId(id: containerID)
@@ -137,6 +137,7 @@ let ISEXPORT = true
             if isSuccess {
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
                 ChatManager.enablePrivateStorage(enable: enablePrivateStorage)
+                CallManager.enableDebugLogs(enable : enableSDKLog)
                 NSLog("SDK INITIALISE Success")
                 if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
                     ChatManager.connect()
@@ -259,13 +260,13 @@ let ISEXPORT = true
                                     NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
                                     CallLogManager().deleteCallLogs()
                                     
-                                    GroupManager.shared.getGroups(fetchFromServer: true) { isSuccess, flyError, flyData in
-                                        if isSuccess {
-                                            NSLog("\(Constants.tag) Fetched All groups for new login")
-                                        }else{
-                                            print("getGroups flyError \(String(describing: flyError?.localizedDescription))")
-                                        }
-                                    }
+//                                    GroupManager.shared.getGroups(fetchFromServer: true) { isSuccess, flyError, flyData in
+//                                        if isSuccess {
+//                                            NSLog("\(Constants.tag) Fetched All groups for new login")
+//                                        }else{
+//                                            print("getGroups flyError \(String(describing: flyError?.localizedDescription))")
+//                                        }
+//                                    }
                                     
                                 }
                                 
@@ -3697,16 +3698,70 @@ let ISEXPORT = true
     func sendMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        let messageType = args["messageType"] as? String
         let receiverJID = args["toJid"] as? String
-        let replyMessageID = args["replyMessageId"] as? String
-        let topicId = args["topicId"] as? String
-        let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
         
         if receiverJID == "" || receiverJID == nil{
             result(FlutterError(code: FLErrorCode.MISSING_PARAMS,message: FLErrorMessage.INVALID_JID,details: nil))
             return
         }
+        
+        /// When a user logs in and sends a message without loading Recent Chats or Groups,
+        /// the message won't be sent if the profile details for the particular JID do not exist in the local database.
+        /// To handle this, we first try to fetch the profile details locally.
+        /// If the profile response is nil, we fetch the profile details from the server, which will store them in the database.
+        /// Once the profile details are retrieved and stored, the message can be sent without any issue.
+
+        let profileResponse = ContactManager.shared.getUserProfileDetails(for: receiverJID!)
+        
+        print("Send Message Profile Response \(String(describing: profileResponse))")
+        
+        if profileResponse == nil {
+            print("Profile does not exist locally, so fetching it from server")
+            if receiverJID!.contains("@mix") {
+                do {
+                    try GroupManager.shared.getGroupProfile(groupJid: receiverJID!, fetchFromServer: true) { isSuccess, flyError, flyData in
+                        if isSuccess {
+                            GroupManager.shared.getParticipants(groupJID: receiverJID!)
+                            print("Group Profile Fetching Success from server")
+                            self.processAndSendMessage(args: args, call: call, result: result)
+                        } else{
+                            print("Group Profile Fetching Error \(String(describing: flyError?.localizedDescription))")
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: flyError?.localizedDescription))
+                        }
+                    }
+                }catch let error {
+                    print("Group Profile Fetching Error \(error.localizedDescription)")
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error.localizedDescription))
+                }
+            } else {
+                do {
+                    try ContactManager.shared.getUserProfile(for: receiverJID!, fetchFromServer: true, saveAsFriend: true){ isSuccess, flyError, flyData in
+                        
+                        if isSuccess {
+                            print("Profile Fetching Success from server")
+                            self.processAndSendMessage(args: args, call: call, result: result)
+                        } else{
+                            print("Profile Fetching Error \(String(describing: flyError?.localizedDescription))")
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: flyError?.localizedDescription))
+                        }
+                    }
+                }catch let error {
+                    print("Group Profile Fetching Error \(error.localizedDescription)")
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error.localizedDescription))
+                }
+            }
+        }else{
+            processAndSendMessage(args: args, call: call, result: result)
+        }
+    }
+    
+    private func processAndSendMessage(args : Dictionary<String, Any>, call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
+        let messageType = args["messageType"] as? String
+        let receiverJID = args["toJid"] as? String
+        let replyMessageID = args["replyMessageId"] as? String
+        let topicId = args["topicId"] as? String
+        let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
         
         if let sendingMessageType = FlyMessageType.fromString(messageType ?? "") {
             print("\(Constants.tag) sendMessage -> Messsage Type \(sendingMessageType)")

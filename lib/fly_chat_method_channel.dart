@@ -902,9 +902,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onGroupNotificationMessageStreamController.addError(error);
     });
 
-    showOrUpdateOrCancelNotificationChannel
-        .receiveBroadcastStream()
-        .listen((event) {
+    showOrUpdateOrCancelNotificationChannel.receiveBroadcastStream().listen(
+        (event) {
       var data = json.decode(event.toString());
       var jid = data["jid"];
       var chatMessage = convertChatMessageJsonFromString(data["chatMessage"]);
@@ -914,13 +913,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       messageEventsListener?.showOrUpdateOrCancelNotification(
           jid, client.sendMessageModelFromJson(chatMessage));
     }, onError: (error) {
-      LogMessage.d("MirrorFly", "Error on show/update/cancel notification: $error");
+      LogMessage.d(
+          "MirrorFly", "Error on show/update/cancel notification: $error");
       showOrUpdateOrCancelNotificationStreamController.addError(error);
     });
 
-    uploadDownloadProgressChangedChannel
-        .receiveBroadcastStream()
-        .listen((event) {
+    uploadDownloadProgressChangedChannel.receiveBroadcastStream().listen(
+        (event) {
       var data = json.decode(event.toString());
       var messageId = data["message_id"] ?? "";
       var progressPercentage = data["progress_percentage"] ?? 0;
@@ -982,13 +981,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onMemberRemovedFromGroupStreamController.addError(error);
     });
 
-    onFetchingGroupMembersCompletedChannel
-        .receiveBroadcastStream()
-        .listen((groupJid) {
+    onFetchingGroupMembersCompletedChannel.receiveBroadcastStream().listen(
+        (groupJid) {
       onFetchingGroupMembersCompletedStreamController.add(groupJid);
       groupEventsListener?.onFetchingGroupMembersCompleted(groupJid);
     }, onError: (error) {
-      LogMessage.d("MirrorFly", "Error on fetching group members completed: $error");
+      LogMessage.d(
+          "MirrorFly", "Error on fetching group members completed: $error");
       onFetchingGroupMembersCompletedStreamController.addError(error);
     });
 
@@ -1190,7 +1189,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       usersIBlockedListFetchedStreamController.add(event);
       profileEventsListener?.usersIBlockedListFetched(jidList);
     }, onError: (error) {
-      LogMessage.d("MirrorFly", "Error on users I blocked list fetched: $error");
+      LogMessage.d(
+          "MirrorFly", "Error on users I blocked list fetched: $error");
       usersIBlockedListFetchedStreamController.addError(error);
     });
 
@@ -1202,15 +1202,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       usersProfilesFetchedStreamController.addError(error);
     });
 
-    usersWhoBlockedMeListFetchedChannel
-        .receiveBroadcastStream()
-        .listen((event) {
+    usersWhoBlockedMeListFetchedChannel.receiveBroadcastStream().listen(
+        (event) {
       var data = json.decode(event.toString());
       var jidList = data["jidlist"] ?? "";
       usersWhoBlockedMeListFetchedStreamController.add(event);
       profileEventsListener?.usersWhoBlockedMeListFetched(jidList);
     }, onError: (error) {
-      LogMessage.d("MirrorFly", "Error on users who blocked me list fetched: $error");
+      LogMessage.d(
+          "MirrorFly", "Error on users who blocked me list fetched: $error");
       usersWhoBlockedMeListFetchedStreamController.addError(error);
     });
 

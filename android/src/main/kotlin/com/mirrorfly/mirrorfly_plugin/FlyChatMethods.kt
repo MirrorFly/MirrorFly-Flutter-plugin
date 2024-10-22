@@ -1700,6 +1700,49 @@ class FlyChatMethods {
     fun sendMessage(call: MethodCall, result: MethodChannel.Result) {
         val messageParams = call.arguments<HashMap<String, Any>>()
         LogMessage.d("sendMessage", messageParams.toString())
+        val userJid = messageParams?.getOrDefault("toJid", "") as String
+
+
+        /// When a user logs in and sends a message without loading Recent Chats or Groups,
+        /// the message won't be sent if the profile details for the particular JID do not exist in the local database.
+        /// To handle this, we first try to fetch the profile details locally.
+        /// If the profile response is nil, we fetch the profile details from the server, which will store them in the database.
+        /// Once the profile details are retrieved and stored, the message can be sent without any issue.
+
+        val profileDetails : ProfileDetails? = ContactManager.getProfileDetails(userJid)
+
+        if (profileDetails != null) {
+            processAndSendMessage(messageParams, result)
+        } else {
+           if (GroupManager.isValidGroupJid(userJid)){
+               GroupManager.getGroupProfile(userJid, true) { isSuccess, throwable, data ->
+                   if (isSuccess) {
+
+                       GroupManager.getGroupMembersList(true, userJid) { groupMemberListIsSuccess, groupMemberListThrowable, _ ->
+                           if (groupMemberListIsSuccess) {
+                               processAndSendMessage(messageParams, result)
+                           } else {
+                               result.error("500", "Group Member Not found", groupMemberListThrowable.toString())
+                           }
+                       }
+                   } else {
+                          result.error("500", throwable?.message, throwable)
+                   }
+               }
+           }else{
+               ContactManager.getUserProfile(userJid, fetchFromServer = true, saveAsFriend = true) { _, throwable, _ ->
+                   val profile = ContactManager.getProfileDetails(userJid)
+                   if (profile != null) {
+                       processAndSendMessage(messageParams, result)
+                   } else {
+                       result.error("500", "User not found", throwable)
+                   }
+               }
+           }
+        }
+    }
+
+    private fun processAndSendMessage(messageParams: HashMap<String, Any>?, result: MethodChannel.Result) {
         val messageType = messageParams?.get("messageType") as String?
         messageType?.let {
             if (MessageType.valueOf(messageType) == MessageType.TEXT) {

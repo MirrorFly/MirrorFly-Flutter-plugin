@@ -1039,8 +1039,12 @@ class Mirrorfly {
   ///   },
   /// );
   /// ```
-  static Future<void> getGroupProfile({required String groupJid, bool fetchFromServer = false, required Function(FlyResponse response) flyCallBack}) {
-    return FlyChatFlutterPlatform.instance.getGroupProfile(groupJid, fetchFromServer, flyCallBack);
+  static Future<void> getGroupProfile(
+      {required String groupJid,
+      bool fetchFromServer = false,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance
+        .getGroupProfile(groupJid, fetchFromServer, flyCallBack);
   }
 
   /*static updateMediaDownloadStatus({required String mediaMessageId,
@@ -2563,7 +2567,7 @@ class Mirrorfly {
       bool exclude = true,
       bool ascendingOrder = false,
       String? topicId,
-        @Deprecated("Meta data is no longer supported in this version")
+      @Deprecated("Meta data is no longer supported in this version")
       MetaDataMessageList? metaDataMessageList,
       int limit = 25}) {
     return FlyChatFlutterPlatform.instance.initializeMessageList(
@@ -5153,4 +5157,119 @@ class Mirrorfly {
   /// Stream that emits events when the call link users are updated
   static Stream<dynamic> get onUsersUpdated =>
       FlyChatFlutterPlatform.instance.onUsersUpdated;
+
+  /// Validates a group JID (Jabber ID) for a group.
+  ///
+  /// This method checks if the provided [groupJid] is a valid group JID. A valid group JID must:
+  /// - Contain the substring "@mix".
+  /// - Contain exactly one '@' character.
+  /// - Have a non-empty local part (the part before the '@').
+  /// - Have a non-empty domain part (the part after the '@') that contains "mix".
+  ///
+  /// Parameters:
+  ///   - [groupJid]: The group JID to be validated. This parameter is required.
+  ///
+  /// Returns:
+  ///   - `true` if the [groupJid] is valid.
+  ///   - `false` if the [groupJid] is invalid.
+  ///
+  /// The method logs debug messages using [LogMessage.d] to indicate the reason for invalidity.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// bool isValid = isValidGroupJid('group@mix.example.com');
+  /// if (isValid) {
+  ///   print('The group JID is valid.');
+  /// } else {
+  ///   print('The group JID is invalid.');
+  /// }
+  /// ```
+  static bool isValidGroupJid(String groupJid) {
+    // Check if the JID contains "@mix" and follows basic JID validation
+    if (groupJid.isNotEmpty && groupJid.contains("@mix")) {
+      int atIndex = groupJid.indexOf('@');
+      if (atIndex == -1) {
+        LogMessage.d("isValidGroupJid",
+            "Invalid Group JID: '$groupJid' does not contain a '@' character.");
+        return false;
+      } else if (groupJid.indexOf('@', atIndex + 1) != -1) {
+        LogMessage.d("isValidGroupJid",
+            "Invalid Group JID: '$groupJid' contains multiple '@' characters.");
+        return false;
+      }
+
+      String localPart = groupJid.split('@')[0];
+      if (localPart.isEmpty) {
+        LogMessage.d("isValidGroupJid",
+            "Invalid Group JID: '$groupJid' has an empty localPart.");
+        return false;
+      }
+
+      String domainPart = groupJid.split('@')[1];
+      if (domainPart.isEmpty || !domainPart.contains("mix")) {
+        LogMessage.d("isValidGroupJid",
+            "Invalid Group JID: '$groupJid' has an invalid domain part (does not contain 'mix').");
+        return false;
+      }
+
+      return true;
+    }
+
+    LogMessage.d("isValidGroupJid",
+        "Invalid Group JID: '$groupJid' is empty or does not contain '@mix'.");
+    return false;
+  }
+
+  /// Validates a user JID (Jabber ID).
+  ///
+  /// This method checks if the provided [userJid] is a valid JID. A valid JID must:
+  /// - Contain exactly one '@' character.
+  /// - Have a non-empty local part (the part before the '@').
+  /// - Have a non-empty domain part (the part after the '@').
+  ///
+  /// Parameters:
+  ///   - [userJid]: The JID to be validated. This parameter is required.
+  ///
+  /// Returns:
+  ///   - `true` if the [userJid] is valid.
+  ///   - `false` if the [userJid] is invalid.
+  ///
+  /// The method logs debug messages using [LogMessage.d] to indicate the reason for invalidity.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// bool isValid = isValidUserJid(userJid: 'user@example.com');
+  /// if (isValid) {
+  ///   print('The JID is valid.');
+  /// } else {
+  ///   print('The JID is invalid.');
+  /// }
+  /// ```
+  static bool isValidUserJid({required String userJid}) {
+    int atIndex = userJid.indexOf('@');
+    if (atIndex == -1) {
+      LogMessage.d("isValidUserJid",
+          "Invalid JID: '$userJid' does not contain a '@' character.");
+      return false;
+    } else if (userJid.indexOf('@', atIndex + 1) != -1) {
+      LogMessage.d("isValidUserJid",
+          "Invalid JID: '$userJid' contains multiple '@' characters.");
+      return false;
+    }
+
+    String localPart = userJid.split('@')[0];
+    if (localPart.isEmpty) {
+      LogMessage.d(
+          "isValidUserJid", "Invalid JID: '$userJid' has an empty localPart.");
+      return false;
+    }
+
+    String domainPart = userJid.split('@')[1];
+    if (domainPart.isEmpty) {
+      LogMessage.d(
+          "isValidUserJid", "Invalid JID: '$userJid' has an empty domainPart.");
+      return false;
+    }
+    return true;
+  }
 }
