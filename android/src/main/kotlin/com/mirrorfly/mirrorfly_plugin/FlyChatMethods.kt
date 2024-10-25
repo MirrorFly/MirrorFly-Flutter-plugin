@@ -261,6 +261,7 @@ class FlyChatMethods {
         ChatManager.enableChatHistory(chatHistoryEnable)
         ChatManager.enablePrivateStorage(enablePrivateStorage)
         CallManager.enableCallLogExport(enableSDKLog)
+        ChatManager.enableDebugLogging(enableSDKLog)
 
         FlyCallMethods().initCall()
 
