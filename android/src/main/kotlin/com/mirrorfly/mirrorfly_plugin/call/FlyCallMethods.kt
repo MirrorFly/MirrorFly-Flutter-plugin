@@ -128,8 +128,10 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
                         LogMessage.d("makeCall", "success $isSuccess message ${flyException?.message}")
                         if (isSuccess) {
                             result.success(true)
+                            CallManager.removeCallActionListener(this)
                         } else {
                             result.error("500", flyException?.message, flyException)
+                            CallManager.removeCallActionListener(this)
                         }
                     }
                 })
@@ -160,8 +162,10 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
                         )
                         if (isSuccess) {
                             result.success(true)
+                            CallManager.removeCallActionListener(this)
                         } else {
                             result.error("500", flyException?.message, flyException)
+                            CallManager.removeCallActionListener(this)
                         }
                     }
 
@@ -206,8 +210,10 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
                 LogMessage.d("answerCall", "success $isSuccess message ${flyException?.message}")
                 if (isSuccess) {
                     result.success(isSuccess)
+                    CallManager.removeCallActionListener(this)
                 } else {
                     result.error("500", flyException?.message, flyException)
+                    CallManager.removeCallActionListener(this)
                 }
             }
 
@@ -289,8 +295,10 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
                 if (isSuccess) {
                     sentMuteStatus(if(muteVideo) "LOCAL_VIDEO_MUTE" else "LOCAL_VIDEO_UN_MUTE")
                     result.success(true)
+                    CallManager.removeCallActionListener(this)
                 } else {
                     result.error("500", flyException?.message, flyException)
+                    CallManager.removeCallActionListener(this)
                 }
             }
 
@@ -313,8 +321,10 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
                                 )
                                 if (isSuccess) {
                                     result.success(true)
+                                    CallManager.removeCallActionListener(this)
                                 } else {
                                     result.error("500", flyException?.message, flyException)
+                                    CallManager.removeCallActionListener(this)
                                 }
                             }
                         })
@@ -344,8 +354,10 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
                         )
                         if (isSuccess) {
                             result.success(isSuccess)
+                            CallManager.removeCallActionListener(this)
                         } else {
                             result.error("500", flyException?.message, flyException)
+                            CallManager.removeCallActionListener(this)
                         }
                     }
 
