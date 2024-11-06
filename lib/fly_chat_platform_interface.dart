@@ -1622,6 +1622,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('syncCallLogs has not been implemented.');
   }
 
+  /// This method is used to get screen is from locked state or not.
+  Future<bool> isLockScreen() {
+    throw UnimplementedError('isLockScreen has not been implemented.');
+  }
+
   /// This listener is set to listen the message events.
   setMessageEventListener(MessageEventListeners messageEventsListener) {
     throw UnimplementedError(
