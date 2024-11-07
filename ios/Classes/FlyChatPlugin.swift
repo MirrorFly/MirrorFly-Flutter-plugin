@@ -112,6 +112,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             }
         }else if methodCall.method == "contactSyncStateValue"{
             contactSyncStateValue(call: methodCall, result: result)
+        }else if methodCall.method == "isLockScreen"{
+            return result(UIScreen.main.brightness == 0.0)
         } else{
             
             if let methodHandler = FlyMethodConstants.chatMethodHandlers[methodCall.method] {
