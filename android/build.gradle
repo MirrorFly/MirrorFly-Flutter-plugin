@@ -8,7 +8,10 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/release"
+            url "https://repo.mirrorfly.com/internal"
+        }
+        maven {
+            url "https://repo.mirrorfly.com/snapshot"
         }
 //        mavenLocal()
     }
@@ -25,7 +28,10 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/release"
+            url "https://repo.mirrorfly.com/internal"
+        }
+        maven {
+            url "https://repo.mirrorfly.com/snapshot"
         }
 //        mavenLocal()
     }
@@ -81,7 +87,7 @@ android {
 }
 dependencies {
 //    api project(':SubmoduleSDK:MirrorFlySDK')
-    api 'com.mirrorfly.sdk:mirrorflysdk:7.13.7'
+    api 'com.mirrorfly.sdk:mirrorflysdk:7.13.7_pre_7'
     api 'com.github.bumptech.glide:glide:4.15.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     api 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
