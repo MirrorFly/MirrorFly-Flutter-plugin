@@ -2,6 +2,7 @@ package com.mirrorfly.mirrorfly_plugin
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.KeyguardManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -166,6 +167,24 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 Log.d("appLaunchedFromMediaNotification", jid)
                 result.success(jid)
                 return
+            }
+
+            "isLockScreen" -> {
+
+                val keyguardManager: KeyguardManager = instance.mContext.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+                val inKeyguardRestrictedInputMode: Boolean = keyguardManager.inKeyguardRestrictedInputMode()
+
+                val isLocked = if (inKeyguardRestrictedInputMode) {
+                    true
+                } else {
+                    val powerManager: PowerManager = instance.mContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                        !powerManager.isInteractive
+                    } else {
+                        !powerManager.isScreenOn
+                    }
+                }
+                return result.success(isLocked)
             }
 
             "init", "initializeSDK" -> {

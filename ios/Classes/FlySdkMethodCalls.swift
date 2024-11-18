@@ -1169,37 +1169,66 @@ let ISEXPORT = true
         
     }
     func getGroupMembersList(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
-        let groupJid = args["jid"] as? String ?? ""
-        var groupMembers = [GroupParticipantDetail]()
-        
-        
-        groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != AppUtils.shared.getMyJid()})
-        let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == AppUtils.shared.getMyJid()})
-        groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
-        if(myJid.count > 0){
-            groupMembers.append(contentsOf: myJid)
-        }
-        var groupMemberProfile: String = "["
-        
-        groupMembers.forEach{ groupMember in
-            if(groupMember.profileDetail != nil){
-                let profileDetailJson = groupMember.profileDetail?.toJson()
-                print("---group members json--- \(String(describing: profileDetailJson))")
-                
-                groupMemberProfile = groupMemberProfile + (profileDetailJson ?? "") + ","
+            let args = call.arguments as! Dictionary<String, Any>
+            let groupJid = args["jid"] as? String ?? ""
+            let fetchFromServer = args["server"] as? Bool ?? false
+
+            if(fetchFromServer){
+                NotificationCenter.default.addObserver(forName: .fetchGroupMembersCompleted, object: nil, queue: .main) { notification in
+
+                    guard let userInfo = notification.userInfo as? [String: Any],
+                          let completedGroupJid = userInfo["groupJid"] as? String,
+                          completedGroupJid == groupJid else {
+                        print("getGroupMembersList NotificationCenter Ignoring notifications for other groupJids")
+                        return
+                    }
+
+                    self.fetchGroupMembers(groupJid: groupJid, result: result)
+                    NotificationCenter.default.removeObserver(self, name: .fetchGroupMembersCompleted, object: nil)
+                }
+                GroupManager.shared.getParticipants(groupJID: groupJid)
+
+            }else{
+
+                self.fetchGroupMembers(groupJid: groupJid, result: result)
             }
+
         }
-        if groupMembers.count > 0 {
-            groupMemberProfile = groupMemberProfile.dropLast() + "]"
-        }else{
-            groupMemberProfile = groupMemberProfile + "]"
+
+
+        private func fetchGroupMembers(groupJid: String, result: @escaping FlutterResult) {
+
+            var groupMembers = [GroupParticipantDetail]()
+
+            groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter { $0.memberJid != AppUtils.shared.getMyJid() }
+            let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter { $0.memberJid == AppUtils.shared.getMyJid() }
+
+            groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
+            if !myJid.isEmpty {
+                groupMembers.append(contentsOf: myJid)
+            }
+
+            var groupMemberProfile: String = "["
+
+            groupMembers.forEach { groupMember in
+                if let profileDetail = groupMember.profileDetail {
+                    let profileDetailJson = profileDetail.toJson()
+                    print("---group members json--- \(String(describing: profileDetailJson))")
+                    groupMemberProfile += (profileDetailJson ?? "") + ","
+                }
+            }
+
+            if !groupMembers.isEmpty {
+                groupMemberProfile = groupMemberProfile.dropLast() + "]"
+            } else {
+                groupMemberProfile += "]"
+            }
+
+            print("getGroupMembersList==**== \(String(describing: groupMemberProfile))")
+            result(groupMemberProfile)
         }
-        
-        print("getGroupMembersList==**== \(String(describing: groupMemberProfile))")
-        
-        result(groupMemberProfile)
-    }
+
+
     func enableDisableArchivedSettings(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let enableArchive = args["enable"] as? Bool ?? false
@@ -3348,7 +3377,7 @@ let ISEXPORT = true
                 if isSuccess {
                     var resp = flyData
                     let profileData = resp.getData() as? ProfileDetails
-                    print("ContactManager.shared.getUserProfile==**==\(String(describing: profileData?.toJson()))")
+                    print("ContactManager.shared.getGroupProfile==**==\(String(describing: profileData?.toJson()))")
                     result(profileData?.toJson())
                 } else{
                     result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
