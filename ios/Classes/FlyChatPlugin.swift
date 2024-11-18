@@ -606,6 +606,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func didFetchGroupMembers(groupJid: String) {
         print("didFetchGroupMembers")
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onFetchingGroupMembersCompleted_channel, value: groupJid)
+        NotificationCenter.default.post(name: .fetchGroupMembersCompleted, object: nil, userInfo: ["groupJid": groupJid])
     }
     
     public func didReceiveGroupNotificationMessage(message: MirrorFlySDK.ChatMessage) {
