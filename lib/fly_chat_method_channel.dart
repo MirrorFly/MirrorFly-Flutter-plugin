@@ -5293,8 +5293,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<bool> isLockScreen() async {
     bool? res;
     try {
-      res = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('isLockScreen');
+      res = await mirrorFlyMethodChannel.invokeMethod<bool>('isLockScreen');
       LogMessage.d("isLockScreen", res);
       return res ?? false;
     } on PlatformException catch (e) {

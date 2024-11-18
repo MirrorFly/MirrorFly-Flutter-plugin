@@ -5283,7 +5283,7 @@ class Mirrorfly {
   ///   - `true` if the screen is locked,
   ///   - `false` otherwise.
   ///
-  static Future<bool> isLockScreen(){
+  static Future<bool> isLockScreen() {
     return FlyChatFlutterPlatform.instance.isLockScreen();
   }
 }
