@@ -1842,6 +1842,12 @@ class MockFlyChatFlutterPlatform
 
   @override
   Stream get onUsersUpdated => throw UnimplementedError();
+
+  @override
+  Future<bool> isLockScreen() {
+    // implement isLockScreen
+    throw UnimplementedError();
+  }
 }
 
 void main() {

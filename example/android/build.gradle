@@ -1,10 +1,16 @@
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.7.10'
     repositories {
         google()
         jcenter()
         mavenCentral()
         //mavenLocal()
+        maven {
+            url "https://repo.mirrorfly.com/snapshot"
+        }
+        maven {
+            url "https://repo.mirrorfly.com/internal"
+        }
         maven {
             url "https://repo.mirrorfly.com/release"
         }
@@ -24,6 +30,12 @@ allprojects {
         mavenCentral()
         //mavenLocal()
         maven {
+            url "https://repo.mirrorfly.com/snapshot"
+        }
+        maven {
+            url "https://repo.mirrorfly.com/internal"
+        }
+        maven {
             url "https://repo.mirrorfly.com/release"
         }
     }
@@ -37,6 +49,6 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-task clean(type: Delete) {
+tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
