@@ -1,13 +1,14 @@
 PODS:
-  - Alamofire (5.7.1)
+  - Alamofire (5.9.1)
   - CocoaAsyncSocket (7.6.5)
-  - CocoaLumberjack (3.8.0):
-    - CocoaLumberjack/Core (= 3.8.0)
-  - CocoaLumberjack/Core (3.8.0)
-  - CocoaLumberjack/Swift (3.8.0):
+  - CocoaLumberjack (3.6.2):
+    - CocoaLumberjack/Core (= 3.6.2)
+  - CocoaLumberjack/Core (3.6.2)
+  - CocoaLumberjack/Swift (3.6.2):
     - CocoaLumberjack/Core
   - Flutter (1.0.0)
-  - GoogleWebRTC (1.1.32000)
+  - GoogleWebRTC (1.1.31999)
+  - IDZSwiftCommonCrypto (0.16.1)
   - KissXML (5.3.1):
     - KissXML/All (= 5.3.1)
   - KissXML/Additions (5.3.1):
@@ -18,24 +19,42 @@ PODS:
   - KissXML/Core (5.3.1)
   - libidn (1.35)
   - libPhoneNumber-iOS (0.9.15)
-  - mirrorfly_plugin (0.0.9):
-    - Alamofire
+  - mirrorfly_plugin (1.0.6):
+    - Alamofire (= 5.9.1)
     - Flutter
-    - GoogleWebRTC
-    - libPhoneNumber-iOS
-    - RealmSwift (= 10.20.1)
-    - Socket.IO-Client-Swift (~> 15.2.0)
+    - GoogleWebRTC (= 1.1.31999)
+    - IDZSwiftCommonCrypto (~> 0.16.1)
+    - libPhoneNumber-iOS (= 0.9.15)
+    - MirrorFlySDK (= 5.17.5)
+    - RealmSwift (~> 10.49.2)
+    - SDWebImage
+    - Socket.IO-Client-Swift (= 16.0.1)
     - SocketRocket
+    - Starscream (= 4.0.4)
     - XMPPFramework/Swift
-  - Realm (10.20.1):
-    - Realm/Headers (= 10.20.1)
-  - Realm/Headers (10.20.1)
-  - RealmSwift (10.20.1):
-    - Realm (= 10.20.1)
-  - Socket.IO-Client-Swift (15.2.0):
-    - Starscream (~> 3.1)
-  - SocketRocket (0.7.0)
-  - Starscream (3.1.1)
+  - MirrorFlySDK (5.17.5):
+    - Alamofire (= 5.9.1)
+    - CocoaLumberjack (= 3.6.2)
+    - GoogleWebRTC (= 1.1.31999)
+    - IDZSwiftCommonCrypto (~> 0.16)
+    - libPhoneNumber-iOS (= 0.9.15)
+    - RealmSwift (~> 10.49.2)
+    - Socket.IO-Client-Swift (= 16.0.1)
+    - SocketRocket (= 0.6.0)
+    - Starscream (= 4.0.4)
+    - XMPPFramework/Swift (= 4.0.0)
+  - Realm (10.49.3):
+    - Realm/Headers (= 10.49.3)
+  - Realm/Headers (10.49.3)
+  - RealmSwift (10.49.3):
+    - Realm (= 10.49.3)
+  - SDWebImage (5.19.4):
+    - SDWebImage/Core (= 5.19.4)
+  - SDWebImage/Core (5.19.4)
+  - Socket.IO-Client-Swift (16.0.1):
+    - Starscream (~> 4.0)
+  - SocketRocket (0.6.0)
+  - Starscream (4.0.4)
   - XMPPFramework/default (4.0.0):
     - CocoaAsyncSocket (~> 7.6)
     - CocoaLumberjack
@@ -55,11 +74,14 @@ SPEC REPOS:
     - CocoaAsyncSocket
     - CocoaLumberjack
     - GoogleWebRTC
+    - IDZSwiftCommonCrypto
     - KissXML
     - libidn
     - libPhoneNumber-iOS
+    - MirrorFlySDK
     - Realm
     - RealmSwift
+    - SDWebImage
     - Socket.IO-Client-Swift
     - SocketRocket
     - Starscream
@@ -72,22 +94,25 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/mirrorfly_plugin/ios"
 
 SPEC CHECKSUMS:
-  Alamofire: 0123a34370cb170936ae79a8df46cc62b2edeb88
+  Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  CocoaLumberjack: 78abfb691154e2a9df8ded4350d504ee19d90732
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  GoogleWebRTC: 4d261187b30512efdb711d21fa961a6adf138717
+  CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
+  IDZSwiftCommonCrypto: aefd3487b88dc3d7a1de2553188c720ac3194940
   KissXML: 5c8e0f2e8b9f071d3e1ae123dec3eb5da615c10c
   libidn: e4576a956b797c584c77aaedfc6e3dd639b61bdc
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
-  mirrorfly_plugin: 9ec260ca1a58e644b7a93ddabeb7db8eac0f705b
-  Realm: fac5ecd031fcb81171627b74944c885662d4b266
-  RealmSwift: 9b02d25acb46a14756bde9893abb99e2e3675923
-  Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
-  SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
-  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
+  mirrorfly_plugin: bc9a5bcef6243c3701386907d6ab24c820ed1d32
+  MirrorFlySDK: 0e6f565152aa381c2319540be9090a9b68dfbfd6
+  Realm: d7cfad3146a7cb9caa00799a216ff0d80c33f36f
+  RealmSwift: 06fb2d9cf029b837fe76136446199906b096470a
+  SDWebImage: 066c47b573f408f18caa467d71deace7c0f8280d
+  Socket.IO-Client-Swift: c116d6dc9fd6be9c259bacfe143f8725bce7d79e
+  SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   XMPPFramework: 5d31ff9f73dce031b24bc49bcf88093627a3a86e
 
-PODFILE CHECKSUM: ee632ba14b5eeda5c7880e81969574bfa29d9062
+PODFILE CHECKSUM: 792e871858a3698e9778b82fa560ed56f1c85c3b
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2

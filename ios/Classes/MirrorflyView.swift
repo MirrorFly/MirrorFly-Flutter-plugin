@@ -24,9 +24,6 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     private var pulsatingTimer: Timer?
     
     let circleView = UIView(frame: .zero)
-//    let rippleLayer = CAShapeLayer()
-    
-    // Create a pulsating animation using a timer
     var scaleFactor: CGFloat = 1.0
     var growing = true
     
@@ -66,7 +63,6 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                             self.handleUserProfileDetails(userJid: userJid, contact: contact, argument: argument)
                                                 
                         } else{
-//                            result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
                             NSLog("\(Constants.callTag) ContactManager.shared.getUserProfile Error fetching Profile")
                         }
                     }
@@ -77,8 +73,6 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             }else{
                 handleUserProfileDetails(userJid: userJid, contact: contact, argument: argument)
             }
-            
-        
         }
         
     }
@@ -107,16 +101,10 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         
         if(videoTrack == nil || muteStatus){
             
-//                showAudioView(argument: argument, userName: userName)
-//                DispatchQueue.main.async {
-                self.videoView?.removeFromSuperview()
-//                }
+            self.videoView?.removeFromSuperview()
             
         }else{
-//                DispatchQueue.main.async {
-                self.audioView?.removeFromSuperview()
-//                }
-            
+            self.audioView?.removeFromSuperview()
         }
     }
     
@@ -134,10 +122,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         NSLog("\(Constants.callTag) createVideoView")
         if videoView == nil {
             videoView = getVideoView()
-//            DispatchQueue.main.async {
-                self._baseView.addSubview(self.videoView!)
-//            }
-            
+            self._baseView.addSubview(self.videoView!)
         }
         
         videoView?.translatesAutoresizingMaskIntoConstraints = false
@@ -182,19 +167,13 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             circleView.translatesAutoresizingMaskIntoConstraints = false
             circleView.backgroundColor = randomColor() // Generate a random background color
             circleView.layer.cornerRadius = CGFloat(profileSize / 2)
-
-
-            // Add a pulsating animation to the circleView
               
             
             if (!hideProfileView){
          
-//                if contact?.image == nil || (contact!.image.isEmpty) {
-//                    DispatchQueue.main.async {
-                        self.audioView?.addSubview(self.circleView)
-//                    }
 
-                    
+                    self.audioView?.addSubview(self.circleView)
+
                     NSLog("===contact image is empty")
                     textView = UITextView(frame: .zero)
                     textView?.translatesAutoresizingMaskIntoConstraints = false
@@ -208,12 +187,9 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                     textView?.backgroundColor = .clear
                     
                     textView?.clipsToBounds = true
-//                    DispatchQueue.main.async {
-                        self.audioView?.addSubview(self.textView!)
-//                    }
-                    
-                    
-//                }else{
+
+                    self.audioView?.addSubview(self.textView!)
+
                 if contact?.image != nil || (!contact!.image.isEmpty) {
                     NSLog("===contact image is not empty \(profileSize)")
                     userProfileView = UIImageView(frame: .zero)
@@ -222,18 +198,12 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                     userProfileView?.layer.cornerRadius = CGFloat(profileSize / 2)
 //                    userProfileView?.loadFlyImage(imageURL: contact?.image ?? "", name: FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType), jid: contact?.jid ?? "", textview: self.textView!, circleview: self.circleView)
                     userProfileView?.clipsToBounds = true
-//                    DispatchQueue.main.async {
-                        self.audioView?.addSubview(self.userProfileView!)
-//                    }
+                    self.audioView?.addSubview(self.userProfileView!)
                 }
                 
-            
-            
 
                 var constraints: [NSLayoutConstraint] = []
                 
-                
-//                if(textView == nil){
                 if(contact?.image != nil || (!contact!.image.isEmpty)){
                     NSLog("setting constraint 1")
                     constraints.append(userProfileView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
@@ -245,7 +215,6 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                     NSLog("setting constraint 4")
                     constraints.append(userProfileView!.heightAnchor.constraint(equalToConstant: CGFloat(profileSize)))
                 }
-//                }else{
                 
                 NSLog("setting constraint 5")
                     constraints.append(textView!.centerXAnchor.constraint(equalTo: audioView!.centerXAnchor))
@@ -260,7 +229,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                 NSLog("setting constraint 10")
                     constraints.append(circleView.heightAnchor.constraint(equalToConstant: CGFloat(profileSize)))
                     
-//                }
+
                 NSLayoutConstraint.activate(constraints)
                 
                 if contact?.image != nil || (!contact!.image.isEmpty) {
@@ -268,65 +237,8 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                 }
 
             }
-            
-
-//            pulsatingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-//                guard let self = self else { return }
-//
-//                if self.growing {
-//                    scaleFactor = 1.2 // Increase size
-//                } else {
-//                    scaleFactor = 1.0 // Restore original size
-//                }
-//
-//                self.growing.toggle()
-//
-//                // Ensure that `circleView` is a valid reference to your UIView
-//
-////                UIView.animate(withDuration: 0.5, delay: 0, options: [.autoreverse, .repeat], animations: {
-////                    circleView.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-////                }, completion: nil)
-//
-//
-//
-//
-//                UIView.animate(withDuration: 0.1, delay: 0, options: [.curveLinear], animations: {
-//                    circleView.transform = CGAffineTransform(scaleX: self.scaleFactor, y: self.scaleFactor)
-//                }, completion: nil)
-//            }
-
-           
-            
-
-            
-
-            
-//            // Create the rippleView
-//            let rippleView = RippleView(frame: CGRect(x: 0, y: 0, width: profileSize+10, height: profileSize+10))
-//            rippleView.translatesAutoresizingMaskIntoConstraints = false
-//            rippleView.backgroundColor = .clear // Set a transparent background color
-//
-//            // Add the rippleView to your circular view or audioView
-//            circleView.addSubview(rippleView)
-//
-//            // Add constraints for the rippleView (similar to your circular view's constraints)
-//            NSLayoutConstraint.activate([
-//                circleView.centerXAnchor.constraint(equalTo: circleView.centerXAnchor),
-//                circleView.centerYAnchor.constraint(equalTo: circleView.centerYAnchor),
-//                rippleView.widthAnchor.constraint(equalToConstant: CGFloat(profileSize+10)),
-//                rippleView.heightAnchor.constraint(equalToConstant: CGFloat(profileSize+10))
-//            ])
-//
-//            // Start the ripple animation
-//            rippleView.startRippleAnimation()
-
-//            DispatchQueue.main.async {
                 
-                self._baseView.addSubview(self.audioView!)
-                
-//            }
-            
-            
+            self._baseView.addSubview(self.audioView!)
             
             NSLayoutConstraint.activate([
                 audioView!.centerXAnchor.constraint(equalTo: _baseView.centerXAnchor),
@@ -334,9 +246,9 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                 audioView!.topAnchor.constraint(equalTo: _baseView.topAnchor),
                 audioView!.bottomAnchor.constraint(equalTo: _baseView.bottomAnchor)
             ])
-//            DispatchQueue.main.async {
-                self.videoView?.removeFromSuperview()
-//            }
+
+            self.videoView?.removeFromSuperview()
+
         }
     }
     
@@ -489,17 +401,15 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         #endif
     }
     private func removeTextView() {
-//        DispatchQueue.main.async {
-            self.textView?.removeFromSuperview()
-//        }
+        self.textView?.removeFromSuperview()
     }
     
     private func removeVideoView() {
         NSLog("\(Constants.callTag) removing video track removeVideoView")
-//        DispatchQueue.main.async {
-            self.videoTrack?.remove(self.videoView as! RTCVideoRenderer)
-            self.videoView?.removeFromSuperview()
-//        }
+
+        self.videoTrack?.remove(self.videoView as! RTCVideoRenderer)
+        self.videoView?.removeFromSuperview()
+
     }
     
     func hexStringToUIColor (hex:String) -> UIColor {

@@ -25,4 +25,5 @@ public enum ConnectionStatus {
 
 extension Notification.Name {
     static let connectionStatusChanged = Notification.Name("connectionStatusChanged")
+    static let fetchGroupMembersCompleted = Notification.Name("fetchGroupMembersCompleted")
 }
