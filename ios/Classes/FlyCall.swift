@@ -153,35 +153,102 @@ import PushKit
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callActionJson)
     }
     
+//    
+//    func getDisplayName(IncomingUser: [String], incomingUserName: String, metaData: [MirrorFlySDK.CallMetadata]) -> [String] { //) {
+//        //    func getDisplayName(IncomingUser: [String]) {
+//        var userString = [String]()
+//        if isHideNotificationContent{
+//            userString.append(APP_NAME)
+//        }else{
+//            for JID in IncomingUser where JID != AppUtils.shared.getMyJid(){
+//                NSLog("#jid \(JID)")
+//                if let contact = ChatManager.getContact(jid: JID.lowercased()){
+//                    let contactSync = Utility.getBoolFromPreference(key: Constants.contactSyncEnable)
+//                    if contactSync{
+//                        if contact.contactType == .unknown{
+//                            userString.append((try? FlyUtils.getIdFromJid(jid: JID)) ?? "")
+//                        }else{
+//                            userString.append(getUserName(jid: contact.jid, name: contact.name, nickName: contact.nickName, contactType: contact.contactType))
+//                        }
+//                    }else{
+//                        userString.append(getUserName(jid: contact.jid, name: contact.name, nickName: contact.nickName, contactType: contact.contactType))
+//                    }
+//                }else {
+//                    let pd = ContactManager.shared.saveTempContact(userId: JID)
+//                    userString.append(pd?.name ?? "User")
+//                }
+//            }
+//            NSLog("#names \(userString)")
+//        }
+//        CallManager.getContactNames(IncomingUserName: userString)
+//        
+//        return userString
+//    }
     
-    func getDisplayName(IncomingUser: [String], incomingUserName: String, metaData: [MirrorFlySDK.CallMetadata]) -> [String] { //) {
-        //    func getDisplayName(IncomingUser: [String]) {
+    func getDisplayName(IncomingUser: [String], incomingUserName: String, metaData: [MirrorFlySDK.CallMetadata]) -> [String] {
         var userString = [String]()
-        if isHideNotificationContent{
+        let dispatchGroup = DispatchGroup()
+        
+        if isHideNotificationContent {
             userString.append(APP_NAME)
-        }else{
-            for JID in IncomingUser where JID != AppUtils.shared.getMyJid(){
+        } else {
+            for JID in IncomingUser where JID != AppUtils.shared.getMyJid() {
                 NSLog("#jid \(JID)")
-                if let contact = ChatManager.getContact(jid: JID.lowercased()){
-                    let contactSync = Utility.getBoolFromPreference(key: Constants.contactSyncEnable)
-                    if contactSync{
-                        if contact.contactType == .unknown{
-                            userString.append((try? FlyUtils.getIdFromJid(jid: JID)) ?? "")
-                        }else{
-                            userString.append(getUserName(jid: contact.jid, name: contact.name, nickName: contact.nickName, contactType: contact.contactType))
-                        }
-                    }else{
-                        userString.append(getUserName(jid: contact.jid, name: contact.name, nickName: contact.nickName, contactType: contact.contactType))
-                    }
-                }else {
-                    let pd = ContactManager.shared.saveTempContact(userId: JID)
-                    userString.append(pd?.name ?? "User")
+                dispatchGroup.enter()
+                getDisplayNameFromServer(JID: JID) { resp in
+                    userString.append(contentsOf: resp)
+                    dispatchGroup.leave()
                 }
             }
-            NSLog("#names \(userString)")
         }
-        CallManager.getContactNames(IncomingUserName: userString)
         
+        dispatchGroup.notify(queue: .main) {
+            NSLog("#names \(userString)")
+            CallManager.getContactNames(IncomingUserName: userString)
+        }
+        
+        NSLog("#names \(userString)")
+        return userString
+    }
+
+    private func getDisplayNameFromServer(JID: String, completion: @escaping ([String]) -> Void) {
+        var userString = [String]()
+        do {
+            try ContactManager.shared.getUserProfile(for: JID.lowercased(), fetchFromServer: true, saveAsFriend: true) { isSuccess, flyError, flyData in
+                var data = flyData
+                let profileData = data.getData() as? ProfileDetails
+                
+                if isSuccess {
+                    userString.append(self.getUserName(jid: profileData?.jid ?? "", name: profileData?.name ?? "", nickName: profileData?.nickName ?? "", contactType: profileData?.contactType ?? .unknown))
+                } else {
+                    let localDisplayNames = self.getLocalDisplayName(JID: JID)
+                    userString.append(contentsOf: localDisplayNames)
+                }
+                completion(userString)
+            }
+        } catch {
+            let localDisplayNames = self.getLocalDisplayName(JID: JID)
+            userString.append(contentsOf: localDisplayNames)
+            completion(userString)
+        }
+    }
+    private func getLocalDisplayName(JID : String) -> [String] {
+        var userString = [String]()
+        if let contact = ChatManager.getContact(jid: JID.lowercased()){
+            let contactSync = Utility.getBoolFromPreference(key: Constants.contactSyncEnable)
+            if contactSync{
+                if contact.contactType == .unknown{
+                    userString.append((try? FlyUtils.getIdFromJid(jid: JID)) ?? "")
+                }else{
+                    userString.append(self.getUserName(jid: contact.jid, name: contact.name, nickName: contact.nickName, contactType: contact.contactType))
+                }
+            }else{
+                userString.append(self.getUserName(jid: contact.jid, name: contact.name, nickName: contact.nickName, contactType: contact.contactType))
+            }
+        }else {
+            let pd = ContactManager.shared.saveTempContact(userId: JID)
+            userString.append(pd?.name ?? "User")
+        }
         return userString
     }
     

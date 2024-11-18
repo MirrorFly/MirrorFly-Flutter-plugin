@@ -112,6 +112,8 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             }
         }else if methodCall.method == "contactSyncStateValue"{
             contactSyncStateValue(call: methodCall, result: result)
+        }else if methodCall.method == "isLockScreen"{
+            return result(UIScreen.main.brightness == 0.0)
         } else{
             
             if let methodHandler = FlyMethodConstants.chatMethodHandlers[methodCall.method] {
@@ -604,6 +606,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func didFetchGroupMembers(groupJid: String) {
         print("didFetchGroupMembers")
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onFetchingGroupMembersCompleted_channel, value: groupJid)
+        NotificationCenter.default.post(name: .fetchGroupMembersCompleted, object: nil, userInfo: ["groupJid": groupJid])
     }
     
     public func didReceiveGroupNotificationMessage(message: MirrorFlySDK.ChatMessage) {

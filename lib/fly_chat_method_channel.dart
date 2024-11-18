@@ -5290,6 +5290,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<bool> isLockScreen() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('isLockScreen');
+      LogMessage.d("isLockScreen", res);
+      return res ?? false;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      return res ?? false;
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      return res ?? false;
+    }
+  }
+
+  @override
   Future<void> makeVideoCall(
       String userJid, Function(FlyResponse response)? callback) async {
     // bool val;
