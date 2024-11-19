@@ -225,5 +225,7 @@ class FlyMethodConstants {
                 "getMetaData": flyChatMethods.getMetaData,
                 "updateMetaData": flyChatMethods.updateMetaData,
                 "isPrivateStorageEnabled": flyChatMethods.isPrivateStorageEnabled,
+                "startBackup": flyChatMethods.startBackup,
+                "restoreBackup": flyChatMethods.restoreBackup,
             ] }()
 }

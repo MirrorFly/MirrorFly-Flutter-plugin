@@ -4393,5 +4393,25 @@ let ISEXPORT = true
     func isPrivateStorageEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(ChatManager.isPrivateStorageEnabled())
     }
+    
+    func startBackup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        BackupManager.shared.startBackup()
+        result(true)
+    }
+    
+    func restoreBackup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let backupUrl = args["backupUrl"] as? String ?? ""
+        
+        if backupUrl.isEmpty {
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.BACKUP_URL_INVALID, details: nil))
+        }else{
+            let backupURL =  URL(fileURLWithPath: backupUrl)
+            BackupManager.shared.restoreMessages(url: backupURL)
+            result(true)
+        }
+    }
+    
+    
 
 }

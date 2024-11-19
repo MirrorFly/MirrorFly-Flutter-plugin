@@ -32,6 +32,7 @@ import com.mirrorflysdk.api.network.FlyNetwork
 import com.mirrorflysdk.api.notification.NotificationEventListener
 import com.mirrorflysdk.api.notification.PushNotificationManager
 import com.mirrorflysdk.api.utils.NameHelper
+import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.flycall.webrtc.CallLogger
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
@@ -346,7 +347,7 @@ class FlyChatMethods {
                                     }
                                 })
                         }
-                        CallLogManager.setCallLogsListener(MirrorFlyManager.instance)
+                        CallLogManager.setCallLogsListener(MirrorFlyManager.getFlyChatInstance())
                         /*ChatEventsManager.setupMessageEventListener(instance)
                         ChatEventsManager.attachProfileEventsListener(instance)
                         ChatEventsManager.attachGroupEventsListener(instance)
