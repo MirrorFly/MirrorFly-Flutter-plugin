@@ -260,6 +260,8 @@ object FlyMethodConstants {
         "updateMetaData" to flyChatMethods::updateMetaData,
         "startBackup" to flyChatMethods::startBackup,
         "restoreBackup" to flyChatMethods::restoreBackup,
+        "cancelBackup" to flyChatMethods::cancelBackup,
+        "cancelRestore" to flyChatMethods::cancelRestore,
     )
 
     private val callEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(

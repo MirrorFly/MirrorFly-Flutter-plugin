@@ -32,7 +32,10 @@ import com.mirrorflysdk.api.network.FlyNetwork
 import com.mirrorflysdk.api.notification.NotificationEventListener
 import com.mirrorflysdk.api.notification.PushNotificationManager
 import com.mirrorflysdk.api.utils.NameHelper
+import com.mirrorflysdk.backup.BackupListener
 import com.mirrorflysdk.backup.BackupManager
+import com.mirrorflysdk.backup.RestoreListener
+import com.mirrorflysdk.backup.RestoreManager
 import com.mirrorflysdk.flycall.webrtc.CallLogger
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
@@ -3773,6 +3776,70 @@ class FlyChatMethods {
                 }
             }
         })
+    }
+
+    fun startBackup(call: MethodCall, result: MethodChannel.Result){
+        BackupManager.startBackup(object : BackupListener {
+            override fun onFailure(reason: String) {
+                FlyMethodConstants.updateChatSinkValue(
+                        Constants.onBackupFailureChannel,
+                        reason
+                )
+            }
+
+            override fun onProgressChanged(percentage: Int) {
+                FlyMethodConstants.updateChatSinkValue(
+                        Constants.onBackupProgressChangedChannel,
+                        percentage
+                )
+            }
+
+            override fun onSuccess(backUpFilePath: String) {
+                FlyMethodConstants.updateChatSinkValue(
+                        Constants.onBackupSuccessChannel,
+                        backUpFilePath
+                )
+            }
+        })
+    }
+    fun restoreBackup(call: MethodCall, result: MethodChannel.Result){
+        val filepath = call.argument<String>("backupPath") ?: ""
+        val file = File(filepath)
+        if (file.exists()) {
+            RestoreManager.restoreData(file, object : RestoreListener {
+                override fun onFailure(reason: String) {
+//                                onFailureStreamHandler.onFailure?.success(reason)
+                    FlyMethodConstants.updateChatSinkValue(
+                            Constants.onRestoreFailureChannel,
+                            reason
+                    )
+                }
+
+                override fun onProgressChanged(percentage: Int) {
+//                                onProgressChangedStreamHandler.onProgressChanged?.success(percentage)
+                    FlyMethodConstants.updateChatSinkValue(
+                            Constants.onRestoreProgressChangedChannel,
+                            percentage
+                    )
+                }
+
+                override fun onSuccess() {
+//                                onSuccessStreamHandler.onSuccess?.success("")
+                    FlyMethodConstants.updateChatSinkValue(
+                            Constants.onRestoreSuccessChannel,
+                            true
+                    )
+                }
+            })
+        }
+    }
+    fun cancelBackup(call: MethodCall, result: MethodChannel.Result){
+        BackupManager.cancelBackup()
+        result.success(true)
+    }
+    fun cancelRestore(call: MethodCall, result: MethodChannel.Result){
+        RestoreManager.cancelRestore()
+        result.success(true)
     }
 
 }
