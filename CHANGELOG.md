@@ -1,3 +1,9 @@
+## [1.0.8] Bug Fix
+* Fetch Group members from server support added in iOS
+* Android Gradle Update fixes
+* Android SDK Updated to 7.13.8
+* Bug Fixes
+
 ## [1.0.8-beta] Bug Fix
 * iOS SDK Updated to 5.18.0
 * Xcode 16 Support Added
