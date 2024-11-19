@@ -5275,8 +5275,6 @@ class Mirrorfly {
 
   /// Checks if the device is locked.
   ///
-  /// This method interacts with the platform-specific `FlyChatFlutterPlatform`
-  /// instance to determine whether the lock screen feature is active.
   ///
   /// Returns:
   ///   A [Future] that completes with a [bool] value:
@@ -5285,5 +5283,49 @@ class Mirrorfly {
   ///
   static Future<bool> isLockScreen() {
     return FlyChatFlutterPlatform.instance.isLockScreen();
+  }
+
+  /// Initiates the backup process for chat data.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Mirrorfly.startBackup();
+  /// ```
+  ///
+  static Future<void> startBackup(){
+    return FlyChatFlutterPlatform.instance.startBackup();
+  }
+
+  /// Initiates the restore process from the backup chat data url.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Mirrorfly.restoreBackup();
+  /// ```
+  ///
+  static Future<void> restoreBackup({required String backupPath}){
+    return FlyChatFlutterPlatform.instance.restoreBackup(backupPath: backupPath);
+  }
+
+  /// Cancels the backup process started from startBackup() Method.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Mirrorfly.cancelBackup();
+  /// ```
+  ///
+  static Future<void> cancelBackup(){
+    return FlyChatFlutterPlatform.instance.cancelBackup();
+  }
+
+  /// Cancels the restore process started from restoreBackup() Method.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Mirrorfly.cancelRestore();
+  /// ```
+  ///
+  static Future<void> cancelRestore(){
+    return FlyChatFlutterPlatform.instance.cancelRestore();
   }
 }

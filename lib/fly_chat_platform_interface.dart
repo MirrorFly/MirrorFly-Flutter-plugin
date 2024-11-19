@@ -1627,6 +1627,27 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('isLockScreen has not been implemented.');
   }
 
+  /// This method is used to start the backup.
+  Future<void> startBackup() {
+    throw UnimplementedError('startBackup has not been implemented.');
+  }
+
+  /// This method is used to restore the backup.
+  Future<void> restoreBackup({required String backupPath}) {
+    throw UnimplementedError('restoreBackup has not been implemented.');
+  }
+
+  /// This method is used to cancel the backup started.
+  Future<void> cancelBackup() {
+    throw UnimplementedError('cancelBackup has not been implemented.');
+  }
+
+  /// This method is used to cancel the restore started.
+  Future<void> cancelRestore() {
+    throw UnimplementedError('cancelBackup has not been implemented.');
+  }
+
+
   /// This listener is set to listen the message events.
   setMessageEventListener(MessageEventListeners messageEventsListener) {
     throw UnimplementedError(

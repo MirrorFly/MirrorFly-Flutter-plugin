@@ -20,7 +20,7 @@ let ISEXPORT = false
 let ISEXPORT = true
 #endif
 
-@objc public class FlySdkMethodCalls : NSObject{
+@objc public class FlyChatMethods : NSObject{
     
     var isTrialLicenceKey : Bool = true;
     var chatHistoryEnable : Bool = false;
@@ -49,7 +49,7 @@ let ISEXPORT = true
     
     
     // Singleton instance
-    static let shared = FlySdkMethodCalls()
+    static let shared = FlyChatMethods()
     
     // Private initializer to prevent creating new instances
     private override init() {
@@ -4401,7 +4401,7 @@ let ISEXPORT = true
     
     func restoreBackup(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
-        let backupUrl = args["backupUrl"] as? String ?? ""
+        let backupUrl = args["backupPath"] as? String ?? ""
         
         if backupUrl.isEmpty {
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.BACKUP_URL_INVALID, details: nil))

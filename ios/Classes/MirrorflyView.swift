@@ -1,6 +1,6 @@
 //
 //  MirrorflyView.swift
-//  mirrorfly_chat
+//  mirrorfly_plugin
 //
 //  Created by Mani Vendhan on 13/06/23.
 //

@@ -1,6 +1,6 @@
 //
 //  FlyEventChannelConstants.swift
-//  mirrorfly_chat
+//  mirrorfly_plugin
 //
 //  Created by Mani Vendhan on 16/06/23.
 //
