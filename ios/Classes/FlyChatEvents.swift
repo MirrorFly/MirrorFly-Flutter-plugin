@@ -1,6 +1,6 @@
 //
-//  FlyEvents.swift
-//  fly_chat
+//  FlyChatEvents.swift
+//  mirrorfly_plugin
 //
 //  Created by user on 23/03/23.
 //

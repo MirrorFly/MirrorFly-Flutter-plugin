@@ -20,7 +20,7 @@ let ISEXPORT = false
 let ISEXPORT = true
 #endif
 
-@objc public class FlySdkMethodCalls : NSObject{
+@objc public class FlyChatMethods : NSObject{
     
     var isTrialLicenceKey : Bool = true;
     var chatHistoryEnable : Bool = false;
@@ -49,7 +49,7 @@ let ISEXPORT = true
     
     
     // Singleton instance
-    static let shared = FlySdkMethodCalls()
+    static let shared = FlyChatMethods()
     
     // Private initializer to prevent creating new instances
     private override init() {
