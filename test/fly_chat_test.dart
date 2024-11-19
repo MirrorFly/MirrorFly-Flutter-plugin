@@ -1848,6 +1848,30 @@ class MockFlyChatFlutterPlatform
     // implement isLockScreen
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> startBackup() {
+    // implement startBackup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> restoreBackup({required String backupPath}) {
+    // implement restoreBackup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> cancelBackup() {
+    // implement cancelBackup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> cancelRestore() {
+    // implement cancelRestore
+    throw UnimplementedError();
+  }
 }
 
 void main() {

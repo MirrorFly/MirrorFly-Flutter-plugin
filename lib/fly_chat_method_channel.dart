@@ -5306,6 +5306,52 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<void> startBackup() async {
+    try {
+      await mirrorFlyMethodChannel.invokeMethod<bool>('startBackup');
+    } on PlatformException catch (e) {
+      LogMessage.d("startBackup Platform Exception =", " $e");
+    } on Exception catch (e) {
+      LogMessage.d("startBackup Exception ", " $e");
+    }
+  }
+
+  @override
+  Future<void> restoreBackup({required String backupPath}) async {
+    try {
+      await mirrorFlyMethodChannel.invokeMethod<bool>('restoreBackup', {'backupPath': backupPath});
+    } on PlatformException catch (e) {
+      LogMessage.d("restoreBackup Platform Exception =", " $e");
+    } on Exception catch (e) {
+      LogMessage.d("restoreBackup Exception ", " $e");
+    }
+  }
+
+  @override
+  Future<void> cancelBackup() async {
+    try {
+      await mirrorFlyMethodChannel.invokeMethod<bool>('cancelBackup');
+    } on PlatformException catch (e) {
+      LogMessage.d("cancelBackup Platform Exception =", " $e");
+    } on Exception catch (e) {
+      LogMessage.d("cancelBackup Exception ", " $e");
+    }
+  }
+
+  @override
+  Future<void> cancelRestore() async {
+    try {
+      await mirrorFlyMethodChannel.invokeMethod<bool>('cancelRestore');
+    } on PlatformException catch (e) {
+      LogMessage.d("cancelRestore Platform Exception =", " $e");
+    } on Exception catch (e) {
+      LogMessage.d("cancelRestore Exception ", " $e");
+    }
+  }
+
+
+
+  @override
   Future<void> makeVideoCall(
       String userJid, Function(FlyResponse response)? callback) async {
     // bool val;
