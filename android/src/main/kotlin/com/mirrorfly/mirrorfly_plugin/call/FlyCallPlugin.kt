@@ -24,7 +24,7 @@ import org.json.JSONObject
 class FlyCallPlugin : MethodChannel.MethodCallHandler,
     CallEventsListener, CallUiListener {
     val tag = "#FlutterCallMethods"
-    val context: Context by lazy { MirrorFlyManager.applicationContext }
+    val context: Context by lazy { MirrorFlyManager.getContext() }
     private val flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? by lazy { MirrorFlyManager.flutterPluginBinding }
 
     fun init() {
