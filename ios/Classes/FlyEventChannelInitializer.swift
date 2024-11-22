@@ -117,6 +117,13 @@ class FlyChatEventChannelInitializer {
         (channelName: Constants.onChatTypingStatus_channel, streamHandler: OnChatTypingStatusStreamHandler()),
         (channelName: Constants.onGroupTypingStatus_channel, streamHandler: OnGroupTypingStatusStreamHandler()),
         (channelName: Constants.onMessageEdited_channel, streamHandler: MessageEditedStreamHandler()),
+        
+        (channelName: Constants.onBackupFailureChannel, streamHandler: OnBackupFailureChannelStreamHandler()),
+        (channelName: Constants.onBackupProgressChangedChannel, streamHandler: OnBackupProgressChangedChannelStreamHandler()),
+        (channelName: Constants.onBackupSuccessChannel, streamHandler: OnBackupSuccessChannelStreamHandler()),
+        (channelName: Constants.onRestoreFailureChannel, streamHandler: OnRestoreFailureChannelStreamHandler()),
+        (channelName: Constants.onRestoreProgressChangedChannel, streamHandler: OnRestoreProgressChangedChannelStreamHandler()),
+        (channelName: Constants.onRestoreSuccessChannel, streamHandler: OnRestoreSuccessChannelStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
     

@@ -68,6 +68,13 @@ public class OnConnectionFailedStreamHandler: EventStreamHandler { }
 
 public class OnGetAvailableFeaturesStreamHandler: EventStreamHandler { }
 
+public class OnBackupSuccessChannelStreamHandler: EventStreamHandler { }
+public class OnBackupFailureChannelStreamHandler: EventStreamHandler { }
+public class OnBackupProgressChangedChannelStreamHandler: EventStreamHandler { }
+public class OnRestoreFailureChannelStreamHandler: EventStreamHandler { }
+public class OnRestoreProgressChangedChannelStreamHandler: EventStreamHandler { }
+public class OnRestoreSuccessChannelStreamHandler: EventStreamHandler { }
+
 /// Call Event Stream Handlers
 public class OnLocalVideoTrackAddedStreamHandler: EventStreamHandler { }
 public class OnRemoteVideoTrackAddedStreamHandler: EventStreamHandler { }
