@@ -377,6 +377,7 @@ class MessageParams {
   factory MessageParams.text({
     required String toJid,
     String? replyMessageId,
+    List<String>? mentionedUsersIds,
     required TextMessageParams textMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
@@ -384,6 +385,7 @@ class MessageParams {
     return MessageParams._(
       toJid: toJid,
       replyMessageId: replyMessageId,
+      mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.text,
       textMessageParams: textMessageParams,
       metaData: metaData,
@@ -395,6 +397,7 @@ class MessageParams {
   factory MessageParams.location({
     required String toJid,
     String? replyMessageId,
+    List<String>? mentionedUsersIds,
     required LocationMessageParams locationMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
@@ -402,6 +405,7 @@ class MessageParams {
     return MessageParams._(
       toJid: toJid,
       replyMessageId: replyMessageId,
+      mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.location,
       locationMessageParams: locationMessageParams,
       metaData: metaData,
@@ -413,6 +417,7 @@ class MessageParams {
   factory MessageParams.contact({
     required String toJid,
     String? replyMessageId,
+    List<String>? mentionedUsersIds,
     required ContactMessageParams contactMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
@@ -420,6 +425,7 @@ class MessageParams {
     return MessageParams._(
       toJid: toJid,
       replyMessageId: replyMessageId,
+      mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.contact,
       contactMessageParams: contactMessageParams,
       metaData: metaData,
@@ -431,6 +437,7 @@ class MessageParams {
   factory MessageParams.image({
     required String toJid,
     String? replyMessageId,
+    List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
@@ -438,6 +445,7 @@ class MessageParams {
     return MessageParams._(
       toJid: toJid,
       replyMessageId: replyMessageId,
+      mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.image,
       fileMessageParams: fileMessageParams,
       metaData: metaData,
@@ -449,6 +457,7 @@ class MessageParams {
   factory MessageParams.audio({
     required String toJid,
     String? replyMessageId,
+    List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
     List<MessageMetaData> metaData = const [],
     required bool isRecorded,
@@ -457,6 +466,7 @@ class MessageParams {
     return MessageParams._(
       toJid: toJid,
       replyMessageId: replyMessageId,
+      mentionedUsersIds: mentionedUsersIds,
       messageType: isRecorded ? MessageType.audioRecorded : MessageType.audio,
       fileMessageParams: fileMessageParams,
       metaData: metaData,
@@ -468,6 +478,7 @@ class MessageParams {
   factory MessageParams.video({
     required String toJid,
     String? replyMessageId,
+    List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
@@ -475,6 +486,7 @@ class MessageParams {
     return MessageParams._(
       toJid: toJid,
       replyMessageId: replyMessageId,
+      mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.video,
       fileMessageParams: fileMessageParams,
       metaData: metaData,
@@ -486,6 +498,7 @@ class MessageParams {
   factory MessageParams.document({
     required String toJid,
     String? replyMessageId,
+    List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
@@ -493,6 +506,7 @@ class MessageParams {
     return MessageParams._(
       toJid: toJid,
       replyMessageId: replyMessageId,
+      mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.document,
       fileMessageParams: fileMessageParams,
       metaData: metaData,
