@@ -549,7 +549,9 @@ extension ExtractMessageParams on MessageParams {
         'toJid': toJid,
         'replyMessageId': replyMessageId,
         'messageType': messageType.value,
-        'mentionedUsersIds': mentionedUsersIds != null ? List<String>.from(mentionedUsersIds!.map((x) => x)) : null,
+        'mentionedUsersIds': mentionedUsersIds != null
+            ? List<String>.from(mentionedUsersIds!.map((x) => x))
+            : null,
         'metaData': List<dynamic>.from(metaData.map((x) => x.toMap())),
         'textMessage': textMessageParams?.toMap(),
         'locationMessage': locationMessageParams?.toMap(),

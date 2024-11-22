@@ -5,6 +5,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:mirrorfly_plugin/internal_models/profile_detail_model.dart';
+
 import '../message_params.dart' show MessageMetaData;
 
 /// Converts a JSON string into a list of [ChatMessage] objects.
@@ -101,6 +103,7 @@ class ChatMessage {
     required this.messageTextContent,
     required this.messageType,
     this.metaData = const [],
+    this.mentionedUsersIds,
     required this.replyParentChatMessage,
     required this.senderNickName,
     required this.senderUserJid,
@@ -168,6 +171,9 @@ class ChatMessage {
   /// A list of metadata associated with the message. Nullable.
   List<MessageMetaData>? metaData;
 
+  /// A list of profile details associated with the mentionId.
+  List<ProfileDetails>? mentionedUsersIds;
+
   /// Information about the parent message if this is a reply. Nullable.
   ReplyParentChatMessage? replyParentChatMessage;
 
@@ -228,6 +234,10 @@ class ChatMessage {
           ? []
           : List<MessageMetaData>.from(
               json["metaData"].map((x) => MessageMetaData.fromJson(x))),
+      mentionedUsersIds: json["mentionedUsersIds"] == null
+          ? []
+          : List<ProfileDetails>.from(
+              json["mentionedUsersIds"].map((x) => ProfileDetails.fromJson(x))),
       replyParentChatMessage: json["replyParentChatMessage"] == null
           ? null
           : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -268,6 +278,9 @@ class ChatMessage {
         "metaData": metaData == null
             ? null
             : List<dynamic>.from(metaData!.map((x) => x.toJson())),
+        "mentionedUsersIds": mentionedUsersIds == null
+            ? null
+            : List<dynamic>.from(mentionedUsersIds!.map((x) => x.toJson())),
         "replyParentChatMessage":
             replyParentChatMessage ?? replyParentChatMessage?.toJson(),
         "senderNickName": senderNickName,
