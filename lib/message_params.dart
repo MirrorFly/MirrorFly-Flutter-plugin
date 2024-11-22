@@ -338,7 +338,8 @@ class MessageParams {
   /// The type of message, defined by the [MessageType] enum.
   MessageType messageType;
 
-  // List<String>? mentionedUsersIds;
+  /// A list of [userJid] for mentioning the message
+  List<String>? mentionedUsersIds;
 
   /// A list of [MessageMetaData] objects providing additional information about the message.
   List<MessageMetaData> metaData;
@@ -363,7 +364,7 @@ class MessageParams {
     required this.toJid,
     this.replyMessageId,
     required this.messageType,
-    // this.mentionedUsersIds,
+    this.mentionedUsersIds,
     this.metaData = const [],
     this.textMessageParams,
     this.locationMessageParams,
@@ -534,8 +535,7 @@ extension ExtractMessageParams on MessageParams {
         'toJid': toJid,
         'replyMessageId': replyMessageId,
         'messageType': messageType.value,
-        'mentionedUsersIds': null,
-        //List<String>.from(mentionedUsersIds.map((x) => x)),
+        'mentionedUsersIds': mentionedUsersIds != null ? List<String>.from(mentionedUsersIds!.map((x) => x)) : null,
         'metaData': List<dynamic>.from(metaData.map((x) => x.toMap())),
         'textMessage': textMessageParams?.toMap(),
         'locationMessage': locationMessageParams?.toMap(),
