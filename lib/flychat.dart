@@ -127,9 +127,9 @@ class Mirrorfly {
   @Deprecated('Instead of use Mirrorfly.login()')
   static Future<void> registerUser(
       {required String userIdentifier,
-        String fcmToken = "",
-        bool isForceRegister = true,
-        required Function(FlyResponse response) flyCallback}) {
+      String fcmToken = "",
+      bool isForceRegister = true,
+      required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
         fcmToken: fcmToken,
         isForceRegister: isForceRegister,
@@ -168,11 +168,11 @@ class Mirrorfly {
   /// Note: This method is a static member of the [Mirrorfly] class.
   static Future<void> login(
       {required String userIdentifier,
-        String fcmToken = "",
-        String userType = "d",
-        bool isForceRegister = true,
-        List<IdentifierMetaData>? identifierMetaData,
-        required Function(FlyResponse response) flyCallback}) {
+      String fcmToken = "",
+      String userType = "d",
+      bool isForceRegister = true,
+      List<IdentifierMetaData>? identifierMetaData,
+      required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
         fcmToken: fcmToken,
         userType: userType,
