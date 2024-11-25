@@ -1,3 +1,8 @@
+## [1.0.9+1] Hot Fix
+* Android SDK Updated to 7.13.10
+* thread block in load message issue fix
+* Manual logout no longer triggers the onLoggedOut listener.
+
 ## [1.0.9] Bug Fix
 * Android SDK Updated to 7.13.9
 * upload/download file progress issue fix
