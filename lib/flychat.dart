@@ -5272,4 +5272,18 @@ class Mirrorfly {
     }
     return true;
   }
+
+  /// Checks if the device is locked.
+  ///
+  /// This method interacts with the platform-specific `FlyChatFlutterPlatform`
+  /// instance to determine whether the lock screen feature is active.
+  ///
+  /// Returns:
+  ///   A [Future] that completes with a [bool] value:
+  ///   - `true` if the screen is locked,
+  ///   - `false` otherwise.
+  ///
+  static Future<bool> isLockScreen() {
+    return FlyChatFlutterPlatform.instance.isLockScreen();
+  }
 }

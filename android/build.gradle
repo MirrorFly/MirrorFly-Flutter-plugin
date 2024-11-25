@@ -1,26 +1,19 @@
-group 'com.mirrorfly.mirrorfly_plugin'
-version '1.0-SNAPSHOT'
+group = 'com.mirrorfly.mirrorfly_plugin'
+version = '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.8.22'
     repositories {
         google()
         jcenter()
         mavenCentral()
-        //mavenLocal()
-//        maven {
-//            url "https://repo.mirrorfly.com/internal"
-//        }
-//        maven {
-//            url "https://repo.mirrorfly.com/snapshot"
-//        }
         maven {
             url "https://repo.mirrorfly.com/release"
         }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -30,13 +23,6 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
-//        mavenLocal()
-//        maven {
-//            url "https://repo.mirrorfly.com/internal"
-//        }
-//        maven {
-//            url "https://repo.mirrorfly.com/snapshot"
-//        }
         maven {
             url "https://repo.mirrorfly.com/release"
         }
@@ -47,7 +33,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdk 34
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.mirrorfly.mirrorfly_plugin'
+    }
+
+    compileSdk = 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -55,7 +45,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = JavaVersion.VERSION_1_8
     }
 
     sourceSets {
@@ -92,7 +82,7 @@ android {
 }
 dependencies {
 //    api project(':SubmoduleSDK:MirrorFlySDK')
-    api 'com.mirrorfly.sdk:mirrorflysdk:7.13.6'
+    api 'com.mirrorfly.sdk:mirrorflysdk:7.13.9'
     api 'com.github.bumptech.glide:glide:4.15.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     api 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
