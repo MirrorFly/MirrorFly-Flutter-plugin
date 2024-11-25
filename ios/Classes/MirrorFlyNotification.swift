@@ -120,7 +120,7 @@ import MirrorFlySDK
                     }
                 }
                 if let message = ChatManager.getMessageOfId(messageId: messageId), !message.mentionedUsersIds.isEmpty {
-                    self.bestAttemptContent?.body = convertMentionUser(message: message.messageTextContent, mentionedUsersIds: message.mentionedUsersIds)
+                    self.bestAttemptContent?.body = NotificationUtils.convertMentionUser(message: message.messageTextContent, mentionedUsersIds: message.mentionedUsersIds)
                 }
                 contentHandler(self.bestAttemptContent!)
 //                FlyDefaults.lastNotificationId = request.identifier
@@ -129,20 +129,7 @@ import MirrorFlySDK
         }
     }
     
-    func convertMentionUser(message: String, mentionedUsersIds: [String]) -> String {
-        var replyMessage = message
-
-        for user in mentionedUsersIds {
-            guard let JID = try? FlyUtils.getJid(from: user) else { return message }
-            let myJID = try? FlyUtils.getMyJid()
-            if let profileDetail = ContactManager.shared.getUserProfileDetails(for: JID) {
-                let userName = "@\(FlyUtils.getGroupUserName(profile: profileDetail))"
-                let mentionRange = (replyMessage as NSString).range(of: "@[?]")
-                replyMessage = replyMessage.replacing(userName, range: mentionRange)
-            }
-        }
-        return replyMessage
-    }
+   
     
     @objc public func handleReceivedMessage(notificationRequest : UNNotificationRequest, containerID: String, licenseKey: String,completion : @escaping (UNMutableNotificationContent?, MirrorFlySDK.ChatMessage?) -> Void) {
         let bestAttemptContent = (notificationRequest.content.mutableCopy() as? UNMutableNotificationContent)
@@ -174,46 +161,12 @@ import MirrorFlySDK
         } else {
             NSLog("#Mirrorfly Handle Push")
             ChatSDK.Builder.initializeDelegate()
-            NotificationMessageSupport.shared.didReceiveNotificationRequest(notificationRequest.content.mutableCopy() as? UNMutableNotificationContent, appName: APP_NAME, onCompletion: { [self] bestAttemptContents, chatMessage in
-                completion(bestAttemptContent,chatMessage)
+            NotificationMessageSupport.shared.didReceiveNotificationRequest(notificationRequest.content.mutableCopy() as? UNMutableNotificationContent, appName: APP_NAME, onCompletion: { bestAttemptContents, chatMessage in
+                completion(bestAttemptContents,chatMessage)
             })
         }
     }
     
-    public func getUnreadMessageAndChatCountForUnmutedUsers() -> (Int, Int){
-        return ChatManager.getUnreadMessageAndChatCountForUnmutedUsers()
-    }
-    
-    public func isUserMuted( jid: String)->Bool{
-        let isMuted = ContactManager.shared.getUserProfileDetails(for:jid)?.isMuted ?? false
-        return isMuted
-    }
-    
-    public func isArchivedSettingsEnabled()-> Bool{
-        return ChatManager.isArchivedSettingsEnabled()
-    }
-    
-    public func isChatArchived(jid:String)-> Bool{
-        return ChatManager.getRechtChat(jid: jid)?.isChatArchived ?? false
-    }
-    
-    public func isValidGroupJid(jid:String)-> Bool{
-        return FlyUtils.isValidGroupJid(groupJid: jid)
-    }
-    
-    public func getMessageofId(messageId: String ) -> MirrorFlySDK.ChatMessage? {
-        let message = ChatManager.getMessageOfId(messageId: messageId)
-        return message
-    }
-    
-    public func getMyJid() throws -> String{
-        return try FlyUtils.getMyJid()
-    }
-    
-    public func getUserProfileDetails(jid:String)-> MirrorFlySDK.ProfileDetails?{
-        let profileDetail = ContactManager.shared.getUserProfileDetails(for: jid)
-        return profileDetail
-    }
 }
 
 extension String {
@@ -245,3 +198,54 @@ extension String {
     }
 }
 
+public class NotificationUtils {
+    public static func getUnreadMessageAndChatCountForUnmutedUsers() -> (Int, Int){
+        return ChatManager.getUnreadMessageAndChatCountForUnmutedUsers()
+    }
+    
+    public static func isUserMuted( jid: String)->Bool{
+        let isMuted = ContactManager.shared.getUserProfileDetails(for:jid)?.isMuted ?? false
+        return isMuted
+    }
+    
+    public static func isArchivedSettingsEnabled()-> Bool{
+        return ChatManager.isArchivedSettingsEnabled()
+    }
+    
+    public static func isChatArchived(jid:String)-> Bool{
+        return ChatManager.getRechtChat(jid: jid)?.isChatArchived ?? false
+    }
+    
+    public static func isValidGroupJid(groupJid:String)-> Bool{
+        return FlyUtils.isValidGroupJid(groupJid: groupJid)
+    }
+    
+    public static func getMessageofId(messageId: String ) -> MirrorFlySDK.ChatMessage? {
+        let message = ChatManager.getMessageOfId(messageId: messageId)
+        return message
+    }
+    
+    public static func getMyJid() throws -> String{
+        return try FlyUtils.getMyJid()
+    }
+    
+    public static func getUserProfileDetails(jid:String)-> MirrorFlySDK.ProfileDetails?{
+        let profileDetail = ContactManager.shared.getUserProfileDetails(for: jid)
+        return profileDetail
+    }
+    
+    public static func convertMentionUser(message: String, mentionedUsersIds: [String]) -> String {
+        var replyMessage = message
+
+        for user in mentionedUsersIds {
+            guard let JID = try? FlyUtils.getJid(from: user) else { return message }
+//            let myJID = try? FlyUtils.getMyJid()
+            if let profileDetail = ContactManager.shared.getUserProfileDetails(for: JID) {
+                let userName = "@\(FlyUtils.getGroupUserName(profile: profileDetail))"
+                let mentionRange = (replyMessage as NSString).range(of: "@[?]")
+                replyMessage = replyMessage.replacing(userName, range: mentionRange)
+            }
+        }
+        return replyMessage
+    }
+}
