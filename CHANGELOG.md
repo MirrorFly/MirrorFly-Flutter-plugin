@@ -1,4 +1,4 @@
-## [1.0.9+1] Bug Fix
+## [1.0.9+1] Hot Fix
 * Android SDK Updated to 7.13.10
 * thread block in load message issue fix
 * Manual logout no longer triggers the onLoggedOut listener.
