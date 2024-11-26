@@ -46,7 +46,7 @@ MirrorFly offers full freedom with the hosting options:
 
 MirrorFly offers a fully-built client SafeTalk that is available in:
 
-<a href="https://play.google.com/store/apps/details?id=com.mirrorfly&hl=en"><img src="./GetItOnGooglePlay_Badge_Web_color_English.png" alt="image" width="140" height="auto"></a> &nbsp; [![appstore](./Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://apps.apple.com/app/safetalk/id1442769177)
+<a href="https://play.google.com/store/apps/details?id=com.mirrorfly&hl=en"><img src="https://raw.githubusercontent.com/MirrorFly/MirrorFly-Flutter-Sample/master/GetItOnGooglePlay_Badge_Web_color_English.png" alt="playstore" width="140" height="auto"></a> &nbsp; [![appstore](https://raw.githubusercontent.com/MirrorFly/MirrorFly-Flutter-Sample/master/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://apps.apple.com/app/safetalk/id1442769177)
 
 You can use this client as a messaging app, or customize, rebrand & white-label it as your chat client.
 
@@ -156,7 +156,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^1.0.8
+  mirrorfly_plugin: ^1.0.9+1
 ```
 
 - Run `flutter pub get` command in your project directory. You can access all classes and methods with the following import statement:
