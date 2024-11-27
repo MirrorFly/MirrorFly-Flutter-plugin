@@ -171,8 +171,8 @@ class ChatMessage {
   /// A list of metadata associated with the message. Nullable.
   List<MessageMetaData>? metaData;
 
-  /// A list of profile details associated with the mentionId.
-  List<ProfileDetails>? mentionedUsersIds;
+  /// A list of userid associated with the mentioned Users.
+  List<String>? mentionedUsersIds;
 
   /// Information about the parent message if this is a reply. Nullable.
   ReplyParentChatMessage? replyParentChatMessage;
@@ -236,8 +236,8 @@ class ChatMessage {
               json["metaData"].map((x) => MessageMetaData.fromJson(x))),
       mentionedUsersIds: json["mentionedUsersIds"] == null
           ? []
-          : List<ProfileDetails>.from(
-              json["mentionedUsersIds"].map((x) => ProfileDetails.fromJson(x))),
+          : List<String>.from(
+              json["mentionedUsersIds"].map((x) => ProfileDetails.fromJson(x).jid?.split("@")[0])),
       replyParentChatMessage: json["replyParentChatMessage"] == null
           ? null
           : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -280,7 +280,7 @@ class ChatMessage {
             : List<dynamic>.from(metaData!.map((x) => x.toJson())),
         "mentionedUsersIds": mentionedUsersIds == null
             ? null
-            : List<dynamic>.from(mentionedUsersIds!.map((x) => x.toJson())),
+            : List<String>.from(mentionedUsersIds!.map((x) => x)),
         "replyParentChatMessage":
             replyParentChatMessage ?? replyParentChatMessage?.toJson(),
         "senderNickName": senderNickName,
