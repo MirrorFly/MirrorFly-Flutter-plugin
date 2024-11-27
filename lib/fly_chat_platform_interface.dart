@@ -1439,6 +1439,33 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
         'getRecentChatListHistoryByTopic has not been implemented.');
   }
 
+
+  /// Stream that emits events when a backup is completed successfully.
+  Stream<dynamic> get onBackupSuccess =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a backup is failed.
+  Stream<dynamic> get onBackupFailure =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a restore is failed.
+  Stream<dynamic> get onRestoreFailure =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a restore is completed successfully.
+  Stream<dynamic> get onRestoreSuccess =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a backup is progress changes.
+  Stream<dynamic> get onBackupProgressChanged =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a backup is progress changes.
+  Stream<dynamic> get onRestoreProgressChanged =>
+      throw UnimplementedError('has not been implemented.');
+
+
+
   /// This method is used to make the video call.
   Future<void> makeVideoCall(
       String userJid, Function(FlyResponse response)? callback) async {
