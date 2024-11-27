@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:mirrorfly_plugin/model/user_list_model.dart';
 
 import '../message_params.dart' show MessageMetaData;
 
