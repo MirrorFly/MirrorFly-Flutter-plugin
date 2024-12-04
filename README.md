@@ -1,4 +1,4 @@
-# [Mirrofly](https://www.mirrorfly.com) Plugin for Flutter
+# [MirroFly](https://www.mirrorfly.com/flutter-chat-sdk.php) Chat and Video Call SDK for Flutter
 
 [![Platform](https://img.shields.io/badge/platform-flutter-blue)](https://flutter.dev/)
 [![Language](https://img.shields.io/badge/language-dart-blue)](https://dart.dev/)
