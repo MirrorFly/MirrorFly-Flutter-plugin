@@ -3147,8 +3147,14 @@ class FlyChatMethods {
 
     fun getGroupMembersList(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
-        val fromServer = call.argument<Boolean>("server")
+        var fromServer = call.argument<Boolean>("server")
             ?: GroupManager.doesFetchingMembersListFromServedRequired(jid)
+        val fetFromServerRequired = GroupManager.doesFetchingMembersListFromServedRequired(jid)
+        if (!fromServer && fetFromServerRequired){
+            fromServer = true
+        }
+        LogMessage.d("#getGroupMembersList ", fromServer.toString())
+        LogMessage.d("#fetFromServerRequired ", fetFromServerRequired.toString())
         GroupManager.getGroupMembersList(fromServer, jid) { isSuccess, throwable, data ->
             if (isSuccess) {
                 //LogMessage.d("RESPONSE_CAPTURE", "===========================")
@@ -3779,26 +3785,33 @@ class FlyChatMethods {
     }
 
     fun startBackup(call: MethodCall, result: MethodChannel.Result){
+
         BackupManager.startBackup(object : BackupListener {
             override fun onFailure(reason: String) {
-                FlyMethodConstants.updateChatSinkValue(
+                MirrorFlyManager.getActivity()?.runOnUiThread {
+                    FlyMethodConstants.updateChatSinkValue(
                         Constants.onBackupFailureChannel,
                         reason
-                )
+                    )
+                }
             }
 
             override fun onProgressChanged(percentage: Int) {
-                FlyMethodConstants.updateChatSinkValue(
+                MirrorFlyManager.getActivity()?.runOnUiThread {
+                    FlyMethodConstants.updateChatSinkValue(
                         Constants.onBackupProgressChangedChannel,
                         percentage
-                )
+                    )
+                }
             }
 
             override fun onSuccess(backUpFilePath: String) {
-                FlyMethodConstants.updateChatSinkValue(
+                MirrorFlyManager.getActivity()?.runOnUiThread {
+                    FlyMethodConstants.updateChatSinkValue(
                         Constants.onBackupSuccessChannel,
                         backUpFilePath
-                )
+                    )
+                }
             }
         })
     }
@@ -3809,26 +3822,32 @@ class FlyChatMethods {
             RestoreManager.restoreData(file, object : RestoreListener {
                 override fun onFailure(reason: String) {
 //                                onFailureStreamHandler.onFailure?.success(reason)
-                    FlyMethodConstants.updateChatSinkValue(
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                        FlyMethodConstants.updateChatSinkValue(
                             Constants.onRestoreFailureChannel,
                             reason
-                    )
+                        )
+                    }
                 }
 
                 override fun onProgressChanged(percentage: Int) {
 //                                onProgressChangedStreamHandler.onProgressChanged?.success(percentage)
-                    FlyMethodConstants.updateChatSinkValue(
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                        FlyMethodConstants.updateChatSinkValue(
                             Constants.onRestoreProgressChangedChannel,
                             percentage
-                    )
+                        )
+                    }
                 }
 
                 override fun onSuccess() {
 //                                onSuccessStreamHandler.onSuccess?.success("")
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
                     FlyMethodConstants.updateChatSinkValue(
                             Constants.onRestoreSuccessChannel,
                             true
                     )
+                        }
                 }
             })
         }

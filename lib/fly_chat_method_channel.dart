@@ -474,7 +474,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   const EventChannel('contus.mirrorfly/onBackupProgressChanged');
 
   /// A broadcast stream controller for message backup events.
-  final StreamController<String> onBackupProgressStreamController = StreamController<String>.broadcast();
+  final StreamController<int> onBackupProgressStreamController = StreamController<int>.broadcast();
 
   /// A event channel for backup success listening events.
   @visibleForTesting
@@ -498,7 +498,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   const EventChannel('contus.mirrorfly/onRestoreSuccess');
 
   /// A broadcast stream controller for message backup events.
-  final StreamController<String> onRestoreSuccessStreamController = StreamController<String>.broadcast();
+  final StreamController<bool> onRestoreSuccessStreamController = StreamController<bool>.broadcast();
 
   /// A event channel for restore progress listening events.
   @visibleForTesting
@@ -506,7 +506,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   const EventChannel('contus.mirrorfly/onRestoreProgressChanged');
 
   /// A broadcast stream controller for message backup events.
-  final StreamController<String> onRestoreProgressStreamController = StreamController<String>.broadcast();
+  final StreamController<int> onRestoreProgressStreamController = StreamController<int>.broadcast();
 
   // @visibleForTesting
   // final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');

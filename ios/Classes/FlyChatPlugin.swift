@@ -165,47 +165,49 @@ extension FlyChatPlugin : BackupEventDelegate, RestoreEventDelegate {
     
     public func backupProgressDidReceive(completedCount: String, completedSize: String) {
         
-        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(completedCount, forKey: "completedCount")
-        jsonObject.setValue(completedSize, forKey: "completedSize")
-        
-        let jsonString = pluginDictToJson(dictionary: jsonObject)
-        
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupProgressChangedChannel, value: jsonString)
+        print("backupProgressDidReceive completedCount : \(completedCount) === completedSize: \(completedSize)")
+//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//        jsonObject.setValue(completedCount, forKey: "completedCount")
+//        jsonObject.setValue(completedSize, forKey: "completedSize")
+//        
+//        let jsonString = pluginDictToJson(dictionary: jsonObject)
+//        
+//        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupProgressChangedChannel, value: jsonString)
     }
     
     public func backupDidFinish(fileUrl: String) {
         
-        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(fileUrl, forKey: "fileUrl")
-        let jsonString = pluginDictToJson(dictionary: jsonObject)
-        
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupSuccessChannel, value: jsonString)
+        print("backupDidFinish FileUrl: \(fileUrl)")
+//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//        jsonObject.setValue(fileUrl, forKey: "fileUrl")
+//        let jsonString = pluginDictToJson(dictionary: jsonObject)
+//        
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupSuccessChannel, value: fileUrl)
     }
     
     public func backupDidFailed(errorMessage: String) {
         
-        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(errorMessage, forKey: "errorMessage")
-        let jsonString = pluginDictToJson(dictionary: jsonObject)
+//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//        jsonObject.setValue(errorMessage, forKey: "errorMessage")
+//        let jsonString = pluginDictToJson(dictionary: jsonObject)
         
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupFailureChannel, value: jsonString)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupFailureChannel, value: errorMessage)
     }
     
     public func restoreProgressDidReceive(completedCount: Double, completedPercentage: String, completedSize: String) {
-        
-        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(completedCount, forKey: "completedCount")
-        jsonObject.setValue(completedSize, forKey: "completedSize")
-        jsonObject.setValue(completedPercentage, forKey: "completedPercentage")
-        
-        let jsonString = pluginDictToJson(dictionary: jsonObject)
-        
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onRestoreProgressChangedChannel, value: jsonString)
+        print("restoreProgressDidReceive completedCount : \(completedCount) === completedPercentage: \(completedPercentage) === completedSize: \(completedSize)")
+//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//        jsonObject.setValue(completedCount, forKey: "completedCount")
+//        jsonObject.setValue(completedSize, forKey: "completedSize")
+//        jsonObject.setValue(completedPercentage, forKey: "completedPercentage")
+//        
+//        let jsonString = pluginDictToJson(dictionary: jsonObject)
+//        
+//        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onRestoreProgressChangedChannel, value: jsonString)
     }
     
     public func restoreDidFinish() {
-        
+        print("restoreDidFinish")
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onRestoreSuccessChannel, value: true)
     }
     
