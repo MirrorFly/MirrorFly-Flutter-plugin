@@ -18,6 +18,7 @@ class MessageObject {
     this.base64Thumbnail,
     this.audioDuration,
     this.isAudioRecorded,
+    this.mentionedUsersIds
   });
 
   /// The JID (Jabber ID) of the recipient.
@@ -61,4 +62,7 @@ class MessageObject {
 
   /// Indicates if the audio is recorded.
   bool? isAudioRecorded;
+
+  /// Indicates mentionedUsersIds of the message
+  List<String>? mentionedUsersIds;
 }
