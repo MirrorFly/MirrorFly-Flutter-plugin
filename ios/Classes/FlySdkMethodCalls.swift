@@ -2226,8 +2226,8 @@ let ISEXPORT = true
                 for item in chatDataModel.mediaAttachmentsUrl {
 
                     let file = URL(fileURLWithPath: item.path)
-                    let absolutePath = self.convertToAbsolutePath(file.path)
-                    mediaAttachmentUri.add(absolutePath)
+//                    let absolutePath = self.convertToAbsolutePath(file.path)
+                    mediaAttachmentUri.add(file.path)
 
                 }
             }
