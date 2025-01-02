@@ -492,6 +492,9 @@ class ReplyParentChatMessage {
   /// The media message.
   MediaChatMessage? mediaChatMessage;
 
+  /// A list of userid associated with the mentioned Users.
+  List<String>? mentionedUsersIds;
+
   /// Constructs a [ReplyParentChatMessage] instance.
   ReplyParentChatMessage({
     required this.chatUserJid,
@@ -508,6 +511,7 @@ class ReplyParentChatMessage {
     required this.locationChatMessage,
     required this.contactChatMessage,
     required this.mediaChatMessage,
+    required this.mentionedUsersIds
   });
 
   /// Converts a JSON object into a [ReplyParentChatMessage] instance.
@@ -529,6 +533,7 @@ class ReplyParentChatMessage {
         mediaChatMessage: json["mediaChatMessage"] == null
             ? null
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+        mentionedUsersIds: json["mentionedUsersIds"] == null ? []  : List<String>.from(json["mentionedUsersIds"].map((x) => x)),
       );
 
   /// Converts a [ReplyParentChatMessage] instance into a JSON object.
@@ -547,6 +552,9 @@ class ReplyParentChatMessage {
         "locationChatMessage": locationChatMessage?.toJson(),
         "contactChatMessage": contactChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage?.toJson(),
+    "mentionedUsersIds": mentionedUsersIds == null
+        ? null
+        : List<String>.from(mentionedUsersIds!.map((x) => x)),
       };
 }
 

@@ -547,6 +547,7 @@ class ReplyParentChatMessage {
     required this.locationChatMessage,
     required this.contactChatMessage,
     required this.mediaChatMessage,
+    required this.mentionedUsersIds
   });
 
   /// The JID of the user involved in the chat.
@@ -591,6 +592,9 @@ class ReplyParentChatMessage {
   /// Details of the media shared in the message. Nullable.
   MediaChatMessage? mediaChatMessage;
 
+  /// A list of userid associated with the mentioned Users.
+  List<String>? mentionedUsersIds;
+
   /// Creates a [ReplyParentChatMessage] instance from a JSON map.
   factory ReplyParentChatMessage.fromJson(Map<String, dynamic> json) =>
       ReplyParentChatMessage(
@@ -614,6 +618,10 @@ class ReplyParentChatMessage {
         mediaChatMessage: json["mediaChatMessage"] == null
             ? null
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+        mentionedUsersIds: json["mentionedUsersIds"] == null
+            ? []
+            : List<String>.from(
+            json["mentionedUsersIds"].map((x) => ProfileDetails.fromJson(x).jid?.split("@")[0])),
       );
 
   /// Converts a [ReplyParentChatMessage] instance to a JSON map.
@@ -634,6 +642,9 @@ class ReplyParentChatMessage {
         "contactChatMessage":
             contactChatMessage ?? contactChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage ?? mediaChatMessage?.toJson(),
+    "mentionedUsersIds": mentionedUsersIds == null
+        ? null
+        : List<String>.from(mentionedUsersIds!.map((x) => x)),
       };
 }
 
