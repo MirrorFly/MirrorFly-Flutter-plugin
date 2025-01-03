@@ -173,6 +173,7 @@ class FlyMethodConstants {
                 "iOSFileExist": flyChatMethods.iOSFileExist,
                 "get_favourite_messages": flyChatMethods.getFavouriteMessages,
                 "getUnsentMessageOfAJid": flyChatMethods.getUnsentMessageOfAJid,
+                "getUnsentMessageOf": flyChatMethods.getUnsentMessageOf,
                 "saveUnsentMessage": flyChatMethods.saveUnsentMessage,
                 "deleteRecentChats": flyChatMethods.deleteRecentChats,
                 "getDefaultNotificationUri": flyChatMethods.getDefaultNotificationUri,

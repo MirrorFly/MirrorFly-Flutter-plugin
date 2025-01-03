@@ -406,6 +406,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  /// This method is used to get the Unsent message of a JID.
+  Future<String?> getUnsentMessageOf(String jid) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   /*Future<String?> getUsersListToAddMembersInOldGroup(String groupJid) {
     throw UnimplementedError('has not been implemented.');
   }*/
@@ -1296,7 +1301,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// This method is used to save the unsent message.
-  saveUnsentMessage(String jid, String message) {
+  saveUnsentMessage(String jid, String message, List<String>? mentionedUsers) {
     throw UnimplementedError('has not been implemented.');
   }
 

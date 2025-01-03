@@ -472,10 +472,17 @@ class FlyChatMethods {
         result.success(data)
     }
 
+    fun getUnsentMessageOf(call: MethodCall, result: MethodChannel.Result) {
+        val jid = call.argument<String>("jid") ?: ""
+        val data = FlyMessenger.getUnsentMessageOf(jid)
+        result.success(data.toJsonString())
+    }
+
     fun saveUnsentMessage(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
         val texMessage = call.argument<String>("texMessage") ?: ""
-        FlyMessenger.saveUnsentMessage(jid, texMessage)
+        val mentionedUsers = call.argument<List<String>>("mentionedUsers") ?: arrayListOf()
+        FlyMessenger.saveUnsentMessage(jid, texMessage, mentionedUsers = mentionedUsers)
     }
 
     fun setMediaAutoDownload(call: MethodCall, result: MethodChannel.Result) {
@@ -1973,19 +1980,8 @@ class FlyChatMethods {
         messageListQuery!!.loadMessages { isSuccess, throwable, data ->
             if (isSuccess) {
                 val messageList = data["data"] as ArrayList<ChatMessage>
-                var messages = arrayListOf<ChatMessage>()
-                if (messageList.size == 1) {
-                    if (messageList[0].messageType == MessageType.NOTIFICATION) {
-                        result.success(messages.toJsonString())
-                    } else {
-                        messages = messageList
-                        result.success(messages.toJsonString())
-                    }
-                } else {
-                    messages = messageList
-                    result.success(messages.toJsonString())
-                }
-                LogMessage.d("loadMessages", "$isSuccess : ${messages.toJsonString()}")
+                result.success(messageList.toJsonString())
+                LogMessage.d("loadMessages", "$isSuccess : ${messageList.toJsonString()}")
             } else {
                 LogMessage.d("loadMessages", "$isSuccess : $throwable")
                 // Fetch messages failed print throwable to find the exception details.

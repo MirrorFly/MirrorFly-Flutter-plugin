@@ -1322,7 +1322,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  saveUnsentMessage(String jid, String message) {
+  saveUnsentMessage(String jid, String message,List<String>? mentionedUsers) {
     //  implement saveUnsentMessage
     throw UnimplementedError();
   }
@@ -1846,6 +1846,12 @@ class MockFlyChatFlutterPlatform
   @override
   Future<bool> isLockScreen() {
     // implement isLockScreen
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> getUnsentMessageOf(String jid) {
+    // TODO: implement getUnsentMessageOf
     throw UnimplementedError();
   }
 }

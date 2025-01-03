@@ -309,32 +309,26 @@ import PushKit
         let userJID = userId
         let selfJID = AppUtils.shared.getMyJid()
 
+        NSLog("#MirrorflyCall Call Status Updated new--> \(CallManager.getCallMode()) type->  \(CallManager.getCallType()))")
         if AudioManager.shared().audioManagerDelegate == nil  && callStatus != .DISCONNECTED{
             NSLog("\(Constants.callTag) AudioManager Delegate is Nil, setting new Delegate @ onCallStatusUpdated")
             AudioManager.shared().audioManagerDelegate = self
         }
         
         /// Call Status Duplicate Handle Code Start
-//        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING){
-            usersInCall.removeAll()
+        ///
+        /// re-enabling this as the user is removed at the other scenarios like call timeout and the fetching the list again gives without the user left the call so status is not passing to flutter
+        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING || callStatus == .RECONNECTED || callStatus == .CALLING){
+        
+    
+           usersInCall.removeAll()
             usersInCall = CallManager.getCallUsersWithStatus()
             if !isUserExists(userId: selfJID){
                 usersInCall[selfJID] = .CONNECTED
             }
             print("\(Constants.callTag) Events: usersInCall: \(usersInCall)")
-//        }
         
-        
-        if(userJID != "" && (callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT)){
-            NSLog("\(Constants.callTag) clearing Mirrorfly Views")
-            self.factory?.clearMirrorflyView(userJID: userJID)
-        }else{
-            NSLog("\(Constants.callTag) unable to clear Mirrorfly Views \(userJID) callstatus \(callStatus.rawValue)")
-        }
-        
-        if (callStatus == .ATTENDED && userId != selfJID){
-            NSLog("\(Constants.callTag) Events: Attended Received for remote user so ignoring it")
-            return
+       
         }
         
         if usersInCall.count <= 1 {
@@ -342,12 +336,13 @@ import PushKit
             return
         }
         
-       
-        
-        if (callStatus == .DISCONNECTED && !isUserExists(userId: userJID)){
-            NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
-            return
+        if(userJID != "" && (callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT || callStatus == .USER_LEFT)){
+            NSLog("\(Constants.callTag) clearing Mirrorfly Views")
+            self.factory?.clearMirrorflyView(userJID: userJID)
+        }else{
+            NSLog("\(Constants.callTag) unable to clear Mirrorfly Views \(userJID) callstatus \(callStatus.rawValue)")
         }
+        
         
         if ((callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && isUserExists(userId: userJID)) {
             NSLog("\(Constants.callTag) Events: User exists so forwarding the status")
@@ -367,6 +362,19 @@ import PushKit
             NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
             return
         }
+        
+        if (callStatus == .ATTENDED && userId != selfJID){
+            NSLog("\(Constants.callTag) Events: Attended Received for remote user so ignoring it")
+            return
+        }
+        
+       
+        
+        if (callStatus == .DISCONNECTED && !isUserExists(userId: userJID)){
+            NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
+            return
+        }
+        
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         if (callStatus.rawValue == "CALL TIME OUTt"){
             jsonObject.setValue("CALL TIME OUT", forKey: "callStatus")
@@ -377,6 +385,8 @@ import PushKit
         
         if CallManager.isOneToOneCall()  {
             jsonObject.setValue("onetoone", forKey: "callMode")
+        }else if (CallManager.getCallMode() == .MEET){
+            jsonObject.setValue("meet", forKey: "callMode")
         }else{
             jsonObject.setValue("onetomany", forKey: "callMode")
         }
@@ -633,7 +643,7 @@ import PushKit
         
     }
     
-    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String], metaData: [MirrorFlySDK.CallMetadata]) {
+    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String], metaData: [MirrorFlySDK.CallMetadata], permissionDenied: Bool) {
         NSLog("\(Constants.callTag) Events: onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(String(describing: groupId)) callType: \(callType) userList: \(userList)")
         NSLog("\(Constants.callTag) Events: FlyConstants.isLoaclNotificationEnabled \(FlyConstants.isLoaclNotificationEnabled)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()

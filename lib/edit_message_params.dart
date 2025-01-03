@@ -3,7 +3,7 @@ class EditMessageParams {
   /// Constructs an instance of [EditMessageParams].
   EditMessageParams({
     required this.messageId,
-    required this.editedTextContent, //this.mentionedUsersIds
+    required this.editedTextContent, this.mentionedUsersIds
   });
 
   /// The unique identifier of the message to be edited.

@@ -1286,11 +1286,24 @@ let ISEXPORT = true
         
     }
     
+    func getUnsentMessageOf(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userjid = args["jid"] as? String ?? ""
+        
+        let savedMessage = FlyMessenger.getUnsentMessageOf(id: userjid)
+        let getUnsentMessageJSON = "{\"textContent\" : \"\(savedMessage.textContent)\",\"mentionedUsers\": " + (savedMessage.mentionedUsers.toJson() ?? "[]") + "}"
+        print("savedMessage toJson : \(savedMessage.toJson())")
+        print("savedMessage : \(getUnsentMessageJSON)")
+        result(getUnsentMessageJSON)
+        
+    }
+    
     func saveUnsentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userjid = args["jid"] as? String ?? ""
         let texMessage = args["texMessage"] as? String ?? ""
-        FlyMessenger.saveUnsentMessage(id: userjid, message: texMessage)
+        let mentionedUsers = args["mentionedUsers"] as? [String] ?? []
+        FlyMessenger.saveUnsentMessage(id: userjid, message: texMessage,mentionedUsers: mentionedUsers)
     }
     
     func getRingtoneName(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -2226,8 +2239,8 @@ let ISEXPORT = true
                 for item in chatDataModel.mediaAttachmentsUrl {
 
                     let file = URL(fileURLWithPath: item.path)
-                    let absolutePath = self.convertToAbsolutePath(file.path)
-                    mediaAttachmentUri.add(absolutePath)
+//                    let absolutePath = self.convertToAbsolutePath(file.path)
+                    mediaAttachmentUri.add(file.path)
 
                 }
             }

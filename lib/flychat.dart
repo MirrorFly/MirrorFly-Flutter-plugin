@@ -1061,6 +1061,20 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getUnsentMessageOfAJid(jid);
   }
 
+  /// Retrieves the Typed unsent message of a given JID.
+  ///
+  /// This static method asynchronously fetches the unsent message for a
+  /// specific JID from the Mirrorfly chat.
+  ///
+  /// [jid] is for which to retrieve the unsent message.
+  ///
+  /// Returns a Future that completes with the unsent message as a Map String, with mentionedUsers
+  /// {"mentionedUsers":[],"textContent":""}
+  /// or null if no unsent message is found.
+  static Future<String?> getUnsentMessageOf({required String jid}) {
+    return FlyChatFlutterPlatform.instance.getUnsentMessageOf(jid);
+  }
+
   /*static Future<String?> getUsersListToAddMembersInOldGroup(String groupJid) {
     return FlyChatFlutterPlatform.instance.getUsersListToAddMembersInOldGroup(groupJid);
   }*/
@@ -4132,8 +4146,8 @@ class Mirrorfly {
   ///   message: "Hello, this message couldn't be sent earlier!",
   /// );
   /// ```
-  static saveUnsentMessage({required String jid, required String message}) {
-    return FlyChatFlutterPlatform.instance.saveUnsentMessage(jid, message);
+  static saveUnsentMessage({required String jid, required String message, List<String>? mentionedUsers}) {
+    return FlyChatFlutterPlatform.instance.saveUnsentMessage(jid, message,mentionedUsers);
   }
 
   /// Deletes the user account from the Mirrorfly platform.
