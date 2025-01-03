@@ -236,7 +236,7 @@ class FlyChatMethods {
             override fun getDisplayName(jid: String): String {
                 return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(
                     jid
-                )!!.getDisplayName() else com.mirrorflysdk.flycommons.Constants.EMPTY_STRING
+                )!!.getDisplayName() else Constants.EMPTY_STRING
             }
         })
         Logger.enableDebugLogging(enableSDKLog)
@@ -3786,34 +3786,36 @@ class FlyChatMethods {
 
     fun startBackup(call: MethodCall, result: MethodChannel.Result){
 
-        BackupManager.startBackup(object : BackupListener {
-            override fun onFailure(reason: String) {
-                MirrorFlyManager.getActivity()?.runOnUiThread {
-                    FlyMethodConstants.updateChatSinkValue(
-                        Constants.onBackupFailureChannel,
-                        reason
-                    )
+        BackupManager.startBackup(
+            isEncrypt = true, backupListener = object : BackupListener {
+                override fun onFailure(reason: String) {
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                        FlyMethodConstants.updateChatSinkValue(
+                            Constants.onBackupFailureChannel,
+                            reason
+                        )
+                    }
                 }
-            }
 
-            override fun onProgressChanged(percentage: Int) {
-                MirrorFlyManager.getActivity()?.runOnUiThread {
-                    FlyMethodConstants.updateChatSinkValue(
-                        Constants.onBackupProgressChangedChannel,
-                        percentage
-                    )
+                override fun onProgressChanged(percentage: Int) {
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                        FlyMethodConstants.updateChatSinkValue(
+                            Constants.onBackupProgressChangedChannel,
+                            percentage
+                        )
+                    }
                 }
-            }
 
-            override fun onSuccess(backUpFilePath: String) {
-                MirrorFlyManager.getActivity()?.runOnUiThread {
-                    FlyMethodConstants.updateChatSinkValue(
-                        Constants.onBackupSuccessChannel,
-                        backUpFilePath
-                    )
+                override fun onSuccess(backUpFilePath: String) {
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                        FlyMethodConstants.updateChatSinkValue(
+                            Constants.onBackupSuccessChannel,
+                            backUpFilePath
+                        )
+                    }
                 }
             }
-        })
+        )
     }
     fun restoreBackup(call: MethodCall, result: MethodChannel.Result){
         val filepath = call.argument<String>("backupPath") ?: ""

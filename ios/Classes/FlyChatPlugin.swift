@@ -171,38 +171,33 @@ extension FlyChatPlugin : BackupEventDelegate, RestoreEventDelegate {
 //        jsonObject.setValue(completedSize, forKey: "completedSize")
 //        
 //        let jsonString = pluginDictToJson(dictionary: jsonObject)
-//        
-//        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupProgressChangedChannel, value: jsonString)
+        
+        if let doubleValue = Double(completedCount) {
+            // Convert the Double to an Int (truncates the decimal part)
+            let intValue = Int(doubleValue)
+            print(intValue)
+            self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupProgressChangedChannel, value: intValue)
+        } else {
+            print("Invalid number")
+        }
+       
     }
     
     public func backupDidFinish(fileUrl: String) {
         
         print("backupDidFinish FileUrl: \(fileUrl)")
-//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-//        jsonObject.setValue(fileUrl, forKey: "fileUrl")
-//        let jsonString = pluginDictToJson(dictionary: jsonObject)
-//        
+        
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupSuccessChannel, value: fileUrl)
     }
     
     public func backupDidFailed(errorMessage: String) {
-        
-//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-//        jsonObject.setValue(errorMessage, forKey: "errorMessage")
-//        let jsonString = pluginDictToJson(dictionary: jsonObject)
         
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupFailureChannel, value: errorMessage)
     }
     
     public func restoreProgressDidReceive(completedCount: Double, completedPercentage: String, completedSize: String) {
         print("restoreProgressDidReceive completedCount : \(completedCount) === completedPercentage: \(completedPercentage) === completedSize: \(completedSize)")
-//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-//        jsonObject.setValue(completedCount, forKey: "completedCount")
-//        jsonObject.setValue(completedSize, forKey: "completedSize")
-//        jsonObject.setValue(completedPercentage, forKey: "completedPercentage")
-//        
-//        let jsonString = pluginDictToJson(dictionary: jsonObject)
-//        
+        
 //        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onRestoreProgressChangedChannel, value: jsonString)
     }
     
@@ -646,6 +641,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     }
     
     public func didReceiveLogout() {
+        print("didReceiveLogout")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.chatEventInitializer.updateSinkValue(forChannel: Constants.onLoggedOut_channel, value: true)
         }

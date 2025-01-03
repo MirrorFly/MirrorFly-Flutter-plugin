@@ -2684,6 +2684,15 @@ let ISEXPORT = true
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
 
+               
+                /// Message Duplicate in load Previous workaround
+                if (messageList?.count == 1 && messageList?.first?.messageId == self.firstMessageID){
+                    
+                    result("[]");
+                    return;
+                   
+                }
+                
                 if (!(messageList?.isEmpty ?? true)) {
                     /// Changing the first message ID here, bcz the new set will be inserted at top of the chat array list,
                     /// so we need to update the first message ID to fetch the previous set of messages again from this message ID
@@ -2691,13 +2700,6 @@ let ISEXPORT = true
                     self.setFirstMessage()
                 }else{
                     print("\(Constants.tag) prev message -> Next Message List previous message id is not setting as the list is empty")
-                }
-                
-                if (messageList?.count == 1 && messageList?.first?.messageId == self.firstMessageID){
-                    
-                    result("[]");
-                    return;
-                   
                 }
                 
                 if let chatJson = messageList.toJson() {
@@ -4393,7 +4395,8 @@ let ISEXPORT = true
     }
     
     func startBackup(call: FlutterMethodCall, result: @escaping FlutterResult){
-        BackupManager.shared.startBackup()
+//        BackupManager.shared.startBackup()
+        BackupManager.shared.startBackup(enableEncryption: true)
         result(true)
     }
     
