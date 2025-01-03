@@ -8,9 +8,6 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/internal"
-        }
-        maven {
             url "https://repo.mirrorfly.com/release"
         }
     }
@@ -26,9 +23,6 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
-        maven {
-            url "https://repo.mirrorfly.com/internal"
-        }
         maven {
             url "https://repo.mirrorfly.com/release"
         }
