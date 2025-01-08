@@ -887,6 +887,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<int?> getCurrentCallDuration() {
+    //  implement getCurrentCallDuration
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool?> isTrailLicence() {
     //  implement isTrailLicence
     throw UnimplementedError();

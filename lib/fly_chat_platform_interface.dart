@@ -1521,6 +1521,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('isOnGoingCall has not been implemented.');
   }
 
+  /// This method is used to get current call duration only for Android.
+  Future<int?> getCurrentCallDuration() async {
+    throw UnimplementedError('getCurrentCallDuration has not been implemented.');
+  }
+
   /// This method is used to disconnect the call.
   Future<void> disconnectCall(Function(FlyResponse response)? callback) async {
     throw UnimplementedError('disconnectCall has not been implemented.');
