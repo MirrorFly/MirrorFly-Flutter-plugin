@@ -5596,6 +5596,27 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<int?> getCurrentCallDuration() async {
+    if(Platform.isAndroid) {
+      int? res;
+      try {
+        res =
+        await mirrorFlyCallMethodChannel.invokeMethod('getCurrentCallDuration');
+        LogMessage.d('getCurrentCallDuration', '$res');
+        return res;
+      } on PlatformException catch (e) {
+        LogMessage.d("Platform Exception =", " $e");
+        rethrow;
+      } on Exception catch (error) {
+        LogMessage.d("Exception ", " $error");
+        rethrow;
+      }
+    }else{
+      return null;
+    }
+  }
+
+  @override
   Future<void> disconnectCall(Function(FlyResponse response)? callback) async {
     bool? res;
     try {

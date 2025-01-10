@@ -4715,6 +4715,12 @@ class Mirrorfly {
   static Future<bool?> isOnGoingCall() async {
     return FlyChatFlutterPlatform.instance.isOnGoingCall();
   }
+  
+  ///This method gives the current ongoing call duration for Android.
+  ///For iOS it will return null by default
+  static Future<int?> getCurrentCallDuration() async {
+    return FlyChatFlutterPlatform.instance.getCurrentCallDuration();
+  }
 
   /// Provides functionality to disconnect a call in the Mirrorfly platform.
   ///
