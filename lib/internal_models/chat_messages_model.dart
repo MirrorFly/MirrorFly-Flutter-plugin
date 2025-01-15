@@ -236,7 +236,7 @@ class ChatMessage {
               json["metaData"].map((x) => MessageMetaData.fromJson(x))),
       mentionedUsersIds: json["mentionedUsersIds"] == null
           ? []
-          : List<String>.from(
+          : Platform.isIOS ? List<String>.from(json["mentionedUsersIds"].map((x) => x)) : List<String>.from(
               json["mentionedUsersIds"].map((x) => ProfileDetails.fromJson(x).jid?.split("@")[0])),
       replyParentChatMessage: json["replyParentChatMessage"] == null
           ? null
@@ -620,7 +620,7 @@ class ReplyParentChatMessage {
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
         mentionedUsersIds: json["mentionedUsersIds"] == null
             ? []
-            : List<String>.from(
+            : Platform.isIOS ? List<String>.from(json["mentionedUsersIds"].map((x) => x)) : List<String>.from(
             json["mentionedUsersIds"].map((x) => ProfileDetails.fromJson(x).jid?.split("@")[0])),
       );
 
