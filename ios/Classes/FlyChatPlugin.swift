@@ -197,8 +197,15 @@ extension FlyChatPlugin : BackupEventDelegate, RestoreEventDelegate {
     
     public func restoreProgressDidReceive(completedCount: Double, completedPercentage: String, completedSize: String) {
         print("restoreProgressDidReceive completedCount : \(completedCount) === completedPercentage: \(completedPercentage) === completedSize: \(completedSize)")
+        if let restoreValueIndouble = Double(completedPercentage) {
+            // Convert the Double to an Int (truncates the decimal part)
+            let restoreValueInInt = Int(restoreValueIndouble)
+            self.chatEventInitializer.updateSinkValue(forChannel: Constants.onRestoreProgressChangedChannel, value: restoreValueInInt)
+        }else {
+            print("Invalid number")
+        }
         
-//        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onRestoreProgressChangedChannel, value: jsonString)
+        
     }
     
     public func restoreDidFinish() {
