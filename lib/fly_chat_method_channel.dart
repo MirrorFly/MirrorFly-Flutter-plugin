@@ -51,9 +51,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   /// initialized is used to check whether the sdk isInitialized or not.
   static var initialized = false;
 
-  /// isInitializedSDK is used to check whether the sdk isInitialized or not.
+  /// isSDKInitialized is used to check whether the sdk isInitialized or not.
   @override
-  get isInitializedSDK => initialized;
+  get isSDKInitialized => initialized;
 
   /// A Event channel to communicate chat related events with the native platform.
   MessageEventListeners? messageEventsListener;

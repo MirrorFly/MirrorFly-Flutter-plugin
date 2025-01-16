@@ -1856,7 +1856,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  bool get isInitializedSDK => throw UnimplementedError();
+  bool get isSDKInitialized => throw UnimplementedError();
 }
 
 void main() {
