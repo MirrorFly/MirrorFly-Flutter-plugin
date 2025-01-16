@@ -1854,6 +1854,9 @@ class MockFlyChatFlutterPlatform
     // implement isLockScreen
     throw UnimplementedError();
   }
+
+  @override
+  bool get isInitializedSDK => throw UnimplementedError();
 }
 
 void main() {

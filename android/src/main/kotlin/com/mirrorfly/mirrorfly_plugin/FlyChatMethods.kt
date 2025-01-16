@@ -270,8 +270,13 @@ class FlyChatMethods {
                 LogMessage.d(tag, "initializeSDK success")
                 result.success(true)
             } else {
-                LogMessage.d(tag, "initializeSDK failed with error message " + data["message"])
-                result.error("500", "SDK failed to Initialize", throwable)
+                //when internet is not connected the sdk returns false so here we check base url is empty or not so that we return true based on that
+                if(ChatManager.getBaseURL()?.isNotEmpty() == true){
+                    result.success(true)
+                }else {
+                    LogMessage.d(tag, "initializeSDK failed with error message " + data["message"])
+                    result.error("500", "SDK failed to Initialize", throwable)
+                }
             }
         }
     }
