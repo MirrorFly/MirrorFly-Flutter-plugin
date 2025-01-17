@@ -144,17 +144,22 @@ let ISEXPORT = true
                 }
                 result(true)
             }else{
-                NSLog("SDK FAILED TO INITIALISE \(String(describing: flyError?.localizedDescription))")
                 
-                if !isSuccess, case let .unexpected(message, code) = flyError {
-                    NSLog("Failed Initialisation message \(message)")
-                    if code == ErrorCode.RESPONSE_FAILURE{
-                        result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.INVALID_CREDENTAILS_MESSAGE, details: message))
-                    }else{
-                        result(FlutterError(code: FLErrorCode.INITALIZATION_FAILED, message: FLErrorMessage.INVALID_CREDENTAILS_MESSAGE, details: message))
+                if(ChatManager.getAppConfigDetails().baseURL.isEmpty){
+                    NSLog("SDK FAILED TO INITIALISE \(String(describing: flyError?.localizedDescription))")
+                    
+                    if !isSuccess, case let .unexpected(message, code) = flyError {
+                        NSLog("Failed Initialisation message \(message)")
+                        if code == ErrorCode.RESPONSE_FAILURE{
+                            result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.INVALID_CREDENTAILS_MESSAGE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INITALIZATION_FAILED, message: FLErrorMessage.INVALID_CREDENTAILS_MESSAGE, details: message))
+                        }
                     }
+                }else{
+                    NSLog("SDK FAILED TO INITIALISE, BUT CONFIG DETAILS ARE ALREADY PRESENT. SO PROCEEDING WITH TRUE CONDITION")
+                    result(true)
                 }
-                
             }
         }
     }

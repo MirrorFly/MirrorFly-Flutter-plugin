@@ -617,6 +617,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     }
     
     public func didReceiveLogout() {
+        print("Logout Received from Mirrorfly SDK")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.chatEventInitializer.updateSinkValue(forChannel: Constants.onLoggedOut_channel, value: true)
         }
