@@ -116,6 +116,17 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             return result(UIScreen.main.brightness == 0.0)
         } else{
             
+            if methodCall.method == "init" || methodCall.method == "initializeSDK"{
+                NSLog("\(Constants.tag) Method call initializeEventListeners")
+                print("Method call initializeEventListeners")
+                let args = methodCall.arguments as! Dictionary<String, Any>
+                let containerID = args["iOSContainerID"] as? String ?? ""
+                ChatManager.setAppGroupContainerId(id: containerID)
+                
+                self.initializeEventListeners()
+
+            }
+            
             if let methodHandler = FlyMethodConstants.chatMethodHandlers[methodCall.method] {
                 NSLog("\(Constants.tag) Method call \(methodCall.method)")
                 methodHandler(methodCall, result)
@@ -123,15 +134,6 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
                 result(FlutterMethodNotImplemented)
             }
             
-            if methodCall.method == "init" || methodCall.method == "initializeSDK"{
-                NSLog("\(Constants.tag) Method call initializeEventListeners")
-                print("Method call initializeEventListeners")
-                DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-                    self.initializeEventListeners()
-                }
-               
-                
-            }
         }
     }
 }

@@ -130,7 +130,11 @@ let ISEXPORT = true
         let enableSDKLog = args["enableDebugLog"] as? Bool ?? false
         let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
-        ChatManager.setAppGroupContainerId(id: containerID)
+        /// 
+        /// Moved this setAppGroupContainerId at FlyChatPlugin before initializeEventListeners for logout delegate issue.
+        ///
+//        ChatManager.setAppGroupContainerId(id: containerID)
+       
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
