@@ -24,6 +24,9 @@ class Mirrorfly {
   /// isPrivateStorageEnabled to check the private storage is enabled or not
   static var isPrivateStorageEnabled = false;
 
+  /// isSDKInitialized is used to check whether the sdk isInitialized or not.
+  static get isSDKInitialized => FlyChatFlutterPlatform.instance.isSDKInitialized;
+
   ///Used as a initChat class for [Mirrorfly]
   ///
   /// * @param [baseUrl] provides the base url for making api calls

@@ -35,6 +35,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   static FlyChatFlutterPlatform _instance = MethodChannelFlyChatFlutter();
 
+  /// isSDKInitialized is used to check whether the sdk isInitialized or not.
+  bool get isSDKInitialized => throw UnimplementedError('isSDKInitialized has not been implemented.');
+
   /// Gets the current instance of [FlyChatFlutterPlatform].
   ///
   /// This instance should be the platform-specific implementation of the

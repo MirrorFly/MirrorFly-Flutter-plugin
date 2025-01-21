@@ -1860,6 +1860,9 @@ class MockFlyChatFlutterPlatform
     // TODO: implement getUnsentMessageOf
     throw UnimplementedError();
   }
+
+  @override
+  bool get isSDKInitialized => throw UnimplementedError();
 }
 
 void main() {
