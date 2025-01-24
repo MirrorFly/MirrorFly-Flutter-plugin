@@ -343,6 +343,11 @@ import PushKit
             NSLog("\(Constants.callTag) unable to clear Mirrorfly Views \(userJID) callstatus \(callStatus.rawValue)")
         }
         
+        if (callStatus == .DISCONNECTED && !isUserExists(userId: userJID)){
+            NSLog("\(Constants.callTag) Events: Users in Call \(usersInCall)")
+            NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
+            return
+        }
         
         if ((callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && isUserExists(userId: userJID)) {
             NSLog("\(Constants.callTag) Events: User exists so forwarding the status")
@@ -368,12 +373,7 @@ import PushKit
             return
         }
         
-       
-        
-        if (callStatus == .DISCONNECTED && !isUserExists(userId: userJID)){
-            NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
-            return
-        }
+    
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         if (callStatus.rawValue == "CALL TIME OUTt"){
@@ -643,7 +643,7 @@ import PushKit
         
     }
     
-    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String], metaData: [MirrorFlySDK.CallMetadata]) {
+    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String], metaData: [MirrorFlySDK.CallMetadata], permissionDenied: Bool) {
         NSLog("\(Constants.callTag) Events: onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(String(describing: groupId)) callType: \(callType) userList: \(userList)")
         NSLog("\(Constants.callTag) Events: FlyConstants.isLoaclNotificationEnabled \(FlyConstants.isLoaclNotificationEnabled)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
