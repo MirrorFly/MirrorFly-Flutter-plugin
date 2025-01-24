@@ -11,6 +11,7 @@ import Flutter
 import PushKit
 
 @objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate, CallLogDelegate, JoinCallDelegate {
+   
     
     var usersInCall: [String: MirrorFlySDK.CALLSTATUS] = [:]
     
@@ -633,7 +634,8 @@ import PushKit
         
     }
     
-    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String], metaData: [MirrorFlySDK.CallMetadata]) {
+    func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String], metaData: [MirrorFlySDK.CallMetadata], permissionDenied: Bool) {
+        
         NSLog("\(Constants.callTag) Events: onMissedCall Event Delegate --> isOneToOneCall : \(isOneToOneCall) userJid: \(userJid) groupId: \(String(describing: groupId)) callType: \(callType) userList: \(userList)")
         NSLog("\(Constants.callTag) Events: FlyConstants.isLoaclNotificationEnabled \(FlyConstants.isLoaclNotificationEnabled)")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()

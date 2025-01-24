@@ -130,7 +130,7 @@ let ISEXPORT = true
         let enableSDKLog = args["enableDebugLog"] as? Bool ?? false
         let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
-        ChatManager.setAppGroupContainerId(id: containerID)
+//        ChatManager.setAppGroupContainerId(id: containerID)
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
@@ -1045,7 +1045,9 @@ let ISEXPORT = true
         
         let status = args["status"] as? String ?? ""
         
-        let _: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
+        let _: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false) {isSuccess,error,data in 
+            
+        }
         
         result(true)
         
@@ -1063,13 +1065,19 @@ let ISEXPORT = true
         for status in getAllStatus {
             if(status.status == newStatus){
                 isAlreadyExists = true
-                _ = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: true)
+                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: true){isSuccess,error,data in
+                    
+                }
             }else{
-                _ = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false){isSuccess,error,data in
+                    
+                }
             }
         }
         if(!isAlreadyExists){
-            ChatManager.saveProfileStatus(statusText: newStatus, currentStatus: true)
+            ChatManager.saveProfileStatus(statusText: newStatus, currentStatus: true){isSuccess,error,data in
+                
+            }
         }
         result(true)
         
@@ -1088,10 +1096,14 @@ let ISEXPORT = true
         getAllStatus = ChatManager.getAllStatus()
         for status in getAllStatus {
             if(status.id == statusId) {
-                _ = ChatManager.updateStatus(statusId: statusId ,statusText: statusText,currentStatus: true)
+                ChatManager.updateStatus(statusId: statusId ,statusText: statusText,currentStatus: true){isSuccess,error,data in
+                    
+                }
             }
             else{
-                _ = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false){isSuccess,error,data in
+                    
+                }
             }
         }
         
@@ -1485,7 +1497,7 @@ let ISEXPORT = true
         
                             let profileDataJson = profileUpdateResponse?.toJson()
                             print("***profile Data json \(String(describing: profileDataJson))")
-                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+                            let profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
                             result(profileResponseJson)
                         } else{
                             NSLog("updateMyProfileImage Error\(flyError!.localizedDescription)")
@@ -2203,9 +2215,9 @@ let ISEXPORT = true
         let acknowledgeReceipt = ChatManager.getSingleChatMessageAcknowledgeReceipt(messageId: messageID)
         print("acknowledgeReceipt\(String(describing: acknowledgeReceipt))")
         
-        var seenResponse = String(format: "%.0f",seenReceipt?.time ?? "")
-        var deliveredResponse = String(format: "%.0f",deliverReceipt?.time ?? "")
-        var acknowledgeResponse = String(format: "%.0f",acknowledgeReceipt?.time ?? "")
+        let seenResponse = String(format: "%.0f",seenReceipt?.time ?? "")
+        let deliveredResponse = String(format: "%.0f",deliverReceipt?.time ?? "")
+        let acknowledgeResponse = String(format: "%.0f",acknowledgeReceipt?.time ?? "")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(seenResponse == "0" ? "" : seenResponse, forKey: "seenTime")
         jsonObject.setValue(deliveredResponse == "0" ? "" : deliveredResponse, forKey: "deliveredTime")
@@ -2251,7 +2263,7 @@ let ISEXPORT = true
         let args = call.arguments as! Dictionary<String, Any>
         let fetchFromServer = args["server"] as? Bool ?? false
         
-        print("calling getAllGroups")
+        print("calling getAllGroups fetchFromServer \(fetchFromServer) ---> \(ChatManager.isChatServerConnected())")
         GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
             
             if isSuccess {
@@ -3820,8 +3832,8 @@ let ISEXPORT = true
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
                 //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
-                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
-                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                let fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
                 let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
@@ -3867,9 +3879,9 @@ let ISEXPORT = true
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
                 //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
-                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
-                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
-                let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
                 let metaData = args["metaData"] as? [[String: Any]] ?? []
@@ -3915,10 +3927,10 @@ let ISEXPORT = true
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
                 //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
-                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
-                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
-                let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
-                let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
                 let metaData = args["metaData"] as? [[String: Any]] ?? []
                 print("Image MetaData \(String(describing: metaData))")
