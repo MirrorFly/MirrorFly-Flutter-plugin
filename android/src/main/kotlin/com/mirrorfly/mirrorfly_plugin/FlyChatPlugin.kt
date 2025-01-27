@@ -744,13 +744,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onLoggedOut() {
         LogMessage.d(TAG, "onLoggedOut")
-        MirrorFlyManager.getActivity()?.runOnUiThread {
-//            onLoggedOutStreamHandler.onLoggedOut?.success(true)
-            FlyMethodConstants.updateChatSinkValue(
-                Constants.onLoggedOutChannel,
-                true
-            )
-        }
+        Handler(Looper.getMainLooper()).postDelayed(
+            Runnable {
+                MirrorFlyManager.getActivity()?.runOnUiThread {
+                    //            onLoggedOutStreamHandler.onLoggedOut?.success(true)
+                    FlyMethodConstants.updateChatSinkValue(
+                        Constants.onLoggedOutChannel,
+                        true
+                    )
+                }
+            },500
+        )
     }
 
     override fun unblockedThisUser(jid: String) {

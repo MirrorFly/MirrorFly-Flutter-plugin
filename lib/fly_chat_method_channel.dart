@@ -47,6 +47,14 @@ class FlyErrorMessage {
 
 /// A class to handle the platform specific methods and events.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
+
+  /// initialized is used to check whether the sdk isInitialized or not.
+  static var initialized = false;
+
+  /// isSDKInitialized is used to check whether the sdk isInitialized or not.
+  @override
+  get isSDKInitialized => initialized;
+
   /// A Event channel to communicate chat related events with the native platform.
   MessageEventListeners? messageEventsListener;
 
@@ -1466,6 +1474,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     if (!_messageOnReceivedStreamController.hasListener) {
       addStreamsAllToStreamController();
     }
+    initialized = true;
     await mirrorFlyMethodChannel.invokeMethod('init', builder.build());
   }
 
@@ -1481,18 +1490,21 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       res = await mirrorFlyMethodChannel.invokeMethod<bool>(
           'initializeSDK', builder.build());
       LogMessage.d("initializeSDK", res);
+      initialized = true;
       callback.call(
           FlyResponse(true, FlyConstants.empty, "initializeSDK Successfully"));
       // return res;
       return;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
+      initialized = false;
       callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
           FlyException(e.code, e.message, e.details)));
       // return res;
       return;
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
+      initialized = false;
       callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
           FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
       // return res;
@@ -5592,6 +5604,27 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     } on Exception catch (error) {
       LogMessage.d("Exception ", " $error");
       rethrow;
+    }
+  }
+
+  @override
+  Future<int?> getCurrentCallDuration() async {
+    if(Platform.isAndroid) {
+      int? res;
+      try {
+        res =
+        await mirrorFlyCallMethodChannel.invokeMethod('getCurrentCallDuration');
+        LogMessage.d('getCurrentCallDuration', '$res');
+        return res;
+      } on PlatformException catch (e) {
+        LogMessage.d("Platform Exception =", " $e");
+        rethrow;
+      } on Exception catch (error) {
+        LogMessage.d("Exception ", " $error");
+        rethrow;
+      }
+    }else{
+      return null;
     }
   }
 
