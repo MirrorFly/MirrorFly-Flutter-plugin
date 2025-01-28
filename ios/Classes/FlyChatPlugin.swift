@@ -29,7 +29,14 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        prepareMethodHandler(methodCall: call, result: result)
+        if ChatManager.isChatServerConnected() {
+            prepareMethodHandler(methodCall: call, result: result)
+        }else{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                print("Chat Server not connected, so delaying the method call")
+                self.prepareMethodHandler(methodCall: call, result: result)
+            }
+        }
     }
     
     
@@ -131,16 +138,6 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
             } else {
                 result(FlutterMethodNotImplemented)
             }
-            
-//            if methodCall.method == "init" || methodCall.method == "initializeSDK"{
-//                NSLog("\(Constants.tag) Method call initializeEventListeners")
-//                print("Method call initializeEventListeners")
-//                DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-//                    self.initializeEventListeners()
-//                }
-//               
-//                
-//            }
         }
     }
 }
