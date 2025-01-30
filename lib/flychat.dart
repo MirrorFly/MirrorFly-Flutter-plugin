@@ -5377,8 +5377,8 @@ class Mirrorfly {
   /// await Mirrorfly.startBackup();
   /// ```
   ///
-  static Future<void> startBackup(){
-    return FlyChatFlutterPlatform.instance.startBackup();
+  static Future<void> startBackup({bool enableEncryption = true}){
+    return FlyChatFlutterPlatform.instance.startBackup(enableEncryption);
   }
 
   /// Initiates the restore process from the backup chat data url.

@@ -5371,9 +5371,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> startBackup() async {
+  Future<void> startBackup(bool enableEncryption) async {
     try {
-      await mirrorFlyMethodChannel.invokeMethod<bool>('startBackup');
+      await mirrorFlyMethodChannel.invokeMethod<bool>('startBackup', {'enableEncryption' : enableEncryption});
     } on PlatformException catch (e) {
       LogMessage.d("startBackup Platform Exception =", " $e");
     } on Exception catch (e) {

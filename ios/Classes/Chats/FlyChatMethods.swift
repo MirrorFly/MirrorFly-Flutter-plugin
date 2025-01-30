@@ -4407,8 +4407,9 @@ let ISEXPORT = true
     }
     
     func startBackup(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        BackupManager.shared.startBackup()
-        BackupManager.shared.startBackup(enableEncryption: true)
+        let args = call.arguments as! Dictionary<String, Any>
+        let encryption = args["enableEncryption"] as? Bool ?? true
+        BackupManager.shared.startBackup(enableEncryption: encryption)
         result(true)
     }
     

@@ -1655,7 +1655,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// This method is used to start the backup.
-  Future<void> startBackup() {
+  Future<void> startBackup(bool enableEncryption) {
     throw UnimplementedError('startBackup has not been implemented.');
   }
 

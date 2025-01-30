@@ -3785,9 +3785,9 @@ class FlyChatMethods {
     }
 
     fun startBackup(call: MethodCall, result: MethodChannel.Result){
-
+        val enableEncryption = call.argument<Boolean>("enableEncryption") ?: true
         BackupManager.startBackup(
-            isEncrypt = true, backupListener = object : BackupListener {
+            isEncrypt = enableEncryption, backupListener = object : BackupListener {
                 override fun onFailure(reason: String) {
                     MirrorFlyManager.getActivity()?.runOnUiThread {
                         FlyMethodConstants.updateChatSinkValue(

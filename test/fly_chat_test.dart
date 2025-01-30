@@ -1850,7 +1850,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> startBackup() {
+  Future<void> startBackup(bool enableEncryption) {
     // implement startBackup
     throw UnimplementedError();
   }
