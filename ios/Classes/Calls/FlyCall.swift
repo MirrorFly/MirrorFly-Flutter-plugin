@@ -316,6 +316,11 @@ import PushKit
         }
         
         /// Call Status Duplicate Handle Code Start
+        
+        if (callStatus == .DISCONNECTED && !isUserExists(userId: userJID)){
+            NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
+            return
+        }
 //        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING){
             usersInCall.removeAll()
             usersInCall = CallManager.getCallUsersWithStatus()
@@ -338,17 +343,15 @@ import PushKit
             return
         }
         
-        if usersInCall.count <= 1 {
+        /// Commenting this, as this creates call navigation back issues in Flutter side
+        /*if usersInCall.count <= 1 {
             NSLog("\(Constants.callTag) Events: Userlist Have only one user so call will be disconnected already sent so ignoring the status")
             return
-        }
+        }*/
         
        
         
-        if (callStatus == .DISCONNECTED && !isUserExists(userId: userJID)){
-            NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
-            return
-        }
+        
         
         if ((callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && isUserExists(userId: userJID)) {
             NSLog("\(Constants.callTag) Events: User exists so forwarding the status")
