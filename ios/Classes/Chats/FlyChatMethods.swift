@@ -130,7 +130,11 @@ let ISEXPORT = true
         let enableSDKLog = args["enableDebugLog"] as? Bool ?? false
         let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
+        ///
+        /// Moved this setAppGroupContainerId at FlyChatPlugin before initializeEventListeners for logout delegate issue.
+        ///
 //        ChatManager.setAppGroupContainerId(id: containerID)
+
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
@@ -144,17 +148,22 @@ let ISEXPORT = true
                 }
                 result(true)
             }else{
-                NSLog("SDK FAILED TO INITIALISE \(String(describing: flyError?.localizedDescription))")
-                
-                if !isSuccess, case let .unexpected(message, code) = flyError {
-                    NSLog("Failed Initialisation message \(message)")
-                    if code == ErrorCode.RESPONSE_FAILURE{
-                        result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.INVALID_CREDENTAILS_MESSAGE, details: message))
-                    }else{
-                        result(FlutterError(code: FLErrorCode.INITALIZATION_FAILED, message: FLErrorMessage.INVALID_CREDENTAILS_MESSAGE, details: message))
+
+                if(ChatManager.getAppConfigDetails().baseURL.isEmpty){
+                    NSLog("SDK FAILED TO INITIALISE \(String(describing: flyError?.localizedDescription))")
+
+                    if !isSuccess, case let .unexpected(message, code) = flyError {
+                        NSLog("Failed Initialisation message \(message)")
+                        if code == ErrorCode.RESPONSE_FAILURE{
+                            result(FlutterError(code: FLErrorCode.INVALID_CREDENTAILS, message: FLErrorMessage.INVALID_CREDENTAILS_MESSAGE, details: message))
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INITALIZATION_FAILED, message: FLErrorMessage.INVALID_CREDENTAILS_MESSAGE, details: message))
+                        }
                     }
+                }else{
+                    NSLog("SDK FAILED TO INITIALISE, BUT CONFIG DETAILS ARE ALREADY PRESENT. SO PROCEEDING WITH TRUE CONDITION")
+                    result(true)
                 }
-                
             }
         }
     }
@@ -1040,17 +1049,19 @@ let ISEXPORT = true
         result(profileStatusJson)
         
     }
+
     func insertDefaultStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let status = args["status"] as? String ?? ""
         
-        let _: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false) {isSuccess,error,data in 
-            
+        ChatManager.saveProfileStatus(statusText: status, currentStatus: false) { isSuccess,error,data in
+            if (isSuccess) {
+                result(true)
+            } else {
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: nil))
+            }
         }
-        
-        result(true)
-        
     }
     
     func insertNewProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1058,30 +1069,49 @@ let ISEXPORT = true
         let newStatus = args["status"] as? String ?? ""
         
         var isAlreadyExists = false
-        
+
+        let dispatchGroup = DispatchGroup()
+
         var getAllStatus: [ProfileStatus] = []
         getAllStatus = ChatManager.getAllStatus()
         
+
         for status in getAllStatus {
             if(status.status == newStatus){
                 isAlreadyExists = true
-                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: true){isSuccess,error,data in
-                    
+                dispatchGroup.enter()
+                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: true) { isSuccess,error,data in
+                    if isSuccess {
+                        print("#insertNewProfileStatus -> updateStatus response \(data)")
+                    } else {
+                        print("#insertNewProfileStatus -> updateStatus error \(String(describing: error?.localizedDescription))")
+                    }
+                    dispatchGroup.leave()
                 }
             }else{
-                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false){isSuccess,error,data in
-                    
+                dispatchGroup.enter()
+                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false) { isSuccess,error,data in
+                    if isSuccess {
+                        print("#insertNewProfileStatus -> updateStatus response \(data)")
+                    } else {
+                        print("#insertNewProfileStatus -> updateStatus error \(String(describing: error?.localizedDescription))")
+                    }
+                    dispatchGroup.leave()
                 }
             }
         }
         if(!isAlreadyExists){
-            ChatManager.saveProfileStatus(statusText: newStatus, currentStatus: true){isSuccess,error,data in
-                
+            dispatchGroup.enter()
+            ChatManager.saveProfileStatus(statusText: newStatus, currentStatus: true) { isSuccess,error,data in
+                dispatchGroup.leave()
             }
         }
-        result(true)
-        
+            dispatchGroup.notify(queue: .main) {
+                result(true)
+            }
+
     }
+
     func isTrailLicence(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(isTrialLicenceKey)
     }
@@ -1091,25 +1121,38 @@ let ISEXPORT = true
         
         let statusText = args["status"] as? String ?? ""
         let statusId = args["statusId"] as? String ?? ""
-        
+        let dispatchGroup = DispatchGroup()
         var getAllStatus: [ProfileStatus] = []
         getAllStatus = ChatManager.getAllStatus()
+
         for status in getAllStatus {
             if(status.id == statusId) {
-                ChatManager.updateStatus(statusId: statusId ,statusText: statusText,currentStatus: true){isSuccess,error,data in
-                    
+                dispatchGroup.enter()
+                ChatManager.updateStatus(statusId: statusId ,statusText: statusText,currentStatus: true) { isSuccess,error,data in
+                    if isSuccess {
+                        print("#setMyProfileStatus -> updateStatus to true response \(data)")
+                    } else {
+                        print("#setMyProfileStatus -> updateStatus to true error \(String(describing: error?.localizedDescription))")
+                    }
+                    dispatchGroup.leave()
                 }
             }
             else{
-                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false){isSuccess,error,data in
-                    
+                dispatchGroup.enter()
+                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false) {isSuccess,error,data in
+                    if isSuccess {
+                        print("#setMyProfileStatus -> updateStatus to false response \(data)")
+                    } else {
+                        print("#setMyProfileStatus -> updateStatus to false error \(String(describing: error?.localizedDescription))")
+                    }
+                    dispatchGroup.leave()
                 }
             }
         }
-        
-        let statusUpdateJSON = "{\"message\": \"Status Update Success\",\"status\": true}"
-        
-        result(statusUpdateJSON)
+            dispatchGroup.notify(queue: .main) {
+                let statusUpdateJSON = "{\"message\": \"Status Update Success\",\"status\": true}"
+                result(statusUpdateJSON)
+            }
         
     }
     
@@ -2238,8 +2281,8 @@ let ISEXPORT = true
                 for item in chatDataModel.mediaAttachmentsUrl {
 
                     let file = URL(fileURLWithPath: item.path)
-                    let absolutePath = self.convertToAbsolutePath(file.path)
-                    mediaAttachmentUri.add(absolutePath)
+//                    let absolutePath = self.convertToAbsolutePath(file.path)
+                    mediaAttachmentUri.add(file.path)
 
                 }
             }
@@ -2696,15 +2739,15 @@ let ISEXPORT = true
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
 
-               
+
                 /// Message Duplicate in load Previous workaround
                 if (messageList?.count == 1 && messageList?.first?.messageId == self.firstMessageID){
-                    
+
                     result("[]");
                     return;
-                   
+
                 }
-                
+
                 if (!(messageList?.isEmpty ?? true)) {
                     /// Changing the first message ID here, bcz the new set will be inserted at top of the chat array list,
                     /// so we need to update the first message ID to fetch the previous set of messages again from this message ID
@@ -2713,7 +2756,7 @@ let ISEXPORT = true
                 }else{
                     print("\(Constants.tag) prev message -> Next Message List previous message id is not setting as the list is empty")
                 }
-                
+
                 if let chatJson = messageList.toJson() {
                     print("\(Constants.tag) Previous Message List \(chatJson)")
                     
@@ -4405,18 +4448,18 @@ let ISEXPORT = true
     func isPrivateStorageEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(ChatManager.isPrivateStorageEnabled())
     }
-    
+
     func startBackup(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let encryption = args["enableEncryption"] as? Bool ?? true
         BackupManager.shared.startBackup(enableEncryption: encryption)
         result(true)
     }
-    
+
     func restoreBackup(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let backupUrl = args["backupPath"] as? String ?? ""
-        
+
         if backupUrl.isEmpty {
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.BACKUP_URL_INVALID, details: nil))
         }else{
@@ -4425,7 +4468,7 @@ let ISEXPORT = true
             result(true)
         }
     }
-    
-    
+
+
 
 }

@@ -23,6 +23,7 @@ import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
 import org.json.JSONObject
 import org.webrtc.VideoTrack
+import android.os.SystemClock
 
 class FlyCallMethods : MissedCallListener,JoinCallListener {
     val tag = "#FlutterCallEvents"
@@ -72,6 +73,17 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         val direction =
             if (CallDirection.INCOMING_CALL == CallManager.getCallDirection()) "Incoming" else "Outgoing"
         result.success(direction)
+    }
+
+    fun getCurrentCallDuration(call: MethodCall, result: MethodChannel.Result) {
+        val callStartTime = CallManager.getCallTimerStartTime()
+        LogMessage.d(tag, "SystemClock.uptimeMillis() : ${SystemClock.uptimeMillis()}")
+        LogMessage.d(tag, "callStartTime : $callStartTime")
+        if(callStartTime>0 && CallManager.isOnGoingCall()) {
+            result.success(SystemClock.uptimeMillis() - callStartTime)
+        }else{
+            result.success(null)
+        }
     }
 
     fun isOnGoingCall(call: MethodCall, result: MethodChannel.Result) {

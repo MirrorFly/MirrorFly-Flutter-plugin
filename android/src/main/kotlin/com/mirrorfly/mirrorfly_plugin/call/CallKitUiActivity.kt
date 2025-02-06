@@ -79,7 +79,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         }*/
         updateUsersProfile()
 
-        setUpCallDataAndUI()
+        setUpCallDataAndUI(intent)
     }
 
     private fun updateUsersProfile() {
@@ -159,12 +159,12 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         LogMessage.i(tag, "CALL_UI onNewIntent()")
-        setUpCallDataAndUI()
+        setUpCallDataAndUI(intent)
     }
 
-    private fun setUpCallDataAndUI() {
+    private fun setUpCallDataAndUI(intent: Intent) {
         LogMessage.d(tag, "isActivityBExists : ${isActivityBExists()}")
-        LogMessage.d(tag, "FROM : ${intent.extras?.getString("FROM").toString()}")
+        LogMessage.d(tag, "extras : ${intent.extras}")
         updateCallStatus()
         val acceptCall = intent.extras?.getBoolean(CallConstants.ACCEPT_CALL)
         LogMessage.d(tag, "${CallConstants.ACCEPT_CALL} : ${acceptCall.toString()}")

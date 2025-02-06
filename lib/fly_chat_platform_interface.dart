@@ -35,6 +35,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   static FlyChatFlutterPlatform _instance = MethodChannelFlyChatFlutter();
 
+  /// isSDKInitialized is used to check whether the sdk isInitialized or not.
+  bool get isSDKInitialized => throw UnimplementedError('isSDKInitialized has not been implemented.');
+
   /// Gets the current instance of [FlyChatFlutterPlatform].
   ///
   /// This instance should be the platform-specific implementation of the
@@ -1546,6 +1549,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// This method is used to check if the call is ongoing.
   Future<bool?> isOnGoingCall() async {
     throw UnimplementedError('isOnGoingCall has not been implemented.');
+  }
+
+  /// This method is used to get current call duration only for Android.
+  Future<int?> getCurrentCallDuration() async {
+    throw UnimplementedError('getCurrentCallDuration has not been implemented.');
   }
 
   /// This method is used to disconnect the call.

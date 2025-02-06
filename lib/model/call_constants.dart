@@ -144,6 +144,9 @@ class CallMode {
 
   /// Represents a group call.
   static const String groupCall = "onetomany";
+
+  /// Represents a meet call.
+  static const String meet = "meet";
 }
 
 /// Represents the call state for a call session.

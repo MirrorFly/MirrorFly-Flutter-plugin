@@ -35,25 +35,29 @@ import MirrorFlySDK
         
         var jsonArray: [[String: Any]] = []
         
+        let currentUserJid = AppUtils.shared.getMyJid()
+        
         for (memberJid,status) in CallManager.getCallUsersWithStatus() {
-            NSLog("\(tag) \(memberJid) \(status)")
+            NSLog("\(tag) processing user list \(memberJid) \(status)")
+            if memberJid == currentUserJid {
+                NSLog("\(tag) processing user list Skipped jid \(memberJid), as we are adding locally after the iteration")
+                continue
+            }
             let jsonObject: [String: Any] = [
                 "userJid": memberJid,
                 "callStatus": status.rawValue,
                 "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid),
                 "isVideoMuted" : CallManager.isRemoteVideoMuted(memberJid)
-                //                "isAudioMuted" : CallManager.isRemoteAudioMuted(memberJid)
             ]
             NSLog("#MirrorflyCall Call Status Updated--> Appending CallUsersList \(jsonObject)")
             jsonArray.append(jsonObject)
         }
         
         let localJIDJson: [String: Any] = [
-            "userJid": AppUtils.shared.getMyJid(),
+            "userJid": currentUserJid,
             "callStatus": CallManager.getCallDirection() == .Incoming ? (CallManager.isCallConnected() ? "Connected" : "Connecting") : (CallManager.isCallConnected() ? "Connected" : "Calling"),
             "isAudioMuted" : CallManager.isAudioMuted(),
             "isVideoMuted" : CallManager.isVideoMuted()
-            //            "isAudioMuted" : CallManager.isAudioMuted()
         ]
         
         jsonArray.append(localJIDJson)

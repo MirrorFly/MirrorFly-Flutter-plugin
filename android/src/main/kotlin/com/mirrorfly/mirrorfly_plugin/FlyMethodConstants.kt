@@ -339,6 +339,7 @@ object FlyMethodConstants {
         "startVideoCapture" to flyCallMethods::startVideoCapture,
         "disposePreview" to flyCallMethods::disposePreview,
         "getMeetUsername" to flyCallMethods::getMeetUsername,
+        "getCurrentCallDuration" to flyCallMethods::getCurrentCallDuration,
     )
 
 

@@ -887,6 +887,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<int?> getCurrentCallDuration() {
+    //  implement getCurrentCallDuration
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool?> isTrailLicence() {
     //  implement isTrailLicence
     throw UnimplementedError();
@@ -1848,6 +1854,9 @@ class MockFlyChatFlutterPlatform
     // implement isLockScreen
     throw UnimplementedError();
   }
+
+  @override
+  bool get isSDKInitialized => throw UnimplementedError();
 
   @override
   Future<void> startBackup(bool enableEncryption) {

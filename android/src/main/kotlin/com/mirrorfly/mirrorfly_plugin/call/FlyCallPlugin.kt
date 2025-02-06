@@ -31,6 +31,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
         Logger.d("$tag init")
         CallManager.setCallEventsListener(this)
         CallManager.setCallUiListener(this)
+        FlyCallMethods().initCall()
     }
 
 

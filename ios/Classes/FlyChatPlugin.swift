@@ -127,11 +127,11 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
                            let args = methodCall.arguments as! Dictionary<String, Any>
                            let containerID = args["iOSContainerID"] as? String ?? ""
                            ChatManager.setAppGroupContainerId(id: containerID)
-                           
+
                            self.initializeEventListeners()
 
                        }
-            
+
             if let methodHandler = FlyMethodConstants.chatMethodHandlers[methodCall.method] {
                 NSLog("\(Constants.tag) Method call \(methodCall.method)")
                 methodHandler(methodCall, result)
@@ -170,16 +170,16 @@ extension FlyChatPlugin : LocalNotificationDelegate {
 }
 
 extension FlyChatPlugin : BackupEventDelegate, RestoreEventDelegate {
-    
+
     public func backupProgressDidReceive(completedCount: String, completedSize: String) {
-        
+
         print("backupProgressDidReceive completedCount : \(completedCount) === completedSize: \(completedSize)")
 //        let jsonObject: NSMutableDictionary = NSMutableDictionary()
 //        jsonObject.setValue(completedCount, forKey: "completedCount")
 //        jsonObject.setValue(completedSize, forKey: "completedSize")
-//        
+//
 //        let jsonString = pluginDictToJson(dictionary: jsonObject)
-        
+
         if let doubleValue = Double(completedCount) {
             // Convert the Double to an Int (truncates the decimal part)
             let intValue = Int(doubleValue)
@@ -188,21 +188,21 @@ extension FlyChatPlugin : BackupEventDelegate, RestoreEventDelegate {
         } else {
             print("Invalid number")
         }
-       
+
     }
-    
+
     public func backupDidFinish(fileUrl: String) {
-        
+
         print("backupDidFinish FileUrl: \(fileUrl)")
-        
+
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupSuccessChannel, value: fileUrl)
     }
-    
+
     public func backupDidFailed(errorMessage: String) {
-        
+
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onBackupFailureChannel, value: errorMessage)
     }
-    
+
     public func restoreProgressDidReceive(completedCount: Double, completedPercentage: String, completedSize: String) {
         print("restoreProgressDidReceive completedCount : \(completedCount) === completedPercentage: \(completedPercentage) === completedSize: \(completedSize)")
         if let restoreValueIndouble = Double(completedPercentage) {
@@ -212,24 +212,24 @@ extension FlyChatPlugin : BackupEventDelegate, RestoreEventDelegate {
         }else {
             print("Invalid number")
         }
-        
-        
+
+
     }
-    
+
     public func restoreDidFinish() {
         print("restoreDidFinish")
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onRestoreSuccessChannel, value: true)
     }
-    
+
     public func restoreDidFailed(errorMessage: String) {
-        
+
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(errorMessage, forKey: "errorMessage")
         let jsonString = pluginDictToJson(dictionary: jsonObject)
-        
+
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onRestoreFailureChannel, value: jsonString)
     }
-    
+
 }
 
 extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate{
@@ -237,7 +237,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
         
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageEdited_channel, value: message.toJson())
     }
-    
+
     public func didRevokedAdminAccess(groupJid: String, revokedAdminMemberJid: String, revokedByMemberJid: String) {
         NSLog("GroupEventsDelegate didRevokedAdminAccess Delegate Triggered")
     }
@@ -273,7 +273,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     public func onMessagesCleared(toJid: String, deleteType: String?) {
         
     }
-    
+
     public func userCameOnline(for jid: String) {
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
@@ -656,7 +656,7 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     }
     
     public func didReceiveLogout() {
-        print("didReceiveLogout")
+        print("Logout Received from Mirrorfly SDK")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.chatEventInitializer.updateSinkValue(forChannel: Constants.onLoggedOut_channel, value: true)
         }
