@@ -370,13 +370,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //LogMessage.d("Message Ack", "Received")
 
         //LogMessage.d(TAG, "Message Status Updated ==> $messageId")
-        val message = FlyMessenger.getMessageOfId(messageId)
-        if (message != null) {
+        try {
+            val message = FlyMessenger.getMessageOfId(messageId)
+            if (message != null) {
 //            MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.toJsonString())
-            FlyMethodConstants.updateChatSinkValue(
-                Constants.onMessageStatusUpdatedChannel,
-                message.toJsonString()
-            )
+                FlyMethodConstants.updateChatSinkValue(
+                    Constants.onMessageStatusUpdatedChannel,
+                    message.toJsonString()
+                )
+            }
+        }catch (e: Exception){
+            
         }
     }
 

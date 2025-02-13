@@ -2642,6 +2642,22 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+  @override
+  Future<String?> getUnsentMessageOf(String jid) async {
+    String? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<String>('getUnsentMessageOf', {"jid": jid});
+      return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
   /*@override
   Future<String?> getUsersListToAddMembersInOldGroup(String groupJid) async {
     String? res;
@@ -3149,6 +3165,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       messageResponse = await mirrorFlyMethodChannel.invokeMethod(
           'sendMessage', messageParams.toMap());
+      LogMessage.d("sendMessage response ", messageResponse);
       var res = convertChatMessageJsonFromString(messageResponse);
       callback.call(FlyResponse(true, res, "message send successfully"));
     } on PlatformException catch (e) {
@@ -4936,10 +4953,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  saveUnsentMessage(String jid, String message) async {
+  saveUnsentMessage(String jid, String message, List<String>? mentionedUsers) async {
     try {
       await mirrorFlyMethodChannel.invokeMethod(
-          'saveUnsentMessage', {"jid": jid, "texMessage": message});
+          'saveUnsentMessage', {"jid": jid, "texMessage": message,"mentionedUsers":mentionedUsers});
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;

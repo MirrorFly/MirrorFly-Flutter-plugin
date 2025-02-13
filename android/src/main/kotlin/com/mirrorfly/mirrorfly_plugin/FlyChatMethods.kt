@@ -481,10 +481,17 @@ class FlyChatMethods {
         result.success(data)
     }
 
+    fun getUnsentMessageOf(call: MethodCall, result: MethodChannel.Result) {
+        val jid = call.argument<String>("jid") ?: ""
+        val data = FlyMessenger.getUnsentMessageOf(jid)
+        result.success(data.toJsonString())
+    }
+
     fun saveUnsentMessage(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
         val texMessage = call.argument<String>("texMessage") ?: ""
-        FlyMessenger.saveUnsentMessage(jid, texMessage)
+        val mentionedUsers = call.argument<List<String>>("mentionedUsers") ?: arrayListOf()
+        FlyMessenger.saveUnsentMessage(jid, texMessage, mentionedUsers = mentionedUsers)
     }
 
     fun setMediaAutoDownload(call: MethodCall, result: MethodChannel.Result) {

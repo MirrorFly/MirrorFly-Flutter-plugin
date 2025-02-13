@@ -355,7 +355,7 @@ import PushKit
             NSLog("\(Constants.callTag) Events: Attended Received for remote user so ignoring it")
             return
         }
-        
+
         /// Commenting this, as this creates call navigation back issues in Flutter side
         /*if usersInCall.count <= 1 {
             NSLog("\(Constants.callTag) Events: Userlist Have only one user so call will be disconnected already sent so ignoring the status")

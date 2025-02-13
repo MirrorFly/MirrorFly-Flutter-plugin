@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+
 import '../message_params.dart' show MessageMetaData;
 
 /// Converts a JSON string into a list of [ChatMessageModel] objects.
@@ -82,6 +83,7 @@ class ChatMessageModel {
     required this.messageTextContent,
     required this.messageType,
     this.metaData = const [],
+    this.mentionedUsersIds,
     this.replyParentChatMessage,
     required this.senderNickName,
     required this.senderUserJid,
@@ -149,6 +151,9 @@ class ChatMessageModel {
   /// The metadata of the message.
   List<MessageMetaData>? metaData;
 
+  /// A list of userid associated with the mentioned Users.
+  List<String>? mentionedUsersIds;
+
   /// The parent message of the reply message.
   ReplyParentChatMessage? replyParentChatMessage;
 
@@ -200,6 +205,9 @@ class ChatMessageModel {
               ? []
               : List<MessageMetaData>.from(
                   json["metaData"].map((x) => MessageMetaData.fromJson(x))),
+          mentionedUsersIds: json["mentionedUsersIds"] == null
+              ? []
+              : List<String>.from(json["mentionedUsersIds"].map((x) => x)),
           replyParentChatMessage: json["replyParentChatMessage"] == null
               ? null
               : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -240,6 +248,9 @@ class ChatMessageModel {
         "metaData": metaData == null
             ? null
             : List<dynamic>.from(metaData!.map((x) => x.toJson())),
+        "mentionedUsersIds": mentionedUsersIds == null
+            ? null
+            : List<String>.from(mentionedUsersIds!.map((x) => x)),
         "replyParentChatMessage": replyParentChatMessage?.toJson(),
         "senderNickName": senderNickName,
         "senderUserJid": senderUserJid,
@@ -481,6 +492,9 @@ class ReplyParentChatMessage {
   /// The media message.
   MediaChatMessage? mediaChatMessage;
 
+  /// A list of userid associated with the mentioned Users.
+  List<String>? mentionedUsersIds;
+
   /// Constructs a [ReplyParentChatMessage] instance.
   ReplyParentChatMessage({
     required this.chatUserJid,
@@ -497,6 +511,7 @@ class ReplyParentChatMessage {
     required this.locationChatMessage,
     required this.contactChatMessage,
     required this.mediaChatMessage,
+    required this.mentionedUsersIds
   });
 
   /// Converts a JSON object into a [ReplyParentChatMessage] instance.
@@ -518,6 +533,7 @@ class ReplyParentChatMessage {
         mediaChatMessage: json["mediaChatMessage"] == null
             ? null
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+        mentionedUsersIds: json["mentionedUsersIds"] == null ? []  : List<String>.from(json["mentionedUsersIds"].map((x) => x)),
       );
 
   /// Converts a [ReplyParentChatMessage] instance into a JSON object.
@@ -536,6 +552,9 @@ class ReplyParentChatMessage {
         "locationChatMessage": locationChatMessage?.toJson(),
         "contactChatMessage": contactChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage?.toJson(),
+    "mentionedUsersIds": mentionedUsersIds == null
+        ? null
+        : List<String>.from(mentionedUsersIds!.map((x) => x)),
       };
 }
 
