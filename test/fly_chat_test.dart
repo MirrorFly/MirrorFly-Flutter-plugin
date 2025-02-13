@@ -887,6 +887,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<int?> getCurrentCallDuration() {
+    //  implement getCurrentCallDuration
+    throw UnimplementedError();
+  }
+
+  @override
   Future<bool?> isTrailLicence() {
     //  implement isTrailLicence
     throw UnimplementedError();
@@ -1322,7 +1328,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  saveUnsentMessage(String jid, String message) {
+  saveUnsentMessage(String jid, String message,List<String>? mentionedUsers) {
     //  implement saveUnsentMessage
     throw UnimplementedError();
   }
@@ -1848,6 +1854,63 @@ class MockFlyChatFlutterPlatform
     // implement isLockScreen
     throw UnimplementedError();
   }
+
+  @override
+  Future<String?> getUnsentMessageOf(String jid) {
+    // TODO: implement getUnsentMessageOf
+    throw UnimplementedError();
+  }
+
+  @override
+  bool get isSDKInitialized => throw UnimplementedError();
+
+  @override
+  Future<void> startBackup(bool enableEncryption) {
+    // implement startBackup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> restoreBackup({required String backupPath}) {
+    // implement restoreBackup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> cancelBackup() {
+    // implement cancelBackup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> cancelRestore() {
+    // implement cancelRestore
+    throw UnimplementedError();
+  }
+
+  @override
+  // implement onBackupFailure
+  Stream get onBackupFailure => throw UnimplementedError();
+
+  @override
+  // implement onBackupProgressChanged
+  Stream get onBackupProgressChanged => throw UnimplementedError();
+
+  @override
+  // implement onBackupSuccess
+  Stream get onBackupSuccess => throw UnimplementedError();
+
+  @override
+  // implement onRestoreFailure
+  Stream get onRestoreFailure => throw UnimplementedError();
+
+  @override
+  // implement onRestoreProgressChanged
+  Stream get onRestoreProgressChanged => throw UnimplementedError();
+
+  @override
+  // implement onRestoreSuccess
+  Stream get onRestoreSuccess => throw UnimplementedError();
 }
 
 void main() {

@@ -89,6 +89,13 @@ struct Constants {
     static let getAvailableFeatures_channel = "\(domain)/onAvailableFeaturesUpdated"
     static let onMessageEdited_channel = "\(domain)/onMessageEdited"
     
+    static let onBackupFailureChannel = "\(domain)/onBackupFailure"
+    static let onBackupProgressChangedChannel = "\(domain)/onBackupProgressChanged"
+    static let onBackupSuccessChannel = "\(domain)/onBackupSuccess"
+    static let onRestoreFailureChannel = "\(domain)/onRestoreFailure"
+    static let onRestoreProgressChangedChannel = "\(domain)/onRestoreProgressChanged"
+    static let onRestoreSuccessChannel = "\(domain)/onRestoreSuccess"
+    
     
     static let contactSyncEnable = "contactSyncEnable"
     
@@ -98,10 +105,10 @@ struct Constants {
     static let tag = "#MirrorFly"
     static let callTag = "#MirrorFlyCall"
     
-    static let licenseKey = "licenseKey"
-    static let containerID = "containerID"
+    static let licenseKey = "\(domain)/licenseKey"
+    static let containerID = "\(domain)/containerID"
     
-    static let googleToken = "googleToken"
+    static let googleToken = "\(domain)/googleToken"
 }
 
 enum CallStatus : String {

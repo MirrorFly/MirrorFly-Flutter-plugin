@@ -36,7 +36,7 @@ class MirrorflyNotificationAppLaunchDetails {
   /// Indicates value of the notification.
   /// for MissedCall it will return true or false
   /// for MediaProgress it will return chat jid.
-  String? value;
+  dynamic value;
 
   /// Constructs an instance of [MirrorflyNotificationAppLaunchDetails].
   MirrorflyNotificationAppLaunchDetails({

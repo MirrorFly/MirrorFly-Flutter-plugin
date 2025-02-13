@@ -284,70 +284,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                     ContactManager.inviteUserViaSMS(mobile_no, message)
                 }
 
-                call.method.equals("cancelBackup") -> {
-                    BackupManager.cancelBackup()
-                }
-
-                call.method.equals("startBackup") -> {
-                    BackupManager.startBackup(object : BackupListener {
-                        override fun onFailure(reason: String) {
-//                            onFailureStreamHandler.onFailure?.success(reason)
-                            FlyMethodConstants.updateChatSinkValue(
-                                Constants.onFailureChannel,
-                                reason
-                            )
-                        }
-
-                        override fun onProgressChanged(percentage: Int) {
-//                            onProgressChangedStreamHandler.onProgressChanged?.success(percentage.toString())
-                            FlyMethodConstants.updateChatSinkValue(
-                                Constants.onProgressChangedChannel,
-                                percentage
-                            )
-                        }
-
-                        override fun onSuccess(backUpFilePath: String) {
-//                            onSuccessStreamHandler.onSuccess?.success(backUpFilePath)
-                            FlyMethodConstants.updateChatSinkValue(
-                                Constants.onSuccessChannel,
-                                backUpFilePath
-                            )
-                        }
-                    })
-                }
-
-                call.method.equals("cancelRestore") -> {
-                    val filepath = call.argument<String>("file") ?: ""
-                    val file = File(filepath)
-                    if (file.exists()) {
-                        RestoreManager.restoreData(file, object : RestoreListener {
-                            override fun onFailure(reason: String) {
-//                                onFailureStreamHandler.onFailure?.success(reason)
-                                FlyMethodConstants.updateChatSinkValue(
-                                    Constants.onFailureChannel,
-                                    reason
-                                )
-                            }
-
-                            override fun onProgressChanged(percentage: Int) {
-//                                onProgressChangedStreamHandler.onProgressChanged?.success(percentage)
-                                FlyMethodConstants.updateChatSinkValue(
-                                    Constants.onProgressChangedChannel,
-                                    percentage
-                                )
-                            }
-
-                            override fun onSuccess() {
-//                                onSuccessStreamHandler.onSuccess?.success("")
-                                FlyMethodConstants.updateChatSinkValue(
-                                    Constants.onSuccessChannel,
-                                    ""
-                                )
-                            }
-                        })
-                    }
-                }
-
                 call.method.equals("clearAllSDKData") -> {
                     FlyCore.clearAllSDKData()
                 }
@@ -434,13 +370,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //LogMessage.d("Message Ack", "Received")
 
         //LogMessage.d(TAG, "Message Status Updated ==> $messageId")
-        val message = FlyMessenger.getMessageOfId(messageId)
-        if (message != null) {
+        try {
+            val message = FlyMessenger.getMessageOfId(messageId)
+            if (message != null) {
 //            MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.toJsonString())
-            FlyMethodConstants.updateChatSinkValue(
-                Constants.onMessageStatusUpdatedChannel,
-                message.toJsonString()
-            )
+                FlyMethodConstants.updateChatSinkValue(
+                    Constants.onMessageStatusUpdatedChannel,
+                    message.toJsonString()
+                )
+            }
+        }catch (e: Exception){
+            
         }
     }
 
@@ -740,13 +680,17 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onLoggedOut() {
         LogMessage.d(TAG, "onLoggedOut")
-        MirrorFlyManager.getActivity()?.runOnUiThread {
-//            onLoggedOutStreamHandler.onLoggedOut?.success(true)
-            FlyMethodConstants.updateChatSinkValue(
-                Constants.onLoggedOutChannel,
-                true
-            )
-        }
+        Handler(Looper.getMainLooper()).postDelayed(
+            Runnable {
+                MirrorFlyManager.getActivity()?.runOnUiThread {
+                    //            onLoggedOutStreamHandler.onLoggedOut?.success(true)
+                    FlyMethodConstants.updateChatSinkValue(
+                        Constants.onLoggedOutChannel,
+                        true
+                    )
+                }
+            },500
+        )
     }
 
     override fun unblockedThisUser(jid: String) {
