@@ -118,6 +118,8 @@ class FLErrorMessage {
     public static let LINK_SERVER_ERROR_MESSAGE : String = "Error while connecting to Signal Server"
     public static let INVALID_MESSAGE_TYPE : String = "Invalid Message Type"
     public static let NOT_LOGGED_IN_MESSAGE : String = "User Not logged-in"
+    
+    public static let BACKUP_URL_INVALID : String = "Backup url provided in Invalid"
 
     
     

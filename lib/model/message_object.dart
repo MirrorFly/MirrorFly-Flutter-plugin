@@ -3,23 +3,22 @@ class MessageObject {
   /// Constructs a MessageObject with the required and optional parameters.
   ///
   /// The [toJid] and [messageType] parameters are required.
-  MessageObject({
-    required this.toJid,
-    required this.messageType,
-    this.textMessage,
-    this.replyMessageId,
-    this.latitude,
-    this.longitude,
-    this.contactName,
-    this.contactNumbers,
-    this.file,
-    this.fileName,
-    this.caption,
-    this.base64Thumbnail,
-    this.audioDuration,
-    this.isAudioRecorded,
-    this.mentionedUsersIds
-  });
+  MessageObject(
+      {required this.toJid,
+      required this.messageType,
+      this.textMessage,
+      this.replyMessageId,
+      this.latitude,
+      this.longitude,
+      this.contactName,
+      this.contactNumbers,
+      this.file,
+      this.fileName,
+      this.caption,
+      this.base64Thumbnail,
+      this.audioDuration,
+      this.isAudioRecorded,
+      this.mentionedUsersIds});
 
   /// The JID (Jabber ID) of the recipient.
   String toJid;

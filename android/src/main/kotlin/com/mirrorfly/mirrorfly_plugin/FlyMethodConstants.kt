@@ -59,9 +59,12 @@ object FlyMethodConstants {
         Constants.setTypingStatusChannel to EventStreamHandler(),
         Constants.onChatTypingStatusChannel to EventStreamHandler(),//NI
         Constants.onGroupTypingStatusChannel to EventStreamHandler(),
-        Constants.onFailureChannel to EventStreamHandler(),//NI
-        Constants.onProgressChangedChannel to EventStreamHandler(),//NI
-        Constants.onSuccessChannel to EventStreamHandler(),//NI
+        Constants.onBackupFailureChannel to EventStreamHandler(),
+        Constants.onBackupProgressChangedChannel to EventStreamHandler(),
+        Constants.onBackupSuccessChannel to EventStreamHandler(),
+        Constants.onRestoreFailureChannel to EventStreamHandler(),
+        Constants.onRestoreProgressChangedChannel to EventStreamHandler(),
+        Constants.onRestoreSuccessChannel to EventStreamHandler(),
         Constants.onAvailableFeaturesUpdatedChannel to EventStreamHandler(),
         Constants.onMessageEditedChannel to EventStreamHandler(),
     )
@@ -259,6 +262,10 @@ object FlyMethodConstants {
         "editMediaCaption" to flyChatMethods::editMediaCaption,
         "getMetaData" to flyChatMethods::getMetaData,
         "updateMetaData" to flyChatMethods::updateMetaData,
+        "startBackup" to flyChatMethods::startBackup,
+        "restoreBackup" to flyChatMethods::restoreBackup,
+        "cancelBackup" to flyChatMethods::cancelBackup,
+        "cancelRestore" to flyChatMethods::cancelRestore,
     )
 
     private val callEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(

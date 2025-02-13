@@ -20,7 +20,7 @@ let ISEXPORT = false
 let ISEXPORT = true
 #endif
 
-@objc public class FlySdkMethodCalls : NSObject{
+@objc public class FlyChatMethods : NSObject{
     
     var isTrialLicenceKey : Bool = true;
     var chatHistoryEnable : Bool = false;
@@ -49,7 +49,7 @@ let ISEXPORT = true
     
     
     // Singleton instance
-    static let shared = FlySdkMethodCalls()
+    static let shared = FlyChatMethods()
     
     // Private initializer to prevent creating new instances
     private override init() {
@@ -130,11 +130,11 @@ let ISEXPORT = true
         let enableSDKLog = args["enableDebugLog"] as? Bool ?? false
         let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
 
-        /// 
+        ///
         /// Moved this setAppGroupContainerId at FlyChatPlugin before initializeEventListeners for logout delegate issue.
         ///
 //        ChatManager.setAppGroupContainerId(id: containerID)
-       
+
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
@@ -148,10 +148,10 @@ let ISEXPORT = true
                 }
                 result(true)
             }else{
-                
+
                 if(ChatManager.getAppConfigDetails().baseURL.isEmpty){
                     NSLog("SDK FAILED TO INITIALISE \(String(describing: flyError?.localizedDescription))")
-                    
+
                     if !isSuccess, case let .unexpected(message, code) = flyError {
                         NSLog("Failed Initialisation message \(message)")
                         if code == ErrorCode.RESPONSE_FAILURE{
@@ -1049,7 +1049,7 @@ let ISEXPORT = true
         result(profileStatusJson)
         
     }
-               
+
     func insertDefaultStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -1069,13 +1069,13 @@ let ISEXPORT = true
         let newStatus = args["status"] as? String ?? ""
         
         var isAlreadyExists = false
-            
+
         let dispatchGroup = DispatchGroup()
-        
+
         var getAllStatus: [ProfileStatus] = []
         getAllStatus = ChatManager.getAllStatus()
         
-        
+
         for status in getAllStatus {
             if(status.status == newStatus){
                 isAlreadyExists = true
@@ -1109,9 +1109,9 @@ let ISEXPORT = true
             dispatchGroup.notify(queue: .main) {
                 result(true)
             }
-       
+
     }
-               
+
     func isTrailLicence(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(isTrialLicenceKey)
     }
@@ -1124,7 +1124,7 @@ let ISEXPORT = true
         let dispatchGroup = DispatchGroup()
         var getAllStatus: [ProfileStatus] = []
         getAllStatus = ChatManager.getAllStatus()
-            
+
         for status in getAllStatus {
             if(status.id == statusId) {
                 dispatchGroup.enter()
@@ -1553,7 +1553,7 @@ let ISEXPORT = true
         
                             let profileDataJson = profileUpdateResponse?.toJson()
                             print("***profile Data json \(String(describing: profileDataJson))")
-                            var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
+                            let profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson ?? "[]") }"
                             result(profileResponseJson)
                         } else{
                             NSLog("updateMyProfileImage Error\(flyError!.localizedDescription)")
@@ -2271,9 +2271,9 @@ let ISEXPORT = true
         let acknowledgeReceipt = ChatManager.getSingleChatMessageAcknowledgeReceipt(messageId: messageID)
         print("acknowledgeReceipt\(String(describing: acknowledgeReceipt))")
         
-        var seenResponse = String(format: "%.0f",seenReceipt?.time ?? "")
-        var deliveredResponse = String(format: "%.0f",deliverReceipt?.time ?? "")
-        var acknowledgeResponse = String(format: "%.0f",acknowledgeReceipt?.time ?? "")
+        let seenResponse = String(format: "%.0f",seenReceipt?.time ?? "")
+        let deliveredResponse = String(format: "%.0f",deliverReceipt?.time ?? "")
+        let acknowledgeResponse = String(format: "%.0f",acknowledgeReceipt?.time ?? "")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(seenResponse == "0" ? "" : seenResponse, forKey: "seenTime")
         jsonObject.setValue(deliveredResponse == "0" ? "" : deliveredResponse, forKey: "deliveredTime")
@@ -2319,7 +2319,7 @@ let ISEXPORT = true
         let args = call.arguments as! Dictionary<String, Any>
         let fetchFromServer = args["server"] as? Bool ?? false
         
-        print("calling getAllGroups")
+        print("calling getAllGroups fetchFromServer \(fetchFromServer) ---> \(ChatManager.isChatServerConnected())")
         GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
             
             if isSuccess {
@@ -2752,13 +2752,15 @@ let ISEXPORT = true
             if (isSuccess) {
                 let messageList  = data.getData() as? [ChatMessage]
 
+
+                /// Message Duplicate in load Previous workaround
                 if (messageList?.count == 1 && messageList?.first?.messageId == self.firstMessageID){
-                    
+
                     result("[]");
                     return;
-                   
+
                 }
-                
+
                 if (!(messageList?.isEmpty ?? true)) {
                     /// Changing the first message ID here, bcz the new set will be inserted at top of the chat array list,
                     /// so we need to update the first message ID to fetch the previous set of messages again from this message ID
@@ -2767,7 +2769,7 @@ let ISEXPORT = true
                 }else{
                     print("\(Constants.tag) prev message -> Next Message List previous message id is not setting as the list is empty")
                 }
-                
+
                 if let chatJson = messageList.toJson() {
                     print("\(Constants.tag) Previous Message List \(chatJson)")
                     
@@ -3886,8 +3888,8 @@ let ISEXPORT = true
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
                 //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
-                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
-                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                let fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
                 let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
@@ -3933,9 +3935,9 @@ let ISEXPORT = true
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
                 //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
-                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
-                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
-                let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
                 let metaData = args["metaData"] as? [[String: Any]] ?? []
@@ -3981,10 +3983,10 @@ let ISEXPORT = true
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
                 //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
-                var fileSizeArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
-                var fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
-                let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
-                let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
+                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
                 let metaData = args["metaData"] as? [[String: Any]] ?? []
                 print("Image MetaData \(String(describing: metaData))")
@@ -4459,5 +4461,27 @@ let ISEXPORT = true
     func isPrivateStorageEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(ChatManager.isPrivateStorageEnabled())
     }
+
+    func startBackup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let encryption = args["enableEncryption"] as? Bool ?? true
+        BackupManager.shared.startBackup(enableEncryption: encryption)
+        result(true)
+    }
+
+    func restoreBackup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let backupUrl = args["backupPath"] as? String ?? ""
+
+        if backupUrl.isEmpty {
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.BACKUP_URL_INVALID, details: nil))
+        }else{
+            let backupURL =  URL(fileURLWithPath: backupUrl)
+            BackupManager.shared.restoreMessages(url: backupURL)
+            result(true)
+        }
+    }
+
+
 
 }

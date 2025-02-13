@@ -89,6 +89,13 @@ struct Constants {
     static let getAvailableFeatures_channel = "\(domain)/onAvailableFeaturesUpdated"
     static let onMessageEdited_channel = "\(domain)/onMessageEdited"
     
+    static let onBackupFailureChannel = "\(domain)/onBackupFailure"
+    static let onBackupProgressChangedChannel = "\(domain)/onBackupProgressChanged"
+    static let onBackupSuccessChannel = "\(domain)/onBackupSuccess"
+    static let onRestoreFailureChannel = "\(domain)/onRestoreFailure"
+    static let onRestoreProgressChangedChannel = "\(domain)/onRestoreProgressChanged"
+    static let onRestoreSuccessChannel = "\(domain)/onRestoreSuccess"
+    
     
     static let contactSyncEnable = "contactSyncEnable"
     
