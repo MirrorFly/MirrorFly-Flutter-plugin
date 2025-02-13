@@ -236,8 +236,10 @@ class ChatMessage {
               json["metaData"].map((x) => MessageMetaData.fromJson(x))),
       mentionedUsersIds: json["mentionedUsersIds"] == null
           ? []
-          : Platform.isIOS ? List<String>.from(json["mentionedUsersIds"].map((x) => x)) : List<String>.from(
-              json["mentionedUsersIds"].map((x) => ProfileDetails.fromJson(x).jid?.split("@")[0])),
+          : Platform.isIOS
+              ? List<String>.from(json["mentionedUsersIds"].map((x) => x))
+              : List<String>.from(json["mentionedUsersIds"]
+                  .map((x) => ProfileDetails.fromJson(x).jid?.split("@")[0])),
       replyParentChatMessage: json["replyParentChatMessage"] == null
           ? null
           : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -532,23 +534,22 @@ class MessageStatus {
 /// Represents a parent message that is being replied to.
 class ReplyParentChatMessage {
   /// Constructs an instance of [ReplyParentChatMessage].
-  ReplyParentChatMessage({
-    required this.chatUserJid,
-    required this.isMessageDeleted,
-    required this.isMessageRecalled,
-    required this.isMessageSentByMe,
-    required this.isMessageStarred,
-    required this.messageId,
-    required this.messageSentTime,
-    required this.messageTextContent,
-    required this.messageType,
-    required this.senderNickName,
-    required this.senderUserName,
-    required this.locationChatMessage,
-    required this.contactChatMessage,
-    required this.mediaChatMessage,
-    required this.mentionedUsersIds
-  });
+  ReplyParentChatMessage(
+      {required this.chatUserJid,
+      required this.isMessageDeleted,
+      required this.isMessageRecalled,
+      required this.isMessageSentByMe,
+      required this.isMessageStarred,
+      required this.messageId,
+      required this.messageSentTime,
+      required this.messageTextContent,
+      required this.messageType,
+      required this.senderNickName,
+      required this.senderUserName,
+      required this.locationChatMessage,
+      required this.contactChatMessage,
+      required this.mediaChatMessage,
+      required this.mentionedUsersIds});
 
   /// The JID of the user involved in the chat.
   String chatUserJid;
@@ -620,8 +621,10 @@ class ReplyParentChatMessage {
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
         mentionedUsersIds: json["mentionedUsersIds"] == null
             ? []
-            : Platform.isIOS ? List<String>.from(json["mentionedUsersIds"].map((x) => x)) : List<String>.from(
-            json["mentionedUsersIds"].map((x) => ProfileDetails.fromJson(x).jid?.split("@")[0])),
+            : Platform.isIOS
+                ? List<String>.from(json["mentionedUsersIds"].map((x) => x))
+                : List<String>.from(json["mentionedUsersIds"]
+                    .map((x) => ProfileDetails.fromJson(x).jid?.split("@")[0])),
       );
 
   /// Converts a [ReplyParentChatMessage] instance to a JSON map.
@@ -642,9 +645,9 @@ class ReplyParentChatMessage {
         "contactChatMessage":
             contactChatMessage ?? contactChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage ?? mediaChatMessage?.toJson(),
-    "mentionedUsersIds": mentionedUsersIds == null
-        ? null
-        : List<String>.from(mentionedUsersIds!.map((x) => x)),
+        "mentionedUsersIds": mentionedUsersIds == null
+            ? null
+            : List<String>.from(mentionedUsersIds!.map((x) => x)),
       };
 }
 

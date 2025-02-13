@@ -4953,10 +4953,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  saveUnsentMessage(String jid, String message, List<String>? mentionedUsers) async {
+  saveUnsentMessage(
+      String jid, String message, List<String>? mentionedUsers) async {
     try {
-      await mirrorFlyMethodChannel.invokeMethod(
-          'saveUnsentMessage', {"jid": jid, "texMessage": message,"mentionedUsers":mentionedUsers});
+      await mirrorFlyMethodChannel.invokeMethod('saveUnsentMessage', {
+        "jid": jid,
+        "texMessage": message,
+        "mentionedUsers": mentionedUsers
+      });
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;

@@ -4240,8 +4240,12 @@ class Mirrorfly {
   ///   message: "Hello, this message couldn't be sent earlier!",
   /// );
   /// ```
-  static saveUnsentMessage({required String jid, required String message, List<String>? mentionedUsers}) {
-    return FlyChatFlutterPlatform.instance.saveUnsentMessage(jid, message,mentionedUsers);
+  static saveUnsentMessage(
+      {required String jid,
+      required String message,
+      List<String>? mentionedUsers}) {
+    return FlyChatFlutterPlatform.instance
+        .saveUnsentMessage(jid, message, mentionedUsers);
   }
 
   /// Deletes the user account from the Mirrorfly platform.

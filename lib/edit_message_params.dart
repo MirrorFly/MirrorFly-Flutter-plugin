@@ -1,10 +1,10 @@
 /// Encapsulates the information necessary for performing an edit operation on a message.
 class EditMessageParams {
   /// Constructs an instance of [EditMessageParams].
-  EditMessageParams({
-    required this.messageId,
-    required this.editedTextContent, this.mentionedUsersIds
-  });
+  EditMessageParams(
+      {required this.messageId,
+      required this.editedTextContent,
+      this.mentionedUsersIds});
 
   /// The unique identifier of the message to be edited.
   String messageId;
