@@ -1,6 +1,6 @@
 //
 //  FlyMethods.swift
-//  mirrorfly_chat
+//  mirrorfly_plugin
 //
 //  Created by Mani Vendhan on 15/06/23.
 //
@@ -65,7 +65,7 @@ class FlyMethodConstants {
         ]
     }()
     
-    static let flyChatMethods = FlySdkMethodCalls.shared
+    static let flyChatMethods = FlyChatMethods.shared
         
         static let chatMethodHandlers: [String: (FlutterMethodCall, @escaping FlutterResult) -> Void] = {
             return [
@@ -173,6 +173,7 @@ class FlyMethodConstants {
                 "iOSFileExist": flyChatMethods.iOSFileExist,
                 "get_favourite_messages": flyChatMethods.getFavouriteMessages,
                 "getUnsentMessageOfAJid": flyChatMethods.getUnsentMessageOfAJid,
+                "getUnsentMessageOf": flyChatMethods.getUnsentMessageOf,
                 "saveUnsentMessage": flyChatMethods.saveUnsentMessage,
                 "deleteRecentChats": flyChatMethods.deleteRecentChats,
                 "getDefaultNotificationUri": flyChatMethods.getDefaultNotificationUri,
@@ -225,5 +226,7 @@ class FlyMethodConstants {
                 "getMetaData": flyChatMethods.getMetaData,
                 "updateMetaData": flyChatMethods.updateMetaData,
                 "isPrivateStorageEnabled": flyChatMethods.isPrivateStorageEnabled,
+                "startBackup": flyChatMethods.startBackup,
+                "restoreBackup": flyChatMethods.restoreBackup,
             ] }()
 }

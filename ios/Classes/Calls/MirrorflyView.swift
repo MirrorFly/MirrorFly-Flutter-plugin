@@ -1,6 +1,6 @@
 //
 //  MirrorflyView.swift
-//  mirrorfly_chat
+//  mirrorfly_plugin
 //
 //  Created by Mani Vendhan on 13/06/23.
 //
@@ -80,7 +80,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     private func handleUserProfileDetails(userJid: String, contact: ProfileDetails?, argument: [String: Any]) {
         
         let muteStatus = userJid == AppUtils.shared.getMyJid() ? CallManager.isVideoMuted() : CallManager.isRemoteVideoMuted(userJid)
-        
+        NSLog("\(Constants.callTag) muteStatus --> \(muteStatus)")
 
         let userName = FlyUtils.getUserName(jid: (contact?.jid)!, name: contact!.name, nickName: contact!.nickName, contactType: contact!.contactType)
         
@@ -100,10 +100,11 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         NSLog("\(Constants.callTag) getCallType \(CallManager.getCallType())")
         
         if(videoTrack == nil || muteStatus){
-            
+            NSLog("\(Constants.callTag) videoView remove")
             self.videoView?.removeFromSuperview()
             
         }else{
+            NSLog("\(Constants.callTag) audioView remove")
             self.audioView?.removeFromSuperview()
         }
     }

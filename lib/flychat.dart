@@ -24,6 +24,10 @@ class Mirrorfly {
   /// isPrivateStorageEnabled to check the private storage is enabled or not
   static var isPrivateStorageEnabled = false;
 
+  /// isSDKInitialized is used to check whether the sdk isInitialized or not.
+  static get isSDKInitialized =>
+      FlyChatFlutterPlatform.instance.isSDKInitialized;
+
   ///Used as a initChat class for [Mirrorfly]
   ///
   /// * @param [baseUrl] provides the base url for making api calls
@@ -1059,6 +1063,20 @@ class Mirrorfly {
   /// or null if no unsent message is found.
   static Future<String?> getUnsentMessageOfAJid({required String jid}) {
     return FlyChatFlutterPlatform.instance.getUnsentMessageOfAJid(jid);
+  }
+
+  /// Retrieves the Typed unsent message of a given JID.
+  ///
+  /// This static method asynchronously fetches the unsent message for a
+  /// specific JID from the Mirrorfly chat.
+  ///
+  /// [jid] is for which to retrieve the unsent message.
+  ///
+  /// Returns a Future that completes with the unsent message as a Map String, with mentionedUsers
+  /// {"mentionedUsers":[],"textContent":""}
+  /// or null if no unsent message is found.
+  static Future<String?> getUnsentMessageOf({required String jid}) {
+    return FlyChatFlutterPlatform.instance.getUnsentMessageOf(jid);
   }
 
   /*static Future<String?> getUsersListToAddMembersInOldGroup(String groupJid) {
@@ -2291,6 +2309,96 @@ class Mirrorfly {
   @Deprecated('Instead of use Mirrorfly.typingStatus')
   static Stream<dynamic> get onGroupTypingStatus =>
       FlyChatFlutterPlatform.instance.onGroupTypingStatus;
+
+  /// A stream that emits events when a backup operation is successful.
+  ///
+  /// This stream listens for backup success events. Use this to handle actions
+  /// or notifications after a successful backup operation.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onBackupSuccess.listen((data) {
+  ///   // Handle the event for a successful backup
+  ///   print("Backup successful: $data");
+  /// });
+  /// ```
+  static Stream<dynamic> get onBackupSuccess =>
+      FlyChatFlutterPlatform.instance.onBackupSuccess;
+
+  /// A stream that emits events when a backup operation fails.
+  ///
+  /// This stream listens for backup failure events. Use this to handle
+  /// errors or retries for failed backup operations.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onBackupFailure.listen((error) {
+  ///   // Handle the event for a failed backup
+  ///   print("Backup failed: $error");
+  /// });
+  /// ```
+  static Stream<dynamic> get onBackupFailure =>
+      FlyChatFlutterPlatform.instance.onBackupFailure;
+
+  /// A stream that emits progress updates for a backup operation.
+  ///
+  /// This stream listens for progress updates during a backup operation.
+  /// Use this to display progress to the user or log updates.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onBackupProgressChanged.listen((progress) {
+  ///   // Handle the backup progress update
+  ///   print("Backup progress: $progress%");
+  /// });
+  /// ```
+  static Stream<dynamic> get onBackupProgressChanged =>
+      FlyChatFlutterPlatform.instance.onBackupProgressChanged;
+
+  /// A stream that emits events when a restore operation is successful.
+  ///
+  /// This stream listens for restore success events. Use this to handle
+  /// actions or notifications after a successful restore operation.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onRestoreSuccess.listen((data) {
+  ///   // Handle the event for a successful restore
+  ///   print("Restore successful: $data");
+  /// });
+  /// ```
+  static Stream<dynamic> get onRestoreSuccess =>
+      FlyChatFlutterPlatform.instance.onRestoreSuccess;
+
+  /// A stream that emits events when a restore operation fails.
+  ///
+  /// This stream listens for restore failure events. Use this to handle
+  /// errors or retries for failed restore operations.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onRestoreFailure.listen((error) {
+  ///   // Handle the event for a failed restore
+  ///   print("Restore failed: $error");
+  /// });
+  /// ```
+  static Stream<dynamic> get onRestoreFailure =>
+      FlyChatFlutterPlatform.instance.onRestoreFailure;
+
+  /// A stream that emits progress updates for a restore operation.
+  ///
+  /// This stream listens for progress updates during a restore operation.
+  /// Use this to display progress to the user or log updates.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onRestoreProgressChanged.listen((progress) {
+  ///   // Handle the restore progress update
+  ///   print("Restore progress: $progress%");
+  /// });
+  /// ```
+  static Stream<dynamic> get onRestoreProgressChanged =>
+      FlyChatFlutterPlatform.instance.onRestoreProgressChanged;
 
   // static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
@@ -4132,8 +4240,12 @@ class Mirrorfly {
   ///   message: "Hello, this message couldn't be sent earlier!",
   /// );
   /// ```
-  static saveUnsentMessage({required String jid, required String message}) {
-    return FlyChatFlutterPlatform.instance.saveUnsentMessage(jid, message);
+  static saveUnsentMessage(
+      {required String jid,
+      required String message,
+      List<String>? mentionedUsers}) {
+    return FlyChatFlutterPlatform.instance
+        .saveUnsentMessage(jid, message, mentionedUsers);
   }
 
   /// Deletes the user account from the Mirrorfly platform.
@@ -4700,6 +4812,12 @@ class Mirrorfly {
   ///
   static Future<bool?> isOnGoingCall() async {
     return FlyChatFlutterPlatform.instance.isOnGoingCall();
+  }
+
+  ///This method gives the current ongoing call duration for Android.
+  ///For iOS it will return null by default
+  static Future<int?> getCurrentCallDuration() async {
+    return FlyChatFlutterPlatform.instance.getCurrentCallDuration();
   }
 
   /// Provides functionality to disconnect a call in the Mirrorfly platform.
@@ -5275,8 +5393,6 @@ class Mirrorfly {
 
   /// Checks if the device is locked.
   ///
-  /// This method interacts with the platform-specific `FlyChatFlutterPlatform`
-  /// instance to determine whether the lock screen feature is active.
   ///
   /// Returns:
   ///   A [Future] that completes with a [bool] value:
