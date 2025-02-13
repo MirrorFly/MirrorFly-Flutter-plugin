@@ -32,6 +32,10 @@ import com.mirrorflysdk.api.network.FlyNetwork
 import com.mirrorflysdk.api.notification.NotificationEventListener
 import com.mirrorflysdk.api.notification.PushNotificationManager
 import com.mirrorflysdk.api.utils.NameHelper
+import com.mirrorflysdk.backup.BackupListener
+import com.mirrorflysdk.backup.BackupManager
+import com.mirrorflysdk.backup.RestoreListener
+import com.mirrorflysdk.backup.RestoreManager
 import com.mirrorflysdk.flycall.webrtc.CallLogger
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
@@ -232,7 +236,7 @@ class FlyChatMethods {
             override fun getDisplayName(jid: String): String {
                 return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(
                     jid
-                )!!.getDisplayName() else com.mirrorflysdk.flycommons.Constants.EMPTY_STRING
+                )!!.getDisplayName() else Constants.EMPTY_STRING
             }
         })
         Logger.enableDebugLogging(enableSDKLog)
@@ -270,8 +274,13 @@ class FlyChatMethods {
                 LogMessage.d(tag, "initializeSDK success")
                 result.success(true)
             } else {
-                LogMessage.d(tag, "initializeSDK failed with error message " + data["message"])
-                result.error("500", "SDK failed to Initialize", throwable)
+                //when internet is not connected the sdk returns false so here we check base url is empty or not so that we return true based on that
+                if(ChatManager.getBaseURL()?.isNotEmpty() == true){
+                    result.success(true)
+                }else {
+                    LogMessage.d(tag, "initializeSDK failed with error message " + data["message"])
+                    result.error("500", "SDK failed to Initialize", throwable)
+                }
             }
         }
     }
@@ -346,7 +355,7 @@ class FlyChatMethods {
                                     }
                                 })
                         }
-                        CallLogManager.setCallLogsListener(MirrorFlyManager.instance)
+                        CallLogManager.setCallLogsListener(MirrorFlyManager.getFlyChatInstance())
                         /*ChatEventsManager.setupMessageEventListener(instance)
                         ChatEventsManager.attachProfileEventsListener(instance)
                         ChatEventsManager.attachGroupEventsListener(instance)
@@ -472,10 +481,17 @@ class FlyChatMethods {
         result.success(data)
     }
 
+    fun getUnsentMessageOf(call: MethodCall, result: MethodChannel.Result) {
+        val jid = call.argument<String>("jid") ?: ""
+        val data = FlyMessenger.getUnsentMessageOf(jid)
+        result.success(data.toJsonString())
+    }
+
     fun saveUnsentMessage(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
         val texMessage = call.argument<String>("texMessage") ?: ""
-        FlyMessenger.saveUnsentMessage(jid, texMessage)
+        val mentionedUsers = call.argument<List<String>>("mentionedUsers") ?: arrayListOf()
+        FlyMessenger.saveUnsentMessage(jid, texMessage, mentionedUsers = mentionedUsers)
     }
 
     fun setMediaAutoDownload(call: MethodCall, result: MethodChannel.Result) {
@@ -1973,19 +1989,8 @@ class FlyChatMethods {
         messageListQuery!!.loadMessages { isSuccess, throwable, data ->
             if (isSuccess) {
                 val messageList = data["data"] as ArrayList<ChatMessage>
-                var messages = arrayListOf<ChatMessage>()
-                if (messageList.size == 1) {
-                    if (messageList[0].messageType == MessageType.NOTIFICATION) {
-                        result.success(messages.toJsonString())
-                    } else {
-                        messages = messageList
-                        result.success(messages.toJsonString())
-                    }
-                } else {
-                    messages = messageList
-                    result.success(messages.toJsonString())
-                }
-                LogMessage.d("loadMessages", "$isSuccess : ${messages.toJsonString()}")
+                result.success(messageList.toJsonString())
+                LogMessage.d("loadMessages", "$isSuccess : ${messageList.toJsonString()}")
             } else {
                 LogMessage.d("loadMessages", "$isSuccess : $throwable")
                 // Fetch messages failed print throwable to find the exception details.
@@ -3143,8 +3148,14 @@ class FlyChatMethods {
 
     fun getGroupMembersList(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
-        val fromServer = call.argument<Boolean>("server")
+        var fromServer = call.argument<Boolean>("server")
             ?: GroupManager.doesFetchingMembersListFromServedRequired(jid)
+        val fetFromServerRequired = GroupManager.doesFetchingMembersListFromServedRequired(jid)
+        if (!fromServer && fetFromServerRequired){
+            fromServer = true
+        }
+        LogMessage.d("#getGroupMembersList ", fromServer.toString())
+        LogMessage.d("#fetFromServerRequired ", fetFromServerRequired.toString())
         GroupManager.getGroupMembersList(fromServer, jid) { isSuccess, throwable, data ->
             if (isSuccess) {
                 //LogMessage.d("RESPONSE_CAPTURE", "===========================")
@@ -3772,6 +3783,85 @@ class FlyChatMethods {
                 }
             }
         })
+    }
+
+    fun startBackup(call: MethodCall, result: MethodChannel.Result){
+        val enableEncryption = call.argument<Boolean>("enableEncryption") ?: true
+        BackupManager.startBackup(
+            isEncrypt = enableEncryption, backupListener = object : BackupListener {
+                override fun onFailure(reason: String) {
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                        FlyMethodConstants.updateChatSinkValue(
+                            Constants.onBackupFailureChannel,
+                            reason
+                        )
+                    }
+                }
+
+                override fun onProgressChanged(percentage: Int) {
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                        FlyMethodConstants.updateChatSinkValue(
+                            Constants.onBackupProgressChangedChannel,
+                            percentage
+                        )
+                    }
+                }
+
+                override fun onSuccess(backUpFilePath: String) {
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                        FlyMethodConstants.updateChatSinkValue(
+                            Constants.onBackupSuccessChannel,
+                            backUpFilePath
+                        )
+                    }
+                }
+            }
+        )
+    }
+    fun restoreBackup(call: MethodCall, result: MethodChannel.Result){
+        val filepath = call.argument<String>("backupPath") ?: ""
+        val file = File(filepath)
+        if (file.exists()) {
+            RestoreManager.restoreData(file, object : RestoreListener {
+                override fun onFailure(reason: String) {
+//                                onFailureStreamHandler.onFailure?.success(reason)
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                        FlyMethodConstants.updateChatSinkValue(
+                            Constants.onRestoreFailureChannel,
+                            reason
+                        )
+                    }
+                }
+
+                override fun onProgressChanged(percentage: Int) {
+//                                onProgressChangedStreamHandler.onProgressChanged?.success(percentage)
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                        FlyMethodConstants.updateChatSinkValue(
+                            Constants.onRestoreProgressChangedChannel,
+                            percentage
+                        )
+                    }
+                }
+
+                override fun onSuccess() {
+//                                onSuccessStreamHandler.onSuccess?.success("")
+                    MirrorFlyManager.getActivity()?.runOnUiThread {
+                    FlyMethodConstants.updateChatSinkValue(
+                            Constants.onRestoreSuccessChannel,
+                            true
+                    )
+                        }
+                }
+            })
+        }
+    }
+    fun cancelBackup(call: MethodCall, result: MethodChannel.Result){
+        BackupManager.cancelBackup()
+        result.success(true)
+    }
+    fun cancelRestore(call: MethodCall, result: MethodChannel.Result){
+        RestoreManager.cancelRestore()
+        result.success(true)
     }
 
 }

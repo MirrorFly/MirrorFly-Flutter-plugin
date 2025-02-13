@@ -1,3 +1,24 @@
+## [1.1.0] SDK Updates
+* Android SDK Updated to 7.13.13
+* iOS SDK Updated to 5.18.6
+* iOS Logout Delegate Issue Fix
+* Bug Fixes
+
+## [1.0.9+1] Hot Fix
+* Android SDK Updated to 7.13.10
+* thread block in load message issue fix
+* Manual logout no longer triggers the onLoggedOut listener.
+
+## [1.0.9] Bug Fix
+* Android SDK Updated to 7.13.9
+* upload/download file progress issue fix
+
+## [1.0.8] Bug Fix
+* Fetch Group members from server support added in iOS
+* Android Gradle Update fixes
+* Android SDK Updated to 7.13.8
+* Bug Fixes
+
 ## [1.0.8-beta] Bug Fix
 * iOS SDK Updated to 5.18.0
 * Xcode 16 Support Added

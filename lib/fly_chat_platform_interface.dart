@@ -35,6 +35,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   static FlyChatFlutterPlatform _instance = MethodChannelFlyChatFlutter();
 
+  /// isSDKInitialized is used to check whether the sdk isInitialized or not.
+  bool get isSDKInitialized =>
+      throw UnimplementedError('isSDKInitialized has not been implemented.');
+
   /// Gets the current instance of [FlyChatFlutterPlatform].
   ///
   /// This instance should be the platform-specific implementation of the
@@ -403,6 +407,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   /// This method is used to get the Unsent message of a JID.
   Future<String?> getUnsentMessageOfAJid(String jid) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
+  /// This method is used to get the Unsent message of a JID.
+  Future<String?> getUnsentMessageOf(String jid) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -1296,7 +1305,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// This method is used to save the unsent message.
-  saveUnsentMessage(String jid, String message) {
+  saveUnsentMessage(String jid, String message, List<String>? mentionedUsers) {
     throw UnimplementedError('has not been implemented.');
   }
 
@@ -1439,6 +1448,30 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
         'getRecentChatListHistoryByTopic has not been implemented.');
   }
 
+  /// Stream that emits events when a backup is completed successfully.
+  Stream<dynamic> get onBackupSuccess =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a backup is failed.
+  Stream<dynamic> get onBackupFailure =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a restore is failed.
+  Stream<dynamic> get onRestoreFailure =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a restore is completed successfully.
+  Stream<dynamic> get onRestoreSuccess =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a backup is progress changes.
+  Stream<dynamic> get onBackupProgressChanged =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a backup is progress changes.
+  Stream<dynamic> get onRestoreProgressChanged =>
+      throw UnimplementedError('has not been implemented.');
+
   /// This method is used to make the video call.
   Future<void> makeVideoCall(
       String userJid, Function(FlyResponse response)? callback) async {
@@ -1519,6 +1552,12 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// This method is used to check if the call is ongoing.
   Future<bool?> isOnGoingCall() async {
     throw UnimplementedError('isOnGoingCall has not been implemented.');
+  }
+
+  /// This method is used to get current call duration only for Android.
+  Future<int?> getCurrentCallDuration() async {
+    throw UnimplementedError(
+        'getCurrentCallDuration has not been implemented.');
   }
 
   /// This method is used to disconnect the call.
@@ -1625,6 +1664,26 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// This method is used to get screen is from locked state or not.
   Future<bool> isLockScreen() {
     throw UnimplementedError('isLockScreen has not been implemented.');
+  }
+
+  /// This method is used to start the backup.
+  Future<void> startBackup(bool enableEncryption) {
+    throw UnimplementedError('startBackup has not been implemented.');
+  }
+
+  /// This method is used to restore the backup.
+  Future<void> restoreBackup({required String backupPath}) {
+    throw UnimplementedError('restoreBackup has not been implemented.');
+  }
+
+  /// This method is used to cancel the backup started.
+  Future<void> cancelBackup() {
+    throw UnimplementedError('cancelBackup has not been implemented.');
+  }
+
+  /// This method is used to cancel the restore started.
+  Future<void> cancelRestore() {
+    throw UnimplementedError('cancelBackup has not been implemented.');
   }
 
   /// This listener is set to listen the message events.

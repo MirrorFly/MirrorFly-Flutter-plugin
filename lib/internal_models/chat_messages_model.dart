@@ -5,6 +5,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:mirrorfly_plugin/internal_models/profile_detail_model.dart';
+
 import '../message_params.dart' show MessageMetaData;
 
 /// Converts a JSON string into a list of [ChatMessage] objects.
@@ -101,6 +103,7 @@ class ChatMessage {
     required this.messageTextContent,
     required this.messageType,
     this.metaData = const [],
+    this.mentionedUsersIds,
     required this.replyParentChatMessage,
     required this.senderNickName,
     required this.senderUserJid,
@@ -168,6 +171,9 @@ class ChatMessage {
   /// A list of metadata associated with the message. Nullable.
   List<MessageMetaData>? metaData;
 
+  /// A list of userid associated with the mentioned Users.
+  List<String>? mentionedUsersIds;
+
   /// Information about the parent message if this is a reply. Nullable.
   ReplyParentChatMessage? replyParentChatMessage;
 
@@ -228,6 +234,12 @@ class ChatMessage {
           ? []
           : List<MessageMetaData>.from(
               json["metaData"].map((x) => MessageMetaData.fromJson(x))),
+      mentionedUsersIds: json["mentionedUsersIds"] == null
+          ? []
+          : Platform.isIOS
+              ? List<String>.from(json["mentionedUsersIds"].map((x) => x))
+              : List<String>.from(json["mentionedUsersIds"]
+                  .map((x) => ProfileDetails.fromJson(x).jid?.split("@")[0])),
       replyParentChatMessage: json["replyParentChatMessage"] == null
           ? null
           : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -268,6 +280,9 @@ class ChatMessage {
         "metaData": metaData == null
             ? null
             : List<dynamic>.from(metaData!.map((x) => x.toJson())),
+        "mentionedUsersIds": mentionedUsersIds == null
+            ? null
+            : List<String>.from(mentionedUsersIds!.map((x) => x)),
         "replyParentChatMessage":
             replyParentChatMessage ?? replyParentChatMessage?.toJson(),
         "senderNickName": senderNickName,
@@ -519,22 +534,22 @@ class MessageStatus {
 /// Represents a parent message that is being replied to.
 class ReplyParentChatMessage {
   /// Constructs an instance of [ReplyParentChatMessage].
-  ReplyParentChatMessage({
-    required this.chatUserJid,
-    required this.isMessageDeleted,
-    required this.isMessageRecalled,
-    required this.isMessageSentByMe,
-    required this.isMessageStarred,
-    required this.messageId,
-    required this.messageSentTime,
-    required this.messageTextContent,
-    required this.messageType,
-    required this.senderNickName,
-    required this.senderUserName,
-    required this.locationChatMessage,
-    required this.contactChatMessage,
-    required this.mediaChatMessage,
-  });
+  ReplyParentChatMessage(
+      {required this.chatUserJid,
+      required this.isMessageDeleted,
+      required this.isMessageRecalled,
+      required this.isMessageSentByMe,
+      required this.isMessageStarred,
+      required this.messageId,
+      required this.messageSentTime,
+      required this.messageTextContent,
+      required this.messageType,
+      required this.senderNickName,
+      required this.senderUserName,
+      required this.locationChatMessage,
+      required this.contactChatMessage,
+      required this.mediaChatMessage,
+      required this.mentionedUsersIds});
 
   /// The JID of the user involved in the chat.
   String chatUserJid;
@@ -578,6 +593,9 @@ class ReplyParentChatMessage {
   /// Details of the media shared in the message. Nullable.
   MediaChatMessage? mediaChatMessage;
 
+  /// A list of userid associated with the mentioned Users.
+  List<String>? mentionedUsersIds;
+
   /// Creates a [ReplyParentChatMessage] instance from a JSON map.
   factory ReplyParentChatMessage.fromJson(Map<String, dynamic> json) =>
       ReplyParentChatMessage(
@@ -601,6 +619,12 @@ class ReplyParentChatMessage {
         mediaChatMessage: json["mediaChatMessage"] == null
             ? null
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+        mentionedUsersIds: json["mentionedUsersIds"] == null
+            ? []
+            : Platform.isIOS
+                ? List<String>.from(json["mentionedUsersIds"].map((x) => x))
+                : List<String>.from(json["mentionedUsersIds"]
+                    .map((x) => ProfileDetails.fromJson(x).jid?.split("@")[0])),
       );
 
   /// Converts a [ReplyParentChatMessage] instance to a JSON map.
@@ -621,6 +645,9 @@ class ReplyParentChatMessage {
         "contactChatMessage":
             contactChatMessage ?? contactChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage ?? mediaChatMessage?.toJson(),
+        "mentionedUsersIds": mentionedUsersIds == null
+            ? null
+            : List<String>.from(mentionedUsersIds!.map((x) => x)),
       };
 }
 

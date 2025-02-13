@@ -1,6 +1,6 @@
 //
-//  FlyEvents.swift
-//  fly_chat
+//  FlyChatEvents.swift
+//  mirrorfly_plugin
 //
 //  Created by user on 23/03/23.
 //
@@ -67,6 +67,13 @@ public class OnGroupTypingStatusStreamHandler: EventStreamHandler { }
 public class OnConnectionFailedStreamHandler: EventStreamHandler { }
 
 public class OnGetAvailableFeaturesStreamHandler: EventStreamHandler { }
+
+public class OnBackupSuccessChannelStreamHandler: EventStreamHandler { }
+public class OnBackupFailureChannelStreamHandler: EventStreamHandler { }
+public class OnBackupProgressChangedChannelStreamHandler: EventStreamHandler { }
+public class OnRestoreFailureChannelStreamHandler: EventStreamHandler { }
+public class OnRestoreProgressChangedChannelStreamHandler: EventStreamHandler { }
+public class OnRestoreSuccessChannelStreamHandler: EventStreamHandler { }
 
 /// Call Event Stream Handlers
 public class OnLocalVideoTrackAddedStreamHandler: EventStreamHandler { }

@@ -24,6 +24,10 @@ class Mirrorfly {
   /// isPrivateStorageEnabled to check the private storage is enabled or not
   static var isPrivateStorageEnabled = false;
 
+  /// isSDKInitialized is used to check whether the sdk isInitialized or not.
+  static get isSDKInitialized =>
+      FlyChatFlutterPlatform.instance.isSDKInitialized;
+
   ///Used as a initChat class for [Mirrorfly]
   ///
   /// * @param [baseUrl] provides the base url for making api calls
@@ -121,6 +125,89 @@ class Mirrorfly {
     isChatHistoryEnabled = chatHistoryEnable;
     isPrivateStorageEnabled = enablePrivateStorage;
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);
+  }
+
+  /// Provides functionality to register the user to the Mirrorfly platform.
+  @Deprecated('Instead of use Mirrorfly.login()')
+  static Future<void> registerUser(
+      {required String userIdentifier,
+      String fcmToken = "",
+      bool isForceRegister = true,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
+        fcmToken: fcmToken,
+        isForceRegister: isForceRegister,
+        callback: flyCallback);
+  }
+
+  /// Provides functionality to log in a user to the Mirrorfly platform.
+  ///
+  /// This static method initiates the login process for a user with the specified [userIdentifier] to the Mirrorfly platform.
+  /// Optionally, you can provide the [fcmToken] for Firebase Cloud Messaging (FCM) integration,
+  /// and specify whether to forcefully register the user if not already registered with [isForceRegister].to specify the app user type use [userType].
+  ///
+  /// The [flyCallback] function is called upon completion of the login operation,
+  /// providing a [FlyResponse] object containing information about the operation's success or failure.
+  /// The [identifierMetaData] parameter is optional and represents additional metadata associated with the User.
+  ///
+  /// Throws an error if the [userIdentifier] is not provided.
+  ///
+  /// Example usage:
+  /// ```dart
+  ///   await Mirrorfly.login(
+  ///     userIdentifier: 'example_user_id',
+  ///     fcmToken: 'example_fcm_token',
+  ///     userType: 'd'
+  ///     isForceRegister: true,
+  ///     flyCallback: (FlyResponse response) {
+  ///       if (response.success) {
+  ///         print('User logged in successfully.');
+  ///       } else {
+  ///         print('Login failed: ${response.errorMessage}');
+  ///       }
+  ///     },
+  ///   );
+  /// ```
+  ///
+  /// Note: This method is a static member of the [Mirrorfly] class.
+  static Future<void> login(
+      {required String userIdentifier,
+      String fcmToken = "",
+      String userType = "d",
+      bool isForceRegister = true,
+      List<IdentifierMetaData>? identifierMetaData,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
+        fcmToken: fcmToken,
+        userType: userType,
+        isForceRegister: isForceRegister,
+        identifierMetaData: identifierMetaData,
+        callback: flyCallback);
+  }
+
+  /// Logs the user out of the Mirrorfly chat SDK.
+  ///
+  /// This static method sends a request to the Mirrorfly chat SDK to logout
+  /// the current user. It returns a [Future] that completes with a [bool] value,
+  /// indicating whether the logout operation was successful (`true`) or not (`false`).
+  ///
+  /// Returns:
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
+  /// Example:
+  /// ```dart
+  /// Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
+  ///   if(response.isSuccess){
+  ///     print('User logged out of Mirrorfly chat SDK.');
+  ///   }else{
+  ///     print('Failed to logout of Mirrorfly chat SDK.');
+  ///   }
+  /// });
+  /// ```
+  static Future<void> logoutOfChatSDK(
+      {required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.logoutOfChatSDK(flyCallBack);
   }
 
   /// isPrivateStorageEnabledOrNot to check the private storage is enabled or not
@@ -978,6 +1065,20 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getUnsentMessageOfAJid(jid);
   }
 
+  /// Retrieves the Typed unsent message of a given JID.
+  ///
+  /// This static method asynchronously fetches the unsent message for a
+  /// specific JID from the Mirrorfly chat.
+  ///
+  /// [jid] is for which to retrieve the unsent message.
+  ///
+  /// Returns a Future that completes with the unsent message as a Map String, with mentionedUsers
+  /// {"mentionedUsers":[],"textContent":""}
+  /// or null if no unsent message is found.
+  static Future<String?> getUnsentMessageOf({required String jid}) {
+    return FlyChatFlutterPlatform.instance.getUnsentMessageOf(jid);
+  }
+
   /*static Future<String?> getUsersListToAddMembersInOldGroup(String groupJid) {
     return FlyChatFlutterPlatform.instance.getUsersListToAddMembersInOldGroup(groupJid);
   }*/
@@ -1162,64 +1263,6 @@ class Mirrorfly {
   /// This [authToken] is used to get refreshed Auth Token.
   static Future<String?> authToken() {
     return FlyChatFlutterPlatform.instance.authToken();
-  }
-
-  /// Provides functionality to register the user to the Mirrorfly platform.
-  @Deprecated('Instead of use Mirrorfly.login()')
-  static Future<void> registerUser(
-      {required String userIdentifier,
-      String fcmToken = "",
-      bool isForceRegister = true,
-      required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
-        fcmToken: fcmToken,
-        isForceRegister: isForceRegister,
-        callback: flyCallback);
-  }
-
-  /// Provides functionality to log in a user to the Mirrorfly platform.
-  ///
-  /// This static method initiates the login process for a user with the specified [userIdentifier] to the Mirrorfly platform.
-  /// Optionally, you can provide the [fcmToken] for Firebase Cloud Messaging (FCM) integration,
-  /// and specify whether to forcefully register the user if not already registered with [isForceRegister].to specify the app user type use [userType].
-  ///
-  /// The [flyCallback] function is called upon completion of the login operation,
-  /// providing a [FlyResponse] object containing information about the operation's success or failure.
-  /// The [identifierMetaData] parameter is optional and represents additional metadata associated with the User.
-  ///
-  /// Throws an error if the [userIdentifier] is not provided.
-  ///
-  /// Example usage:
-  /// ```dart
-  ///   await Mirrorfly.login(
-  ///     userIdentifier: 'example_user_id',
-  ///     fcmToken: 'example_fcm_token',
-  ///     userType: 'd'
-  ///     isForceRegister: true,
-  ///     flyCallback: (FlyResponse response) {
-  ///       if (response.success) {
-  ///         print('User logged in successfully.');
-  ///       } else {
-  ///         print('Login failed: ${response.errorMessage}');
-  ///       }
-  ///     },
-  ///   );
-  /// ```
-  ///
-  /// Note: This method is a static member of the [Mirrorfly] class.
-  static Future<void> login(
-      {required String userIdentifier,
-      String fcmToken = "",
-      String userType = "d",
-      bool isForceRegister = true,
-      List<IdentifierMetaData>? identifierMetaData,
-      required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance.registerUser(userIdentifier,
-        fcmToken: fcmToken,
-        userType: userType,
-        isForceRegister: isForceRegister,
-        identifierMetaData: identifierMetaData,
-        callback: flyCallback);
   }
 
   /// This method is used to refresh the Auth Token.
@@ -2267,6 +2310,96 @@ class Mirrorfly {
   static Stream<dynamic> get onGroupTypingStatus =>
       FlyChatFlutterPlatform.instance.onGroupTypingStatus;
 
+  /// A stream that emits events when a backup operation is successful.
+  ///
+  /// This stream listens for backup success events. Use this to handle actions
+  /// or notifications after a successful backup operation.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onBackupSuccess.listen((data) {
+  ///   // Handle the event for a successful backup
+  ///   print("Backup successful: $data");
+  /// });
+  /// ```
+  static Stream<dynamic> get onBackupSuccess =>
+      FlyChatFlutterPlatform.instance.onBackupSuccess;
+
+  /// A stream that emits events when a backup operation fails.
+  ///
+  /// This stream listens for backup failure events. Use this to handle
+  /// errors or retries for failed backup operations.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onBackupFailure.listen((error) {
+  ///   // Handle the event for a failed backup
+  ///   print("Backup failed: $error");
+  /// });
+  /// ```
+  static Stream<dynamic> get onBackupFailure =>
+      FlyChatFlutterPlatform.instance.onBackupFailure;
+
+  /// A stream that emits progress updates for a backup operation.
+  ///
+  /// This stream listens for progress updates during a backup operation.
+  /// Use this to display progress to the user or log updates.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onBackupProgressChanged.listen((progress) {
+  ///   // Handle the backup progress update
+  ///   print("Backup progress: $progress%");
+  /// });
+  /// ```
+  static Stream<dynamic> get onBackupProgressChanged =>
+      FlyChatFlutterPlatform.instance.onBackupProgressChanged;
+
+  /// A stream that emits events when a restore operation is successful.
+  ///
+  /// This stream listens for restore success events. Use this to handle
+  /// actions or notifications after a successful restore operation.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onRestoreSuccess.listen((data) {
+  ///   // Handle the event for a successful restore
+  ///   print("Restore successful: $data");
+  /// });
+  /// ```
+  static Stream<dynamic> get onRestoreSuccess =>
+      FlyChatFlutterPlatform.instance.onRestoreSuccess;
+
+  /// A stream that emits events when a restore operation fails.
+  ///
+  /// This stream listens for restore failure events. Use this to handle
+  /// errors or retries for failed restore operations.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onRestoreFailure.listen((error) {
+  ///   // Handle the event for a failed restore
+  ///   print("Restore failed: $error");
+  /// });
+  /// ```
+  static Stream<dynamic> get onRestoreFailure =>
+      FlyChatFlutterPlatform.instance.onRestoreFailure;
+
+  /// A stream that emits progress updates for a restore operation.
+  ///
+  /// This stream listens for progress updates during a restore operation.
+  /// Use this to display progress to the user or log updates.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onRestoreProgressChanged.listen((progress) {
+  ///   // Handle the restore progress update
+  ///   print("Restore progress: $progress%");
+  /// });
+  /// ```
+  static Stream<dynamic> get onRestoreProgressChanged =>
+      FlyChatFlutterPlatform.instance.onRestoreProgressChanged;
+
   // static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
   // static Stream<dynamic> get onProgressChanged => FlyChatFlutterPlatform.instance.onProgressChanged;
@@ -2955,31 +3088,6 @@ class Mirrorfly {
   /// ```
   static Future<bool?> markAsReadDeleteUnreadSeparator({required String jid}) {
     return FlyChatFlutterPlatform.instance.markAsReadDeleteUnreadSeparator(jid);
-  }
-
-  /// Logs the user out of the Mirrorfly chat SDK.
-  ///
-  /// This static method sends a request to the Mirrorfly chat SDK to logout
-  /// the current user. It returns a [Future] that completes with a [bool] value,
-  /// indicating whether the logout operation was successful (`true`) or not (`false`).
-  ///
-  /// Returns:
-  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
-  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
-  ///
-  /// Example:
-  /// ```dart
-  /// Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
-  ///   if(response.isSuccess){
-  ///     print('User logged out of Mirrorfly chat SDK.');
-  ///   }else{
-  ///     print('Failed to logout of Mirrorfly chat SDK.');
-  ///   }
-  /// });
-  /// ```
-  static Future<void> logoutOfChatSDK(
-      {required Function(FlyResponse response) flyCallBack}) {
-    return FlyChatFlutterPlatform.instance.logoutOfChatSDK(flyCallBack);
   }
 
   /// Sets the ongoing chat user for the current session.
@@ -4132,8 +4240,12 @@ class Mirrorfly {
   ///   message: "Hello, this message couldn't be sent earlier!",
   /// );
   /// ```
-  static saveUnsentMessage({required String jid, required String message}) {
-    return FlyChatFlutterPlatform.instance.saveUnsentMessage(jid, message);
+  static saveUnsentMessage(
+      {required String jid,
+      required String message,
+      List<String>? mentionedUsers}) {
+    return FlyChatFlutterPlatform.instance
+        .saveUnsentMessage(jid, message, mentionedUsers);
   }
 
   /// Deletes the user account from the Mirrorfly platform.
@@ -4700,6 +4812,12 @@ class Mirrorfly {
   ///
   static Future<bool?> isOnGoingCall() async {
     return FlyChatFlutterPlatform.instance.isOnGoingCall();
+  }
+
+  ///This method gives the current ongoing call duration for Android.
+  ///For iOS it will return null by default
+  static Future<int?> getCurrentCallDuration() async {
+    return FlyChatFlutterPlatform.instance.getCurrentCallDuration();
   }
 
   /// Provides functionality to disconnect a call in the Mirrorfly platform.
@@ -5275,8 +5393,6 @@ class Mirrorfly {
 
   /// Checks if the device is locked.
   ///
-  /// This method interacts with the platform-specific `FlyChatFlutterPlatform`
-  /// instance to determine whether the lock screen feature is active.
   ///
   /// Returns:
   ///   A [Future] that completes with a [bool] value:
