@@ -1,3 +1,9 @@
+## [1.1.0] SDK Updates
+* Android SDK Updated to 7.13.13
+* iOS SDK Updated to 5.18.6
+* iOS Logout Delegate Issue Fix
+* Bug Fixes
+
 ## [1.0.9+1] Hot Fix
 * Android SDK Updated to 7.13.10
 * thread block in load message issue fix

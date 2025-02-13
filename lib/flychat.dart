@@ -25,7 +25,8 @@ class Mirrorfly {
   static var isPrivateStorageEnabled = false;
 
   /// isSDKInitialized is used to check whether the sdk isInitialized or not.
-  static get isSDKInitialized => FlyChatFlutterPlatform.instance.isSDKInitialized;
+  static get isSDKInitialized =>
+      FlyChatFlutterPlatform.instance.isSDKInitialized;
 
   ///Used as a initChat class for [Mirrorfly]
   ///
@@ -2307,7 +2308,8 @@ class Mirrorfly {
   ///   print("Backup successful: $data");
   /// });
   /// ```
-  static Stream<dynamic> get onBackupSuccess => FlyChatFlutterPlatform.instance.onBackupSuccess;
+  static Stream<dynamic> get onBackupSuccess =>
+      FlyChatFlutterPlatform.instance.onBackupSuccess;
 
   /// A stream that emits events when a backup operation fails.
   ///
@@ -2321,7 +2323,8 @@ class Mirrorfly {
   ///   print("Backup failed: $error");
   /// });
   /// ```
-  static Stream<dynamic> get onBackupFailure => FlyChatFlutterPlatform.instance.onBackupFailure;
+  static Stream<dynamic> get onBackupFailure =>
+      FlyChatFlutterPlatform.instance.onBackupFailure;
 
   /// A stream that emits progress updates for a backup operation.
   ///
@@ -2335,7 +2338,8 @@ class Mirrorfly {
   ///   print("Backup progress: $progress%");
   /// });
   /// ```
-  static Stream<dynamic> get onBackupProgressChanged => FlyChatFlutterPlatform.instance.onBackupProgressChanged;
+  static Stream<dynamic> get onBackupProgressChanged =>
+      FlyChatFlutterPlatform.instance.onBackupProgressChanged;
 
   /// A stream that emits events when a restore operation is successful.
   ///
@@ -2349,7 +2353,8 @@ class Mirrorfly {
   ///   print("Restore successful: $data");
   /// });
   /// ```
-  static Stream<dynamic> get onRestoreSuccess => FlyChatFlutterPlatform.instance.onRestoreSuccess;
+  static Stream<dynamic> get onRestoreSuccess =>
+      FlyChatFlutterPlatform.instance.onRestoreSuccess;
 
   /// A stream that emits events when a restore operation fails.
   ///
@@ -2363,7 +2368,8 @@ class Mirrorfly {
   ///   print("Restore failed: $error");
   /// });
   /// ```
-  static Stream<dynamic> get onRestoreFailure => FlyChatFlutterPlatform.instance.onRestoreFailure;
+  static Stream<dynamic> get onRestoreFailure =>
+      FlyChatFlutterPlatform.instance.onRestoreFailure;
 
   /// A stream that emits progress updates for a restore operation.
   ///
@@ -2377,8 +2383,8 @@ class Mirrorfly {
   ///   print("Restore progress: $progress%");
   /// });
   /// ```
-  static Stream<dynamic> get onRestoreProgressChanged => FlyChatFlutterPlatform.instance.onRestoreProgressChanged;
-
+  static Stream<dynamic> get onRestoreProgressChanged =>
+      FlyChatFlutterPlatform.instance.onRestoreProgressChanged;
 
   // static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
@@ -4789,7 +4795,7 @@ class Mirrorfly {
   static Future<bool?> isOnGoingCall() async {
     return FlyChatFlutterPlatform.instance.isOnGoingCall();
   }
-  
+
   ///This method gives the current ongoing call duration for Android.
   ///For iOS it will return null by default
   static Future<int?> getCurrentCallDuration() async {
@@ -5377,49 +5383,5 @@ class Mirrorfly {
   ///
   static Future<bool> isLockScreen() {
     return FlyChatFlutterPlatform.instance.isLockScreen();
-  }
-
-  /// Initiates the backup process for chat data.
-  ///
-  /// Example:
-  /// ```dart
-  /// await Mirrorfly.startBackup();
-  /// ```
-  ///
-  static Future<void> startBackup({bool enableEncryption = true}){
-    return FlyChatFlutterPlatform.instance.startBackup(enableEncryption);
-  }
-
-  /// Initiates the restore process from the backup chat data url.
-  ///
-  /// Example:
-  /// ```dart
-  /// await Mirrorfly.restoreBackup();
-  /// ```
-  ///
-  static Future<void> restoreBackup({required String backupPath}){
-    return FlyChatFlutterPlatform.instance.restoreBackup(backupPath: backupPath);
-  }
-
-  /// Cancels the backup process started from startBackup() Method.
-  ///
-  /// Example:
-  /// ```dart
-  /// await Mirrorfly.cancelBackup();
-  /// ```
-  ///
-  static Future<void> cancelBackup(){
-    return FlyChatFlutterPlatform.instance.cancelBackup();
-  }
-
-  /// Cancels the restore process started from restoreBackup() Method.
-  ///
-  /// Example:
-  /// ```dart
-  /// await Mirrorfly.cancelRestore();
-  /// ```
-  ///
-  static Future<void> cancelRestore(){
-    return FlyChatFlutterPlatform.instance.cancelRestore();
   }
 }

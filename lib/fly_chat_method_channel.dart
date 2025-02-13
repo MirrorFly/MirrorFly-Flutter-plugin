@@ -47,7 +47,6 @@ class FlyErrorMessage {
 
 /// A class to handle the platform specific methods and events.
 class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
-
   /// initialized is used to check whether the sdk isInitialized or not.
   static var initialized = false;
 
@@ -471,50 +470,56 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   /// A event channel for backup listening events.
   @visibleForTesting
   final onBackupFailureChannel =
-  const EventChannel('contus.mirrorfly/onBackupFailure');
+      const EventChannel('contus.mirrorfly/onBackupFailure');
 
   /// A broadcast stream controller for message backup events.
-  final StreamController<String> onBackupFailureStreamController = StreamController<String>.broadcast();
+  final StreamController<String> onBackupFailureStreamController =
+      StreamController<String>.broadcast();
 
   /// A event channel for backup progress listening events.
   @visibleForTesting
   final onBackupProgressChangedChannel =
-  const EventChannel('contus.mirrorfly/onBackupProgressChanged');
+      const EventChannel('contus.mirrorfly/onBackupProgressChanged');
 
   /// A broadcast stream controller for message backup events.
-  final StreamController<int> onBackupProgressStreamController = StreamController<int>.broadcast();
+  final StreamController<int> onBackupProgressStreamController =
+      StreamController<int>.broadcast();
 
   /// A event channel for backup success listening events.
   @visibleForTesting
   final onBackupSuccessChannel =
-  const EventChannel('contus.mirrorfly/onBackupSuccess');
+      const EventChannel('contus.mirrorfly/onBackupSuccess');
 
   /// A broadcast stream controller for message backup events.
-  final StreamController<String> onBackupSuccessStreamController = StreamController<String>.broadcast();
+  final StreamController<String> onBackupSuccessStreamController =
+      StreamController<String>.broadcast();
 
   /// A event channel for restore failure listening events.
   @visibleForTesting
   final onRestoreFailureChannel =
-  const EventChannel('contus.mirrorfly/onRestoreFailure');
+      const EventChannel('contus.mirrorfly/onRestoreFailure');
 
   /// A broadcast stream controller for message backup events.
-  final StreamController<String> onRestoreFailureStreamController = StreamController<String>.broadcast();
+  final StreamController<String> onRestoreFailureStreamController =
+      StreamController<String>.broadcast();
 
   /// A event channel for restore success listening events.
   @visibleForTesting
   final onRestoreSuccessChannel =
-  const EventChannel('contus.mirrorfly/onRestoreSuccess');
+      const EventChannel('contus.mirrorfly/onRestoreSuccess');
 
   /// A broadcast stream controller for message backup events.
-  final StreamController<bool> onRestoreSuccessStreamController = StreamController<bool>.broadcast();
+  final StreamController<bool> onRestoreSuccessStreamController =
+      StreamController<bool>.broadcast();
 
   /// A event channel for restore progress listening events.
   @visibleForTesting
   final onRestoreProgressChangedChannel =
-  const EventChannel('contus.mirrorfly/onRestoreProgressChanged');
+      const EventChannel('contus.mirrorfly/onRestoreProgressChanged');
 
   /// A broadcast stream controller for message backup events.
-  final StreamController<int> onRestoreProgressStreamController = StreamController<int>.broadcast();
+  final StreamController<int> onRestoreProgressStreamController =
+      StreamController<int>.broadcast();
 
   // @visibleForTesting
   // final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
@@ -844,18 +849,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Stream<dynamic> get onGroupTypingStatus =>
       onGroupTypingStatusStreamController.stream;
 
-
   @override
-  Stream<dynamic> get onBackupFailure =>
-      onBackupFailureStreamController.stream;
+  Stream<dynamic> get onBackupFailure => onBackupFailureStreamController.stream;
 
   @override
   Stream<dynamic> get onBackupProgressChanged =>
       onBackupProgressStreamController.stream;
 
   @override
-  Stream<dynamic> get onBackupSuccess =>
-      onBackupSuccessStreamController.stream;
+  Stream<dynamic> get onBackupSuccess => onBackupSuccessStreamController.stream;
 
   @override
   Stream<dynamic> get onRestoreFailure =>
@@ -868,7 +870,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onRestoreSuccess =>
       onRestoreSuccessStreamController.stream;
-
 
   @override
   Stream<dynamic> get onLocalVideoTrackAdded =>
@@ -1340,7 +1341,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("MirrorFly", "Error on group typing status: $error");
       onGroupTypingStatusStreamController.addError(error);
     });
-
 
     onBackupFailureChannel.receiveBroadcastStream().listen((event) {
       onBackupFailureStreamController.add(event);
@@ -5385,7 +5385,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Future<void> startBackup(bool enableEncryption) async {
     try {
-      await mirrorFlyMethodChannel.invokeMethod<bool>('startBackup', {'enableEncryption' : enableEncryption});
+      await mirrorFlyMethodChannel.invokeMethod<bool>(
+          'startBackup', {'enableEncryption': enableEncryption});
     } on PlatformException catch (e) {
       LogMessage.d("startBackup Platform Exception =", " $e");
     } on Exception catch (e) {
@@ -5396,7 +5397,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Future<void> restoreBackup({required String backupPath}) async {
     try {
-      await mirrorFlyMethodChannel.invokeMethod<bool>('restoreBackup', {'backupPath': backupPath});
+      await mirrorFlyMethodChannel
+          .invokeMethod<bool>('restoreBackup', {'backupPath': backupPath});
     } on PlatformException catch (e) {
       LogMessage.d("restoreBackup Platform Exception =", " $e");
     } on Exception catch (e) {
@@ -5425,8 +5427,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("cancelRestore Exception ", " $e");
     }
   }
-
-
 
   @override
   Future<void> makeVideoCall(
@@ -5703,11 +5703,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<int?> getCurrentCallDuration() async {
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       int? res;
       try {
-        res =
-        await mirrorFlyCallMethodChannel.invokeMethod('getCurrentCallDuration');
+        res = await mirrorFlyCallMethodChannel
+            .invokeMethod('getCurrentCallDuration');
         LogMessage.d('getCurrentCallDuration', '$res');
         return res;
       } on PlatformException catch (e) {
@@ -5717,7 +5717,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         LogMessage.d("Exception ", " $error");
         rethrow;
       }
-    }else{
+    } else {
       return null;
     }
   }

@@ -36,7 +36,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   static FlyChatFlutterPlatform _instance = MethodChannelFlyChatFlutter();
 
   /// isSDKInitialized is used to check whether the sdk isInitialized or not.
-  bool get isSDKInitialized => throw UnimplementedError('isSDKInitialized has not been implemented.');
+  bool get isSDKInitialized =>
+      throw UnimplementedError('isSDKInitialized has not been implemented.');
 
   /// Gets the current instance of [FlyChatFlutterPlatform].
   ///
@@ -1442,7 +1443,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
         'getRecentChatListHistoryByTopic has not been implemented.');
   }
 
-
   /// Stream that emits events when a backup is completed successfully.
   Stream<dynamic> get onBackupSuccess =>
       throw UnimplementedError('has not been implemented.');
@@ -1466,8 +1466,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// Stream that emits events when a backup is progress changes.
   Stream<dynamic> get onRestoreProgressChanged =>
       throw UnimplementedError('has not been implemented.');
-
-
 
   /// This method is used to make the video call.
   Future<void> makeVideoCall(
@@ -1553,7 +1551,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   /// This method is used to get current call duration only for Android.
   Future<int?> getCurrentCallDuration() async {
-    throw UnimplementedError('getCurrentCallDuration has not been implemented.');
+    throw UnimplementedError(
+        'getCurrentCallDuration has not been implemented.');
   }
 
   /// This method is used to disconnect the call.
@@ -1681,7 +1680,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<void> cancelRestore() {
     throw UnimplementedError('cancelBackup has not been implemented.');
   }
-
 
   /// This listener is set to listen the message events.
   setMessageEventListener(MessageEventListeners messageEventsListener) {
