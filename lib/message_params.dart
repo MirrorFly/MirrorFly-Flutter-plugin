@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:mirrorfly_plugin/flychat.dart';
+
 /// Represents the parameters for a text message.
 ///
 /// This class holds the text content of a message. It is designed to encapsulate
@@ -358,7 +360,6 @@ class MessageParams {
 
   /// The ID of the topic under which the message is sent, if any.
   String topicId;
-
   /// Initializes a new instance of the [MessageParams] class.
   MessageParams._({
     required this.toJid,
@@ -381,7 +382,9 @@ class MessageParams {
     required TextMessageParams textMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
+    Function(String? errorMessage)? validationCallback,
   }) {
+
     return MessageParams._(
       toJid: toJid,
       replyMessageId: replyMessageId,
@@ -629,6 +632,8 @@ enum MessageType {
   /// The enum constructor takes a [value] parameter which is the string representation of the message type.
   final String value;
 }
+
+enum MessagePreventionType {enCode, inputValidation, none}
 
 /// An enumeration of media download statuses.
 ///
