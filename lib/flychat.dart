@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
+import 'package:mirrorfly_plugin/helpers/text_safety.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'fly_chat_platform_interface.dart';
@@ -21,7 +22,6 @@ class Mirrorfly {
   /// isChatHistoryEnabled to check the chat history is enabled or not
   static var isChatHistoryEnabled = false;
 
-  static late MessagePreventionType isPreventionType;
 
   /// isPrivateStorageEnabled to check the private storage is enabled or not
   static var isPrivateStorageEnabled = false;
@@ -115,9 +115,7 @@ class Mirrorfly {
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false,
       bool enablePrivateStorage = false,
-        MessagePreventionType preventionType= MessagePreventionType.none,
       required Function(FlyResponse response) flyCallback}) {
-    isPreventionType =preventionType;
     var builder = InitializeSDKBuilder(
         iOSContainerID: iOSContainerID,
         licenseKey: licenseKey,
@@ -128,7 +126,6 @@ class Mirrorfly {
         enablePrivateStorage: enablePrivateStorage);
     isChatHistoryEnabled = chatHistoryEnable;
     isPrivateStorageEnabled = enablePrivateStorage;
-    preventionType=preventionType;
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);
   }
   /// Provides functionality to register the user to the Mirrorfly platform.
@@ -1477,35 +1474,25 @@ class Mirrorfly {
     required MessageParams messageParams,
     required Function(FlyResponse response) flyCallback,
   }) async {
-    final isValid = _handleMessageProcessing(messageParams);
-    if (isValid){
-      return FlyChatFlutterPlatform.instance.sendMessage(
-        messageParams: messageParams,
-        callback: flyCallback,
-      );
-    }else {
-      return flyCallback(FlyResponse(false, '',  'Invalid input: HTML tags are not allowed'));
+    String messageText = '';
+    if (messageParams.messageType == MessageType.text) {
+      messageText = messageParams.textMessageParams?.messageText?? '';
+    } else if (messageParams.messageType == MessageType.image ||
+        messageParams.messageType == MessageType.video) {
+      messageText = messageParams.fileMessageParams?.caption?? '';
+    }else if(messageParams.messageType == MessageType.contact){
+      messageText = (messageParams.contactMessageParams?.name ?? '') +
+          (messageParams.contactMessageParams?.numbers.join(' ') ?? '');
     }
-  }
-  static bool _handleMessageProcessing(MessageParams messageParams) {
-    switch (Mirrorfly.isPreventionType) {
-      case MessagePreventionType.inputValidation:
-        return _validateMessageInput(messageParams.textMessageParams!.messageText);
-      case MessagePreventionType.enCode:
-        messageParams.textMessageParams!.messageText =
-            _encryptMessage(messageParams.textMessageParams!.messageText);
-        break;
-      case MessagePreventionType.none:
-        break;
+    // Perform input validation if enabled
+    if (messageParams.messageSecurityMode == MessageSecurityMode.enabled && messageText.isNotEmpty && TextSafety.isUnsafeText(messageText)) {
+      return flyCallback(FlyResponse(false, '', 'Invalid input: HTML tags are not allowed'));
     }
-    return true;
-  }
-  static bool _validateMessageInput(String message) {
-    final htmlTagRegex = RegExp(r'<[^>]*>'); // Blocks any HTML tags
-    return !htmlTagRegex.hasMatch(message);
-  }
-  static String _encryptMessage(String message) {
-    return message;
+    // Send the message if no XSS detected
+    return FlyChatFlutterPlatform.instance.sendMessage(
+      messageParams: messageParams,
+      callback: flyCallback,
+    );
   }
 
 
