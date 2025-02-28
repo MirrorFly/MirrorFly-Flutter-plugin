@@ -2812,7 +2812,11 @@ let ISEXPORT = true
                 }else{
                     print("\(Constants.tag) Next Message List last message id is not setting as the list is empty")
                 }
-                
+                if(self.firstMessageID.isEmpty){
+                    self.firstMessageID = messageList?.first?.messageId ?? emptyString()
+                    self.setFirstMessage()
+                }
+            
                 if let chatJson = messageList.toJson() {
                     print("\(Constants.tag) Next Message List \(chatJson)")
                     result(chatJson)
@@ -3051,6 +3055,10 @@ let ISEXPORT = true
         ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred) { (isSuccess, flyError, resultDict) in
             
             if(isSuccess){
+                self.lastMessageID = emptyString()
+                self.setLastMessage()
+                self.firstMessageID = emptyString()
+                self.setFirstMessage()
                 result(true)
             }else{
                 if case let .invalid_data(message, _) = flyError {
