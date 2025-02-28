@@ -102,6 +102,7 @@ class ChatMessage {
     required this.isMessageEdited,
     required this.messageTextContent,
     required this.messageType,
+    required this.meetChatMessage,
     this.metaData = const [],
     this.mentionedUsersIds,
     required this.replyParentChatMessage,
@@ -168,6 +169,8 @@ class ChatMessage {
   /// The type of message (e.g., text, image, video).
   String messageType;
 
+  MeetChatMessage? meetChatMessage;
+
   /// A list of metadata associated with the message. Nullable.
   List<MessageMetaData>? metaData;
 
@@ -230,6 +233,7 @@ class ChatMessage {
           Platform.isAndroid ? json["isEdited"] : json["isMessageEdited"],
       messageTextContent: json["messageTextContent"].toString(),
       messageType: getMessageType(json["messageType"]),
+      meetChatMessage:json['meetChatMessage'] == null ? null: MeetChatMessage.fromJson(json['meetChatMessage']),
       metaData: json["metaData"] == null
           ? []
           : List<MessageMetaData>.from(
@@ -277,6 +281,7 @@ class ChatMessage {
         "isMessageEdited": isMessageEdited,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
+         "meetChatMessage":meetChatMessage?.toJson(),
         "metaData": metaData == null
             ? null
             : List<dynamic>.from(metaData!.map((x) => x.toJson())),
@@ -357,6 +362,38 @@ class ContactChatMessage {
         "isChatAppUser": List<dynamic>.from(isChatAppUser.map((x) => x)),
         "messageId": messageId,
       };
+}
+
+class MeetChatMessage {
+  final String link;
+  final String messageId;
+  final int scheduledDateTime;
+  final String title;
+
+  MeetChatMessage({
+    required this.link,
+    required this.messageId,
+    required this.scheduledDateTime,
+    required this.title,
+  });
+
+  factory MeetChatMessage.fromJson(Map<String, dynamic> json) {
+    return MeetChatMessage(
+      link: json['link']??'',
+      messageId: json['messageId']??'',
+      scheduledDateTime: json['scheduledDateTime']??0,
+      title: json['title']??'',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'link': link,
+      'messageId': messageId,
+      'scheduledDateTime': scheduledDateTime,
+      'title': title,
+    };
+  }
 }
 
 /// Represents a location shared in a chat message.
