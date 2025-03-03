@@ -1,3 +1,8 @@
+## [1.1.1] Bug Fix
+* Topic ID Added for iOS Messages
+* iOS SDK Updated to 5.18.7
+* Bug Fixes
+
 ## [1.1.0] SDK Updates
 * Android SDK Updated to 7.13.13
 * iOS SDK Updated to 5.18.6
