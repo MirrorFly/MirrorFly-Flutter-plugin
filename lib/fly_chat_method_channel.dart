@@ -1256,7 +1256,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     usersIBlockedListFetchedChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       usersIBlockedListFetchedStreamController.add(event);
-      profileEventsListener?.usersIBlockedListFetched(List<String>.from((data ?? "").map((x) => x.toString())));
+      profileEventsListener?.usersIBlockedListFetched(
+          List<String>.from((data ?? "").map((x) => x.toString())));
     }, onError: (error) {
       LogMessage.d(
           "MirrorFly", "Error on users I blocked list fetched: $error");
@@ -1275,7 +1276,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         (event) {
       var data = json.decode(event.toString());
       usersWhoBlockedMeListFetchedStreamController.add(event);
-      profileEventsListener?.usersWhoBlockedMeListFetched(List<String>.from((data ?? "").map((x) => x.toString())));
+      profileEventsListener?.usersWhoBlockedMeListFetched(
+          List<String>.from((data ?? "").map((x) => x.toString())));
     }, onError: (error) {
       LogMessage.d(
           "MirrorFly", "Error on users who blocked me list fetched: $error");
