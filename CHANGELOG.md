@@ -1,3 +1,11 @@
+## [1.1.1] Bug Fix
+* Topic ID Added for iOS Messages
+* iOS SDK Updated to 5.18.7
+* Android Topic Based messages duplicate fix
+* hasNextMessage and hasPreviousMessage Methods Deprecated
+* MessageEventListeners Type Bug Fix
+* iOS Profile Name Encryption Bug Fix
+
 ## [1.1.0] SDK Updates
 * Android SDK Updated to 7.13.13
 * iOS SDK Updated to 5.18.6

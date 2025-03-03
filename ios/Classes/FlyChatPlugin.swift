@@ -336,20 +336,18 @@ extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, Logout
     }
     
     public  func usersIBlockedListFetched(jidList: [String]) {
-        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(jidList, forKey: "jidlist")
-        let jsonString = pluginDictToJson(dictionary: jsonObject)
-        
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.usersIBlockedListFetched_channel, value: jsonString)
+//         let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//         jsonObject.setValue(jidList, forKey: "jidlist")
+//         let jsonString = pluginDictToJson(dictionary: jsonObject)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.usersIBlockedListFetched_channel, value: jidList.toJson())
         
     }
     
     public func usersBlockedMeListFetched(jidList: [String]) {
-        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(jidList, forKey: "jidlist")
-        let jsonString = pluginDictToJson(dictionary: jsonObject)
-        
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.usersWhoBlockedMeListFetched_channel, value: jsonString)
+//         let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//         jsonObject.setValue(jidList, forKey: "jidlist")
+//         let jsonString = pluginDictToJson(dictionary: jsonObject)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.usersWhoBlockedMeListFetched_channel, value: jidList.toJson())
 
     }
     
