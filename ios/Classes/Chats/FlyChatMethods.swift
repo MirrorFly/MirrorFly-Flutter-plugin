@@ -4322,19 +4322,78 @@ let ISEXPORT = true
         
         let barcode = args["barcode"] as? String ?? ""
         
-        WebLoginsManager.shared.handleQrCodeData(qrCodeString: barcode) { isSuccess, message in
+        /// Native side, they are checking for the socket id and then allowing the scanning. So for now we are testing without getting the SocketId
+        WebLoginsManager.shared.getSocketId { isSuccess, message in
+               
             if isSuccess {
-                print("QRCodeScannerViewModel isSuccess")
-                result(isSuccess)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    WebLoginsManager.shared.handleQrCodeData(qrCodeString: barcode) { isSuccess, message in
+                        if isSuccess {
+                            print("QRCodeScannerViewModel isSuccess")
+                            self.saveWebLoginInfo(qrData: barcode)
+                            result(isSuccess)
+                        }else{
+                            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.QR_LOGIN_FAILED, details: message))
+                        }
+                    }
+                }
+                
             }else{
-                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.QR_LOGIN_FAILED, details: message))
+                print("QRCodeScannerViewModel failed \(message)")
             }
         }
+        
+       
     }
     
+    private func saveWebLoginInfo(qrData : String) {
+        WebLoginsManager.shared.saveWebLogin(qrData: qrData)
+    }
     
     func webLoginDetailsCleared(call : FlutterMethodCall, result: @escaping FlutterResult){
+        WebLoginsManager.shared.reset()
+    }
+    
+    func getWebLoginDetails(call : FlutterMethodCall, result: @escaping FlutterResult){
+        let loginDetails : [WebLoginInfo?] = WebLoginsManager.shared.getWebLogins()
+        print("getWebLoginDetails \(loginDetails)")
         
+        var jsonArray: [[String: Any]] = []
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEE, d MMM yyyy hh:mm:ss a" // Desired format
+        dateFormatter.locale = Locale(identifier: "en_US") // Ensures proper day/month formatting
+
+        for login in loginDetails.compactMap({ $0 }) {
+            var jsonObject: [String: Any] = [:]
+            
+            jsonObject["id"] = Int.random(in: 0..<100)
+            jsonObject["osName"] = login.platform ?? ""
+            jsonObject["qrUniqeToken"] = login.token ?? ""
+            jsonObject["webBrowserName"] = login.browser ?? ""
+            
+            if let loginTime = login.loginTime {
+                    let timeInSeconds = loginTime / 1_000_000 // Convert microseconds to seconds
+                    let date = Date(timeIntervalSince1970: timeInSeconds) // Create Date object
+                    jsonObject["lastLoginTime"] = dateFormatter.string(from: date) // Format to required string
+                } else {
+                    jsonObject["lastLoginTime"] = ""
+                }
+
+            jsonArray.append(jsonObject)
+        }
+
+        let webLoginJsonArrray = jsonArray.toJSONString()
+        
+        print("login Details json \(webLoginJsonArrray)")
+        
+        result(webLoginJsonArrray)
+        
+    }
+    
+    func logoutWebUser(call : FlutterMethodCall, result: @escaping FlutterResult){
+        WebLoginsManager.shared.logoutFromDevices()
+        result(true)
     }
     
     func sendContactUsInfo(call : FlutterMethodCall, result: @escaping FlutterResult){

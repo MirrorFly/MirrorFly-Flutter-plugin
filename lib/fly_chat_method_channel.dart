@@ -4409,6 +4409,25 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+
+  @override
+  Future<bool?> iOSFileExist(String filePath) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('iOSFileExist', {"file_path": filePath});
+      LogMessage.d("iOSFileExist Response ", " $response");
+      return response;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+   */
+
   @override
   Future<void> loginWebChatViaQRCode(
       String barcode, Function(FlyResponse response)? callback) async {
@@ -4464,22 +4483,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
-  Future<bool?> iOSFileExist(String filePath) async {
-    bool? response;
-    try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('iOSFileExist', {"file_path": filePath});
-      LogMessage.d("iOSFileExist Response ", " $response");
-      return response;
-    } on PlatformException catch (e) {
-      LogMessage.d("Platform Exception =", " $e");
-      rethrow;
-    } on Exception catch (error) {
-      LogMessage.d("Exception ", " $error");
-      rethrow;
-    }
-  }
 
   @override
   Future<dynamic> getWebLoginDetails() async {
@@ -4496,7 +4499,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
-  }*/
+  }
 
   @override
   Future<void> updateFavouriteStatus(

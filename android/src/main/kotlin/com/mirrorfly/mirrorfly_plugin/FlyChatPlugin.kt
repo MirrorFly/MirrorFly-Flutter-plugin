@@ -310,7 +310,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //                getMessageUsingIds(call, result)
                 }
 
-                call.method.equals("getWebLoginDetails") -> {
+                /*call.method.equals("getWebLoginDetails") -> {
                     val details = WebLoginDataManager.getWebLoginDetails()
                     result.success(details.toJsonString())
                 }
@@ -330,7 +330,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                         }
                     }
                     result.success(true)
-                }
+                }*/
 
                 else -> {
                     result.notImplemented()

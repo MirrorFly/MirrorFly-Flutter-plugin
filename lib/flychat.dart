@@ -3577,8 +3577,8 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getRingtoneName();
   }*/
 
-  /*static Future<bool?> loginWebChatViaQRCode({required String barcode}) {
-    return FlyChatFlutterPlatform.instance.loginWebChatViaQRCode(barcode);
+  static Future<void> loginWebChatViaQRCode({required String barcode,  required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.loginWebChatViaQRCode(barcode, flyCallBack);
   }
 
   static Future<bool?> webLoginDetailsCleared() {
@@ -3587,16 +3587,18 @@ class Mirrorfly {
 
   static Future<bool?> logoutWebUser({required List<String> logins}) {
     return FlyChatFlutterPlatform.instance.logoutWebUser(logins);
-  }*/
+  }
+
+  static Future<dynamic> getWebLoginDetails() {
+    return FlyChatFlutterPlatform.instance.getWebLoginDetails();
+  }
 
   //not used
   /*static Future<bool?> iOSFileExist({required String filePath}) {
     return FlyChatFlutterPlatform.instance.iOSFileExist(filePath);
   }*/
 
-  /*static Future<dynamic> getWebLoginDetails() {
-    return FlyChatFlutterPlatform.instance.getWebLoginDetails();
-  }*/
+
 
   /// This method updates the favourite status of a specific message for a chat user. The favourite status
   /// can be set to true or false. Upon completion, the [flyCallBack] function is invoked with a [FlyResponse]

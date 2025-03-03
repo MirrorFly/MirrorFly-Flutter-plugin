@@ -218,6 +218,8 @@ class FlyMethodConstants {
                 "getUnreadMessagesCount": flyChatMethods.getUnreadMessagesCount,
                 "loginWebChatViaQRCode": flyChatMethods.loginWebChatViaQRCode,
                 "webLoginDetailsCleared": flyChatMethods.webLoginDetailsCleared,
+                "getWebLoginDetails": flyChatMethods.getWebLoginDetails,
+                "logoutWebUser": flyChatMethods.logoutWebUser,
                 "sendContactUsInfo": flyChatMethods.sendContactUsInfo,
                 "getJidFromPhoneNumber": flyChatMethods.getJidFromPhoneNumber,
                 "editTextMessage": flyChatMethods.editTextMessage,

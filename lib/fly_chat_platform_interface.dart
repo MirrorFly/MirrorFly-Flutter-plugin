@@ -1153,27 +1153,32 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<String?> getRingtoneName() {
     throw UnimplementedError('has not been implemented.');
   }
+  Future<bool?> iOSFileExist(String filePath) {
+    throw UnimplementedError('has not been implemented.');
+  }
 
+  */
+
+  /// This method is used to login in Web using QR Code
   Future<void> loginWebChatViaQRCode(
       String barcode, Function(FlyResponse response)? callback) {
     throw UnimplementedError('has not been implemented.');
   }
 
+  /// This method is used to clear the web login details
   Future<bool?> webLoginDetailsCleared() {
     throw UnimplementedError('has not been implemented.');
   }
 
+  /// This method is used to logout the user from web
   Future<bool?> logoutWebUser(List<String> logins) {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<bool?> iOSFileExist(String filePath) {
-    throw UnimplementedError('has not been implemented.');
-  }
-
+  /// This method is used to get web login details
   Future<dynamic> getWebLoginDetails() {
     throw UnimplementedError('has not been implemented.');
-  }*/
+  }
 
   /// This method is used to update the favourite status of a message.
   Future<void> updateFavouriteStatus(

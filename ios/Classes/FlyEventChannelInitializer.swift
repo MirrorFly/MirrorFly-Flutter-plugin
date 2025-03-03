@@ -31,9 +31,9 @@ class FlyEventChannelInitializer {
         
         /// For Meet Link
         (channelName: Constants.onSubscribeSuccess, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
-        (channelName: Constants.onConnectedToSignalServer, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
-        (channelName: Constants.onError, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
-        (channelName: Constants.onUsersUpdated, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
+        (channelName: Constants.onConnectedToSignalServer, streamHandler: OnConnectedToSignalServerChannelStreamHandler()),
+        (channelName: Constants.onError, streamHandler: OnErrorChannelStreamHandler()),
+        (channelName: Constants.onUsersUpdated, streamHandler: OnUsersUpdatedChannelStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
     
