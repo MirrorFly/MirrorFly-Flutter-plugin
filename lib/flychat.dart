@@ -2725,6 +2725,7 @@ class Mirrorfly {
   }
 
   /// This [hasPreviousMessages] is used to find it has any Previous messages
+  @Deprecated('')
   static Future<bool> hasPreviousMessages() {
     return FlyChatFlutterPlatform.instance.hasPreviousMessages();
   }
@@ -2740,6 +2741,7 @@ class Mirrorfly {
   }
 
   /// This [hasNextMessages] is used to find it has any Previous messages
+  @Deprecated('')
   static Future<bool> hasNextMessages() {
     return FlyChatFlutterPlatform.instance.hasNextMessages();
   }
