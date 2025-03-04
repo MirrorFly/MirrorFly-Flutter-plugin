@@ -169,6 +169,7 @@ class ChatMessage {
   /// The type of message (e.g., text, image, video).
   String messageType;
 
+  /// Details of the meet shared in the message. Nullable.
   MeetChatMessage? meetChatMessage;
 
   /// A list of metadata associated with the message. Nullable.
@@ -364,12 +365,22 @@ class ContactChatMessage {
       };
 }
 
+
+/// Represents a contact shared in a chat message.
 class MeetChatMessage {
+  ///Meet link for the event
   final String link;
+
+  /// Unique identifier for the message
   final String messageId;
+
+  /// Scheduled date and time of the event (in milliseconds since epoch)
   final int scheduledDateTime;
+
+  /// Title of the meeting or event
   final String title;
 
+  /// Constructs an instance of [MeetChatMessage].
   MeetChatMessage({
     required this.link,
     required this.messageId,
@@ -377,15 +388,17 @@ class MeetChatMessage {
     required this.title,
   });
 
+  ///Factory constructor to create an instance from a JSON object
   factory MeetChatMessage.fromJson(Map<String, dynamic> json) {
     return MeetChatMessage(
-      link: json['link']??'',
-      messageId: json['messageId']??'',
-      scheduledDateTime: json['scheduledDateTime']??0,
-      title: json['title']??'',
+      link: json['link'] ?? '', // Default empty string if null
+      messageId: json['messageId'] ?? '', // Default empty string if null
+      scheduledDateTime: json['scheduledDateTime'] ?? 0, // Default 0 if null
+      title: json['title'] ?? '', // Default empty string if null
     );
   }
 
+  /// Converts the object into a JSON representation
   Map<String, dynamic> toJson() {
     return {
       'link': link,

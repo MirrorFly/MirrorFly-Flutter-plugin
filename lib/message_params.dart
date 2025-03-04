@@ -160,17 +160,6 @@ class MeetMessage {
       this.title,
         required this.scheduledDateTime,
         required this.link});
-
-  /// The Jabber ID (JID) of the recipient.
-
-  /// The ID of the message being replied to, if any.
-
-  /// A list of user IDs mentioned in the message.
-
-  /// A list of [MessageMetaData] objects providing additional information about the message.
-
-  /// The ID of the topic under which the message is sent, if any.
-
   /// The title of the meeting.
   String? title;
 
@@ -342,6 +331,7 @@ class MessageParams {
   /// Parameters for a file message, if applicable.
   FileMessageParams? fileMessageParams;
 
+  /// Parameters for a Meet message, if applicable.
     MeetMessage? meetMessageParams;
   /// The ID of the topic under which the message is sent, if any.
   String topicId;
@@ -380,6 +370,7 @@ class MessageParams {
     );
   }
 
+  /// Constructs a [MessageParams] object for a Meet message.
   factory MessageParams.meet({
     required String toJid,
     String? replyMessageId,
@@ -599,6 +590,7 @@ enum MessageType {
   /// Represents a notification message.
   notification('NOTIFICATION'),
 
+  /// Represents a Meet message
   meet('MEET');
   // autoText('AUTO_TEXT'),
   // chatSummary('CHAT_SUMMARY');
@@ -630,6 +622,7 @@ enum MessageType {
   /// The string representation for a notification message.
   static const isNotification = "NOTIFICATION";
 
+  /// The string representation for a meet message.
   static const isMeet = "MEET";
 
 
@@ -638,8 +631,6 @@ enum MessageType {
   /// The enum constructor takes a [value] parameter which is the string representation of the message type.
   final String value;
 }
-
-enum MessagePreventionType {enCode, inputValidation, none}
 
 /// An enumeration of media download statuses.
 ///
