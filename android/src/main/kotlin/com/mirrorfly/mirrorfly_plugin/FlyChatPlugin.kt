@@ -787,12 +787,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun usersIBlockedListFetched(jidList: List<String>) {
-        val map = JSONObject()
-        map.put("jidlist", jidList)
 //        usersIBlockedListFetchedStreamHandler.usersIBlockedListFetched?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
             Constants.usersIBlockedListFetchedChannel,
-            map.toString()
+            jidList.toJsonString()
         )
     }
 
@@ -805,12 +803,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     }
 
     override fun usersWhoBlockedMeListFetched(jidList: List<String>) {
-        val map = JSONObject()
-        map.put("jidlist", jidList)
 //        usersWhoBlockedMeListFetchedStreamHandler.usersWhoBlockedMeListFetched?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
             Constants.usersWhoBlockedMeListFetchedChannel,
-            map.toString()
+            jidList.toJsonString()
         )
     }
 
