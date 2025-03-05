@@ -2812,7 +2812,11 @@ let ISEXPORT = true
                 }else{
                     print("\(Constants.tag) Next Message List last message id is not setting as the list is empty")
                 }
-                
+                if(self.firstMessageID.isEmpty){
+                    self.firstMessageID = messageList?.first?.messageId ?? emptyString()
+                    self.setFirstMessage()
+                }
+
                 if let chatJson = messageList.toJson() {
                     print("\(Constants.tag) Next Message List \(chatJson)")
                     result(chatJson)
@@ -3051,6 +3055,10 @@ let ISEXPORT = true
         ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred) { (isSuccess, flyError, resultDict) in
             
             if(isSuccess){
+                self.lastMessageID = emptyString()
+                self.setLastMessage()
+                self.firstMessageID = emptyString()
+                self.setFirstMessage()
                 result(true)
             }else{
                 if case let .invalid_data(message, _) = flyError {
@@ -3866,7 +3874,7 @@ let ISEXPORT = true
             let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
             metaDataArray.append(obj)
         }
-        
+
         if let sendingMessageType = FlyMessageType.fromString(messageType ?? "") {
             print("\(Constants.tag) sendMessage -> Messsage Type \(sendingMessageType)")
             switch sendingMessageType {
@@ -3892,7 +3900,7 @@ let ISEXPORT = true
                 let fileThumbImageArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
                 let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
-                
+
                 let imagefileUrl = URL(fileURLWithPath: filePathArg)
                 
                 
@@ -3912,7 +3920,7 @@ let ISEXPORT = true
                         
                         let mediaParams = FileMessageParams(fileUrl: localFilePath!, fileName: fileNameArg == "" ? fileName : fileNameArg,  caption : fileCaptionArg, fileSize: fileSize, duration: 0.0, thumbImage: fileThumbImageArg == "" ? MediaUtils.convertImageToBase64String(img: selectedImage!) : fileThumbImageArg, fileKey: fileKey)
                         
-                        let imageFileMessage = FileMessage(toId: receiverJID!, messageType: .image, fileMessage : mediaParams, replyMessageId : replyMessageID, mentionedUsersIds: mentionedUsersIds, metaData: metaDataArray)
+                        let imageFileMessage = FileMessage(toId: receiverJID!, messageType: .image, fileMessage : mediaParams, replyMessageId : replyMessageID, mentionedUsersIds: mentionedUsersIds, metaData: metaDataArray, topicID: topicId)
                         
                         self.sendImage(imageMessageParams: imageFileMessage, call: call, result: result)
                         
@@ -3951,7 +3959,7 @@ let ISEXPORT = true
                     if let compressedURL = url,  isSuccess{
                         
                         let mediaParams = FileMessageParams(fileUrl: compressedURL, fileName: fileName, caption: fileCaptionArg, fileSize: fileSize, duration: duration, thumbImage: base64Img, fileKey: fileKey)
-                        let videoFileMessage = FileMessage(toId: receiverJID!, messageType: .video, fileMessage : mediaParams, replyMessageId: replyMessageID, mentionedUsersIds: mentionedUsersIds, metaData: metaDataArray)
+                        let videoFileMessage = FileMessage(toId: receiverJID!, messageType: .video, fileMessage : mediaParams, replyMessageId: replyMessageID, mentionedUsersIds: mentionedUsersIds, metaData: metaDataArray, topicID: topicId)
                         
                         self.sendVideo(videoMessageParams: videoFileMessage, call: call, result: result)
                         
@@ -3971,14 +3979,14 @@ let ISEXPORT = true
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
-                
+
 
                 let audiofileUrl = URL(fileURLWithPath: filePathArg)
                 
                 MediaUtils.processAudioFile(url: audiofileUrl) { isSuccess, fileName ,localPath, fileSize, duration, fileKey, errorMessage  in
                     if let localPathURL = localPath, isSuccess{
                         let audioParams = FileMessageParams (fileUrl: localPathURL, fileName: fileName,fileSize: fileSize, duration: duration, fileKey: fileKey)
-                        let audioFileMessage = FileMessage(toId: receiverJID ?? emptyString(), messageType: sendingMessageType == .AUDIO_RECORDED ? .audioRecorded : .audio, fileMessage : audioParams, replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
+                        let audioFileMessage = FileMessage(toId: receiverJID ?? emptyString(), messageType: sendingMessageType == .AUDIO_RECORDED ? .audioRecorded : .audio, fileMessage : audioParams, replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray, topicID: topicId)
                         self.sendAudio(audioMessageParams: audioFileMessage, call: call, result: result)
                         
                     } else {
@@ -3994,7 +4002,7 @@ let ISEXPORT = true
                 let contactName = AppUtils.shared.getValueForKey(dictionary: contactDict, key: "name") as? String ?? ""
                 let contactNumbers = AppUtils.shared.getValueForKey(dictionary: contactDict, key: "numbers") as? [String] ?? []
                 
-                let contactMessageParams = FileMessage(toId: receiverJID!, messageType: .contact, contactMessage: ContactMessageParams(name: contactName, numbers: contactNumbers), replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
+                let contactMessageParams = FileMessage(toId: receiverJID!, messageType: .contact, contactMessage: ContactMessageParams(name: contactName, numbers: contactNumbers), replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray, topicID: topicId)
                 
                 sendContact(contactMessageParams: contactMessageParams, call: call, result: result)
                 break;
@@ -4010,7 +4018,7 @@ let ISEXPORT = true
                     if let localPathURL = localPath, isSuccess {
                         
                         let documentParams = FileMessageParams(fileUrl: localPathURL, fileName: fileName)
-                        let documentMsg = FileMessage(toId: receiverJID!, messageType: .document, fileMessage: documentParams, replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
+                        let documentMsg = FileMessage(toId: receiverJID!, messageType: .document, fileMessage: documentParams, replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray, topicID: topicId)
                         
                         self.sendDocument(documentMessageParams: documentMsg, call: call, result: result)
                         
@@ -4029,7 +4037,7 @@ let ISEXPORT = true
                 let latitude = AppUtils.shared.getValueForKey(dictionary: locationDict, key: "latitude") as? Double ?? 0.0
                 let longitude = AppUtils.shared.getValueForKey(dictionary: locationDict, key: "longitude") as? Double ?? 0.0
 
-                let locationMessageParams = FileMessage(toId: receiverJID!, messageType: .location, locationMessage: LocationMessageParams(latitude: latitude, longitude: longitude), replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
+                let locationMessageParams = FileMessage(toId: receiverJID!, messageType: .location, locationMessage: LocationMessageParams(latitude: latitude, longitude: longitude), replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray, topicID: topicId)
                 
                 sendLocation(locationMessageParams: locationMessageParams, call: call, result: result)
                 
@@ -4042,9 +4050,9 @@ let ISEXPORT = true
                 let scheduledDateTime = AppUtils.shared.getValueForKey(dictionary: meetDict, key: "scheduledDateTime") as? Int ?? 0
 
                 let meetMessageParams = MeetMessage(toId: receiverJID!, title: title, link: link, scheduledDateTime: scheduledDateTime,replyMessageId: replyMessageID ?? emptyString(),mentionedUsersIds: mentionedUsersIds,metaData: metaDataArray,topicID: topicId)
-                
+
                 sendMeetMessage(meetMessageParams: meetMessageParams, call: call, result: result)
-                
+
                 break;
             default:
                 print("sendMessage -> Messsage Type goes to Default")
@@ -4271,7 +4279,7 @@ let ISEXPORT = true
             }
         }
     }
-    
+
     private func sendMeetMessage(meetMessageParams: MeetMessage, call : FlutterMethodCall, result: @escaping FlutterResult){
 
         FlyMessenger.sendMeetMessage(messageParams: meetMessageParams){ isSuccess,error,chatMessage in
@@ -4301,7 +4309,7 @@ let ISEXPORT = true
         }
 
     }
-    
+
     func unFavouriteAllFavouriteMessages(call : FlutterMethodCall, result: @escaping FlutterResult){
         ChatManager.unFavouriteAllFavouriteMessages{(isSuccess, flyError, resultDict) in
             if isSuccess{

@@ -104,7 +104,7 @@ abstract class ProfileEventListeners {
   void myProfileUpdated();
 
   /// This listener is triggered whenever the user's profile who blocked you is fetched and synced.
-  void usersWhoBlockedMeListFetched(String jidList);
+  void usersWhoBlockedMeListFetched(List<String> jidList);
 
   /// This listener is triggered whenever the user's profile who you blocked is fetched and synced.
   void usersIBlockedListFetched(List<String> jidList);
