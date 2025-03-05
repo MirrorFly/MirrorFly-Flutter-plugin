@@ -3859,6 +3859,13 @@ let ISEXPORT = true
         let replyMessageID = args["replyMessageId"] as? String
         let topicId = args["topicId"] as? String
         let mentionedUsersIds = args["mentionedUsersIds"] as? [String] ?? []
+        let metaData = args["metaData"] as? [[String: Any]] ?? []
+        print("\(String(describing: messageType)) MetaData \(String(describing: metaData))")
+        var metaDataArray : [MessageMetaData] = []
+        for data in metaData {
+            let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
+            metaDataArray.append(obj)
+        }
         
         if let sendingMessageType = FlyMessageType.fromString(messageType ?? "") {
             print("\(Constants.tag) sendMessage -> Messsage Type \(sendingMessageType)")
@@ -3870,13 +3877,6 @@ let ISEXPORT = true
                 (AppUtils.shared.getValueForKey(dictionary: args["textMessage"] as? Dictionary<String, Any>, key: "messageText") as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
                 messageParams.replyMessageId = replyMessageID
                 messageParams.mentionedUsersIds = mentionedUsersIds
-                let metaData = args["metaData"] as? [[String: Any]] ?? []
-                print("Text MetaData \(String(describing: metaData))")
-                var metaDataArray : [MessageMetaData] = []
-                for data in metaData {
-                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
-                    metaDataArray.append(obj)
-                }
                 messageParams.metaData = metaDataArray
                 messageParams.topicID = topicId
                 
@@ -3893,14 +3893,6 @@ let ISEXPORT = true
                 let fileNameArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
-                let metaData = args["metaData"] as? [[String: Any]] ?? []
-                print("Image MetaData \(String(describing: metaData))")
-                var metaDataArray : [MessageMetaData] = []
-                for data in metaData {
-                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
-                    metaDataArray.append(obj)
-                }
-
                 let imagefileUrl = URL(fileURLWithPath: filePathArg)
                 
                 
@@ -3939,14 +3931,6 @@ let ISEXPORT = true
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
-                
-                let metaData = args["metaData"] as? [[String: Any]] ?? []
-                print("Image MetaData \(String(describing: metaData))")
-                var metaDataArray : [MessageMetaData] = []
-                for data in metaData {
-                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
-                    metaDataArray.append(obj)
-                }
 
                 let videoFileUrl = URL(fileURLWithPath: filePathArg)
                 
@@ -3988,13 +3972,6 @@ let ISEXPORT = true
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
                 
-                let metaData = args["metaData"] as? [[String: Any]] ?? []
-                print("Image MetaData \(String(describing: metaData))")
-                var metaDataArray : [MessageMetaData] = []
-                for data in metaData {
-                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
-                    metaDataArray.append(obj)
-                }
 
                 let audiofileUrl = URL(fileURLWithPath: filePathArg)
                 
@@ -4017,14 +3994,6 @@ let ISEXPORT = true
                 let contactName = AppUtils.shared.getValueForKey(dictionary: contactDict, key: "name") as? String ?? ""
                 let contactNumbers = AppUtils.shared.getValueForKey(dictionary: contactDict, key: "numbers") as? [String] ?? []
                 
-                let metaData = args["metaData"] as? [[String: Any]] ?? []
-                print("Image MetaData \(String(describing: metaData))")
-                var metaDataArray : [MessageMetaData] = []
-                for data in metaData {
-                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
-                    metaDataArray.append(obj)
-                }
-
                 let contactMessageParams = FileMessage(toId: receiverJID!, messageType: .contact, contactMessage: ContactMessageParams(name: contactName, numbers: contactNumbers), replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
                 
                 sendContact(contactMessageParams: contactMessageParams, call: call, result: result)
@@ -4033,14 +4002,6 @@ let ISEXPORT = true
             case .DOCUMENT:
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
-                
-                let metaData = args["metaData"] as? [[String: Any]] ?? []
-                print("Image MetaData \(String(describing: metaData))")
-                var metaDataArray : [MessageMetaData] = []
-                for data in metaData {
-                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
-                    metaDataArray.append(obj)
-                }
 
                 let documentFileUrl = URL(fileURLWithPath: filePathArg)
                 
@@ -4067,14 +4028,6 @@ let ISEXPORT = true
                 let locationDict = args["locationMessage"] as? Dictionary<String, Any>
                 let latitude = AppUtils.shared.getValueForKey(dictionary: locationDict, key: "latitude") as? Double ?? 0.0
                 let longitude = AppUtils.shared.getValueForKey(dictionary: locationDict, key: "longitude") as? Double ?? 0.0
-                
-                let metaData = args["metaData"] as? [[String: Any]] ?? []
-                print("Image MetaData \(String(describing: metaData))")
-                var metaDataArray : [MessageMetaData] = []
-                for data in metaData {
-                    let obj = MessageMetaData(key: data["key"] as? String ?? "", value: data["value"] as? String ?? "")
-                    metaDataArray.append(obj)
-                }
 
                 let locationMessageParams = FileMessage(toId: receiverJID!, messageType: .location, locationMessage: LocationMessageParams(latitude: latitude, longitude: longitude), replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray)
                 
@@ -4082,6 +4035,17 @@ let ISEXPORT = true
                 
                 break;
                 
+            case .MEET:
+                let meetDict = args["meetMessage"] as? Dictionary<String, Any>
+                let title = AppUtils.shared.getValueForKey(dictionary: meetDict, key: "title") as? String ?? ""
+                let link = AppUtils.shared.getValueForKey(dictionary: meetDict, key: "link") as? String ?? ""
+                let scheduledDateTime = AppUtils.shared.getValueForKey(dictionary: meetDict, key: "scheduledDateTime") as? Int ?? 0
+
+                let meetMessageParams = MeetMessage(toId: receiverJID!, title: title, link: link, scheduledDateTime: scheduledDateTime,replyMessageId: replyMessageID ?? emptyString(),mentionedUsersIds: mentionedUsersIds,metaData: metaDataArray,topicID: topicId)
+                
+                sendMeetMessage(meetMessageParams: meetMessageParams, call: call, result: result)
+                
+                break;
             default:
                 print("sendMessage -> Messsage Type goes to Default")
                 break;
@@ -4307,6 +4271,37 @@ let ISEXPORT = true
             }
         }
     }
+    
+    private func sendMeetMessage(meetMessageParams: MeetMessage, call : FlutterMethodCall, result: @escaping FlutterResult){
+
+        FlyMessenger.sendMeetMessage(messageParams: meetMessageParams){ isSuccess,error,chatMessage in
+            if (isSuccess) {
+                let meetResponse = chatMessage?.toJson()
+//                self.setLastMessage(messageID: chatMessage?.messageId)
+                print("FlyMessenger.sendMeetMessage==**==\(String(describing: meetResponse))")
+                result(meetResponse)
+            }else{
+                //Error Code Checked with SDK
+                if case let .invalid_data(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else if case let .unexpected(message, code) = error {
+                    if code == ErrorCode.CANNOT_PROCESS{
+                        result(FlutterError(code: FLErrorCode.CANNOT_PROCESS, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }else if code == ErrorCode.FORBIDDEN{
+                        result(FlutterError(code: FLErrorCode.FORBIDDEN_ACTION, message: FLErrorMessage.FEATURE_NOT_AVAILABLE, details: message))
+                    }else{
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                    }
+                }else if case let .invalid_jid(message, _) = error {
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: message))
+                }else{
+                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_SENDING_FAILED, details: error?.localizedDescription))
+                }
+            }
+        }
+
+    }
+    
     func unFavouriteAllFavouriteMessages(call : FlutterMethodCall, result: @escaping FlutterResult){
         ChatManager.unFavouriteAllFavouriteMessages{(isSuccess, flyError, resultDict) in
             if isSuccess{
