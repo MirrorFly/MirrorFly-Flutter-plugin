@@ -691,9 +691,31 @@ class Mirrorfly {
   /// ```dart
   /// await Mirrorfly.updateChatMuteStatus(jid: 'example@domain.com', muteStatus: true);
   /// ```
+  @Deprecated('Instead of use Mirrorfly.updateChatMuteStatusList()')
   static updateChatMuteStatus({required String jid, required bool muteStatus}) {
     return FlyChatFlutterPlatform.instance
         .updateChatMuteStatus(jid, muteStatus);
+  }
+
+  /// Updates the mute status of a chat Lists identified by its JID List.
+  ///
+  /// This method is used to update the mute status of a chat identified by its JID List.
+  ///
+  /// The [jidList] parameter specifies the List of JID of the chat to be updated.
+  ///
+  /// The [muteStatus] parameter indicates whether the chat should be muted or unmuted.
+  /// If set to `true`, the chat will be muted. If set to `false`, the chat will be unmuted.
+  ///
+  /// Returns a `Future<void>` that completes when the mute status update is performed successfully.
+  ///
+  /// Example usage:
+  ///
+  /// ```dart
+  /// await Mirrorfly.updateChatMuteStatusList(jidList: ['example@domain.com', 'example1@domain.com], muteStatus: true);
+  /// ```
+  static updateChatMuteStatusList({required List<String> jidList, required bool muteStatus}) {
+    return FlyChatFlutterPlatform.instance
+        .updateChatMuteStatusList(jidList, muteStatus);
   }
 
   /// Updates the pin status of a recent chat.
@@ -2224,6 +2246,22 @@ class Mirrorfly {
   static Stream<dynamic> get onConnectionFailed =>
       FlyChatFlutterPlatform.instance.onConnectionFailed;
 
+  /// A stream that emits events when the chat service reconnection.
+  ///
+  /// This stream listens for events indicating that the chat service is reconnecting to establish a connection.
+  /// Each event contains information about the reconnection. Use this stream
+  /// to update your UI or perform actions upon reconnection.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onReconnecting.listen(() {
+  ///   // Handle the event when the platform reconnection
+  ///
+  /// });
+  /// ```
+  static Stream<dynamic> get onReconnecting =>
+      FlyChatFlutterPlatform.instance.onReconnecting;
+
   // static Stream<dynamic> get connectionFailed => FlyChatFlutterPlatform.instance.connectionFailed;
 
   // static Stream<dynamic> get connectionSuccess => FlyChatFlutterPlatform.instance.connectionSuccess;
@@ -3581,10 +3619,6 @@ class Mirrorfly {
 
   static Future<void> loginWebChatViaQRCode({required String barcode,  required Function(FlyResponse response) flyCallBack}) {
     return FlyChatFlutterPlatform.instance.loginWebChatViaQRCode(barcode, flyCallBack);
-  }
-
-  static Future<bool?> webLoginDetailsCleared() {
-    return FlyChatFlutterPlatform.instance.webLoginDetailsCleared();
   }
 
   static Future<bool?> logoutWebUser({required List<String> logins}) {

@@ -838,6 +838,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onReconnecting() {
         //onReconnecting
+        LogMessage.d(TAG, "Chat Manager Reconnecting")
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onReconnectingChannel,
+            true
+        )
     }
 
     /*override fun onConnectionNotAuthorized() {

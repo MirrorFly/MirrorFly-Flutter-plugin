@@ -3338,10 +3338,10 @@ class FlyChatMethods {
         result.success(details.toJsonString())
     }
 
-    fun webLoginDetailsCleared(call: MethodCall, result: MethodChannel.Result) {
+    /*fun webLoginDetailsCleared(call: MethodCall, result: MethodChannel.Result) {
         WebLoginDataManager.webLoginDetailsCleared()
         result.success(true)
-    }
+    }*/
 
     fun logoutWebUser(call: MethodCall, result: MethodChannel.Result) {
         WebLoginDataManager.webLoginDetailsCleared()

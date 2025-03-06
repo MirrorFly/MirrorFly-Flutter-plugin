@@ -147,6 +147,7 @@ class FlyMethodConstants {
                 "updateArchiveUnArchiveChat": flyChatMethods.updateArchiveUnArchiveChat,
                 "getArchivedChatList": flyChatMethods.getArchivedChatList,
                 "updateChatMuteStatus": flyChatMethods.updateChatMuteStatus,
+                "updateChatMuteStatusList": flyChatMethods.updateChatMuteStatusList,
                 "sendTypingStatus": flyChatMethods.sendTypingStatus,
                 "sendTypingGoneStatus": flyChatMethods.sendTypingGoneStatus,
                 "setNotificationSound": flyChatMethods.setNotificationSound,

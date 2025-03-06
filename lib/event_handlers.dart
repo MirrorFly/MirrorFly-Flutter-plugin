@@ -79,6 +79,9 @@ abstract class ConnectionEventListeners {
   /// This listener is triggered whenever the connection is failed.
   void onConnectionFailed(String connectionError);
 
+  /// This listener is triggered whenever the reconnecting.
+  void onReconnecting();
+
   /// This listener is triggered whenever the user logged in is logged out by the server.
   void onLoggedOut();
 }

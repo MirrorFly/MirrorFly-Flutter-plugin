@@ -52,6 +52,7 @@ object FlyMethodConstants {
         Constants.usersWhoBlockedMeListFetchedChannel to EventStreamHandler(),
         Constants.onConnectedChannel to EventStreamHandler(),
         Constants.onDisconnectedChannel to EventStreamHandler(),
+        Constants.onReconnectingChannel to EventStreamHandler(),
         Constants.onConnectionFailedChannel to EventStreamHandler(),
         Constants.connectionFailedChannel to EventStreamHandler(),//NI
         Constants.connectionSuccessChannel to EventStreamHandler(),//NI
@@ -251,7 +252,7 @@ object FlyMethodConstants {
         "sendContactUsInfo" to flyChatMethods::sendContactUsInfo,
         "loginWebChatViaQRCode" to flyChatMethods::loginWebChatViaQRCode,
         "getWebLoginDetails" to flyChatMethods::getWebLoginDetails,
-        "webLoginDetailsCleared" to flyChatMethods::webLoginDetailsCleared,
+//        "webLoginDetailsCleared" to flyChatMethods::webLoginDetailsCleared,
         "logoutWebUser" to flyChatMethods::logoutWebUser,
         "showCustomTones" to flyChatMethods::showCustomTones,
         "cancelNotifications" to flyChatMethods::cancelNotifications,

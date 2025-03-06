@@ -419,6 +419,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onConnectionFailedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for reconnection events.
+  @visibleForTesting
+  final onReconnectingChannel =
+      const EventChannel('contus.mirrorfly/onReconnecting');
+
+  /// A broadcast stream controller for connection failed events.
+  final StreamController<dynamic> onReconnectingStreamController =
+      StreamController<dynamic>.broadcast();
+
   // @visibleForTesting
   // final connectionFailedChannel = const EventChannel('contus.mirrorfly/connectionFailed');
   // final StreamController<dynamic> connectionFailedStreamController = StreamController<dynamic>.broadcast();
@@ -827,6 +836,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onConnectionFailed =>
       onConnectionFailedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onReconnecting =>
+      onReconnectingStreamController.stream;
 
   // @override
   // Stream<dynamic> get connectionFailed => connectionFailedStreamController.stream;
@@ -1306,6 +1319,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }, onError: (error) {
       LogMessage.d("MirrorFly", "Error on connection failed: $error");
       onConnectionFailedStreamController.addError(error);
+    });
+
+    onReconnectingChannel.receiveBroadcastStream().listen((event) {
+      onReconnectingStreamController.add(event);
+      connectionEventsListener?.onReconnecting();
+    }, onError: (error) {
+      LogMessage.d("MirrorFly", "Error on reconnecting : $error");
+      onReconnectingStreamController.addError(error);
     });
 
     // connectionFailedChannel.receiveBroadcastStream().listen((event) {
@@ -2143,6 +2164,20 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       await mirrorFlyMethodChannel.invokeMethod(
           'updateChatMuteStatus', {"jid": jid, "mute_status": muteStatus});
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      rethrow;
+    } on Exception catch (error) {
+      LogMessage.d("Exception ", " $error");
+      rethrow;
+    }
+  }
+
+  @override
+  updateChatMuteStatusList(List<String> jidList, bool muteStatus) async {
+    try {
+      await mirrorFlyMethodChannel.invokeMethod(
+          'updateChatMuteStatusList', {"jidList": jidList, "mute_status": muteStatus});
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;

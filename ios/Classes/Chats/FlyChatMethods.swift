@@ -421,7 +421,7 @@ let ISEXPORT = true
             if let unformattedPhoneNumber = try? phoneNumberUtil.format(phoneNumber, numberFormat: .E164).replacingOccurrences(of: "+", with: "") {
                 do{
                     try result(FlyUtils.getJid(from: unformattedPhoneNumber))
-                }catch let jidError{
+                }catch _{
                     result(FlutterError(code: FLErrorCode.INVALID_DATA,message: FLErrorMessage.JID_FETCH_FAILED,details: nil))
                 }
             }
@@ -1347,7 +1347,7 @@ let ISEXPORT = true
         
         let savedMessage = FlyMessenger.getUnsentMessageOf(id: userjid)
         let getUnsentMessageJSON = "{\"textContent\" : \"\(savedMessage.textContent)\",\"mentionedUsers\": " + (savedMessage.mentionedUsers.toJson() ?? "[]") + "}"
-        print("savedMessage toJson : \(savedMessage.toJson())")
+        print("savedMessage toJson : \(String(describing: savedMessage.toJson()))")
         print("savedMessage : \(getUnsentMessageJSON)")
         result(getUnsentMessageJSON)
         
@@ -1942,6 +1942,18 @@ let ISEXPORT = true
         let muteStatus = args["mute_status"] as? Bool ?? false
         ChatManager.updateChatMuteStatus(jid: userJID, muteStatus: muteStatus)
     }
+    
+    func updateChatMuteStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let userJidList = args["jidList"] as? [String] ?? []
+        let muteStatus = args["mute_status"] as? Bool ?? false
+        
+        ChatManager.updateChatMuteStatus(jidList: userJidList, mute: muteStatus)
+        
+    }
+        
     func sendTypingStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>

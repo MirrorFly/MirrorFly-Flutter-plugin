@@ -1920,9 +1920,25 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  // implement onReconnecting
+  Stream get onReconnecting => throw UnimplementedError();
+
+  @override
   Future<bool?> webLoginDetailsCleared() {
+    // implement webLoginDetailsCleared
     throw UnimplementedError();
   }
+
+  @override
+  updateChatMuteStatusList(List<String> jidList, bool muteStatus) {
+    // implement updateChatMuteStatusList
+    throw UnimplementedError();
+  }
+
+ /* @override
+  Future<bool?> webLoginDetailsCleared() {
+    throw UnimplementedError();
+  }*/
 }
 
 void main() {

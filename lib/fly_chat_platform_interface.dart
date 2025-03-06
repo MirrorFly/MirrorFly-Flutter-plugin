@@ -249,6 +249,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  /// This method is used to update the list chat mute status.
+  updateChatMuteStatusList(List<String> jidList, bool muteStatus) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   /// This method is used to update the recent chat pin status.
   updateRecentChatPinStatus(String jid, bool pinStatus) {
     throw UnimplementedError('has not been implemented.');
@@ -770,6 +775,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   /// Stream that emits events when the server connection is failed.
   Stream<dynamic> get onConnectionFailed =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when the server is reconnecting.
+  Stream<dynamic> get onReconnecting =>
       throw UnimplementedError('has not been implemented.');
 
   // Stream<dynamic> get connectionFailed => throw UnimplementedError('has not been implemented.');
