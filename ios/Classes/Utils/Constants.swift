@@ -134,6 +134,7 @@ enum FlyMessageType : String {
     case DOCUMENT = "DOCUMENT";
     case LOCATION = "LOCATION";
     case NOTIFICATION = "NOTIFICATION";
+    case MEET = "MEET";
     
     static func fromString(_ value: String) -> FlyMessageType? {
         return FlyMessageType(rawValue: value)
