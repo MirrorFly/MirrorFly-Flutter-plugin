@@ -310,28 +310,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //                getMessageUsingIds(call, result)
                 }
 
-                /*call.method.equals("getWebLoginDetails") -> {
-                    val details = WebLoginDataManager.getWebLoginDetails()
-                    result.success(details.toJsonString())
-                }
-
-                call.method.equals("webLoginDetailsCleared") -> {
-                    WebLoginDataManager.webLoginDetailsCleared()
-                    result.success(true)
-                }
-
-                call.method.equals("logoutWebUser") -> {
-                    UpDateWebPassword().upDatePassword()
-                    val listWebLogin =
-                        call.argument<List<String>>("listWebLogin")//qrUniqeToken list
-                    if (!listWebLogin.isNullOrEmpty()) {
-                        for (it in listWebLogin) {
-                            ChatManager.logoutWebUser(it)
-                        }
-                    }
-                    result.success(true)
-                }*/
-
                 else -> {
                     result.notImplemented()
                 }
@@ -870,11 +848,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onWebChatPasswordChanged(isError: Boolean) {
         LogMessage.d(TAG, "web chat password changed error $isError")
-//        onWebChatPasswordChangedStreamHandler.onWebChatPasswordChanged?.success(isError)
-        FlyMethodConstants.updateChatSinkValue(
+        /// Commenting this as this is not used anywhere and not available in iOS
+       /* FlyMethodConstants.updateChatSinkValue(
             Constants.onWebChatPasswordChangedChannel,
             isError
-        )
+        )*/
     }
 
     override fun setTypingStatus(singleOrGroupJid: String, userId: String, composing: String) {

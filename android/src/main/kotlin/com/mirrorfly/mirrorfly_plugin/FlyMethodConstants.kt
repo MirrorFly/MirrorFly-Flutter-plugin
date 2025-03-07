@@ -56,7 +56,7 @@ object FlyMethodConstants {
         Constants.onConnectionFailedChannel to EventStreamHandler(),
         Constants.connectionFailedChannel to EventStreamHandler(),//NI
         Constants.connectionSuccessChannel to EventStreamHandler(),//NI
-        Constants.onWebChatPasswordChangedChannel to EventStreamHandler(),//NI
+//        Constants.onWebChatPasswordChangedChannel to EventStreamHandler(),//NI
         Constants.setTypingStatusChannel to EventStreamHandler(),
         Constants.onChatTypingStatusChannel to EventStreamHandler(),//NI
         Constants.onGroupTypingStatusChannel to EventStreamHandler(),
@@ -68,6 +68,17 @@ object FlyMethodConstants {
         Constants.onRestoreSuccessChannel to EventStreamHandler(),
         Constants.onAvailableFeaturesUpdatedChannel to EventStreamHandler(),
         Constants.onMessageEditedChannel to EventStreamHandler(),
+
+        Constants.onMessagesClearedChannel to EventStreamHandler(),
+        Constants.onMessagesClearedOrDeletedChannel to EventStreamHandler(),
+        Constants.onUpdateFavouriteChannel to EventStreamHandler(),
+        Constants.onClearAllConversationChannel to EventStreamHandler(),
+
+        Constants.onWebLogoutChannel to EventStreamHandler(),
+        Constants.onChatMuteStatusUpdatedChannel to EventStreamHandler(),
+        Constants.didUpdateMuteSettingsChannel to EventStreamHandler(),
+        Constants.updateArchiveUnArchiveChatsChannel to EventStreamHandler(),
+        Constants.updateArchivedSettingsChannel to EventStreamHandler(),
     )
     val chatMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "init" to flyChatMethods::buildChatSDK,
@@ -366,7 +377,7 @@ object FlyMethodConstants {
         val streamHandler = chatEventListeners[channelName]
         LogMessage.d(
             "#updateChatSinkValue",
-            "$channelName : " + value
+            "$channelName : $value"
         )
         if (streamHandler is FlyEventSinkProvider) {
             streamHandler.setEventSinkValue(value)
@@ -379,7 +390,7 @@ object FlyMethodConstants {
         val streamHandler = callEventListeners[channelName]
         LogMessage.d(
             "#updateCallSinkValue",
-            "$channelName : " + value
+            "$channelName : $value"
         )
         if (streamHandler is FlyEventSinkProvider) {
             streamHandler.setEventSinkValue(value)

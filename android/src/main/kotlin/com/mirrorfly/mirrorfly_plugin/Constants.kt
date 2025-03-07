@@ -76,12 +76,13 @@ object Constants {
         "$Domain/usersWhoBlockedMeListFetched"
     const val onConnectedChannel = "$Domain/onConnected"
     const val onDisconnectedChannel = "$Domain/onDisconnected"
+    const val onReconnectingChannel = "$Domain/onConnectionReconnecting"
 
     //  const val onConnectionNotAuthorized_channel = "$domain/onConnectionNotAuthorized"
     const val onConnectionFailedChannel = "$Domain/onConnectionFailed"
     const val connectionFailedChannel = "$Domain/connectionFailed"
     const val connectionSuccessChannel = "$Domain/connectionSuccess"
-    const val onWebChatPasswordChangedChannel = "$Domain/onWebChatPasswordChanged"
+//    const val onWebChatPasswordChangedChannel = "$Domain/onWebChatPasswordChanged"
     const val setTypingStatusChannel = "$Domain/setTypingStatus"
     const val onChatTypingStatusChannel = "$Domain/onChatTypingStatus"
     const val onGroupTypingStatusChannel = "$Domain/onGroupTypingStatus"
@@ -93,9 +94,19 @@ object Constants {
     const val onRestoreSuccessChannel = "$Domain/onRestoreSuccess"
     const val onAvailableFeaturesUpdatedChannel = "$Domain/onAvailableFeaturesUpdated"
     const val onMessageEditedChannel = "$Domain/onMessageEdited"
-    const val onCallLogsUpdatedChannel = "$Domain/onCallLog"
-    const val onCallLogDeletedChannel = "$Domain/onCallLogDeleted"
-    const val clearAllCallLogChannel = "$Domain/clearAllCallLog"
+
+    const val onMessagesClearedChannel = "$Domain/onMessagesCleared"
+    const val onMessagesClearedOrDeletedChannel = "$Domain/onMessagesClearedOrDeleted"
+    const val onUpdateFavouriteChannel = "$Domain/onUpdateFavourites"
+    const val onClearAllConversationChannel = "$Domain/onClearAllConversation"
+
+    const val onWebLogoutChannel = "$Domain/onWebLogout"
+    const val onChatMuteStatusUpdatedChannel = "$Domain/onChatMuteStatusUpdated"
+    const val didUpdateMuteSettingsChannel = "$Domain/didUpdateMuteSettings"
+    const val updateArchiveUnArchiveChatsChannel = "$Domain/updateArchiveUnArchiveChats"
+    const val updateArchivedSettingsChannel = "$Domain/updateArchivedSettings"
+
+
 
     //call Method channel constants
     const val callMethodChannel = "$Domain/flyCall"
@@ -116,6 +127,10 @@ object Constants {
     const val onError = "$Domain/onError"
 //    const val onLocalTrack = "$Domain/onLocalTrack"
     const val onUsersUpdated = "$Domain/onUsersUpdated"
+
+    const val onCallLogsUpdatedChannel = "$Domain/onCallLog"
+    const val onCallLogDeletedChannel = "$Domain/onCallLogDeleted"
+    const val clearAllCallLogChannel = "$Domain/clearAllCallLog"
 
     const val ACTION_CALL_INCOMING =
         "com.mirrorfly.mirrorfly_plugin.ACTION_CALL_INCOMING"
