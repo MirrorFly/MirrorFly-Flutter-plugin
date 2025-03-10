@@ -48,7 +48,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     TypingEventListener, TypingStatusListener, ActivityAware, DefaultLifecycleObserver,
     PluginRegistry.NewIntentListener, PluginRegistry.ActivityResultListener,
     AvailableFeaturesCallback, MissedCallListener, CallLogManager.CallLogsListener,
-    MediaNotificationHelper {
+    MediaNotificationHelper, MuteEventsListener {
 
     //    var instance: FlyChatPlugin = FlyChatPlugin()
     init {
@@ -96,6 +96,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             instance.mContext = context
             initChannels(binaryMessenger)
             FlyCallPlugin().init()
+
+            /****
+            /// Attach Event Listeners should add at the SDK Initialisation and
+            // should not added here as it will cause issues like improper updates
+            ****/
+
             ChatConnectionManager.addChatConnectionListener(instance)
             CallManager.setMissedCallListener(instance)
             ChatEventsManager.setupMessageEventListener(instance)
@@ -192,6 +198,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 ChatEventsManager.attachGroupEventsListener(instance)
                 ChatEventsManager.attachLoginEventsListener(instance)
                 ChatEventsManager.attachTypingEventListener(instance)
+                ChatEventsManager.attachMuteEventsListener(instance)
             }
         }
         FlyMethodConstants.chatMethodHandlers[call.method]?.let { methodHandler ->
