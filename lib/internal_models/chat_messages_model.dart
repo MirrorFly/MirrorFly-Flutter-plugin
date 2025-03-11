@@ -821,7 +821,9 @@ String getReplyMessageType(dynamic json) {
   if (Platform.isAndroid) {
     return json["messageType"].toString().toUpperCase();
   } else {
-    if (json["messageTextContent"].toString().isNotEmpty) {
+    if (json["meetChatMessage"] != null) {
+      return "MEET";
+    }else if (json["messageTextContent"].toString().isNotEmpty) {
       return "TEXT";
     } else if (json["mediaChatMessage"] != null &&
         json["mediaChatMessage"]["mediaFileType"].toString().isNotEmpty) {
