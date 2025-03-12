@@ -599,6 +599,7 @@ class ReplyParentChatMessage {
       required this.locationChatMessage,
       required this.contactChatMessage,
       required this.mediaChatMessage,
+        required this.meetChatMessage,
       required this.mentionedUsersIds});
 
   /// The JID of the user involved in the chat.
@@ -643,6 +644,9 @@ class ReplyParentChatMessage {
   /// Details of the media shared in the message. Nullable.
   MediaChatMessage? mediaChatMessage;
 
+  /// Details of the meet shared in the message. Nullable.
+  MeetChatMessage? meetChatMessage;
+
   /// A list of userid associated with the mentioned Users.
   List<String>? mentionedUsersIds;
 
@@ -669,6 +673,7 @@ class ReplyParentChatMessage {
         mediaChatMessage: json["mediaChatMessage"] == null
             ? null
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+        meetChatMessage:json['meetChatMessage'] == null ? null: MeetChatMessage.fromJson(json['meetChatMessage']),
         mentionedUsersIds: json["mentionedUsersIds"] == null
             ? []
             : Platform.isIOS
@@ -695,6 +700,7 @@ class ReplyParentChatMessage {
         "contactChatMessage":
             contactChatMessage ?? contactChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage ?? mediaChatMessage?.toJson(),
+        "meetChatMessage":meetChatMessage?.toJson(),
         "mentionedUsersIds": mentionedUsersIds == null
             ? null
             : List<String>.from(mentionedUsersIds!.map((x) => x)),

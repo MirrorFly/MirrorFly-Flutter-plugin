@@ -81,6 +81,7 @@ class ChatMessageModel {
     required this.isMessageEdited,
     required this.messageTextContent,
     required this.messageType,
+    required this.meetChatMessage,
     this.metaData = const [],
     this.mentionedUsersIds,
     this.replyParentChatMessage,
@@ -147,6 +148,10 @@ class ChatMessageModel {
   /// The type of message.
   String messageType;
 
+  ///the meet message
+  final MeetChatMessage? meetChatMessage;
+
+
   /// The metadata of the message.
   List<MessageMetaData>? metaData;
 
@@ -200,6 +205,7 @@ class ChatMessageModel {
           isMessageEdited: json["isMessageEdited"],
           messageTextContent: json["messageTextContent"],
           messageType: json["messageType"],
+          meetChatMessage : json['meetChatMessage'] != null ? MeetChatMessage.fromJson(json['meetChatMessage'] as Map<String,dynamic>) : null,
           metaData: json["metaData"] == null
               ? []
               : List<MessageMetaData>.from(
@@ -244,6 +250,7 @@ class ChatMessageModel {
         "isMessageEdited": isMessageEdited,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
+        'meetChatMessage' : meetChatMessage?.toJson(),
         "metaData": metaData == null
             ? null
             : List<dynamic>.from(metaData!.map((x) => x.toJson())),
@@ -433,7 +440,43 @@ class MediaChatMessage {
         "messageType": messageType,
       };
 }
+/// Represents a meet chat message.
+class MeetChatMessage {
+  ///Meet link for the event
+  final String? link;
 
+  /// Unique identifier for the message
+  final String? messageId;
+
+  /// Scheduled date and time of the event (in milliseconds since epoch)
+  final int? scheduledDateTime;
+
+  /// Title of the meeting or event
+  final String? title;
+
+  /// Constructs a [MeetChatMessage] instance.
+  MeetChatMessage({
+    required this.link,
+    required this.messageId,
+    required this.scheduledDateTime,
+    required this.title,
+  });
+
+  /// Converts a JSON object into a [MeetChatMessage] instance.
+  MeetChatMessage.fromJson(Map<String, dynamic> json)
+      : link = json['link'] as String?,
+        messageId = json['messageId'] as String?,
+        scheduledDateTime = json['scheduledDateTime'] as int?,
+        title = json['title'] as String?;
+
+  /// Converts a [MeetChatMessage] instance into a JSON object.
+  Map<String, dynamic> toJson() => {
+    'link' : link,
+    'messageId' : messageId,
+    'scheduledDateTime' : scheduledDateTime,
+    'title' : title
+  };
+}
 /// Represents a custom field of a message.
 class MessageCustomField {
   /// Constructs a [MessageCustomField] instance.
@@ -476,6 +519,9 @@ class ReplyParentChatMessage {
   /// The type of message.
   String messageType;
 
+  /// the meet message
+  MeetChatMessage? meetChatMessage;
+
   /// The nickname of the sender.
   String senderNickName;
 
@@ -505,6 +551,7 @@ class ReplyParentChatMessage {
       required this.messageSentTime,
       required this.messageTextContent,
       required this.messageType,
+        required this.meetChatMessage,
       required this.senderNickName,
       required this.senderUserName,
       required this.locationChatMessage,
@@ -524,6 +571,7 @@ class ReplyParentChatMessage {
         messageSentTime: json["messageSentTime"],
         messageTextContent: json["messageTextContent"],
         messageType: json["messageType"],
+        meetChatMessage : json['meetChatMessage'] != null ? MeetChatMessage.fromJson(json['meetChatMessage'] as Map<String,dynamic>) : null,
         senderNickName: json["senderNickName"],
         senderUserName: json["senderUserName"],
         locationChatMessage: json["locationChatMessage"],
@@ -551,6 +599,7 @@ class ReplyParentChatMessage {
         "senderUserName": senderUserName,
         "locationChatMessage": locationChatMessage?.toJson(),
         "contactChatMessage": contactChatMessage?.toJson(),
+        'meetChatMessage' : meetChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage?.toJson(),
         "mentionedUsersIds": mentionedUsersIds == null
             ? null
