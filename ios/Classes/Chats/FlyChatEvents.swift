@@ -73,10 +73,11 @@ public class OnRestoreProgressChangedChannelStreamHandler: EventStreamHandler { 
 public class OnRestoreSuccessChannelStreamHandler: EventStreamHandler { }
 
 
-public class OnMessagesClearedChannelStreamHandler: EventStreamHandler { }
-public class OnMessagesClearedOrDeletedChannelStreamHandler: EventStreamHandler { }
+public class OnChatClearedChannelStreamHandler: EventStreamHandler { }
+public class OnMessageDeletedChannelStreamHandler: EventStreamHandler { }
+public class OnAllChatsClearedChannelStreamHandler: EventStreamHandler { }
+
 public class OnUpdateFavouriteChannelStreamHandler: EventStreamHandler { }
-public class OnClearAllConversationChannelStreamHandler: EventStreamHandler { }
 
 public class OnWebLogoutChannelStreamHandler: EventStreamHandler { }
 public class OnChatMuteStatusUpdatedChannelStreamHandler: EventStreamHandler { }

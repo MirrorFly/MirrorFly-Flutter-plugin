@@ -842,6 +842,25 @@ class FlyChatMethods {
         LogMessage.d("updateChatMuteStatus", "isMuted" + ChatManager.isMuted(jid))
     }
 
+    fun updateChatMuteStatusList(call: MethodCall, result: MethodChannel.Result) {
+        val jidList = call.argument<List<String>>("jidList") ?: arrayListOf()
+        val muteStatus = call.argument<Boolean>("mute_status") ?: false
+        try {
+            ChatManager.updateChatMuteStatus(jidList, muteStatus)
+        } catch (e : Exception) {
+            val map = JSONObject()
+            map.put("isSuccess", false)
+            map.put("message", e.message)
+            val jidListJsonArray = JSONArray(jidList)
+            map.put("jidList", jidListJsonArray)
+            map.put("muteStatus", muteStatus)
+            FlyMethodConstants.updateChatSinkValue(
+                Constants.onChatMuteStatusUpdatedChannel,
+                map.toString()
+            )
+        }
+    }
+
     fun sendTypingStatus(call: MethodCall, result: MethodChannel.Result) {
         val tojid = call.argument<String>("to_jid") ?: ""
         val type = call.argument<String>("chattype") ?: ""

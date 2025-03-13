@@ -555,6 +555,7 @@ extension FlyChatPlugin : ConnectionEventDelegate {
 
 
 extension FlyChatPlugin : MessageEventsDelegate   {
+    
     public func onMessageReceived(message: MirrorFlySDK.ChatMessage, chatJid: String) {
         
         let messageReceivedJson = message.toJson()
@@ -618,10 +619,14 @@ extension FlyChatPlugin : MessageEventsDelegate   {
         
     }
     
+    ///
+    /// Old Delegate method for clear, delete chats
+    ///
+    
     /// message deleted
     public func onMessagesClearedOrDeleted(messageIds: Array<String>) {
         print("Delegate : onMessagesClearedOrDeleted => messageIds: \(messageIds)")
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessagesClearedOrDeletedChannel, value: messageIds.toJson())
+//        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessagesClearedOrDeletedChannel, value: messageIds.toJson())
     }
     
     /// Recall
@@ -635,7 +640,7 @@ extension FlyChatPlugin : MessageEventsDelegate   {
             }
             let chatMessageJson = chatMessage?.toJson()
             
-            self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageStatusUpdatedChannel, value: chatMessageJson)
+//            self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageStatusUpdatedChannel, value: chatMessageJson)
 
         }
         
@@ -643,14 +648,78 @@ extension FlyChatPlugin : MessageEventsDelegate   {
     
     /// message clear
     public func onMessagesCleared(toJid: String, deleteType: String?) {
-        print("Delegate : onMessagesCleared => toJid: \(toJid) deleteType: \(deleteType)")
+        print("Delegate : onMessagesCleared => toJid: \(toJid) deleteType: \(String(describing: deleteType))")
         let messageClearedJson: NSMutableDictionary = NSMutableDictionary()
         messageClearedJson.setValue(toJid, forKey: "toJid")
         messageClearedJson.setValue(deleteType, forKey: "deleteType")
         let messageClearedJsonStr = pluginDictToJson(dictionary: messageClearedJson)
-        print("Delegate : onMessagesClearedjson => \(messageClearedJsonStr)")
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessagesClearedChannel, value: messageClearedJsonStr)
+        print("Delegate : onMessagesClearedjson => \(String(describing: messageClearedJsonStr))")
+//        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessagesClearedChannel, value: messageClearedJsonStr)
     }
+    
+    public func clearAllConversationForSyncedDevice() {
+        print("Delegate : clearAllConversationForSyncedDevice")
+//        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onClearAllConversationChannel, value: true)
+    }
+    
+    ///
+    /// End of Old Delegate Method for clear, delete chats
+    ///
+    
+    
+    ///
+    /// New Delegate method for clear, delete chats
+    ///
+    
+    public func onChatCleared(toJid: String, chatClearType: MirrorFlySDK.ChatClearType) {
+        
+        print("Delegate : onChatCleared => toJid: \(toJid) chatClearType: \(String(describing: chatClearType))")
+        let chatClearedJson: NSMutableDictionary = NSMutableDictionary()
+        chatClearedJson.setValue(toJid, forKey: "toJid")
+        if (chatClearType == .deleteChat) {
+            chatClearedJson.setValue("delete", forKey: "chatClearType")
+        }else if (chatClearType == .clearChat){
+            chatClearedJson.setValue("clear", forKey: "chatClearType")
+        }else{
+            print("onChatCleared Delegate received unhandled value")
+        }
+        let chatClearedJsonStr = pluginDictToJson(dictionary: chatClearedJson)
+        
+        print("Delegate : onChatCleared => \(String(describing: chatClearedJsonStr))")
+        
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onChatClearedChannel, value: chatClearedJsonStr)
+        
+    }
+    
+    public func onMessageDeleted(toJid: String, messageIds: [String], messageDeleteType: MirrorFlySDK.MessageDeleteType) {
+        
+        print("Delegate : onMessageDeleted => toJid: \(toJid), messageIds: \(messageIds), messageDeleteType: \(String(describing: messageDeleteType))")
+            
+        let messageDeletedJson: NSMutableDictionary = NSMutableDictionary()
+        messageDeletedJson.setValue(toJid, forKey: "toJid")
+        messageDeletedJson.setValue(messageIds, forKey: "messageIds")
+
+        if (messageDeleteType == .deleteForEveryone) {
+            messageDeletedJson.setValue("deleteForEveryone", forKey: "messageDeleteType")
+        } else if (messageDeleteType == .deleteForMe) {
+            messageDeletedJson.setValue("deleteForMe", forKey: "messageDeleteType")
+        } else {
+            print("onMessageDeleted Delegate received unhandled value")
+        }
+
+        let messageDeletedJsonStr = pluginDictToJson(dictionary: messageDeletedJson)
+        
+        print("Delegate : onMessageDeleted => \(String(describing: messageDeletedJsonStr))")
+        
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageDeletedChannel, value: messageDeletedJsonStr)
+        
+    }
+    
+    public func onAllChatsCleared() {
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onAllChatsClearedChannel, value: true)
+    }
+    
+    
     
     public func setOrUpdateFavourite(messageId: String, favourite: Bool, removeAllFavourite: Bool) {
         print("Delegate : setOrUpdateFavourite => messageId: \(messageId) favourite: \(favourite) removeAllFavourite: \(removeAllFavourite)")
@@ -659,7 +728,7 @@ extension FlyChatPlugin : MessageEventsDelegate   {
         updateFavJson.setValue(favourite, forKey: "favourite")
         updateFavJson.setValue(removeAllFavourite, forKey: "removeAllFavourite")
         let updateFavJsonStr = pluginDictToJson(dictionary: updateFavJson)
-        print("Delegate : setOrUpdateFavouriteJson =>\(updateFavJsonStr)")
+        print("Delegate : setOrUpdateFavouriteJson =>\(String(describing: updateFavJsonStr))")
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onUpdateFavouriteChannel, value: updateFavJsonStr)
     }
     
@@ -667,10 +736,7 @@ extension FlyChatPlugin : MessageEventsDelegate   {
         
     }
     
-    public func clearAllConversationForSyncedDevice() {
-        print("Delegate : clearAllConversationForSyncedDevice")
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onClearAllConversationChannel, value: true)
-    }
+
 
 
 //    
@@ -700,23 +766,23 @@ extension FlyChatPlugin {
 
 
 extension FlyChatPlugin : WebLogoutDelegate {
-    public func didLogoutWeb(socketId: String) {
-        print("Delegate : didLogoutWeb received -> \(socketId)")
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onWebLogoutChannel, value: socketId)
+    public func didLogoutWeb(socketIds: [String]) {
+        print("Delegate : didLogoutWeb received -> \(socketIds)")
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onWebLogoutChannel, value: socketIds.toJson())
     }
 }
-// onMessagesCleared -> delete recent chat
-// onMessagesClearedOrDeleted -> chat delete for me
 
 extension FlyChatPlugin : MuteEventDelegate {
-    public func onMuteStatusUpdated(isSuccess: Bool, message: String, jidList: [String]) {
+
+    public func onMuteStatusUpdated(isSuccess: Bool, message: String, jidList: [String], muteStatus: Bool) {
         print("Delegate : onMuteStatusUpdated => isSuccess: \(isSuccess) message: \(message) jidList: \(jidList)")
         let chatMuteJson: NSMutableDictionary = NSMutableDictionary()
         chatMuteJson.setValue(isSuccess, forKey: "isSuccess")
         chatMuteJson.setValue(message, forKey: "message")
         chatMuteJson.setValue(jidList.toJson(), forKey: "jidList")
+        chatMuteJson.setValue(muteStatus, forKey: "muteStatus")
         let chatMuteJsonStr = pluginDictToJson(dictionary: chatMuteJson)
-        print("Delegate : onMuteStatusUpdated => json \(chatMuteJsonStr)")
+        print("Delegate : onMuteStatusUpdated => json \(String(describing: chatMuteJsonStr))")
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onChatMuteStatusUpdatedChannel, value: chatMuteJsonStr)
     }
     
@@ -727,7 +793,7 @@ extension FlyChatPlugin : MuteEventDelegate {
         updateMuteSettings.setValue(message, forKey: "message")
         updateMuteSettings.setValue(isMuteStatus, forKey: "isMuteStatus")
         let updateMuteSettingsJson = pluginDictToJson(dictionary: updateMuteSettings)
-        print("Delegate : didUpdateMuteSettings => json \(updateMuteSettingsJson)")
+        print("Delegate : didUpdateMuteSettings => json \(String(describing: updateMuteSettingsJson))")
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.didUpdateMuteSettingsChannel, value: updateMuteSettingsJson)
     }
     
@@ -742,7 +808,7 @@ extension FlyChatPlugin : ArchiveEventsDelegate {
         updateArchiveUnArchiveChats.setValue(toUser, forKey: "toUser")
         updateArchiveUnArchiveChats.setValue(archiveStatus, forKey: "archiveStatus")
         let updateArchiveUnArchiveChatsJson = pluginDictToJson(dictionary: updateArchiveUnArchiveChats)
-        print("Delegate : updateArchiveUnArchiveChats => json \(updateArchiveUnArchiveChatsJson)")
+        print("Delegate : updateArchiveUnArchiveChats => json \(String(describing: updateArchiveUnArchiveChatsJson))")
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.updateArchiveUnArchiveChatsChannel, value: updateArchiveUnArchiveChatsJson)
     }
     

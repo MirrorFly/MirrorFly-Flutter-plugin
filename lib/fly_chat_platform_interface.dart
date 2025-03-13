@@ -1486,6 +1486,42 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onRestoreProgressChanged =>
       throw UnimplementedError('has not been implemented.');
 
+  /// Stream that emits events when a chat is cleared.
+  Stream<dynamic> get onChatCleared =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a message is deleted
+  Stream<dynamic> get onMessageDeleted =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a all chats is cleared
+  Stream<dynamic> get onAllChatsCleared =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a message favourites has been updated
+  Stream<dynamic> get onUpdateFavourites =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a corresponding web login is logged out
+  Stream<dynamic> get onWebLogout =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a chat is mute/un-muted
+  Stream<dynamic> get onChatMuteStatusUpdated =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a mute/un-mute setting is updated
+  Stream<dynamic> get onUpdateMuteSettings =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when chat is Archived/Unarchived
+  Stream<dynamic> get onArchiveUnArchiveChats =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when Archived/Unarchive settings is toggled
+  Stream<dynamic> get onArchivedSettingsUpdated =>
+      throw UnimplementedError('has not been implemented.');
+
   /// This method is used to make the video call.
   Future<void> makeVideoCall(
       String userJid, Function(FlyResponse response)? callback) async {

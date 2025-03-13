@@ -69,10 +69,10 @@ object FlyMethodConstants {
         Constants.onAvailableFeaturesUpdatedChannel to EventStreamHandler(),
         Constants.onMessageEditedChannel to EventStreamHandler(),
 
-        Constants.onMessagesClearedChannel to EventStreamHandler(),
-        Constants.onMessagesClearedOrDeletedChannel to EventStreamHandler(),
+        Constants.onChatClearedChannel to EventStreamHandler(),
+        Constants.onMessageDeletedChannel to EventStreamHandler(),
         Constants.onUpdateFavouriteChannel to EventStreamHandler(),
-        Constants.onClearAllConversationChannel to EventStreamHandler(),
+        Constants.onAllChatsClearedChannel to EventStreamHandler(),
 
         Constants.onWebLogoutChannel to EventStreamHandler(),
         Constants.onChatMuteStatusUpdatedChannel to EventStreamHandler(),
@@ -157,6 +157,7 @@ object FlyMethodConstants {
         "updateArchiveUnArchiveChat" to flyChatMethods::updateArchiveUnArchiveChat,
         "getArchivedChatList" to flyChatMethods::getArchivedChatList,
         "updateChatMuteStatus" to flyChatMethods::updateChatMuteStatus,
+        "updateChatMuteStatusList" to flyChatMethods::updateChatMuteStatusList,
         "sendTypingStatus" to flyChatMethods::sendTypingStatus,
         "sendTypingGoneStatus" to flyChatMethods::sendTypingGoneStatus,
         "setNotificationSound" to flyChatMethods::setNotificationSound,

@@ -2438,6 +2438,144 @@ class Mirrorfly {
   static Stream<dynamic> get onRestoreProgressChanged =>
       FlyChatFlutterPlatform.instance.onRestoreProgressChanged;
 
+  /// A stream that emits an event when a chat is cleared or deleted.
+  ///
+  /// This stream listens for chat clear events and provides details such as
+  /// the JID of the chat and the type of clearance (`delete` or `clear`).
+  /// Use this to update the UI or log chat clearance events.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onChatCleared.listen((event) {
+  ///   // Handle chat cleared event
+  ///   print("Chat cleared: ${event['toJid']} - Type: ${event['chatClearType']}");
+  /// });
+  /// ```
+  static Stream<dynamic> get onChatCleared =>
+      FlyChatFlutterPlatform.instance.onChatCleared;
+
+  /// A stream that emits an event when a message is deleted.
+  ///
+  /// This stream listens for message deletion events and provides details such as
+  /// the JID, message IDs, and the type of deletion (`deleteForMe` or `deleteForEveryone`).
+  /// Use this to update the chat UI or log message deletions.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMessageDeleted.listen((event) {
+  ///   // Handle message deleted event
+  ///   print("Message deleted: ${event['messageIds']} - Type: ${event['messageDeleteType']}");
+  /// });
+  /// ```
+  static Stream<dynamic> get onMessageDeleted =>
+      FlyChatFlutterPlatform.instance.onMessageDeleted;
+
+  /// A stream that emits an event when all chats are cleared.
+  ///
+  /// This stream listens for events when a user clears all chats from the application.
+  /// Use this to reset the chat list or perform any necessary cleanup.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onAllChatsCleared.listen((event) {
+  ///   // Handle all chats cleared event
+  ///   print("All chats cleared");
+  /// });
+  /// ```
+  static Stream<dynamic> get onAllChatsCleared =>
+      FlyChatFlutterPlatform.instance.onAllChatsCleared;
+
+  /// A stream that emits an event when a favorite is updated.
+  ///
+  /// This stream listens for updates to favorite chats or contacts.
+  /// Use this to update the UI or log the favorite status changes.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onUpdateFavourites.listen((event) {
+  ///   // Handle favorite update event
+  ///   print("Favorite status updated: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onUpdateFavourites =>
+      FlyChatFlutterPlatform.instance.onUpdateFavourites;
+
+/*  /// A stream that emits an event when a user logs out from a web session.
+  ///
+  /// This stream listens for logout events triggered from a web device.
+  /// Use this to notify the user or update authentication status.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onWebLogout.listen((event) {
+  ///   // Handle web logout event
+  ///   print("User logged out from web: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onWebLogout =>
+      FlyChatFlutterPlatform.instance.onWebLogout;*/
+
+  /// A stream that emits an event when a chat's mute status is updated.
+  ///
+  /// This stream listens for mute/unmute actions on a chat.
+  /// Use this to reflect the updated mute status in the UI.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onChatMuteStatusUpdated.listen((event) {
+  ///   // Handle chat mute status update
+  ///   print("Chat mute status updated: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onChatMuteStatusUpdated =>
+      FlyChatFlutterPlatform.instance.onChatMuteStatusUpdated;
+
+  /// A stream that emits an event when mute settings are updated.
+  ///
+  /// This stream listens for changes in mute settings for chats.
+  /// Use this to update UI elements based on mute preferences.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onUpdateMuteSettings.listen((event) {
+  ///   // Handle mute settings update
+  ///   print("Mute settings changed: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onUpdateMuteSettings =>
+      FlyChatFlutterPlatform.instance.onUpdateMuteSettings;
+
+  /// A stream that emits an event when a chat is archived or unarchived.
+  ///
+  /// This stream listens for archive/unarchive actions on a chat.
+  /// Use this to update the chat list accordingly.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onArchiveUnArchiveChats.listen((event) {
+  ///   // Handle archive/unarchive event
+  ///   print("Chat archive status changed: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onArchiveUnArchiveChats =>
+      FlyChatFlutterPlatform.instance.onArchiveUnArchiveChats;
+
+  /// A stream that emits an event when archived chat settings are updated.
+  ///
+  /// This stream listens for changes in archive settings for chats.
+  /// Use this to update UI elements related to archive preferences.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onArchivedSettingsUpdated.listen((event) {
+  ///   // Handle archived settings update
+  ///   print("Archived settings updated: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onArchivedSettingsUpdated =>
+      FlyChatFlutterPlatform.instance.onArchivedSettingsUpdated;
+
+
   // static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
   // static Stream<dynamic> get onProgressChanged => FlyChatFlutterPlatform.instance.onProgressChanged;
@@ -3617,17 +3755,6 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getRingtoneName();
   }*/
 
-  static Future<void> loginWebChatViaQRCode({required String barcode,  required Function(FlyResponse response) flyCallBack}) {
-    return FlyChatFlutterPlatform.instance.loginWebChatViaQRCode(barcode, flyCallBack);
-  }
-
-  static Future<bool?> logoutWebUser({required List<String> logins}) {
-    return FlyChatFlutterPlatform.instance.logoutWebUser(logins);
-  }
-
-  static Future<dynamic> getWebLoginDetails() {
-    return FlyChatFlutterPlatform.instance.getWebLoginDetails();
-  }
 
   //not used
   /*static Future<bool?> iOSFileExist({required String filePath}) {

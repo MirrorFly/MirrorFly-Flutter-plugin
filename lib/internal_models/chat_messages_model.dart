@@ -765,9 +765,7 @@ String getReplyMessageType(dynamic json) {
   if (Platform.isAndroid) {
     return json["messageType"].toString().toUpperCase();
   } else {
-    if (json["messageTextContent"].toString().isNotEmpty) {
-      return "TEXT";
-    } else if (json["mediaChatMessage"] != null &&
+    if (json["mediaChatMessage"] != null &&
         json["mediaChatMessage"]["mediaFileType"].toString().isNotEmpty) {
       return json["mediaChatMessage"]["mediaFileType"]
                   .toString()
@@ -779,6 +777,8 @@ String getReplyMessageType(dynamic json) {
       return "CONTACT";
     } else if (json["locationChatMessage"] != null) {
       return "LOCATION";
+    } else if (json["messageTextContent"].toString().isNotEmpty) {
+      return "TEXT";
     } else {
       return "";
     }

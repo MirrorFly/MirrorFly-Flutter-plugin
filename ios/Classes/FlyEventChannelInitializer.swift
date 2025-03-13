@@ -126,10 +126,11 @@ class FlyChatEventChannelInitializer {
         (channelName: Constants.onRestoreProgressChangedChannel, streamHandler: OnRestoreProgressChangedChannelStreamHandler()),
         (channelName: Constants.onRestoreSuccessChannel, streamHandler: OnRestoreSuccessChannelStreamHandler()),
         
-        (channelName: Constants.onMessagesClearedChannel, streamHandler: OnMessagesClearedChannelStreamHandler()),
-        (channelName: Constants.onMessagesClearedOrDeletedChannel, streamHandler: OnMessagesClearedOrDeletedChannelStreamHandler()),
+        (channelName: Constants.onChatClearedChannel, streamHandler: OnChatClearedChannelStreamHandler()),
+        (channelName: Constants.onMessageDeletedChannel, streamHandler: OnMessageDeletedChannelStreamHandler()),
+        (channelName: Constants.onAllChatsClearedChannel, streamHandler: OnAllChatsClearedChannelStreamHandler()),
+        
         (channelName: Constants.onUpdateFavouriteChannel, streamHandler: OnUpdateFavouriteChannelStreamHandler()),
-        (channelName: Constants.onClearAllConversationChannel, streamHandler: OnClearAllConversationChannelStreamHandler()),
         
         (channelName: Constants.onWebLogoutChannel, streamHandler: OnWebLogoutChannelStreamHandler()),
         (channelName: Constants.onChatMuteStatusUpdatedChannel, streamHandler: OnChatMuteStatusUpdatedChannelStreamHandler()),

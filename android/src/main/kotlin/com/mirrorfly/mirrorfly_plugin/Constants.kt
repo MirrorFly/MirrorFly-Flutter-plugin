@@ -95,10 +95,11 @@ object Constants {
     const val onAvailableFeaturesUpdatedChannel = "$Domain/onAvailableFeaturesUpdated"
     const val onMessageEditedChannel = "$Domain/onMessageEdited"
 
-    const val onMessagesClearedChannel = "$Domain/onMessagesCleared"
-    const val onMessagesClearedOrDeletedChannel = "$Domain/onMessagesClearedOrDeleted"
+    const val onChatClearedChannel = "$Domain/onChatCleared"
+    const val onMessageDeletedChannel = "$Domain/onMessageDeleted"
+    const val onAllChatsClearedChannel = "$Domain/onAllChatsCleared"
+
     const val onUpdateFavouriteChannel = "$Domain/onUpdateFavourites"
-    const val onClearAllConversationChannel = "$Domain/onClearAllConversation"
 
     const val onWebLogoutChannel = "$Domain/onWebLogout"
     const val onChatMuteStatusUpdatedChannel = "$Domain/onChatMuteStatusUpdated"

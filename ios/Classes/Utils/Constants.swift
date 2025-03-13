@@ -97,10 +97,11 @@ struct Constants {
     static let onRestoreProgressChangedChannel = "\(domain)/onRestoreProgressChanged"
     static let onRestoreSuccessChannel = "\(domain)/onRestoreSuccess"
     
-    static let onMessagesClearedChannel = "\(domain)/onMessagesCleared"
-    static let onMessagesClearedOrDeletedChannel = "\(domain)/onMessagesClearedOrDeleted"
+    static let onChatClearedChannel = "\(domain)/onChatCleared"
+    static let onMessageDeletedChannel = "\(domain)/onMessageDeleted"
+    static let onAllChatsClearedChannel = "\(domain)/onAllChatsCleared"
+    
     static let onUpdateFavouriteChannel = "\(domain)/onUpdateFavourites"
-    static let onClearAllConversationChannel = "\(domain)/onClearAllConversation"
     
     static let onWebLogoutChannel = "\(domain)/onWebLogout"
     static let onChatMuteStatusUpdatedChannel = "\(domain)/onChatMuteStatusUpdated"

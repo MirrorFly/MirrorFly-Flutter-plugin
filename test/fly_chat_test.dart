@@ -1905,6 +1905,42 @@ class MockFlyChatFlutterPlatform
   Stream get onRestoreSuccess => throw UnimplementedError();
 
   @override
+  // implement onChatCleared
+  Stream get onChatCleared => throw UnimplementedError();
+
+  @override
+  // implement onMessageDeleted
+  Stream get onMessageDeleted => throw UnimplementedError();
+
+  @override
+  // implement onAllChatsCleared
+  Stream get onAllChatsCleared => throw UnimplementedError();
+
+  @override
+  // implement onUpdateFavourites
+  Stream get onUpdateFavourites => throw UnimplementedError();
+
+  @override
+  // implement onWebLogout
+  Stream get onWebLogout => throw UnimplementedError();
+
+  @override
+  // implement onChatMuteStatusUpdated
+  Stream get onChatMuteStatusUpdated => throw UnimplementedError();
+
+  @override
+  // implement onUpdateMuteSettings
+  Stream get onUpdateMuteSettings => throw UnimplementedError();
+
+  @override
+  // implement onArchiveUnArchiveChats
+  Stream get onArchiveUnArchiveChats => throw UnimplementedError();
+
+  @override
+  // implement onArchiveUnArchiveChats
+  Stream get onArchivedSettingsUpdated => throw UnimplementedError();
+
+  @override
   Future getWebLoginDetails() {
     throw UnimplementedError();
   }
