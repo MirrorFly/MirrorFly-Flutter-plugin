@@ -18,7 +18,7 @@ public enum ConnectionStatus {
     case connected
     case disconnected
     case reconnecting
-    case notAuthorized
+//    case notAuthorized
     case connectionfailed(error: String)
 }
 
