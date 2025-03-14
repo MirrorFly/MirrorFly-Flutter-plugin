@@ -766,9 +766,9 @@ extension FlyChatPlugin {
 
 
 extension FlyChatPlugin : WebLogoutDelegate {
-    public func didLogoutWeb(socketIds: [String]) {
-        print("Delegate : didLogoutWeb received -> \(socketIds)")
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onWebLogoutChannel, value: socketIds.toJson())
+    public func didLogoutWeb(socketId: String) {
+        print("Delegate : didLogoutWeb received -> \(socketId)")
+//        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onWebLogoutChannel, value: socketId)
     }
 }
 
