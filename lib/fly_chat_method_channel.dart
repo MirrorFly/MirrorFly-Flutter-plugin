@@ -1520,6 +1520,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
     onChatClearedChannel.receiveBroadcastStream().listen((event) {
       onChatClearedStreamController.add(event);
+      messageEventsListener?.onChatCleared(event);
     }, onError: (error) {
       LogMessage.d("MirrorFly", "Error on chat clear listener: $error");
       onChatClearedStreamController.addError(error);
@@ -1527,6 +1528,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
     onMessageDeletedChannel.receiveBroadcastStream().listen((event) {
       onMessageDeletedStreamController.add(event);
+      messageEventsListener?.onMessageDeleted(event);
     }, onError: (error) {
       LogMessage.d("MirrorFly", "Error on message deleted listener: $error");
       onMessageDeletedStreamController.addError(error);
@@ -1534,6 +1536,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
     onAllChatsClearedChannel.receiveBroadcastStream().listen((event) {
       onAllChatsClearedStreamController.add(event);
+      messageEventsListener?.onAllChatsCleared(event);
     }, onError: (error) {
       LogMessage.d("MirrorFly", "Error on all chat cleared listener: $error");
       onAllChatsClearedStreamController.addError(error);
@@ -1555,6 +1558,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
     onChatMuteStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
       onChatMuteStatusUpdatedStreamController.add(event);
+      messageEventsListener?.onChatMuteStatusUpdated(event);
     }, onError: (error) {
       LogMessage.d(
           "MirrorFly", "Error on chat mute or un-mute listener: $error");
@@ -1563,6 +1567,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
     onUpdateMuteSettingsChannel.receiveBroadcastStream().listen((event) {
       onUpdateMuteSettingsStreamController.add(event);
+      messageEventsListener?.onUpdateMuteSettings(event);
     }, onError: (error) {
       LogMessage.d("MirrorFly", "Error on chat mute settings update: $error");
       onUpdateMuteSettingsStreamController.addError(error);
@@ -1570,6 +1575,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
     onArchiveUnArchiveChatsChannel.receiveBroadcastStream().listen((event) {
       onArchiveUnArchiveChatsStreamController.add(event);
+      messageEventsListener?.onArchiveUnArchiveChats(event);
     }, onError: (error) {
       LogMessage.d(
           "MirrorFly", "Error on chat archive / Unarchive updates: $error");
@@ -1578,6 +1584,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
     onArchivedSettingsUpdatedChannel.receiveBroadcastStream().listen((event) {
       onArchivedSettingsUpdatedStreamController.add(event);
+      messageEventsListener?.onArchivedSettingsUpdated(event);
     }, onError: (error) {
       LogMessage.d("MirrorFly",
           "Error on chat archive / Unarchive settings toggle: $error");
