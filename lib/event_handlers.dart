@@ -108,7 +108,6 @@ abstract class MessageEventListeners {
   ///
   /// [event]: The event containing details about the chat mute status update.
   void onChatMuteStatusUpdated(event);
-
 }
 
 /// A class that provides a set of callback methods that can be used to listen for Connection Events in the MirrorFly Flutter Plugin.
