@@ -1,3 +1,13 @@
+## [1.2.0] Multi-Session Sync Updates
+* Chat mute/unmute 
+* Chat archive/unarchive 
+* Chat global mute settings 
+* Chat archive settings updates 
+* Chat delete updates 
+* Chat clear updates 
+* Android SDK updated to 7.13.15 
+* iOS SDK updated to 5.18.8
+
 ## [1.1.1] Bug Fix
 * Topic ID Added for iOS Messages
 * iOS SDK Updated to 5.18.7
