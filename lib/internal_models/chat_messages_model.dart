@@ -102,6 +102,7 @@ class ChatMessage {
     required this.isMessageEdited,
     required this.messageTextContent,
     required this.messageType,
+    required this.meetChatMessage,
     this.metaData = const [],
     this.mentionedUsersIds,
     required this.replyParentChatMessage,
@@ -168,6 +169,9 @@ class ChatMessage {
   /// The type of message (e.g., text, image, video).
   String messageType;
 
+  /// Details of the meet shared in the message. Nullable.
+  MeetChatMessage? meetChatMessage;
+
   /// A list of metadata associated with the message. Nullable.
   List<MessageMetaData>? metaData;
 
@@ -230,6 +234,7 @@ class ChatMessage {
           Platform.isAndroid ? json["isEdited"] : json["isMessageEdited"],
       messageTextContent: json["messageTextContent"].toString(),
       messageType: getMessageType(json["messageType"]),
+      meetChatMessage:json['meetChatMessage'] == null ? null: MeetChatMessage.fromJson(json['meetChatMessage']),
       metaData: json["metaData"] == null
           ? []
           : List<MessageMetaData>.from(
@@ -277,6 +282,7 @@ class ChatMessage {
         "isMessageEdited": isMessageEdited,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
+         "meetChatMessage":meetChatMessage?.toJson(),
         "metaData": metaData == null
             ? null
             : List<dynamic>.from(metaData!.map((x) => x.toJson())),
@@ -357,6 +363,50 @@ class ContactChatMessage {
         "isChatAppUser": List<dynamic>.from(isChatAppUser.map((x) => x)),
         "messageId": messageId,
       };
+}
+
+
+/// Represents a contact shared in a chat message.
+class MeetChatMessage {
+  ///Meet link for the event
+  final String link;
+
+  /// Unique identifier for the message
+  final String messageId;
+
+  /// Scheduled date and time of the event (in milliseconds since epoch)
+  final int scheduledDateTime;
+
+  /// Title of the meeting or event
+  final String title;
+
+  /// Constructs an instance of [MeetChatMessage].
+  MeetChatMessage({
+    required this.link,
+    required this.messageId,
+    required this.scheduledDateTime,
+    required this.title,
+  });
+
+  ///Factory constructor to create an instance from a JSON object
+  factory MeetChatMessage.fromJson(Map<String, dynamic> json) {
+    return MeetChatMessage(
+      link: json['link'] ?? '', // Default empty string if null
+      messageId: json['messageId'] ?? '', // Default empty string if null
+      scheduledDateTime: json['scheduledDateTime'] ?? 0, // Default 0 if null
+      title: json['title'] ?? '', // Default empty string if null
+    );
+  }
+
+  /// Converts the object into a JSON representation
+  Map<String, dynamic> toJson() {
+    return {
+      'link': link,
+      'messageId': messageId,
+      'scheduledDateTime': scheduledDateTime,
+      'title': title,
+    };
+  }
 }
 
 /// Represents a location shared in a chat message.
@@ -549,6 +599,7 @@ class ReplyParentChatMessage {
       required this.locationChatMessage,
       required this.contactChatMessage,
       required this.mediaChatMessage,
+        required this.meetChatMessage,
       required this.mentionedUsersIds});
 
   /// The JID of the user involved in the chat.
@@ -593,6 +644,9 @@ class ReplyParentChatMessage {
   /// Details of the media shared in the message. Nullable.
   MediaChatMessage? mediaChatMessage;
 
+  /// Details of the meet shared in the message. Nullable.
+  MeetChatMessage? meetChatMessage;
+
   /// A list of userid associated with the mentioned Users.
   List<String>? mentionedUsersIds;
 
@@ -619,6 +673,7 @@ class ReplyParentChatMessage {
         mediaChatMessage: json["mediaChatMessage"] == null
             ? null
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+        meetChatMessage:json['meetChatMessage'] == null ? null: MeetChatMessage.fromJson(json['meetChatMessage']),
         mentionedUsersIds: json["mentionedUsersIds"] == null
             ? []
             : Platform.isIOS
@@ -645,6 +700,7 @@ class ReplyParentChatMessage {
         "contactChatMessage":
             contactChatMessage ?? contactChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage ?? mediaChatMessage?.toJson(),
+        "meetChatMessage":meetChatMessage?.toJson(),
         "mentionedUsersIds": mentionedUsersIds == null
             ? null
             : List<String>.from(mentionedUsersIds!.map((x) => x)),

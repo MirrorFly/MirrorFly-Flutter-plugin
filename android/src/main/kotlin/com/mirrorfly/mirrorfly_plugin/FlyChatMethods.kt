@@ -1817,6 +1817,13 @@ class FlyChatMethods {
                     LogMessage.d("textMessage", textMessage.toJsonString())
                     sendTextMessage(textMessage, result)
                 }
+            }else if(MessageType.valueOf(messageType) == MessageType.MEET){
+                val meetMessage = buildMeetMessage(messageParams)
+                LogMessage.d("meetMessage", meetMessage?.toJsonString())
+                meetMessage.let {
+                    LogMessage.d("meetMessage", meetMessage?.toJsonString())
+                    sendMeetMessage(meetMessage, result)
+                }
             } else {
                 val fileMessage = buildFileMessage(messageParams)
                 LogMessage.d("fileMessage", fileMessage.toJsonString())
@@ -1831,6 +1838,31 @@ class FlyChatMethods {
             return
         }
         FlyMessenger.sendTextMessage(textMessage, object : SendMessageCallback {
+            override fun onResponse(
+                isSuccess: Boolean,
+                error: Throwable?,
+                chatMessage: ChatMessage?
+            ) {
+                if (isSuccess) {
+                    if (chatMessage != null) {
+                        result.success(chatMessage.toJsonString())
+                    } else {
+                        result.error("500", "message not available", error)
+                    }
+                } else {
+                    result.error("500", error?.message ?: "", error)
+                }
+            }
+        })
+    }
+
+    private fun sendMeetMessage(meetMessage: MeetMessage?, result: MethodChannel.Result) {
+        if (meetMessage == null) {
+            result.error("500", "MeetMessage params not be null for MessageType TEXT", null)
+            return
+        }
+        LogMessage.d("meetMessage send", meetMessage.toJsonString())
+        FlyMessenger.sendMeetMessage(meetMessage, object : SendMessageCallback {
             override fun onResponse(
                 isSuccess: Boolean,
                 error: Throwable?,
@@ -1895,6 +1927,30 @@ class FlyChatMethods {
             }
         }
         return textMessage
+    }
+
+    private fun buildMeetMessage(map: HashMap<String, Any>?): MeetMessage? {
+        val meetMessage = MeetMessage()
+        if(map  != null && map["meetMessage"] != null){
+            LogMessage.d("meetMessage par -", map.toString());
+       meetMessage.apply {
+            this.toId = map.getOrDefault("toJid", "") as String
+           this.replyMessageId = map["replyMessageId"] as String?
+           this.topicId = map.getOrDefault("topicId", "") as String
+           this.metaData =
+               if (map["metaData"] != null) extractMessageMetaData(map["metaData"] as List<Map<String, Any>>) else emptyList()
+           val meetMessageMap = map["meetMessage"] as? Map<String, Any> // Safe cast to Map<String, Any>
+
+           this.title = meetMessageMap?.get("title") as? String
+           this.scheduledDateTime = meetMessageMap?.get("scheduledDateTime") as? Long
+           this.link = meetMessageMap?.get("link") as? String
+
+           this.mentionedUsersIds= if (map["mentionedUsersIds"] != null) map["mentionedUsersIds"] as List<String> else null
+       }
+        }else {
+            return null
+        }
+        return meetMessage
     }
 
     private fun buildFileMessage(map: HashMap<String, Any>?): FileMessage {
