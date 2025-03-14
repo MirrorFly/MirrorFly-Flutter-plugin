@@ -530,87 +530,85 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<int> onRestoreProgressStreamController =
       StreamController<int>.broadcast();
 
-
   /// A event channel for chat cleared listening events.
   @visibleForTesting
   final onChatClearedChannel =
-  const EventChannel('contus.mirrorfly/onChatCleared');
+      const EventChannel('contus.mirrorfly/onChatCleared');
 
   /// A broadcast stream controller for chat cleared events.
   final StreamController<dynamic> onChatClearedStreamController =
-  StreamController<dynamic>.broadcast();
+      StreamController<dynamic>.broadcast();
 
   /// A event channel for message deleted listening events.
   @visibleForTesting
   final onMessageDeletedChannel =
-  const EventChannel('contus.mirrorfly/onMessageDeleted');
+      const EventChannel('contus.mirrorfly/onMessageDeleted');
 
   /// A broadcast stream controller for message deleted events.
   final StreamController<dynamic> onMessageDeletedStreamController =
-  StreamController<dynamic>.broadcast();
+      StreamController<dynamic>.broadcast();
 
   /// A event channel for all chats cleared listening events.
   @visibleForTesting
   final onAllChatsClearedChannel =
-  const EventChannel('contus.mirrorfly/onAllChatsCleared');
+      const EventChannel('contus.mirrorfly/onAllChatsCleared');
 
   /// A broadcast stream controller for all chats cleared events.
   final StreamController<bool> onAllChatsClearedStreamController =
-  StreamController<bool>.broadcast();
+      StreamController<bool>.broadcast();
 
   /// A event channel for favourite message listening events.
   @visibleForTesting
   final onUpdateFavouritesChannel =
-  const EventChannel('contus.mirrorfly/onUpdateFavourites');
+      const EventChannel('contus.mirrorfly/onUpdateFavourites');
 
   /// A broadcast stream controller for favourite message update events.
   final StreamController<dynamic> onUpdateFavouritesStreamController =
-  StreamController<dynamic>.broadcast();
+      StreamController<dynamic>.broadcast();
 
   /// A event channel for corresponding web logout listening events.
   @visibleForTesting
-  final onWebLogoutChannel =
-  const EventChannel('contus.mirrorfly/onWebLogout');
+  final onWebLogoutChannel = const EventChannel('contus.mirrorfly/onWebLogout');
 
   /// A broadcast stream controller for web logout events.
   final StreamController<dynamic> onWebLogoutStreamController =
-  StreamController<dynamic>.broadcast();
+      StreamController<dynamic>.broadcast();
 
   /// A event channel for chat Mute/UnMute listening events.
   @visibleForTesting
   final onChatMuteStatusUpdatedChannel =
-  const EventChannel('contus.mirrorfly/onChatMuteStatusUpdated');
+      const EventChannel('contus.mirrorfly/onChatMuteStatusUpdated');
 
   /// A broadcast stream controller for chat Mute/UnMute events.
   final StreamController<dynamic> onChatMuteStatusUpdatedStreamController =
-  StreamController<dynamic>.broadcast();
+      StreamController<dynamic>.broadcast();
 
   /// A event channel for Mute/UnMute Settings listening events.
   @visibleForTesting
   final onUpdateMuteSettingsChannel =
-  const EventChannel('contus.mirrorfly/didUpdateMuteSettings');
+      const EventChannel('contus.mirrorfly/didUpdateMuteSettings');
 
   /// A broadcast stream controller for Mute/UnMute settings events.
   final StreamController<dynamic> onUpdateMuteSettingsStreamController =
-  StreamController<dynamic>.broadcast();
+      StreamController<dynamic>.broadcast();
 
   /// A event channel for chat Archive/Unarchive listening events.
   @visibleForTesting
   final onArchiveUnArchiveChatsChannel =
-  const EventChannel('contus.mirrorfly/updateArchiveUnArchiveChats');
+      const EventChannel('contus.mirrorfly/updateArchiveUnArchiveChats');
 
   /// A broadcast stream controller for chat Archive/Unarchive listening events.
   final StreamController<dynamic> onArchiveUnArchiveChatsStreamController =
-  StreamController<dynamic>.broadcast();
+      StreamController<dynamic>.broadcast();
 
   /// A event channel for chat Archive/Unarchive listening events.
   @visibleForTesting
   final onArchivedSettingsUpdatedChannel =
-  const EventChannel('contus.mirrorfly/updateArchivedSettings');
+      const EventChannel('contus.mirrorfly/updateArchivedSettings');
 
   /// A broadcast stream controller for chat Archive/Unarchive listening events.
   final StreamController<dynamic> onArchivedSettingsUpdatedStreamController =
-  StreamController<dynamic>.broadcast();
+      StreamController<dynamic>.broadcast();
 
   // @visibleForTesting
   // final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
@@ -920,8 +918,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onConnectionFailedStreamController.stream;
 
   @override
-  Stream<dynamic> get onReconnecting =>
-      onReconnectingStreamController.stream;
+  Stream<dynamic> get onReconnecting => onReconnectingStreamController.stream;
 
   // @override
   // Stream<dynamic> get connectionFailed => connectionFailedStreamController.stream;
@@ -967,8 +964,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onRestoreSuccessStreamController.stream;
 
   @override
-  Stream<dynamic> get onChatCleared =>
-      onChatClearedStreamController.stream;
+  Stream<dynamic> get onChatCleared => onChatClearedStreamController.stream;
 
   @override
   Stream<dynamic> get onMessageDeleted =>
@@ -983,8 +979,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onUpdateFavouritesStreamController.stream;
 
   @override
-  Stream<dynamic> get onWebLogout =>
-      onWebLogoutStreamController.stream;
+  Stream<dynamic> get onWebLogout => onWebLogoutStreamController.stream;
 
   @override
   Stream<dynamic> get onChatMuteStatusUpdated =>
@@ -1561,7 +1556,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     onChatMuteStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
       onChatMuteStatusUpdatedStreamController.add(event);
     }, onError: (error) {
-      LogMessage.d("MirrorFly", "Error on chat mute or un-mute listener: $error");
+      LogMessage.d(
+          "MirrorFly", "Error on chat mute or un-mute listener: $error");
       onChatMuteStatusUpdatedStreamController.addError(error);
     });
 
@@ -1575,14 +1571,16 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     onArchiveUnArchiveChatsChannel.receiveBroadcastStream().listen((event) {
       onArchiveUnArchiveChatsStreamController.add(event);
     }, onError: (error) {
-      LogMessage.d("MirrorFly", "Error on chat archive / Unarchive updates: $error");
+      LogMessage.d(
+          "MirrorFly", "Error on chat archive / Unarchive updates: $error");
       onArchiveUnArchiveChatsStreamController.addError(error);
     });
 
     onArchivedSettingsUpdatedChannel.receiveBroadcastStream().listen((event) {
       onArchivedSettingsUpdatedStreamController.add(event);
     }, onError: (error) {
-      LogMessage.d("MirrorFly", "Error on chat archive / Unarchive settings toggle: $error");
+      LogMessage.d("MirrorFly",
+          "Error on chat archive / Unarchive settings toggle: $error");
       onArchivedSettingsUpdatedStreamController.addError(error);
     });
 
@@ -2357,8 +2355,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   updateChatMuteStatusList(List<String> jidList, bool muteStatus) async {
     try {
-      await mirrorFlyMethodChannel.invokeMethod(
-          'updateChatMuteStatusList', {"jidList": jidList, "mute_status": muteStatus});
+      await mirrorFlyMethodChannel.invokeMethod('updateChatMuteStatusList',
+          {"jidList": jidList, "mute_status": muteStatus});
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
@@ -4698,7 +4696,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       rethrow;
     }
   }
-
 
   @override
   Future<dynamic> getWebLoginDetails() async {

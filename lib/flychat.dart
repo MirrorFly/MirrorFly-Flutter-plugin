@@ -713,7 +713,8 @@ class Mirrorfly {
   /// ```dart
   /// await Mirrorfly.updateChatMuteStatusList(jidList: ['example@domain.com', 'example1@domain.com], muteStatus: true);
   /// ```
-  static updateChatMuteStatusList({required List<String> jidList, required bool muteStatus}) {
+  static updateChatMuteStatusList(
+      {required List<String> jidList, required bool muteStatus}) {
     return FlyChatFlutterPlatform.instance
         .updateChatMuteStatusList(jidList, muteStatus);
   }
@@ -2575,7 +2576,6 @@ class Mirrorfly {
   static Stream<dynamic> get onArchivedSettingsUpdated =>
       FlyChatFlutterPlatform.instance.onArchivedSettingsUpdated;
 
-
   // static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
   // static Stream<dynamic> get onProgressChanged => FlyChatFlutterPlatform.instance.onProgressChanged;
@@ -3755,13 +3755,10 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getRingtoneName();
   }*/
 
-
   //not used
   /*static Future<bool?> iOSFileExist({required String filePath}) {
     return FlyChatFlutterPlatform.instance.iOSFileExist(filePath);
   }*/
-
-
 
   /// This method updates the favourite status of a specific message for a chat user. The favourite status
   /// can be set to true or false. Upon completion, the [flyCallBack] function is invoked with a [FlyResponse]
