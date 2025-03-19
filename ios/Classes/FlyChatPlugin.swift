@@ -223,11 +223,11 @@ extension FlyChatPlugin : BackupEventDelegate, RestoreEventDelegate {
 
     public func restoreDidFailed(errorMessage: String) {
 
-        let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(errorMessage, forKey: "errorMessage")
-        let jsonString = pluginDictToJson(dictionary: jsonObject)
+//        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+//        jsonObject.setValue(errorMessage, forKey: "errorMessage")
+//        let jsonString = pluginDictToJson(dictionary: jsonObject)
 
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onRestoreFailureChannel, value: jsonString)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onRestoreFailureChannel, value: errorMessage)
     }
 
 }

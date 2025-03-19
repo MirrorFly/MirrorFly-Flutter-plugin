@@ -4484,6 +4484,13 @@ let ISEXPORT = true
             result(true)
         }
     }
+    
+    
+    func cancelBackup(call : FlutterMethodCall, result: @escaping FlutterResult) {
+        BackupManager.shared.cancelBackup()
+        
+    }
+    
 
 
 
