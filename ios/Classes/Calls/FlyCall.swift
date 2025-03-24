@@ -298,11 +298,11 @@ import PushKit
         }
     }
     
-    /// Call Status Duplicate Handle Code Start
+    /// Call Status user exists check
     func isUserExists(userId: String) -> Bool {
         return usersInCall.keys.contains(userId)
     }
-    /// Call Status Duplicate Handle Code End
+    /// Call Status user exists check end
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         NSLog("#MirrorflyCall Events: Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
@@ -322,20 +322,17 @@ import PushKit
             NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
             return
         }
-//        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING){
-            usersInCall.removeAll()
-        ///
+        
         /// re-enabling this as the user is removed at the other scenarios like call timeout and the fetching the list again gives without the user left the call so status is not passing to flutter
         if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING || callStatus == .RECONNECTED || callStatus == .CALLING){
 
 
-           usersInCall.removeAll()
+            usersInCall.removeAll()
             usersInCall = CallManager.getCallUsersWithStatus()
             if !isUserExists(userId: selfJID){
                 usersInCall[selfJID] = .CONNECTED
             }
             print("\(Constants.callTag) Events: usersInCall: \(usersInCall)")
-        
 
         }
 
@@ -374,16 +371,22 @@ import PushKit
         if ((callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && isUserExists(userId: userJID)) {
             NSLog("\(Constants.callTag) Events: User exists so forwarding the status")
             usersInCall.removeValue(forKey: userJID)
+            
+            /// ****
+            /// Check here why the user not exists is written here
+            /// ****
+            ///
         }else if !(callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && !isUserExists(userId: userJID){
             NSLog("\(Constants.callTag) Events: User not exists so adding the user")
             usersInCall[userJID] = .CONNECTED
         }
         /// Call Status Duplicate Handle Code End
+
         
-        //Added to Sync the Call log in Call Status update
-        NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
         
+        /// ****
+        /// Moved this code from below the updateSinkValue to above as this code needs to restirct the status sent to the Flutter side
+        /// ****
         
         if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
             NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
@@ -394,7 +397,12 @@ import PushKit
             NSLog("\(Constants.callTag) Events: Attended Received for remote user so ignoring it")
             return
         }
+        
+        
 
+        //Added to Sync the Call log in Call Status update
+        NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
 
 
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
