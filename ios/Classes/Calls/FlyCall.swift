@@ -373,7 +373,7 @@ import PushKit
             usersInCall.removeValue(forKey: userJID)
             
             /// ****
-            /// Check here why the user not exists is written here
+            ///  Checking the user in list and adding again as the user is not present and the status received is equivalent to connected/joined
             /// ****
             ///
         }else if !(callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && !isUserExists(userId: userJID){
