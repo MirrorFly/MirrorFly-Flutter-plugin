@@ -31,9 +31,9 @@ class FlyEventChannelInitializer {
         
         /// For Meet Link
         (channelName: Constants.onSubscribeSuccess, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
-        (channelName: Constants.onConnectedToSignalServer, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
-        (channelName: Constants.onError, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
-        (channelName: Constants.onUsersUpdated, streamHandler: OnSubscribeSuccessChannelStreamHandler()),
+        (channelName: Constants.onConnectedToSignalServer, streamHandler: OnConnectedToSignalServerChannelStreamHandler()),
+        (channelName: Constants.onError, streamHandler: OnErrorChannelStreamHandler()),
+        (channelName: Constants.onUsersUpdated, streamHandler: OnUsersUpdatedChannelStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
     
@@ -78,6 +78,7 @@ class FlyChatEventChannelInitializer {
         (channelName: Constants.getAvailableFeatures_channel, streamHandler: OnGetAvailableFeaturesStreamHandler()),
         (channelName: Constants.showUpdateCancelNotificationChannel, streamHandler: ShowOrUpdateOrCancelNotificationStreamHandler()),
         (channelName: Constants.onConnectionFailed_channel, streamHandler: OnConnectionFailedStreamHandler()),
+        (channelName: Constants.onConnectionReconnecting_channel, streamHandler: OnReconnectionStreamHandler()),
         (channelName: Constants.userCameOnline_channel, streamHandler: UserCameOnlineStreamHandler()),
         (channelName: Constants.userWentOffline_channel, streamHandler: UserWentOfflineStreamHandler()),
         (channelName: Constants.userProfileFetched_channel, streamHandler: UserProfileFetchedStreamHandler()),
@@ -124,6 +125,18 @@ class FlyChatEventChannelInitializer {
         (channelName: Constants.onRestoreFailureChannel, streamHandler: OnRestoreFailureChannelStreamHandler()),
         (channelName: Constants.onRestoreProgressChangedChannel, streamHandler: OnRestoreProgressChangedChannelStreamHandler()),
         (channelName: Constants.onRestoreSuccessChannel, streamHandler: OnRestoreSuccessChannelStreamHandler()),
+        
+        (channelName: Constants.onChatClearedChannel, streamHandler: OnChatClearedChannelStreamHandler()),
+        (channelName: Constants.onMessageDeletedChannel, streamHandler: OnMessageDeletedChannelStreamHandler()),
+        (channelName: Constants.onAllChatsClearedChannel, streamHandler: OnAllChatsClearedChannelStreamHandler()),
+        
+        (channelName: Constants.onUpdateFavouriteChannel, streamHandler: OnUpdateFavouriteChannelStreamHandler()),
+        
+        (channelName: Constants.onWebLogoutChannel, streamHandler: OnWebLogoutChannelStreamHandler()),
+        (channelName: Constants.onChatMuteStatusUpdatedChannel, streamHandler: OnChatMuteStatusUpdatedChannelStreamHandler()),
+        (channelName: Constants.didUpdateMuteSettingsChannel, streamHandler: DidUpdateMuteSettingsChannelStreamHandler()),
+        (channelName: Constants.updateArchiveUnArchiveChatsChannel, streamHandler: UpdateArchiveUnArchiveChatsChannelStreamHandler()),
+        (channelName: Constants.updateArchivedSettingsChannel, streamHandler: UpdateArchivedSettingsChannelStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
     

@@ -51,10 +51,6 @@ public class UsersWhoBlockedMeListFetchedStreamHandler: EventStreamHandler { }
 public class OnConnectedStreamHandler: EventStreamHandler { }
 public class OnDisconnectedStreamHandler: EventStreamHandler { }
 public class OnConnectionNotAuthorizedStreamHandler: EventStreamHandler { }
-//public class ConnectionFailedStreamHandler: EventStreamHandler { }
-//public class ConnectionSuccessStreamHandler: EventStreamHandler { }
-//public class OnWebChatPasswordChangedStreamHandler: EventStreamHandler { }
-//public class OnFailureStreamHandler: EventStreamHandler { }
 public class OnProgressChangedStreamHandler: EventStreamHandler { }
 public class OnSuccessStreamHandler: EventStreamHandler { }
 
@@ -65,6 +61,7 @@ public class OnsetTypingStatusStreamHandler: EventStreamHandler { }
 public class OnGroupTypingStatusStreamHandler: EventStreamHandler { }
 
 public class OnConnectionFailedStreamHandler: EventStreamHandler { }
+public class OnReconnectionStreamHandler: EventStreamHandler { }
 
 public class OnGetAvailableFeaturesStreamHandler: EventStreamHandler { }
 
@@ -74,6 +71,19 @@ public class OnBackupProgressChangedChannelStreamHandler: EventStreamHandler { }
 public class OnRestoreFailureChannelStreamHandler: EventStreamHandler { }
 public class OnRestoreProgressChangedChannelStreamHandler: EventStreamHandler { }
 public class OnRestoreSuccessChannelStreamHandler: EventStreamHandler { }
+
+
+public class OnChatClearedChannelStreamHandler: EventStreamHandler { }
+public class OnMessageDeletedChannelStreamHandler: EventStreamHandler { }
+public class OnAllChatsClearedChannelStreamHandler: EventStreamHandler { }
+
+public class OnUpdateFavouriteChannelStreamHandler: EventStreamHandler { }
+
+public class OnWebLogoutChannelStreamHandler: EventStreamHandler { }
+public class OnChatMuteStatusUpdatedChannelStreamHandler: EventStreamHandler { }
+public class DidUpdateMuteSettingsChannelStreamHandler: EventStreamHandler { }
+public class UpdateArchiveUnArchiveChatsChannelStreamHandler: EventStreamHandler { }
+public class UpdateArchivedSettingsChannelStreamHandler: EventStreamHandler { }
 
 /// Call Event Stream Handlers
 public class OnLocalVideoTrackAddedStreamHandler: EventStreamHandler { }

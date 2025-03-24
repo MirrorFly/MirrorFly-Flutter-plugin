@@ -823,8 +823,6 @@ String getReplyMessageType(dynamic json) {
   } else {
     if (json["meetChatMessage"] != null) {
       return "MEET";
-    }else if (json["messageTextContent"].toString().isNotEmpty) {
-      return "TEXT";
     } else if (json["mediaChatMessage"] != null &&
         json["mediaChatMessage"]["mediaFileType"].toString().isNotEmpty) {
       return json["mediaChatMessage"]["mediaFileType"]
@@ -837,6 +835,8 @@ String getReplyMessageType(dynamic json) {
       return "CONTACT";
     } else if (json["locationChatMessage"] != null) {
       return "LOCATION";
+    } else if (json["messageTextContent"].toString().isNotEmpty) {
+      return "TEXT";
     } else {
       return "";
     }

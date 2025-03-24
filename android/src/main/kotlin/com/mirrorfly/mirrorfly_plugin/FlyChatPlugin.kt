@@ -37,6 +37,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import kotlin.collections.ArrayList
@@ -97,10 +98,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             initChannels(binaryMessenger)
             FlyCallPlugin().init()
 
-            /****
-            /// Attach Event Listeners should add at the SDK Initialisation and
-            // should not added here as it will cause issues like improper updates
-            ****/
+            /**
+             * Attach Event Listeners should add at the SDK Initialisation and
+             * should not added here as it will cause issues like improper updates
+             **/
 
             ChatConnectionManager.addChatConnectionListener(instance)
             CallManager.setMissedCallListener(instance)
@@ -317,28 +318,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //                getMessageUsingIds(call, result)
                 }
 
-                call.method.equals("getWebLoginDetails") -> {
-                    val details = WebLoginDataManager.getWebLoginDetails()
-                    result.success(details.toJsonString())
-                }
-
-                call.method.equals("webLoginDetailsCleared") -> {
-                    WebLoginDataManager.webLoginDetailsCleared()
-                    result.success(true)
-                }
-
-                call.method.equals("logoutWebUser") -> {
-                    UpDateWebPassword().upDatePassword()
-                    val listWebLogin =
-                        call.argument<List<String>>("listWebLogin")//qrUniqeToken list
-                    if (!listWebLogin.isNullOrEmpty()) {
-                        for (it in listWebLogin) {
-                            ChatManager.logoutWebUser(it)
-                        }
-                    }
-                    result.success(true)
-                }
-
                 else -> {
                     result.notImplemented()
                 }
@@ -356,107 +335,6 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     private inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
         Build.VERSION.SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)
         else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
-    }
-
-
-    override fun onMessageReceived(message: ChatMessage) {
-        LogMessage.d(TAG, "onMessageReceived ${message.toJsonString()}")
-        //called when the new message is received
-        //LogMessage.d(TAG, "Message Received ${message.tojsonString()}")
-//        MessageReceivedStreamHandler.onMessageReceived?.success(message.toJsonString())
-        FlyMethodConstants.updateChatSinkValue(
-            Constants.onMessageReceivedChannel,
-            message.toJsonString()
-        )
-
-    }
-
-    override fun onMessageStatusUpdated(messageId: String) {
-        LogMessage.d(TAG, "onMessageStatusUpdated $messageId")
-        //called when the message status is updated
-        //LogMessage.d("Message Ack", "Received")
-
-        //LogMessage.d(TAG, "Message Status Updated ==> $messageId")
-        try {
-            val message = FlyMessenger.getMessageOfId(messageId)
-            if (message != null) {
-//            MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.toJsonString())
-                FlyMethodConstants.updateChatSinkValue(
-                    Constants.onMessageStatusUpdatedChannel,
-                    message.toJsonString()
-                )
-            }
-        }catch (e: Exception){
-            
-        }
-    }
-
-    override fun onMediaStatusUpdated(message: ChatMessage) {
-        LogMessage.d(TAG, "onMediaStatusUpdated ${message.toJsonString()}")
-//        MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.toJsonString())
-        FlyMethodConstants.updateChatSinkValue(
-            Constants.onMediaStatusUpdatedChannel,
-            message.toJsonString()
-        )
-    }
-
-    override fun onMessageEdited(editedMessage: ChatMessage) {
-        FlyMethodConstants.updateChatSinkValue(
-            Constants.onMessageEditedChannel,
-            editedMessage.toJsonString()
-        )
-    }
-
-    override fun onUploadDownloadProgressChanged(
-        messageId: String,
-        progressPercentage: Int
-    ) {
-        //called when the media message progress is updated
-        //LogMessage.d("MirrorFly", "Upload/Download Status Updated")
-        val js = JSONObject()
-        js.put("message_id", messageId)
-        js.put("progress_percentage", progressPercentage)
-//        UploadDownloadProgressChangedStreamHandler.onUploadDownloadProgressChanged?.success(
-//            js.toString()
-//        )
-        FlyMethodConstants.updateChatSinkValue(
-            Constants.onUploadDownloadProgressChangedChannel,
-            js.toString()
-        )
-    }
-
-    override fun onMessagesClearedOrDeleted(messageIds: ArrayList<String>, jid: String) {
-        LogMessage.d(TAG, "onMessagesClearedOrDeleted : messageIds $messageIds jid $jid")
-        //LogMessage.d("MirrorFly", "onMessagesClearedOrDeleted Status Updated")
-    }
-
-    override fun onUpdateBusyStatus(status: Boolean, message: String?) {
-        LogMessage.d(TAG, "onUpdateBusyStatus : status $status message $message")
-    }
-
-    override fun showOrUpdateOrCancelNotification(jid: String, chatMessage: ChatMessage?) {
-        if (chatMessage != null) {
-            val chat = chatMessage.toJsonString()
-            LogMessage.d(
-                TAG,
-                "showOrUpdateOrCancelNotification : jid $jid chatMessage ${chat}"
-            )
-            val json = JSONObject()
-            json.put("jid", jid)
-            json.put("chatMessage", chat)
-//            ShowOrUpdateOrCancelNotificationStreamHandler.showOrUpdateOrCancelNotification?.success(
-//                json.toString()
-//            )
-            FlyMethodConstants.updateChatSinkValue(
-                Constants.showUpdateCancelNotificationChannel,
-                json.toString()
-            )
-        } else {
-            LogMessage.d(
-                TAG,
-                "showOrUpdateOrCancelNotification : jid $jid chatMessage ${chatMessage}"
-            )
-        }
     }
 
     override fun onDeleteGroup(groupJid: String) {
@@ -845,6 +723,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     override fun onReconnecting() {
         //onReconnecting
+        LogMessage.d(TAG, "Chat Manager Reconnecting")
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onReconnectingChannel,
+            true
+        )
     }
 
     /*override fun onConnectionNotAuthorized() {
@@ -870,13 +753,256 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         )
     }
 
+    /**
+     * QR Login Listener - Triggered when logged out at web
+     *
+     * - onLogoutWeb
+     */
+//    override fun onLogoutWeb(socketId: List<String>?) {
+//        LogMessage.d(TAG, "onLogoutWeb : socketId $socketId")
+//    }
+
+    /**
+     * MuteEventsListener Listeners
+     *
+     * - onMuteStatusUpdated
+     * - updateMuteSettings
+     *
+     */
+    override fun onMuteStatusUpdated(
+        isSuccess: Boolean,
+        message: String,
+        jidList: List<String>,
+        muteStatus: Boolean
+    ) {
+        LogMessage.d(TAG, "onMuteStatusUpdated : isSuccess $isSuccess, message $message, jidList $jidList, muteStatus $muteStatus")
+        val map = JSONObject()
+        map.put("isSuccess", isSuccess)
+        map.put("message", message)
+        val jidListJsonArray = JSONArray(jidList)
+        map.put("jidList", jidListJsonArray)
+        map.put("muteStatus", muteStatus)
+
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onChatMuteStatusUpdatedChannel,
+            map.toString()
+        )
+    }
+
+    override fun updateMuteSettings(isSuccess: Boolean, message: String, isMuteStatus: Boolean) {
+        LogMessage.d(TAG, "updateMuteSettings : isSuccess $isSuccess, message $message, isMuteStatus $isMuteStatus")
+        val map = JSONObject()
+        map.put("isSuccess", isSuccess)
+        map.put("message", message)
+        map.put("isMuteStatus", isMuteStatus)
+
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.didUpdateMuteSettingsChannel,
+            map.toString()
+        )
+    }
+
+    /**
+     * Message Event Listeners
+     *
+     * - onMuteStatusUpdated
+     * - updateMuteSettings
+     *
+     */
+
+    override fun onAllChatsCleared(){
+        LogMessage.d(TAG, "onAllChatsCleared")
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onAllChatsClearedChannel,
+            true
+        )
+    }
+
+    override fun onChatCleared(toJid: String, chatClearType: ChatClearType) {
+        LogMessage.d(TAG, "onChatCleared : toJid $toJid, chatClearType $chatClearType")
+        val map = JSONObject()
+        map.put("toJid", toJid)
+        when (chatClearType) {
+            ChatClearType.DeleteChat -> {
+                map.put("chatClearType", "delete")
+            }
+            ChatClearType.ClearChat -> {
+                map.put("chatClearType", "clear")
+            }
+            else -> {
+                LogMessage.d(TAG, "onChatCleared listener received unhandled value")
+            }
+        }
+
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onChatClearedChannel,
+            map.toString()
+        )
+
+    }
+
+    override fun onMessageDeleted(
+        toJid: String,
+        messageIds: ArrayList<String>,
+        messageDeleteType: MessageDeleteType
+    ) {
+        LogMessage.d(TAG, "onMessageDeleted : toJid $toJid, messageIds $messageIds, messageDeleteType $messageDeleteType")
+        val map = JSONObject()
+        map.put("toJid", toJid)
+        val messageIdsJsonArray = JSONArray(messageIds)
+        map.put("messageIds", messageIdsJsonArray)
+
+        if (messageDeleteType == MessageDeleteType.DeleteForMe){
+            map.put("messageDeleteType", "deleteForMe")
+        }else if (messageDeleteType == MessageDeleteType.DeleteForEveryone) {
+            map.put("messageDeleteType", "deleteForEveryone")
+        }
+
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onMessageDeletedChannel,
+            map.toString()
+        )
+
+    }
+
+    override fun onUpdateUnStarAllMessages() {
+        LogMessage.d(TAG, "onUpdateUnStarAllMessages")
+    }
+
+    override fun updateArchiveUnArchiveChats(toUser: String?, archiveStatus: Boolean) {
+        LogMessage.d(TAG, "updateArchiveUnArchiveChats : toUser $toUser, archiveStatus $archiveStatus")
+        val map = JSONObject()
+        map.put("toUser", toUser)
+        map.put("archiveStatus", archiveStatus)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.updateArchiveUnArchiveChatsChannel,
+            map.toString()
+        )
+    }
+
+    override fun updateArchivedSettings(archivedSettingsStatus: Boolean) {
+        LogMessage.d(TAG, "updateArchivedSettings : archivedSettingsStatus $archivedSettingsStatus")
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.updateArchivedSettingsChannel,
+            archivedSettingsStatus
+        )
+    }
+
+    override fun updateGroupReplyNotificationForArchivedSettingsEnabled(chatMessage: ChatMessage) {
+        LogMessage.d(TAG, "updateGroupReplyNotificationForArchivedSettingsEnabled : chatMessage $chatMessage")
+    }
+
+    /// Old Delegate method, instead onMessageDeleted added
+    override fun onMessagesClearedOrDeleted(messageIds: ArrayList<String>, jid: String) {
+        LogMessage.d(TAG, "onMessagesClearedOrDeleted : messageIds $messageIds jid $jid")
+        //LogMessage.d("MirrorFly", "onMessagesClearedOrDeleted Status Updated")
+    }
+
+
+    override fun onUpdateBusyStatus(status: Boolean, message: String?) {
+        LogMessage.d(TAG, "onUpdateBusyStatus : status $status message $message")
+    }
+
+    override fun onMediaStatusUpdated(message: ChatMessage) {
+        LogMessage.d(TAG, "onMediaStatusUpdated ${message.toJsonString()}")
+//        MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.toJsonString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onMediaStatusUpdatedChannel,
+            message.toJsonString()
+        )
+    }
+
+    override fun onMessageEdited(editedMessage: ChatMessage) {
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onMessageEditedChannel,
+            editedMessage.toJsonString()
+        )
+    }
+
+    override fun onMessageReceived(message: ChatMessage) {
+        LogMessage.d(TAG, "onMessageReceived ${message.toJsonString()}")
+        //called when the new message is received
+        //LogMessage.d(TAG, "Message Received ${message.tojsonString()}")
+//        MessageReceivedStreamHandler.onMessageReceived?.success(message.toJsonString())
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onMessageReceivedChannel,
+            message.toJsonString()
+        )
+
+    }
+
+    override fun onMessageStatusUpdated(messageId: String) {
+        LogMessage.d(TAG, "onMessageStatusUpdated $messageId")
+        //called when the message status is updated
+        //LogMessage.d("Message Ack", "Received")
+
+        //LogMessage.d(TAG, "Message Status Updated ==> $messageId")
+        try {
+            val message = FlyMessenger.getMessageOfId(messageId)
+            if (message != null) {
+//            MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.toJsonString())
+                FlyMethodConstants.updateChatSinkValue(
+                    Constants.onMessageStatusUpdatedChannel,
+                    message.toJsonString()
+                )
+            }
+        }catch (e: Exception){
+
+        }
+    }
+
+    override fun onUploadDownloadProgressChanged(
+        messageId: String,
+        progressPercentage: Int
+    ) {
+        //called when the media message progress is updated
+        //LogMessage.d("MirrorFly", "Upload/Download Status Updated")
+        val js = JSONObject()
+        js.put("message_id", messageId)
+        js.put("progress_percentage", progressPercentage)
+//        UploadDownloadProgressChangedStreamHandler.onUploadDownloadProgressChanged?.success(
+//            js.toString()
+//        )
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onUploadDownloadProgressChangedChannel,
+            js.toString()
+        )
+    }
+
+    override fun showOrUpdateOrCancelNotification(jid: String, chatMessage: ChatMessage?) {
+        if (chatMessage != null) {
+            val chat = chatMessage.toJsonString()
+            LogMessage.d(
+                TAG,
+                "showOrUpdateOrCancelNotification : jid $jid chatMessage ${chat}"
+            )
+            val json = JSONObject()
+            json.put("jid", jid)
+            json.put("chatMessage", chat)
+//            ShowOrUpdateOrCancelNotificationStreamHandler.showOrUpdateOrCancelNotification?.success(
+//                json.toString()
+//            )
+            FlyMethodConstants.updateChatSinkValue(
+                Constants.showUpdateCancelNotificationChannel,
+                json.toString()
+            )
+        } else {
+            LogMessage.d(
+                TAG,
+                "showOrUpdateOrCancelNotification : jid $jid chatMessage ${chatMessage}"
+            )
+        }
+    }
+
+
+
     override fun onWebChatPasswordChanged(isError: Boolean) {
         LogMessage.d(TAG, "web chat password changed error $isError")
-//        onWebChatPasswordChangedStreamHandler.onWebChatPasswordChanged?.success(isError)
-        FlyMethodConstants.updateChatSinkValue(
+        /// Commenting this as this is not used anywhere and not available in iOS
+       /* FlyMethodConstants.updateChatSinkValue(
             Constants.onWebChatPasswordChangedChannel,
             isError
-        )
+        )*/
     }
 
     override fun setTypingStatus(singleOrGroupJid: String, userId: String, composing: String) {
