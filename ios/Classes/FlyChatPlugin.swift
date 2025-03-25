@@ -236,26 +236,8 @@ extension FlyChatPlugin : BackupEventDelegate, RestoreEventDelegate {
 
 }
 
-extension FlyChatPlugin : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,AdminBlockDelegate{
-    public func onMessageEdited(message: MirrorFlySDK.ChatMessage) {
-        
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageEdited_channel, value: message.toJson())
-    }
-
-    public func didRevokedAdminAccess(groupJid: String, revokedAdminMemberJid: String, revokedByMemberJid: String) {
-        NSLog("GroupEventsDelegate didRevokedAdminAccess Delegate Triggered")
-    }
-    
-    public func onMediaStatusFailed(error: String, messageId: String, errorCode: Int) {
-        let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
-        
-        let chatMediaJson = chatMessage?.toJson()
-        
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMediaStatusUpdatedChannel, value: chatMediaJson)
-        
-    }
-    
-    public func onConnectionFailed(error: MirrorFlySDK.FlyError) {
+extension FlyChatPlugin : AdminBlockDelegate {
+    public func didBlockOrUnblockContact(userJid: String, isBlocked: Bool) {
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userJid, forKey: "jid")
