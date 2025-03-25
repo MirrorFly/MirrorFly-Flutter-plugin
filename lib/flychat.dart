@@ -5565,7 +5565,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.isLockScreen();
   }
 
-  /// Initiates the backup process for chat data.
+  /*/// Initiates the backup process for chat data.
   ///
   /// Example:
   /// ```dart
@@ -5607,5 +5607,5 @@ class Mirrorfly {
   ///
   static Future<void> cancelRestore(){
     return FlyChatFlutterPlatform.instance.cancelRestore();
-  }
+  }*/
 }

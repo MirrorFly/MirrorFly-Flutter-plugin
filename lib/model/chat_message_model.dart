@@ -151,7 +151,6 @@ class ChatMessageModel {
   ///the meet message
   final MeetChatMessage? meetChatMessage;
 
-
   /// The metadata of the message.
   List<MessageMetaData>? metaData;
 
@@ -205,7 +204,10 @@ class ChatMessageModel {
           isMessageEdited: json["isMessageEdited"],
           messageTextContent: json["messageTextContent"],
           messageType: json["messageType"],
-          meetChatMessage : json['meetChatMessage'] != null ? MeetChatMessage.fromJson(json['meetChatMessage'] as Map<String,dynamic>) : null,
+          meetChatMessage: json['meetChatMessage'] != null
+              ? MeetChatMessage.fromJson(
+                  json['meetChatMessage'] as Map<String, dynamic>)
+              : null,
           metaData: json["metaData"] == null
               ? []
               : List<MessageMetaData>.from(
@@ -250,7 +252,7 @@ class ChatMessageModel {
         "isMessageEdited": isMessageEdited,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
-        'meetChatMessage' : meetChatMessage?.toJson(),
+        'meetChatMessage': meetChatMessage?.toJson(),
         "metaData": metaData == null
             ? null
             : List<dynamic>.from(metaData!.map((x) => x.toJson())),
@@ -440,6 +442,7 @@ class MediaChatMessage {
         "messageType": messageType,
       };
 }
+
 /// Represents a meet chat message.
 class MeetChatMessage {
   ///Meet link for the event
@@ -471,12 +474,13 @@ class MeetChatMessage {
 
   /// Converts a [MeetChatMessage] instance into a JSON object.
   Map<String, dynamic> toJson() => {
-    'link' : link,
-    'messageId' : messageId,
-    'scheduledDateTime' : scheduledDateTime,
-    'title' : title
-  };
+        'link': link,
+        'messageId': messageId,
+        'scheduledDateTime': scheduledDateTime,
+        'title': title
+      };
 }
+
 /// Represents a custom field of a message.
 class MessageCustomField {
   /// Constructs a [MessageCustomField] instance.
@@ -551,7 +555,7 @@ class ReplyParentChatMessage {
       required this.messageSentTime,
       required this.messageTextContent,
       required this.messageType,
-        required this.meetChatMessage,
+      required this.meetChatMessage,
       required this.senderNickName,
       required this.senderUserName,
       required this.locationChatMessage,
@@ -571,7 +575,10 @@ class ReplyParentChatMessage {
         messageSentTime: json["messageSentTime"],
         messageTextContent: json["messageTextContent"],
         messageType: json["messageType"],
-        meetChatMessage : json['meetChatMessage'] != null ? MeetChatMessage.fromJson(json['meetChatMessage'] as Map<String,dynamic>) : null,
+        meetChatMessage: json['meetChatMessage'] != null
+            ? MeetChatMessage.fromJson(
+                json['meetChatMessage'] as Map<String, dynamic>)
+            : null,
         senderNickName: json["senderNickName"],
         senderUserName: json["senderUserName"],
         locationChatMessage: json["locationChatMessage"],
@@ -599,7 +606,7 @@ class ReplyParentChatMessage {
         "senderUserName": senderUserName,
         "locationChatMessage": locationChatMessage?.toJson(),
         "contactChatMessage": contactChatMessage?.toJson(),
-        'meetChatMessage' : meetChatMessage?.toJson(),
+        'meetChatMessage': meetChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage?.toJson(),
         "mentionedUsersIds": mentionedUsersIds == null
             ? null
