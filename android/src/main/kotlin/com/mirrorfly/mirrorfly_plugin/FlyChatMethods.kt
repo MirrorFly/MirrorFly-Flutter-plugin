@@ -42,6 +42,7 @@ import com.mirrorflysdk.api.chat.FetchMessageListQuery
 import com.mirrorflysdk.api.chat.FileMessage
 import com.mirrorflysdk.api.chat.FileMessageParams
 import com.mirrorflysdk.api.chat.LocationMessageParams
+import com.mirrorflysdk.api.chat.MeetMessage
 import com.mirrorflysdk.api.chat.TextMessage
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
