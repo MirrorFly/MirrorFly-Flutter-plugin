@@ -118,9 +118,17 @@ import PushKit
                 }
                 
             }
+
             if (call.method == "initializeMeet"){
+            
                 CallManager.setJoinCallDelegate(delegate: self)
+            
             }
+            
+            if (call.method == "disposePreview"){
+                CallManager.setJoinCallDelegate(delegate: nil)
+            }
+            
             if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
                 NSLog("\(Constants.callTag) Method call \(call.method)")
                 methodHandler(call, result, factory)
@@ -598,6 +606,26 @@ import PushKit
             // Handle case when unique ID is not found
             NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> Unique ID is not Found")
         }
+        
+        /// 
+        /// Work Around for Meet Link Initial Video Render Issue
+        ///
+        
+//        if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
+//            if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+//                mirrorflyView.updatePreviewVideoTrack(track: videoTrack, updateType: MuteEvent.ACTION_LOCAL_VIDEO_UN_MUTE)
+//            } else {
+//                // Handle case when view is not found
+//                NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> View is not Found")
+//            }
+//        } else {
+//            // Handle case when unique ID is not found
+//            NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> Unique ID is not Found")
+//        }
+        
+        /// 
+        /// Work Around for Meet Link Initial Video Render Issue End
+        ///
         
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onLocalVideoTrackAddedChannel, value: jidJson)
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onTrackAddedChannel, value: jidJson)

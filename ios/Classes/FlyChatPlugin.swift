@@ -766,10 +766,14 @@ extension FlyChatPlugin {
 
 
 extension FlyChatPlugin : WebLogoutDelegate {
-    public func didLogoutWeb(socketId: String) {
-        print("Delegate : didLogoutWeb received -> \(socketId)")
-//        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onWebLogoutChannel, value: socketId)
+    public func didLogoutWeb(socketIds: [String]) {
+        print("Delegate : didLogoutWeb received -> \(socketIds)")
     }
+    
+//    public func didLogoutWeb(socketId: String) {
+//        print("Delegate : didLogoutWeb received -> \(socketId)")
+////        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onWebLogoutChannel, value: socketId)
+//    }
 }
 
 extension FlyChatPlugin : MuteEventDelegate {
