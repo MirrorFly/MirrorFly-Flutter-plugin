@@ -5565,7 +5565,73 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.isLockScreen();
   }
 
-  /*/// Initiates the backup process for chat data.
+  /// Logs in to web chat using a QR code.
+  ///
+  /// This method allows the user to authenticate a web chat session by scanning a QR code.
+  /// A callback function is required to handle the response.
+  ///
+  /// **Parameters:**
+  /// - `barcode` (String, required): The scanned QR code data.
+  /// - `flyCallBack` (Function(FlyResponse response), required): A callback function that receives the login response.
+  ///
+  /// **Returns:**
+  /// A `Future<void>` that completes once the login process is finished.
+  ///
+  /// **Usage example:**
+  /// ```dart
+  /// Mirrorfly.loginWebChatViaQRCode(
+  ///   barcode: "scanned_qr_code",
+  ///   flyCallBack: (response) {
+  ///     // Handle login response
+  ///     print("Login Response: ${response.status}");
+  ///   },
+  /// );
+  /// ```
+  static Future<void> loginWebChatViaQRCode({required String barcode, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.loginWebChatViaQRCode(barcode, flyCallBack);
+  }
+
+  /// Logs out a web user session.
+  ///
+  /// This method logs out the specified web chat sessions identified by their login IDs.
+  ///
+  /// **Parameters:**
+  /// - `logins` (List<String>, required): A list of login IDs to be logged out.
+  ///
+  /// **Returns:**
+  /// A `Future<bool?>` that resolves to `true` if logout is successful, `false` otherwise.
+  ///
+  /// **Usage example:**
+  /// ```dart
+  /// bool? isLoggedOut = await Mirrorfly.logoutWebUser(logins: ["login_123", "login_456"]);
+  /// if (isLoggedOut == true) {
+  ///   print("Web user logged out successfully.");
+  /// } else {
+  ///   print("Failed to log out web user.");
+  /// }
+  /// ```
+  static Future<bool?> logoutWebUser({required List<String> logins}) {
+    return FlyChatFlutterPlatform.instance.logoutWebUser(logins);
+  }
+
+  /// Retrieves details of logged-in web sessions.
+  ///
+  /// This method fetches the active web login sessions associated with the user's account.
+  ///
+  /// **Returns:**
+  /// A `Future<dynamic>` that resolves with web login details.
+  ///
+  /// **Usage example:**
+  /// ```dart
+  /// var webLoginDetails = await Mirrorfly.getWebLoginDetails();
+  /// print("Web Login Details: $webLoginDetails");
+  /// ```
+  static Future<dynamic> getWebLoginDetails() {
+    return FlyChatFlutterPlatform.instance.getWebLoginDetails();
+  }
+
+
+  /// Initiates the backup process for chat data.
   ///
   /// Example:
   /// ```dart
@@ -5607,5 +5673,5 @@ class Mirrorfly {
   ///
   static Future<void> cancelRestore(){
     return FlyChatFlutterPlatform.instance.cancelRestore();
-  }*/
+  }
 }
