@@ -817,7 +817,7 @@ let ISEXPORT = true
                 if((data.getData() as? [ProfileDetails])?.count != 0){
                     userData = (list?.toJson())!
                 }
-                result(userData)
+                result("{\"data\":" + userData + "}")
             } else{
                 if case let .unexpected(message, code) = flyError {
                     if code == ErrorCode.NO_NETWORK{
