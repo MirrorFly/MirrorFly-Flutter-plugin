@@ -691,9 +691,32 @@ class Mirrorfly {
   /// ```dart
   /// await Mirrorfly.updateChatMuteStatus(jid: 'example@domain.com', muteStatus: true);
   /// ```
+  @Deprecated('Instead of use Mirrorfly.updateChatMuteStatusList()')
   static updateChatMuteStatus({required String jid, required bool muteStatus}) {
     return FlyChatFlutterPlatform.instance
         .updateChatMuteStatus(jid, muteStatus);
+  }
+
+  /// Updates the mute status of a chat Lists identified by its JID List.
+  ///
+  /// This method is used to update the mute status of a chat identified by its JID List.
+  ///
+  /// The [jidList] parameter specifies the List of JID of the chat to be updated.
+  ///
+  /// The [muteStatus] parameter indicates whether the chat should be muted or unmuted.
+  /// If set to `true`, the chat will be muted. If set to `false`, the chat will be unmuted.
+  ///
+  /// Returns a `Future<void>` that completes when the mute status update is performed successfully.
+  ///
+  /// Example usage:
+  ///
+  /// ```dart
+  /// await Mirrorfly.updateChatMuteStatusList(jidList: ['example@domain.com', 'example1@domain.com], muteStatus: true);
+  /// ```
+  static updateChatMuteStatusList(
+      {required List<String> jidList, required bool muteStatus}) {
+    return FlyChatFlutterPlatform.instance
+        .updateChatMuteStatusList(jidList, muteStatus);
   }
 
   /// Updates the pin status of a recent chat.
@@ -2224,6 +2247,22 @@ class Mirrorfly {
   static Stream<dynamic> get onConnectionFailed =>
       FlyChatFlutterPlatform.instance.onConnectionFailed;
 
+  /// A stream that emits events when the chat service reconnection.
+  ///
+  /// This stream listens for events indicating that the chat service is reconnecting to establish a connection.
+  /// Each event contains information about the reconnection. Use this stream
+  /// to update your UI or perform actions upon reconnection.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onReconnecting.listen(() {
+  ///   // Handle the event when the platform reconnection
+  ///
+  /// });
+  /// ```
+  static Stream<dynamic> get onReconnecting =>
+      FlyChatFlutterPlatform.instance.onReconnecting;
+
   // static Stream<dynamic> get connectionFailed => FlyChatFlutterPlatform.instance.connectionFailed;
 
   // static Stream<dynamic> get connectionSuccess => FlyChatFlutterPlatform.instance.connectionSuccess;
@@ -2399,6 +2438,144 @@ class Mirrorfly {
   /// ```
   static Stream<dynamic> get onRestoreProgressChanged =>
       FlyChatFlutterPlatform.instance.onRestoreProgressChanged;
+
+  /// A stream that emits an event when a chat is cleared or deleted.
+  ///
+  /// This stream listens for chat clear events and provides details such as
+  /// the JID of the chat and the type of clearance (`delete` or `clear`).
+  /// Use this to update the UI or log chat clearance events.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onChatCleared.listen((event) {
+  ///   // Handle chat cleared event
+  ///   print("Chat cleared: ${event['toJid']} - Type: ${event['chatClearType']}");
+  /// });
+  /// ```
+  static Stream<dynamic> get onChatCleared =>
+      FlyChatFlutterPlatform.instance.onChatCleared;
+
+  /// A stream that emits an event when a message is deleted.
+  ///
+  /// This stream listens for message deletion events and provides details such as
+  /// the JID, message IDs, and the type of deletion (`deleteForMe` or `deleteForEveryone`).
+  /// Use this to update the chat UI or log message deletions.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onMessageDeleted.listen((event) {
+  ///   // Handle message deleted event
+  ///   print("Message deleted: ${event['messageIds']} - Type: ${event['messageDeleteType']}");
+  /// });
+  /// ```
+  static Stream<dynamic> get onMessageDeleted =>
+      FlyChatFlutterPlatform.instance.onMessageDeleted;
+
+  /// A stream that emits an event when all chats are cleared.
+  ///
+  /// This stream listens for events when a user clears all chats from the application.
+  /// Use this to reset the chat list or perform any necessary cleanup.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onAllChatsCleared.listen((event) {
+  ///   // Handle all chats cleared event
+  ///   print("All chats cleared");
+  /// });
+  /// ```
+  static Stream<dynamic> get onAllChatsCleared =>
+      FlyChatFlutterPlatform.instance.onAllChatsCleared;
+
+  /// A stream that emits an event when a favorite is updated.
+  ///
+  /// This stream listens for updates to favorite chats or contacts.
+  /// Use this to update the UI or log the favorite status changes.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onUpdateFavourites.listen((event) {
+  ///   // Handle favorite update event
+  ///   print("Favorite status updated: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onUpdateFavourites =>
+      FlyChatFlutterPlatform.instance.onUpdateFavourites;
+
+  /// A stream that emits an event when a user logs out from a web session.
+  ///
+  /// This stream listens for logout events triggered from a web device.
+  /// Use this to notify the user or update authentication status.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onWebLogout.listen((event) {
+  ///   // Handle web logout event
+  ///   //{"socketIdList":["8mXojaLkd4CC773aAAFh"]}
+  ///   print("User logged out from web: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onWebLogout =>
+      FlyChatFlutterPlatform.instance.onWebLogout;
+
+  /// A stream that emits an event when a chat's mute status is updated.
+  ///
+  /// This stream listens for mute/unmute actions on a chat.
+  /// Use this to reflect the updated mute status in the UI.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onChatMuteStatusUpdated.listen((event) {
+  ///   // Handle chat mute status update
+  ///   print("Chat mute status updated: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onChatMuteStatusUpdated =>
+      FlyChatFlutterPlatform.instance.onChatMuteStatusUpdated;
+
+  /// A stream that emits an event when mute settings are updated.
+  ///
+  /// This stream listens for changes in mute settings for chats.
+  /// Use this to update UI elements based on mute preferences.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onUpdateMuteSettings.listen((event) {
+  ///   // Handle mute settings update
+  ///   print("Mute settings changed: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onUpdateMuteSettings =>
+      FlyChatFlutterPlatform.instance.onUpdateMuteSettings;
+
+  /// A stream that emits an event when a chat is archived or unarchived.
+  ///
+  /// This stream listens for archive/unarchive actions on a chat.
+  /// Use this to update the chat list accordingly.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onArchiveUnArchiveChats.listen((event) {
+  ///   // Handle archive/unarchive event
+  ///   print("Chat archive status changed: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onArchiveUnArchiveChats =>
+      FlyChatFlutterPlatform.instance.onArchiveUnArchiveChats;
+
+  /// A stream that emits an event when archived chat settings are updated.
+  ///
+  /// This stream listens for changes in archive settings for chats.
+  /// Use this to update UI elements related to archive preferences.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onArchivedSettingsUpdated.listen((event) {
+  ///   // Handle archived settings update
+  ///   print("Archived settings updated: $event");
+  /// });
+  /// ```
+  static Stream<dynamic> get onArchivedSettingsUpdated =>
+      FlyChatFlutterPlatform.instance.onArchivedSettingsUpdated;
 
   // static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
@@ -3579,25 +3756,9 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getRingtoneName();
   }*/
 
-  /*static Future<bool?> loginWebChatViaQRCode({required String barcode}) {
-    return FlyChatFlutterPlatform.instance.loginWebChatViaQRCode(barcode);
-  }
-
-  static Future<bool?> webLoginDetailsCleared() {
-    return FlyChatFlutterPlatform.instance.webLoginDetailsCleared();
-  }
-
-  static Future<bool?> logoutWebUser({required List<String> logins}) {
-    return FlyChatFlutterPlatform.instance.logoutWebUser(logins);
-  }*/
-
   //not used
   /*static Future<bool?> iOSFileExist({required String filePath}) {
     return FlyChatFlutterPlatform.instance.iOSFileExist(filePath);
-  }*/
-
-  /*static Future<dynamic> getWebLoginDetails() {
-    return FlyChatFlutterPlatform.instance.getWebLoginDetails();
   }*/
 
   /// This method updates the favourite status of a specific message for a chat user. The favourite status
@@ -5404,6 +5565,72 @@ class Mirrorfly {
   static Future<bool> isLockScreen() {
     return FlyChatFlutterPlatform.instance.isLockScreen();
   }
+
+  /// Logs in to web chat using a QR code.
+  ///
+  /// This method allows the user to authenticate a web chat session by scanning a QR code.
+  /// A callback function is required to handle the response.
+  ///
+  /// **Parameters:**
+  /// - `barcode` (String, required): The scanned QR code data.
+  /// - `flyCallBack` (Function(FlyResponse response), required): A callback function that receives the login response.
+  ///
+  /// **Returns:**
+  /// A `Future<void>` that completes once the login process is finished.
+  ///
+  /// **Usage example:**
+  /// ```dart
+  /// Mirrorfly.loginWebChatViaQRCode(
+  ///   barcode: "scanned_qr_code",
+  ///   flyCallBack: (response) {
+  ///     // Handle login response
+  ///     print("Login Response: ${response.status}");
+  ///   },
+  /// );
+  /// ```
+  static Future<void> loginWebChatViaQRCode({required String barcode, required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance.loginWebChatViaQRCode(barcode, flyCallBack);
+  }
+
+  /// Logs out a web user session.
+  ///
+  /// This method logs out the specified web chat sessions identified by their login IDs.
+  ///
+  /// **Parameters:**
+  /// - `logins` (List<String>, required): A list of login IDs to be logged out.
+  ///
+  /// **Returns:**
+  /// A `Future<bool?>` that resolves to `true` if logout is successful, `false` otherwise.
+  ///
+  /// **Usage example:**
+  /// ```dart
+  /// bool? isLoggedOut = await Mirrorfly.logoutWebUser(logins: ["login_123", "login_456"]);
+  /// if (isLoggedOut == true) {
+  ///   print("Web user logged out successfully.");
+  /// } else {
+  ///   print("Failed to log out web user.");
+  /// }
+  /// ```
+  static Future<bool?> logoutWebUser({required List<String> logins}) {
+    return FlyChatFlutterPlatform.instance.logoutWebUser(logins);
+  }
+
+  /// Retrieves details of logged-in web sessions.
+  ///
+  /// This method fetches the active web login sessions associated with the user's account.
+  ///
+  /// **Returns:**
+  /// A `Future<dynamic>` that resolves with web login details.
+  ///
+  /// **Usage example:**
+  /// ```dart
+  /// var webLoginDetails = await Mirrorfly.getWebLoginDetails();
+  /// print("Web Login Details: $webLoginDetails");
+  /// ```
+  static Future<dynamic> getWebLoginDetails() {
+    return FlyChatFlutterPlatform.instance.getWebLoginDetails();
+  }
+
 
   /// Initiates the backup process for chat data.
   ///

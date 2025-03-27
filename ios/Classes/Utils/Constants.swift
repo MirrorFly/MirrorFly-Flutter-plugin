@@ -85,6 +85,7 @@ struct Constants {
     static let onSuccess_channel = "\(domain)/onSuccess"
     static let onMessageDeleteForEveryOne_channel = "\(domain)/onMessageDeleteForEveryOne"
     static let onConnectionFailed_channel = "\(domain)/onConnectionFailed"
+    static let onConnectionReconnecting_channel = "\(domain)/onConnectionReconnecting"
     
     static let getAvailableFeatures_channel = "\(domain)/onAvailableFeaturesUpdated"
     static let onMessageEdited_channel = "\(domain)/onMessageEdited"
@@ -96,6 +97,17 @@ struct Constants {
     static let onRestoreProgressChangedChannel = "\(domain)/onRestoreProgressChanged"
     static let onRestoreSuccessChannel = "\(domain)/onRestoreSuccess"
     
+    static let onChatClearedChannel = "\(domain)/onChatCleared"
+    static let onMessageDeletedChannel = "\(domain)/onMessageDeleted"
+    static let onAllChatsClearedChannel = "\(domain)/onAllChatsCleared"
+    
+    static let onUpdateFavouriteChannel = "\(domain)/onUpdateFavourites"
+    
+    static let onWebLogoutChannel = "\(domain)/onWebLogout"
+    static let onChatMuteStatusUpdatedChannel = "\(domain)/onChatMuteStatusUpdated"
+    static let didUpdateMuteSettingsChannel = "\(domain)/didUpdateMuteSettings"
+    static let updateArchiveUnArchiveChatsChannel = "\(domain)/updateArchiveUnArchiveChats"
+    static let updateArchivedSettingsChannel = "\(domain)/updateArchivedSettings"
     
     static let contactSyncEnable = "contactSyncEnable"
     

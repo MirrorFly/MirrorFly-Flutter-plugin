@@ -234,7 +234,9 @@ class ChatMessage {
           Platform.isAndroid ? json["isEdited"] : json["isMessageEdited"],
       messageTextContent: json["messageTextContent"].toString(),
       messageType: getMessageType(json["messageType"]),
-      meetChatMessage:json['meetChatMessage'] == null ? null: MeetChatMessage.fromJson(json['meetChatMessage']),
+      meetChatMessage: json['meetChatMessage'] == null
+          ? null
+          : MeetChatMessage.fromJson(json['meetChatMessage']),
       metaData: json["metaData"] == null
           ? []
           : List<MessageMetaData>.from(
@@ -282,7 +284,7 @@ class ChatMessage {
         "isMessageEdited": isMessageEdited,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
-         "meetChatMessage":meetChatMessage?.toJson(),
+        "meetChatMessage": meetChatMessage?.toJson(),
         "metaData": metaData == null
             ? null
             : List<dynamic>.from(metaData!.map((x) => x.toJson())),
@@ -364,7 +366,6 @@ class ContactChatMessage {
         "messageId": messageId,
       };
 }
-
 
 /// Represents a contact shared in a chat message.
 class MeetChatMessage {
@@ -599,7 +600,7 @@ class ReplyParentChatMessage {
       required this.locationChatMessage,
       required this.contactChatMessage,
       required this.mediaChatMessage,
-        required this.meetChatMessage,
+      required this.meetChatMessage,
       required this.mentionedUsersIds});
 
   /// The JID of the user involved in the chat.
@@ -673,7 +674,9 @@ class ReplyParentChatMessage {
         mediaChatMessage: json["mediaChatMessage"] == null
             ? null
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
-        meetChatMessage:json['meetChatMessage'] == null ? null: MeetChatMessage.fromJson(json['meetChatMessage']),
+        meetChatMessage: json['meetChatMessage'] == null
+            ? null
+            : MeetChatMessage.fromJson(json['meetChatMessage']),
         mentionedUsersIds: json["mentionedUsersIds"] == null
             ? []
             : Platform.isIOS
@@ -700,7 +703,7 @@ class ReplyParentChatMessage {
         "contactChatMessage":
             contactChatMessage ?? contactChatMessage?.toJson(),
         "mediaChatMessage": mediaChatMessage ?? mediaChatMessage?.toJson(),
-        "meetChatMessage":meetChatMessage?.toJson(),
+        "meetChatMessage": meetChatMessage?.toJson(),
         "mentionedUsersIds": mentionedUsersIds == null
             ? null
             : List<String>.from(mentionedUsersIds!.map((x) => x)),
@@ -821,8 +824,8 @@ String getReplyMessageType(dynamic json) {
   if (Platform.isAndroid) {
     return json["messageType"].toString().toUpperCase();
   } else {
-    if (json["messageTextContent"].toString().isNotEmpty) {
-      return "TEXT";
+    if (json["meetChatMessage"] != null) {
+      return "MEET";
     } else if (json["mediaChatMessage"] != null &&
         json["mediaChatMessage"]["mediaFileType"].toString().isNotEmpty) {
       return json["mediaChatMessage"]["mediaFileType"]
@@ -835,6 +838,8 @@ String getReplyMessageType(dynamic json) {
       return "CONTACT";
     } else if (json["locationChatMessage"] != null) {
       return "LOCATION";
+    } else if (json["messageTextContent"].toString().isNotEmpty) {
+      return "TEXT";
     } else {
       return "";
     }
