@@ -2501,7 +2501,7 @@ class Mirrorfly {
   static Stream<dynamic> get onUpdateFavourites =>
       FlyChatFlutterPlatform.instance.onUpdateFavourites;
 
-/*  /// A stream that emits an event when a user logs out from a web session.
+  /// A stream that emits an event when a user logs out from a web session.
   ///
   /// This stream listens for logout events triggered from a web device.
   /// Use this to notify the user or update authentication status.
@@ -2510,11 +2510,12 @@ class Mirrorfly {
   /// ```dart
   /// Mirrorfly.onWebLogout.listen((event) {
   ///   // Handle web logout event
+  ///   //{"socketIdList":["8mXojaLkd4CC773aAAFh"]}
   ///   print("User logged out from web: $event");
   /// });
   /// ```
   static Stream<dynamic> get onWebLogout =>
-      FlyChatFlutterPlatform.instance.onWebLogout;*/
+      FlyChatFlutterPlatform.instance.onWebLogout;
 
   /// A stream that emits an event when a chat's mute status is updated.
   ///
