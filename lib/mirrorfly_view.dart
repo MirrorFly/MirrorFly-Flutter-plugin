@@ -126,12 +126,12 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
     if (widget.userJid.isEmpty) {
       throw Exception("remoteUserJid must not be empty");
     }
-    return Stack(
+    return (widget.onClick!=null) ? Stack(
       children: [
         buildHybridCompositionView(),
         InkWell(splashColor: Colors.transparent, onTap: widget.onClick)
       ],
-    );
+    ) : buildHybridCompositionView();
   }
 
   String getScalingType(ScalingType type) {
