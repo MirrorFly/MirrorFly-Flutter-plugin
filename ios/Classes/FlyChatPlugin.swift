@@ -768,12 +768,11 @@ extension FlyChatPlugin {
 extension FlyChatPlugin : WebLogoutDelegate {
     public func didLogoutWeb(socketIds: [String]) {
         print("Delegate : didLogoutWeb received -> \(socketIds)")
+        let didLogoutWeb: NSMutableDictionary = NSMutableDictionary()
+        didLogoutWeb.setValue(socketIds, forKey: "socketIdList")
+        let didLogoutWebStr = pluginDictToJson(dictionary: didLogoutWeb)
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onWebLogoutChannel, value: didLogoutWebStr)
     }
-    
-//    public func didLogoutWeb(socketId: String) {
-//        print("Delegate : didLogoutWeb received -> \(socketId)")
-////        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onWebLogoutChannel, value: socketId)
-//    }
 }
 
 extension FlyChatPlugin : MuteEventDelegate {
