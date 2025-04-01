@@ -1,42 +1,51 @@
-buildscript {
+/*buildscript {
     ext.kotlin_version = '1.7.10'
     repositories {
         google()
-        jcenter()
         mavenCentral()
-        //mavenLocal()
-        maven {
-            url "https://repo.mirrorfly.com/snapshot"
-        }
-        maven {
-            url "https://repo.mirrorfly.com/internal"
-        }
-        maven {
-            url "https://repo.mirrorfly.com/release"
-        }
+        jcenter()
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0"
         classpath 'com.google.gms:google-services:4.3.15'
     }
 }
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://repo.mirrorfly.com/release"
+        }
+        //mavenLocal()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}*/
 
 allprojects {
     repositories {
         google()
-        jcenter()
         mavenCentral()
-        //mavenLocal()
-        maven {
-            url "https://repo.mirrorfly.com/snapshot"
-        }
+        jcenter()
         maven {
             url "https://repo.mirrorfly.com/internal"
         }
         maven {
-            url "https://repo.mirrorfly.com/release"
+            url "https://repo.mirrorfly.com/snapshot"
         }
     }
 }
@@ -52,3 +61,4 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+

@@ -1799,44 +1799,37 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<void> createMeetLink(Function(FlyResponse response)? callback) {
-    // TODO: implement createMeetLink
     throw UnimplementedError();
   }
 
   @override
   Future<void> disposePreview() {
-    // TODO: implement disposePreview
     throw UnimplementedError();
   }
 
   @override
   Future<String> getCallLink() {
-    // TODO: implement getCallLink
     throw UnimplementedError();
   }
 
   @override
   Future<String> getMeetUsername(String jid) {
-    // TODO: implement getMeetUsername
     throw UnimplementedError();
   }
 
   @override
   Future<void> initializeMeet(String callLink, String userName,
       Function(FlyResponse response)? callback) {
-    // TODO: implement initializeMeet
     throw UnimplementedError();
   }
 
   @override
   Future<void> joinCall(Function(FlyResponse response)? callback) {
-    // TODO: implement joinCall
     throw UnimplementedError();
   }
 
   @override
   Future<void> startVideoCapture(Function(FlyResponse response)? callback) {
-    // TODO: implement startVideoCapture
     throw UnimplementedError();
   }
 
@@ -1857,7 +1850,6 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<String?> getUnsentMessageOf(String jid) {
-    // TODO: implement getUnsentMessageOf
     throw UnimplementedError();
   }
 
@@ -1911,6 +1903,78 @@ class MockFlyChatFlutterPlatform
   @override
   // implement onRestoreSuccess
   Stream get onRestoreSuccess => throw UnimplementedError();
+
+  @override
+  // implement onChatCleared
+  Stream get onChatCleared => throw UnimplementedError();
+
+  @override
+  // implement onMessageDeleted
+  Stream get onMessageDeleted => throw UnimplementedError();
+
+  @override
+  // implement onAllChatsCleared
+  Stream get onAllChatsCleared => throw UnimplementedError();
+
+  @override
+  // implement onUpdateFavourites
+  Stream get onUpdateFavourites => throw UnimplementedError();
+
+  @override
+  // implement onWebLogout
+  Stream get onWebLogout => throw UnimplementedError();
+
+  @override
+  // implement onChatMuteStatusUpdated
+  Stream get onChatMuteStatusUpdated => throw UnimplementedError();
+
+  @override
+  // implement onUpdateMuteSettings
+  Stream get onUpdateMuteSettings => throw UnimplementedError();
+
+  @override
+  // implement onArchiveUnArchiveChats
+  Stream get onArchiveUnArchiveChats => throw UnimplementedError();
+
+  @override
+  // implement onArchiveUnArchiveChats
+  Stream get onArchivedSettingsUpdated => throw UnimplementedError();
+
+  @override
+  Future getWebLoginDetails() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> loginWebChatViaQRCode(String barcode, Function(FlyResponse response)? callback) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> logoutWebUser(List<String> logins) {
+    throw UnimplementedError();
+  }
+
+  @override
+  // implement onReconnecting
+  Stream get onReconnecting => throw UnimplementedError();
+
+  @override
+  Future<bool?> webLoginDetailsCleared() {
+    // implement webLoginDetailsCleared
+    throw UnimplementedError();
+  }
+
+  @override
+  updateChatMuteStatusList(List<String> jidList, bool muteStatus) {
+    // implement updateChatMuteStatusList
+    throw UnimplementedError();
+  }
+
+ /* @override
+  Future<bool?> webLoginDetailsCleared() {
+    throw UnimplementedError();
+  }*/
 }
 
 void main() {

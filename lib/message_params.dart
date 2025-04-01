@@ -156,35 +156,13 @@ extension ExtractFileMessage on FileMessage {
 class MeetMessage {
   /// Initializes a new instance of the [MeetMessage] class.
   MeetMessage(
-      {required this.toJid,
-      this.replyMessageId,
-      // this.mentionedUsersIds,
-      // this.metaData = const [],
-      this.topicId = "",
-      this.title,
-      this.scheduledDateTime,
-      this.link});
-
-  /// The Jabber ID (JID) of the recipient.
-  String toJid;
-
-  /// The ID of the message being replied to, if any.
-  String? replyMessageId;
-
-  /// A list of user IDs mentioned in the message.
-  List<String>? mentionedUsersIds;
-
-  /// A list of [MessageMetaData] objects providing additional information about the message.
-  List<MessageMetaData> metaData = const [];
-
-  /// The ID of the topic under which the message is sent, if any.
-  String topicId = "";
+      {this.title, required this.scheduledDateTime, required this.link});
 
   /// The title of the meeting.
   String? title;
 
   /// The scheduled date and time of the meeting.
-  int? scheduledDateTime;
+  int scheduledDateTime;
 
   /// A link to the meeting.
   String? link;
@@ -193,7 +171,7 @@ class MeetMessage {
 
   @override
   String toString() {
-    return "MeetMessage(toJid='$toJid', replyMessageId=$replyMessageId, topicId='$topicId', title=$title, scheduledDateTime=$scheduledDateTime, link=$link)";
+    return "MeetMessage(title=$title, scheduledDateTime=$scheduledDateTime, link=$link)";
   }
 }
 
@@ -205,16 +183,8 @@ class MeetMessage {
 ///
 extension ExtractMeetMessage on MeetMessage {
   /// Converts a [MeetMessage] object into a map.
-  Map<String, dynamic> toMap() => {
-        'toJid': toJid,
-        'replyMessageId': replyMessageId,
-        'mentionedUsersIds': mentionedUsersIds,
-        'metaData': List<dynamic>.from(metaData.map((x) => x.toMap())),
-        'topicId': topicId,
-        'title': title,
-        'scheduledDateTime': scheduledDateTime,
-        'link': link
-      };
+  Map<String, dynamic> toMap() =>
+      {'title': title, 'scheduledDateTime': scheduledDateTime, 'link': link};
 }
 
 /// Represents the parameters for a location message.
@@ -358,6 +328,9 @@ class MessageParams {
 
   MessageSecurityMode? messageSecurityMode;
 
+  /// Parameters for a Meet message, if applicable.
+  MeetMessage? meetMessageParams;
+
   /// The ID of the topic under which the message is sent, if any.
   String topicId;
   /// Initializes a new instance of the [MessageParams] class.
@@ -371,6 +344,7 @@ class MessageParams {
     this.locationMessageParams,
     this.contactMessageParams,
     this.fileMessageParams,
+    this.meetMessageParams,
     this.messageSecurityMode,
     this.topicId = "",
   });
@@ -394,6 +368,25 @@ class MessageParams {
       textMessageParams: textMessageParams,
       messageSecurityMode: messageSecurityMode,
       metaData: metaData,
+      topicId: topicId,
+    );
+  }
+
+  /// Constructs a [MessageParams] object for a Meet message.
+  factory MessageParams.meet({
+    required String toJid,
+    String? replyMessageId,
+    List<String>? mentionedUsersIds,
+    required MeetMessage meetMessageParams,
+    List<MessageMetaData> metaData = const [],
+    String topicId = "",
+  }) {
+    return MessageParams._(
+      toJid: toJid,
+      replyMessageId: replyMessageId,
+      mentionedUsersIds: mentionedUsersIds,
+      messageType: MessageType.meet,
+      meetMessageParams: meetMessageParams,
       topicId: topicId,
     );
   }
@@ -572,6 +565,7 @@ extension ExtractMessageParams on MessageParams {
         'locationMessage': locationMessageParams?.toMap(),
         'contactMessage': contactMessageParams?.toMap(),
         'fileMessage': fileMessageParams?.toMap(),
+        'meetMessage': meetMessageParams?.toMap(),
         'topicId': topicId,
       };
 }
@@ -606,9 +600,10 @@ enum MessageType {
   location('LOCATION'),
 
   /// Represents a notification message.
-  notification('NOTIFICATION');
+  notification('NOTIFICATION'),
 
-  // meet('MEET'),
+  /// Represents a Meet message
+  meet('MEET');
   // autoText('AUTO_TEXT'),
   // chatSummary('CHAT_SUMMARY');
 
@@ -638,6 +633,9 @@ enum MessageType {
 
   /// The string representation for a notification message.
   static const isNotification = "NOTIFICATION";
+
+  /// The string representation for a meet message.
+  static const isMeet = "MEET";
 
   const MessageType(this.value);
 

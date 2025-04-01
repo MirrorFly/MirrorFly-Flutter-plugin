@@ -1,3 +1,21 @@
+## [1.2.0] Multi-Session Sync Updates
+* Chat mute/unmute 
+* Chat archive/unarchive 
+* Chat global mute settings 
+* Chat archive settings updates 
+* Chat delete updates 
+* Chat clear updates 
+* Android SDK updated to 7.13.15 
+* iOS SDK updated to 5.18.8
+
+## [1.1.1] Bug Fix
+* Topic ID Added for iOS Messages
+* iOS SDK Updated to 5.18.7
+* Android Topic Based messages duplicate fix
+* hasNextMessage and hasPreviousMessage Methods Deprecated
+* MessageEventListeners Type Bug Fix
+* iOS Profile Name Encryption Bug Fix
+
 ## [1.1.0] SDK Updates
 * Android SDK Updated to 7.13.13
 * iOS SDK Updated to 5.18.6

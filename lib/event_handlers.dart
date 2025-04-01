@@ -66,6 +66,48 @@ abstract class MessageEventListeners {
   ///
   /// [chatMessage]: The `ChatMessageModel` instance containing the details of the edited message.
   void onMessageEdited(ChatMessageModel chatMessage);
+
+  /// This listener is triggered whenever a message is deleted. Listen to this method to handle
+  /// the deletion of a message in the UI.
+  ///
+  /// [event]: The event containing details about the deleted message.
+  void onMessageDeleted(event);
+
+  /// This listener is triggered whenever all chats are cleared. Listen to this method to update
+  /// the UI accordingly when all chats are removed.
+  ///
+  /// [event]: The event containing details about the chat clearance.
+  void onAllChatsCleared(event);
+
+  /// This listener is triggered whenever a specific chat is cleared. Listen to this method to
+  /// handle the cleared chat in the UI.
+  ///
+  /// [event]: The event containing details about the cleared chat.
+  void onChatCleared(event);
+
+  /// This listener is triggered whenever a chat is archived or unarchived. Listen to this method
+  /// to update the UI based on the archive status of a chat.
+  ///
+  /// [event]: The event containing details about the archive/unarchive action.
+  void onArchiveUnArchiveChats(event);
+
+  /// This listener is triggered whenever archived settings are updated. Listen to this method to
+  /// reflect the latest archive settings in the UI.
+  ///
+  /// [event]: The event containing details about the archived settings update.
+  void onArchivedSettingsUpdated(event);
+
+  /// This listener is triggered whenever mute settings are updated. Listen to this method to
+  /// update the UI based on the latest mute preferences.
+  ///
+  /// [event]: The event containing details about the mute settings update.
+  void onUpdateMuteSettings(event);
+
+  /// This listener is triggered whenever a chat’s mute status is updated. Listen to this method
+  /// to handle mute/unmute actions in the UI.
+  ///
+  /// [event]: The event containing details about the chat mute status update.
+  void onChatMuteStatusUpdated(event);
 }
 
 /// A class that provides a set of callback methods that can be used to listen for Connection Events in the MirrorFly Flutter Plugin.
@@ -78,6 +120,9 @@ abstract class ConnectionEventListeners {
 
   /// This listener is triggered whenever the connection is failed.
   void onConnectionFailed(String connectionError);
+
+  /// This listener is triggered whenever the reconnecting.
+  void onReconnecting();
 
   /// This listener is triggered whenever the user logged in is logged out by the server.
   void onLoggedOut();
@@ -104,7 +149,7 @@ abstract class ProfileEventListeners {
   void myProfileUpdated();
 
   /// This listener is triggered whenever the user's profile who blocked you is fetched and synced.
-  void usersWhoBlockedMeListFetched(String jidList);
+  void usersWhoBlockedMeListFetched(List<String> jidList);
 
   /// This listener is triggered whenever the user's profile who you blocked is fetched and synced.
   void usersIBlockedListFetched(List<String> jidList);

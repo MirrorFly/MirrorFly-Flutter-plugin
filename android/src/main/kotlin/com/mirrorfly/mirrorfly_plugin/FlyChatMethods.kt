@@ -11,7 +11,8 @@ import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.media.ThumbnailUtils
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Environment
 import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.util.Base64
@@ -23,11 +24,35 @@ import com.mirrorfly.mirrorfly_plugin.call.FlyCallMethods
 import com.mirrorfly.mirrorfly_plugin.call.getDisplayName
 import com.mirrorflysdk.ChatSDK
 import com.mirrorflysdk.GroupConfig
-import com.mirrorflysdk.api.*
-import com.mirrorflysdk.api.chat.*
+import com.mirrorflysdk.api.ChatActionListener
+import com.mirrorflysdk.api.ChatConnectionListener
+import com.mirrorflysdk.api.ChatManager
+import com.mirrorflysdk.api.DeleteChatType
+import com.mirrorflysdk.api.FlyCore
+import com.mirrorflysdk.api.FlyMessenger
+import com.mirrorflysdk.api.GroupManager
+import com.mirrorflysdk.api.RecentChatListBuilder
+import com.mirrorflysdk.api.SendMessageCallback
+import com.mirrorflysdk.api.TopicChatListBuilder
+import com.mirrorflysdk.api.WebLoginDataManager
+import com.mirrorflysdk.api.chat.ContactMessageParams
+import com.mirrorflysdk.api.chat.EditMessage
+import com.mirrorflysdk.api.chat.FetchMessageListParams
+import com.mirrorflysdk.api.chat.FetchMessageListQuery
+import com.mirrorflysdk.api.chat.FileMessage
+import com.mirrorflysdk.api.chat.FileMessageParams
+import com.mirrorflysdk.api.chat.LocationMessageParams
+import com.mirrorflysdk.api.chat.MeetMessage
+import com.mirrorflysdk.api.chat.TextMessage
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
-import com.mirrorflysdk.api.models.*
+import com.mirrorflysdk.api.models.BusyStatus
+import com.mirrorflysdk.api.models.ChatDataModel
+import com.mirrorflysdk.api.models.ChatMessage
+import com.mirrorflysdk.api.models.ChatMessageStatusDetail
+import com.mirrorflysdk.api.models.MessageStatusDetail
+import com.mirrorflysdk.api.models.ProfileStatus
+import com.mirrorflysdk.api.models.RecentChat
 import com.mirrorflysdk.api.network.FlyNetwork
 import com.mirrorflysdk.api.notification.NotificationEventListener
 import com.mirrorflysdk.api.notification.PushNotificationManager
@@ -36,12 +61,18 @@ import com.mirrorflysdk.backup.BackupListener
 import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
-import com.mirrorflysdk.flycall.webrtc.CallLogger
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
 import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
-import com.mirrorflysdk.flycommons.*
+import com.mirrorflysdk.flycommons.ChatType
+import com.mirrorflysdk.flycommons.ChatTypeEnum
+import com.mirrorflysdk.flycommons.FlyCallback
+import com.mirrorflysdk.flycommons.FlyUtils
+import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.flycommons.Result
+import com.mirrorflysdk.flycommons.SharedPreferenceManager
+import com.mirrorflysdk.flycommons.TypingStatus
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MessageMetaData
 import com.mirrorflysdk.flycommons.models.MessageType
@@ -54,6 +85,7 @@ import com.mirrorflysdk.models.MediaAutoDownloadOption
 import com.mirrorflysdk.models.RecentChatListParams
 import com.mirrorflysdk.models.TopicChatListParams
 import com.mirrorflysdk.utils.ThumbSize
+import com.mirrorflysdk.utils.UpDateWebPassword
 import com.mirrorflysdk.utils.Utils
 import com.mirrorflysdk.utils.VideoRecUtils
 import com.mirrorflysdk.xmpp.FlyXMPP
@@ -71,9 +103,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import java.util.Locale
 
 class FlyChatMethods {
     val tag = "#FlyChatMethods"
@@ -811,6 +841,25 @@ class FlyChatMethods {
             FlyCore.updateChatMuteStatus(jid, mute_status)
         }
         LogMessage.d("updateChatMuteStatus", "isMuted" + ChatManager.isMuted(jid))
+    }
+
+    fun updateChatMuteStatusList(call: MethodCall, result: MethodChannel.Result) {
+        val jidList = call.argument<List<String>>("jidList") ?: arrayListOf()
+        val muteStatus = call.argument<Boolean>("mute_status") ?: false
+        try {
+            ChatManager.updateChatMuteStatus(jidList, muteStatus)
+        } catch (e : Exception) {
+            val map = JSONObject()
+            map.put("isSuccess", false)
+            map.put("message", e.message)
+            val jidListJsonArray = JSONArray(jidList)
+            map.put("jidList", jidListJsonArray)
+            map.put("muteStatus", muteStatus)
+            FlyMethodConstants.updateChatSinkValue(
+                Constants.onChatMuteStatusUpdatedChannel,
+                map.toString()
+            )
+        }
     }
 
     fun sendTypingStatus(call: MethodCall, result: MethodChannel.Result) {
@@ -1769,6 +1818,13 @@ class FlyChatMethods {
                     LogMessage.d("textMessage", textMessage.toJsonString())
                     sendTextMessage(textMessage, result)
                 }
+            }else if(MessageType.valueOf(messageType) == MessageType.MEET){
+                val meetMessage = buildMeetMessage(messageParams)
+                LogMessage.d("meetMessage", meetMessage?.toJsonString())
+                meetMessage.let {
+                    LogMessage.d("meetMessage", meetMessage?.toJsonString())
+                    sendMeetMessage(meetMessage, result)
+                }
             } else {
                 val fileMessage = buildFileMessage(messageParams)
                 LogMessage.d("fileMessage", fileMessage.toJsonString())
@@ -1783,6 +1839,31 @@ class FlyChatMethods {
             return
         }
         FlyMessenger.sendTextMessage(textMessage, object : SendMessageCallback {
+            override fun onResponse(
+                isSuccess: Boolean,
+                error: Throwable?,
+                chatMessage: ChatMessage?
+            ) {
+                if (isSuccess) {
+                    if (chatMessage != null) {
+                        result.success(chatMessage.toJsonString())
+                    } else {
+                        result.error("500", "message not available", error)
+                    }
+                } else {
+                    result.error("500", error?.message ?: "", error)
+                }
+            }
+        })
+    }
+
+    private fun sendMeetMessage(meetMessage: MeetMessage?, result: MethodChannel.Result) {
+        if (meetMessage == null) {
+            result.error("500", "MeetMessage params not be null for MessageType TEXT", null)
+            return
+        }
+        LogMessage.d("meetMessage send", meetMessage.toJsonString())
+        FlyMessenger.sendMeetMessage(meetMessage, object : SendMessageCallback {
             override fun onResponse(
                 isSuccess: Boolean,
                 error: Throwable?,
@@ -1847,6 +1928,30 @@ class FlyChatMethods {
             }
         }
         return textMessage
+    }
+
+    private fun buildMeetMessage(map: HashMap<String, Any>?): MeetMessage? {
+        val meetMessage = MeetMessage()
+        if(map  != null && map["meetMessage"] != null){
+            LogMessage.d("meetMessage par -", map.toString());
+       meetMessage.apply {
+            this.toId = map.getOrDefault("toJid", "") as String
+           this.replyMessageId = map["replyMessageId"] as String?
+           this.topicId = map.getOrDefault("topicId", "") as String
+           this.metaData =
+               if (map["metaData"] != null) extractMessageMetaData(map["metaData"] as List<Map<String, Any>>) else emptyList()
+           val meetMessageMap = map["meetMessage"] as? Map<String, Any> // Safe cast to Map<String, Any>
+
+           this.title = meetMessageMap?.get("title") as? String
+           this.scheduledDateTime = meetMessageMap?.get("scheduledDateTime") as? Long
+           this.link = meetMessageMap?.get("link") as? String
+
+           this.mentionedUsersIds= if (map["mentionedUsersIds"] != null) map["mentionedUsersIds"] as List<String> else null
+       }
+        }else {
+            return null
+        }
+        return meetMessage
     }
 
     private fun buildFileMessage(map: HashMap<String, Any>?): FileMessage {
@@ -3302,6 +3407,29 @@ class FlyChatMethods {
         } catch (e: java.lang.Exception) {
             //LogMessage.d("qr", e.toString())
         }
+    }
+
+    fun getWebLoginDetails(call: MethodCall, result: MethodChannel.Result) {
+        val details = WebLoginDataManager.getWebLoginDetails()
+        result.success(details.toJsonString())
+    }
+
+    /*fun webLoginDetailsCleared(call: MethodCall, result: MethodChannel.Result) {
+        WebLoginDataManager.webLoginDetailsCleared()
+        result.success(true)
+    }*/
+
+    fun logoutWebUser(call: MethodCall, result: MethodChannel.Result) {
+        WebLoginDataManager.webLoginDetailsCleared()
+        UpDateWebPassword().upDatePassword()
+            val listWebLogin =
+            call.argument<List<String>>("listWebLogin")//qrUniqeToken list
+        if (!listWebLogin.isNullOrEmpty()) {
+            for (it in listWebLogin) {
+                ChatManager.logoutWebUser(it)
+            }
+        }
+        result.success(true)
     }
 
     private lateinit var ringToneResult: MethodChannel.Result
