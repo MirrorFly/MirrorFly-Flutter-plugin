@@ -151,11 +151,68 @@ extension FlyChatPlugin : AvailableFeaturesDelegate {
     public func didUpdateAvailableFeatures(features: MirrorFlySDK.AvailableFeaturesModel) {
 
         print("didUpdateAvailableFeatures event \(features)")
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.getAvailableFeatures_channel, value: features.toJson())
+        
+
+        let localModel = mapToLocalModel(features)
+        
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.getAvailableFeatures_channel, value: localModel.toJson())
   
     }
 
 }
+
+/// Work Around for the Available Features
+
+public struct AvailableFeaturesLocalModel: Codable {
+    public var isGroupChatEnabled: Bool
+    public var isGroupCallEnabled: Bool
+    public var isOneToOneCallEnabled: Bool
+    public var isRecentChatSearchEnabled: Bool
+    public var isImageAttachmentEnabled: Bool
+    public var isVideoAttachmentEnabled: Bool
+    public var isAudioAttachmentEnabled: Bool
+    public var isDocumentAttachmentEnabled: Bool
+    public var isContactAttachmentEnabled: Bool
+    public var isLocationAttachmentEnabled: Bool
+    public var isAttachmentEnabled: Bool
+    public var isStarMessageEnabled: Bool
+    public var isClearChatEnabled: Bool
+    public var isDeleteChatEnabled: Bool
+    public var isTranslationEnabled: Bool
+    public var isBlockEnabled: Bool
+    public var isReportEnabled: Bool
+    public var isDeleteMessageEnabled: Bool
+    public var isViewAllMediasEnabled: Bool
+    public var isChatHistoryEnabled: Bool
+}
+
+func mapToLocalModel(_ sdkModel: MirrorFlySDK.AvailableFeaturesModel) -> AvailableFeaturesLocalModel {
+    return AvailableFeaturesLocalModel(
+        isGroupChatEnabled: sdkModel.isGroupChatEnabled,
+        isGroupCallEnabled: sdkModel.isGroupCallEnabled,
+        isOneToOneCallEnabled: sdkModel.isOneToOneCallEnabled,
+        isRecentChatSearchEnabled: sdkModel.isRecentChatSearchEnabled,
+        isImageAttachmentEnabled: sdkModel.isImageAttachmentEnabled,
+        isVideoAttachmentEnabled: sdkModel.isVideoAttachmentEnabled,
+        isAudioAttachmentEnabled: sdkModel.isAudioAttachmentEnabled,
+        isDocumentAttachmentEnabled: sdkModel.isDocumentAttachmentEnabled,
+        isContactAttachmentEnabled: sdkModel.isContactAttachmentEnabled,
+        isLocationAttachmentEnabled: sdkModel.isLocationAttachmentEnabled,
+        isAttachmentEnabled: sdkModel.isAttachmentEnabled,
+        isStarMessageEnabled: sdkModel.isStarMessageEnabled,
+        isClearChatEnabled: sdkModel.isClearChatEnabled,
+        isDeleteChatEnabled: sdkModel.isDeleteChatEnabled,
+        isTranslationEnabled: sdkModel.isTranslationEnabled,
+        isBlockEnabled: sdkModel.isBlockEnabled,
+        isReportEnabled: sdkModel.isReportEnabled,
+        isDeleteMessageEnabled: sdkModel.isDeleteMessageEnabled,
+        isViewAllMediasEnabled: sdkModel.isViewAllMediasEnabled,
+        isChatHistoryEnabled: sdkModel.isChatHistoryEnabled
+    )
+}
+
+
+///
 
 extension FlyChatPlugin : LocalNotificationDelegate {
     
