@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
+import 'package:mirrorfly_plugin/helpers/text_safety.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'fly_chat_platform_interface.dart';
@@ -20,6 +21,7 @@ class Mirrorfly {
 
   /// isChatHistoryEnabled to check the chat history is enabled or not
   static var isChatHistoryEnabled = false;
+
 
   /// isPrivateStorageEnabled to check the private storage is enabled or not
   static var isPrivateStorageEnabled = false;
@@ -126,7 +128,6 @@ class Mirrorfly {
     isPrivateStorageEnabled = enablePrivateStorage;
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);
   }
-
   /// Provides functionality to register the user to the Mirrorfly platform.
   @Deprecated('Instead of use Mirrorfly.login()')
   static Future<void> registerUser(
@@ -1228,7 +1229,7 @@ class Mirrorfly {
   ///
   /// If the operation is successful, the method returns a [String] representing
   /// the group JID. If the operation fails, `null` is returned.
-  ///
+  ///bbitit
   /// Throws an error if [groupId] is null.
   ///
   /// Example usage:
@@ -1492,12 +1493,31 @@ class Mirrorfly {
   ///   },
   /// );
   /// ```
-  static Future<void> sendMessage(
-      {required MessageParams messageParams,
-      required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance
-        .sendMessage(messageParams: messageParams, callback: flyCallback);
+  static Future<void> sendMessage({
+    required MessageParams messageParams,
+    required Function(FlyResponse response) flyCallback,
+  }) async {
+    String messageText = '';
+    if (messageParams.messageType == MessageType.text) {
+      messageText = messageParams.textMessageParams?.messageText?? '';
+    } else if (messageParams.messageType == MessageType.image ||
+        messageParams.messageType == MessageType.video) {
+      messageText = messageParams.fileMessageParams?.caption?? '';
+    }else if(messageParams.messageType == MessageType.contact){
+      messageText = (messageParams.contactMessageParams?.name ?? '') +
+          (messageParams.contactMessageParams?.numbers.join(' ') ?? '');
+    }
+    // Perform input validation if enabled
+    if (messageParams.messageSecurityMode == MessageSecurityMode.enabled && messageText.isNotEmpty && TextSafety.isUnsafeText(messageText)) {
+      return flyCallback(FlyResponse(false, '', 'Invalid input: HTML tags are not allowed',FlyException("500","Invalid input: HTML tags are not allowed","")));
+    }
+    // Send the message if no XSS detected
+    return FlyChatFlutterPlatform.instance.sendMessage(
+      messageParams: messageParams,
+      callback: flyCallback,
+    );
   }
+
 
   /// A method used to edit a text message sent previously.
   ///
