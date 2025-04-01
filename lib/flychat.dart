@@ -1509,7 +1509,7 @@ class Mirrorfly {
     }
     // Perform input validation if enabled
     if (messageParams.messageSecurityMode == MessageSecurityMode.enabled && messageText.isNotEmpty && TextSafety.isUnsafeText(messageText)) {
-      return flyCallback(FlyResponse(false, '', 'Invalid input: HTML tags are not allowed'));
+      return flyCallback(FlyResponse(false, '', 'Invalid input: HTML tags are not allowed',FlyException("500","Invalid input: HTML tags are not allowed","")));
     }
     // Send the message if no XSS detected
     return FlyChatFlutterPlatform.instance.sendMessage(

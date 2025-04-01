@@ -356,7 +356,7 @@ class MessageParams {
     List<String>? mentionedUsersIds,
     required TextMessageParams textMessageParams,
     List<MessageMetaData> metaData = const [],
-    MessageSecurityMode? messageSecurityMode=MessageSecurityMode.disabled,
+    MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
     String topicId = "",
   }) {
 
@@ -417,7 +417,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required ContactMessageParams contactMessageParams,
-  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.disabled,
+  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
@@ -438,7 +438,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     List<String>? mentionedUsersIds,
-    MessageSecurityMode? messageSecurityMode=MessageSecurityMode.disabled,
+    MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
     required FileMessageParams fileMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
@@ -461,7 +461,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
-  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.disabled,
+  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     required bool isRecorded,
     String topicId = "",
@@ -484,7 +484,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
-  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.disabled,
+  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
@@ -506,7 +506,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
-  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.disabled,
+  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
