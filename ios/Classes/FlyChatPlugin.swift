@@ -839,7 +839,7 @@ extension FlyChatPlugin : MuteEventDelegate {
         let chatMuteJson: NSMutableDictionary = NSMutableDictionary()
         chatMuteJson.setValue(isSuccess, forKey: "isSuccess")
         chatMuteJson.setValue(message, forKey: "message")
-        chatMuteJson.setValue(jidList.toJson(), forKey: "jidList")
+        chatMuteJson.setValue(jidList, forKey: "jidList")
         chatMuteJson.setValue(muteStatus, forKey: "muteStatus")
         let chatMuteJsonStr = pluginDictToJson(dictionary: chatMuteJson)
         print("Delegate : onMuteStatusUpdated => json \(String(describing: chatMuteJsonStr))")
