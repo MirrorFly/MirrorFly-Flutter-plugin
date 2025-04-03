@@ -1951,7 +1951,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<bool?> logoutWebUser(List<String> logins) {
+  Future<bool?> logoutWebUser() {
     throw UnimplementedError();
   }
 

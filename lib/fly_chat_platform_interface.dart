@@ -1180,7 +1180,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// This method is used to logout the user from web
-  Future<bool?> logoutWebUser(List<String> logins) {
+  Future<bool?> logoutWebUser() {
     throw UnimplementedError('has not been implemented.');
   }
 
