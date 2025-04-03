@@ -4407,8 +4407,13 @@ let ISEXPORT = true
     }
     
     func logoutWebUser(call : FlutterMethodCall, result: @escaping FlutterResult){
-        WebLoginsManager.shared.logoutFromDevices()
-        result(true)
+        WebLoginsManager.shared.logoutWebSessions(completionHandler: { isSuccess, error, data in
+            if isSuccess {
+                result(isSuccess)
+            }else {
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: error?.localizedDescription, details: nil))
+            }
+        })
     }
     
     func sendContactUsInfo(call : FlutterMethodCall, result: @escaping FlutterResult){
