@@ -853,18 +853,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.inviteUserViaSMS(mobileNo, message);
   }*/
 
-  /*static cancelBackup() {
-    return FlyChatFlutterPlatform.instance.cancelBackup();
-  }
-
-  static startBackup() {
-    return FlyChatFlutterPlatform.instance.startBackup();
-  }
-
-  static cancelRestore() {
-    return FlyChatFlutterPlatform.instance.cancelRestore();
-  }
-
+  /*
   static clearAllSDKData() {
     return FlyChatFlutterPlatform.instance.clearAllSDKData();
   }

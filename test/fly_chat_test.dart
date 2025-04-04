@@ -61,11 +61,6 @@ class MockFlyChatFlutterPlatform
   //  implement blockedThisUser
   Stream get blockedThisUser => throw UnimplementedError();
 
-  /*@override
-  cancelBackup() {
-    //  implement cancelBackup
-    throw UnimplementedError();
-  }*/
 
   @override
   cancelMediaUploadOrDownload(String messageId) {

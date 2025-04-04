@@ -231,5 +231,7 @@ class FlyMethodConstants {
                 "isPrivateStorageEnabled": flyChatMethods.isPrivateStorageEnabled,
                 "startBackup": flyChatMethods.startBackup,
                 "restoreBackup": flyChatMethods.restoreBackup,
+                "cancelBackup": flyChatMethods.cancelBackup,
+                "cancelRestore": flyChatMethods.cancelRestore,
             ] }()
 }
