@@ -110,7 +110,7 @@ class Mirrorfly {
   static Future<void> initializeSDK(
       {required String licenseKey,
       required String iOSContainerID,
-      String? storageFolderName = "Mirrorfly",
+      String? storageFolderName = "Mirrorfly Flutter",
       bool chatHistoryEnable = false,
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false,
