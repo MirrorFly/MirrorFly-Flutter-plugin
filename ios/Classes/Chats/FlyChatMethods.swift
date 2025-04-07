@@ -4388,7 +4388,7 @@ let ISEXPORT = true
             jsonObject["webBrowserName"] = login.browser ?? ""
             
             if let loginTime = login.loginTime {
-                    let timeInSeconds = loginTime / 1_000_000 // Convert microseconds to seconds
+                    let timeInSeconds = loginTime / 1000
                     let date = Date(timeIntervalSince1970: timeInSeconds) // Create Date object
                     jsonObject["lastLoginTime"] = dateFormatter.string(from: date) // Format to required string
                 } else {
@@ -4564,10 +4564,14 @@ let ISEXPORT = true
     
     func cancelBackup(call : FlutterMethodCall, result: @escaping FlutterResult) {
         BackupManager.shared.cancelBackup()
-        
+        result(true)
     }
     
-
-
+    
+    func cancelRestore(call : FlutterMethodCall, result: @escaping FlutterResult) {
+        BackupManager.shared.cancelRestore()
+        result(true)
+    }
+    
 
 }

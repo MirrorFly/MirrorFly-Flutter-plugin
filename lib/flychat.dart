@@ -110,7 +110,7 @@ class Mirrorfly {
   static Future<void> initializeSDK(
       {required String licenseKey,
       required String iOSContainerID,
-      String? storageFolderName = "Mirrorfly",
+      String? storageFolderName = "Mirrorfly Flutter",
       bool chatHistoryEnable = false,
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false,
@@ -853,18 +853,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.inviteUserViaSMS(mobileNo, message);
   }*/
 
-  /*static cancelBackup() {
-    return FlyChatFlutterPlatform.instance.cancelBackup();
-  }
-
-  static startBackup() {
-    return FlyChatFlutterPlatform.instance.startBackup();
-  }
-
-  static cancelRestore() {
-    return FlyChatFlutterPlatform.instance.cancelRestore();
-  }
-
+  /*
   static clearAllSDKData() {
     return FlyChatFlutterPlatform.instance.clearAllSDKData();
   }
@@ -5616,23 +5605,20 @@ class Mirrorfly {
   ///
   /// This method logs out the specified web chat sessions identified by their login IDs.
   ///
-  /// **Parameters:**
-  /// - `logins` (List<String>, required): A list of login IDs to be logged out.
-  ///
   /// **Returns:**
   /// A `Future<bool?>` that resolves to `true` if logout is successful, `false` otherwise.
   ///
   /// **Usage example:**
   /// ```dart
-  /// bool? isLoggedOut = await Mirrorfly.logoutWebUser(logins: ["login_123", "login_456"]);
+  /// bool? isLoggedOut = await Mirrorfly.logoutWebUser();
   /// if (isLoggedOut == true) {
   ///   print("Web user logged out successfully.");
   /// } else {
   ///   print("Failed to log out web user.");
   /// }
   /// ```
-  static Future<bool?> logoutWebUser({required List<String> logins}) {
-    return FlyChatFlutterPlatform.instance.logoutWebUser(logins);
+  static Future<bool?> logoutWebUser() {
+    return FlyChatFlutterPlatform.instance.logoutWebUser();
   }
 
   /// Retrieves details of logged-in web sessions.

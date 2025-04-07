@@ -4712,19 +4712,21 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool?> logoutWebUser(List<String> logins) async {
+  Future<bool?> logoutWebUser() async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('logoutWebUser', {"listWebLogin": logins});
+          .invokeMethod<bool>('logoutWebUser');
       LogMessage.d("logoutWebUser Response ", " $response");
       return response;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      rethrow;
+      return false;
+      // rethrow;
     } on Exception catch (error) {
       LogMessage.d("Exception ", " $error");
-      rethrow;
+      return false;
+      // rethrow;
     }
   }
 
