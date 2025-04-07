@@ -3420,15 +3420,6 @@ class FlyChatMethods {
     }*/
 
     fun logoutWebUser(call: MethodCall, result: MethodChannel.Result) {
-        WebLoginDataManager.webLoginDetailsCleared()
-        UpDateWebPassword().upDatePassword()
-//            val listWebLogin =
-//            call.argument<List<String>>("listWebLogin")//qrUniqeToken list
-//        if (!listWebLogin.isNullOrEmpty()) {
-//            for (it in listWebLogin) {
-//                ChatManager.logoutWebUser(it)
-//            }
-//        }
         WebLoginDataManager.logOutWebSessions{isSuccess, throwable, data ->
             if (isSuccess) {
                 // Logout from the web session was successful.
