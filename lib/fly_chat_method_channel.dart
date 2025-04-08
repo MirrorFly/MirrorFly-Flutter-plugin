@@ -1383,7 +1383,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       var data = json.decode(event.toString());
       usersIBlockedListFetchedStreamController.add(event);
       profileEventsListener?.usersIBlockedListFetched(
-          List<String>.from((data ?? "").map((x) => x.toString())));
+          List<String>.from((data ?? []).map((x) => x.toString())));
     }, onError: (error) {
       LogMessage.d(
           "MirrorFly", "Error on users I blocked list fetched: $error");
@@ -1403,7 +1403,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       var data = json.decode(event.toString());
       usersWhoBlockedMeListFetchedStreamController.add(event);
       profileEventsListener?.usersWhoBlockedMeListFetched(
-          List<String>.from((data ?? "").map((x) => x.toString())));
+          List<String>.from((data ?? []).map((x) => x.toString())));
     }, onError: (error) {
       LogMessage.d(
           "MirrorFly", "Error on users who blocked me list fetched: $error");
@@ -1519,16 +1519,26 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     });
 
     onChatClearedChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var toJid = data["toJid"] ?? "";
+      var chatClearType = data["chatClearType"] ?? "";
+
       onChatClearedStreamController.add(event);
-      messageEventsListener?.onChatCleared(event);
+      messageEventsListener?.onChatCleared(toJid, chatClearType);
     }, onError: (error) {
       LogMessage.d("MirrorFly", "Error on chat clear listener: $error");
       onChatClearedStreamController.addError(error);
     });
 
     onMessageDeletedChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      String toJid = data["toJid"] ?? "";
+      List<String> messageIds = List<String>.from(
+          (data["messageIds"] ?? []).map((x) => x.toString()));
+      String messageDeleteType = data["messageDeleteType"] ?? "";
       onMessageDeletedStreamController.add(event);
-      messageEventsListener?.onMessageDeleted(event);
+      messageEventsListener?.onMessageDeleted(
+          toJid, messageIds, messageDeleteType);
     }, onError: (error) {
       LogMessage.d("MirrorFly", "Error on message deleted listener: $error");
       onMessageDeletedStreamController.addError(error);
@@ -1557,8 +1567,16 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     });
 
     onChatMuteStatusUpdatedChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var isSuccess = data["isSuccess"] ?? false;
+      var message = data["message"] ?? "";
+      List<String> jidList =
+          List<String>.from((data["jidList"] ?? []).map((x) => x.toString()));
+      var muteStatus = data["muteStatus"] ?? false;
+
       onChatMuteStatusUpdatedStreamController.add(event);
-      messageEventsListener?.onChatMuteStatusUpdated(event);
+      messageEventsListener?.onChatMuteStatusUpdated(
+          isSuccess, message, jidList, muteStatus);
     }, onError: (error) {
       LogMessage.d(
           "MirrorFly", "Error on chat mute or un-mute listener: $error");
@@ -1566,16 +1584,24 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     });
 
     onUpdateMuteSettingsChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var isSuccess = data["isSuccess"] ?? false;
+      var message = data["message"] ?? "";
+      var isMuteStatus = data["isMuteStatus"] ?? false;
       onUpdateMuteSettingsStreamController.add(event);
-      messageEventsListener?.onUpdateMuteSettings(event);
+      messageEventsListener?.onUpdateMuteSettings(
+          isSuccess, message, isMuteStatus);
     }, onError: (error) {
       LogMessage.d("MirrorFly", "Error on chat mute settings update: $error");
       onUpdateMuteSettingsStreamController.addError(error);
     });
 
     onArchiveUnArchiveChatsChannel.receiveBroadcastStream().listen((event) {
+      var data = json.decode(event.toString());
+      var chatJid = data["toUser"] ?? "";
+      var archiveStatus = data["archiveStatus"] ?? false;
       onArchiveUnArchiveChatsStreamController.add(event);
-      messageEventsListener?.onArchiveUnArchiveChats(event);
+      messageEventsListener?.onArchiveUnArchiveChats(chatJid, archiveStatus);
     }, onError: (error) {
       LogMessage.d(
           "MirrorFly", "Error on chat archive / Unarchive updates: $error");
@@ -1762,7 +1788,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       debugPrint("onUsersUpdatedChannel event = $event");
       onUsersUpdatedStreamController.add(event);
       var data = json.decode(event.toString());
-      callLinkEventsListener?.onUsersUpdated(List<String>.from(data ?? ''));
+      callLinkEventsListener?.onUsersUpdated(List<String>.from(data ?? []));
     }, onError: (error) {
       debugPrint("onUsersUpdatedChannel error = $error");
       onUsersUpdatedStreamController.addError(error);
@@ -4688,19 +4714,21 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool?> logoutWebUser(List<String> logins) async {
+  Future<bool?> logoutWebUser() async {
     bool? response;
     try {
-      response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('logoutWebUser', {"listWebLogin": logins});
+      response =
+          await mirrorFlyMethodChannel.invokeMethod<bool>('logoutWebUser');
       LogMessage.d("logoutWebUser Response ", " $response");
       return response;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      rethrow;
+      return false;
+      // rethrow;
     } on Exception catch (error) {
       LogMessage.d("Exception ", " $error");
-      rethrow;
+      return false;
+      // rethrow;
     }
   }
 

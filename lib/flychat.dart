@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
+import 'package:mirrorfly_plugin/helpers/text_safety.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'fly_chat_platform_interface.dart';
@@ -108,7 +109,7 @@ class Mirrorfly {
   static Future<void> initializeSDK(
       {required String licenseKey,
       required String iOSContainerID,
-      String? storageFolderName = "Mirrorfly",
+      String? storageFolderName = "Mirrorfly Flutter",
       bool chatHistoryEnable = false,
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false,
@@ -852,18 +853,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.inviteUserViaSMS(mobileNo, message);
   }*/
 
-  /*static cancelBackup() {
-    return FlyChatFlutterPlatform.instance.cancelBackup();
-  }
-
-  static startBackup() {
-    return FlyChatFlutterPlatform.instance.startBackup();
-  }
-
-  static cancelRestore() {
-    return FlyChatFlutterPlatform.instance.cancelRestore();
-  }
-
+  /*
   static clearAllSDKData() {
     return FlyChatFlutterPlatform.instance.clearAllSDKData();
   }
@@ -1228,7 +1218,7 @@ class Mirrorfly {
   ///
   /// If the operation is successful, the method returns a [String] representing
   /// the group JID. If the operation fails, `null` is returned.
-  ///
+  ///bbitit
   /// Throws an error if [groupId] is null.
   ///
   /// Example usage:
@@ -1492,11 +1482,36 @@ class Mirrorfly {
   ///   },
   /// );
   /// ```
-  static Future<void> sendMessage(
-      {required MessageParams messageParams,
-      required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance
-        .sendMessage(messageParams: messageParams, callback: flyCallback);
+  static Future<void> sendMessage({
+    required MessageParams messageParams,
+    required Function(FlyResponse response) flyCallback,
+  }) async {
+    String messageText = '';
+    if (messageParams.messageType == MessageType.text) {
+      messageText = messageParams.textMessageParams?.messageText ?? '';
+    } else if (messageParams.messageType == MessageType.image ||
+        messageParams.messageType == MessageType.video) {
+      messageText = messageParams.fileMessageParams?.caption ?? '';
+    } else if (messageParams.messageType == MessageType.contact) {
+      messageText = (messageParams.contactMessageParams?.name ?? '') +
+          (messageParams.contactMessageParams?.numbers.join(' ') ?? '');
+    }
+    // Perform input validation if enabled
+    if (messageParams.messageSecurityMode == MessageSecurityMode.enabled &&
+        messageText.isNotEmpty &&
+        TextSafety.isUnsafeText(messageText)) {
+      return flyCallback(FlyResponse(
+          false,
+          '',
+          'Invalid input: HTML tags and scripts are not allowed',
+          FlyException("500",
+              "Invalid input: HTML tags and scripts are not allowed", "")));
+    }
+    // Send the message if no XSS detected
+    return FlyChatFlutterPlatform.instance.sendMessage(
+      messageParams: messageParams,
+      callback: flyCallback,
+    );
   }
 
   /// A method used to edit a text message sent previously.
@@ -2501,7 +2516,7 @@ class Mirrorfly {
   static Stream<dynamic> get onUpdateFavourites =>
       FlyChatFlutterPlatform.instance.onUpdateFavourites;
 
-/*  /// A stream that emits an event when a user logs out from a web session.
+  /// A stream that emits an event when a user logs out from a web session.
   ///
   /// This stream listens for logout events triggered from a web device.
   /// Use this to notify the user or update authentication status.
@@ -2510,11 +2525,12 @@ class Mirrorfly {
   /// ```dart
   /// Mirrorfly.onWebLogout.listen((event) {
   ///   // Handle web logout event
+  ///   //{"socketIdList":["8mXojaLkd4CC773aAAFh"]}
   ///   print("User logged out from web: $event");
   /// });
   /// ```
   static Stream<dynamic> get onWebLogout =>
-      FlyChatFlutterPlatform.instance.onWebLogout;*/
+      FlyChatFlutterPlatform.instance.onWebLogout;
 
   /// A stream that emits an event when a chat's mute status is updated.
   ///
@@ -5564,4 +5580,113 @@ class Mirrorfly {
   static Future<bool> isLockScreen() {
     return FlyChatFlutterPlatform.instance.isLockScreen();
   }
+
+  /// Logs in to web chat using a QR code.
+  ///
+  /// This method allows the user to authenticate a web chat session by scanning a QR code.
+  /// A callback function is required to handle the response.
+  ///
+  /// **Parameters:**
+  /// - `barcode` (String, required): The scanned QR code data.
+  /// - `flyCallBack` (Function(FlyResponse response), required): A callback function that receives the login response.
+  ///
+  /// **Returns:**
+  /// A `Future<void>` that completes once the login process is finished.
+  ///
+  /// **Usage example:**
+  /// ```dart
+  /// Mirrorfly.loginWebChatViaQRCode(
+  ///   barcode: "scanned_qr_code",
+  ///   flyCallBack: (response) {
+  ///     // Handle login response
+  ///     print("Login Response: ${response.status}");
+  ///   },
+  /// );
+  /// ```
+  static Future<void> loginWebChatViaQRCode(
+      {required String barcode,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance
+        .loginWebChatViaQRCode(barcode, flyCallBack);
+  }
+
+  /// Logs out a web user session.
+  ///
+  /// This method logs out the specified web chat sessions identified by their login IDs.
+  ///
+  /// **Returns:**
+  /// A `Future<bool?>` that resolves to `true` if logout is successful, `false` otherwise.
+  ///
+  /// **Usage example:**
+  /// ```dart
+  /// bool? isLoggedOut = await Mirrorfly.logoutWebUser();
+  /// if (isLoggedOut == true) {
+  ///   print("Web user logged out successfully.");
+  /// } else {
+  ///   print("Failed to log out web user.");
+  /// }
+  /// ```
+  static Future<bool?> logoutWebUser() {
+    return FlyChatFlutterPlatform.instance.logoutWebUser();
+  }
+
+  /// Retrieves details of logged-in web sessions.
+  ///
+  /// This method fetches the active web login sessions associated with the user's account.
+  ///
+  /// **Returns:**
+  /// A `Future<dynamic>` that resolves with web login details.
+  ///
+  /// **Usage example:**
+  /// ```dart
+  /// var webLoginDetails = await Mirrorfly.getWebLoginDetails();
+  /// print("Web Login Details: $webLoginDetails");
+  /// ```
+  static Future<dynamic> getWebLoginDetails() {
+    return FlyChatFlutterPlatform.instance.getWebLoginDetails();
+  }
+
+  /*/// Initiates the backup process for chat data.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Mirrorfly.startBackup();
+  /// ```
+  ///
+  static Future<void> startBackup({bool enableEncryption = true}){
+    return FlyChatFlutterPlatform.instance.startBackup(enableEncryption);
+  }
+
+  /// Initiates the restore process from the backup chat data url.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Mirrorfly.restoreBackup();
+  /// ```
+  ///
+  static Future<void> restoreBackup({required String backupPath}){
+    return FlyChatFlutterPlatform.instance.restoreBackup(backupPath: backupPath);
+  }
+
+  /// Cancels the backup process started from startBackup() Method.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Mirrorfly.cancelBackup();
+  /// ```
+  ///
+  static Future<void> cancelBackup(){
+    return FlyChatFlutterPlatform.instance.cancelBackup();
+  }
+
+  /// Cancels the restore process started from restoreBackup() Method.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Mirrorfly.cancelRestore();
+  /// ```
+  ///
+  static Future<void> cancelRestore(){
+    return FlyChatFlutterPlatform.instance.cancelRestore();
+  }*/
 }
