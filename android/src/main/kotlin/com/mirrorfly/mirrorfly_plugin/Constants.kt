@@ -76,7 +76,7 @@ object Constants {
         "$Domain/usersWhoBlockedMeListFetched"
     const val onConnectedChannel = "$Domain/onConnected"
     const val onDisconnectedChannel = "$Domain/onDisconnected"
-    const val onReconnectingChannel = "$Domain/onConnectionReconnecting"
+    const val onReconnectingChannel = "$Domain/onReconnecting"
 
     //  const val onConnectionNotAuthorized_channel = "$domain/onConnectionNotAuthorized"
     const val onConnectionFailedChannel = "$Domain/onConnectionFailed"

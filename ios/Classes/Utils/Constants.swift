@@ -85,7 +85,7 @@ struct Constants {
     static let onSuccess_channel = "\(domain)/onSuccess"
     static let onMessageDeleteForEveryOne_channel = "\(domain)/onMessageDeleteForEveryOne"
     static let onConnectionFailed_channel = "\(domain)/onConnectionFailed"
-    static let onConnectionReconnecting_channel = "\(domain)/onConnectionReconnecting"
+    static let onConnectionReconnecting_channel = "\(domain)/onReconnecting"
     
     static let getAvailableFeatures_channel = "\(domain)/onAvailableFeaturesUpdated"
     static let onMessageEdited_channel = "\(domain)/onMessageEdited"
