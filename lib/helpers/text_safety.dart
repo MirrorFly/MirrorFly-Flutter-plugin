@@ -23,10 +23,12 @@ class TextSafety {
   /// - `false` if the input is considered clean and safe.
   static bool isUnsafeText(String input) {
     // Normalize input (remove excessive whitespace)
-    String normalizedInput = input.replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
+    String normalizedInput =
+        input.replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
 
     // Step 1: Detect <script> tags
-    RegExp scriptTagPattern = RegExp(r'<\s*script\b[^>]*>(.*?)<\s*/\s*script\s*>', dotAll: true);
+    RegExp scriptTagPattern =
+        RegExp(r'<\s*script\b[^>]*>(.*?)<\s*/\s*script\s*>', dotAll: true);
     var scriptMatches = scriptTagPattern.allMatches(normalizedInput);
 
     for (var match in scriptMatches) {
@@ -43,7 +45,8 @@ class TextSafety {
     if (eventHandlersPattern.hasMatch(normalizedInput)) return true;
 
     // Step 3: Detect JavaScript-based URLs
-    RegExp javascriptURLPattern = RegExp(r'''\b(src|href)\s*=\s*["\']?\s*javascript\s*:''');
+    RegExp javascriptURLPattern =
+        RegExp(r'''\b(src|href)\s*=\s*["\']?\s*javascript\s*:''');
     if (javascriptURLPattern.hasMatch(normalizedInput)) return true;
 
     // Step 4: Detect encoded XSS payloads (e.g., &#x6a; for "j")
@@ -51,7 +54,8 @@ class TextSafety {
     if (encodedPayloadPattern.hasMatch(normalizedInput)) return true;
 
     // Step 5: Detect CSS-based XSS (e.g., <div style="expression(alert(1))">)
-    RegExp cssExpressionPattern = RegExp(r'''style\s*=\s*["\'][^"\']*expression\s*\(''');
+    RegExp cssExpressionPattern =
+        RegExp(r'''style\s*=\s*["\'][^"\']*expression\s*\(''');
     if (cssExpressionPattern.hasMatch(normalizedInput)) return true;
 
     // Step 6: Detect iframe injections (e.g., <iframe src="malicious.com">)
@@ -67,7 +71,8 @@ class TextSafety {
     if (anyHTMLTagPattern.hasMatch(normalizedInput)) return true;
 
     // Step 9: Block meta/object/embed/etc.
-    RegExp metaTagPattern = RegExp(r'<\s*(meta|object|embed|applet|link|base)\b');
+    RegExp metaTagPattern =
+        RegExp(r'<\s*(meta|object|embed|applet|link|base)\b');
     if (metaTagPattern.hasMatch(normalizedInput)) return true;
 
     // Step 10: Block srcdoc attributes in iframes
@@ -82,14 +87,15 @@ class TextSafety {
     if (svgOnEventPattern.hasMatch(normalizedInput)) return true;
 
     // Step 12: Block data: JavaScript or SVG
-    RegExp dataJsOrSvgPattern = RegExp(r'data:(text/javascript|image/svg\+xml)', caseSensitive: false);
+    RegExp dataJsOrSvgPattern =
+        RegExp(r'data:(text/javascript|image/svg\+xml)', caseSensitive: false);
     if (dataJsOrSvgPattern.hasMatch(normalizedInput)) return true;
 
     // Step 13: Block access to document.cookie, location, etc.
-    RegExp jsAccessors = RegExp(r'\b(document\.cookie|window\.location|localStorage|getElementById)\b');
+    RegExp jsAccessors = RegExp(
+        r'\b(document\.cookie|window\.location|localStorage|getElementById)\b');
     if (jsAccessors.hasMatch(normalizedInput)) return true;
 
     return false; // No XSS detected
   }
-
 }

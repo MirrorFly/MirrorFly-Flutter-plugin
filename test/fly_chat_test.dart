@@ -61,7 +61,6 @@ class MockFlyChatFlutterPlatform
   //  implement blockedThisUser
   Stream get blockedThisUser => throw UnimplementedError();
 
-
   @override
   cancelMediaUploadOrDownload(String messageId) {
     //  implement cancelMediaUploadOrDownload
@@ -1323,7 +1322,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  saveUnsentMessage(String jid, String message,List<String>? mentionedUsers) {
+  saveUnsentMessage(String jid, String message, List<String>? mentionedUsers) {
     //  implement saveUnsentMessage
     throw UnimplementedError();
   }
@@ -1941,7 +1940,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> loginWebChatViaQRCode(String barcode, Function(FlyResponse response)? callback) {
+  Future<void> loginWebChatViaQRCode(
+      String barcode, Function(FlyResponse response)? callback) {
     throw UnimplementedError();
   }
 
@@ -1966,7 +1966,7 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
- /* @override
+  /* @override
   Future<bool?> webLoginDetailsCleared() {
     throw UnimplementedError();
   }*/
