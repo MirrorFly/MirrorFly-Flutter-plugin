@@ -22,7 +22,6 @@ class Mirrorfly {
   /// isChatHistoryEnabled to check the chat history is enabled or not
   static var isChatHistoryEnabled = false;
 
-
   /// isPrivateStorageEnabled to check the private storage is enabled or not
   static var isPrivateStorageEnabled = false;
 
@@ -128,6 +127,7 @@ class Mirrorfly {
     isPrivateStorageEnabled = enablePrivateStorage;
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);
   }
+
   /// Provides functionality to register the user to the Mirrorfly platform.
   @Deprecated('Instead of use Mirrorfly.login()')
   static Future<void> registerUser(
@@ -1488,17 +1488,24 @@ class Mirrorfly {
   }) async {
     String messageText = '';
     if (messageParams.messageType == MessageType.text) {
-      messageText = messageParams.textMessageParams?.messageText?? '';
+      messageText = messageParams.textMessageParams?.messageText ?? '';
     } else if (messageParams.messageType == MessageType.image ||
         messageParams.messageType == MessageType.video) {
-      messageText = messageParams.fileMessageParams?.caption?? '';
-    }else if(messageParams.messageType == MessageType.contact){
+      messageText = messageParams.fileMessageParams?.caption ?? '';
+    } else if (messageParams.messageType == MessageType.contact) {
       messageText = (messageParams.contactMessageParams?.name ?? '') +
           (messageParams.contactMessageParams?.numbers.join(' ') ?? '');
     }
     // Perform input validation if enabled
-    if (messageParams.messageSecurityMode == MessageSecurityMode.enabled && messageText.isNotEmpty && TextSafety.isUnsafeText(messageText)) {
-      return flyCallback(FlyResponse(false, '', 'Invalid input: HTML tags and scripts are not allowed',FlyException("500","Invalid input: HTML tags and scripts are not allowed","")));
+    if (messageParams.messageSecurityMode == MessageSecurityMode.enabled &&
+        messageText.isNotEmpty &&
+        TextSafety.isUnsafeText(messageText)) {
+      return flyCallback(FlyResponse(
+          false,
+          '',
+          'Invalid input: HTML tags and scripts are not allowed',
+          FlyException("500",
+              "Invalid input: HTML tags and scripts are not allowed", "")));
     }
     // Send the message if no XSS detected
     return FlyChatFlutterPlatform.instance.sendMessage(
@@ -1506,7 +1513,6 @@ class Mirrorfly {
       callback: flyCallback,
     );
   }
-
 
   /// A method used to edit a text message sent previously.
   ///
@@ -5597,8 +5603,11 @@ class Mirrorfly {
   ///   },
   /// );
   /// ```
-  static Future<void> loginWebChatViaQRCode({required String barcode, required Function(FlyResponse response) flyCallBack}) {
-    return FlyChatFlutterPlatform.instance.loginWebChatViaQRCode(barcode, flyCallBack);
+  static Future<void> loginWebChatViaQRCode(
+      {required String barcode,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance
+        .loginWebChatViaQRCode(barcode, flyCallBack);
   }
 
   /// Logs out a web user session.
@@ -5637,8 +5646,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getWebLoginDetails();
   }
 
-
-  /// Initiates the backup process for chat data.
+  /*/// Initiates the backup process for chat data.
   ///
   /// Example:
   /// ```dart
@@ -5680,5 +5688,5 @@ class Mirrorfly {
   ///
   static Future<void> cancelRestore(){
     return FlyChatFlutterPlatform.instance.cancelRestore();
-  }
+  }*/
 }

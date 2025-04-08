@@ -333,6 +333,7 @@ class MessageParams {
 
   /// The ID of the topic under which the message is sent, if any.
   String topicId;
+
   /// Initializes a new instance of the [MessageParams] class.
   MessageParams._({
     required this.toJid,
@@ -356,10 +357,9 @@ class MessageParams {
     List<String>? mentionedUsersIds,
     required TextMessageParams textMessageParams,
     List<MessageMetaData> metaData = const [],
-    MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     String topicId = "",
   }) {
-
     return MessageParams._(
       toJid: toJid,
       replyMessageId: replyMessageId,
@@ -417,7 +417,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required ContactMessageParams contactMessageParams,
-  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
@@ -438,7 +438,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     List<String>? mentionedUsersIds,
-    MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     required FileMessageParams fileMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
@@ -461,7 +461,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
-  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     required bool isRecorded,
     String topicId = "",
@@ -484,7 +484,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
-  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
@@ -506,7 +506,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
-  MessageSecurityMode? messageSecurityMode=MessageSecurityMode.enabled,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
@@ -644,6 +644,7 @@ enum MessageType {
 }
 
 enum MessageSecurityMode { enabled, disabled }
+
 /// An enumeration of media download statuses.
 ///
 /// This enum defines the various states of media download within the application, providing a clear

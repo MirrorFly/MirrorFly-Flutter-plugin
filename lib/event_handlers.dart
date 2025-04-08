@@ -73,7 +73,8 @@ abstract class MessageEventListeners {
   /// [toJid]: The JID (Jabber ID) of the user or group where the message was deleted.
   /// [messageIds]: A list of message IDs that were deleted.
   /// [messageDeleteType]: The type of deletion event, such as "deleteForEveryone" or "deleteForMe".
-  void onMessageDeleted(String toJid, List<String> messageIds, String messageDeleteType);
+  void onMessageDeleted(
+      String toJid, List<String> messageIds, String messageDeleteType);
 
   /// This listener is triggered whenever all chats are cleared. Listen to this method to handle
   /// the global clearing of all chat histories in the UI.
@@ -117,7 +118,8 @@ abstract class MessageEventListeners {
   /// [message]: A message string providing additional context or information about the result.
   /// [jidList]: A list of JIDs (Jabber IDs) representing the users or groups whose mute status has changed.
   /// [muteStatus]: A boolean indicating the new mute status — `true` if muted, `false` if unmuted.
-  void onChatMuteStatusUpdated(bool isSuccess, String message, List<String> jidList, bool muteStatus);
+  void onChatMuteStatusUpdated(
+      bool isSuccess, String message, List<String> jidList, bool muteStatus);
 }
 
 /// A class that provides a set of callback methods that can be used to listen for Connection Events in the MirrorFly Flutter Plugin.
