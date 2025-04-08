@@ -758,9 +758,16 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
      *
      * - onLogoutWeb
      */
-//    override fun onLogoutWeb(socketId: List<String>?) {
-//        LogMessage.d(TAG, "onLogoutWeb : socketId $socketId")
-//    }
+    override fun onLogoutWeb(socketId: List<String>?) {
+        LogMessage.d(TAG, "onLogoutWeb : socketId $socketId")
+        val socketIdJsonArray = JSONArray(socketId)
+        val map = JSONObject()
+        map.put("socketIdList", socketIdJsonArray)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onWebLogoutChannel,
+            map.toString()
+        )
+    }
 
     /**
      * MuteEventsListener Listeners

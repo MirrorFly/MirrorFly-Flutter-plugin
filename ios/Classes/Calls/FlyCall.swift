@@ -118,9 +118,17 @@ import PushKit
                 }
                 
             }
+
             if (call.method == "initializeMeet"){
+            
                 CallManager.setJoinCallDelegate(delegate: self)
+            
             }
+            
+            if (call.method == "disposePreview"){
+                CallManager.setJoinCallDelegate(delegate: nil)
+            }
+            
             if let methodHandler = FlyMethodConstants.callMethodHandlers[call.method] {
                 NSLog("\(Constants.callTag) Method call \(call.method)")
                 methodHandler(call, result, factory)
@@ -298,11 +306,11 @@ import PushKit
         }
     }
     
-    /// Call Status Duplicate Handle Code Start
+    /// Call Status user exists check
     func isUserExists(userId: String) -> Bool {
         return usersInCall.keys.contains(userId)
     }
-    /// Call Status Duplicate Handle Code End
+    /// Call Status user exists check end
     
     func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: String) {
         NSLog("#MirrorflyCall Events: Call Status Updated--> \(callStatus.rawValue) userID \(userId)")
@@ -322,20 +330,17 @@ import PushKit
             NSLog("\(Constants.callTag) Events: User status already sent so ignoring the status")
             return
         }
-//        if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING){
-            usersInCall.removeAll()
-        ///
+        
         /// re-enabling this as the user is removed at the other scenarios like call timeout and the fetching the list again gives without the user left the call so status is not passing to flutter
         if (callStatus == .ATTENDED || callStatus == .CONNECTED || callStatus == .RINGING || callStatus == .RECONNECTED || callStatus == .CALLING){
 
 
-           usersInCall.removeAll()
+            usersInCall.removeAll()
             usersInCall = CallManager.getCallUsersWithStatus()
             if !isUserExists(userId: selfJID){
                 usersInCall[selfJID] = .CONNECTED
             }
             print("\(Constants.callTag) Events: usersInCall: \(usersInCall)")
-        
 
         }
 
@@ -374,16 +379,22 @@ import PushKit
         if ((callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && isUserExists(userId: userJID)) {
             NSLog("\(Constants.callTag) Events: User exists so forwarding the status")
             usersInCall.removeValue(forKey: userJID)
+            
+            /// ****
+            ///  Checking the user in list and adding again as the user is not present and the status received is equivalent to connected/joined
+            /// ****
+            ///
         }else if !(callStatus == .CALL_TIME_OUT || callStatus == .INVITE_CALL_TIME_OUT  || callStatus == .USER_LEFT || callStatus == .DISCONNECTED) && !isUserExists(userId: userJID){
             NSLog("\(Constants.callTag) Events: User not exists so adding the user")
             usersInCall[userJID] = .CONNECTED
         }
         /// Call Status Duplicate Handle Code End
+
         
-        //Added to Sync the Call log in Call Status update
-        NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
-        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
         
+        /// ****
+        /// Moved this code from below the updateSinkValue to above as this code needs to restirct the status sent to the Flutter side
+        /// ****
         
         if callStatus == .RECONNECTED && !CallManager.isCallConnected(){
             NSLog("#Mirrorfly Call not updating the Call Status bcz Call is reconnected status and call is not connected")
@@ -394,7 +405,12 @@ import PushKit
             NSLog("\(Constants.callTag) Events: Attended Received for remote user so ignoring it")
             return
         }
+        
+        
 
+        //Added to Sync the Call log in Call Status update
+        NSLog("\(Constants.callTag) Events: callLogUpdate in status Update")
+        self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallLogUpdateChannel, value: true)
 
 
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
@@ -590,6 +606,26 @@ import PushKit
             // Handle case when unique ID is not found
             NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> Unique ID is not Found")
         }
+        
+        /// 
+        /// Work Around for Meet Link Initial Video Render Issue
+        ///
+        
+//        if let mirrorFlyViewId = factory?.getUniqueID(forString: userId) {
+//            if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+//                mirrorflyView.updatePreviewVideoTrack(track: videoTrack, updateType: MuteEvent.ACTION_LOCAL_VIDEO_UN_MUTE)
+//            } else {
+//                // Handle case when view is not found
+//                NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> View is not Found")
+//            }
+//        } else {
+//            // Handle case when unique ID is not found
+//            NSLog("\(Constants.callTag) onLocalVideoTrackAdded --> Unique ID is not Found")
+//        }
+        
+        /// 
+        /// Work Around for Meet Link Initial Video Render Issue End
+        ///
         
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onLocalVideoTrackAddedChannel, value: jidJson)
         self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onTrackAddedChannel, value: jidJson)
