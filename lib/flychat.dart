@@ -43,7 +43,7 @@ class Mirrorfly {
       {required String baseUrl,
       required String licenseKey,
       required String iOSContainerID,
-      String? storageFolderName,
+      String storageFolderName = "Mirrorfly Flutter",
       bool enableMobileNumberLogin = true,
       bool isTrialLicenceKey = true,
       bool chatHistoryEnable = false,
