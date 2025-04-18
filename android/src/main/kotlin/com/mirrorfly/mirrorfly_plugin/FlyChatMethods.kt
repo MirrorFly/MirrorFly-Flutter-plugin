@@ -676,6 +676,7 @@ class FlyChatMethods {
         if (profileDetails != null) {
             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
             //DebugUtilis.v("ContactManager.getProfileDetails", profileDetails.tojsonString())
+            LogMessage.d("ContactManager.getProfileDetails", "${profileDetails.toJsonString()}")
             result.success(profileDetails.toJsonString())
         } else {
             ContactManager.getUserProfile(jid, true, true, object : FlyCallback {
@@ -684,6 +685,7 @@ class FlyChatMethods {
                     throwable: Throwable?,
                     data: HashMap<String, Any>
                 ) {
+                    LogMessage.d("ContactManager.getUserProfile", "${data.toJsonString()}")
                     val profile = ContactManager.getProfileDetails(jid)
                     if (profile != null) {
                         result.success(profile.toJsonString())

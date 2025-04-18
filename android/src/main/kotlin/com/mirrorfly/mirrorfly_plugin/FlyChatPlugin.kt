@@ -1195,6 +1195,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     private fun sendNotificationPayloadMessage(intent: Intent): Boolean {
         Log.d("sendNotificationPayloadMessage", "${intent.extras}")
+//        intent.extras?.let {
+//            Log.d(TAG, "mainActivityIntent ${it.getString("FROM")}")
+//        }
         /*if (SELECT_NOTIFICATION.equals(intent.action)
             || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.action)
         ) {

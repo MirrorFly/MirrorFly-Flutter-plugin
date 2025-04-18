@@ -70,7 +70,7 @@ class MirrorflyView(
             LogMessage.d("$tag Lifecycle","dispose $jid")
             getTextureViewByTag(jid)?.release()
         }else{
-            LogMessage.d("$tag Lifecycle","not dispose")
+            LogMessage.d("$tag Lifecycle","not dispose $id")
         }
     }
 

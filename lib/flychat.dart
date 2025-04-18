@@ -43,7 +43,7 @@ class Mirrorfly {
       {required String baseUrl,
       required String licenseKey,
       required String iOSContainerID,
-      String? storageFolderName,
+      String storageFolderName = "Mirrorfly Flutter",
       bool enableMobileNumberLogin = true,
       bool isTrialLicenceKey = true,
       bool chatHistoryEnable = false,
@@ -5653,7 +5653,7 @@ class Mirrorfly {
   /// await Mirrorfly.startBackup();
   /// ```
   ///
-  static Future<void> startBackup({bool enableEncryption = true}){
+  static Future<void> startBackup({bool enableEncryption = true}) {
     return FlyChatFlutterPlatform.instance.startBackup(enableEncryption);
   }
 
@@ -5664,8 +5664,9 @@ class Mirrorfly {
   /// await Mirrorfly.restoreBackup();
   /// ```
   ///
-  static Future<void> restoreBackup({required String backupPath}){
-    return FlyChatFlutterPlatform.instance.restoreBackup(backupPath: backupPath);
+  static Future<void> restoreBackup({required String backupPath}) {
+    return FlyChatFlutterPlatform.instance
+        .restoreBackup(backupPath: backupPath);
   }
 
   /// Cancels the backup process started from startBackup() Method.
@@ -5675,7 +5676,7 @@ class Mirrorfly {
   /// await Mirrorfly.cancelBackup();
   /// ```
   ///
-  static Future<void> cancelBackup(){
+  static Future<void> cancelBackup() {
     return FlyChatFlutterPlatform.instance.cancelBackup();
   }
 
@@ -5686,7 +5687,7 @@ class Mirrorfly {
   /// await Mirrorfly.cancelRestore();
   /// ```
   ///
-  static Future<void> cancelRestore(){
+  static Future<void> cancelRestore() {
     return FlyChatFlutterPlatform.instance.cancelRestore();
   }
 }
