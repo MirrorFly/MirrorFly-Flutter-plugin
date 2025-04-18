@@ -1,3 +1,9 @@
+## [1.4.0] Feature Updates
+* Backup and Restore feature
+* Bug Fixes
+* Android SDK updated to 7.13.20
+* iOS SDK updated to 5.18.12
+
 ## [1.3.0] Feature Updates
 * Mention User feature in Group Chats 
 * Schedule Meet feature 
