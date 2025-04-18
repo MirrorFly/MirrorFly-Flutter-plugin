@@ -17,12 +17,12 @@ class ChatBuilder {
   /// and debug logging.
   ChatBuilder(
       {required this.domainBaseUrl,
-      this.storageFolderName,
+      this.storageFolderName = "Mirrorfly Flutter",
       required this.iOSContainerID,
       required this.licenseKey,
       this.enableMobileNumberLogin = false,
       this.isTrialLicenceKey = true,
-      this.chatHistoryEnable,
+      this.chatHistoryEnable = true,
       // this.maximumRecentChatPin,
       // this.groupConfig,
       // bool useProfileName = false,
@@ -33,7 +33,7 @@ class ChatBuilder {
   String domainBaseUrl;
 
   /// The name of the local storage folder. Optional.
-  String? storageFolderName;
+  String storageFolderName;
 
   /// The ID of the App Groups container. Required for iOS platforms.
   String iOSContainerID;
@@ -48,7 +48,7 @@ class ChatBuilder {
   bool isTrialLicenceKey;
 
   /// Determines if chat history should be enabled. Optional.
-  bool? chatHistoryEnable;
+  bool chatHistoryEnable;
 
   // int? maximumRecentChatPin;
   // GroupConfig? groupConfig;

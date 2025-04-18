@@ -103,6 +103,10 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      LogMessage.d("MirrorFlyView", "setState addPostFrameCallback");
+      setState(() {});
+    });
   }
 
   @override

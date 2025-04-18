@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
   s.dependency 'GoogleWebRTC','1.1.31999'
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16.1'
-  s.dependency 'MirrorFlySDK', '5.18.10'
+  s.dependency 'MirrorFlySDK', '5.18.12'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
