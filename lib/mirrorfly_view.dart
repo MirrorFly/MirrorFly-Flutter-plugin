@@ -107,7 +107,6 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
       LogMessage.d("MirrorFlyView", "setState addPostFrameCallback");
       setState(() {});
     });
-
   }
 
   @override
