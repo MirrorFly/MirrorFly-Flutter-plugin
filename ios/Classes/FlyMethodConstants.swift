@@ -61,6 +61,7 @@ class FlyMethodConstants {
             "disposePreview": flyCallMethods.disposePreview,
             "joinCall": flyCallMethods.joinCall,
             "startVideoCapture": flyCallMethods.startVideoCapture,
+            "getCurrentCameraPosition": flyCallMethods.getCurrentCameraPosition,
             
         ]
     }()

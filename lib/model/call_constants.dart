@@ -290,3 +290,13 @@ class CallDirection {
   /// Represents the call direction when the call is incoming.
   static const String incoming = "Incoming";
 }
+
+/// Represents the camera position for a video call session.
+class CameraPosition {
+  /// Represents the camera position when the front camera is accessed.
+  static const String frontCamera = "frontcamera";
+
+  /// Represents the camera position when the back camera is accessed.
+  static const String backCamera = "backcamera";
+
+}

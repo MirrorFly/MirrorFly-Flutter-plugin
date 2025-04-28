@@ -928,5 +928,10 @@ import MirrorFlySDK
           }
         }
     }
+
+    func getCurrentCameraPosition(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
+         let cameraPosition = CallManager.getCurrentCameraPosition()
+         result(cameraPosition?.rawValue.lowercased())
+     }
     
 }

@@ -1736,6 +1736,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('cancelBackup has not been implemented.');
   }
 
+  /// This method is used to cancel the restore started.
+  Future<String> getCurrentCameraPosition() {
+    throw UnimplementedError('getCurrentCameraPosition has not been implemented.');
+  }
+
   /// This listener is set to listen the message events.
   setMessageEventListener(MessageEventListeners messageEventsListener) {
     throw UnimplementedError(

@@ -357,6 +357,7 @@ object FlyMethodConstants {
         "disposePreview" to flyCallMethods::disposePreview,
         "getMeetUsername" to flyCallMethods::getMeetUsername,
         "getCurrentCallDuration" to flyCallMethods::getCurrentCallDuration,
+        "getCurrentCameraPosition" to flyCallMethods::getCurrentCameraPosition,
     )
 
 

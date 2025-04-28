@@ -5690,4 +5690,9 @@ class Mirrorfly {
   static Future<void> cancelRestore() {
     return FlyChatFlutterPlatform.instance.cancelRestore();
   }
+
+  /// To get the current [CameraPosition] for the ongoing Call
+  static Future<String> getCurrentCameraPosition(){
+    return FlyChatFlutterPlatform.instance.getCurrentCameraPosition();
+  }
 }

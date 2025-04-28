@@ -6532,4 +6532,23 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return FlyConstants.empty;
     }
   }
+
+  @override
+  Future<String> getCurrentCameraPosition() async {
+    String? val = "";
+    try {
+      val = await mirrorFlyCallMethodChannel.invokeMethod<String>('getCurrentCameraPosition');
+      LogMessage.d('getCurrentCameraPosition', ' $val');
+      return val ?? "";
+      // callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      return "";
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      return "";
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
 }

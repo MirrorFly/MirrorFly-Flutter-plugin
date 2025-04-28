@@ -1875,6 +1875,12 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<String> getCurrentCameraPosition() {
+    // implement getCurrentCameraPosition
+    throw UnimplementedError();
+  }
+
+  @override
   // implement onBackupFailure
   Stream get onBackupFailure => throw UnimplementedError();
 
