@@ -66,6 +66,60 @@ abstract class MessageEventListeners {
   ///
   /// [chatMessage]: The `ChatMessageModel` instance containing the details of the edited message.
   void onMessageEdited(ChatMessageModel chatMessage);
+
+  /// This listener is triggered whenever a message is deleted. Listen to this method to handle
+  /// the deletion of a message in the UI.
+  ///
+  /// [toJid]: The JID (Jabber ID) of the user or group where the message was deleted.
+  /// [messageIds]: A list of message IDs that were deleted.
+  /// [messageDeleteType]: The type of deletion event, such as "deleteForEveryone" or "deleteForMe".
+  void onMessageDeleted(
+      String toJid, List<String> messageIds, String messageDeleteType);
+
+  /// This listener is triggered whenever all chats are cleared. Listen to this method to handle
+  /// the global clearing of all chat histories in the UI.
+  ///
+  /// [isChatCleared]: A boolean flag indicating whether all chats have been successfully cleared.
+  void onAllChatsCleared(bool isChatCleared);
+
+  /// This listener is triggered whenever a chat is cleared. Listen to this method to handle
+  /// the clearing of chat history in the UI.
+  ///
+  /// [toJid]: The JID (Jabber ID) of the user or group whose chat was cleared.
+  /// [chatClearType]: The type of chat clear event, such as "delete" or "clear".
+  void onChatCleared(String toJid, String chatClearType);
+
+  /// This listener is triggered whenever a chat is archived or unarchived. Listen to this method to handle
+  /// the archive status change of a chat in the UI.
+  ///
+  /// [toUser]: The JID (Jabber ID) of the user or group whose chat archive status has changed.
+  /// [archiveStatus]: A boolean flag indicating the new archive status — `true` for archived, `false` for unarchived.
+  void onArchiveUnArchiveChats(String chatJid, bool archiveStatus);
+
+  /// This listener is triggered whenever the archive settings are updated. Listen to this method to handle
+  /// changes in the archive chat settings in the UI.
+  ///
+  /// [archiveSettingStatus]: A boolean flag indicating the updated archive setting status —
+  /// `true` if the setting is enabled, `false` if it is disabled.
+  void onArchivedSettingsUpdated(bool archiveSettingStatus);
+
+  /// This listener is triggered whenever the mute settings for a chat are updated. Listen to this method to handle
+  /// the result of a mute or unmute operation in the UI.
+  ///
+  /// [isSuccess]: A boolean flag indicating whether the mute/unmute operation was successful.
+  /// [message]: A message string providing additional context or details about the result.
+  /// [isMuteStatus]: A boolean indicating the updated mute status — `true` if muted, `false` if unmuted.
+  void onUpdateMuteSettings(bool isSuccess, String message, bool isMuteStatus);
+
+  /// This listener is triggered whenever the mute status for one or more chats is updated.
+  /// Listen to this method to handle bulk mute/unmute operations in the UI.
+  ///
+  /// [isSuccess]: A boolean flag indicating whether the operation was successful.
+  /// [message]: A message string providing additional context or information about the result.
+  /// [jidList]: A list of JIDs (Jabber IDs) representing the users or groups whose mute status has changed.
+  /// [muteStatus]: A boolean indicating the new mute status — `true` if muted, `false` if unmuted.
+  void onChatMuteStatusUpdated(
+      bool isSuccess, String message, List<String> jidList, bool muteStatus);
 }
 
 /// A class that provides a set of callback methods that can be used to listen for Connection Events in the MirrorFly Flutter Plugin.
@@ -78,6 +132,9 @@ abstract class ConnectionEventListeners {
 
   /// This listener is triggered whenever the connection is failed.
   void onConnectionFailed(String connectionError);
+
+  /// This listener is triggered whenever the reconnecting.
+  void onReconnecting();
 
   /// This listener is triggered whenever the user logged in is logged out by the server.
   void onLoggedOut();

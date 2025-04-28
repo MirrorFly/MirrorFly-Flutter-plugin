@@ -147,6 +147,7 @@ class FlyMethodConstants {
                 "updateArchiveUnArchiveChat": flyChatMethods.updateArchiveUnArchiveChat,
                 "getArchivedChatList": flyChatMethods.getArchivedChatList,
                 "updateChatMuteStatus": flyChatMethods.updateChatMuteStatus,
+                "updateChatMuteStatusList": flyChatMethods.updateChatMuteStatusList,
                 "sendTypingStatus": flyChatMethods.sendTypingStatus,
                 "sendTypingGoneStatus": flyChatMethods.sendTypingGoneStatus,
                 "setNotificationSound": flyChatMethods.setNotificationSound,
@@ -218,6 +219,8 @@ class FlyMethodConstants {
                 "getUnreadMessagesCount": flyChatMethods.getUnreadMessagesCount,
                 "loginWebChatViaQRCode": flyChatMethods.loginWebChatViaQRCode,
                 "webLoginDetailsCleared": flyChatMethods.webLoginDetailsCleared,
+                "getWebLoginDetails": flyChatMethods.getWebLoginDetails,
+                "logoutWebUser": flyChatMethods.logoutWebUser,
                 "sendContactUsInfo": flyChatMethods.sendContactUsInfo,
                 "getJidFromPhoneNumber": flyChatMethods.getJidFromPhoneNumber,
                 "editTextMessage": flyChatMethods.editTextMessage,
@@ -228,5 +231,7 @@ class FlyMethodConstants {
                 "isPrivateStorageEnabled": flyChatMethods.isPrivateStorageEnabled,
                 "startBackup": flyChatMethods.startBackup,
                 "restoreBackup": flyChatMethods.restoreBackup,
+                "cancelBackup": flyChatMethods.cancelBackup,
+                "cancelRestore": flyChatMethods.cancelRestore,
             ] }()
 }

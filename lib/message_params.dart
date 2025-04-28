@@ -156,10 +156,8 @@ extension ExtractFileMessage on FileMessage {
 class MeetMessage {
   /// Initializes a new instance of the [MeetMessage] class.
   MeetMessage(
-      {
-      this.title,
-        required this.scheduledDateTime,
-        required this.link});
+      {this.title, required this.scheduledDateTime, required this.link});
+
   /// The title of the meeting.
   String? title;
 
@@ -185,11 +183,8 @@ class MeetMessage {
 ///
 extension ExtractMeetMessage on MeetMessage {
   /// Converts a [MeetMessage] object into a map.
-  Map<String, dynamic> toMap() => {
-        'title': title,
-        'scheduledDateTime': scheduledDateTime,
-        'link': link
-      };
+  Map<String, dynamic> toMap() =>
+      {'title': title, 'scheduledDateTime': scheduledDateTime, 'link': link};
 }
 
 /// Represents the parameters for a location message.
@@ -331,10 +326,14 @@ class MessageParams {
   /// Parameters for a file message, if applicable.
   FileMessageParams? fileMessageParams;
 
+  MessageSecurityMode? messageSecurityMode;
+
   /// Parameters for a Meet message, if applicable.
-    MeetMessage? meetMessageParams;
+  MeetMessage? meetMessageParams;
+
   /// The ID of the topic under which the message is sent, if any.
   String topicId;
+
   /// Initializes a new instance of the [MessageParams] class.
   MessageParams._({
     required this.toJid,
@@ -347,6 +346,7 @@ class MessageParams {
     this.contactMessageParams,
     this.fileMessageParams,
     this.meetMessageParams,
+    this.messageSecurityMode,
     this.topicId = "",
   });
 
@@ -357,6 +357,7 @@ class MessageParams {
     List<String>? mentionedUsersIds,
     required TextMessageParams textMessageParams,
     List<MessageMetaData> metaData = const [],
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     String topicId = "",
   }) {
     return MessageParams._(
@@ -365,6 +366,7 @@ class MessageParams {
       mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.text,
       textMessageParams: textMessageParams,
+      messageSecurityMode: messageSecurityMode,
       metaData: metaData,
       topicId: topicId,
     );
@@ -375,20 +377,20 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     List<String>? mentionedUsersIds,
-    required  MeetMessage meetMessageParams,
+    required MeetMessage meetMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
-
     return MessageParams._(
       toJid: toJid,
       replyMessageId: replyMessageId,
       mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.meet,
-      meetMessageParams : meetMessageParams,
+      meetMessageParams: meetMessageParams,
       topicId: topicId,
     );
   }
+
   /// Constructs a [MessageParams] object for a Location message.
   factory MessageParams.location({
     required String toJid,
@@ -415,6 +417,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required ContactMessageParams contactMessageParams,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
@@ -424,6 +427,7 @@ class MessageParams {
       mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.contact,
       contactMessageParams: contactMessageParams,
+      messageSecurityMode: messageSecurityMode,
       metaData: metaData,
       topicId: topicId,
     );
@@ -434,6 +438,7 @@ class MessageParams {
     required String toJid,
     String? replyMessageId,
     List<String>? mentionedUsersIds,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     required FileMessageParams fileMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
@@ -444,6 +449,7 @@ class MessageParams {
       mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.image,
       fileMessageParams: fileMessageParams,
+      messageSecurityMode: messageSecurityMode,
       metaData: metaData,
       topicId: topicId,
     );
@@ -455,6 +461,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     required bool isRecorded,
     String topicId = "",
@@ -465,6 +472,7 @@ class MessageParams {
       mentionedUsersIds: mentionedUsersIds,
       messageType: isRecorded ? MessageType.audioRecorded : MessageType.audio,
       fileMessageParams: fileMessageParams,
+      messageSecurityMode: messageSecurityMode,
       metaData: metaData,
       topicId: topicId,
     );
@@ -476,6 +484,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
@@ -485,6 +494,7 @@ class MessageParams {
       mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.video,
       fileMessageParams: fileMessageParams,
+      messageSecurityMode: messageSecurityMode,
       metaData: metaData,
       topicId: topicId,
     );
@@ -496,6 +506,7 @@ class MessageParams {
     String? replyMessageId,
     List<String>? mentionedUsersIds,
     required FileMessageParams fileMessageParams,
+    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
   }) {
@@ -505,6 +516,7 @@ class MessageParams {
       mentionedUsersIds: mentionedUsersIds,
       messageType: MessageType.document,
       fileMessageParams: fileMessageParams,
+      messageSecurityMode: messageSecurityMode,
       metaData: metaData,
       topicId: topicId,
     );
@@ -553,7 +565,7 @@ extension ExtractMessageParams on MessageParams {
         'locationMessage': locationMessageParams?.toMap(),
         'contactMessage': contactMessageParams?.toMap(),
         'fileMessage': fileMessageParams?.toMap(),
-       'meetMessage':meetMessageParams?.toMap(),
+        'meetMessage': meetMessageParams?.toMap(),
         'topicId': topicId,
       };
 }
@@ -625,12 +637,13 @@ enum MessageType {
   /// The string representation for a meet message.
   static const isMeet = "MEET";
 
-
   const MessageType(this.value);
 
   /// The enum constructor takes a [value] parameter which is the string representation of the message type.
   final String value;
 }
+
+enum MessageSecurityMode { enabled, disabled }
 
 /// An enumeration of media download statuses.
 ///

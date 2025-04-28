@@ -30,6 +30,8 @@ import MirrorFlySDK
     /// This feature ensures that a call is made only after the server is reconnected during permission popups.
     let checkXMPPConnection = true
     
+    var meetLinkServerObserverToken: NSObjectProtocol?
+    
     
     func getCallUsersList(call: FlutterMethodCall, result: @escaping FlutterResult, factory: MirrorflyViewFactory?) {
         
@@ -846,16 +848,32 @@ import MirrorFlySDK
         
         if !CallManager.isConnectedToLinkServer(){
             CallManager.setupJoinCallViaLink()
+            meetLinkServerObserverToken = NotificationCenter.default.addObserver(forName: .signalConnected, object: nil, queue: nil) { notification in
+                print("isConnectedToLinkServer isConnectedToLinkServer observer returned")
+                if let token = self.meetLinkServerObserverToken {
+                    NotificationCenter.default.removeObserver(token)
+                    self.meetLinkServerObserverToken = nil
+                }
+                self.subscribeCallEvents(callLink: callLink, userName: userName, result: result)
+            }
+            
+            
+        }else{
+            print("isConnectedToLinkServer isConnectedToLinkServer else")
+            subscribeCallEvents(callLink: callLink, userName: userName, result: result)
         }
         
-//         if(CallManager.isVideoCallPermissionsGranted()){
-//             CallManager.startVideoCapture()
-//         }
         
+    }
+    
+    private func subscribeCallEvents(callLink: String, userName: String, result: @escaping FlutterResult) {
+        print("isConnectedToLinkServer subscribeCallEvents")
         CallManager.subscribeToCallEvents(link: callLink, name: userName) { isSuccess, flyError in
             if isSuccess{
+                print("isConnectedToLinkServer subscribeCallEvents issuccess")
                 result(isSuccess)
             }else{
+                print("isConnectedToLinkServer subscribeCallEvents failed")
                 if case let .unexpected(message, code) = flyError {
                     if code == ErrorCode.NO_NETWORK{
                         result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))

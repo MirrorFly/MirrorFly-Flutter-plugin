@@ -1,3 +1,29 @@
+## [1.4.0] Feature Updates
+* Backup and Restore feature
+* Bug Fixes
+* Android SDK updated to 7.13.20
+* iOS SDK updated to 5.18.12
+
+## [1.3.0] Feature Updates
+* Mention User feature in Group Chats 
+* Schedule Meet feature 
+* Android SDK updated to 7.13.17 
+* iOS SDK updated to 5.18.10 
+* Bug fixes 
+* Chat Mute/Unmute, Archive/Unarchive event handler parameter updates 
+* QR Login feature 
+* XSS attack check added as a parameter (enabled by default). It can be disabled by changing messageSecurityMode in MessageParams
+
+## [1.2.0] Multi-Session Sync Updates
+* Chat mute/unmute 
+* Chat archive/unarchive 
+* Chat global mute settings 
+* Chat archive settings updates 
+* Chat delete updates 
+* Chat clear updates 
+* Android SDK updated to 7.13.15 
+* iOS SDK updated to 5.18.8
+
 ## [1.1.1] Bug Fix
 * Topic ID Added for iOS Messages
 * iOS SDK Updated to 5.18.7

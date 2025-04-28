@@ -249,6 +249,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  /// This method is used to update the list chat mute status.
+  updateChatMuteStatusList(List<String> jidList, bool muteStatus) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   /// This method is used to update the recent chat pin status.
   updateRecentChatPinStatus(String jid, bool pinStatus) {
     throw UnimplementedError('has not been implemented.');
@@ -772,6 +777,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onConnectionFailed =>
       throw UnimplementedError('has not been implemented.');
 
+  /// Stream that emits events when the server is reconnecting.
+  Stream<dynamic> get onReconnecting =>
+      throw UnimplementedError('has not been implemented.');
+
   // Stream<dynamic> get connectionFailed => throw UnimplementedError('has not been implemented.');
 
   // Stream<dynamic> get connectionSuccess => throw UnimplementedError('has not been implemented.');
@@ -1153,27 +1162,32 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<String?> getRingtoneName() {
     throw UnimplementedError('has not been implemented.');
   }
+  Future<bool?> iOSFileExist(String filePath) {
+    throw UnimplementedError('has not been implemented.');
+  }
 
+  */
+
+  /// This method is used to login in Web using QR Code
   Future<void> loginWebChatViaQRCode(
       String barcode, Function(FlyResponse response)? callback) {
     throw UnimplementedError('has not been implemented.');
   }
 
+  /// This method is used to clear the web login details
   Future<bool?> webLoginDetailsCleared() {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<bool?> logoutWebUser(List<String> logins) {
+  /// This method is used to logout the user from web
+  Future<bool?> logoutWebUser() {
     throw UnimplementedError('has not been implemented.');
   }
 
-  Future<bool?> iOSFileExist(String filePath) {
-    throw UnimplementedError('has not been implemented.');
-  }
-
+  /// This method is used to get web login details
   Future<dynamic> getWebLoginDetails() {
     throw UnimplementedError('has not been implemented.');
-  }*/
+  }
 
   /// This method is used to update the favourite status of a message.
   Future<void> updateFavouriteStatus(
@@ -1470,6 +1484,42 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   /// Stream that emits events when a backup is progress changes.
   Stream<dynamic> get onRestoreProgressChanged =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a chat is cleared.
+  Stream<dynamic> get onChatCleared =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a message is deleted
+  Stream<dynamic> get onMessageDeleted =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a all chats is cleared
+  Stream<dynamic> get onAllChatsCleared =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a message favourites has been updated
+  Stream<dynamic> get onUpdateFavourites =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a corresponding web login is logged out
+  Stream<dynamic> get onWebLogout =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a chat is mute/un-muted
+  Stream<dynamic> get onChatMuteStatusUpdated =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when a mute/un-mute setting is updated
+  Stream<dynamic> get onUpdateMuteSettings =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when chat is Archived/Unarchived
+  Stream<dynamic> get onArchiveUnArchiveChats =>
+      throw UnimplementedError('has not been implemented.');
+
+  /// Stream that emits events when Archived/Unarchive settings is toggled
+  Stream<dynamic> get onArchivedSettingsUpdated =>
       throw UnimplementedError('has not been implemented.');
 
   /// This method is used to make the video call.
