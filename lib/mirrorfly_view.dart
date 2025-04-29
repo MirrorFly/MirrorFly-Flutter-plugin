@@ -47,6 +47,7 @@ class MirrorFlyView extends StatefulWidget {
   /// Constructor for the [MirrorFlyView] class.
   const MirrorFlyView(
       {Key? key,
+        @Deprecated("This field is not used and handled internally")
       this.mirror = true,
       this.scalingType = ScalingType.scaleAspectFILL,
       this.viewBgColor,

@@ -320,6 +320,11 @@ import MirrorFlySDK
             jsonObject.setValue("CAMERA_SWITCH_SUCCESS", forKey: "callAction")
             let callUpdate = pluginDictToJson(dictionary: jsonObject)
             self.eventChannelInitializer.updateSinkValue(forChannel: Constants.onCallActionChannel, value: callUpdate)
+            if let mirrorFlyViewId = factory?.getUniqueID(forString: AppUtils.shared.getMyJid()) {
+                if let (_, mirrorflyView) = factory?.mirrorflyViews[mirrorFlyViewId] {
+                    mirrorflyView.setMirror(isMirror: CallManager.getCurrentCameraPosition() != CameraPosition.backCamera)
+                }
+            }
             result(true)
         }
     }

@@ -24,6 +24,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import org.webrtc.RendererCommon
+import com.mirrorflysdk.flycall.call.utils.CameraPosition
 
 
 class MirrorflyView(
@@ -88,6 +89,7 @@ class MirrorflyView(
             getTextureViewByTag(jid)?.visibility = View.VISIBLE
             getImageViewByTag(jid)?.visibility = View.GONE
             CallManager.getLocalProxyVideoSink()?.setTarget(getTextureViewByTag(jid))
+            setMirror(CallManager.getCurrentCameraPosition() != CameraPosition.BackCamera)
             LogMessage.d(tag,"Local Target set $id $jid ${CallManager.getLocalProxyVideoSink()} ${CallManager.isVideoMuted()} ${getTextureViewByTag(jid)}")
         }else{
             setProfileView(jid)

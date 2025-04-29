@@ -29,9 +29,9 @@ class MirrorflyViewBuilder {
             if (creationParams.containsKey("isLocal") || (userJid.toString() == CallManager.getCurrentUserId())) {
                 newMirrorflyView.setLocalTarget()
             }
-            if (creationParams.containsKey("setMirror")) {
-                newMirrorflyView.setMirror(creationParams["setMirror"] as Boolean)
-            }
+//            if (creationParams.containsKey("setMirror")) {
+//                newMirrorflyView.setMirror(creationParams["setMirror"] as Boolean)
+//            }
             if (creationParams.containsKey("isRemote") || (userJid.toString() != CallManager.getCurrentUserId())) {
                 newMirrorflyView.setRemoteTarget(userJid.toString())
             }
