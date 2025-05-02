@@ -1742,32 +1742,32 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// This listener is set to listen the message events.
-  setMessageEventListener(MessageEventListeners messageEventsListener) {
+  setMessageEventListener(MessageEventListeners? messageEventsListener) {
     throw UnimplementedError(
         'setMessageEventListener has not been implemented.');
   }
 
   /// This listener is set to listen the connection events.
   setConnectionEventListener(
-      ConnectionEventListeners connectionEventsListener) {
+      ConnectionEventListeners? connectionEventsListener) {
     throw UnimplementedError(
         'setConnectionEventListener has not been implemented.');
   }
 
   /// This listener is set to listen the group events.
-  setGroupEventsListener(GroupEventListeners groupEventsListener) {
+  setGroupEventsListener(GroupEventListeners? groupEventsListener) {
     throw UnimplementedError(
         'setGroupEventsListener has not been implemented.');
   }
 
   /// This listener is set to listen the profile events.
-  setProfileEventsListener(ProfileEventListeners profileEventsListener) {
+  setProfileEventsListener(ProfileEventListeners? profileEventsListener) {
     throw UnimplementedError(
         'setProfileEventsListener has not been implemented.');
   }
 
   /// This listener is set to listen the call events.
-  setCallEventListener(CallEventListeners callEventsListener) {
+  setCallEventListener(CallEventListeners? callEventsListener) {
     throw UnimplementedError('setCallEventListener has not been implemented.');
   }
 

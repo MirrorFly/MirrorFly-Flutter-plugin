@@ -6331,28 +6331,28 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  void setMessageEventListener(MessageEventListeners messageEventsListener) {
+  void setMessageEventListener(MessageEventListeners? messageEventsListener) {
     this.messageEventsListener = messageEventsListener;
   }
 
   @override
   void setConnectionEventListener(
-      ConnectionEventListeners connectionEventsListener) {
+      ConnectionEventListeners? connectionEventsListener) {
     this.connectionEventsListener = connectionEventsListener;
   }
 
   @override
-  void setProfileEventsListener(ProfileEventListeners profileEventsListener) {
+  void setProfileEventsListener(ProfileEventListeners? profileEventsListener) {
     this.profileEventsListener = profileEventsListener;
   }
 
   @override
-  void setGroupEventsListener(GroupEventListeners groupEventsListener) {
+  void setGroupEventsListener(GroupEventListeners? groupEventsListener) {
     this.groupEventsListener = groupEventsListener;
   }
 
   @override
-  void setCallEventListener(CallEventListeners callEventsListener) {
+  void setCallEventListener(CallEventListeners? callEventsListener) {
     this.callEventsListener = callEventsListener;
   }
 

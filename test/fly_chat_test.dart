@@ -1739,32 +1739,32 @@ class MockFlyChatFlutterPlatform
   }*/
 
   @override
-  setMessageEventListener(MessageEventListeners messageEventListeners) {
+  setMessageEventListener(MessageEventListeners? messageEventListeners) {
     // implement setMessageEventListener
     throw UnimplementedError();
   }
 
   @override
   setConnectionEventListener(
-      ConnectionEventListeners connectionEventListeners) {
+      ConnectionEventListeners? connectionEventListeners) {
     // implement setConnectionEventListener
     throw UnimplementedError();
   }
 
   @override
-  setProfileEventsListener(ProfileEventListeners profileEventListeners) {
+  setProfileEventsListener(ProfileEventListeners? profileEventListeners) {
     // implement setProfileEventsListener
     throw UnimplementedError();
   }
 
   @override
-  setGroupEventsListener(GroupEventListeners groupEventListeners) {
+  setGroupEventsListener(GroupEventListeners? groupEventListeners) {
     // implement setGroupEventsListener
     throw UnimplementedError();
   }
 
   @override
-  setCallEventListener(CallEventListeners callEventListeners) {
+  setCallEventListener(CallEventListeners? callEventListeners) {
     // implement setCallEventListener
     throw UnimplementedError();
   }

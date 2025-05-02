@@ -5244,7 +5244,7 @@ class Mirrorfly {
   /// Parameters:
   ///   [messageEventListeners] - The listener to be registered for message events.
   ///
-  static setMessageEventListener(MessageEventListeners messageEventListeners) {
+  static setMessageEventListener(MessageEventListeners? messageEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setMessageEventListener(messageEventListeners);
   }
@@ -5257,7 +5257,7 @@ class Mirrorfly {
   /// Parameters:
   ///   [connectionEventListeners] - The listener to be registered for connection events.
   static setConnectionEventListener(
-      ConnectionEventListeners connectionEventListeners) {
+      ConnectionEventListeners? connectionEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setConnectionEventListener(connectionEventListeners);
   }
@@ -5270,7 +5270,7 @@ class Mirrorfly {
   /// Parameters:
   ///   [profileEventListeners] - The listener to be registered for profile events.
   ///
-  static setProfileEventListener(ProfileEventListeners profileEventListeners) {
+  static setProfileEventListener(ProfileEventListeners? profileEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setProfileEventsListener(profileEventListeners);
   }
@@ -5282,7 +5282,7 @@ class Mirrorfly {
   /// Parameters:
   ///   [groupEventListeners] - The listener to be registered for group events.
   ///
-  static setGroupEventListener(GroupEventListeners groupEventListeners) {
+  static setGroupEventListener(GroupEventListeners? groupEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setGroupEventsListener(groupEventListeners);
   }
@@ -5293,7 +5293,7 @@ class Mirrorfly {
   ///
   /// Parameters:
   ///   [callEventListeners] - The listener to be registered for call events.
-  static setCallEventListener(CallEventListeners callEventListeners) {
+  static setCallEventListener(CallEventListeners? callEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setCallEventListener(callEventListeners);
   }
