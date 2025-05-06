@@ -458,6 +458,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         )
     }
 
+    override fun onSuperAdminDeleteGroup(groupJid: String, groupName: String) {
+
+    }
+
     override fun onMemberRemovedFromGroup(
         groupJid: String,
         removedMemberJid: String,
