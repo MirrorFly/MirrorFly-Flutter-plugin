@@ -610,6 +610,16 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onArchivedSettingsUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
+
+  /// A event channel for chat Archive/Unarchive listening events.
+  @visibleForTesting
+  final onSuperAdminDeleteGroupChannel =
+      const EventChannel('contus.mirrorfly/onSuperAdminDeleteGroup');
+
+  /// A broadcast stream controller for chat Archive/Unarchive listening events.
+  final StreamController<dynamic> onSuperAdminDeleteGroupStreamController =
+      StreamController<dynamic>.broadcast();
+
   // @visibleForTesting
   // final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
   // final StreamController<dynamic> onFailureStreamController = StreamController<dynamic>.broadcast();
@@ -996,6 +1006,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onArchivedSettingsUpdated =>
       onArchivedSettingsUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onSuperAdminDeleteGroup =>
+      onSuperAdminDeleteGroupStreamController.stream;
 
   @override
   Stream<dynamic> get onLocalVideoTrackAdded =>
@@ -1615,6 +1629,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("MirrorFly",
           "Error on chat archive / Unarchive settings toggle: $error");
       onArchivedSettingsUpdatedStreamController.addError(error);
+    });
+
+    onSuperAdminDeleteGroupChannel.receiveBroadcastStream().listen((event) {
+      onSuperAdminDeleteGroupStreamController.add(event);
+      var data = json.decode(event.toString());
+      var groupJid = data["groupJid"] ?? "";
+      var groupName = data["groupName"] ?? "";
+      groupEventsListener?.onSuperAdminDeleteGroup(groupJid, groupName);
+    }, onError: (error) {
+      LogMessage.d("MirrorFly",
+          "Error on Super admin delete group channel: $error");
+      onSuperAdminDeleteGroupStreamController.addError(error);
     });
 
     // onFailureChannel.receiveBroadcastStream().listen((event) {

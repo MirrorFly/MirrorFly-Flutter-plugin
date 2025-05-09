@@ -1522,6 +1522,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onArchivedSettingsUpdated =>
       throw UnimplementedError('has not been implemented.');
 
+  /// Stream that emits events when Super Admin deletes the Group
+  Stream<dynamic> get onSuperAdminDeleteGroup =>
+      throw UnimplementedError('has not been implemented.');
+
   /// This method is used to make the video call.
   Future<void> makeVideoCall(
       String userJid, Function(FlyResponse response)? callback) async {
