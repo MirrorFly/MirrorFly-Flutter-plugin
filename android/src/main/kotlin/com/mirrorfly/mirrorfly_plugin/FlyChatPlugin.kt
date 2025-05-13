@@ -954,7 +954,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 )
             }
         }catch (e: Exception){
-
+            LogMessage.d(TAG, "onMessageStatusUpdated Exception $e")
         }
     }
 
@@ -1430,4 +1430,18 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             )
         }
     }
+
+    /**
+     * This below listener is to listen for the Group Deleted by Super Admin and notify to the Flutter
+     */
+    override fun onSuperAdminDeleteGroup(groupJid: String, groupName: String) {
+        val map = JSONObject()
+        map.put("groupJid", groupJid)
+        map.put("groupName", groupName)
+        FlyMethodConstants.updateChatSinkValue(
+            Constants.onSuperAdminDeleteGroupChannel,
+            map.toString()
+        )
+    }
+
 }

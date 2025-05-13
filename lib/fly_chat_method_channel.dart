@@ -610,6 +610,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onArchivedSettingsUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for chat Archive/Unarchive listening events.
+  @visibleForTesting
+  final onSuperAdminDeleteGroupChannel =
+      const EventChannel('contus.mirrorfly/onSuperAdminDeleteGroup');
+
+  /// A broadcast stream controller for chat Archive/Unarchive listening events.
+  final StreamController<dynamic> onSuperAdminDeleteGroupStreamController =
+      StreamController<dynamic>.broadcast();
+
   // @visibleForTesting
   // final onFailureChannel = const EventChannel('contus.mirrorfly/onFailure');
   // final StreamController<dynamic> onFailureStreamController = StreamController<dynamic>.broadcast();
@@ -996,6 +1005,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onArchivedSettingsUpdated =>
       onArchivedSettingsUpdatedStreamController.stream;
+
+  @override
+  Stream<dynamic> get onSuperAdminDeleteGroup =>
+      onSuperAdminDeleteGroupStreamController.stream;
 
   @override
   Stream<dynamic> get onLocalVideoTrackAdded =>
@@ -1615,6 +1628,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("MirrorFly",
           "Error on chat archive / Unarchive settings toggle: $error");
       onArchivedSettingsUpdatedStreamController.addError(error);
+    });
+
+    onSuperAdminDeleteGroupChannel.receiveBroadcastStream().listen((event) {
+      onSuperAdminDeleteGroupStreamController.add(event);
+      var data = json.decode(event.toString());
+      var groupJid = data["groupJid"] ?? "";
+      var groupName = data["groupName"] ?? "";
+      groupEventsListener?.onSuperAdminDeleteGroup(groupJid, groupName);
+    }, onError: (error) {
+      LogMessage.d(
+          "MirrorFly", "Error on Super admin delete group channel: $error");
+      onSuperAdminDeleteGroupStreamController.addError(error);
     });
 
     // onFailureChannel.receiveBroadcastStream().listen((event) {
@@ -6331,28 +6356,28 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  void setMessageEventListener(MessageEventListeners messageEventsListener) {
+  void setMessageEventListener(MessageEventListeners? messageEventsListener) {
     this.messageEventsListener = messageEventsListener;
   }
 
   @override
   void setConnectionEventListener(
-      ConnectionEventListeners connectionEventsListener) {
+      ConnectionEventListeners? connectionEventsListener) {
     this.connectionEventsListener = connectionEventsListener;
   }
 
   @override
-  void setProfileEventsListener(ProfileEventListeners profileEventsListener) {
+  void setProfileEventsListener(ProfileEventListeners? profileEventsListener) {
     this.profileEventsListener = profileEventsListener;
   }
 
   @override
-  void setGroupEventsListener(GroupEventListeners groupEventsListener) {
+  void setGroupEventsListener(GroupEventListeners? groupEventsListener) {
     this.groupEventsListener = groupEventsListener;
   }
 
   @override
-  void setCallEventListener(CallEventListeners callEventsListener) {
+  void setCallEventListener(CallEventListeners? callEventsListener) {
     this.callEventsListener = callEventsListener;
   }
 
@@ -6530,6 +6555,26 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
       return FlyConstants.empty;
+    }
+  }
+
+  @override
+  Future<String> getCurrentCameraPosition() async {
+    String? val = "";
+    try {
+      val = await mirrorFlyCallMethodChannel
+          .invokeMethod<String>('getCurrentCameraPosition');
+      LogMessage.d('getCurrentCameraPosition', ' $val');
+      return val ?? "";
+      // callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      return "";
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      return "";
+      // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
     }
   }
 }

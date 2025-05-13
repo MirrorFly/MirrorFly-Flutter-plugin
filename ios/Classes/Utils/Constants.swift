@@ -109,6 +109,8 @@ struct Constants {
     static let updateArchiveUnArchiveChatsChannel = "\(domain)/updateArchiveUnArchiveChats"
     static let updateArchivedSettingsChannel = "\(domain)/updateArchivedSettings"
     
+    static let onSuperAdminDeleteGroupChannel = "\(domain)/onSuperAdminDeleteGroup"
+    
     static let contactSyncEnable = "contactSyncEnable"
     
     static let voipToken = "voipToken"

@@ -1522,6 +1522,10 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Stream<dynamic> get onArchivedSettingsUpdated =>
       throw UnimplementedError('has not been implemented.');
 
+  /// Stream that emits events when Super Admin deletes the Group
+  Stream<dynamic> get onSuperAdminDeleteGroup =>
+      throw UnimplementedError('has not been implemented.');
+
   /// This method is used to make the video call.
   Future<void> makeVideoCall(
       String userJid, Function(FlyResponse response)? callback) async {
@@ -1736,33 +1740,39 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('cancelBackup has not been implemented.');
   }
 
+  /// This method is used to cancel the restore started.
+  Future<String> getCurrentCameraPosition() {
+    throw UnimplementedError(
+        'getCurrentCameraPosition has not been implemented.');
+  }
+
   /// This listener is set to listen the message events.
-  setMessageEventListener(MessageEventListeners messageEventsListener) {
+  setMessageEventListener(MessageEventListeners? messageEventsListener) {
     throw UnimplementedError(
         'setMessageEventListener has not been implemented.');
   }
 
   /// This listener is set to listen the connection events.
   setConnectionEventListener(
-      ConnectionEventListeners connectionEventsListener) {
+      ConnectionEventListeners? connectionEventsListener) {
     throw UnimplementedError(
         'setConnectionEventListener has not been implemented.');
   }
 
   /// This listener is set to listen the group events.
-  setGroupEventsListener(GroupEventListeners groupEventsListener) {
+  setGroupEventsListener(GroupEventListeners? groupEventsListener) {
     throw UnimplementedError(
         'setGroupEventsListener has not been implemented.');
   }
 
   /// This listener is set to listen the profile events.
-  setProfileEventsListener(ProfileEventListeners profileEventsListener) {
+  setProfileEventsListener(ProfileEventListeners? profileEventsListener) {
     throw UnimplementedError(
         'setProfileEventsListener has not been implemented.');
   }
 
   /// This listener is set to listen the call events.
-  setCallEventListener(CallEventListeners callEventsListener) {
+  setCallEventListener(CallEventListeners? callEventsListener) {
     throw UnimplementedError('setCallEventListener has not been implemented.');
   }
 

@@ -85,6 +85,8 @@ public class DidUpdateMuteSettingsChannelStreamHandler: EventStreamHandler { }
 public class UpdateArchiveUnArchiveChatsChannelStreamHandler: EventStreamHandler { }
 public class UpdateArchivedSettingsChannelStreamHandler: EventStreamHandler { }
 
+public class OnSuperAdminDeleteGroupChannelStreamHandler: EventStreamHandler { }
+
 /// Call Event Stream Handlers
 public class OnLocalVideoTrackAddedStreamHandler: EventStreamHandler { }
 public class OnRemoteVideoTrackAddedStreamHandler: EventStreamHandler { }

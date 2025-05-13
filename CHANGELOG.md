@@ -1,3 +1,9 @@
+## [1.5.0] Feature Updates
+* Added onSuperAdminDeleteGroup event stream to reflect super admin chat group deletions via API.
+* Bug Fixes
+* Android SDK updated to 7.13.23
+* iOS SDK updated to 5.18.15
+
 ## [1.4.0] Feature Updates
 * Backup and Restore feature
 * Bug Fixes
