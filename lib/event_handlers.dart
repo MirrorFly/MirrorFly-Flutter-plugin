@@ -226,7 +226,6 @@ abstract class GroupEventListeners {
 
   /// This listener is triggered whenever the super admin deletes the group.
   void onSuperAdminDeleteGroup(String groupJid, String groupName);
-
 }
 
 /// A class that provides a set of callback methods that can be used to listen for Call Events in the MirrorFly Flutter Plugin.

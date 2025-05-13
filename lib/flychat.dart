@@ -2592,7 +2592,6 @@ class Mirrorfly {
   static Stream<dynamic> get onArchivedSettingsUpdated =>
       FlyChatFlutterPlatform.instance.onArchivedSettingsUpdated;
 
-
   /// A stream that emits an event when a super admin deletes a group.
   ///
   /// This stream listens for super‐admin group deletion events. Whenever a super admin
@@ -5710,7 +5709,7 @@ class Mirrorfly {
   }
 
   /// To get the current [CameraPosition] for the ongoing Call
-  static Future<String> getCurrentCameraPosition(){
+  static Future<String> getCurrentCameraPosition() {
     return FlyChatFlutterPlatform.instance.getCurrentCameraPosition();
   }
 }

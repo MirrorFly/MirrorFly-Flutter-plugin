@@ -610,7 +610,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onArchivedSettingsUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
-
   /// A event channel for chat Archive/Unarchive listening events.
   @visibleForTesting
   final onSuperAdminDeleteGroupChannel =
@@ -1638,8 +1637,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       var groupName = data["groupName"] ?? "";
       groupEventsListener?.onSuperAdminDeleteGroup(groupJid, groupName);
     }, onError: (error) {
-      LogMessage.d("MirrorFly",
-          "Error on Super admin delete group channel: $error");
+      LogMessage.d(
+          "MirrorFly", "Error on Super admin delete group channel: $error");
       onSuperAdminDeleteGroupStreamController.addError(error);
     });
 
@@ -6563,7 +6562,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<String> getCurrentCameraPosition() async {
     String? val = "";
     try {
-      val = await mirrorFlyCallMethodChannel.invokeMethod<String>('getCurrentCameraPosition');
+      val = await mirrorFlyCallMethodChannel
+          .invokeMethod<String>('getCurrentCameraPosition');
       LogMessage.d('getCurrentCameraPosition', ' $val');
       return val ?? "";
       // callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));

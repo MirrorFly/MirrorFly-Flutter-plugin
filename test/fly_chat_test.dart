@@ -1940,7 +1940,6 @@ class MockFlyChatFlutterPlatform
   // implement onArchiveUnArchiveChats
   Stream get onArchivedSettingsUpdated => throw UnimplementedError();
 
-
   @override
   // implement onSuperAdminDeleteGroup
   Stream get onSuperAdminDeleteGroup => throw UnimplementedError();

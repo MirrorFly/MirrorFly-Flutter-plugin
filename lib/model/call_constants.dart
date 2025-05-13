@@ -298,5 +298,4 @@ class CameraPosition {
 
   /// Represents the camera position when the back camera is accessed.
   static const String backCamera = "backcamera";
-
 }
