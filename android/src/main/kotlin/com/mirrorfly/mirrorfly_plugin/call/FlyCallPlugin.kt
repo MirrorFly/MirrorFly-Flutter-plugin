@@ -8,6 +8,7 @@ import androidx.lifecycle.Lifecycle
 import com.mirrorfly.mirrorfly_plugin.*
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.flycall.call.utils.CallConstants
+import com.mirrorflysdk.flycall.call.utils.CameraPosition
 import com.mirrorflysdk.flycall.webrtc.*
 import com.mirrorflysdk.flycall.webrtc.api.*
 import com.mirrorflysdk.flycommons.LogMessage
@@ -228,6 +229,15 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     )
                 ) {
                     MirrorflyViewHashMap.getMirrorflyView(userJid)?.setRemoteTarget(userJid)
+                }
+            }
+        }
+        if(callAction == CallAction.ACTION_CAMERA_SWITCH_SUCCESS){
+            if (MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId()) != null) {
+                if(userJid == ChatManager.getCurrentUserJid()){
+                    MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())?.setMirror(CallManager.getCurrentCameraPosition() != CameraPosition.BackCamera)
+                }else {
+                    MirrorflyViewHashMap.getMirrorflyView(CallManager.getCurrentUserId())?.setMirror(false)
                 }
             }
         }

@@ -568,6 +568,15 @@ extension FlyChatPlugin : GroupEventsDelegate {
         self.chatEventInitializer.updateSinkValue(forChannel: Constants.onGroupNotificationMessage_channel, value: groupNotificationJson)
     }
     
+    public func didSuperAdminDeleteGroup(groupJid: String, groupName: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(groupJid, forKey: "groupJid")
+        jsonObject.setValue(groupName, forKey: "groupName")
+        let jsonString = pluginDictToJson(dictionary: jsonObject)
+        
+        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onSuperAdminDeleteGroupChannel, value: jsonString)
+    }
+    
 
 }
 
