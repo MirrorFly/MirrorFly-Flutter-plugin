@@ -125,17 +125,24 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             videoView = getVideoView()
             self._baseView.addSubview(self.videoView!)
         }
+        let userJid = argument["userJid"] as? String ?? ""
         
         videoView?.translatesAutoresizingMaskIntoConstraints = false
         
         videoView?.layer.masksToBounds = true
         videoView?.contentMode = .center
         videoView?.backgroundColor = .black
-        if argument["setMirror"] is Bool{
-            videoView?.transform = CGAffineTransform(scaleX: -1, y: 1)
-        }
+//        if(userJid == AppUtils.shared.getMyJid()){
+//            videoView?.transform = CGAffineTransform(scaleX: -1, y: 1)
+//        }
+//        if argument["setMirror"] is Bool{
+//            videoView?.transform = CGAffineTransform(scaleX: -1, y: 1)
+//        }else {
+//            videoView?.transform = CGAffineTransform.identity
+//        }
         NSLog("\(Constants.callTag) Adding video track")
         videoTrack?.add(videoView as! RTCVideoRenderer)
+        setMirror(isMirror: CallManager.getCurrentCameraPosition() != CameraPosition.backCamera)
         
         NSLayoutConstraint.activate([
             videoView!.leadingAnchor.constraint(equalTo: _baseView.leadingAnchor),
@@ -310,6 +317,20 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         return _baseView
     }
     
+    func setMirror(isMirror: Bool) {
+        if(isMirror){
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+                self.videoView?.transform = CGAffineTransform(scaleX: -1, y: 1)
+            })
+        }else{
+//            videoView?.transform = CGAffineTransform.identity
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+                self.videoView?.transform = CGAffineTransform.identity
+            })
+        
+        }
+    }
+    
     func updatePreviewVideoTrack(track: RTCVideoTrack?, updateType: MuteEvent) {
         NSLog("\(Constants.callTag) Update Video Track viewId\(viewId) videoTrack\(String(describing: videoTrack))")
         
@@ -319,8 +340,10 @@ class MirrorflyView: NSObject, FlutterPlatformView {
                 if videoView == nil{
                     videoView = getVideoView()
                 }
-                
                 track.add(videoView as! RTCVideoRenderer)
+                if(updateType == .ACTION_LOCAL_VIDEO_UN_MUTE){
+                    setMirror(isMirror: CallManager.getCurrentCameraPosition() != CameraPosition.backCamera)
+                }
                 DispatchQueue.main.async {
                     self._baseView.addSubview(self.videoView!)
                     

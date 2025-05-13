@@ -47,6 +47,7 @@ class MirrorFlyView extends StatefulWidget {
   /// Constructor for the [MirrorFlyView] class.
   const MirrorFlyView(
       {Key? key,
+      @Deprecated("This field is not used and handled internally")
       this.mirror = true,
       this.scalingType = ScalingType.scaleAspectFILL,
       this.viewBgColor,
@@ -130,12 +131,14 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
     if (widget.userJid.isEmpty) {
       throw Exception("remoteUserJid must not be empty");
     }
-    return Stack(
-      children: [
-        buildHybridCompositionView(),
-        InkWell(splashColor: Colors.transparent, onTap: widget.onClick)
-      ],
-    );
+    return (widget.onClick != null)
+        ? Stack(
+            children: [
+              buildHybridCompositionView(),
+              InkWell(splashColor: Colors.transparent, onTap: widget.onClick)
+            ],
+          )
+        : buildHybridCompositionView();
   }
 
   String getScalingType(ScalingType type) {

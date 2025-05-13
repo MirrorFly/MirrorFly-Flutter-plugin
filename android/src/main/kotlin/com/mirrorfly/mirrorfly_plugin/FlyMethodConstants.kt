@@ -79,6 +79,8 @@ object FlyMethodConstants {
         Constants.didUpdateMuteSettingsChannel to EventStreamHandler(),
         Constants.updateArchiveUnArchiveChatsChannel to EventStreamHandler(),
         Constants.updateArchivedSettingsChannel to EventStreamHandler(),
+
+        Constants.onSuperAdminDeleteGroupChannel to EventStreamHandler(),
     )
     val chatMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "init" to flyChatMethods::buildChatSDK,
@@ -357,6 +359,7 @@ object FlyMethodConstants {
         "disposePreview" to flyCallMethods::disposePreview,
         "getMeetUsername" to flyCallMethods::getMeetUsername,
         "getCurrentCallDuration" to flyCallMethods::getCurrentCallDuration,
+        "getCurrentCameraPosition" to flyCallMethods::getCurrentCameraPosition,
     )
 
 

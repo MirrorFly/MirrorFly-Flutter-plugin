@@ -293,6 +293,11 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         FlyMethodConstants.updateCallSinkValue(Constants.onMuteStatusUpdated, json.toString())
     }
 
+    fun getCurrentCameraPosition(call: MethodCall,result: MethodChannel.Result){
+        val cameraPosition = CallManager.getCurrentCameraPosition();
+        result.success(cameraPosition.name.lowercase())
+    }
+
     fun muteVideo(call: MethodCall, result: MethodChannel.Result) {
         LogMessage.d(tag, "muteVideo")
         val muteVideo = call.argument<Boolean>("muteVideo") ?: false

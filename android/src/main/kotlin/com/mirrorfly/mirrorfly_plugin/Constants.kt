@@ -107,6 +107,8 @@ object Constants {
     const val updateArchiveUnArchiveChatsChannel = "$Domain/updateArchiveUnArchiveChats"
     const val updateArchivedSettingsChannel = "$Domain/updateArchivedSettings"
 
+    const val onSuperAdminDeleteGroupChannel = "$Domain/onSuperAdminDeleteGroup"
+
 
 
     //call Method channel constants

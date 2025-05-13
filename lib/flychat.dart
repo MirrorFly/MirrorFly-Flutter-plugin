@@ -2592,6 +2592,23 @@ class Mirrorfly {
   static Stream<dynamic> get onArchivedSettingsUpdated =>
       FlyChatFlutterPlatform.instance.onArchivedSettingsUpdated;
 
+  /// A stream that emits an event when a super admin deletes a group.
+  ///
+  /// This stream listens for super‐admin group deletion events. Whenever a super admin
+  /// permanently removes a group, an event is emitted detailing which group was
+  /// deleted and group name. You can use this to update your UI, clean up local caches,
+  /// or notify other participants that the group no longer exists.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// Mirrorfly.onSuperAdminDeleteGroup.listen((event) {
+  ///   final String groupJid = event['groupJid'] as String;
+  ///   final String groupName = event['groupName'] as String;
+  /// });
+  /// ```
+  static Stream<dynamic> get onSuperAdminDeleteGroup =>
+      FlyChatFlutterPlatform.instance.onSuperAdminDeleteGroup;
+
   // static Stream<dynamic> get onFailure => FlyChatFlutterPlatform.instance.onFailure;
 
   // static Stream<dynamic> get onProgressChanged => FlyChatFlutterPlatform.instance.onProgressChanged;
@@ -5244,7 +5261,7 @@ class Mirrorfly {
   /// Parameters:
   ///   [messageEventListeners] - The listener to be registered for message events.
   ///
-  static setMessageEventListener(MessageEventListeners messageEventListeners) {
+  static setMessageEventListener(MessageEventListeners? messageEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setMessageEventListener(messageEventListeners);
   }
@@ -5257,7 +5274,7 @@ class Mirrorfly {
   /// Parameters:
   ///   [connectionEventListeners] - The listener to be registered for connection events.
   static setConnectionEventListener(
-      ConnectionEventListeners connectionEventListeners) {
+      ConnectionEventListeners? connectionEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setConnectionEventListener(connectionEventListeners);
   }
@@ -5270,7 +5287,7 @@ class Mirrorfly {
   /// Parameters:
   ///   [profileEventListeners] - The listener to be registered for profile events.
   ///
-  static setProfileEventListener(ProfileEventListeners profileEventListeners) {
+  static setProfileEventListener(ProfileEventListeners? profileEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setProfileEventsListener(profileEventListeners);
   }
@@ -5282,7 +5299,7 @@ class Mirrorfly {
   /// Parameters:
   ///   [groupEventListeners] - The listener to be registered for group events.
   ///
-  static setGroupEventListener(GroupEventListeners groupEventListeners) {
+  static setGroupEventListener(GroupEventListeners? groupEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setGroupEventsListener(groupEventListeners);
   }
@@ -5293,7 +5310,7 @@ class Mirrorfly {
   ///
   /// Parameters:
   ///   [callEventListeners] - The listener to be registered for call events.
-  static setCallEventListener(CallEventListeners callEventListeners) {
+  static setCallEventListener(CallEventListeners? callEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setCallEventListener(callEventListeners);
   }
@@ -5689,5 +5706,10 @@ class Mirrorfly {
   ///
   static Future<void> cancelRestore() {
     return FlyChatFlutterPlatform.instance.cancelRestore();
+  }
+
+  /// To get the current [CameraPosition] for the ongoing Call
+  static Future<String> getCurrentCameraPosition() {
+    return FlyChatFlutterPlatform.instance.getCurrentCameraPosition();
   }
 }
