@@ -137,6 +137,8 @@ class FlyChatEventChannelInitializer {
         (channelName: Constants.didUpdateMuteSettingsChannel, streamHandler: DidUpdateMuteSettingsChannelStreamHandler()),
         (channelName: Constants.updateArchiveUnArchiveChatsChannel, streamHandler: UpdateArchiveUnArchiveChatsChannelStreamHandler()),
         (channelName: Constants.updateArchivedSettingsChannel, streamHandler: UpdateArchivedSettingsChannelStreamHandler()),
+        
+        (channelName: Constants.onSuperAdminDeleteGroupChannel, streamHandler: OnSuperAdminDeleteGroupChannelStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
     

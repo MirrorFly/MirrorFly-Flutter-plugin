@@ -2295,7 +2295,7 @@ class FlyChatMethods {
         val mobile = call.argument("mobile") ?: ""
         val email = call.argument("email") ?: ""
         val image = call.argument("image") ?: ""
-        val status = call.argument("status") ?: "I'm Mirrorfly user"
+        val status = call.argument("status") ?: ""
 //        if (name.isNotEmpty() && mobile.isNotEmpty() && email.isNotEmpty()) {
         val profileObj = Profile()
         profileObj.name = name
