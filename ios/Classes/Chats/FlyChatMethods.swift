@@ -99,8 +99,7 @@ let ISEXPORT = true
 
         // *** =============================================
 
-        ChatManager.disableLocalNotification()
-            ChatManager.disableLocalNotification()
+        // ChatManager.disableLocalNotification()
 
             /// Moved Inside SDK
             /*if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
