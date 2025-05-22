@@ -142,8 +142,13 @@ class MirrorflyView: NSObject, FlutterPlatformView {
 //        }
         NSLog("\(Constants.callTag) Adding video track")
         videoTrack?.add(videoView as! RTCVideoRenderer)
-        setMirror(isMirror: CallManager.getCurrentCameraPosition() != CameraPosition.backCamera)
-        
+
+        // MARK: - Need to mirror the current user preview video only on front camera of initial creation
+        let currentUserJid: String = AppUtils.shared.getMyJid()
+        if (userJid == currentUserJid) {
+            setMirror(isMirror: CallManager.getCurrentCameraPosition() != CameraPosition.backCamera)
+        }
+
         NSLayoutConstraint.activate([
             videoView!.leadingAnchor.constraint(equalTo: _baseView.leadingAnchor),
             videoView!.trailingAnchor.constraint(equalTo: _baseView.trailingAnchor),
