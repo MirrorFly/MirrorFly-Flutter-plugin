@@ -2,6 +2,8 @@ package com.mirrorfly.mirrorfly_plugin
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
@@ -70,6 +72,7 @@ import com.mirrorflysdk.flycommons.ChatTypeEnum
 import com.mirrorflysdk.flycommons.FlyCallback
 import com.mirrorflysdk.flycommons.FlyUtils
 import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.flycommons.MediaCompressQuality
 import com.mirrorflysdk.flycommons.Result
 import com.mirrorflysdk.flycommons.SharedPreferenceManager
 import com.mirrorflysdk.flycommons.TypingStatus
@@ -81,9 +84,12 @@ import com.mirrorflysdk.flycommons.models.MetaDataMessageList
 import com.mirrorflysdk.flycommons.models.MetaDataUserList
 import com.mirrorflysdk.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.mirrorflysdk.media.MediaUploadHelper
+import com.mirrorflysdk.media.newfilecompression.compressfile.MediaCompress
 import com.mirrorflysdk.models.MediaAutoDownloadOption
 import com.mirrorflysdk.models.RecentChatListParams
 import com.mirrorflysdk.models.TopicChatListParams
+import com.mirrorflysdk.utils.CompressCallback
+import com.mirrorflysdk.utils.MediaUtils
 import com.mirrorflysdk.utils.ThumbSize
 import com.mirrorflysdk.utils.UpDateWebPassword
 import com.mirrorflysdk.utils.Utils
@@ -1813,6 +1819,7 @@ class FlyChatMethods {
 
     private fun processAndSendMessage(messageParams: HashMap<String, Any>?, result: MethodChannel.Result) {
         val messageType = messageParams?.get("messageType") as String?
+        val mediaCompressionType = messageParams?.get("mediaCompressionType") as Int?
         messageType?.let {
             if (MessageType.valueOf(messageType) == MessageType.TEXT) {
                 val textMessage = buildTextMessage(messageParams)
@@ -1827,6 +1834,15 @@ class FlyChatMethods {
                     LogMessage.d("meetMessage", meetMessage?.toJsonString())
                     sendMeetMessage(meetMessage, result)
                 }
+            } else if ((MessageType.valueOf(messageType) == MessageType.IMAGE || MessageType.valueOf(messageType) == MessageType.VIDEO)
+                && mediaCompressionType != null) {
+                LogMessage.d(
+                    "MediaCompression Manual",
+                    "MessageType ${
+                        MessageType.valueOf(messageType).toString()
+                    } & CompresstionType $mediaCompressionType"
+                )
+                compressAndSendImageOrVideoFiles(messageParams, result)
             } else {
                 val fileMessage = buildFileMessage(messageParams)
                 LogMessage.d("fileMessage", fileMessage.toJsonString())
@@ -1906,6 +1922,136 @@ class FlyChatMethods {
                 }
             }
 
+        })
+    }
+
+    private fun compressAndSendImageOrVideoFiles(messageParams: HashMap<String, Any>?, result: MethodChannel.Result) {
+        val messageType = messageParams?.get("messageType") as String?
+        val mediaCompressionType = messageParams?.get("mediaCompressionType") as Int?
+
+        val fileMessage: FileMessageParams? = if (messageParams?.get("fileMessage") != null) {
+            (messageParams["fileMessage"] as? HashMap<*, *>)?.let { fileMap ->
+                FileMessageParams().apply {
+                    this.file = (fileMap["file"] as? String)?.let { File(it) }
+                    this.duration = (fileMap["duration"] as? Int)?.toLong()
+                    this.thumbImage = fileMap["thumbImage"] as? String
+                    this.fileName = fileMap["fileName"] as? String
+                    this.fileSize = (fileMap["fileSize"] as? Int)?.toLong()
+                    this.caption = (fileMap["caption"] as? String).toString()
+                }
+            }
+        } else null
+
+        messageType?.let {
+            if (fileMessage?.file == null) {
+                result.error("400", "File is missing", null)
+                return
+            }
+
+            val quality = getCompressionQuality(mediaCompressionType)
+            LogMessage.d(
+                "MediaCompression Manual",
+                "getCompressionQuality $quality"
+            )
+
+            when (MessageType.valueOf(messageType)) {
+                MessageType.IMAGE -> {
+                    LogMessage.d(
+                        "MediaCompression Manual",
+                        "into compressImage"
+                    )
+                    compressImage(fileMessage.file.toString(), quality, MirrorFlyManager.getContext(), result)
+                }
+                MessageType.VIDEO -> {
+                    LogMessage.d(
+                        "MediaCompression Manual",
+                        "into compressVideo"
+                    )
+                    compressVideo(fileMessage.file.toString(), quality, MirrorFlyManager.getContext(), result)
+                }
+                else -> {
+                    result.error("400", "Media file should be only image or video", null)
+                }
+            }
+        }
+    }
+
+    private fun getCompressionQuality(qualityAsString: Int?): MediaCompressQuality {
+        return when (qualityAsString) {
+            0 -> MediaCompressQuality.uncompressed
+            1 -> MediaCompressQuality.low
+            2 -> MediaCompressQuality.medium
+            3 -> MediaCompressQuality.high
+            else -> MediaCompressQuality.uncompressed
+        }
+    }
+
+    private fun  compressImage(filePath:String,compressQuality:MediaCompressQuality,context: Context,result: MethodChannel.Result) {
+        val contextWrapper = ContextWrapper(context)
+        MediaUtils.compressImageFile(filePath, compressQuality, contextWrapper,object :
+            CompressCallback {
+            override fun response(
+                isSuccess: Boolean,
+                compressedFilePath: String?,
+                errorMessage: String
+            ) {
+                if (isSuccess) {
+                    LogMessage.d(
+                        "MediaCompression Manual",
+                        "into compressImage success $isSuccess & FilePath $filePath"
+                    )
+                } else {
+                    LogMessage.d(
+                        "MediaCompression Manual",
+                        "into compressImage error $errorMessage"
+                    )
+                }
+            }
+
+        })
+    }
+
+    private fun compressVideo(filePath:String,compressQuality:MediaCompressQuality,context: Context,result: MethodChannel.Result) {
+        val contextWrapper = ContextWrapper(context)
+        MediaUtils.compressVideoFile(filePath, compressQuality,contextWrapper, object : CompressCallback {
+            override fun response(
+                isSuccess: Boolean,
+                compressedFilePath: String?,
+                errorMessage: String
+            ) {
+                if (isSuccess) {
+                    LogMessage.d(
+                        "MediaCompression Manual",
+                        "into compressVideo success $isSuccess & FilePath $filePath"
+                    )
+                } else {
+                    LogMessage.d(
+                        "MediaCompression Manual",
+                        "into compressVideo error $errorMessage"
+                    )
+                }
+            }
+        })
+    }
+
+    private fun sendMediaMessage(fileMessage: FileMessage?, result: MethodChannel.Result) {
+        if (fileMessage == null) {
+            result.error("500", "fileMessage params not be null for Media Messages", null)
+            return
+        }
+
+        FlyMessenger.sendMediaMessage(fileMessage, object : SendMessageCallback {
+            override fun onResponse(
+                isSuccess: Boolean,
+                error: Throwable?,
+                chatMessage: ChatMessage?
+            ) {
+//                if (isSuccess && chatMessage != null && messageListener != null) {
+//                    result.onSendMessageSuccess(chatMessage)
+//                } else {
+//                    result!!.onSendMessageFailure(error?.message?:Constants.EMPTY_STRING)
+//                }
+            }
         })
     }
 

@@ -3431,7 +3431,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<void> sendMessage(
       {required MessageParams messageParams,
       required Function(FlyResponse response) callback}) async {
-    LogMessage.d("sendMessage", messageParams.toMap());
+    LogMessage.d("sendMessage from plugin", messageParams.toMap());
     //sendMessage
     String? messageResponse;
     try {

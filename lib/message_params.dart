@@ -334,6 +334,9 @@ class MessageParams {
   /// The ID of the topic under which the message is sent, if any.
   String topicId;
 
+  /// Media file compression enum, if applicable.
+  MediaCompressionType? mediaCompressionType;
+
   /// Initializes a new instance of the [MessageParams] class.
   MessageParams._({
     required this.toJid,
@@ -348,6 +351,7 @@ class MessageParams {
     this.meetMessageParams,
     this.messageSecurityMode,
     this.topicId = "",
+    this.mediaCompressionType
   });
 
   /// Constructs a [MessageParams] object for a Text message.
@@ -442,6 +446,7 @@ class MessageParams {
     required FileMessageParams fileMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
+    MediaCompressionType? mediaCompressionType
   }) {
     return MessageParams._(
       toJid: toJid,
@@ -452,6 +457,7 @@ class MessageParams {
       messageSecurityMode: messageSecurityMode,
       metaData: metaData,
       topicId: topicId,
+      mediaCompressionType: mediaCompressionType
     );
   }
 
@@ -487,6 +493,7 @@ class MessageParams {
     MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
+    MediaCompressionType? mediaCompressionType
   }) {
     return MessageParams._(
       toJid: toJid,
@@ -497,6 +504,7 @@ class MessageParams {
       messageSecurityMode: messageSecurityMode,
       metaData: metaData,
       topicId: topicId,
+      mediaCompressionType: mediaCompressionType
     );
   }
 
@@ -567,6 +575,7 @@ extension ExtractMessageParams on MessageParams {
         'fileMessage': fileMessageParams?.toMap(),
         'meetMessage': meetMessageParams?.toMap(),
         'topicId': topicId,
+        'mediaCompressionType': mediaCompressionType?.value
       };
 }
 
@@ -729,6 +738,29 @@ enum MediaUploadStatus {
   const MediaUploadStatus(this.value);
 
   /// The integer value associated with the media upload status.
+  final int value;
+}
+
+///
+/// An Enum for Image & Video compression options
+///
+enum MediaCompressionType {
+  /// Without any compression applied
+  uncompressed(0),
+
+  /// Low amount of the compression will be applied
+  low(1),
+
+  /// Medium amount of the compression will be applied
+  medium(2),
+
+  /// High amount of the compression will be applied
+  high(3);
+
+  /// Constructs a MediaCompressionType enum with the provided integer value.
+  const MediaCompressionType(this.value);
+
+  /// The integer value associated with the media compression status.
   final int value;
 }
 
