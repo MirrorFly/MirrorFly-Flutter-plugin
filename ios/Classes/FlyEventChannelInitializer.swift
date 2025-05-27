@@ -141,7 +141,7 @@ class FlyChatEventChannelInitializer {
         (channelName: Constants.onSuperAdminDeleteGroupChannel, streamHandler: OnSuperAdminDeleteGroupChannelStreamHandler()),
     ]
     var sinkValues: [String: String] = [:]
-    
+    let appUt = AppUtils()
     func initializeChatEventChannels(registrar: FlutterPluginRegistrar) {
         for (channelName, streamHandler) in FlyChatEventChannelInitializer.chatEventChannels {
                 let handler: (NSObjectProtocol & FlutterStreamHandler)? = streamHandler

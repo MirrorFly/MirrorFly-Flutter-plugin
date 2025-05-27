@@ -446,7 +446,7 @@ class MessageParams {
     required FileMessageParams fileMessageParams,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
-    MediaCompressionType? mediaCompressionType
+    MediaCompressionType? mediaCompressionType = MediaCompressionType.high
   }) {
     return MessageParams._(
       toJid: toJid,
@@ -493,7 +493,7 @@ class MessageParams {
     MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
     List<MessageMetaData> metaData = const [],
     String topicId = "",
-    MediaCompressionType? mediaCompressionType
+    MediaCompressionType? mediaCompressionType = MediaCompressionType.high
   }) {
     return MessageParams._(
       toJid: toJid,
