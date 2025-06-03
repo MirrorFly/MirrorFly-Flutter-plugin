@@ -120,7 +120,14 @@ class MirrorflyView(
     fun setProfileView(userJid: String){
         LogMessage.d(tag,"ProfileView set $id $userJid ${CallManager.isRemoteVideoMuted(userJid)}")
         val profile = ContactManager.getProfileDetails(userJid)
-        val name = profile.getDisplayName() ?: "Guest User"
+        val displayName = profile.getDisplayName()
+        val name: String
+
+        if (displayName == null || displayName.isEmpty()) {
+            name = "Guest User"
+        } else {
+            name = displayName
+        }
         val imageUrl = profile?.image ?: ""
         getTextureViewByTag(userJid)?.visibility=View.GONE
         getImageViewByTag(jid)?.visibility=if(viewAble()) View.VISIBLE else View.GONE
