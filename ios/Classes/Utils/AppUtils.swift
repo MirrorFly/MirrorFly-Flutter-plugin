@@ -9,11 +9,13 @@ import Foundation
 import MirrorFlySDK
 import Photos
 
-class AppUtils: NSObject {
+class AppUtils {
     
     //Singleton class
-    static let shared = AppUtils()
+    static let shared: AppUtils = AppUtils()
     
+    private init() {}
+        
     func getMyJid() -> String {
         guard let myJid = try? FlyUtils.getMyJid() else {
             AppUtils.shared.forceLogout()
@@ -82,5 +84,23 @@ class AppUtils: NSObject {
     
     func debugLog(tag: String, log: String){
         NSLog("\(tag): %@", log)
+    }
+    
+    func getMediaCompressionType(type: Int?) -> MirrorFlySDK.MediaQuality {
+        if type != nil {
+            if type == 0 {
+                return MediaQuality.uncompressed
+            } else if type == 1 {
+                return MediaQuality.low
+            } else if type == 2 {
+                return MediaQuality.medium
+            } else if type == 3 {
+                return MediaQuality.high
+            } else {
+                return MediaQuality.uncompressed
+            }
+        }  else {
+            return MediaQuality.uncompressed
+        }
     }
 }
