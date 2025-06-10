@@ -246,9 +246,6 @@ class FlyChatMethods {
         if (storageFolderName != null) {
             ChatManager.setMediaFolderName(storageFolderName)
         }
-        if (enableMobileNumberLogin != null) {
-            ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
-        }
         if (maximumRecentChatPin != null) {
             buildSDK.setMaximumPinningForRecentChat(maximumRecentChatPin)
         }
@@ -265,6 +262,14 @@ class FlyChatMethods {
                 .setIsTrialLicenceKey(isTrialLicenceKey)
         }
         buildSDK.build()
+
+        /// Do not move this code inside the  buildSDK.build() method. ///
+
+        if (enableMobileNumberLogin != null) {
+            ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
+        }
+
+        /// ----- ///
 
         //Set Name based on the Profile data
         //if not set you will get error on email chat(export) and any group related actions
