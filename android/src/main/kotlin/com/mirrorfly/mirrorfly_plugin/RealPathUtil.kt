@@ -129,9 +129,9 @@ object RealPathUtil {
         } catch (e: Exception) {
             LogMessage.e(TAG, e)
             val basePath = FilePathUtils.getExternalStorage()
-                    .toString() + File.separator + Constants.LOCAL_PATH + File.separator
-            val folderName = (basePath + Constants.FILE_LOCAL_PATH
-                    + File.separator + Constants.MSG_SENT_PATH)
+                    .toString() + File.separator + FlutterConstants.LOCAL_PATH + File.separator
+            val folderName = (basePath + FlutterConstants.FILE_LOCAL_PATH
+                    + File.separator + FlutterConstants.MSG_SENT_PATH)
             val file = createFile(folderName, getFileName(context, uri))
             realPath = file.absolutePath
             if (!saveFileFromUri(context, uri, realPath)) realPath = null
@@ -210,9 +210,9 @@ object RealPathUtil {
         } catch (e: Exception) {
             LogMessage.e(TAG, e)
             val basePath = FilePathUtils.getExternalStorage()
-                    .toString() + File.separator + Constants.LOCAL_PATH + File.separator
-            val folderName = (basePath + Constants.FILE_LOCAL_PATH
-                    + File.separator + Constants.MSG_SENT_PATH)
+                    .toString() + File.separator + FlutterConstants.LOCAL_PATH + File.separator
+            val folderName = (basePath + FlutterConstants.FILE_LOCAL_PATH
+                    + File.separator + FlutterConstants.MSG_SENT_PATH)
             val file = createFile(folderName, getFileName(context, uri))
             realPath = file.absolutePath
             if (!saveFileFromUri(context, uri, realPath)) realPath = null
@@ -234,16 +234,16 @@ object RealPathUtil {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
             if (fileUri == null)
                 return null
-            val directoryName = (FilePathUtils.getExternalStorage()).toString() + File.separator + Constants.LOCAL_PATH
+            val directoryName = (FilePathUtils.getExternalStorage()).toString() + File.separator + FlutterConstants.LOCAL_PATH
                 .replace(" ", "") +
-                    File.separator + Constants.FILE_LOCAL_PATH + File.separator + Constants.MSG_SENT_PATH
+                    File.separator + FlutterConstants.FILE_LOCAL_PATH + File.separator + FlutterConstants.MSG_SENT_PATH
 
 
             val documentFile = DocumentFile.fromSingleUri(context, fileUri)
             var fileName =  documentFile!!.name
             ImagePickerUtils.createFolderIfNotExist(directoryName)
             val mimeType = getMimeTypeFromFilePath(context, fileUri)
-            if(fileName == null) fileName = Constants.TEMP_FILE_NAME
+            if(fileName == null) fileName = FlutterConstants.TEMP_FILE_NAME
             val filePath = getFilePath(fileName, mimeType, directoryName)
             return checkFilePath(filePath,context,fileUri)
         } else {
@@ -333,7 +333,7 @@ object RealPathUtil {
             }
         }
         val directoryName = (FilePathUtils.getExternalStorage().toString() + File.separator
-                + Constants.LOCAL_PATH + File.separator + "temp")
+                + FlutterConstants.LOCAL_PATH + File.separator + "temp")
         if (!TextUtils.isEmpty(fileName)) {
             val directory = File(directoryName)
             if (!directory.exists()) directory.mkdir()
@@ -347,7 +347,7 @@ object RealPathUtil {
     private fun getDriveFilePath(context: Context, fileName: String, fileUri: Uri): String? {
         //copyFiles file and send new file path
         val directoryName = (FilePathUtils.getExternalStorage().toString() + File.separator
-                + Constants.LOCAL_PATH + File.separator + Constants.FILE_LOCAL_PATH + File.separator + Constants.MSG_SENT_PATH)
+                + FlutterConstants.LOCAL_PATH + File.separator + FlutterConstants.FILE_LOCAL_PATH + File.separator + FlutterConstants.MSG_SENT_PATH)
         if (!TextUtils.isEmpty(fileName)) {
             val directory = File(directoryName)
             if (!directory.exists()) directory.mkdirs()
@@ -401,7 +401,7 @@ object RealPathUtil {
      * @return The created file to which the downloaded data is written.
      */
     private fun createFile(folderName: String, fileName: String?): File {
-        val file = File(folderName, fileName ?: Constants.EMPTY_STRING)
+        val file = File(folderName, fileName ?: FlutterConstants.EMPTY_STRING)
         val parentFile = file.parentFile
         if (parentFile != null && !parentFile.exists()) {
             parentFile.mkdirs()

@@ -30,13 +30,13 @@ import com.mirrorflysdk.flycommons.SharedPreferenceManager;
  * @version 1.0
  */
 @Keep
-public class TokenAuthenticator implements Authenticator {
-    private static final String TAG = TokenAuthenticator.class.getSimpleName();
+public class FlutterTokenAuthenticator implements Authenticator {
+    private static final String TAG = FlutterTokenAuthenticator.class.getSimpleName();
     private static final okhttp3.OkHttpClient client = new OkHttpClient();
     private static final String TOKEN = "token";
     private static final int RETRY_LIMIT = 3;
 
-    public TokenAuthenticator() {
+    public FlutterTokenAuthenticator() {
     }
 
     public okhttp3.Request authenticate(Route route, @NotNull okhttp3.Response response) throws IOException {

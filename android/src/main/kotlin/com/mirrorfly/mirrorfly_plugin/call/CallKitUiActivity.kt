@@ -96,7 +96,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         if (users.isNotEmpty()) {
             if (!CallManager.isOneToOneCall()) {
                 if (CallManager.getGroupID().isNotEmpty()) {
-                    val membersName = Utils.setGroupMemberProfile(
+                    val membersName = FlutterUtils.setGroupMemberProfile(
                         this,
                         users,
                         imageCallMember1,
@@ -107,13 +107,13 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     participants.text = membersName
                     participants.visibility = View.VISIBLE
 
-                    Utils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
+                    FlutterUtils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
                     userImage.visibility = View.VISIBLE
                     userName.visibility = View.VISIBLE
                     val profile = ContactManager.getProfileDetails(CallManager.getGroupID())
 //                    val name = ContactManager.getDisplayName(CallManager.getGroupID())
                     userName.text = profile.getDisplayName()
-                    Utils.loadGlideImage(
+                    FlutterUtils.loadGlideImage(
                         this,
                         userImage,
                         profile.getDisplayName(),
@@ -123,7 +123,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 } else {
                     userImage.visibility = View.GONE
                     participants.visibility = View.GONE
-                    val membersName = Utils.setGroupMemberProfile(
+                    val membersName = FlutterUtils.setGroupMemberProfile(
                         this,
                         users,
                         imageCallMember1,
@@ -136,13 +136,13 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     userName.visibility = View.VISIBLE
                 }
             } else {
-                Utils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
+                FlutterUtils.makeViewsGone(imageCallMember2, imageCallMember3, imageCallMember4)
                 userName.visibility = View.VISIBLE
                 userImage.visibility = View.VISIBLE
                 val profile = ContactManager.getProfileDetails(CallManager.getEndCallerJid())
 //                val name = ContactManager.getDisplayName(CallManager.getEndCallerJid())
                 userName.text = profile.getDisplayName()
-                Utils.loadGlideImage(
+                FlutterUtils.loadGlideImage(
                     this,
                     userImage,
                     profile.getDisplayName(),
@@ -293,7 +293,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                         json.put("callMode", CallManager.getCallMode())
 //                        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
                         FlyMethodConstants.updateCallSinkValue(
-                            Constants.onCallStatusUpdated,
+                            FlutterConstants.onCallStatusUpdated,
                             json.toString()
                         )
                         finishTask()

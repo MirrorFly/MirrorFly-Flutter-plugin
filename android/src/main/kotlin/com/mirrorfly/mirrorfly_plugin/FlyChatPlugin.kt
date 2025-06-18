@@ -18,10 +18,6 @@ import com.mirrorflysdk.api.chat.*
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
 import com.mirrorflysdk.api.models.*
-import com.mirrorflysdk.backup.BackupListener
-import com.mirrorflysdk.backup.BackupManager
-import com.mirrorflysdk.backup.RestoreListener
-import com.mirrorflysdk.backup.RestoreManager
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
@@ -29,7 +25,6 @@ import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.CallMetaData
-import com.mirrorflysdk.utils.*
 import com.mirrorflysdk.xmpp.chat.listener.TypingStatusListener
 import io.flutter.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -39,7 +34,6 @@ import io.flutter.plugin.common.*
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.File
 import kotlin.collections.ArrayList
 
 
@@ -72,7 +66,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             Log.d("#FlyChatEvents", "sharePluginWithRegister")
             val factory = MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
             flutterPluginBinding.platformViewRegistry.registerViewFactory(
-                Constants.mirrorflyView,
+                FlutterConstants.mirrorflyView,
                 factory
             )
             MirrorFlyManager.init(flutterPluginBinding.applicationContext)
@@ -113,7 +107,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
         private fun initChannels(binaryMessenger: BinaryMessenger) {
             Log.d("initChannels", "FlyChatPlugin")
-            val channel = MethodChannel(binaryMessenger, Constants.MirrorflyMethodChannel)
+            val channel = MethodChannel(binaryMessenger, FlutterConstants.MirrorflyMethodChannel)
             methodChannels[binaryMessenger] = channel
             channel.setMethodCallHandler(instance)
             initMethodAndEvent(binaryMessenger)
@@ -123,10 +117,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //        private val eventHandlers = mutableListOf<WeakReference<EventCallbackHandler>>()
         fun sendEvent(event: String, body: JSONObject) {
             Log.d("sendEvent", "event : $event body : $body")
-            if (event == Constants.ACTION_CALL_ACCEPT) {
+            if (event == FlutterConstants.ACTION_CALL_ACCEPT) {
 //                onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(body.toString())
                 FlyMethodConstants.updateCallSinkValue(
-                    Constants.onCallStatusUpdated,
+                    FlutterConstants.onCallStatusUpdated,
                     body.toString()
                 )
             }
@@ -341,7 +335,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "onDeleteGroup : groupJid $groupJid")
 //        onDeleteGroupStreamHandler.onDeleteGroup?.success(groupJid)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onDeleteGroupChannel,
+            FlutterConstants.onDeleteGroupChannel,
             groupJid
         )
     }
@@ -352,7 +346,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //            noOfGroups
 //        )
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onFetchingGroupListCompletedChannel,
+            FlutterConstants.onFetchingGroupListCompletedChannel,
             noOfGroups
         )
     }
@@ -363,7 +357,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //            groupJid
 //        )
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onFetchingGroupMembersCompletedChannel,
+            FlutterConstants.onFetchingGroupMembersCompletedChannel,
             groupJid
         )
     }
@@ -372,7 +366,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "onGroupDeletedLocally : $groupJid")
 //        onGroupDeletedLocallyStreamHandler.onGroupDeletedLocally?.success(groupJid)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onGroupDeletedLocallyChannel,
+            FlutterConstants.onGroupDeletedLocallyChannel,
             groupJid
         )
     }
@@ -382,7 +376,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "onGroupNotificationMessage : ${message.toJsonString()}")
 //        onGroupNotificationMessageStreamHandler.onGroupNotificationMessage?.success(message.toJsonString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onGroupNotificationMessageChannel,
+            FlutterConstants.onGroupNotificationMessageChannel,
             message.toJsonString()
         )
     }
@@ -391,7 +385,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "onGroupProfileFetched : $groupJid")
 //        onGroupProfileFetchedStreamHandler.onGroupProfileFetched?.success(groupJid)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onGroupProfileFetchedChannel,
+            FlutterConstants.onGroupProfileFetchedChannel,
             groupJid
         )
     }
@@ -401,7 +395,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //LogMessage.d("our GroupProfileUpdated", groupJid)
 //        onGroupProfileUpdatedStreamHandler.onGroupProfileUpdated?.success(groupJid)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onGroupProfileUpdatedChannel,
+            FlutterConstants.onGroupProfileUpdatedChannel,
             groupJid
         )
     }
@@ -413,7 +407,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("leftUserJid", leftUserJid)
 //        onLeftFromGroupStreamHandler.onLeftFromGroup?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onLeftFromGroupChannel,
+            FlutterConstants.onLeftFromGroupChannel,
             map.toString()
         )
     }
@@ -433,7 +427,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("madeByMemberJid", madeByMemberJid)
 //        onMemberMadeAsAdminStreamHandler.onMemberMadeAsAdmin?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onMemberMadeAsAdminChannel,
+            FlutterConstants.onMemberMadeAsAdminChannel,
             map.toString()
         )
     }
@@ -453,7 +447,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("removedByMemberJid", revokedByMemberJid)
 //        onMemberRemovedAsAdminStreamHandler.onMemberRemovedAsAdmin?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onMemberRemovedAsAdminChannel,
+            FlutterConstants.onMemberRemovedAsAdminChannel,
             map.toString()
         )
     }
@@ -473,7 +467,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("removedByMemberJid", removedByMemberJid)
 //        onMemberRemovedFromGroupStreamHandler.onMemberRemovedFromGroup?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onMemberRemovedFromGroupChannel,
+            FlutterConstants.onMemberRemovedFromGroupChannel,
             map.toString()
         )
     }
@@ -482,7 +476,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "onNewGroupCreated : $groupJid")
 //        onNewGroupCreatedStreamHandler.onNewGroupCreated?.success(groupJid)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onNewGroupCreatedChannel,
+            FlutterConstants.onNewGroupCreatedChannel,
             groupJid
         )
     }
@@ -502,7 +496,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("addedByMemberJid", addedByMemberJid)
 //        onNewMemberAddedToGroupStreamHandler.onNewMemberAddedToGroup?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onNewMemberAddedToGroupChannel,
+            FlutterConstants.onNewMemberAddedToGroupChannel,
             map.toString()
         )
     }
@@ -513,7 +507,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("jid", jid)
 //        blockedThisUserStreamHandler.blockedThisUser?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.blockedThisUserChannel,
+            FlutterConstants.blockedThisUserChannel,
             map.toString()
         )
     }
@@ -522,7 +516,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "myProfileUpdated isSuccess : $isSuccess")
 //        myProfileUpdatedStreamHandler.myProfileUpdated?.success(isSuccess)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.myProfileUpdatedChannel,
+            FlutterConstants.myProfileUpdatedChannel,
             isSuccess
         )
     }
@@ -535,7 +529,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("status", status)
 //        onAdminBlockedOtherUserStreamHandler.onAdminBlockedOtherUser?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onAdminBlockedOtherUserChannel,
+            FlutterConstants.onAdminBlockedOtherUserChannel,
             map.toString()
         )
     }
@@ -547,7 +541,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("status", status)
 //        onAdminBlockedUserStreamHandler.onAdminBlockedUser?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onAdminBlockedUserChannel,
+            FlutterConstants.onAdminBlockedUserChannel,
             map.toString()
         )
     }
@@ -557,7 +551,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         FlyCore.getRegisteredUsers(true) { success, _, data ->
 //            onContactSyncCompleteStreamHandler.onContactSyncComplete?.success(isSuccess)
             FlyMethodConstants.updateChatSinkValue(
-                Constants.onContactSyncCompleteChannel,
+                FlutterConstants.onContactSyncCompleteChannel,
                 isSuccess
             )
         }
@@ -570,7 +564,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 MirrorFlyManager.getActivity()?.runOnUiThread {
                     //            onLoggedOutStreamHandler.onLoggedOut?.success(true)
                     FlyMethodConstants.updateChatSinkValue(
-                        Constants.onLoggedOutChannel,
+                        FlutterConstants.onLoggedOutChannel,
                         true
                     )
                 }
@@ -584,7 +578,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("jid", jid)
 //        unblockedThisUserStreamHandler.unblockedThisUser?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.unblockedThisUserChannel,
+            FlutterConstants.unblockedThisUserChannel,
             map.toString()
         )
     }
@@ -595,7 +589,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("jid", jid)
 //        userBlockedMeStreamHandler.userBlockedMe?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.userBlockedMeChannel,
+            FlutterConstants.userBlockedMeChannel,
             map.toString()
         )
     }
@@ -606,7 +600,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("jid", jid)
 //        userCameOnlineStreamHandler.userCameOnline?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.userCameOnlineChannel,
+            FlutterConstants.userCameOnlineChannel,
             map.toString()
         )
     }
@@ -617,7 +611,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("jid", jid)
 //        userDeletedHisProfileStreamHandler.userDeletedHisProfile?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.userDeletedHisProfileChannel,
+            FlutterConstants.userDeletedHisProfileChannel,
             map.toString()
         )
     }
@@ -632,7 +626,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("profileDetails", profileDetails.toJsonString())
 //        userProfileFetchedStreamHandler.userProfileFetched?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.userProfileFetchedChannel,
+            FlutterConstants.userProfileFetchedChannel,
             map.toString()
         )
     }
@@ -643,7 +637,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("jid", jid)
 //        userUnBlockedMeStreamHandler.userUnBlockedMe?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.userUnBlockedMeChannel,
+            FlutterConstants.userUnBlockedMeChannel,
             map.toString()
         )
     }
@@ -654,7 +648,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("jid", jid)
 //        userUpdatedHisProfileStreamHandler.userUpdatedHisProfile?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.userUpdatedHisProfileChannel,
+            FlutterConstants.userUpdatedHisProfileChannel,
             map.toString()
         )
         FlutterChat.profileListener?.userUpdatedHisProfile(jid)
@@ -666,7 +660,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("jid", jid)
 //        userWentOfflineStreamHandler.userWentOffline?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.userWentOfflineChannel,
+            FlutterConstants.userWentOfflineChannel,
             map.toString()
         )
     }
@@ -674,7 +668,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun usersIBlockedListFetched(jidList: List<String>) {
 //        usersIBlockedListFetchedStreamHandler.usersIBlockedListFetched?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.usersIBlockedListFetchedChannel,
+            FlutterConstants.usersIBlockedListFetchedChannel,
             jidList.toJsonString()
         )
     }
@@ -682,7 +676,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun usersProfilesFetched() {
 //        usersProfilesFetchedStreamHandler.usersProfilesFetched?.success(true)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.userProfileFetchedChannel,
+            FlutterConstants.userProfileFetchedChannel,
             true
         )
     }
@@ -690,7 +684,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun usersWhoBlockedMeListFetched(jidList: List<String>) {
 //        usersWhoBlockedMeListFetchedStreamHandler.usersWhoBlockedMeListFetched?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.usersWhoBlockedMeListFetchedChannel,
+            FlutterConstants.usersWhoBlockedMeListFetchedChannel,
             jidList.toJsonString()
         )
     }
@@ -699,7 +693,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "Chat Manager connected")
 //        onConnectedStreamHandler.onConnected?.success(true)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onConnectedChannel,
+            FlutterConstants.onConnectedChannel,
             true
         )
     }
@@ -707,7 +701,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun onConnectionFailed(e: FlyException) {
 //        onConnectionFailedStreamHandler.onConnectionFailed?.success(e.message)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onConnectionFailedChannel,
+            FlutterConstants.onConnectionFailedChannel,
             e.message
         )
     }
@@ -716,7 +710,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "Chat Manager Disconnected")
 //        onDisconnectedStreamHandler.onDisconnected?.success(true)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onDisconnectedChannel,
+            FlutterConstants.onDisconnectedChannel,
             true
         )
     }
@@ -725,7 +719,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //onReconnecting
         LogMessage.d(TAG, "Chat Manager Reconnecting")
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onReconnectingChannel,
+            FlutterConstants.onReconnectingChannel,
             true
         )
     }
@@ -739,7 +733,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "connectionFailed : $message")
 //        connectionFailedStreamHandler.connectionFailed?.success(message)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.connectionFailedChannel,
+            FlutterConstants.connectionFailedChannel,
             message
         )
     }
@@ -748,7 +742,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "connection Success")
 //        connectionSuccessStreamHandler.connectionSuccess?.success(true)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.connectionSuccessChannel,
+            FlutterConstants.connectionSuccessChannel,
             true
         )
     }
@@ -764,7 +758,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val map = JSONObject()
         map.put("socketIdList", socketIdJsonArray)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onWebLogoutChannel,
+            FlutterConstants.onWebLogoutChannel,
             map.toString()
         )
     }
@@ -791,7 +785,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("muteStatus", muteStatus)
 
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onChatMuteStatusUpdatedChannel,
+            FlutterConstants.onChatMuteStatusUpdatedChannel,
             map.toString()
         )
     }
@@ -804,7 +798,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("isMuteStatus", isMuteStatus)
 
         FlyMethodConstants.updateChatSinkValue(
-            Constants.didUpdateMuteSettingsChannel,
+            FlutterConstants.didUpdateMuteSettingsChannel,
             map.toString()
         )
     }
@@ -820,7 +814,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun onAllChatsCleared(){
         LogMessage.d(TAG, "onAllChatsCleared")
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onAllChatsClearedChannel,
+            FlutterConstants.onAllChatsClearedChannel,
             true
         )
     }
@@ -842,7 +836,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
 
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onChatClearedChannel,
+            FlutterConstants.onChatClearedChannel,
             map.toString()
         )
 
@@ -866,7 +860,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }
 
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onMessageDeletedChannel,
+            FlutterConstants.onMessageDeletedChannel,
             map.toString()
         )
 
@@ -882,7 +876,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("toUser", toUser)
         map.put("archiveStatus", archiveStatus)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.updateArchiveUnArchiveChatsChannel,
+            FlutterConstants.updateArchiveUnArchiveChatsChannel,
             map.toString()
         )
     }
@@ -890,7 +884,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun updateArchivedSettings(archivedSettingsStatus: Boolean) {
         LogMessage.d(TAG, "updateArchivedSettings : archivedSettingsStatus $archivedSettingsStatus")
         FlyMethodConstants.updateChatSinkValue(
-            Constants.updateArchivedSettingsChannel,
+            FlutterConstants.updateArchivedSettingsChannel,
             archivedSettingsStatus
         )
     }
@@ -914,14 +908,14 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "onMediaStatusUpdated ${message.toJsonString()}")
 //        MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.toJsonString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onMediaStatusUpdatedChannel,
+            FlutterConstants.onMediaStatusUpdatedChannel,
             message.toJsonString()
         )
     }
 
     override fun onMessageEdited(editedMessage: ChatMessage) {
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onMessageEditedChannel,
+            FlutterConstants.onMessageEditedChannel,
             editedMessage.toJsonString()
         )
     }
@@ -932,7 +926,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //LogMessage.d(TAG, "Message Received ${message.tojsonString()}")
 //        MessageReceivedStreamHandler.onMessageReceived?.success(message.toJsonString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onMessageReceivedChannel,
+            FlutterConstants.onMessageReceivedChannel,
             message.toJsonString()
         )
 
@@ -949,7 +943,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             if (message != null) {
 //            MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.toJsonString())
                 FlyMethodConstants.updateChatSinkValue(
-                    Constants.onMessageStatusUpdatedChannel,
+                    FlutterConstants.onMessageStatusUpdatedChannel,
                     message.toJsonString()
                 )
             }
@@ -971,7 +965,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //            js.toString()
 //        )
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onUploadDownloadProgressChangedChannel,
+            FlutterConstants.onUploadDownloadProgressChangedChannel,
             js.toString()
         )
     }
@@ -990,7 +984,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //                json.toString()
 //            )
             FlyMethodConstants.updateChatSinkValue(
-                Constants.showUpdateCancelNotificationChannel,
+                FlutterConstants.showUpdateCancelNotificationChannel,
                 json.toString()
             )
         } else {
@@ -1035,7 +1029,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map2.put("status", composing)
 //        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.setTypingStatusChannel,
+            FlutterConstants.setTypingStatusChannel,
             map2.toString()
         )
     }
@@ -1050,7 +1044,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("status", getTypingStatus(status))
 //        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.setTypingStatusChannel,
+            FlutterConstants.setTypingStatusChannel,
             map.toString()
         )
     }
@@ -1062,7 +1056,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("status", getTypingStatus(status))
 //        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.setTypingStatusChannel,
+            FlutterConstants.setTypingStatusChannel,
             map.toString()
         )
     }
@@ -1090,10 +1084,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         instance.mediaClickedJid = ""
         mainActivityIntent.extras?.let {
             Log.d(TAG, "mainActivityIntent ${it.getBoolean("IS_CALL_NOTIFICATION")}")
-            if (it.getBoolean(Constants.IS_CALL_NOTIFICATION)) {
+            if (it.getBoolean(FlutterConstants.IS_CALL_NOTIFICATION)) {
                 instance.fromCallNotification = true
-            } else if (it.getBoolean(Constants.IS_CHAT_NOTIFICATION)) {
-                instance.mediaClickedJid = it.getString(Constants.JID, "")
+            } else if (it.getBoolean(FlutterConstants.IS_CHAT_NOTIFICATION)) {
+                instance.mediaClickedJid = it.getString(FlutterConstants.JID, "")
             }
         }
 //        if (!launchedActivityFromHistory(mainActivityIntent)) {
@@ -1123,12 +1117,12 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         val json = JSONObject()
         instance.extras?.let {
             Log.d(TAG, "appLaunchedDetails $it")
-            if (it.getBoolean(Constants.IS_CALL_NOTIFICATION)) {
+            if (it.getBoolean(FlutterConstants.IS_CALL_NOTIFICATION)) {
                 json.put("type", "MissedCall")
                 json.put("value", true)
-            } else if (it.getBoolean(Constants.IS_CHAT_NOTIFICATION)) {
+            } else if (it.getBoolean(FlutterConstants.IS_CHAT_NOTIFICATION)) {
                 json.put("type", "MediaProgress")
-                json.put("value", it.getString(Constants.JID, ""))
+                json.put("value", it.getString(FlutterConstants.JID, ""))
             } else {
             }
         }
@@ -1254,7 +1248,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //        setting isActivityStartedForResult to false for xmpp disconnection
         ChatManager.isActivityStartedForResult = false
         when (requestCode) {
-            Constants.FROM_GALLERY -> {
+            FlutterConstants.FROM_GALLERY -> {
                 handleAudioVideoIntentFromGalleryMenu(resultCode, data)
             }
         }
@@ -1265,7 +1259,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d("onAvailableFeaturesUpdated", features.toJsonString())
 //        onUpdateAvailableFeaturesStreamHandler.onAvailableFeaturesUpdated?.success(features.toJsonString())
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onAvailableFeaturesUpdatedChannel,
+            FlutterConstants.onAvailableFeaturesUpdatedChannel,
             features.toJsonString()
         )
     }
@@ -1305,10 +1299,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         if (MirrorFlyManager.getActivity() != null) {
             MirrorFlyManager.getActivity()?.runOnUiThread {
 //                onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
-                FlyMethodConstants.updateCallSinkValue(Constants.onMissedCall, json.toString())
+                FlyMethodConstants.updateCallSinkValue(FlutterConstants.onMissedCall, json.toString())
             }
         } else {
-            FlyMethodConstants.updateCallSinkValue(Constants.onMissedCall, json.toString())
+            FlyMethodConstants.updateCallSinkValue(FlutterConstants.onMissedCall, json.toString())
             val notificationContent = getMissedCallNotificationContent(
                 isOneToOneCall,
                 userJid,
@@ -1378,13 +1372,13 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         if (!isClearAll) {
             callIdList.forEach { item ->
                 FlyMethodConstants.updateCallSinkValue(
-                    Constants.onCallLogDeletedChannel,
+                    FlutterConstants.onCallLogDeletedChannel,
                     item
                 )
             }
         } else {
             FlyMethodConstants.updateCallSinkValue(
-                Constants.clearAllCallLogChannel,
+                FlutterConstants.clearAllCallLogChannel,
                 true
             )
         }
@@ -1394,7 +1388,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun onCallLogsUpdated() {
         LogMessage.d("onCallLogs Updated ", "Updated Called")
 //        onCallLogsUpdatedStreamHandler.onCallLogsUpdated?.success(true)
-        FlyMethodConstants.updateCallSinkValue(Constants.onCallLogsUpdatedChannel, true)
+        FlyMethodConstants.updateCallSinkValue(FlutterConstants.onCallLogsUpdatedChannel, true)
     }
 
     override fun setMediaNotificationIntentAction(
@@ -1416,10 +1410,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         notificationIntent?.flags =
             (Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         notificationIntent?.putExtra("FROM", "setMediaNotificationIntentAction")
-        notificationIntent?.putExtra(Constants.IS_CHAT_NOTIFICATION, true)
+        notificationIntent?.putExtra(FlutterConstants.IS_CHAT_NOTIFICATION, true)
         notificationIntent?.putExtra(
-            Constants.JID,
-            if (toUsers.count() == 1) toUsers.elementAt(0) else Constants.EMPTY_STRING
+            FlutterConstants.JID,
+            if (toUsers.count() == 1) toUsers.elementAt(0) else FlutterConstants.EMPTY_STRING
         )
         val requestID = System.currentTimeMillis().toInt()
         return notificationIntent?.let {
@@ -1439,7 +1433,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         map.put("groupJid", groupJid)
         map.put("groupName", groupName)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.onSuperAdminDeleteGroupChannel,
+            FlutterConstants.onSuperAdminDeleteGroupChannel,
             map.toString()
         )
     }

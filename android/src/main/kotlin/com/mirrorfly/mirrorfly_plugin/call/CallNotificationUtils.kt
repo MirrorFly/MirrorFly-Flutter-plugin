@@ -9,14 +9,11 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import com.mirrorfly.mirrorfly_plugin.AppUtils
-import com.mirrorfly.mirrorfly_plugin.Constants
-import com.mirrorfly.mirrorfly_plugin.R
+import com.mirrorfly.mirrorfly_plugin.FlutterConstants
 import com.mirrorflysdk.api.FlyMessenger
 import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
-import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.flycommons.PendingIntentHelper
 import java.security.SecureRandom
 
@@ -116,7 +113,7 @@ object CallNotificationUtils {
         val notificationIntent = AppUtils.getAppIntent(context)
         notificationIntent?.let {
             it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            it.putExtra(Constants.IS_CALL_NOTIFICATION, true)
+            it.putExtra(FlutterConstants.IS_CALL_NOTIFICATION, true)
             val pendingIntent = PendingIntentHelper.getActivity(
                 context, CallConstants.CALL_NOTIFICATION_ID,
                 it

@@ -7,14 +7,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.RelativeLayout
 import com.mirrorfly.mirrorfly_plugin.R
-import com.mirrorfly.mirrorfly_plugin.call.Utils
+import com.mirrorfly.mirrorfly_plugin.call.FlutterUtils
 import kotlin.math.min
 
 
@@ -58,7 +57,7 @@ class RippleRelativeLayout : RelativeLayout {
         )
         rippleRadius = typedArray.getDimension(
             R.styleable.ripple_relativeLayout_ripple_radius,
-            Utils.dpToPx(30f)
+            FlutterUtils.dpToPx(30f)
         )
         rippleDurationTime = typedArray.getInt(
             R.styleable.ripple_relativeLayout_ripple_duration,

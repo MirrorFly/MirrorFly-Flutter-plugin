@@ -100,9 +100,9 @@ object AppUtils {
 
                 LogMessage.d("Returned denied Permissions", deniedPermissions.toString())
                 LogMessage.d("Returned permanently denied Permissions", permanentlyDeniedPermissions.toString())
-                var message = Constants.AUDIO_CALL_PERMISSION
+                var message = FlutterConstants.AUDIO_CALL_PERMISSION
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                    message = Constants.AUDIO_CALL_PERMISSION12
+                    message = FlutterConstants.AUDIO_CALL_PERMISSION12
                 }
 
                 if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
@@ -136,9 +136,9 @@ object AppUtils {
 
                 LogMessage.d("Returned denied Permissions", deniedPermissions.toString())
                 LogMessage.d("Returned permanently denied Permissions", permanentlyDeniedPermissions.toString())
-                var message = Constants.VIDEO_CALL_PERMISSION
+                var message = FlutterConstants.VIDEO_CALL_PERMISSION
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                    message = Constants.VIDEO_CALL_PERMISSION12
+                    message = FlutterConstants.VIDEO_CALL_PERMISSION12
                 }
                 if (permanentlyDeniedPermissions.isNotEmpty() || deniedPermissions.isNotEmpty()) {
                     activity?.let { showPermissionSnackBar(it, view, message, permissionsToCheck.toTypedArray()) }
@@ -208,6 +208,6 @@ fun Any.toJson(): String {
 }
 
 fun String?.checkNullOrEmpty(): String {
-    if (this == null) return Constants.EMPTY_STRING
-    return if (this == "null") Constants.EMPTY_STRING else this
+    if (this == null) return FlutterConstants.EMPTY_STRING
+    return if (this == "null") FlutterConstants.EMPTY_STRING else this
 }

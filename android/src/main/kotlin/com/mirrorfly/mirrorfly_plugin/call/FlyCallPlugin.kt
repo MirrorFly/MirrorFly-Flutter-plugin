@@ -40,7 +40,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
         flutterPluginBinding?.binaryMessenger?.let {
             MethodChannel(
                 it,
-                Constants.callMethodChannel
+                FlutterConstants.callMethodChannel
             ).setMethodCallHandler(this)
         }
         flutterPluginBinding?.binaryMessenger?.let { FlyMethodConstants.initializeCallListeners(it) }
@@ -164,7 +164,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                         jsons.put("callMode", CallManager.getCallMode())
 //                        onCallActionStreamHandler.onCallAction?.success(jsons.toString())
                         FlyMethodConstants.updateCallSinkValue(
-                            Constants.onCallAction,
+                            FlutterConstants.onCallAction,
                             jsons.toString()
                         )
                     }
@@ -180,7 +180,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             CallStatus.CALLING_AFTER_10S -> {}
         }
 //        onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
-        FlyMethodConstants.updateCallSinkValue(Constants.onCallStatusUpdated, json.toString())
+        FlyMethodConstants.updateCallSinkValue(FlutterConstants.onCallStatusUpdated, json.toString())
 
 
     }
@@ -249,7 +249,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             sendCallStatusForLocalJidInRemoteHangUP(callAction, userJid)
         } else {
 //            onCallActionStreamHandler.onCallAction?.success(json.toString())
-            FlyMethodConstants.updateCallSinkValue(Constants.onCallAction, json.toString())
+            FlyMethodConstants.updateCallSinkValue(FlutterConstants.onCallAction, json.toString())
         }
     }
 
@@ -267,7 +267,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                 json.put("callStatus", CallStatus.DISCONNECTED)
 //                onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
                 FlyMethodConstants.updateCallSinkValue(
-                    Constants.onCallStatusUpdated,
+                    FlutterConstants.onCallStatusUpdated,
                     json.toString()
                 )
             }
@@ -285,7 +285,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     json.put("callStatus", "Disconnected")
 //                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
                     FlyMethodConstants.updateCallSinkValue(
-                        Constants.onCallStatusUpdated,
+                        FlutterConstants.onCallStatusUpdated,
                         json.toString()
                     )
                 }
@@ -296,7 +296,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                     json.put("callStatus", "Disconnected")
 //                    onCallStatusUpdatedStreamHandler.onCallStatusUpdated?.success(json.toString())
                     FlyMethodConstants.updateCallSinkValue(
-                        Constants.onCallStatusUpdated,
+                        FlutterConstants.onCallStatusUpdated,
                         json.toString()
                     )
                 }
@@ -321,7 +321,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             json.put("userJid", userJid)
 //            onRemoteVideoTrackAddedStreamHandler.onRemoteVideoTrackAdded?.success(json.toString())
             FlyMethodConstants.updateCallSinkValue(
-                Constants.onRemoteVideoTrackAdded,
+                FlutterConstants.onRemoteVideoTrackAdded,
                 json.toString()
             )
             if (MirrorflyViewHashMap.getMirrorflyView(userJid) != null) {
@@ -330,7 +330,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                 Log.d(tag, "#onVideoTrackAdded view not created")
             }
 //            onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
-            FlyMethodConstants.updateCallSinkValue(Constants.onTrackAdded, json.toString())
+            FlyMethodConstants.updateCallSinkValue(FlutterConstants.onTrackAdded, json.toString())
         }
     }
 
@@ -344,14 +344,14 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
         val json = JSONObject()
         json.put("userJid", ChatManager.getCurrentUserJid())
 //        onLocalVideoTrackAddedStreamHandler.onLocalVideoTrackAdded?.success(json.toString())
-        FlyMethodConstants.updateCallSinkValue(Constants.onLocalVideoTrackAdded, json.toString())
+        FlyMethodConstants.updateCallSinkValue(FlutterConstants.onLocalVideoTrackAdded, json.toString())
         if (MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid()) != null) {
             MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())?.setLocalTarget()
         } else {
             Log.d(tag, "#onVideoTrackAdded view not created")
         }
 //        onTrackAddedStreamHandler.onTrackAdded?.success(json.toString())
-        FlyMethodConstants.updateCallSinkValue(Constants.onTrackAdded, json.toString())
+        FlyMethodConstants.updateCallSinkValue(FlutterConstants.onTrackAdded, json.toString())
     }
 
     override fun onMuteStatusUpdated(muteEvent: String, userJid: String) {
@@ -374,7 +374,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             }
         }
 //        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
-        FlyMethodConstants.updateCallSinkValue(Constants.onMuteStatusUpdated, json.toString())
+        FlyMethodConstants.updateCallSinkValue(FlutterConstants.onMuteStatusUpdated, json.toString())
     }
 
     override fun onUserSpeaking(userJid: String, audioLevel: Int) {
@@ -386,7 +386,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             MirrorflyViewHashMap.getMirrorflyView(userJid)?.userSpeaking(userJid)
         }
 //        onUserSpeakingStreamHandler.onUserSpeaking?.success(json.toString())
-        FlyMethodConstants.updateCallSinkValue(Constants.onUserSpeaking, json.toString())
+        FlyMethodConstants.updateCallSinkValue(FlutterConstants.onUserSpeaking, json.toString())
     }
 
     override fun onUserStoppedSpeaking(userJid: String) {
@@ -395,7 +395,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             MirrorflyViewHashMap.getMirrorflyView(userJid)?.userStoppedSpeaking(userJid)
         }
 //        onUserStoppedSpeakingStreamHandler.onUserStoppedSpeaking?.success(userJid)
-        FlyMethodConstants.updateCallSinkValue(Constants.onUserStoppedSpeaking, userJid)
+        FlyMethodConstants.updateCallSinkValue(FlutterConstants.onUserStoppedSpeaking, userJid)
     }
 
     override fun getCallAttendedPendingIntent(): PendingIntent {
@@ -475,7 +475,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
 //                                json.toString()
 //                            )
                             FlyMethodConstants.updateCallSinkValue(
-                                Constants.onCallStatusUpdated,
+                                FlutterConstants.onCallStatusUpdated,
                                 json.toString()
                             )
                         }
@@ -556,7 +556,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                 json.put("callMode", CallManager.getCallMode())
                 handler.post {
 //                    onCallActionStreamHandler.onCallAction?.success(json.toString())
-                    FlyMethodConstants.updateCallSinkValue(Constants.onCallAction, json.toString())
+                    FlyMethodConstants.updateCallSinkValue(FlutterConstants.onCallAction, json.toString())
                 }
             }
         }
@@ -582,7 +582,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
 //                        json.toString()
 //                    )
                     FlyMethodConstants.updateCallSinkValue(
-                        Constants.onCallStatusUpdated,
+                        FlutterConstants.onCallStatusUpdated,
                         json.toString()
                     )
                 }
@@ -600,7 +600,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
 //                        json.toString()
 //                    )
                     FlyMethodConstants.updateCallSinkValue(
-                        Constants.onCallStatusUpdated,
+                        FlutterConstants.onCallStatusUpdated,
                         json.toString()
                     )
                 }

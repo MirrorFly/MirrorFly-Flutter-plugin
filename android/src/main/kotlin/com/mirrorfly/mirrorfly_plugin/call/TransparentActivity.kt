@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.mirrorfly.mirrorfly_plugin.AppUtils
-import com.mirrorfly.mirrorfly_plugin.Constants
+import com.mirrorfly.mirrorfly_plugin.FlutterConstants
 import com.mirrorfly.mirrorfly_plugin.FlyChatPlugin
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.LogMessage
@@ -39,7 +39,7 @@ class TransparentActivity : Activity() {
         /*val broadcastIntent = CallkitIncomingBroadcastReceiver.getIntent(this, intent.action!!, data)
         broadcastIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
         sendBroadcast(broadcastIntent)*/
-        if (intent.action == Constants.ACTION_CALL_INCOMING) {
+        if (intent.action == FlutterConstants.ACTION_CALL_INCOMING) {
             //action call incoming
         } else {
             val json = JSONObject()

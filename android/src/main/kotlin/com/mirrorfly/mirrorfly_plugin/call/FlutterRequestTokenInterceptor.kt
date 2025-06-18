@@ -17,7 +17,7 @@ import java.net.UnknownHostException
 
 
 @Keep
-class RequestTokenInterceptor : Interceptor {
+class FlutterRequestTokenInterceptor : Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {

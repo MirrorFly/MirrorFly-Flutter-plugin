@@ -3,7 +3,6 @@ package com.mirrorfly.mirrorfly_plugin.call
 import android.content.Context
 import android.graphics.Color
 import android.util.DisplayMetrics
-import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -130,7 +129,7 @@ class MirrorflyView(
             LogMessage.d(tag,"profile "+profile.toJsonString())
         }
         if(viewAble()) {
-            Utils.loadGlideImage(mContext!!, getImageViewByTag(jid)!!, name, imageUrl,false)
+            FlutterUtils.loadGlideImage(mContext!!, getImageViewByTag(jid)!!, name, imageUrl,false)
         }
     }
 
@@ -414,7 +413,7 @@ class MirrorflyView(
         LogMessage.d(tag,"userUpdatedHisProfile $jid ${this.jid} ${MirrorflyViewHashMap.getMirrorflyView(jid)} ${MirrorflyViewHashMap.getMirrorflyView(jid)?.getImageViewByTag(jid)}")
         val profile = ContactManager.getProfileDetails(jid)
         if (profile != null && MirrorflyViewHashMap.getMirrorflyView(jid)!=null ) {
-            Utils.loadGlideImage(mContext!!, MirrorflyViewHashMap.getMirrorflyView(jid)?.getImageViewByTag(jid)!!, profile.getDisplayName(), profile.image,false)
+            FlutterUtils.loadGlideImage(mContext!!, MirrorflyViewHashMap.getMirrorflyView(jid)?.getImageViewByTag(jid)!!, profile.getDisplayName(), profile.image,false)
         }
     }
 

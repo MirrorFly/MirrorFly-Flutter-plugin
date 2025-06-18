@@ -6,13 +6,12 @@ import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import com.mirrorfly.mirrorfly_plugin.Constants
+import com.mirrorfly.mirrorfly_plugin.FlutterConstants
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CustomDrawable
 import com.mirrorfly.mirrorfly_plugin.call.widgets.SetDrawable
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
-import com.mirrorflysdk.flycall.call.utils.GroupCallUtils.getEndCallerJid
 import com.mirrorflysdk.flycall.webrtc.CallDirection
 import com.mirrorflysdk.flycall.webrtc.CallStatus
 import com.mirrorflysdk.flycall.webrtc.CallType
@@ -21,8 +20,6 @@ import com.mirrorflysdk.flycommons.ChatType
 import com.mirrorflysdk.flycommons.ContactType
 import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.utils.ChatUtils
-import com.mirrorflysdk.utils.MediaUtils
-import com.mirrorflysdk.utils.Utils
 import kotlin.math.abs
 
 fun CallManager.getEndCallerJid() : String {
@@ -59,7 +56,7 @@ fun CallManager.getOnGoingCallStatus(context: Context): String {
         isOutgoingCall() -> return getOutGoingCallStatus(context)
         isInComingCall() -> return getInComingCallStatus(context)
     }
-    return Constants.EMPTY_STRING
+    return FlutterConstants.EMPTY_STRING
 }
 
 
@@ -71,7 +68,7 @@ fun CallManager.getCallConnectedStatus(context: Context): String {
             else -> {
                 when (val remoteCallStatus = getCallStatus(getEndCallerJid())) {
                     CallStatus.CALLING, CallStatus.RINGING, CallStatus.ON_HOLD -> remoteCallStatus
-                    else -> Constants.EMPTY_STRING
+                    else -> FlutterConstants.EMPTY_STRING
                 }
             }
         }
@@ -102,21 +99,21 @@ fun ImageView.loadUserProfileImage(context: Context, userProfileDetails: Profile
     val drawable: Drawable?
     var imageUrl = if (!userProfileDetails.thumbImage.isNullOrEmpty()) {
         userProfileDetails.thumbImage
-    } else userProfileDetails.image ?: Constants.EMPTY_STRING
+    } else userProfileDetails.image ?: FlutterConstants.EMPTY_STRING
     if (userProfileDetails.isBlockedMe || userProfileDetails.isAdminBlocked) {
-        imageUrl = Constants.EMPTY_STRING
+        imageUrl = FlutterConstants.EMPTY_STRING
         drawable = CustomDrawable(context).getDefaultDrawable(userProfileDetails)
     } else if (userProfileDetails.isDeletedContact()) {
-        imageUrl = userProfileDetails.image ?: Constants.EMPTY_STRING
+        imageUrl = userProfileDetails.image ?: FlutterConstants.EMPTY_STRING
         drawable = CustomDrawable(context).getDefaultDrawable(userProfileDetails)
     } else if (TextUtils.isEmpty(imageUrl) || this.drawable == null)
         drawable = CustomDrawable(context).getDefaultDrawable(userProfileDetails)
     else
         drawable = CustomDrawable(context).getDefaultDrawable(userProfileDetails)
-    if (imageUrl.startsWith(Constants.STORAGE))
-        com.mirrorfly.mirrorfly_plugin.call.Utils.loadImageWithGlide(context, imageUrl, this, drawable)
+    if (imageUrl.startsWith(FlutterConstants.STORAGE))
+        com.mirrorfly.mirrorfly_plugin.call.FlutterUtils.loadImageWithGlide(context, imageUrl, this, drawable)
     else
-        com.mirrorfly.mirrorfly_plugin.call.Utils.loadImage(context, imageUrl, this, drawable)
+        com.mirrorfly.mirrorfly_plugin.call.FlutterUtils.loadImage(context, imageUrl, this, drawable)
 }
 
 fun ProfileDetails.isUnknownContact() =
@@ -191,7 +188,7 @@ fun Context.getDefaultDrawable(chatType: String): Drawable {
 }
 
 fun String?.getColourCode(): Int {
-    if (this != null && this == Constants.YOU)
+    if (this != null && this == FlutterConstants.YOU)
         return ContextCompat.getColor(ChatManager.applicationContext, R.color.color_black)
 
     val colorsArray = ChatManager.applicationContext.resources.getIntArray(R.array.colour_code)

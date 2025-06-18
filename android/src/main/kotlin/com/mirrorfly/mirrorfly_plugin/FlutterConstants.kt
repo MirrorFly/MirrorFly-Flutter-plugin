@@ -2,7 +2,7 @@ package com.mirrorfly.mirrorfly_plugin
 
 import java.util.regex.Pattern
 
-object Constants {
+object FlutterConstants {
     //    const val TAG = "FlyChatMethods"
     const val IS_CALL_NOTIFICATION = "IS_CALL_NOTIFICATION"
     const val IS_CHAT_NOTIFICATION = "IS_CHAT_NOTIFICATION"

@@ -3,7 +3,7 @@ package com.mirrorfly.mirrorfly_plugin.call.widgets
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import com.mirrorfly.mirrorfly_plugin.Constants
+import com.mirrorfly.mirrorfly_plugin.FlutterConstants
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorflysdk.api.contacts.ProfileDetails
 
@@ -78,7 +78,7 @@ class SetDrawable : BaseDrawable {
     }
 
     private fun isEmojiOnly(string: String): Boolean? {
-        return Constants.emojiPattern.matcher(string).find()
+        return FlutterConstants.emojiPattern.matcher(string).find()
     }
 
     private fun getProfileNameIcon(username: String): String {

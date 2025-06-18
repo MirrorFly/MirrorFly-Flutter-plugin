@@ -1,8 +1,5 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
-import android.Manifest
-import android.content.pm.PackageManager
-import androidx.core.content.ContextCompat
 import com.mirrorfly.mirrorfly_plugin.*
 import com.mirrorflysdk.api.ChatActionListener
 import com.mirrorflysdk.api.ChatManager
@@ -16,7 +13,6 @@ import com.mirrorflysdk.flycommons.Error
 import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.CallMetaData
-import com.mirrorflysdk.helpers.Permissions
 import io.flutter.Log
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -290,7 +286,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         json.put("userJid", userJid)
 
 //        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
-        FlyMethodConstants.updateCallSinkValue(Constants.onMuteStatusUpdated, json.toString())
+        FlyMethodConstants.updateCallSinkValue(FlutterConstants.onMuteStatusUpdated, json.toString())
     }
 
     fun getCurrentCameraPosition(call: MethodCall,result: MethodChannel.Result){
@@ -597,7 +593,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
          */
 //        onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
         FlyMethodConstants.updateCallSinkValue(
-            com.mirrorfly.mirrorfly_plugin.Constants.onMissedCall,
+            com.mirrorfly.mirrorfly_plugin.FlutterConstants.onMissedCall,
             json.toString()
         )
     }
@@ -668,7 +664,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         json.put("userJid", CallManager.getEndCallerJid())
 //        onMuteStatusUpdatedStreamHandler.onMuteStatusUpdated?.success(json.toString())
         FlyMethodConstants.updateCallSinkValue(
-            com.mirrorfly.mirrorfly_plugin.Constants.onMuteStatusUpdated,
+            com.mirrorfly.mirrorfly_plugin.FlutterConstants.onMuteStatusUpdated,
             json.toString()
         )
     }
@@ -852,7 +848,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
     override fun onSubscribeSuccess() {
         //enable join call UI button here
         FlyMethodConstants.updateCallSinkValue(
-               Constants.onSubscribeSuccess,
+               FlutterConstants.onSubscribeSuccess,
                 true
         )
     }
@@ -870,7 +866,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         json.put("code", error.code)
         json.put("description", error.description)
         FlyMethodConstants.updateCallSinkValue(
-                Constants.onError,
+                FlutterConstants.onError,
                 json.toString()
         )
     }
@@ -885,20 +881,20 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         )
         val json = JSONObject()
         json.put("userJid", ChatManager.getCurrentUserJid())
-        FlyMethodConstants.updateCallSinkValue(Constants.onLocalVideoTrackAdded, json.toString())
+        FlyMethodConstants.updateCallSinkValue(FlutterConstants.onLocalVideoTrackAdded, json.toString())
         if (MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid()) != null) {
             MirrorflyViewHashMap.getMirrorflyView(ChatManager.getCurrentUserJid())?.setLocalTarget()
         } else {
             Log.d(tag, "#onVideoTrackAdded view not created")
         }
-        FlyMethodConstants.updateCallSinkValue(Constants.onTrackAdded, json.toString())
+        FlyMethodConstants.updateCallSinkValue(FlutterConstants.onTrackAdded, json.toString())
 //        FlyMethodConstants.updateCallSinkValue(Constants.onLocalTrack, json.toString())
     }
 
     override fun onUsersUpdated(usersList: List<String>) {
         // update the users list in ui here
         FlyMethodConstants.updateCallSinkValue(
-                Constants.onUsersUpdated,
+                FlutterConstants.onUsersUpdated,
                 usersList.toJsonString()
         )
     }

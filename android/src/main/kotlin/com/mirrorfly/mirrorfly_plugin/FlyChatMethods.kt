@@ -85,7 +85,6 @@ import com.mirrorflysdk.models.MediaAutoDownloadOption
 import com.mirrorflysdk.models.RecentChatListParams
 import com.mirrorflysdk.models.TopicChatListParams
 import com.mirrorflysdk.utils.ThumbSize
-import com.mirrorflysdk.utils.UpDateWebPassword
 import com.mirrorflysdk.utils.Utils
 import com.mirrorflysdk.utils.VideoRecUtils
 import com.mirrorflysdk.xmpp.FlyXMPP
@@ -266,7 +265,7 @@ class FlyChatMethods {
             override fun getDisplayName(jid: String): String {
                 return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(
                     jid
-                )!!.getDisplayName() else Constants.EMPTY_STRING
+                )!!.getDisplayName() else FlutterConstants.EMPTY_STRING
             }
         })
         Logger.enableDebugLogging(enableSDKLog)
@@ -858,7 +857,7 @@ class FlyChatMethods {
             map.put("jidList", jidListJsonArray)
             map.put("muteStatus", muteStatus)
             FlyMethodConstants.updateChatSinkValue(
-                Constants.onChatMuteStatusUpdatedChannel,
+                FlutterConstants.onChatMuteStatusUpdatedChannel,
                 map.toString()
             )
         }
@@ -2383,7 +2382,7 @@ class FlyChatMethods {
                 val profile = Profile().apply {
                     name = details.name
                     nickName = details.nickName
-                    image = Constants.EMPTY_STRING
+                    image = FlutterConstants.EMPTY_STRING
                     mobileNumber = details.mobileNumber
                     email = details.email
                     status = details.status
@@ -3703,7 +3702,7 @@ class FlyChatMethods {
         val manufacturer = Build.MANUFACTURER.uppercase(Locale.getDefault())
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
         val audioListIntent = Intent(Intent.ACTION_GET_CONTENT)
-        audioListIntent.type = Constants.AUDIO_FILE
+        audioListIntent.type = FlutterConstants.AUDIO_FILE
         val audioPickerApps: List<ResolveInfo> =
             MirrorFlyManager.getContext().packageManager.queryIntentActivities(audioListIntent, 0)
         when {
@@ -3723,13 +3722,13 @@ class FlyChatMethods {
                 val intent2 = Intent("com.sec.android.app.myfiles.PICK_DATA")
                 intent2.putExtra("CONTENT_TYPE", audioListIntent.type)
                 intent2.addCategory(Intent.CATEGORY_DEFAULT)
-                getActivity()?.startActivityForResult(intent2, Constants.FROM_GALLERY)
+                getActivity()?.startActivityForResult(intent2, FlutterConstants.FROM_GALLERY)
                 /* setting isActivityStartedForResult to true to avoid xmpp disconnection*/
                 ChatManager.isActivityStartedForResult = true
             }
 
             intent.resolveActivity(MirrorFlyManager.getContext().packageManager) != null -> {
-                getActivity()?.startActivityForResult(intent, Constants.FROM_GALLERY)
+                getActivity()?.startActivityForResult(intent, FlutterConstants.FROM_GALLERY)
                 /* setting isActivityStartedForResult to true to avoid xmpp disconnection*/
                 ChatManager.isActivityStartedForResult = true
             }
@@ -3739,9 +3738,9 @@ class FlyChatMethods {
                     val audioIntent = Intent(Intent.ACTION_GET_CONTENT)
                     audioIntent.setDataAndType(
                         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        Constants.AUDIO_FILE
+                        FlutterConstants.AUDIO_FILE
                     )
-                    getActivity()?.startActivityForResult(audioIntent, Constants.FROM_GALLERY)
+                    getActivity()?.startActivityForResult(audioIntent, FlutterConstants.FROM_GALLERY)
                 } catch (e: Exception) {
                     MirrorFlyManager.audioFileResult?.error("500", e.message, e)
                     LogMessage.e(tag, e.stackTraceToString())
@@ -3764,9 +3763,9 @@ class FlyChatMethods {
 
     private fun openCustomOSAudioSelection() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = Constants.AUDIO_FILE
+        intent.type = FlutterConstants.AUDIO_FILE
         if (intent.resolveActivity(MirrorFlyManager.getContext().packageManager) != null) {
-            getActivity()?.startActivityForResult(intent, Constants.FROM_GALLERY)
+            getActivity()?.startActivityForResult(intent, FlutterConstants.FROM_GALLERY)
             /* setting isActivityStartedForResult to true to avoid xmpp disconnection*/
             ChatManager.isActivityStartedForResult = true
         }
@@ -3922,7 +3921,7 @@ class FlyChatMethods {
                 override fun onFailure(reason: String) {
                     MirrorFlyManager.getActivity()?.runOnUiThread {
                         FlyMethodConstants.updateChatSinkValue(
-                            Constants.onBackupFailureChannel,
+                            FlutterConstants.onBackupFailureChannel,
                             reason
                         )
                     }
@@ -3931,7 +3930,7 @@ class FlyChatMethods {
                 override fun onProgressChanged(percentage: Int) {
                     MirrorFlyManager.getActivity()?.runOnUiThread {
                         FlyMethodConstants.updateChatSinkValue(
-                            Constants.onBackupProgressChangedChannel,
+                            FlutterConstants.onBackupProgressChangedChannel,
                             percentage
                         )
                     }
@@ -3940,7 +3939,7 @@ class FlyChatMethods {
                 override fun onSuccess(backUpFilePath: String) {
                     MirrorFlyManager.getActivity()?.runOnUiThread {
                         FlyMethodConstants.updateChatSinkValue(
-                            Constants.onBackupSuccessChannel,
+                            FlutterConstants.onBackupSuccessChannel,
                             backUpFilePath
                         )
                     }
@@ -3957,7 +3956,7 @@ class FlyChatMethods {
 //                                onFailureStreamHandler.onFailure?.success(reason)
                     MirrorFlyManager.getActivity()?.runOnUiThread {
                         FlyMethodConstants.updateChatSinkValue(
-                            Constants.onRestoreFailureChannel,
+                            FlutterConstants.onRestoreFailureChannel,
                             reason
                         )
                     }
@@ -3967,7 +3966,7 @@ class FlyChatMethods {
 //                                onProgressChangedStreamHandler.onProgressChanged?.success(percentage)
                     MirrorFlyManager.getActivity()?.runOnUiThread {
                         FlyMethodConstants.updateChatSinkValue(
-                            Constants.onRestoreProgressChangedChannel,
+                            FlutterConstants.onRestoreProgressChangedChannel,
                             percentage
                         )
                     }
@@ -3977,7 +3976,7 @@ class FlyChatMethods {
 //                                onSuccessStreamHandler.onSuccess?.success("")
                     MirrorFlyManager.getActivity()?.runOnUiThread {
                     FlyMethodConstants.updateChatSinkValue(
-                            Constants.onRestoreSuccessChannel,
+                            FlutterConstants.onRestoreSuccessChannel,
                             true
                     )
                         }

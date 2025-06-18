@@ -22,7 +22,7 @@ import okhttp3.OkHttpClient;
  * @version 1.0
  */
 @GlideModule
-public class GlideTokenModule extends AppGlideModule {
+public class FlutterGlideTokenModule extends AppGlideModule {
 
     @Override
     public boolean isManifestParsingEnabled() {
@@ -38,8 +38,8 @@ public class GlideTokenModule extends AppGlideModule {
     public void registerComponents(
             @NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
         OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new RequestTokenInterceptor())
-                .authenticator(new TokenAuthenticator())
+                .addInterceptor(new FlutterRequestTokenInterceptor())
+                .authenticator(new FlutterTokenAuthenticator())
                 .build();
         registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
     }

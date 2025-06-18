@@ -8,7 +8,6 @@ import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.core.view.isGone
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
@@ -17,14 +16,13 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.mirrorfly.mirrorfly_plugin.Constants
+import com.mirrorfly.mirrorfly_plugin.FlutterConstants
 import com.mirrorfly.mirrorfly_plugin.R
 import com.mirrorfly.mirrorfly_plugin.call.widgets.CircleImageView
 import com.mirrorfly.mirrorfly_plugin.call.widgets.SetDrawable
 import com.mirrorfly.mirrorfly_plugin.toJsonString
 import com.mirrorflysdk.api.contacts.ContactManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
-import com.mirrorflysdk.flycall.call.utils.CallConstants
 import com.mirrorflysdk.flycommons.LogMessage
 import com.mirrorflysdk.media.MediaUploadHelper
 import com.mirrorflysdk.utils.ChatUtils
@@ -36,7 +34,7 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 
-class Utils {
+class FlutterUtils {
 
     companion object {
 
@@ -172,13 +170,13 @@ class Utils {
             val profileDetails = ContactManager.getProfileDetails(jid)
             val name = if (profileDetails != null) {
                 returnEmptyStringIfNull(profileDetails.getDisplayName())
-            } else Utils.getFormattedPhoneNumber(ChatUtils.getUserFromJid(jid)) ?: Constants.EMPTY_STRING
+            } else Utils.getFormattedPhoneNumber(ChatUtils.getUserFromJid(jid)) ?: FlutterConstants.EMPTY_STRING
             return Pair(name, profileDetails)
         }
         private fun getActualMemberName(stringBuilder: java.lang.StringBuilder): Pair<StringBuilder, Boolean> {
-            return if (stringBuilder.length > Constants.MAX_NAME_LENGTH)
+            return if (stringBuilder.length > FlutterConstants.MAX_NAME_LENGTH)
                 Pair(
-                    StringBuilder(stringBuilder.substring(0, Constants.MAX_NAME_LENGTH)).append("..."),
+                    StringBuilder(stringBuilder.substring(0, FlutterConstants.MAX_NAME_LENGTH)).append("..."),
                     false
                 )
             else
@@ -220,7 +218,7 @@ class Utils {
                     LogMessage.d("actualMemberName$i",actualMemberName.first.toString()+" : "+actualMemberName.second)
                     membersName = actualMemberName.first
                     isMaxMemberNameNotReached = actualMemberName.second
-                    spaceAvailable = membersName.length < Constants.MAX_NAME_LENGTH;
+                    spaceAvailable = membersName.length < FlutterConstants.MAX_NAME_LENGTH;
                     imageCallMember1.show()
                     loadUserProfilePic(context, imageCallMember1, pair)
                 } else if (spaceAvailable && isMaxMemberNameNotReached && i == 1) {
@@ -229,7 +227,7 @@ class Utils {
                     LogMessage.d("actualMemberName$i",actualMemberName.first.toString()+" : "+actualMemberName.second)
                     membersName = actualMemberName.first
                     isMaxMemberNameNotReached = actualMemberName.second
-                    spaceAvailable = membersName.length < Constants.MAX_NAME_LENGTH;
+                    spaceAvailable = membersName.length < FlutterConstants.MAX_NAME_LENGTH;
                     imageCallMember2.show()
                     loadUserProfilePic(context, imageCallMember2, pair)
                 } else if (spaceAvailable && isMaxMemberNameNotReached && i == 2) {
@@ -237,7 +235,7 @@ class Utils {
                     val actualMemberName = getActualMemberName(membersName)
                     LogMessage.d("actualMemberName$i",actualMemberName.first.toString()+" : "+actualMemberName.second)
                     membersName = actualMemberName.first
-                    spaceAvailable = membersName.length < Constants.MAX_NAME_LENGTH;
+                    spaceAvailable = membersName.length < FlutterConstants.MAX_NAME_LENGTH;
                     imageCallMember3.show()
                     loadUserProfilePic(context, imageCallMember3, pair)
                 } else {

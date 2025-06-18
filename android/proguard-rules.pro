@@ -84,8 +84,18 @@
 -dontwarn org.xbill.DNS.Record
 -dontwarn org.xbill.DNS.SRVRecord
 -dontwarn org.xbill.DNS.TextParseException
+-dontwarn java.lang.invoke.StringConcatFactory
 
 -dontwarn com.google.devtools.build.android.desugar.runtime.ThrowableExtension
 
 -dontwarn a.**
 -keep class a.** { *; }
+
+-keep class com.mirrorfly.mirrorfly_plugin.** { *; }
+-keepnames class com.mirrorfly.mirrorfly_plugin.** { *; }
+-dontwarn com.mirrorfly.mirrorfly_plugin.**
+
+-keep class com.mirrorfly.mirrorfly_plugin.** {
+    public *;
+}
+
