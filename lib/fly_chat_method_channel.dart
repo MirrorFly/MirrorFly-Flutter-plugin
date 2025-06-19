@@ -1875,6 +1875,27 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<void> initializeTranslations(Map<String, String> stringSet,
+      Function(FlyResponse response) callback) async {
+    if (!Platform.isIOS) {
+      try {
+        await mirrorFlyMethodChannel.invokeMethod<bool>(
+            'initializeTranslations', {"stringSet": stringSet});
+        callback.call(
+            FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      } on PlatformException catch (e) {
+        LogMessage.d("Platform Exception =", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(e.code, e.message, e.details)));
+      } on Exception catch (e) {
+        LogMessage.d("Exception ", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+      }
+    }
+  }
+
+  @override
   Future<bool> isPrivateStorageEnabledOrNot() async {
     bool? res;
     try {

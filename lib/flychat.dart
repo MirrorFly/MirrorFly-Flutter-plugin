@@ -128,6 +128,12 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);
   }
 
+  static Future<void> initializeTranslations(
+  {required Map<String,String> stringSet,required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.initializeTranslations(stringSet, flyCallback);
+  }
+
+
   /// Provides functionality to register the user to the Mirrorfly platform.
   @Deprecated('Instead of use Mirrorfly.login()')
   static Future<void> registerUser(

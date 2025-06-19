@@ -1976,6 +1976,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future<void> initializeTranslations(
+      Map<String, String> stringSet, Function(FlyResponse response) callback) {
+    throw UnimplementedError();
+  }
+
   /* @override
   Future<bool?> webLoginDetailsCleared() {
     throw UnimplementedError();

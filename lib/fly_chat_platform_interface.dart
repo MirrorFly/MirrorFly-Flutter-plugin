@@ -88,6 +88,12 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('build() has not been implemented.');
   }
 
+  Future<void> initializeTranslations(
+      Map<String, String> stringSet, Function(FlyResponse response) callback) {
+    throw UnimplementedError(
+        'initializeTranslations() has not been implemented.');
+  }
+
   /// Checks if private storage is enabled in the SDK settings.
   Future<bool> isPrivateStorageEnabledOrNot() {
     throw UnimplementedError(
