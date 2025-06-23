@@ -72,6 +72,7 @@ class FlyMethodConstants {
             return [
                 "init": flyChatMethods.buildChatSDK,
                 "initializeSDK": flyChatMethods.initializeSDK,
+                "setTranslations": flyChatMethods.setTranslations,
                 "getPlistValue": flyChatMethods.getPlistValue,
     //            "contactSyncStateValue": flyChatMethods.contactSyncStateValue,
                 "revokeContactSync": flyChatMethods.revokeContactSync,

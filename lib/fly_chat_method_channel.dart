@@ -1875,12 +1875,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> initializeTranslations(Map<String, String> stringSet,
+  Future<void> setTranslations(Map<String, String> stringSet,
       Function(FlyResponse response) callback) async {
-    if (!Platform.isIOS) {
       try {
         await mirrorFlyMethodChannel.invokeMethod<bool>(
-            'initializeTranslations', {"stringSet": stringSet});
+            'setTranslations', {"stringSet": stringSet});
         callback.call(
             FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
       } on PlatformException catch (e) {
@@ -1892,7 +1891,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
             FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
       }
-    }
   }
 
   @override

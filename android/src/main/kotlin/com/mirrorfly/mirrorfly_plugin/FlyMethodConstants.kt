@@ -85,7 +85,7 @@ object FlyMethodConstants {
     val chatMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "init" to flyChatMethods::buildChatSDK,
         "initializeSDK" to flyChatMethods::buildInitializeSDK,
-        "initializeTranslations" to flyChatMethods::initializeTranslations,
+        "setTranslations" to flyChatMethods::setTranslations,
         "isPrivateStorageEnabled" to flyChatMethods::privateStorageEnabled,
         "getManifestValue" to flyChatMethods::getManifestValue,
         "revokeContactSync" to flyChatMethods::revokeContactSync,

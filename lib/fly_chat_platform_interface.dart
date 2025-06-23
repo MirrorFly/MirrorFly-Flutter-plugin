@@ -88,10 +88,19 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('build() has not been implemented.');
   }
 
-  Future<void> initializeTranslations(
+  /// Sets customized translations for the MirrorFly platform.
+  ///
+  /// This method allows you to provide localized strings by passing a key-value map.
+  /// It also provides a [callback] that is executed once the translation initialization completes.
+  ///
+  /// - [stringSet] : A map containing translation keys and their localized values.
+  /// - [callback] : A function that receives a [FlyResponse] indicating the result of the operation.
+  ///
+  /// Throws an [UnimplementedError] if the platform-specific implementation is not provided.
+  Future<void> setTranslations(
       Map<String, String> stringSet, Function(FlyResponse response) callback) {
     throw UnimplementedError(
-        'initializeTranslations() has not been implemented.');
+        'setTranslations() has not been implemented.');
   }
 
   /// Checks if private storage is enabled in the SDK settings.

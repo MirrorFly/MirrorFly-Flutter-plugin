@@ -1977,7 +1977,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> initializeTranslations(
+  Future<void> setTranslations(
       Map<String, String> stringSet, Function(FlyResponse response) callback) {
     throw UnimplementedError();
   }

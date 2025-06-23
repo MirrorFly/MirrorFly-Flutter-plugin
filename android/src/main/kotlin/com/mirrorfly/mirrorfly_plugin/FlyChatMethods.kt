@@ -91,6 +91,7 @@ import com.mirrorflysdk.models.TopicChatListParams
 import com.mirrorflysdk.utils.CompressCallback
 import com.mirrorflysdk.utils.MFTextLocalization
 import com.mirrorflysdk.utils.StringConstants
+import com.mirrorfly.mirrorfly_plugin.FlyTranslations
 import com.mirrorflysdk.utils.MediaUtils
 import com.mirrorflysdk.utils.ThumbSize
 import com.mirrorflysdk.utils.UpDateWebPassword
@@ -328,18 +329,22 @@ class FlyChatMethods {
         }
     }
 
-    fun initializeTranslations(call: MethodCall, result: MethodChannel.Result) {
+    fun setTranslations(call: MethodCall, result: MethodChannel.Result) {
         val receivedMap = call.argument<Map<String, String>>("stringSet")
         val stringSet = HashMap<String, String>()
         if (receivedMap != null) {
             for ((key, value) in receivedMap) {
-                stringSet[StringConstants.FLY_INFO_INCOMING] = value
+                val stringConstKey = FlyTranslations.constantMap[key]
+                if (stringConstKey != null) {
+                    stringSet[stringConstKey] = value
+                } else {
+                    Log.d("FlyTranslations", "Unknown key: $key")
+                }
             }
-            Log.d("FlyTranslations", "Mapped: $stringSet")
             MFTextLocalization.setStringSet(stringSet)
             result.success(true)
         } else {
-            result.error("500", "initializeTranslations stringSet is null", null)
+            result.error("500", "setTranslations stringSet is null", null)
         }
     }
 

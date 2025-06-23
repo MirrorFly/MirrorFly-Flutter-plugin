@@ -128,11 +128,35 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);
   }
 
-  static Future<void> initializeTranslations(
-  {required Map<String,String> stringSet,required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance.initializeTranslations(stringSet, flyCallback);
+  /// Provides functionality to initialize customized translations
+  /// to the Mirrorfly platform.
+  ///
+  /// Parameters:
+  /// - [stringSet] : A map containing translation keys and their localized values.
+  /// - [flyCallback] : Callback function to handle the SDK response after applying translations.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// Mirrorfly.setTranslations(
+  ///   stringSet: {
+  ///  "FLY_INFO_INCOMING" : "your_localized_value",
+  ///  "FLY_INFO_OUTGOING" : "your_localized_value"
+  ///   },
+  ///   flyCallback: (response) {
+  ///     if (response.isSuccess) {
+  ///       print("Translations updated successfully");
+  ///     } else {
+  ///       print("Failed to update translations: ${response.message}");
+  ///     }
+  ///   },
+  /// );
+  /// ```
+  static Future<void> setTranslations(
+      {required Map<String, String> stringSet,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance
+        .setTranslations(stringSet, flyCallback);
   }
-
 
   /// Provides functionality to register the user to the Mirrorfly platform.
   @Deprecated('Instead of use Mirrorfly.login()')
