@@ -139,14 +139,14 @@ class Mirrorfly {
   /// ```dart
   /// Mirrorfly.setTranslations(
   ///   stringSet: {
-  ///  "FLY_INFO_INCOMING" : "your_localized_value",
-  ///  "FLY_INFO_OUTGOING" : "your_localized_value"
-  ///   },
+  ///       "FLY_INFO_INCOMING" : "your_localized_value",
+  ///       "FLY_INFO_OUTGOING" : "your_localized_value"
+  ///     },
   ///   flyCallback: (response) {
   ///     if (response.isSuccess) {
   ///       print("Translations updated successfully");
   ///     } else {
-  ///       print("Failed to update translations: ${response.message}");
+  ///       print("Failed to update translations: ${response.errorMessage}");
   ///     }
   ///   },
   /// );
