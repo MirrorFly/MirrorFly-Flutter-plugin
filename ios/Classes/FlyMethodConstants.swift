@@ -72,7 +72,6 @@ class FlyMethodConstants {
             return [
                 "init": flyChatMethods.buildChatSDK,
                 "initializeSDK": flyChatMethods.initializeSDK,
-                "setTranslations": flyChatMethods.setTranslations,
                 "getPlistValue": flyChatMethods.getPlistValue,
     //            "contactSyncStateValue": flyChatMethods.contactSyncStateValue,
                 "revokeContactSync": flyChatMethods.revokeContactSync,
@@ -235,5 +234,6 @@ class FlyMethodConstants {
                 "restoreBackup": flyChatMethods.restoreBackup,
                 "cancelBackup": flyChatMethods.cancelBackup,
                 "cancelRestore": flyChatMethods.cancelRestore,
+                "setTranslations": flyChatMethods.setTranslations,
             ] }()
 }

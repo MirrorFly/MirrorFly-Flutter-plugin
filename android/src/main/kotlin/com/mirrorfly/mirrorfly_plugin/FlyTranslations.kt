@@ -9,7 +9,7 @@ class FlyTranslations {
             "FLY_ERROR_RETRY" to StringConstants.FLY_ERROR_RETRY,
             "FLY_INFO_MSG_UPLOADING" to StringConstants.FLY_INFO_MSG_UPLOADING,
             "FLY_ERROR_MSG_NO_INTERNET" to StringConstants.FLY_ERROR_MSG_NO_INTERNET,
-            "FLY_INFO_GROUP_USER_ADDED" to StringConstants.FLY_INFO_GROUP_USER_ADDED,
+//            "FLY_INFO_GROUP_USER_ADDED" to StringConstants.FLY_INFO_GROUP_USER_ADDED,
             "FLY_INFO_MSG_DOWNLOADING_FILE" to StringConstants.FLY_INFO_MSG_DOWNLOADING_FILE,
             "FLY_INFO_MSG_DOWNLOADING_FILES" to StringConstants.FLY_INFO_MSG_DOWNLOADING_FILES,
             "FLY_INFO_MSG_DOWNLOADING" to StringConstants.FLY_INFO_MSG_DOWNLOADING,

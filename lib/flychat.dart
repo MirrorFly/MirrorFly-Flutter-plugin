@@ -128,35 +128,6 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);
   }
 
-  /// Provides functionality to initialize customized translations
-  /// to the Mirrorfly platform.
-  ///
-  /// Parameters:
-  /// - [fileName] : Contains the name of the your translation json file.
-  ///                Note: File should be placed under assets/i18n/your_file. Also
-  ///                should be mentioned under assets: in your pubspec.yaml.
-  /// - [flyCallback] : Callback function to handle the SDK response after applying translations.
-  ///
-  /// Example usage:
-  /// ```dart
-  /// Mirrorfly.setTranslations(
-  ///   fileName: "your_file_name"
-  ///   flyCallback: (response) {
-  ///     if (response.isSuccess) {
-  ///       print("Translations updated successfully");
-  ///     } else {
-  ///       print("Failed to update translations: ${response.message}");
-  ///     }
-  ///   },
-  /// );
-  /// ```
-  static Future<void> setTranslations(
-      {required String fileName,
-      required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance
-        .setTranslations(fileName: fileName,callback:  flyCallback);
-  }
-
   /// Provides functionality to register the user to the Mirrorfly platform.
   @Deprecated('Instead of use Mirrorfly.login()')
   static Future<void> registerUser(
@@ -5740,5 +5711,39 @@ class Mirrorfly {
   /// To get the current [CameraPosition] for the ongoing Call
   static Future<String> getCurrentCameraPosition() {
     return FlyChatFlutterPlatform.instance.getCurrentCameraPosition();
+  }
+
+  /// Provides functionality to initialize customized translations
+  /// to the Mirrorfly platform.
+  ///
+  /// This method loads localized strings from a JSON file and applies them to the SDK.
+  /// Only the [fileName] (e.g., `"en.json"`) should be passed. The file is expected to be
+  /// located inside the `assets/i18n/` directory and must be defined under `assets:`
+  /// in your `pubspec.yaml`.
+  ///
+  /// Parameters:
+  /// - [fileName] : Contains the name of the your translation json file.
+  ///                Note: File should be placed under assets/i18n/your_file. Also
+  ///                should be mentioned under assets: in your pubspec.yaml.
+  /// - [flyCallback] : Callback function to handle the SDK response after applying translations.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// Mirrorfly.setTranslations(
+  ///   fileName: "your_file_name"
+  ///   flyCallback: (response) {
+  ///     if (response.isSuccess) {
+  ///       print("Translations updated successfully");
+  ///     } else {
+  ///       print("Failed to update translations: ${response.message}");
+  ///     }
+  ///   },
+  /// );
+  /// ```
+  static Future<void> setTranslations(
+      {required String fileName,
+        required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance
+        .setTranslations(fileName: fileName,callback:  flyCallback);
   }
 }

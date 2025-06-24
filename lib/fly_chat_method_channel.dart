@@ -1877,33 +1877,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> setTranslations(
-      {required String fileName,
-      required Function(FlyResponse response) callback}) async {
-    final FileReadResult result = await MirrorFlyFileHelper.readFile(fileName);
-    if (result.isSuccess) {
-      try {
-        LogMessage.d("setTranslations loadString success", "true}");
-        await mirrorFlyMethodChannel
-            .invokeMethod<bool>('setTranslations', {"stringSet": result.map});
-        callback
-            .call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
-      } on PlatformException catch (e) {
-        LogMessage.d("Platform Exception =", " $e");
-        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
-            FlyException(e.code, e.message, e.details)));
-      } on Exception catch (e) {
-        LogMessage.d("Exception ", " $e");
-        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
-            FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
-      }
-    } else {
-      LogMessage.d("Exception ", " ${result.errorMessage}");
-      callback.call(FlyResponse(false, FlyConstants.empty, result.errorMessage,null));
-    }
-  }
-
-  @override
   Future<bool> isPrivateStorageEnabledOrNot() async {
     bool? res;
     try {
@@ -6604,6 +6577,33 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $e");
       return "";
       // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<void> setTranslations(
+      {required String fileName,
+        required Function(FlyResponse response) callback}) async {
+    final FileReadResult result = await MirrorFlyFileHelper.readFile(fileName);
+    if (result.isSuccess) {
+      try {
+        LogMessage.d("setTranslations loadString success", "true}");
+        await mirrorFlyMethodChannel
+            .invokeMethod<bool>('setTranslations', {"stringSet": result.map});
+        callback
+            .call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      } on PlatformException catch (e) {
+        LogMessage.d("Platform Exception =", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(e.code, e.message, e.details)));
+      } on Exception catch (e) {
+        LogMessage.d("Exception ", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+      }
+    } else {
+      LogMessage.d("Exception ", " ${result.errorMessage}");
+      callback.call(FlyResponse(false, FlyConstants.empty, result.errorMessage,null));
     }
   }
 }

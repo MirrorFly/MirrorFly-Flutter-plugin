@@ -88,23 +88,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('build() has not been implemented.');
   }
 
-  /// Sets customized translations for the MirrorFly platform.
-  ///
-  /// This method allows you to provide localized strings by passing a key-value map.
-  /// It also provides a [callback] that is executed once the translation initialization completes.
-  ///
-  /// - [fileName] : Contains the path of the your translation json file.
-  ///                File should be placed under assets/i18n/your_file also
-  ///                should be mentioned under assets: in your pubspec.yaml.
-  /// - [callback] : A function that receives a [FlyResponse] indicating the result of the operation.
-  ///
-  /// Throws an [UnimplementedError] if the platform-specific implementation is not provided.
-  Future<void> setTranslations({required String fileName,
-    required Function(FlyResponse response) callback}) {
-    throw UnimplementedError(
-        'setTranslations() has not been implemented.');
-  }
-
   /// Checks if private storage is enabled in the SDK settings.
   Future<bool> isPrivateStorageEnabledOrNot() {
     throw UnimplementedError(
@@ -1761,6 +1744,14 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<String> getCurrentCameraPosition() {
     throw UnimplementedError(
         'getCurrentCameraPosition has not been implemented.');
+  }
+
+  /// Sets custom translations for the MirrorFly platform.
+  Future<void> setTranslations({
+    required String fileName,
+    required Function(FlyResponse response) callback,
+  }) {
+    throw UnimplementedError('setTranslations() has not been implemented.');
   }
 
   /// This listener is set to listen the message events.

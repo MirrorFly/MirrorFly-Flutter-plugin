@@ -85,7 +85,6 @@ object FlyMethodConstants {
     val chatMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "init" to flyChatMethods::buildChatSDK,
         "initializeSDK" to flyChatMethods::buildInitializeSDK,
-        "setTranslations" to flyChatMethods::setTranslations,
         "isPrivateStorageEnabled" to flyChatMethods::privateStorageEnabled,
         "getManifestValue" to flyChatMethods::getManifestValue,
         "revokeContactSync" to flyChatMethods::revokeContactSync,
@@ -285,7 +284,8 @@ object FlyMethodConstants {
         "restoreBackup" to flyChatMethods::restoreBackup,
         "cancelBackup" to flyChatMethods::cancelBackup,
         "cancelRestore" to flyChatMethods::cancelRestore,
-    )
+        "setTranslations" to flyChatMethods::setTranslations,
+        )
 
     private val callEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(
         Constants.onLocalVideoTrackAdded to EventStreamHandler(),

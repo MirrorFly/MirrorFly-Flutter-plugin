@@ -329,29 +329,6 @@ class FlyChatMethods {
         }
     }
 
-    fun setTranslations(call: MethodCall, result: MethodChannel.Result) {
-        val receivedMap = call.argument<Map<String, String>>("stringSet")
-        val stringSet = HashMap<String, String>()
-        if (receivedMap != null) {
-            for ((key, value) in receivedMap) {
-                val stringConstKey = FlyTranslations.constantMap[key]
-                if (stringConstKey != null) {
-                    if (value.contains("{%s}")) {
-                        stringSet[stringConstKey] = value.replace("{%s}", "%s")
-                    } else {
-                        stringSet[stringConstKey] = value
-                    }
-                } else {
-                    Log.d("FlyTranslations", "Unknown key: $key")
-                }
-            }
-            MFTextLocalization.setStringSet(stringSet)
-            result.success(true)
-        } else {
-            result.error(MirrorFlyErrorCodes.TRANSLATION_STRING_SET_NOT_FOUND, "setTranslations stringSet is null", null)
-        }
-    }
-
     fun privateStorageEnabled(call: MethodCall, result: MethodChannel.Result){
         result.success(ChatManager.isPrivateStorageEnable())
     }
@@ -4130,4 +4107,26 @@ class FlyChatMethods {
         result.success(true)
     }
 
+    fun setTranslations(call: MethodCall, result: MethodChannel.Result) {
+        val receivedMap = call.argument<Map<String, String>>("stringSet")
+        val stringSet = HashMap<String, String>()
+        if (receivedMap != null) {
+            for ((key, value) in receivedMap) {
+                val stringConstKey = FlyTranslations.constantMap[key]
+                if (stringConstKey != null) {
+                    if (value.contains("{%s}")) {
+                        stringSet[stringConstKey] = value.replace("{%s}", "%s")
+                    } else {
+                        stringSet[stringConstKey] = value
+                    }
+                } else {
+                    Log.d("FlyTranslations", "Unknown key: $key")
+                }
+            }
+            MFTextLocalization.setStringSet(stringSet)
+            result.success(true)
+        } else {
+            result.error(MirrorFlyErrorCodes.TRANSLATION_STRING_SET_NOT_FOUND, "setTranslations stringSet is null", null)
+        }
+    }
 }
