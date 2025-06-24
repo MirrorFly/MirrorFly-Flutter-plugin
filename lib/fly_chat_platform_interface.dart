@@ -93,12 +93,14 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// This method allows you to provide localized strings by passing a key-value map.
   /// It also provides a [callback] that is executed once the translation initialization completes.
   ///
-  /// - [stringSet] : A map containing translation keys and their localized values.
+  /// - [fileName] : Contains the path of the your translation json file.
+  ///                File should be placed under assets/i18n/your_file also
+  ///                should be mentioned under assets: in your pubspec.yaml.
   /// - [callback] : A function that receives a [FlyResponse] indicating the result of the operation.
   ///
   /// Throws an [UnimplementedError] if the platform-specific implementation is not provided.
-  Future<void> setTranslations(
-      Map<String, String> stringSet, Function(FlyResponse response) callback) {
+  Future<void> setTranslations({required String fileName,
+    required Function(FlyResponse response) callback}) {
     throw UnimplementedError(
         'setTranslations() has not been implemented.');
   }

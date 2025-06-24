@@ -132,30 +132,29 @@ class Mirrorfly {
   /// to the Mirrorfly platform.
   ///
   /// Parameters:
-  /// - [stringSet] : A map containing translation keys and their localized values.
+  /// - [fileName] : Contains the name of the your translation json file.
+  ///                Note: File should be placed under assets/i18n/your_file. Also
+  ///                should be mentioned under assets: in your pubspec.yaml.
   /// - [flyCallback] : Callback function to handle the SDK response after applying translations.
   ///
   /// Example usage:
   /// ```dart
   /// Mirrorfly.setTranslations(
-  ///   stringSet: {
-  ///       "FLY_INFO_INCOMING" : "your_localized_value",
-  ///       "FLY_INFO_OUTGOING" : "your_localized_value"
-  ///     },
+  ///   fileName: "your_file_name"
   ///   flyCallback: (response) {
   ///     if (response.isSuccess) {
   ///       print("Translations updated successfully");
   ///     } else {
-  ///       print("Failed to update translations: ${response.errorMessage}");
+  ///       print("Failed to update translations: ${response.message}");
   ///     }
   ///   },
   /// );
   /// ```
   static Future<void> setTranslations(
-      {required Map<String, String> stringSet,
+      {required String fileName,
       required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance
-        .setTranslations(stringSet, flyCallback);
+        .setTranslations(fileName: fileName,callback:  flyCallback);
   }
 
   /// Provides functionality to register the user to the Mirrorfly platform.
