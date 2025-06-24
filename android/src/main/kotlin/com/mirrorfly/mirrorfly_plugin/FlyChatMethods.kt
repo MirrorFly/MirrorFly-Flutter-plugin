@@ -336,7 +336,11 @@ class FlyChatMethods {
             for ((key, value) in receivedMap) {
                 val stringConstKey = FlyTranslations.constantMap[key]
                 if (stringConstKey != null) {
-                    stringSet[stringConstKey] = value
+                    if (value.contains("{%s}")) {
+                        stringSet[stringConstKey] = value.replace("{%s}", "%s")
+                    } else {
+                        stringSet[stringConstKey] = value
+                    }
                 } else {
                     Log.d("FlyTranslations", "Unknown key: $key")
                 }
@@ -344,7 +348,7 @@ class FlyChatMethods {
             MFTextLocalization.setStringSet(stringSet)
             result.success(true)
         } else {
-            result.error("500", "setTranslations stringSet is null", null)
+            result.error(MirrorFlyErrorCodes.TRANSLATION_STRING_SET_NOT_FOUND, "setTranslations stringSet is null", null)
         }
     }
 
