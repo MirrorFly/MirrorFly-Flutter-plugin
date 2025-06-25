@@ -1977,8 +1977,10 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> setTranslations({required String fileName,
-    required Function(FlyResponse response) callback}) {
+  Future<void> setTranslations(
+      {required String fileNameOrPath,
+      String? packageName,
+      required Function(FlyResponse response) callback}) {
     throw UnimplementedError();
   }
 

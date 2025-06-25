@@ -6582,12 +6582,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<void> setTranslations(
-      {required String fileName,
-        required Function(FlyResponse response) callback}) async {
-    final FileReadResult result = await MirrorFlyFileHelper.readFile(fileName);
+      {required fileNameOrPath,
+        String? packageName,
+      required Function(FlyResponse response) callback}) async {
+    final FileReadResult result = await MirrorFlyFileHelper.readFile(
+        fileNameOrPath: fileNameOrPath, packageName: packageName);
     if (result.isSuccess) {
       try {
-        LogMessage.d("setTranslations loadString success", "true}");
+        LogMessage.d("setTranslations loadString success", "true, map: ${result.map}");
         await mirrorFlyMethodChannel
             .invokeMethod<bool>('setTranslations', {"stringSet": result.map});
         callback

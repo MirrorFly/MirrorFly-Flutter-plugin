@@ -1748,7 +1748,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
 
   /// Sets custom translations for the MirrorFly platform.
   Future<void> setTranslations({
-    required String fileName,
+    required String fileNameOrPath,
+    String? packageName,
     required Function(FlyResponse response) callback,
   }) {
     throw UnimplementedError('setTranslations() has not been implemented.');

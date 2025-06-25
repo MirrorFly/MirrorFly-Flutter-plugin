@@ -5713,24 +5713,30 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getCurrentCameraPosition();
   }
 
-  /// Provides functionality to initialize customized translations
-  /// to the Mirrorfly platform.
+  /// Initializes customized translations for the MirrorFly platform.
   ///
-  /// This method loads localized strings from a JSON file and applies them to the SDK.
-  /// Only the [fileName] (e.g., `"en.json"`) should be passed. The file is expected to be
-  /// located inside the `assets/i18n/` directory and must be defined under `assets:`
-  /// in your `pubspec.yaml`.
+  /// This method allows you to provide a localized translation JSON file
+  /// to be used within the SDK. The file can be loaded either from the
+  /// main app's asset bundle or from an external Flutter package.
   ///
-  /// Parameters:
-  /// - [fileName] : Contains the name of the your translation json file.
-  ///                Note: File should be placed under assets/i18n/your_file. Also
-  ///                should be mentioned under assets: in your pubspec.yaml.
-  /// - [flyCallback] : Callback function to handle the SDK response after applying translations.
+  /// ### Parameters:
+  /// - [fileNameOrPath]: The relative file name or full path to the translation JSON.
+  ///   - If only a file name is provided (e.g. `en.json`), it is assumed to be under
+  ///     `assets/i18n/` and should be declared in your app’s `pubspec.yaml`.
+  ///   - If a full path is provided (e.g. `your_path/en.json`), it will be used directly,
+  ///     also it should be declared in your app’s `pubspec.yaml` .
+  /// - [packageName]: *(Optional)* The name of the package if the translation file is
+  ///   located in an external Flutter package. This will use the
+  ///   `packages/<packageName>/your_path/your_file.json...` path resolution. There also you should
+  ///    declare the asset file path in your `pubspec.yaml`
+  /// - [flyCallback]: A callback function that receives the [FlyResponse] result
+  ///   indicating success or failure of the translation initialization.
   ///
-  /// Example usage:
+  /// ### Example:
   /// ```dart
   /// Mirrorfly.setTranslations(
-  ///   fileName: "your_file_name"
+  ///   fileNameOrPath: "en.json",
+  ///   packageName: "<package_name>" (optional)
   ///   flyCallback: (response) {
   ///     if (response.isSuccess) {
   ///       print("Translations updated successfully");
@@ -5740,10 +5746,15 @@ class Mirrorfly {
   ///   },
   /// );
   /// ```
-  static Future<void> setTranslations(
-      {required String fileName,
-        required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance
-        .setTranslations(fileName: fileName,callback:  flyCallback);
+  static Future<void> setTranslations({
+    required String fileNameOrPath,
+    String? packageName,
+    required Function(FlyResponse response) flyCallback,
+  }) {
+    return FlyChatFlutterPlatform.instance.setTranslations(
+      fileNameOrPath: fileNameOrPath,
+      packageName: packageName,
+      callback: flyCallback,
+    );
   }
 }
