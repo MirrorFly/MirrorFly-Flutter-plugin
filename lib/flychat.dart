@@ -5717,26 +5717,25 @@ class Mirrorfly {
   ///
   /// This method allows you to provide a localized translation JSON file
   /// to be used within the SDK. The file can be loaded either from the
-  /// main app's asset bundle or from an external Flutter package.
+  /// main app’s asset bundle or from an external Flutter package.
   ///
   /// ### Parameters:
-  /// - [fileNameOrPath]: The relative file name or full path to the translation JSON.
-  ///   - If only a file name is provided (e.g. `en.json`), it is assumed to be under
-  ///     `assets/i18n/` and should be declared in your app’s `pubspec.yaml`.
-  ///   - If a full path is provided (e.g. `your_path/en.json`), it will be used directly,
-  ///     also it should be declared in your app’s `pubspec.yaml` .
-  /// - [packageName]: *(Optional)* The name of the package if the translation file is
-  ///   located in an external Flutter package. This will use the
-  ///   `packages/<packageName>/your_path/your_file.json...` path resolution. There also you should
-  ///    declare the asset file path in your `pubspec.yaml`
-  /// - [flyCallback]: A callback function that receives the [FlyResponse] result
-  ///   indicating success or failure of the translation initialization.
+  /// - [fileNameOrPath]: The name or path of the translation JSON file.
+  ///   - If only a file name is provided (e.g., `"en.json"`), the plugin assumes it is located at
+  ///     `assets/i18n/en.json`. You must declare this path under the `assets` section of your `pubspec.yaml`.
+  ///   - If a relative path is provided (e.g., `"your_file_path/en.json"`), the plugin will use that path directly.
+  ///     This must also be declared under `assets` in your `pubspec.yaml`.
+  /// - [packageName]: *(Optional)* The name of the package if the translation file resides in an external package.
+  ///   In this case, the file will be resolved from `packages/<packageName>/<fileNameOrPath>`. You must declare the
+  ///   asset path under the `assets` section of that package’s `pubspec.yaml`.
+  /// - [flyCallback]: A callback function that receives a [FlyResponse] object indicating whether the
+  ///   translation initialization was successful.
   ///
   /// ### Example:
   /// ```dart
   /// Mirrorfly.setTranslations(
   ///   fileNameOrPath: "en.json",
-  ///   packageName: "<package_name>" (optional)
+  ///   packageName: "your_package_name", // optional
   ///   flyCallback: (response) {
   ///     if (response.isSuccess) {
   ///       print("Translations updated successfully");
@@ -5746,6 +5745,7 @@ class Mirrorfly {
   ///   },
   /// );
   /// ```
+
   static Future<void> setTranslations({
     required String fileNameOrPath,
     String? packageName,
