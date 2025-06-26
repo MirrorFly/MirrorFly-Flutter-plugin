@@ -441,8 +441,9 @@ import PushKit
     }
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
-        NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId)")
-        
+        NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue), userID \(userId), usersInCall \(usersInCall)")
+        let selfJID = AppUtils.shared.getMyJid()
+
         ///Work Around till sdk is fixed
         
         if callAction == .ACTION_LOCAL_HANGUP && AppUtils.shared.getMyJid() != userId {
@@ -453,6 +454,15 @@ import PushKit
         if (callAction == .ACTION_REMOTE_BUSY && isUserExists(userId: userId)) {
             NSLog("\(Constants.callTag) Events: User exists in Call Action so forwarding the status")
             usersInCall.removeValue(forKey: userId)
+        }
+        
+        /// Scenario for this workaround
+        /// For one - one call : Caller is iOS and Reciver is Android. Android user declines the call  `ACTION_LOCAL_HANGUP` triggered two times,
+        /// This causing an issue while handling the navigation in UI.
+        ///
+        if (callAction == .ACTION_LOCAL_HANGUP && isUserExists(userId: selfJID) && usersInCall.count == 1) {
+            NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue), usersInCall count: 1, isSelfJID \(userId == selfJID) :==> rejecting local hangup to send to the user")
+            return
         }
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
