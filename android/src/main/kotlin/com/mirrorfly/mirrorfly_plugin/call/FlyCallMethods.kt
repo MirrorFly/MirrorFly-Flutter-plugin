@@ -527,11 +527,11 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
 
     fun getUnreadMissedCallCount(call: MethodCall, result: MethodChannel.Result) {
         try {
-            if (!ChatManager.getBaseURL().isNullOrEmpty()) {
+//            if (!ChatManager.getBaseURL().isNullOrEmpty()) {
                 result.success(CallLogManager.getUnreadMissedCallCount())
-            } else {
-                result.error("500", "SDK not isInitialised", null)
-            }
+//            } else {
+//                result.error("500", "SDK not isInitialised", null)
+//            }
         } catch (e: java.lang.Exception) {
             result.error("500", e.toString(), null)
         }
@@ -548,13 +548,13 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
 
     fun markAllUnreadMissedCallsAsRead(call: MethodCall, result: MethodChannel.Result) {
         try {
-        if (!ChatManager.getBaseURL().isNullOrEmpty()) {
+//        if (!ChatManager.getBaseURL().isNullOrEmpty()) {
             CallLogManager.markAllUnreadMissedCallsAsRead()
             LogMessage.d("markAllUnreadMissedCallsAsRead", "called")
             result.success(true)
-        } else {
-            result.error("500", "SDK not isInitialised", null)
-        }
+//        } else {
+//            result.error("500", "SDK not isInitialised", null)
+//        }
         } catch (e: java.lang.Exception) {
             result.error("500", e.toString(), null)
         }
