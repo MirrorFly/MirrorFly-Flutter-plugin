@@ -3179,7 +3179,7 @@ extension MirrorFlySDK.FlyUtils {
   public static func getGroupUserName(profile: MirrorFlySDK.ProfileDetails) -> Swift.String
   public static func getUnknownUserName(jid: Swift.String, name: Swift.String, nickName: Swift.String, contactType: MirrorFlySDK.ContactType) -> Swift.String
   public static func mobileNumberParse(phoneNo: Swift.String) -> Swift.String
-  public static func convertUserName(name: Swift.String, nickName: Swift.String, phone: Swift.String) -> Swift.String
+  public static func convertUserName(jid: Swift.String, name: Swift.String? = nil, nickName: Swift.String? = nil) -> Swift.String
   public static func getFormattedMobileNumber(mobileNumber: Swift.String) -> Swift.String
   public static func getEncryptedFileName(path: Swift.String?) -> Swift.String?
   public static func setAppName(appName: Swift.String)

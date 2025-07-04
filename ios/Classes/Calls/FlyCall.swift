@@ -456,15 +456,6 @@ import PushKit
             usersInCall.removeValue(forKey: userId)
         }
         
-        /// Scenario for this workaround
-        /// For one - one call : Caller is iOS and Reciver is Android. Android user declines the call  `ACTION_LOCAL_HANGUP` triggered two times,
-        /// This causing an issue while handling the navigation in UI.
-        ///
-        if (callAction == .ACTION_LOCAL_HANGUP && isUserExists(userId: selfJID) && usersInCall.count == 1) {
-            NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue), usersInCall count: 1, isSelfJID \(userId == selfJID) :==> rejecting local hangup to send to the user")
-            return
-        }
-        
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(userId, forKey: "userJid")
         
