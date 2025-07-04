@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16.1'
 #   s.dependency 'MirrorFlySDK', '5.18.16'
-  s.ios.vendored_frameworks = 'sdk/MirrorFlySDK.xcframework'
+  s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
