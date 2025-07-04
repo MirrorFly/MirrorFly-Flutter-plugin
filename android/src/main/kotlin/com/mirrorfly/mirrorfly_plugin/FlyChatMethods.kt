@@ -690,22 +690,50 @@ class FlyChatMethods {
         if (profileDetails != null) {
             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
             //DebugUtilis.v("ContactManager.getProfileDetails", profileDetails.tojsonString())
-            LogMessage.d("ContactManager.getProfileDetails", "${profileDetails.toJsonString()}")
+            LogMessage.d("#MF_Profile L: getProfileDetails", profileDetails.toJsonString())
             result.success(profileDetails.toJsonString())
         } else {
-            ContactManager.getUserProfile(jid, true, true, object : FlyCallback {
-                override fun flyResponse(
-                    isSuccess: Boolean,
-                    throwable: Throwable?,
-                    data: HashMap<String, Any>
-                ) {
-                    LogMessage.d("ContactManager.getUserProfile", "${data.toJsonString()}")
-                    val profile = ContactManager.getProfileDetails(jid)
-                    if (profile != null) {
-                        result.success(profile.toJsonString())
+            if (GroupManager.isValidGroupJid(jid)){
+                LogMessage.d("#MF_Profile#", "getGroupProfile $jid")
+                GroupManager.getGroupProfile(jid, true) { isSuccess, throwable, data ->
+                    if (isSuccess) {
+                        val groupProfileDetails: ProfileDetails = data["data"] as ProfileDetails
+                        LogMessage.d("#MF_Profile S: getGroupProfile", groupProfileDetails.toJsonString())
+//                        result.success(groupProfileDetails.toJsonString())
+                        val profile = ContactManager.getProfileDetails(jid)
+                        if (profile != null) {
+                            LogMessage.d("#MF_Profile S:I : getGroupProfile", profile.toJsonString())
+                            result.success(profile.toJsonString())
+                        }else{
+                            LogMessage.d("#MF_Profile S:I : getGroupProfile", "Profile is null")
+                            result.error("500", "Group Profile fetch failed", "Unable to fetch group profile, after fetching from server")
+                        }
+                    } else {
+                        // Group creation failed print throwable to find the exception details.
+                        LogMessage.d("#MF_Profile S: getGroupProfile", throwable.toString())
+                        result.error("500", throwable?.message, throwable)
                     }
                 }
-            })
+            }else {
+                LogMessage.d("#MF_Profile#", "getUserProfile $jid")
+                ContactManager.getUserProfile(jid, true, true, object : FlyCallback {
+                    override fun flyResponse(
+                        isSuccess: Boolean,
+                        throwable: Throwable?,
+                        data: HashMap<String, Any>
+                    ) {
+                        LogMessage.d("#MF_Profile S: getUserProfile", data.toJsonString())
+                        val profile = ContactManager.getProfileDetails(jid)
+                        if (profile != null) {
+                            LogMessage.d("#MF_Profile S:I : getUserProfile", profile.toJsonString())
+                            result.success(profile.toJsonString())
+                        }else{
+                            LogMessage.d("#MF_Profile S:I : getUserProfile", "Profile is null")
+                            result.error("500", "Profile fetch failed", "Unable to fetch profile, after fetching from server")
+                        }
+                    }
+                })
+            }
         }
     }
 
