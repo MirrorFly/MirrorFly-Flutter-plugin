@@ -18,10 +18,18 @@ class MirrorflyViewBuilder {
             newMirrorflyView.setBackgroundColor(backgroundColor.toString())
         }
         newMirrorflyView.init()
-        if (creationParams.containsKey("scalingType")) {
+        if (creationParams.containsKey("scalingType") && !creationParams["scalingType"].toString().isNullOrEmpty()) {
             val scale =
                 RendererCommon.ScalingType.valueOf(creationParams["scalingType"].toString())
             newMirrorflyView.setScalingType(scale)
+        }else{
+            newMirrorflyView.setScalingType("SCALE_ASPECT_FILL")
+        }
+
+        if (creationParams.containsKey("alignment")&& !creationParams["alignment"].toString().isNullOrEmpty()) {
+            newMirrorflyView.setTextureViewAlignment()
+        }else{
+            newMirrorflyView.setTextureViewAlignment()
         }
 //        if (CallManager.isOnGoingAudioCall()){
 //            newMirrorflyView.setProfileView(viewId.toString())
