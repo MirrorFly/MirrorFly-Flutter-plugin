@@ -1,7 +1,7 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 6.0.3 effective-5.10 (swiftlang-6.0.3.1.10 clang-1600.0.30.1)
-// swift-module-flags: -target arm64-apple-ios12.1 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-bare-slash-regex -module-name MirrorFlySDK
-// swift-module-flags-ignorable: -no-verify-emitted-module-interface
+// swift-compiler-version: Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1)
+// swift-module-flags: -target arm64-apple-ios12.1 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name MirrorFlySDK
+// swift-module-flags-ignorable: -enable-bare-slash-regex
 import AVFAudio
 import AVFoundation
 import Alamofire
@@ -1781,7 +1781,9 @@ public protocol FlyXmppControllerDelegate : ObjectiveC.NSObjectProtocol {
 @_hasMissingDesignatedInitializers public class FlyLogWriter {
   public static var sharedInstance: MirrorFlySDK.FlyLogWriter
   public var flyLog: Swift.String
+  public var flyGroupLog: Swift.String
   public func writeText(_ str: Swift.String)
+  public func groupLogsText(_ str: Swift.String)
   public func writeCallText(_ str: Swift.String)
   public func writeStatusText(_ str: Swift.String)
   public func getLogFileURL() -> Foundation.URL
@@ -3357,7 +3359,7 @@ public enum MessageType : Swift.String, Swift.CustomStringConvertible, Swift.Cas
   public init?(rawValue: Swift.String)
   public typealias AllCases = [MirrorFlySDK.MessageType]
   public typealias RawValue = Swift.String
-  nonisolated public static var allCases: [MirrorFlySDK.MessageType] {
+  public static var allCases: [MirrorFlySDK.MessageType] {
     get
   }
   public var rawValue: Swift.String {
