@@ -23,7 +23,9 @@ class MirrorflyViewBuilder {
                 RendererCommon.ScalingType.valueOf(creationParams["scalingType"].toString())
             newMirrorflyView.setScalingType(scale)
         }else{
-            newMirrorflyView.setScalingType("SCALE_ASPECT_FILL")
+            val scale =
+                RendererCommon.ScalingType.valueOf("SCALE_ASPECT_FILL")
+            newMirrorflyView.setScalingType(scale)
         }
 
         if (creationParams.containsKey("alignment")&& !creationParams["alignment"].toString().isNullOrEmpty()) {
