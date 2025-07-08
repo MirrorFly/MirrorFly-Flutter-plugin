@@ -83,6 +83,59 @@ class MirrorflyView(
         getTextureViewByTag(jid)?.setScalingType(scalingType)
     }
 
+    fun setTextureViewAlignment() {
+        val alignment = (creationParams["alignment"] as? String).orEmpty().lowercase()
+        val params = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        when (alignment) {
+            "topleft" -> {
+                params.addRule(RelativeLayout.ALIGN_PARENT_START)
+                params.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+            }
+            "topcenter" -> {
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL)
+                params.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+            }
+            "topright" -> {
+                params.addRule(RelativeLayout.ALIGN_PARENT_END)
+                params.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+            }
+            "centerleft" -> {
+                params.addRule(RelativeLayout.ALIGN_PARENT_START)
+                params.addRule(RelativeLayout.CENTER_VERTICAL)
+            }
+            "center" -> {
+                params.addRule(RelativeLayout.CENTER_IN_PARENT)
+            }
+            "centerright" -> {
+                params.addRule(RelativeLayout.ALIGN_PARENT_END)
+                params.addRule(RelativeLayout.CENTER_VERTICAL)
+            }
+            "bottomleft" -> {
+                params.addRule(RelativeLayout.ALIGN_PARENT_START)
+                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            }
+            "bottomcenter" -> {
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL)
+                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            }
+            "bottomright" -> {
+                params.addRule(RelativeLayout.ALIGN_PARENT_END)
+                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            }
+            else -> {
+                // Fallback to center
+                params.addRule(RelativeLayout.CENTER_IN_PARENT)
+            }
+        }
+
+        textureView.layoutParams = params
+        textureView.visibility = View.VISIBLE
+    }
+
     fun setLocalTarget(){
         LogMessage.d(tag,"Local set $id $jid ${CallManager.getLocalProxyVideoSink()} ${CallManager.isVideoMuted()} ${getTextureViewByTag(jid)}")
         if(!CallManager.isVideoMuted() && CallManager.getLocalProxyVideoSink()!=null) {
