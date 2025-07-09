@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mirrorfly_plugin/helpers/file_helper.dart';
+import 'package:mirrorfly_plugin/helpers/file_helper_model.dart';
 
 import 'builder.dart';
 import 'edit_message_params.dart';
@@ -6575,6 +6577,37 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $e");
       return "";
       // callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty, FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<void> setTranslations(
+      {required fileNameOrPath,
+      String? packageName,
+      required Function(FlyResponse response) callback}) async {
+    final FileReadResult result = await MirrorFlyFileHelper.readFile(
+        fileNameOrPath: fileNameOrPath, packageName: packageName);
+    if (result.isSuccess) {
+      try {
+        LogMessage.d(
+            "setTranslations loadString success", "true, map: ${result.map}");
+        await mirrorFlyMethodChannel
+            .invokeMethod<bool>('setTranslations', {"stringSet": result.map});
+        callback
+            .call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      } on PlatformException catch (e) {
+        LogMessage.d("Platform Exception =", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(e.code, e.message, e.details)));
+      } on Exception catch (e) {
+        LogMessage.d("Exception ", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+      }
+    } else {
+      LogMessage.d("Exception ", " ${result.errorMessage}");
+      callback.call(
+          FlyResponse(false, FlyConstants.empty, result.errorMessage, null));
     }
   }
 }

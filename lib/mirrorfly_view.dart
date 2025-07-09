@@ -22,6 +22,36 @@ enum ScalingType {
   scaleAspectBALANCED;
 }
 
+/// Enum representing the different types of Alignment that can be applied to a `MirrorFlyView`.
+enum AlignmentType {
+  /// Align the view to the top left corner.
+  TopLeft,
+
+  /// Align the view to the top center corner..
+  TopCenter,
+
+  /// Align the view to the top right corner..
+  TopRight,
+
+  /// Align the view to the center left corner.
+  CenterLeft,
+
+  /// Align the view to the center corner.
+  Center,
+
+  /// Align the view to the center right corner.
+  CenterRight,
+
+  /// Align the view to the bottom left corner.
+  BottomLeft,
+
+  /// Align the view to the bottom center corner.
+  BottomCenter,
+
+  /// Align the view to the bottom right corner.
+  BottomRight;
+}
+
 /// Enum representing the different positions that a profile picture can be aligned to in a `MirrorFlyView`.
 enum HorizontalGravity {
   /// Align the profile picture to the top of the view.
@@ -50,6 +80,7 @@ class MirrorFlyView extends StatefulWidget {
       @Deprecated("This field is not used and handled internally")
       this.mirror = true,
       this.scalingType = ScalingType.scaleAspectFILL,
+      this.alignmentType = AlignmentType.TopLeft,
       this.viewBgColor,
       this.alignProfilePictureCenter = true,
       // this.horizontalGravity = HorizontalGravity.center,
@@ -66,6 +97,9 @@ class MirrorFlyView extends StatefulWidget {
 
   /// The scaling type for the view.
   final ScalingType scalingType;
+
+  /// The Alignment type for the view.
+  final AlignmentType alignmentType;
 
   /// The color for the view.
   final Color? viewBgColor;
@@ -141,7 +175,7 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
         : buildHybridCompositionView();
   }
 
-  String getScalingType(ScalingType type) {
+  String _getScalingType(ScalingType type) {
     switch (type) {
       case ScalingType.scaleAspectFIT:
         return "SCALE_ASPECT_FIT";
@@ -149,6 +183,29 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
         return "SCALE_ASPECT_FILL";
       case ScalingType.scaleAspectBALANCED:
         return "SCALE_ASPECT_BALANCED";
+    }
+  }
+
+  String _getAlignmentType(AlignmentType type) {
+    switch (type) {
+      case AlignmentType.TopLeft:
+        return "topLeft";
+      case AlignmentType.TopCenter:
+        return "topCenter";
+      case AlignmentType.TopRight:
+        return "topRight";
+      case AlignmentType.CenterLeft:
+        return "centerLeft";
+      case AlignmentType.Center:
+        return "center";
+      case AlignmentType.CenterRight:
+        return "centerRight";
+      case AlignmentType.BottomLeft:
+        return "bottomLeft";
+      case AlignmentType.BottomCenter:
+        return "bottomCenter";
+      case AlignmentType.BottomRight:
+        return "bottomRight";
     }
   }
 
@@ -165,8 +222,9 @@ class _MirrorFlyViewState extends State<MirrorFlyView> {
 
   Map<dynamic, dynamic> buildParams() {
     return {
-      "scalingType": getScalingType(widget.scalingType),
+      "scalingType": _getScalingType(widget.scalingType),
       "setMirror": widget.mirror,
+      "alignment": _getAlignmentType(widget.alignmentType),
       'viewId': widget.userJid.trim().toString(),
       'backgroundColor': colorToHex(widget.viewBgColor),
       'alignProfilePictureCenter': widget.alignProfilePictureCenter,

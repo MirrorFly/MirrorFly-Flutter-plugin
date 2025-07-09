@@ -4577,5 +4577,13 @@ let ISEXPORT = true
         result(true)
     }
     
-
+    func setTranslations(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let args = call.arguments as! Dictionary<String, Any>
+        let stringSet: Dictionary<String, String>? = args["stringSet"] as? Dictionary<String, String>
+        if (stringSet != nil) {
+            print("\(Constants.tag) setTranslations stringSet: \(stringSet!)")
+        }
+        result(true)
+        // Needs to be implemented in future
+    }
 }

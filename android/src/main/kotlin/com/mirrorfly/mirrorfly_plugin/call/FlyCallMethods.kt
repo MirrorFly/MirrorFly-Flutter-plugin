@@ -530,7 +530,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
             if (!ChatManager.getBaseURL().isNullOrEmpty()) {
                 result.success(CallLogManager.getUnreadMissedCallCount())
             } else {
-                result.error("500", "SDK not isInitialised", null)
+                result.error("500", "Base URL is empty or SDK is not initialized", null)
             }
         } catch (e: java.lang.Exception) {
             result.error("500", e.toString(), null)
@@ -553,7 +553,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
             LogMessage.d("markAllUnreadMissedCallsAsRead", "called")
             result.success(true)
         } else {
-            result.error("500", "SDK not isInitialised", null)
+            result.error("500", "Base URL is empty or SDK is not initialized", null)
         }
         } catch (e: java.lang.Exception) {
             result.error("500", e.toString(), null)

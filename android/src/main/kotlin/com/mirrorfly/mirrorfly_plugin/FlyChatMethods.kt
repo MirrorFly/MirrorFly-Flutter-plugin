@@ -89,6 +89,9 @@ import com.mirrorflysdk.models.MediaAutoDownloadOption
 import com.mirrorflysdk.models.RecentChatListParams
 import com.mirrorflysdk.models.TopicChatListParams
 import com.mirrorflysdk.utils.CompressCallback
+import com.mirrorflysdk.utils.MFTextLocalization
+import com.mirrorflysdk.utils.StringConstants
+import com.mirrorfly.mirrorfly_plugin.FlyTranslations
 import com.mirrorflysdk.utils.MediaUtils
 import com.mirrorflysdk.utils.ThumbSize
 import com.mirrorflysdk.utils.UpDateWebPassword
@@ -687,22 +690,50 @@ class FlyChatMethods {
         if (profileDetails != null) {
             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
             //DebugUtilis.v("ContactManager.getProfileDetails", profileDetails.tojsonString())
-            LogMessage.d("ContactManager.getProfileDetails", "${profileDetails.toJsonString()}")
+            LogMessage.d("#MF_Profile L: getProfileDetails", profileDetails.toJsonString())
             result.success(profileDetails.toJsonString())
         } else {
-            ContactManager.getUserProfile(jid, true, true, object : FlyCallback {
-                override fun flyResponse(
-                    isSuccess: Boolean,
-                    throwable: Throwable?,
-                    data: HashMap<String, Any>
-                ) {
-                    LogMessage.d("ContactManager.getUserProfile", "${data.toJsonString()}")
-                    val profile = ContactManager.getProfileDetails(jid)
-                    if (profile != null) {
-                        result.success(profile.toJsonString())
+            if (GroupManager.isValidGroupJid(jid)){
+                LogMessage.d("#MF_Profile#", "getGroupProfile $jid")
+                GroupManager.getGroupProfile(jid, true) { isSuccess, throwable, data ->
+                    if (isSuccess) {
+                        val groupProfileDetails: ProfileDetails = data["data"] as ProfileDetails
+                        LogMessage.d("#MF_Profile S: getGroupProfile", groupProfileDetails.toJsonString())
+//                        result.success(groupProfileDetails.toJsonString())
+                        val profile = ContactManager.getProfileDetails(jid)
+                        if (profile != null) {
+                            LogMessage.d("#MF_Profile S:I : getGroupProfile", profile.toJsonString())
+                            result.success(profile.toJsonString())
+                        }else{
+                            LogMessage.d("#MF_Profile S:I : getGroupProfile", "Profile is null")
+                            result.error("500", "Group Profile fetch failed", "Unable to fetch group profile, after fetching from server")
+                        }
+                    } else {
+                        // Group creation failed print throwable to find the exception details.
+                        LogMessage.d("#MF_Profile S: getGroupProfile", throwable.toString())
+                        result.error("500", throwable?.message, throwable)
                     }
                 }
-            })
+            }else {
+                LogMessage.d("#MF_Profile#", "getUserProfile $jid")
+                ContactManager.getUserProfile(jid, true, true, object : FlyCallback {
+                    override fun flyResponse(
+                        isSuccess: Boolean,
+                        throwable: Throwable?,
+                        data: HashMap<String, Any>
+                    ) {
+                        LogMessage.d("#MF_Profile S: getUserProfile", data.toJsonString())
+                        val profile = ContactManager.getProfileDetails(jid)
+                        if (profile != null) {
+                            LogMessage.d("#MF_Profile S:I : getUserProfile", profile.toJsonString())
+                            result.success(profile.toJsonString())
+                        }else{
+                            LogMessage.d("#MF_Profile S:I : getUserProfile", "Profile is null")
+                            result.error("500", "Profile fetch failed", "Unable to fetch profile, after fetching from server")
+                        }
+                    }
+                })
+            }
         }
     }
 
@@ -4104,4 +4135,26 @@ class FlyChatMethods {
         result.success(true)
     }
 
+    fun setTranslations(call: MethodCall, result: MethodChannel.Result) {
+        val receivedMap = call.argument<Map<String, String>>("stringSet")
+        val stringSet = HashMap<String, String>()
+        if (receivedMap != null) {
+            for ((key, value) in receivedMap) {
+                val stringConstKey = FlyTranslations.constantMap[key]
+                if (stringConstKey != null) {
+                    if (value.contains("{%s}")) {
+                        stringSet[stringConstKey] = value.replace("{%s}", "%s")
+                    } else {
+                        stringSet[stringConstKey] = value
+                    }
+                } else {
+                    Log.d("FlyTranslations", "Unknown key: $key")
+                }
+            }
+            MFTextLocalization.setStringSet(stringSet)
+            result.success(true)
+        } else {
+            result.error(MirrorFlyErrorCodes.TRANSLATION_STRING_SET_NOT_FOUND, "setTranslations stringSet is null", null)
+        }
+    }
 }
