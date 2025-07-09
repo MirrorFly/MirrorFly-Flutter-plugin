@@ -136,7 +136,7 @@ fun String.isNotNumber(): Boolean {
 
 fun ProfileDetails?.getDisplayName() : String {
     if(this==null) {
-        return "Guest User"
+        return ""
     }
     else {
         /*if (!name.isNullOrEmpty()) {

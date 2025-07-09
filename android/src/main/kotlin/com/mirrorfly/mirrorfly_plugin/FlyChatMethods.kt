@@ -2,6 +2,8 @@ package com.mirrorfly.mirrorfly_plugin
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
@@ -70,6 +72,7 @@ import com.mirrorflysdk.flycommons.ChatTypeEnum
 import com.mirrorflysdk.flycommons.FlyCallback
 import com.mirrorflysdk.flycommons.FlyUtils
 import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.flycommons.MediaCompressQuality
 import com.mirrorflysdk.flycommons.Result
 import com.mirrorflysdk.flycommons.SharedPreferenceManager
 import com.mirrorflysdk.flycommons.TypingStatus
@@ -81,9 +84,15 @@ import com.mirrorflysdk.flycommons.models.MetaDataMessageList
 import com.mirrorflysdk.flycommons.models.MetaDataUserList
 import com.mirrorflysdk.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.mirrorflysdk.media.MediaUploadHelper
+import com.mirrorflysdk.media.newfilecompression.compressfile.MediaCompress
 import com.mirrorflysdk.models.MediaAutoDownloadOption
 import com.mirrorflysdk.models.RecentChatListParams
 import com.mirrorflysdk.models.TopicChatListParams
+import com.mirrorflysdk.utils.CompressCallback
+import com.mirrorflysdk.utils.MFTextLocalization
+import com.mirrorflysdk.utils.StringConstants
+import com.mirrorfly.mirrorfly_plugin.FlyTranslations
+import com.mirrorflysdk.utils.MediaUtils
 import com.mirrorflysdk.utils.ThumbSize
 import com.mirrorflysdk.utils.UpDateWebPassword
 import com.mirrorflysdk.utils.Utils
@@ -240,9 +249,6 @@ class FlyChatMethods {
         if (storageFolderName != null) {
             ChatManager.setMediaFolderName(storageFolderName)
         }
-        if (enableMobileNumberLogin != null) {
-            ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
-        }
         if (maximumRecentChatPin != null) {
             buildSDK.setMaximumPinningForRecentChat(maximumRecentChatPin)
         }
@@ -259,6 +265,14 @@ class FlyChatMethods {
                 .setIsTrialLicenceKey(isTrialLicenceKey)
         }
         buildSDK.build()
+
+        /// Do not move this code inside the  buildSDK.build() method. ///
+
+        if (enableMobileNumberLogin != null) {
+            ChatManager.enableMobileNumberLogin(enableMobileNumberLogin)
+        }
+
+        /// ----- ///
 
         //Set Name based on the Profile data
         //if not set you will get error on email chat(export) and any group related actions
@@ -676,22 +690,50 @@ class FlyChatMethods {
         if (profileDetails != null) {
             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
             //DebugUtilis.v("ContactManager.getProfileDetails", profileDetails.tojsonString())
-            LogMessage.d("ContactManager.getProfileDetails", "${profileDetails.toJsonString()}")
+            LogMessage.d("#MF_Profile L: getProfileDetails", profileDetails.toJsonString())
             result.success(profileDetails.toJsonString())
         } else {
-            ContactManager.getUserProfile(jid, true, true, object : FlyCallback {
-                override fun flyResponse(
-                    isSuccess: Boolean,
-                    throwable: Throwable?,
-                    data: HashMap<String, Any>
-                ) {
-                    LogMessage.d("ContactManager.getUserProfile", "${data.toJsonString()}")
-                    val profile = ContactManager.getProfileDetails(jid)
-                    if (profile != null) {
-                        result.success(profile.toJsonString())
+            if (GroupManager.isValidGroupJid(jid)){
+                LogMessage.d("#MF_Profile#", "getGroupProfile $jid")
+                GroupManager.getGroupProfile(jid, true) { isSuccess, throwable, data ->
+                    if (isSuccess) {
+                        val groupProfileDetails: ProfileDetails = data["data"] as ProfileDetails
+                        LogMessage.d("#MF_Profile S: getGroupProfile", groupProfileDetails.toJsonString())
+//                        result.success(groupProfileDetails.toJsonString())
+                        val profile = ContactManager.getProfileDetails(jid)
+                        if (profile != null) {
+                            LogMessage.d("#MF_Profile S:I : getGroupProfile", profile.toJsonString())
+                            result.success(profile.toJsonString())
+                        }else{
+                            LogMessage.d("#MF_Profile S:I : getGroupProfile", "Profile is null")
+                            result.error("500", "Group Profile fetch failed", "Unable to fetch group profile, after fetching from server")
+                        }
+                    } else {
+                        // Group creation failed print throwable to find the exception details.
+                        LogMessage.d("#MF_Profile S: getGroupProfile", throwable.toString())
+                        result.error("500", throwable?.message, throwable)
                     }
                 }
-            })
+            }else {
+                LogMessage.d("#MF_Profile#", "getUserProfile $jid")
+                ContactManager.getUserProfile(jid, true, true, object : FlyCallback {
+                    override fun flyResponse(
+                        isSuccess: Boolean,
+                        throwable: Throwable?,
+                        data: HashMap<String, Any>
+                    ) {
+                        LogMessage.d("#MF_Profile S: getUserProfile", data.toJsonString())
+                        val profile = ContactManager.getProfileDetails(jid)
+                        if (profile != null) {
+                            LogMessage.d("#MF_Profile S:I : getUserProfile", profile.toJsonString())
+                            result.success(profile.toJsonString())
+                        }else{
+                            LogMessage.d("#MF_Profile S:I : getUserProfile", "Profile is null")
+                            result.error("500", "Profile fetch failed", "Unable to fetch profile, after fetching from server")
+                        }
+                    }
+                })
+            }
         }
     }
 
@@ -1813,6 +1855,7 @@ class FlyChatMethods {
 
     private fun processAndSendMessage(messageParams: HashMap<String, Any>?, result: MethodChannel.Result) {
         val messageType = messageParams?.get("messageType") as String?
+        val mediaCompressionType = messageParams?.get("mediaCompressionType") as Int?
         messageType?.let {
             if (MessageType.valueOf(messageType) == MessageType.TEXT) {
                 val textMessage = buildTextMessage(messageParams)
@@ -1827,6 +1870,8 @@ class FlyChatMethods {
                     LogMessage.d("meetMessage", meetMessage?.toJsonString())
                     sendMeetMessage(meetMessage, result)
                 }
+            } else if ((MessageType.valueOf(messageType) == MessageType.IMAGE || MessageType.valueOf(messageType) == MessageType.VIDEO)) {
+                compressAndSendImageOrVideoFiles(messageParams, result)
             } else {
                 val fileMessage = buildFileMessage(messageParams)
                 LogMessage.d("fileMessage", fileMessage.toJsonString())
@@ -1907,6 +1952,102 @@ class FlyChatMethods {
             }
 
         })
+    }
+
+    private fun compressAndSendImageOrVideoFiles(messageParams: HashMap<String, Any>?, result: MethodChannel.Result) {
+        val messageType = messageParams?.get("messageType") as String?
+        val mediaCompressionType = messageParams?.get("mediaCompressionType") as Int?
+
+        val fileMessage: FileMessageParams? = if (messageParams?.get("fileMessage") != null) {
+            (messageParams["fileMessage"] as? HashMap<*, *>)?.let { fileMap ->
+                FileMessageParams().apply {
+                    this.file = (fileMap["file"] as? String)?.let { File(it) }
+                    this.duration = (fileMap["duration"] as? Int)?.toLong()
+                    this.thumbImage = fileMap["thumbImage"] as? String
+                    this.fileName = fileMap["fileName"] as? String
+                    this.fileSize = (fileMap["fileSize"] as? Int)?.toLong()
+                    this.caption = (fileMap["caption"] as? String).toString()
+                }
+            }
+        } else null
+
+        messageType?.let {
+            if (fileMessage?.file == null) {
+                result.error("400", "File is missing", null)
+                return
+            }
+
+            val quality = getCompressionQuality(mediaCompressionType)
+            when (MessageType.valueOf(messageType)) {
+                MessageType.IMAGE -> {
+                    val fileMessage = buildFileMessage(messageParams)
+                    compressImage(fileMessage, quality, MirrorFlyManager.getContext(), result)
+                }
+                MessageType.VIDEO -> {
+                    val fileMessage = buildFileMessage(messageParams)
+                    compressVideo(fileMessage, quality, MirrorFlyManager.getContext(), result)
+                }
+                else -> {
+                    result.error("400", "Media file should be only image or video", null)
+                }
+            }
+        }
+    }
+
+    private fun getCompressionQuality(qualityAsString: Int?): MediaCompressQuality {
+        return when (qualityAsString) {
+            0 -> MediaCompressQuality.uncompressed
+            1 -> MediaCompressQuality.low
+            2 -> MediaCompressQuality.medium
+            3 -> MediaCompressQuality.high
+            else -> MediaCompressQuality.uncompressed
+        }
+    }
+
+    private fun  compressImage(fileMessage:FileMessage,compressQuality:MediaCompressQuality,context: Context,result: MethodChannel.Result) {
+        val contextWrapper = ContextWrapper(context)
+        MediaUtils.compressImageFile(fileMessage.fileMessage?.file?.absolutePath, compressQuality, contextWrapper
+        ) { isSuccess, compressedFilePath, errorMessage ->
+            if (isSuccess) {
+                fileMessage.fileMessage?.file = File(compressedFilePath!!)
+                sendMediaMessage(fileMessage, result)
+            } else {
+                result.error("402", "Error while compressing the image", null)
+            }
+        }
+    }
+
+    private fun compressVideo(fileMessage: FileMessage,compressQuality:MediaCompressQuality,context: Context,result: MethodChannel.Result) {
+        val contextWrapper = ContextWrapper(context)
+        MediaUtils.compressVideoFile(fileMessage.fileMessage?.file?.absolutePath, compressQuality,contextWrapper) { isSuccess, compressedFilePath, errorMessage ->
+            if (isSuccess) {
+                fileMessage.fileMessage?.file = File(compressedFilePath!!)
+                sendMediaMessage(fileMessage, result)
+            } else {
+                result.error("402", "Error while compressing the video", null)
+            }
+        }
+    }
+
+    private fun sendMediaMessage(fileMessage: FileMessage?, result: MethodChannel.Result) {
+        if (fileMessage == null) {
+            result.error("500", "fileMessage params not be null for Media Messages", null)
+            return
+        }
+
+        FlyMessenger.sendMediaMessage(fileMessage
+        ) { isSuccess, error, chatMessage ->
+            if (isSuccess) {
+                LogMessage.d("MediaCompression Manual","sendMediaMessage message: ${chatMessage.toString()}")
+                if (chatMessage != null) {
+                    result.success(chatMessage.toJsonString())
+                } else {
+                    result.error("500", "message not available", error)
+                }
+            } else {
+                result.error("500", error?.message ?: "", error)
+            }
+        }
     }
 
     private fun buildTextMessage(map: HashMap<String, Any>?): TextMessage? {
@@ -3994,4 +4135,26 @@ class FlyChatMethods {
         result.success(true)
     }
 
+    fun setTranslations(call: MethodCall, result: MethodChannel.Result) {
+        val receivedMap = call.argument<Map<String, String>>("stringSet")
+        val stringSet = HashMap<String, String>()
+        if (receivedMap != null) {
+            for ((key, value) in receivedMap) {
+                val stringConstKey = FlyTranslations.constantMap[key]
+                if (stringConstKey != null) {
+                    if (value.contains("{%s}")) {
+                        stringSet[stringConstKey] = value.replace("{%s}", "%s")
+                    } else {
+                        stringSet[stringConstKey] = value
+                    }
+                } else {
+                    Log.d("FlyTranslations", "Unknown key: $key")
+                }
+            }
+            MFTextLocalization.setStringSet(stringSet)
+            result.success(true)
+        } else {
+            result.error(MirrorFlyErrorCodes.TRANSLATION_STRING_SET_NOT_FOUND, "setTranslations stringSet is null", null)
+        }
+    }
 }

@@ -682,7 +682,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     override fun usersProfilesFetched() {
 //        usersProfilesFetchedStreamHandler.usersProfilesFetched?.success(true)
         FlyMethodConstants.updateChatSinkValue(
-            Constants.userProfileFetchedChannel,
+            Constants.usersProfilesFetchedChannel,
             true
         )
     }

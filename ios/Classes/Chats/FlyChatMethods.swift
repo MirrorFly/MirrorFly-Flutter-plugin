@@ -99,8 +99,7 @@ let ISEXPORT = true
 
         // *** =============================================
 
-        ChatManager.disableLocalNotification()
-            ChatManager.disableLocalNotification()
+        // ChatManager.disableLocalNotification()
 
             /// Moved Inside SDK
             /*if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
@@ -3906,6 +3905,7 @@ let ISEXPORT = true
             case .IMAGE:
                 
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
+                let compressionType: Int? = args["mediaCompressionType"] as? Int
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
                 //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
@@ -3926,8 +3926,10 @@ let ISEXPORT = true
                 }else{
                     print("Selected Image Data is null")
                 }
-
-                MediaUtils.compressImageFile(imageData:  selectedImageData! as Data, mediaQuality: .medium) { isSuccess, data, fileName, localFilePath, fileKey, fileSize, errorMessage  in
+                
+                let mediaCompressionQuality: MediaQuality = AppUtils.shared.getMediaCompressionType(type: compressionType)
+                MediaUtils.compressImageFile(imageData:  selectedImageData! as Data, mediaQuality: mediaCompressionQuality) { isSuccess, data,
+                    fileName, localFilePath, fileKey, fileSize, errorMessage  in
                     if isSuccess{
                         
                         let mediaParams = FileMessageParams(fileUrl: localFilePath!, fileName: fileNameArg == "" ? fileName : fileNameArg,  caption : fileCaptionArg, fileSize: fileSize, duration: 0.0, thumbImage: fileThumbImageArg == "" ? MediaUtils.convertImageToBase64String(img: selectedImage!) : fileThumbImageArg, fileKey: fileKey)
@@ -3945,6 +3947,7 @@ let ISEXPORT = true
                 
             case .VIDEO:
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
+                let compressionType: Int? = args["mediaCompressionType"] as? Int
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
                 //                let fileDuration = AppUtils.shared.getValueForKey(dictionary: fileDict, key: "duration") as? Int ?? 0
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
@@ -3967,7 +3970,8 @@ let ISEXPORT = true
                 
                 let base64Img = MediaUtils.convertImageToBase64(img: thumbnail!)
                 
-                MediaUtils.compressVideoFile(videoURL: videoFileUrl, mediaQuality: .medium) { isSuccess, url, fileName, fileKey, fileSize , duration, errorMessage  in
+                let mediaCompressionQuality: MediaQuality = AppUtils.shared.getMediaCompressionType(type: compressionType)
+                MediaUtils.compressVideoFile(videoURL: videoFileUrl, mediaQuality: mediaCompressionQuality) { isSuccess, url, fileName, fileKey, fileSize , duration, errorMessage  in
                     if let compressedURL = url,  isSuccess{
                         
                         let mediaParams = FileMessageParams(fileUrl: compressedURL, fileName: fileName, caption: fileCaptionArg, fileSize: fileSize, duration: duration, thumbImage: base64Img, fileKey: fileKey)
@@ -4573,5 +4577,13 @@ let ISEXPORT = true
         result(true)
     }
     
-
+    func setTranslations(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let args = call.arguments as! Dictionary<String, Any>
+        let stringSet: Dictionary<String, String>? = args["stringSet"] as? Dictionary<String, String>
+        if (stringSet != nil) {
+            print("\(Constants.tag) setTranslations stringSet: \(stringSet!)")
+        }
+        result(true)
+        // Needs to be implemented in future
+    }
 }

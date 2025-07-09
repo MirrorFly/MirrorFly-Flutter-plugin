@@ -1746,6 +1746,15 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
         'getCurrentCameraPosition has not been implemented.');
   }
 
+  /// Sets custom translations for the MirrorFly platform.
+  Future<void> setTranslations({
+    required String fileNameOrPath,
+    String? packageName,
+    required Function(FlyResponse response) callback,
+  }) {
+    throw UnimplementedError('setTranslations() has not been implemented.');
+  }
+
   /// This listener is set to listen the message events.
   setMessageEventListener(MessageEventListeners? messageEventsListener) {
     throw UnimplementedError(

@@ -234,5 +234,6 @@ class FlyMethodConstants {
                 "restoreBackup": flyChatMethods.restoreBackup,
                 "cancelBackup": flyChatMethods.cancelBackup,
                 "cancelRestore": flyChatMethods.cancelRestore,
+                "setTranslations": flyChatMethods.setTranslations,
             ] }()
 }

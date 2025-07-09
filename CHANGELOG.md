@@ -1,3 +1,10 @@
+## [1.6.0] Feature Updates
+* Added the media files custom compression logic with options.
+* Added the alignment in MirrorFlyView.
+* Bug Fixes
+* Android SDK updated to 7.13.26
+* iOS SDK updated to 5.18.17
+
 ## [1.5.0] Feature Updates
 * Added onSuperAdminDeleteGroup event stream to reflect super admin chat group deletions via API.
 * Bug Fixes
