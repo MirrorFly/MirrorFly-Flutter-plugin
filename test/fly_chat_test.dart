@@ -1976,6 +1976,14 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future<void> setTranslations(
+      {required String fileNameOrPath,
+      String? packageName,
+      required Function(FlyResponse response) callback}) {
+    throw UnimplementedError();
+  }
+
   /* @override
   Future<bool?> webLoginDetailsCleared() {
     throw UnimplementedError();

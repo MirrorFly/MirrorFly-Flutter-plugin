@@ -441,8 +441,9 @@ import PushKit
     }
     
     func onCallAction(callAction: MirrorFlySDK.CallAction, userId: String) {
-        NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue) userID \(userId)")
-        
+        NSLog("#MirrorflyCall Events: oncalll Action --> \(callAction.rawValue), userID \(userId), usersInCall \(usersInCall)")
+        let selfJID = AppUtils.shared.getMyJid()
+
         ///Work Around till sdk is fixed
         
         if callAction == .ACTION_LOCAL_HANGUP && AppUtils.shared.getMyJid() != userId {

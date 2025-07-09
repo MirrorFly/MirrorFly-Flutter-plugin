@@ -5712,4 +5712,49 @@ class Mirrorfly {
   static Future<String> getCurrentCameraPosition() {
     return FlyChatFlutterPlatform.instance.getCurrentCameraPosition();
   }
+
+  /// Initializes customized translations for the MirrorFly platform.
+  ///
+  /// This method allows you to provide a localized translation JSON file
+  /// to be used within the SDK. The file can be loaded either from the
+  /// main app’s asset bundle or from an external Flutter package.
+  ///
+  /// ### Parameters:
+  /// - [fileNameOrPath]: The name or path of the translation JSON file.
+  ///   - If only a file name is provided (e.g., `"en.json"`), the plugin assumes it is located at
+  ///     `assets/i18n/en.json`. You must declare this path under the `assets` section of your `pubspec.yaml`.
+  ///   - If a relative path is provided (e.g., `"your_file_path/en.json"`), the plugin will use that path directly.
+  ///     This must also be declared under `assets` in your `pubspec.yaml`.
+  /// - [packageName]: *(Optional)* The name of the package if the translation file resides in an external package.
+  ///   In this case, the file will be resolved from `packages/<packageName>/<fileNameOrPath>`. You must declare the
+  ///   asset path under the `assets` section of that package’s `pubspec.yaml`.
+  /// - [flyCallback]: A callback function that receives a [FlyResponse] object indicating whether the
+  ///   translation initialization was successful.
+  ///
+  /// ### Example:
+  /// ```dart
+  /// Mirrorfly.setTranslations(
+  ///   fileNameOrPath: "en.json",
+  ///   packageName: "your_package_name", // optional
+  ///   flyCallback: (response) {
+  ///     if (response.isSuccess) {
+  ///       print("Translations updated successfully");
+  ///     } else {
+  ///       print("Failed to update translations: ${response.message}");
+  ///     }
+  ///   },
+  /// );
+  /// ```
+
+  static Future<void> setTranslations({
+    required String fileNameOrPath,
+    String? packageName,
+    required Function(FlyResponse response) flyCallback,
+  }) {
+    return FlyChatFlutterPlatform.instance.setTranslations(
+      fileNameOrPath: fileNameOrPath,
+      packageName: packageName,
+      callback: flyCallback,
+    );
+  }
 }
