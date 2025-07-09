@@ -132,6 +132,8 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         videoView?.layer.masksToBounds = true
         videoView?.contentMode = .center
         videoView?.backgroundColor = .black
+        let scalingType = argument["scalingType"] as? String ?? "SCALE_ASPECT_FILL"
+        let alignment = argument["alignment"] as? String ?? "center"
 //        if(userJid == AppUtils.shared.getMyJid()){
 //            videoView?.transform = CGAffineTransform(scaleX: -1, y: 1)
 //        }
@@ -142,8 +144,14 @@ class MirrorflyView: NSObject, FlutterPlatformView {
 //        }
         NSLog("\(Constants.callTag) Adding video track")
         videoTrack?.add(videoView as! RTCVideoRenderer)
-        setMirror(isMirror: CallManager.getCurrentCameraPosition() != CameraPosition.backCamera)
-        
+        getScaleType(scalingType: scalingType, alignment: alignment)
+
+        // MARK: - Need to mirror the current user preview video only on front camera of initial creation
+        let currentUserJid: String = AppUtils.shared.getMyJid()
+        if (userJid == currentUserJid) {
+            setMirror(isMirror: CallManager.getCurrentCameraPosition() != CameraPosition.backCamera)
+        }
+
         NSLayoutConstraint.activate([
             videoView!.leadingAnchor.constraint(equalTo: _baseView.leadingAnchor),
             videoView!.trailingAnchor.constraint(equalTo: _baseView.trailingAnchor),
@@ -151,7 +159,42 @@ class MirrorflyView: NSObject, FlutterPlatformView {
             videoView!.bottomAnchor.constraint(equalTo: _baseView.bottomAnchor)
         ])
     }
-    
+
+    func getScaleType(scalingType: String, alignment: String) {
+            if (scalingType == "SCALE_ASPECT_FIT") {
+                switch alignment {
+                    case "topLeft":
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .topLeft
+                    case "topRight":
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .topRight
+                    case "topCenter":
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .top
+                    case "bottomLeft":
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .bottomLeft
+                    case "bottomRight":
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .bottomRight
+                    case "bottomCenter":
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .bottom
+                    case "center":
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .center
+                    case "centerLeft":
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .left
+                    case "centerRight":
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .right
+                default:
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .center
+                }
+            } else {
+                // In Android using SCALE_ASPECT_BALANCED in iOS using scaleToFill
+                if (scalingType == "SCALE_ASPECT_BALANCED") {
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .scaleToFill
+                } else {
+                    (videoView as? RTCMTLVideoView)?.videoContentMode = .scaleAspectFill
+                }
+            }
+
+        }
+
     private func createAudioView(argument : [String: Any], userName : String, contact: ProfileDetails?){
         
         let alignProfilePictureCenter = argument["alignProfilePictureCenter"] as? Bool ?? true
