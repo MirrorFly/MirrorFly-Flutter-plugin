@@ -6583,13 +6583,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Future<void> setTranslations(
       {required fileNameOrPath,
-        String? packageName,
+      String? packageName,
       required Function(FlyResponse response) callback}) async {
     final FileReadResult result = await MirrorFlyFileHelper.readFile(
         fileNameOrPath: fileNameOrPath, packageName: packageName);
     if (result.isSuccess) {
       try {
-        LogMessage.d("setTranslations loadString success", "true, map: ${result.map}");
+        LogMessage.d(
+            "setTranslations loadString success", "true, map: ${result.map}");
         await mirrorFlyMethodChannel
             .invokeMethod<bool>('setTranslations', {"stringSet": result.map});
         callback
@@ -6605,7 +6606,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       }
     } else {
       LogMessage.d("Exception ", " ${result.errorMessage}");
-      callback.call(FlyResponse(false, FlyConstants.empty, result.errorMessage,null));
+      callback.call(
+          FlyResponse(false, FlyConstants.empty, result.errorMessage, null));
     }
   }
 }

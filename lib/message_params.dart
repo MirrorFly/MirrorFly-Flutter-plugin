@@ -338,21 +338,20 @@ class MessageParams {
   MediaCompressionType? mediaCompressionType;
 
   /// Initializes a new instance of the [MessageParams] class.
-  MessageParams._({
-    required this.toJid,
-    this.replyMessageId,
-    required this.messageType,
-    this.mentionedUsersIds,
-    this.metaData = const [],
-    this.textMessageParams,
-    this.locationMessageParams,
-    this.contactMessageParams,
-    this.fileMessageParams,
-    this.meetMessageParams,
-    this.messageSecurityMode,
-    this.topicId = "",
-    this.mediaCompressionType
-  });
+  MessageParams._(
+      {required this.toJid,
+      this.replyMessageId,
+      required this.messageType,
+      this.mentionedUsersIds,
+      this.metaData = const [],
+      this.textMessageParams,
+      this.locationMessageParams,
+      this.contactMessageParams,
+      this.fileMessageParams,
+      this.meetMessageParams,
+      this.messageSecurityMode,
+      this.topicId = "",
+      this.mediaCompressionType});
 
   /// Constructs a [MessageParams] object for a Text message.
   factory MessageParams.text({
@@ -438,27 +437,25 @@ class MessageParams {
   }
 
   /// Constructs a [MessageParams] object for a Image message.
-  factory MessageParams.image({
-    required String toJid,
-    String? replyMessageId,
-    List<String>? mentionedUsersIds,
-    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
-    required FileMessageParams fileMessageParams,
-    List<MessageMetaData> metaData = const [],
-    String topicId = "",
-    MediaCompressionType? mediaCompressionType = MediaCompressionType.high
-  }) {
+  factory MessageParams.image(
+      {required String toJid,
+      String? replyMessageId,
+      List<String>? mentionedUsersIds,
+      MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
+      required FileMessageParams fileMessageParams,
+      List<MessageMetaData> metaData = const [],
+      String topicId = "",
+      MediaCompressionType? mediaCompressionType = MediaCompressionType.high}) {
     return MessageParams._(
-      toJid: toJid,
-      replyMessageId: replyMessageId,
-      mentionedUsersIds: mentionedUsersIds,
-      messageType: MessageType.image,
-      fileMessageParams: fileMessageParams,
-      messageSecurityMode: messageSecurityMode,
-      metaData: metaData,
-      topicId: topicId,
-      mediaCompressionType: mediaCompressionType
-    );
+        toJid: toJid,
+        replyMessageId: replyMessageId,
+        mentionedUsersIds: mentionedUsersIds,
+        messageType: MessageType.image,
+        fileMessageParams: fileMessageParams,
+        messageSecurityMode: messageSecurityMode,
+        metaData: metaData,
+        topicId: topicId,
+        mediaCompressionType: mediaCompressionType);
   }
 
   /// Constructs a [MessageParams] object for a Audio message.
@@ -485,27 +482,25 @@ class MessageParams {
   }
 
   /// Constructs a [MessageParams] object for a Video message.
-  factory MessageParams.video({
-    required String toJid,
-    String? replyMessageId,
-    List<String>? mentionedUsersIds,
-    required FileMessageParams fileMessageParams,
-    MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
-    List<MessageMetaData> metaData = const [],
-    String topicId = "",
-    MediaCompressionType? mediaCompressionType = MediaCompressionType.high
-  }) {
+  factory MessageParams.video(
+      {required String toJid,
+      String? replyMessageId,
+      List<String>? mentionedUsersIds,
+      required FileMessageParams fileMessageParams,
+      MessageSecurityMode? messageSecurityMode = MessageSecurityMode.enabled,
+      List<MessageMetaData> metaData = const [],
+      String topicId = "",
+      MediaCompressionType? mediaCompressionType = MediaCompressionType.high}) {
     return MessageParams._(
-      toJid: toJid,
-      replyMessageId: replyMessageId,
-      mentionedUsersIds: mentionedUsersIds,
-      messageType: MessageType.video,
-      fileMessageParams: fileMessageParams,
-      messageSecurityMode: messageSecurityMode,
-      metaData: metaData,
-      topicId: topicId,
-      mediaCompressionType: mediaCompressionType
-    );
+        toJid: toJid,
+        replyMessageId: replyMessageId,
+        mentionedUsersIds: mentionedUsersIds,
+        messageType: MessageType.video,
+        fileMessageParams: fileMessageParams,
+        messageSecurityMode: messageSecurityMode,
+        metaData: metaData,
+        topicId: topicId,
+        mediaCompressionType: mediaCompressionType);
   }
 
   /// Constructs a [MessageParams] object for a Document message.

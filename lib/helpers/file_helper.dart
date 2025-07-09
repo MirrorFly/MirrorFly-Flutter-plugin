@@ -46,9 +46,8 @@ class MirrorFlyFileHelper {
     try {
       const String defaultPrefix = 'assets/i18n/';
       final bool isFullPath = fileNameOrPath.contains('/');
-      final String fullPath = isFullPath
-          ? fileNameOrPath
-          : '$defaultPrefix$fileNameOrPath';
+      final String fullPath =
+          isFullPath ? fileNameOrPath : '$defaultPrefix$fileNameOrPath';
 
       String pathToRead;
       if (packageName != null) {
@@ -68,7 +67,7 @@ class MirrorFlyFileHelper {
 
       final Map<String, dynamic> jsonMap = json.decode(jsonString);
       final Map<String, String> stringMap = jsonMap.map(
-            (key, value) => MapEntry(key, value.toString()),
+        (key, value) => MapEntry(key, value.toString()),
       );
 
       return FileReadResult(
