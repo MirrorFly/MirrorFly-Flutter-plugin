@@ -120,7 +120,7 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     }
     
     private func createVideoView(argument : [String: Any]){
-        NSLog("\(Constants.callTag) createVideoView")
+        NSLog("\(Constants.callTag) createVideoView argument: \(argument)")
         if videoView == nil {
             videoView = getVideoView()
             self._baseView.addSubview(self.videoView!)
@@ -143,8 +143,11 @@ class MirrorflyView: NSObject, FlutterPlatformView {
 //            videoView?.transform = CGAffineTransform.identity
 //        }
         NSLog("\(Constants.callTag) Adding video track")
+        NSLog("\(Constants.callTag) scalingType \(scalingType)")
+        NSLog("\(Constants.callTag) alignment \(alignment)")
+        
         videoTrack?.add(videoView as! RTCVideoRenderer)
-        getScaleType(scalingType: scalingType, alignment: alignment)
+        setContentMode(scalingType: scalingType, alignment: alignment)
 
         // MARK: - Need to mirror the current user preview video only on front camera of initial creation
         let currentUserJid: String = AppUtils.shared.getMyJid()
@@ -160,41 +163,48 @@ class MirrorflyView: NSObject, FlutterPlatformView {
         ])
     }
 
-    func getScaleType(scalingType: String, alignment: String) {
-            if (scalingType == "SCALE_ASPECT_FIT") {
-                switch alignment {
-                    case "topLeft":
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .topLeft
-                    case "topRight":
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .topRight
-                    case "topCenter":
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .top
-                    case "bottomLeft":
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .bottomLeft
-                    case "bottomRight":
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .bottomRight
-                    case "bottomCenter":
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .bottom
-                    case "center":
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .center
-                    case "centerLeft":
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .left
-                    case "centerRight":
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .right
-                default:
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .center
-                }
-            } else {
-                // In Android using SCALE_ASPECT_BALANCED in iOS using scaleToFill
-                if (scalingType == "SCALE_ASPECT_BALANCED") {
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .scaleToFill
-                } else {
-                    (videoView as? RTCMTLVideoView)?.videoContentMode = .scaleAspectFill
-                }
-            }
-
+    private func setContentMode(scalingType: String, alignment: String) {
+        guard let scaling = MirrorFlyViewUtils.ScalingType(rawValue: scalingType),
+              let align = MirrorFlyViewUtils.Alignment(rawValue: alignment) else {
+            return
         }
+#if arch(arm64)
+        guard let video = videoView as? RTCMTLVideoView else {return}
+        video.videoContentMode = contentMode(for: scaling, alignment: align)
+#else
+        guard let video = videoView as? RTCEAGLVideoView else {return}
+        video.contentMode = contentMode(for: scaling, alignment: align)
+#endif
+    }
 
+    private func contentMode(for scaling: MirrorFlyViewUtils.ScalingType, alignment: MirrorFlyViewUtils.Alignment) -> UIView.ContentMode {
+        switch scaling {
+        case .scaleAspectFit:
+            return mapAlignmentToContentMode(alignment)
+        case .scaleAspectBalanced:
+            return .scaleToFill
+        case .scaleAspectFill:
+            return .scaleAspectFill
+        }
+    }
+
+    private func mapAlignmentToContentMode(_ alignment: MirrorFlyViewUtils.Alignment) -> UIView.ContentMode {
+        
+        switch alignment {
+        case .topLeft: return .topLeft
+        case .topRight: return .topRight
+        case .topCenter: return .top
+        case .bottomLeft: return .bottomLeft
+        case .bottomRight: return .bottomRight
+        case .bottomCenter: return .bottom
+        case .center: return .center
+        case .centerLeft: return .left
+        case .centerRight: return .right
+//        default: return .center
+        }
+    }
+
+    
     private func createAudioView(argument : [String: Any], userName : String, contact: ProfileDetails?){
         
         let alignProfilePictureCenter = argument["alignProfilePictureCenter"] as? Bool ?? true
