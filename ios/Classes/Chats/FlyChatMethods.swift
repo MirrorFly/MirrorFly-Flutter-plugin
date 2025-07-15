@@ -232,6 +232,7 @@ let ISEXPORT = true
 
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
             ChatManager.disconnect()
+            Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
         }
 
         try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: userType, metaData: metaDataArray, pushServerType: .firebase) { isSuccess, flyError, flyData in
