@@ -164,6 +164,15 @@ class MirrorflyView: NSObject, FlutterPlatformView {
     }
 
     private func setContentMode(scalingType: String, alignment: String) {
+        
+        ///
+        /// Converts the raw string values received from Flutter into corresponding custom enums
+        /// `ScalingType` and `Alignment` defined in `MirrorFlyViewUtils`.
+        ///
+        /// - Parameters:
+        ///   - scalingType: String representing the scaling type sent from Flutter.
+        ///   - alignment: String representing the alignment sent from Flutter.
+        ///
         guard let scaling = MirrorFlyViewUtils.ScalingType(rawValue: scalingType),
               let align = MirrorFlyViewUtils.Alignment(rawValue: alignment) else {
             return
@@ -190,6 +199,16 @@ class MirrorflyView: NSObject, FlutterPlatformView {
 
     private func mapAlignmentToContentMode(_ alignment: MirrorFlyViewUtils.Alignment) -> UIView.ContentMode {
         
+        ///
+        /// Maps the custom `MirrorFlyViewUtils.Alignment` enum to the corresponding
+        /// `UIView.ContentMode`.
+        ///
+        /// This method helps convert the alignment value, which originates as a string from Flutter,
+        /// into a concrete `UIView.ContentMode` for rendering alignment.
+        ///
+        /// - Parameter alignment: A `MirrorFlyViewUtils.Alignment` enum value representing the alignment.
+        /// - Returns: Corresponding `UIView.ContentMode` for the given alignment.
+        ///
         switch alignment {
         case .topLeft: return .topLeft
         case .topRight: return .topRight
