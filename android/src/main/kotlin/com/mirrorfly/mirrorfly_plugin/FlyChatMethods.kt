@@ -370,7 +370,7 @@ class FlyChatMethods {
             LogMessage.d("registerUser", call.arguments.toString())
             val metaDataList = extractMetaData(metaData)
             if (userIdentifier != null) {
-                if (FlyXMPP.isConnected()) {
+                if (FlyXMPP.isConnectedAndAuthenticated()) {
                     ChatManager.disconnect()
                 }
                 FlyCore.registerUser(
