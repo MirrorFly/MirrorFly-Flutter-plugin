@@ -1,3 +1,6 @@
+## [1.6.0+1] Hot Fix
+* Added Mirrorfly View support for non-arm64 devices and simulators.
+
 ## [1.6.0] Feature Updates
 * Added the media files custom compression logic with options.
 * Added the alignment in MirrorFlyView.
