@@ -12,6 +12,7 @@ import com.mirrorflysdk.flycall.call.utils.CameraPosition
 import com.mirrorflysdk.flycall.webrtc.*
 import com.mirrorflysdk.flycall.webrtc.api.*
 import com.mirrorflysdk.flycommons.LogMessage
+import com.mirrorflysdk.flycommons.SharedPreferenceManager
 import com.mirrorflysdk.media.MediaUploadDownloadManager.handler
 import io.flutter.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -399,42 +400,71 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     }
 
     override fun getCallAttendedPendingIntent(): PendingIntent {
+        LogMessage.d(tag, "#CALL-UI #onShowCallUi getCallAttendedPendingIntent")
         val intent: Intent? = AppUtils.getAppIntent(context)
 //        intent?.putExtra("FROM", "getCallAttendedPendingIntent")
 //        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
-        return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
+      //  return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
+        val dummyIntent = Intent()
+        return  PendingIntent.getActivity(context, 0, dummyIntent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     override fun getCallConnectingPendingIntent(): PendingIntent {
+        LogMessage.d(tag, "#CALL-UI #onShowCallUi getCallConnectingPendingIntent")
         val intent: Intent? = AppUtils.getAppIntent(context)
 //        intent?.putExtra("FROM", "getCallConnectingPendingIntent")
 //        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
-        return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
+    //    return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
+        val dummyIntent = Intent()
+        return  PendingIntent.getActivity(context, 0, dummyIntent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     override fun getCallNotAttendedPendingIntent(): PendingIntent {
+        LogMessage.d(tag, "#CALL-UI #onShowCallUi getCallNotAttendedPendingIntent")
         val intent = Intent(context, CallKitUiActivity::class.java)
         intent.action = CallConstants.ACTION_SHOW_CALL_UI
         intent.putExtra(CallConstants.ACCEPT_CALL, false)
         intent.putExtra("FROM", "getCallNotAttendedPendingIntent")
-        return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
+        //return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
+        val dummyIntent = Intent()
+        return  PendingIntent.getActivity(context, 0, dummyIntent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     override fun getCallAcceptPendingIntent(): PendingIntent {
+        LogMessage.d(tag, "#CALL-UI #onShowCallUi getCallAcceptPendingIntent")
         val intentTransparent = Intent(context, CallKitUiActivity::class.java)
         intentTransparent.action = CallConstants.ACCEPT_CALL
         intentTransparent.putExtra(CallConstants.ACCEPT_CALL, true)
         intentTransparent.putExtra("FROM", CallConstants.ACCEPT_CALL)
-        return PendingIntent.getActivity(
-            context,
-            AppUtils.CALL_REQUEST,
-            intentTransparent,
-            AppUtils.getFlagPendingIntent()
-        )
+//        return PendingIntent.getActivity(
+//            context,
+//            AppUtils.CALL_REQUEST,
+//            intentTransparent,
+//            AppUtils.getFlagPendingIntent()
+//        )
+        val dummyIntent = Intent()
+        return  PendingIntent.getActivity(context, 0, dummyIntent, PendingIntent.FLAG_IMMUTABLE)
     }
 
 
     override fun onShowCallUi(callAction: String?) {
+        val isAndroidCallKitEnabled = SharedPreferenceManager.instance.getBoolean(
+            MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI
+        )
+
+        LogMessage.d(tag, "#CALL-UI isAndroidCallKitEnabled: $isAndroidCallKitEnabled")
+
+        if (!isAndroidCallKitEnabled) {
+            LogMessage.d(tag, "#CALL-UI restricting the activity")
+            handler.post {
+                FlyMethodConstants.updateCallSinkValue(
+                    Constants.onIncomingCallReceivedChannel,
+                    callAction
+                )
+            }
+            return
+        }
+
         LogMessage.d(tag, "#onShowCallUi $callAction")
         FlutterCall.callUiListener?.onShowCallUiFlutter(callAction, null)
         if (callAction != null) {

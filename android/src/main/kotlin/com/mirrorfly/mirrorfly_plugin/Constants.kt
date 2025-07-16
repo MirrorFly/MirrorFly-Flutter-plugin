@@ -134,6 +134,7 @@ object Constants {
     const val onCallLogsUpdatedChannel = "$Domain/onCallLog"
     const val onCallLogDeletedChannel = "$Domain/onCallLogDeleted"
     const val clearAllCallLogChannel = "$Domain/clearAllCallLog"
+    const val onIncomingCallReceivedChannel = "$Domain/onIncomingCallReceived"
 
     const val ACTION_CALL_INCOMING =
         "com.mirrorfly.mirrorfly_plugin.ACTION_CALL_INCOMING"

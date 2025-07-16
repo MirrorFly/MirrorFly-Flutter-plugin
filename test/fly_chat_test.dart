@@ -1965,6 +1965,9 @@ class MockFlyChatFlutterPlatform
   Stream get onReconnecting => throw UnimplementedError();
 
   @override
+  Stream get onIncomingCallReceived => throw UnimplementedError();
+
+  @override
   Future<bool?> webLoginDetailsCleared() {
     // implement webLoginDetailsCleared
     throw UnimplementedError();

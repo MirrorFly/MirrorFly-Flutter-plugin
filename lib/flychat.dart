@@ -81,6 +81,7 @@ class Mirrorfly {
   ///   - [enableMobileNumberLogin] : Flag indicating whether mobile number login should be enabled. Defaults to true.
   ///   - [enableDebugLog] : Flag indicating whether debug logs should be enabled. Defaults to false.
   ///   - [enablePrivateStorage] : Flag indicating whether private storage should be enable. Defaults to false.
+  ///   - [enableAndroidCallKitUI] : Flag indicating whether default android incoming callKit ui is enabled. Defaults to false.
   ///   - [flyCallback] : A callback function to handle the response from the SDK initialization. Must not be null.
   ///
   /// Returns:
@@ -114,7 +115,9 @@ class Mirrorfly {
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false,
       bool enablePrivateStorage = false,
+      bool? enableAndroidCallKitUI = true,
       required Function(FlyResponse response) flyCallback}) {
+    print("#CALL-UI from flutter initializeSDK enableAndroidCallKitUI: $enableAndroidCallKitUI");
     var builder = InitializeSDKBuilder(
         iOSContainerID: iOSContainerID,
         licenseKey: licenseKey,
@@ -122,7 +125,8 @@ class Mirrorfly {
         chatHistoryEnable: chatHistoryEnable,
         enableMobileNumberLogin: enableMobileNumberLogin,
         enableDebugLog: enableDebugLog,
-        enablePrivateStorage: enablePrivateStorage);
+        enablePrivateStorage: enablePrivateStorage,
+        enableAndroidCallKitUI: enableAndroidCallKitUI);
     isChatHistoryEnabled = chatHistoryEnable;
     isPrivateStorageEnabled = enablePrivateStorage;
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);
@@ -5470,6 +5474,10 @@ class Mirrorfly {
   /// Stream that emits events when the call link users are updated
   static Stream<dynamic> get onUsersUpdated =>
       FlyChatFlutterPlatform.instance.onUsersUpdated;
+
+  /// Stream that emits events when the call link users are updated
+  static Stream<dynamic> get onIncomingCallReceived =>
+      FlyChatFlutterPlatform.instance.onIncomingCallReceived;
 
   /// Validates a group JID (Jabber ID) for a group.
   ///

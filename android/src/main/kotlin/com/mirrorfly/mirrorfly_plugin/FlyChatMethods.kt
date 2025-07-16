@@ -295,6 +295,7 @@ class FlyChatMethods {
         val enableMobileNumberLogin: Boolean? = call.argument("enableMobileNumberLogin")
         val enableSDKLog: Boolean = call.argument("enableDebugLog") ?: false
         val enablePrivateStorage: Boolean = call.argument("enablePrivateStorage") ?: false
+        val enableAndroidCallKitUI: Boolean = call.argument("enableAndroidCallKitUI") ?: true
 
         if (storageFolderName != null) {
             ChatManager.setMediaFolderName(storageFolderName)
@@ -310,6 +311,13 @@ class FlyChatMethods {
         ChatManager.enablePrivateStorage(enablePrivateStorage)
         CallManager.enableCallLogExport(enableSDKLog)
         ChatManager.enableDebugLogging(enableSDKLog)
+
+        LogMessage.d("#CALL-UI", "buildInitializeSDK, enableAndroidCallKitUI: $enableAndroidCallKitUI")
+        SharedPreferenceManager.instance.storeBoolean(
+            MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI,
+            enableAndroidCallKitUI
+        )
+        LogMessage.d("#CALL-UI", enableAndroidCallKitUI.toString())
 
         FlyCallMethods().initCall()
 

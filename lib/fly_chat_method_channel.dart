@@ -779,6 +779,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onUsersUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for incoming call.
+  @visibleForTesting
+  final onIncomingCallReceivedChannel =
+  const EventChannel('contus.mirrorfly/onIncomingCallReceived');
+
+  /// A stream controller to update the incoming call event as a stream.
+  final StreamController<dynamic> onIncomingCallReceivedStreamController =
+  StreamController<dynamic>.broadcast();
+
   @override
   Stream<dynamic> get onMessageReceived =>
       _messageOnReceivedStreamController.stream;
@@ -1059,6 +1068,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onClearAllCallLog =>
       onClearAllCallLogStreamController.stream;
+
+  @override
+  Stream<dynamic> get onIncomingCallReceived =>
+      onIncomingCallReceivedStreamController.stream;
 
   ///Using [addStreamsAllToStreamController] to add all streams to stream controller
   ///benefit to use stream controller we can call multiple listeners to listen.
@@ -1819,6 +1832,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }, onError: (error) {
       debugPrint("onUsersUpdatedChannel error = $error");
       onUsersUpdatedStreamController.addError(error);
+    });
+
+    onIncomingCallReceivedChannel.receiveBroadcastStream().listen((event) {
+      debugPrint("onIncomingCallReceivedChannel event = $event");
+      onIncomingCallReceivedStreamController.add(event);
+      callEventsListener?.onIncomingCallReceived(event);
     });
   }
 

@@ -174,6 +174,7 @@ class InitializeSDKBuilder {
     this.chatHistoryEnable,
     this.enableDebugLog = false,
     this.enablePrivateStorage = false,
+    this.enableAndroidCallKitUI
   });
 
   /// The name of the local storage folder. Optional for Android platforms.
@@ -196,6 +197,9 @@ class InitializeSDKBuilder {
 
   /// Determines if private storage is enabled. Defaults to false.
   bool enablePrivateStorage;
+
+  /// Determines if default android incoming call ui is enabled. Defaults to true
+  bool? enableAndroidCallKitUI = true;
 }
 
 /// `InitializeSDKBuilderParsing` is an extension on `InitializeSDKBuilder` that provides a method to build a map
@@ -218,6 +222,7 @@ extension InitializeSDKBuilderParsing on InitializeSDKBuilder {
       "chatHistoryEnable": chatHistoryEnable,
       "enableDebugLog": enableDebugLog,
       "enablePrivateStorage": enablePrivateStorage,
+      "enableAndroidCallKitUI": enableAndroidCallKitUI,
     };
   }
 }
