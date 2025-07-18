@@ -6629,4 +6629,32 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           FlyResponse(false, FlyConstants.empty, result.errorMessage, null));
     }
   }
+
+  @override
+  Future<void> answerCall(
+      {required Function(FlyResponse response) callback}) async {
+    if (Platform.isAndroid) {
+      try {
+        LogMessage.d("answerCall", "answerCall");
+        await mirrorFlyCallMethodChannel.invokeMethod<bool>('answerCall');
+        callback
+            .call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      } on PlatformException catch (e) {
+        LogMessage.d("Platform Exception =", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(e.code, e.message, e.details)));
+      } on Exception catch (e) {
+        LogMessage.d("Exception ", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+      }
+    } else {
+      callback.call(FlyResponse(
+          false,
+          FlyConstants.empty,
+          FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle,
+              "This method call is not supported for iOS")));
+    }
+  }
 }

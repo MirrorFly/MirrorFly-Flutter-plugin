@@ -134,6 +134,8 @@ object Constants {
     const val onCallLogsUpdatedChannel = "$Domain/onCallLog"
     const val onCallLogDeletedChannel = "$Domain/onCallLogDeleted"
     const val clearAllCallLogChannel = "$Domain/clearAllCallLog"
+
+    // Channels related to call handling on flutter side
     const val onIncomingCallReceivedChannel = "$Domain/onIncomingCallReceived"
 
     const val ACTION_CALL_INCOMING =

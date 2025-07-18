@@ -29,6 +29,10 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     val context: Context by lazy { MirrorFlyManager.getContext() }
     private val flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? by lazy { MirrorFlyManager.flutterPluginBinding }
 
+    val isAndroidCallKitEnabled = SharedPreferenceManager.instance.getBoolean(
+        MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI
+    )
+
     fun init() {
         Logger.d("$tag init")
         CallManager.setCallEventsListener(this)
@@ -404,9 +408,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
         val intent: Intent? = AppUtils.getAppIntent(context)
 //        intent?.putExtra("FROM", "getCallAttendedPendingIntent")
 //        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
-      //  return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
-        val dummyIntent = Intent()
-        return  PendingIntent.getActivity(context, 0, dummyIntent, PendingIntent.FLAG_IMMUTABLE)
+        return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
     }
 
     override fun getCallConnectingPendingIntent(): PendingIntent {
@@ -414,53 +416,103 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
         val intent: Intent? = AppUtils.getAppIntent(context)
 //        intent?.putExtra("FROM", "getCallConnectingPendingIntent")
 //        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
-    //    return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
-        val dummyIntent = Intent()
-        return  PendingIntent.getActivity(context, 0, dummyIntent, PendingIntent.FLAG_IMMUTABLE)
+        return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
     }
+
+    ///
+    /// While clicking the notification on ringing state goes here
+    ///
 
     override fun getCallNotAttendedPendingIntent(): PendingIntent {
         LogMessage.d(tag, "#CALL-UI #onShowCallUi getCallNotAttendedPendingIntent")
-        val intent = Intent(context, CallKitUiActivity::class.java)
-        intent.action = CallConstants.ACTION_SHOW_CALL_UI
-        intent.putExtra(CallConstants.ACCEPT_CALL, false)
-        intent.putExtra("FROM", "getCallNotAttendedPendingIntent")
-        //return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
-        val dummyIntent = Intent()
-        return  PendingIntent.getActivity(context, 0, dummyIntent, PendingIntent.FLAG_IMMUTABLE)
+//        return PendingIntent.getActivity(context,0,Intent(),AppUtils.getFlagPendingIntent());
+        if (SharedPreferenceManager.instance.getBoolean(MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI)) {
+            val intent = Intent(context, CallKitUiActivity::class.java)
+            intent.action = CallConstants.ACTION_SHOW_CALL_UI
+            intent.putExtra(CallConstants.ACCEPT_CALL, false)
+            intent.putExtra("FROM", "getCallNotAttendedPendingIntent")
+            return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
+        } else {
+            val intent = Intent(context, context.packageManager.getLaunchIntentForPackage(context.packageName)?.component!!.javaClass)
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or
+                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.action = Intent.ACTION_MAIN
+            intent.addCategory(Intent.CATEGORY_LAUNCHER)
+
+            return PendingIntent.getActivity(
+                context,
+                0,
+                Intent(),
+                AppUtils.getFlagPendingIntent()
+            )
+        }
     }
 
+    ///
+    /// While clicking the accept in notification on ringing state goes here
+    ///
     override fun getCallAcceptPendingIntent(): PendingIntent {
         LogMessage.d(tag, "#CALL-UI #onShowCallUi getCallAcceptPendingIntent")
-        val intentTransparent = Intent(context, CallKitUiActivity::class.java)
-        intentTransparent.action = CallConstants.ACCEPT_CALL
-        intentTransparent.putExtra(CallConstants.ACCEPT_CALL, true)
-        intentTransparent.putExtra("FROM", CallConstants.ACCEPT_CALL)
-//        return PendingIntent.getActivity(
-//            context,
-//            AppUtils.CALL_REQUEST,
-//            intentTransparent,
-//            AppUtils.getFlagPendingIntent()
-//        )
-        val dummyIntent = Intent()
-        return  PendingIntent.getActivity(context, 0, dummyIntent, PendingIntent.FLAG_IMMUTABLE)
+//        return PendingIntent.getActivity(context,0,Intent(),AppUtils.getFlagPendingIntent());
+        if (SharedPreferenceManager.instance.getBoolean(MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI)) {
+            val intentTransparent = Intent(context, CallKitUiActivity::class.java)
+            intentTransparent.action = CallConstants.ACCEPT_CALL
+            intentTransparent.putExtra(CallConstants.ACCEPT_CALL, true)
+            intentTransparent.putExtra("FROM", CallConstants.ACCEPT_CALL)
+//            return PendingIntent.getActivity(
+//                context,
+//                AppUtils.CALL_REQUEST,
+//                intentTransparent,
+//                AppUtils.getFlagPendingIntent()
+//            )
+                    return PendingIntent.getActivity(context,0,intentTransparent,AppUtils.getFlagPendingIntent());
+        } else {
+            val intent = Intent(context, context.packageManager.getLaunchIntentForPackage(context.packageName)?.component!!.javaClass)
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or
+                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.action = Intent.ACTION_MAIN
+            intent.addCategory(Intent.CATEGORY_LAUNCHER)
+            return PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                AppUtils.getFlagPendingIntent()
+            )
+        }
     }
 
 
     override fun onShowCallUi(callAction: String?) {
-        val isAndroidCallKitEnabled = SharedPreferenceManager.instance.getBoolean(
-            MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI
-        )
-
-        LogMessage.d(tag, "#CALL-UI isAndroidCallKitEnabled: $isAndroidCallKitEnabled")
+        LogMessage.d(tag, "#CALL-UI isAndroidCallKitEnabled: $isAndroidCallKitEnabled callAction: $callAction")
 
         if (!isAndroidCallKitEnabled) {
             LogMessage.d(tag, "#CALL-UI restricting the activity")
-            handler.post {
-                FlyMethodConstants.updateCallSinkValue(
-                    Constants.onIncomingCallReceivedChannel,
-                    callAction
-                )
+            when (callAction) {
+                CallConstants.ACTION_SHOW_CALL_UI -> {
+                    val isIncomingCall = CallManager.getCallDirection() == CallDirection.INCOMING_CALL
+                    if (isIncomingCall) {
+                        val callType = CallManager.getCallType()
+                        val isGroupCall = !CallManager.isOneToOneCall()
+                        val callerJid = CallManager.getEndCallerJid()
+                        val groupJID = CallManager.getGroupID()
+                        val payload = mapOf(
+                            "call_action" to callAction,
+                            "call_type" to callType,
+                            "is_group_call" to isGroupCall,
+                            "caller_jid" to callerJid,
+                            "group_jid" to groupJID
+                        )
+
+                        handler.post {
+                            FlyMethodConstants.updateCallSinkValue(
+                                Constants.onIncomingCallReceivedChannel,
+                                payload
+                            )
+                        }
+                    }
+                }
             }
             return
         }

@@ -1987,6 +1987,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future<void> answerCall({required Function(FlyResponse response) callback}) {
+    // TODO: implement answerCall
+    throw UnimplementedError();
+  }
+
   /* @override
   Future<bool?> webLoginDetailsCleared() {
     throw UnimplementedError();

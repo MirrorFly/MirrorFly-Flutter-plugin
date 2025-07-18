@@ -5475,7 +5475,7 @@ class Mirrorfly {
   static Stream<dynamic> get onUsersUpdated =>
       FlyChatFlutterPlatform.instance.onUsersUpdated;
 
-  /// Stream that emits events when the call link users are updated
+  /// Stream that emits events when the incoming call is received
   static Stream<dynamic> get onIncomingCallReceived =>
       FlyChatFlutterPlatform.instance.onIncomingCallReceived;
 
@@ -5764,5 +5764,10 @@ class Mirrorfly {
       packageName: packageName,
       callback: flyCallback,
     );
+  }
+
+  static Future<void> answerCall(
+      {required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.answerCall(callback: flyCallback);
   }
 }

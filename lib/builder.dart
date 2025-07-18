@@ -27,7 +27,8 @@ class ChatBuilder {
       // this.groupConfig,
       // bool useProfileName = false,
       // this.ivKey,
-      this.enableDebugLog = false});
+      this.enableDebugLog = false,
+      this.enableAndroidCallKitUI = true});
 
   /// The base URL for making API calls.
   String domainBaseUrl;
@@ -57,6 +58,9 @@ class ChatBuilder {
 
   /// Determines if debug logging is enabled. Defaults to false.
   bool enableDebugLog;
+
+  /// Determines if the android call kit is enabled. Defaults to true.
+  bool enableAndroidCallKitUI;
 }
 
 /// `GroupConfig` is a class used to configure group chat functionality.
@@ -124,6 +128,7 @@ extension BuilderParsing on ChatBuilder {
       // "useProfileName":useProfileName,
       // "ivKey":ivKey,
       "enableDebugLog": enableDebugLog,
+      "enableAndroidCallKitUI": enableAndroidCallKitUI,
     };
   }
 }
