@@ -5765,8 +5765,42 @@ class Mirrorfly {
     );
   }
 
+  ///
+  /// This method allows the current user to answer an incoming call.
+  /// ### Parameters:
+  /// - [flyCallback]: A callback function that receives a [FlyResponse] as a return callback
+  /// ### Example:
+  /// ```dart
+  /// Mirrorfly.answerCall(
+  ///   flyCallback: (response) {
+  ///     if (response.isSuccess) {
+  ///       print("Answer call succeeded");
+  ///     } else {
+  ///       print("Answer call failed ${response.message");
+  ///     }
+  ///   },
+  ///
   static Future<void> answerCall(
       {required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.answerCall(callback: flyCallback);
+  }
+
+  ///
+  /// This method allows you to check whether the current user is connected to the call.
+  /// ### Parameters:
+  /// - [flyCallback]: A callback function that receives a [FlyResponse] as a return callback
+  /// ### Example:
+  /// ```dart
+  /// Mirrorfly.isCallConnected(
+  ///   flyCallback: (response) {
+  ///     if (response.isSuccess) {
+  ///       print("Answer call succeeded");
+  ///     } else {
+  ///       print("Answer call failed ${response.message");
+  ///     }
+  ///   },
+  ///
+  static Future<bool?> isCallConnected({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.isCallConnected(callback: flyCallback);
   }
 }

@@ -1755,7 +1755,13 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('setTranslations() has not been implemented.');
   }
 
+  /// This method is used to answer the call
   Future<void> answerCall({required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('answerCall() has not been implemented.');
+  }
+
+  /// This method is used to whether the call is connected or not
+  Future<bool?> isCallConnected({required Function(FlyResponse response) callback}) {
     throw UnimplementedError('answerCall() has not been implemented.');
   }
 

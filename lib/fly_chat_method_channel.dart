@@ -6649,12 +6649,50 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
             FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
       }
     } else {
+      const String errorMessage = "This method call is not supported for iOS";
+      LogMessage.d("Exception ", " $errorMessage");
       callback.call(FlyResponse(
           false,
           FlyConstants.empty,
           FlyConstants.empty,
-          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle,
-              "This method call is not supported for iOS")));
+          FlyException(
+              FlyErrorCode.unHandle, FlyErrorMessage.unHandle, errorMessage)));
     }
+  }
+
+  @override
+  Future<bool?> isCallConnected(
+      {required Function(FlyResponse response) callback}) async {
+    bool? getIsCallConnected = false;
+    if (Platform.isAndroid) {
+      try {
+        LogMessage.d("answerCall", "answerCall");
+        getIsCallConnected = await mirrorFlyCallMethodChannel
+            .invokeMethod<bool>('isCallConnected');
+        callback
+            .call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+        return getIsCallConnected;
+      } on PlatformException catch (e) {
+        LogMessage.d("Platform Exception =", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+        return getIsCallConnected;
+      } on Exception catch (e) {
+        LogMessage.d("Exception ", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+        return getIsCallConnected;
+      }
+    } else {
+      const String errorMessage = "This method call is not supported for iOS";
+      LogMessage.d("Exception ", " $errorMessage");
+      callback.call(FlyResponse(
+          false,
+          FlyConstants.empty,
+          FlyConstants.empty,
+          FlyException(
+              FlyErrorCode.unHandle, FlyErrorMessage.unHandle, errorMessage)));
+    }
+    return getIsCallConnected;
   }
 }

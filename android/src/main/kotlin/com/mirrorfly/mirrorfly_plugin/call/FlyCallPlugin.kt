@@ -433,7 +433,6 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             t?.putExtra("FROM", CallConstants.ACTION_SHOW_CALL_UI)
             t?.putExtra(CallConstants.ACCEPT_CALL, false)
             t?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(t)
             return PendingIntent.getActivity(context, 0, t, AppUtils.getFlagPendingIntent())
         }
     }
@@ -442,22 +441,19 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     /// While clicking the accept in notification on ringing state goes here
     ///
     override fun getCallAcceptPendingIntent(): PendingIntent {
-        if (SharedPreferenceManager.instance.getBoolean(MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI)) {
-            val intentTransparent = Intent(context, CallKitUiActivity::class.java)
-            intentTransparent.action = CallConstants.ACCEPT_CALL
-            intentTransparent.putExtra(CallConstants.ACCEPT_CALL, true)
-            intentTransparent.putExtra("FROM", CallConstants.ACCEPT_CALL)
-            return PendingIntent.getActivity(context,0,intentTransparent,AppUtils.getFlagPendingIntent());
-        } else {
-            val t = AppUtils.getAppIntent(context)
-            t?.putExtra("FROM", CallConstants.ACTION_SHOW_CALL_UI)
-            t?.putExtra(CallConstants.ACCEPT_CALL, true)
-            t?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(t)
-            return PendingIntent.getActivity(context, 0, t, AppUtils.getFlagPendingIntent())
-        }
+        // if (SharedPreferenceManager.instance.getBoolean(MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI)) {
+        val intentTransparent = Intent(context, CallKitUiActivity::class.java)
+        intentTransparent.action = CallConstants.ACCEPT_CALL
+        intentTransparent.putExtra(CallConstants.ACCEPT_CALL, true)
+        intentTransparent.putExtra("FROM", CallConstants.ACCEPT_CALL)
+        return PendingIntent.getActivity(
+            context,
+            0,
+            intentTransparent,
+            AppUtils.getFlagPendingIntent()
+        );
+        //   } else { }
     }
-
 
     override fun onShowCallUi(callAction: String?) {
         if (!isAndroidCallKitEnabled) {
