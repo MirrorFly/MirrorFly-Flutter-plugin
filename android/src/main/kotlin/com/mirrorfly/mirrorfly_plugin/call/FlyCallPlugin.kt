@@ -433,19 +433,12 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             intent.putExtra("FROM", "getCallNotAttendedPendingIntent")
             return PendingIntent.getActivity(context, 0, intent, AppUtils.getFlagPendingIntent())
         } else {
-            val intent = Intent(context, context.packageManager.getLaunchIntentForPackage(context.packageName)?.component!!.javaClass)
-            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or
-                    Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP
-            intent.action = Intent.ACTION_MAIN
-            intent.addCategory(Intent.CATEGORY_LAUNCHER)
-
-            return PendingIntent.getActivity(
-                context,
-                0,
-                Intent(),
-                AppUtils.getFlagPendingIntent()
-            )
+            val t = AppUtils.getAppIntent(context)
+            t?.putExtra("FROM", CallConstants.ACTION_SHOW_CALL_UI)
+            t?.putExtra(CallConstants.ACCEPT_CALL, false)
+            t?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(t)
+            return PendingIntent.getActivity(context, 0, t, AppUtils.getFlagPendingIntent())
         }
     }
 
@@ -460,26 +453,14 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             intentTransparent.action = CallConstants.ACCEPT_CALL
             intentTransparent.putExtra(CallConstants.ACCEPT_CALL, true)
             intentTransparent.putExtra("FROM", CallConstants.ACCEPT_CALL)
-//            return PendingIntent.getActivity(
-//                context,
-//                AppUtils.CALL_REQUEST,
-//                intentTransparent,
-//                AppUtils.getFlagPendingIntent()
-//            )
-                    return PendingIntent.getActivity(context,0,intentTransparent,AppUtils.getFlagPendingIntent());
+            return PendingIntent.getActivity(context,0,intentTransparent,AppUtils.getFlagPendingIntent());
         } else {
-            val intent = Intent(context, context.packageManager.getLaunchIntentForPackage(context.packageName)?.component!!.javaClass)
-            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or
-                    Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP
-            intent.action = Intent.ACTION_MAIN
-            intent.addCategory(Intent.CATEGORY_LAUNCHER)
-            return PendingIntent.getActivity(
-                context,
-                0,
-                intent,
-                AppUtils.getFlagPendingIntent()
-            )
+            val t = AppUtils.getAppIntent(context)
+            t?.putExtra("FROM", CallConstants.ACTION_SHOW_CALL_UI)
+            t?.putExtra(CallConstants.ACCEPT_CALL, true)
+            t?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(t)
+            return PendingIntent.getActivity(context, 0, t, AppUtils.getFlagPendingIntent())
         }
     }
 
