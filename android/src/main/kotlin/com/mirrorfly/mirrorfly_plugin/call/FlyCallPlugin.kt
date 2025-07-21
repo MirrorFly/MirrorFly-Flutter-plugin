@@ -448,7 +448,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
         intentTransparent.putExtra("FROM", CallConstants.ACCEPT_CALL)
         return PendingIntent.getActivity(
             context,
-            0,
+            AppUtils.CALL_REQUEST,
             intentTransparent,
             AppUtils.getFlagPendingIntent()
         );
