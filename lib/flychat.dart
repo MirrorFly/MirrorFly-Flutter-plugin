@@ -38,6 +38,9 @@ class Mirrorfly {
   /// @param [isTrialLicenceKey] to provide trial/live register and contact sync
   /// @param [storageFolderName] provides the Local Storage Folder Name
   /// @param [enableDebugLog] provides the Debug Log.
+  /// @param [enableAndroidCallKitUI] Determines whether the Android CallKit UI is enabled. Defaults to true.
+  /// If set to false, incoming calls will not trigger the call UI.
+  /// Instead, you will receive an event through the `onIncomingCallReceived` callback.
   @Deprecated('Instead of use Mirrorfly.initializeSDK()')
   static init(
       {required String baseUrl,
@@ -50,7 +53,8 @@ class Mirrorfly {
       // int? maximumRecentChatPin,
       // GroupConfig? groupConfig,
       // String? ivKey,
-      bool enableDebugLog = false}) {
+      bool enableDebugLog = false,
+      bool? enableAndroidCallKitUI = true}) {
     var builder = ChatBuilder(
         domainBaseUrl: baseUrl,
         iOSContainerID: iOSContainerID,
@@ -62,7 +66,8 @@ class Mirrorfly {
         // maximumRecentChatPin: maximumRecentChatPin,
         // groupConfig: groupConfig,
         // ivKey: ivKey,
-        enableDebugLog: enableDebugLog);
+        enableDebugLog: enableDebugLog,
+        enableAndroidCallKitUI: enableAndroidCallKitUI);
     isTrialLicence = isTrialLicenceKey;
     isChatHistoryEnabled = chatHistoryEnable;
     FlyChatFlutterPlatform.instance.init(builder);
@@ -5474,7 +5479,9 @@ class Mirrorfly {
   static Stream<dynamic> get onUsersUpdated =>
       FlyChatFlutterPlatform.instance.onUsersUpdated;
 
-  /// Stream that emits events when the incoming call is received
+  /// Stream that emits events when an incoming call is received.
+  /// This will only be triggered if [enableAndroidCallKitUI] is set to **false**.
+  /// When enabled, the Android CallKit UI will handle incoming calls instead of this event.
   static Stream<dynamic> get onIncomingCallReceived =>
       FlyChatFlutterPlatform.instance.onIncomingCallReceived;
 

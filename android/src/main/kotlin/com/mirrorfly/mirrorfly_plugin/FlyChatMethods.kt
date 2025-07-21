@@ -220,6 +220,7 @@ class FlyChatMethods {
         val ivKey: String? = call.argument("ivKey")
         val enableSDKLog: Boolean = call.argument("enableDebugLog") ?: false
         val chatHistoryEnable: Boolean = call.argument("chatHistoryEnable") ?: false
+        val enableAndroidCallKitUI: Boolean = call.argument("enableAndroidCallKitUI") ?: false
         LogMessage.enableDebugLogging(enableSDKLog)
         LogMessage.d("buildChatSDK", call.arguments.toString())
         /*GroupManager.setNameHelper(object  : NameHelper {
@@ -228,6 +229,10 @@ class FlyChatMethods {
             }
         })*/
         val buildSDK = ChatSDK.Builder()
+        SharedPreferenceManager.instance.storeBoolean(
+            MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI,
+            enableAndroidCallKitUI
+        )
 //    if(enableGroup){
         val groupConfiguration = GroupConfig.Builder()
             .enableGroupCreation(true)

@@ -59,8 +59,10 @@ class ChatBuilder {
   /// Determines if debug logging is enabled. Defaults to false.
   bool enableDebugLog;
 
-  /// Determines if the android call kit is enabled. Defaults to true.
-  bool enableAndroidCallKitUI;
+  /// Determines whether the Android CallKit UI is enabled. Defaults to true.
+  /// If set to false, incoming calls will not trigger the call UI.
+  /// Instead, you will receive an event through the `onIncomingCallReceived` stream.
+  bool? enableAndroidCallKitUI;
 }
 
 /// `GroupConfig` is a class used to configure group chat functionality.
