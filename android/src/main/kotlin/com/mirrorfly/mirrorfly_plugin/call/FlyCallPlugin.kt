@@ -404,7 +404,6 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     }
 
     override fun getCallAttendedPendingIntent(): PendingIntent {
-        LogMessage.d(tag, "#CALL-UI #onShowCallUi getCallAttendedPendingIntent")
         val intent: Intent? = AppUtils.getAppIntent(context)
 //        intent?.putExtra("FROM", "getCallAttendedPendingIntent")
 //        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
@@ -412,7 +411,6 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     }
 
     override fun getCallConnectingPendingIntent(): PendingIntent {
-        LogMessage.d(tag, "#CALL-UI #onShowCallUi getCallConnectingPendingIntent")
         val intent: Intent? = AppUtils.getAppIntent(context)
 //        intent?.putExtra("FROM", "getCallConnectingPendingIntent")
 //        LogMessage.d(tag,"getCallAttendedPendingIntent $intent")
@@ -424,8 +422,6 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     ///
 
     override fun getCallNotAttendedPendingIntent(): PendingIntent {
-        LogMessage.d(tag, "#CALL-UI #onShowCallUi getCallNotAttendedPendingIntent")
-//        return PendingIntent.getActivity(context,0,Intent(),AppUtils.getFlagPendingIntent());
         if (SharedPreferenceManager.instance.getBoolean(MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI)) {
             val intent = Intent(context, CallKitUiActivity::class.java)
             intent.action = CallConstants.ACTION_SHOW_CALL_UI
@@ -446,8 +442,6 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     /// While clicking the accept in notification on ringing state goes here
     ///
     override fun getCallAcceptPendingIntent(): PendingIntent {
-        LogMessage.d(tag, "#CALL-UI #onShowCallUi getCallAcceptPendingIntent")
-//        return PendingIntent.getActivity(context,0,Intent(),AppUtils.getFlagPendingIntent());
         if (SharedPreferenceManager.instance.getBoolean(MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI)) {
             val intentTransparent = Intent(context, CallKitUiActivity::class.java)
             intentTransparent.action = CallConstants.ACCEPT_CALL
@@ -466,8 +460,6 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
 
 
     override fun onShowCallUi(callAction: String?) {
-        LogMessage.d(tag, "#CALL-UI isAndroidCallKitEnabled: $isAndroidCallKitEnabled callAction: $callAction")
-
         if (!isAndroidCallKitEnabled) {
             LogMessage.d(tag, "#CALL-UI restricting the activity")
             when (callAction) {

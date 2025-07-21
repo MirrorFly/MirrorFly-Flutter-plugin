@@ -779,7 +779,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onUsersUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
-  /// A event channel for incoming call.
+  /// A event channel for incoming call when the dafault and.
   @visibleForTesting
   final onIncomingCallReceivedChannel =
   const EventChannel('contus.mirrorfly/onIncomingCallReceived');

@@ -117,7 +117,6 @@ class Mirrorfly {
       bool enablePrivateStorage = false,
       bool? enableAndroidCallKitUI = true,
       required Function(FlyResponse response) flyCallback}) {
-    print("#CALL-UI from flutter initializeSDK enableAndroidCallKitUI: $enableAndroidCallKitUI");
     var builder = InitializeSDKBuilder(
         iOSContainerID: iOSContainerID,
         licenseKey: licenseKey,
