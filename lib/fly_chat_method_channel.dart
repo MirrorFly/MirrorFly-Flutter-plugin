@@ -5022,7 +5022,16 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'reportUserOrMessages',
           {"jid": jid, "chat_type": type, "selectedMessageID": messageId});
       LogMessage.d("report Result ", " $response");
-      callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      if(Platform.isIOS){
+        if(response!){
+          callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+        }
+        else{
+          callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty));
+        }
+      }else{
+        callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      }
       // return response;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
