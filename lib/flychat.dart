@@ -38,6 +38,9 @@ class Mirrorfly {
   /// @param [isTrialLicenceKey] to provide trial/live register and contact sync
   /// @param [storageFolderName] provides the Local Storage Folder Name
   /// @param [enableDebugLog] provides the Debug Log.
+  /// @param [enableAndroidCallKitUI] Determines whether the Android CallKit UI is enabled. Defaults to true.
+  /// If set to false, incoming calls will not trigger the call UI.
+  /// Instead, you will receive an event through the `onIncomingCallReceived` callback.
   @Deprecated('Instead of use Mirrorfly.initializeSDK()')
   static init(
       {required String baseUrl,
@@ -50,7 +53,8 @@ class Mirrorfly {
       // int? maximumRecentChatPin,
       // GroupConfig? groupConfig,
       // String? ivKey,
-      bool enableDebugLog = false}) {
+      bool enableDebugLog = false,
+      bool? enableAndroidCallKitUI = true}) {
     var builder = ChatBuilder(
         domainBaseUrl: baseUrl,
         iOSContainerID: iOSContainerID,
@@ -62,7 +66,8 @@ class Mirrorfly {
         // maximumRecentChatPin: maximumRecentChatPin,
         // groupConfig: groupConfig,
         // ivKey: ivKey,
-        enableDebugLog: enableDebugLog);
+        enableDebugLog: enableDebugLog,
+        enableAndroidCallKitUI: enableAndroidCallKitUI);
     isTrialLicence = isTrialLicenceKey;
     isChatHistoryEnabled = chatHistoryEnable;
     FlyChatFlutterPlatform.instance.init(builder);
@@ -81,6 +86,7 @@ class Mirrorfly {
   ///   - [enableMobileNumberLogin] : Flag indicating whether mobile number login should be enabled. Defaults to true.
   ///   - [enableDebugLog] : Flag indicating whether debug logs should be enabled. Defaults to false.
   ///   - [enablePrivateStorage] : Flag indicating whether private storage should be enable. Defaults to false.
+  ///   - [enableAndroidCallKitUI] : Flag indicating whether default android incoming callKit ui is enabled. Defaults to true.
   ///   - [flyCallback] : A callback function to handle the response from the SDK initialization. Must not be null.
   ///
   /// Returns:
@@ -114,6 +120,7 @@ class Mirrorfly {
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false,
       bool enablePrivateStorage = false,
+      bool? enableAndroidCallKitUI = true,
       required Function(FlyResponse response) flyCallback}) {
     var builder = InitializeSDKBuilder(
         iOSContainerID: iOSContainerID,
@@ -122,7 +129,8 @@ class Mirrorfly {
         chatHistoryEnable: chatHistoryEnable,
         enableMobileNumberLogin: enableMobileNumberLogin,
         enableDebugLog: enableDebugLog,
-        enablePrivateStorage: enablePrivateStorage);
+        enablePrivateStorage: enablePrivateStorage,
+        enableAndroidCallKitUI: enableAndroidCallKitUI);
     isChatHistoryEnabled = chatHistoryEnable;
     isPrivateStorageEnabled = enablePrivateStorage;
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);
@@ -5471,6 +5479,12 @@ class Mirrorfly {
   static Stream<dynamic> get onUsersUpdated =>
       FlyChatFlutterPlatform.instance.onUsersUpdated;
 
+  /// Stream that emits events when an incoming call is received.
+  /// This will only be triggered if [enableAndroidCallKitUI] is set to **false**.
+  /// When enabled, the Android CallKit UI will handle incoming calls instead of this event.
+  static Stream<dynamic> get onIncomingCallReceived =>
+      FlyChatFlutterPlatform.instance.onIncomingCallReceived;
+
   /// Validates a group JID (Jabber ID) for a group.
   ///
   /// This method checks if the provided [groupJid] is a valid group JID. A valid group JID must:
@@ -5756,5 +5770,44 @@ class Mirrorfly {
       packageName: packageName,
       callback: flyCallback,
     );
+  }
+
+  ///
+  /// This method allows the current user to answer an incoming call.
+  /// ### Parameters:
+  /// - [flyCallback]: A callback function that receives a [FlyResponse] as a return callback
+  /// ### Example:
+  /// ```dart
+  /// Mirrorfly.answerCall(
+  ///   flyCallback: (response) {
+  ///     if (response.isSuccess) {
+  ///       print("Answer call succeeded");
+  ///     } else {
+  ///       print("Answer call failed ${response.message");
+  ///     }
+  ///   },
+  ///
+  static Future<void> answerCall(
+      {required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.answerCall(callback: flyCallback);
+  }
+
+  ///
+  /// This method allows you to check whether the current user is connected to the call.
+  /// ### Parameters:
+  /// - [flyCallback]: A callback function that receives a [FlyResponse] as a return callback
+  /// ### Example:
+  /// ```dart
+  /// Mirrorfly.isCallConnected(
+  ///   flyCallback: (response) {
+  ///     if (response.isSuccess) {
+  ///       print("Answer call succeeded");
+  ///     } else {
+  ///       print("Answer call failed ${response.message");
+  ///     }
+  ///   },
+  ///
+  static Future<bool?> isCallConnected({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.isCallConnected(callback: flyCallback);
   }
 }

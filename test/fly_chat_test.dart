@@ -1965,6 +1965,9 @@ class MockFlyChatFlutterPlatform
   Stream get onReconnecting => throw UnimplementedError();
 
   @override
+  Stream get onIncomingCallReceived => throw UnimplementedError();
+
+  @override
   Future<bool?> webLoginDetailsCleared() {
     // implement webLoginDetailsCleared
     throw UnimplementedError();
@@ -1981,6 +1984,16 @@ class MockFlyChatFlutterPlatform
       {required String fileNameOrPath,
       String? packageName,
       required Function(FlyResponse response) callback}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> answerCall({required Function(FlyResponse response) callback}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isCallConnected({required Function(FlyResponse response) callback}) {
     throw UnimplementedError();
   }
 

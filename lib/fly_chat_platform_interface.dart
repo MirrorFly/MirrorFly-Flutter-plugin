@@ -1755,6 +1755,16 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('setTranslations() has not been implemented.');
   }
 
+  /// This method is used to answer the call
+  Future<void> answerCall({required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('answerCall() has not been implemented.');
+  }
+
+  /// This method is used to whether the call is connected or not
+  Future<bool?> isCallConnected({required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('answerCall() has not been implemented.');
+  }
+
   /// This listener is set to listen the message events.
   setMessageEventListener(MessageEventListeners? messageEventsListener) {
     throw UnimplementedError(
@@ -1857,4 +1867,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// Stream that emits events when the call link users are updated
   Stream<dynamic> get onUsersUpdated =>
       throw UnimplementedError('onUsersUpdated has not been implemented');
+
+  /// Stream that emits events when the incoming call is arrived
+  Stream<dynamic> get onIncomingCallReceived =>
+      throw UnimplementedError('onIncomingCallReceived has not been implemented');
+
 }

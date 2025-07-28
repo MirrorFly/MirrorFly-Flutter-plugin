@@ -27,7 +27,8 @@ class ChatBuilder {
       // this.groupConfig,
       // bool useProfileName = false,
       // this.ivKey,
-      this.enableDebugLog = false});
+      this.enableDebugLog = false,
+      this.enableAndroidCallKitUI = true});
 
   /// The base URL for making API calls.
   String domainBaseUrl;
@@ -57,6 +58,11 @@ class ChatBuilder {
 
   /// Determines if debug logging is enabled. Defaults to false.
   bool enableDebugLog;
+
+  /// Determines whether the Android CallKit UI is enabled. Defaults to true.
+  /// If set to false, incoming calls will not trigger the call UI.
+  /// Instead, you will receive an event through the `onIncomingCallReceived` stream.
+  bool? enableAndroidCallKitUI;
 }
 
 /// `GroupConfig` is a class used to configure group chat functionality.
@@ -124,6 +130,7 @@ extension BuilderParsing on ChatBuilder {
       // "useProfileName":useProfileName,
       // "ivKey":ivKey,
       "enableDebugLog": enableDebugLog,
+      "enableAndroidCallKitUI": enableAndroidCallKitUI,
     };
   }
 }
@@ -174,6 +181,7 @@ class InitializeSDKBuilder {
     this.chatHistoryEnable,
     this.enableDebugLog = false,
     this.enablePrivateStorage = false,
+    this.enableAndroidCallKitUI = true
   });
 
   /// The name of the local storage folder. Optional for Android platforms.
@@ -196,6 +204,9 @@ class InitializeSDKBuilder {
 
   /// Determines if private storage is enabled. Defaults to false.
   bool enablePrivateStorage;
+
+  /// Determines if default android incoming call ui is enabled. Defaults to true
+  bool? enableAndroidCallKitUI;
 }
 
 /// `InitializeSDKBuilderParsing` is an extension on `InitializeSDKBuilder` that provides a method to build a map
@@ -218,6 +229,7 @@ extension InitializeSDKBuilderParsing on InitializeSDKBuilder {
       "chatHistoryEnable": chatHistoryEnable,
       "enableDebugLog": enableDebugLog,
       "enablePrivateStorage": enablePrivateStorage,
+      "enableAndroidCallKitUI": enableAndroidCallKitUI,
     };
   }
 }
