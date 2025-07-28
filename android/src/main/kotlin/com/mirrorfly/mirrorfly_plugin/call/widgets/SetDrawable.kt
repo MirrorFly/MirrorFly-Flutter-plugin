@@ -44,7 +44,7 @@ class SetDrawable : BaseDrawable {
                     icon
                 }
                 username.length == 1 -> {
-                    icon.setText(username.toUpperCase())
+                    icon.setText(username.uppercase())
                     icon.setDrawableProfileColour(R.color.colorSecondary)
                     icon
                 }
@@ -63,7 +63,7 @@ class SetDrawable : BaseDrawable {
             if (initialName[1].trim { it <= ' ' }.isNotEmpty()) {
                 secondletter = String(Character.toChars(initialName[1].trim { it <= ' ' }.codePointAt(0)))
             }
-            icon.setText(firstletter.toUpperCase() + secondletter.toUpperCase())
+            icon.setText(firstletter.uppercase() + secondletter.uppercase())
             icon.setDrawableProfileColour(R.color.colorSecondary)
             icon
         }
@@ -86,6 +86,6 @@ class SetDrawable : BaseDrawable {
         if (isEmojiOnly(profileLetters) == true) {
             profileLetters = if (username.length>=4 && isEmojiOnly(username.substring(0, 4)) == true) username.substring(0, 4) else username.substring(0, 3)
         }
-        return profileLetters.toUpperCase()
+        return profileLetters.uppercase()
     }
 }
