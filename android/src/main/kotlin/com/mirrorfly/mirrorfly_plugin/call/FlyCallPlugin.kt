@@ -29,9 +29,7 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     val context: Context by lazy { MirrorFlyManager.getContext() }
     private val flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? by lazy { MirrorFlyManager.flutterPluginBinding }
 
-    val isAndroidCallKitEnabled = SharedPreferenceManager.instance.getBoolean(
-        MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI
-    )
+
 
     fun init() {
         Logger.d("$tag init")
@@ -456,6 +454,9 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
     }
 
     override fun onShowCallUi(callAction: String?) {
+        val isAndroidCallKitEnabled = SharedPreferenceManager.instance.getBoolean(
+            MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI
+        )
         if (!isAndroidCallKitEnabled) {
             LogMessage.d(tag, "#CALL-UI restricting the activity")
             when (callAction) {
