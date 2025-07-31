@@ -39,6 +39,8 @@ class Mirrorfly {
   /// @param [storageFolderName] provides the Local Storage Folder Name
   /// @param [enableDebugLog] provides the Debug Log.
   /// @param [enableAndroidCallKitUI] Determines whether the Android CallKit UI is enabled. Defaults to true.
+  /// **Note:** The `enableAndroidCallKitUI` parameter in `Mirrorfly.initializeSDK()` has been **deprecated**.
+  /// To control the native ringtone and incoming call UI behavior, use:Mirrorfly.configureAndroidCallKit(enableRingtone: true,enableIncomingCallUI: true)
   /// If set to false, incoming calls will not trigger the call UI.
   /// Instead, you will receive an event through the `onIncomingCallReceived` callback.
   @Deprecated('Instead of use Mirrorfly.initializeSDK()')
@@ -87,6 +89,8 @@ class Mirrorfly {
   ///   - [enableDebugLog] : Flag indicating whether debug logs should be enabled. Defaults to false.
   ///   - [enablePrivateStorage] : Flag indicating whether private storage should be enable. Defaults to false.
   ///   - [enableAndroidCallKitUI] : Flag indicating whether default android incoming callKit ui is enabled. Defaults to true.
+  /// **Note:** The `enableAndroidCallKitUI` parameter in `Mirrorfly.initializeSDK()` has been **deprecated**.
+  /// To control the native ringtone and incoming call UI behavior, use:Mirrorfly.configureAndroidCallKit(enableRingtone: true,enableIncomingCallUI: true)
   ///   - [flyCallback] : A callback function to handle the response from the SDK initialization. Must not be null.
   ///
   /// Returns:
@@ -5504,6 +5508,8 @@ class Mirrorfly {
 
   /// Stream that emits events when an incoming call is received.
   /// This will only be triggered if [enableAndroidCallKitUI] is set to **false**.
+  /// **Note:** The `enableAndroidCallKitUI` parameter in `Mirrorfly.initializeSDK()` has been **deprecated**.
+  /// To control the native ringtone and incoming call UI behavior, use:Mirrorfly.configureAndroidCallKit(enableRingtone: true,enableIncomingCallUI: true)
   /// When enabled, the Android CallKit UI will handle incoming calls instead of this event.
   static Stream<dynamic> get onIncomingCallReceived =>
       FlyChatFlutterPlatform.instance.onIncomingCallReceived;
