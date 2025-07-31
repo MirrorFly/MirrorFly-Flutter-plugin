@@ -4815,7 +4815,7 @@ class Mirrorfly {
   ///
   /// - [enableIncomingCallUI] (optional): A boolean value to enable or disable the incoming call screen.
   ///   - Defaults to `true`. Set to `false` to suppress the UI.
-  static Future<void> configureAndroidCallKit({
+  static Future<bool?> configureAndroidCallKit({
     bool enableRingtone = true,
     bool enableIncomingCallUI = true,
   }) {

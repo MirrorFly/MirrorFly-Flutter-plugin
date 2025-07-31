@@ -229,7 +229,6 @@ class FlyChatMethods {
             }
         })*/
         val buildSDK = ChatSDK.Builder()
-        CallManager.disableIncomingCallRingtone(!enableAndroidCallKitUI)
         SharedPreferenceManager.instance.storeBoolean(
             MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI,
             enableAndroidCallKitUI
@@ -317,7 +316,6 @@ class FlyChatMethods {
         ChatManager.enablePrivateStorage(enablePrivateStorage)
         CallManager.enableCallLogExport(enableSDKLog)
         ChatManager.enableDebugLogging(enableSDKLog)
-        CallManager.disableIncomingCallRingtone(!enableAndroidCallKitUI)
 
         SharedPreferenceManager.instance.storeBoolean(
             MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI,

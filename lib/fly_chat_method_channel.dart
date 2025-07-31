@@ -1935,13 +1935,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> configureAndroidCallKit(AndroidCallKitSettings builder) async {
+  Future<bool?> configureAndroidCallKit(AndroidCallKitSettings builder) async {
+    bool? response = false;
     if (Platform.isAndroid) {
       try {
-        await mirrorFlyCallMethodChannel.invokeMethod<bool>(
+        response = await mirrorFlyCallMethodChannel.invokeMethod<bool>(
           "configureAndroidCallKit",
           builder.toMap(),
         );
+        return response;
       } on PlatformException catch (e) {
         LogMessage.d("#Platform Exception =", " $e");
         rethrow;
@@ -1950,7 +1952,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         rethrow;
       }
     } else {
-      return null;
+      return false;
     }
   }
 

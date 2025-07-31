@@ -90,7 +90,7 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// Configures the Android CallKit settings such as ringtone and UI visibility.
-  Future<void> configureAndroidCallKit(
+  Future<bool?> configureAndroidCallKit(
       AndroidCallKitSettings builder){
     throw UnimplementedError('build() has not been implemented.');
   }
