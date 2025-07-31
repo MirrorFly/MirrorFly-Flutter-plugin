@@ -1,3 +1,4 @@
+import 'package:mirrorfly_plugin/android_call_config_builder.dart';
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
@@ -87,6 +88,13 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
       InitializeSDKBuilder builder, Function(FlyResponse response) callback) {
     throw UnimplementedError('build() has not been implemented.');
   }
+
+  /// Configures the Android CallKit settings such as ringtone and UI visibility.
+  Future<bool?> configureAndroidCallKit(
+      AndroidCallKitSettings builder){
+    throw UnimplementedError('build() has not been implemented.');
+  }
+
 
   /// Checks if private storage is enabled in the SDK settings.
   Future<bool> isPrivateStorageEnabledOrNot() {

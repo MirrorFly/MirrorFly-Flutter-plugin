@@ -62,6 +62,7 @@ class ChatBuilder {
   /// Determines whether the Android CallKit UI is enabled. Defaults to true.
   /// If set to false, incoming calls will not trigger the call UI.
   /// Instead, you will receive an event through the `onIncomingCallReceived` stream.
+  @Deprecated("Instead of use Mirrorfly.configureAndroidCallKit()")
   bool? enableAndroidCallKitUI;
 }
 
@@ -206,6 +207,7 @@ class InitializeSDKBuilder {
   bool enablePrivateStorage;
 
   /// Determines if default android incoming call ui is enabled. Defaults to true
+  @Deprecated("Instead of use Mirrorfly.configureAndroidCallKit()")
   bool? enableAndroidCallKitUI;
 }
 

@@ -120,6 +120,7 @@ class Mirrorfly {
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false,
       bool enablePrivateStorage = false,
+        @Deprecated("Instead of use Mirrorfly.configureAndroidCallKit()")
       bool? enableAndroidCallKitUI = true,
       required Function(FlyResponse response) flyCallback}) {
     var builder = InitializeSDKBuilder(
@@ -4803,6 +4804,28 @@ class Mirrorfly {
         limit: limit,
         callback: flyCallback);
   }
+  /// Configures Android CallKit behavior, including ringtone and UI display settings.
+  ///
+  /// This method allows you to enable or disable the incoming call ringtone and
+  /// the visibility of the incoming call UI independently.
+  ///
+  /// Parameters:
+  /// - [enableRingtone] (optional): A boolean value to enable or disable the ringtone sound.
+  ///   - Defaults to `true`. Set to `false` to mute the ringtone.
+  ///
+  /// - [enableIncomingCallUI] (optional): A boolean value to enable or disable the incoming call screen.
+  ///   - Defaults to `true`. Set to `false` to suppress the UI.
+  static Future<bool?> configureAndroidCallKit({
+    bool enableRingtone = true,
+    bool enableIncomingCallUI = true,
+  }) {
+    final settings = AndroidCallKitSettings(
+      enableRingtone: enableRingtone,
+      enableIncomingCallUI: enableIncomingCallUI,
+    );
+    return FlyChatFlutterPlatform.instance.configureAndroidCallKit(settings);
+  }
+
 
   /// Initiates a video call with the specified user.
   ///
