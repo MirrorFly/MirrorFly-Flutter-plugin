@@ -362,7 +362,8 @@ object FlyMethodConstants {
         "getMeetUsername" to flyCallMethods::getMeetUsername,
         "getCurrentCallDuration" to flyCallMethods::getCurrentCallDuration,
         "getCurrentCameraPosition" to flyCallMethods::getCurrentCameraPosition,
-    )
+        "configureAndroidCallKit" to flyCallMethods::configureAndroidCallKit,
+        )
 
 
     fun initializeChatListeners(binaryMessenger: BinaryMessenger) {

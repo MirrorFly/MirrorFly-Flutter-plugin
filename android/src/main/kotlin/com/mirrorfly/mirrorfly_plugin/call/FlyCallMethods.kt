@@ -1,6 +1,7 @@
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.Manifest
+import com.mirrorflysdk.flycommons.SharedPreferenceManager
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import com.mirrorfly.mirrorfly_plugin.*
@@ -157,6 +158,20 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
             }
         }
     }
+    /// To Configure the Android CallKit settings such as ringtone and UI visibility.
+
+    fun configureAndroidCallKit(call: MethodCall, result: MethodChannel.Result) {
+        val enableRingtone = call.argument<Boolean>("enableRingtone") ?: false
+        val enableIncomingCallUI = call.argument<Boolean>("enableIncomingCallUI") ?: false
+        CallManager.disableIncomingCallRingtone(!enableRingtone)
+        SharedPreferenceManager.instance.storeBoolean(
+            MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI,
+            enableIncomingCallUI
+        )
+
+        result.success(true)
+    }
+
 
     fun makeVideoCall(call: MethodCall, result: MethodChannel.Result) {
         try {

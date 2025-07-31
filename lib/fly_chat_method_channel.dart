@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mirrorfly_plugin/android_call_config_builder.dart';
 import 'package:mirrorfly_plugin/helpers/file_helper.dart';
 import 'package:mirrorfly_plugin/helpers/file_helper_model.dart';
 
@@ -1932,6 +1933,27 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
     }
   }
+
+  @override
+  Future<void> configureAndroidCallKit(AndroidCallKitSettings builder) async {
+    if (Platform.isAndroid) {
+      try {
+        await mirrorFlyCallMethodChannel.invokeMethod<bool>(
+          "configureAndroidCallKit",
+          builder.toMap(),
+        );
+      } on PlatformException catch (e) {
+        LogMessage.d("#Platform Exception =", " $e");
+        rethrow;
+      } on Exception catch (e) {
+        LogMessage.d("Exception ", " $e");
+        rethrow;
+      }
+    } else {
+      return null;
+    }
+  }
+
 
   @override
   Future<bool> contactSyncStateValue() async {

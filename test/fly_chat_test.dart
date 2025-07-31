@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mirrorfly_plugin/android_call_config_builder.dart';
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
@@ -18,6 +19,7 @@ class MockFlyChatFlutterPlatform
     //  implement acceptVideoCallSwitchRequest
     throw UnimplementedError();
   }
+  
 
   @override
   Future<bool?> addContact(String number, String name) {
@@ -1994,6 +1996,12 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<bool?> isCallConnected({required Function(FlyResponse response) callback}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> configureAndroidCallKit(AndroidCallKitSettings builder) {
+    // TODO: implement configureAndroidCallKit
     throw UnimplementedError();
   }
 
