@@ -297,8 +297,11 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
     fun muteVideo(call: MethodCall, result: MethodChannel.Result) {
         LogMessage.d(tag, "muteVideo")
         val muteVideo = call.argument<Boolean>("muteVideo") ?: false
+        var isResultSent = false
         CallManager.muteVideo(muteVideo, object : CallActionListener {
             override fun onResponse(isSuccess: Boolean, flyException: FlyException?) {
+                if(isResultSent) return
+                isResultSent = true
                 LogMessage.d(
                     tag,
                     "$muteVideo ${CallManager.getCurrentUserId()} ${
@@ -308,11 +311,12 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
                 if (isSuccess) {
                     sentMuteStatus(if(muteVideo) "LOCAL_VIDEO_MUTE" else "LOCAL_VIDEO_UN_MUTE")
                     result.success(true)
-                    CallManager.removeCallActionListener(this)
+//                    CallManager.removeCallActionListener(this)
                 } else {
                     result.error("500", flyException?.message, flyException)
-                    CallManager.removeCallActionListener(this)
+//                    CallManager.removeCallActionListener(this)
                 }
+                CallManager.removeCallActionListener(this)
             }
 
         })
