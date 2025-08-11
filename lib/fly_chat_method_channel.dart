@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mirrorfly_flutter_call_kit/mirrorfly_flutter_call_kit.dart';
+import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/helpers/file_helper.dart';
 import 'package:mirrorfly_plugin/helpers/file_helper_model.dart';
 
@@ -6608,6 +6610,33 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " ${result.errorMessage}");
       callback.call(
           FlyResponse(false, FlyConstants.empty, result.errorMessage, null));
+    }
+  }
+
+  @override
+  void getAuthToken({required Function(FlyResponse response) callback}) async {
+    try {
+      // final String? token = await mirrorFlyMethodChannel.invokeMethod<String>('getAuthToken');
+      // callback
+      //     .call(FlyResponse(true, token ?? 'token empty', FlyConstants.empty));
+    } catch(e) {
+      // LogMessage.d("initializeCallKit",'error... $e');
+    }
+  }
+
+  @override
+  Future<void> initializeCallKit(
+      Function(FlyResponse response)? callback) async {
+    try {
+      LogMessage.d("initializeCallKit", 'started...');
+      MirrorflyCallKit.initialize(
+          centrifugeUrl: 'wss://mf-core.contus.us/connection/websocket',
+          centrifugeToken: await Mirrorfly.getCurrentAuthToken(),
+          userChannel: '',
+          tenantId: 'https://api-uikit-qa.contus.us',
+          userId: '9190000000009');
+    } catch (e) {
+      LogMessage.d("initializeCallKit", 'error... $e');
     }
   }
 }

@@ -5757,4 +5757,14 @@ class Mirrorfly {
       callback: flyCallback,
     );
   }
+
+  ///
+  static void getAuthToken({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.getAuthToken(callback: flyCallback);
+  }
+
+  ///
+  static Future<void> initializeCallKit({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.initializeCallKit(flyCallback);
+  }
 }

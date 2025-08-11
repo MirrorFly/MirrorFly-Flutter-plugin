@@ -1857,4 +1857,14 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// Stream that emits events when the call link users are updated
   Stream<dynamic> get onUsersUpdated =>
       throw UnimplementedError('onUsersUpdated has not been implemented');
+
+  ///
+  Future<void> initializeCallKit(Function(FlyResponse response)? callback) {
+    throw UnimplementedError('initializeCallKit has not been implemented.');
+  }
+
+  ///
+  void getAuthToken({required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('getAuthToken has not been implemented.');
+  }
 }

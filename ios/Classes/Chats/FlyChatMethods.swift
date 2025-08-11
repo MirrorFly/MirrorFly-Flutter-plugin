@@ -4586,4 +4586,9 @@ let ISEXPORT = true
         result(true)
         // Needs to be implemented in future
     }
+    
+    func getAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult) {
+//        let token = UserDefaultsManager.shared.getAuthToken()
+//        result(token) // sends token back to Flutter
+    }
 }

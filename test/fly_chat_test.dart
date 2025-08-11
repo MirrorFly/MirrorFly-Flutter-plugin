@@ -1984,6 +1984,18 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  void getAuthToken({required Function(FlyResponse response) callback}) {
+    // TODO: implement getAuthToken
+  }
+
+  @override
+  Future<void> initializeCallKit(Function(FlyResponse response)? callback) {
+    // TODO: implement initializeCallKit
+    throw UnimplementedError();
+  }
+
+
   /* @override
   Future<bool?> webLoginDetailsCleared() {
     throw UnimplementedError();
