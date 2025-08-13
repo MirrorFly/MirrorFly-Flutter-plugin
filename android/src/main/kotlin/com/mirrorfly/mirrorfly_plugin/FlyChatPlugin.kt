@@ -54,6 +54,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     //    var instance: FlyChatPlugin = FlyChatPlugin()
     init {
         Log.d("#FlyChatEvents", " FlyChatPlugin init")
+        Log.d("#Mirror-Fly Android Internal Release", " Running on sdk:mirrorflysdk:7.13.26_pre_8")
     }
 
     companion object {

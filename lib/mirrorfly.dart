@@ -2,6 +2,7 @@
 library mirrorfly_plugin;
 
 export 'builder.dart';
+export 'android_call_config_builder.dart';
 export 'flychat.dart';
 export 'logmessage.dart';
 export 'message_params.dart';

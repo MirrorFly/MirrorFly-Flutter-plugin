@@ -344,11 +344,6 @@ import PushKit
 
         }
 
-        if usersInCall.count <= 1 {
-            NSLog("\(Constants.callTag) Events: Userlist Have only one user so call will be disconnected already sent so ignoring the status")
-            return
-        }
-
         if(userJID != "" && (callStatus == .DISCONNECTED || callStatus == .CALL_TIME_OUT || callStatus == .USER_LEFT)){
             NSLog("\(Constants.callTag) clearing Mirrorfly Views")
             self.factory?.clearMirrorflyView(userJID: userJID)
