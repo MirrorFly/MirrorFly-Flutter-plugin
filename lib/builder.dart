@@ -27,7 +27,8 @@ class ChatBuilder {
       // this.groupConfig,
       // bool useProfileName = false,
       // this.ivKey,
-      this.enableDebugLog = false});
+      this.enableDebugLog = false,
+      this.enableAndroidCallKitUI = true});
 
   /// The base URL for making API calls.
   String domainBaseUrl;
@@ -57,6 +58,12 @@ class ChatBuilder {
 
   /// Determines if debug logging is enabled. Defaults to false.
   bool enableDebugLog;
+
+  /// Determines whether the Android CallKit UI is enabled. Defaults to true.
+  /// If set to false, incoming calls will not trigger the call UI.
+  /// Instead, you will receive an event through the `onIncomingCallReceived` stream.
+  @Deprecated("Instead of use Mirrorfly.configureAndroidCallKit()")
+  bool? enableAndroidCallKitUI;
 }
 
 /// `GroupConfig` is a class used to configure group chat functionality.
@@ -124,6 +131,7 @@ extension BuilderParsing on ChatBuilder {
       // "useProfileName":useProfileName,
       // "ivKey":ivKey,
       "enableDebugLog": enableDebugLog,
+      "enableAndroidCallKitUI": enableAndroidCallKitUI,
     };
   }
 }
@@ -166,15 +174,15 @@ extension GroupConfigParsing on GroupConfig? {
 class InitializeSDKBuilder {
   /// This constructor allows for the configuration of the SDK initialization process,
   /// including specifying storage options, authentication details, and various feature toggles.
-  InitializeSDKBuilder({
-    this.storageFolderName,
-    required this.iOSContainerID,
-    required this.licenseKey,
-    this.enableMobileNumberLogin = false,
-    this.chatHistoryEnable,
-    this.enableDebugLog = false,
-    this.enablePrivateStorage = false,
-  });
+  InitializeSDKBuilder(
+      {this.storageFolderName,
+      required this.iOSContainerID,
+      required this.licenseKey,
+      this.enableMobileNumberLogin = false,
+      this.chatHistoryEnable,
+      this.enableDebugLog = false,
+      this.enablePrivateStorage = false,
+      this.enableAndroidCallKitUI = true});
 
   /// The name of the local storage folder. Optional for Android platforms.
   String? storageFolderName;
@@ -196,6 +204,10 @@ class InitializeSDKBuilder {
 
   /// Determines if private storage is enabled. Defaults to false.
   bool enablePrivateStorage;
+
+  /// Determines if default android incoming call ui is enabled. Defaults to true
+  @Deprecated("Instead of use Mirrorfly.configureAndroidCallKit()")
+  bool? enableAndroidCallKitUI;
 }
 
 /// `InitializeSDKBuilderParsing` is an extension on `InitializeSDKBuilder` that provides a method to build a map
@@ -218,6 +230,7 @@ extension InitializeSDKBuilderParsing on InitializeSDKBuilder {
       "chatHistoryEnable": chatHistoryEnable,
       "enableDebugLog": enableDebugLog,
       "enablePrivateStorage": enablePrivateStorage,
+      "enableAndroidCallKitUI": enableAndroidCallKitUI,
     };
   }
 }
