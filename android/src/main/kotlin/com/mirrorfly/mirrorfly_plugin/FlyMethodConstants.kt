@@ -305,6 +305,7 @@ object FlyMethodConstants {
         Constants.onError to EventStreamHandler(),
 //        Constants.onLocalTrack to EventStreamHandler(),
         Constants.onUsersUpdated to EventStreamHandler(),
+        Constants.onIncomingCallReceivedChannel to EventStreamHandler(),
     )
     val callMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "getCallUsersList" to flyCallMethods::getCallUsersList,
@@ -361,7 +362,8 @@ object FlyMethodConstants {
         "getMeetUsername" to flyCallMethods::getMeetUsername,
         "getCurrentCallDuration" to flyCallMethods::getCurrentCallDuration,
         "getCurrentCameraPosition" to flyCallMethods::getCurrentCameraPosition,
-    )
+        "configureAndroidCallKit" to flyCallMethods::configureAndroidCallKit,
+        )
 
 
     fun initializeChatListeners(binaryMessenger: BinaryMessenger) {

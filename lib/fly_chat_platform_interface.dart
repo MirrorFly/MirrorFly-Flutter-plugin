@@ -1,3 +1,4 @@
+import 'package:mirrorfly_plugin/android_call_config_builder.dart';
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
@@ -85,6 +86,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// Throws [UnimplementedError] if the method has not been implemented in the subclass.
   Future<void> initializeSDK(
       InitializeSDKBuilder builder, Function(FlyResponse response) callback) {
+    throw UnimplementedError('build() has not been implemented.');
+  }
+
+  /// Configures the Android CallKit settings such as ringtone and UI visibility.
+  Future<bool?> configureAndroidCallKit(AndroidCallKitSettings builder) {
     throw UnimplementedError('build() has not been implemented.');
   }
 
@@ -1755,6 +1761,17 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('setTranslations() has not been implemented.');
   }
 
+  /// This method is used to answer the call
+  Future<void> answerCall({required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('answerCall() has not been implemented.');
+  }
+
+  /// This method is used to whether the call is connected or not
+  Future<bool?> isCallConnected(
+      {required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('answerCall() has not been implemented.');
+  }
+
   /// This listener is set to listen the message events.
   setMessageEventListener(MessageEventListeners? messageEventsListener) {
     throw UnimplementedError(
@@ -1857,4 +1874,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// Stream that emits events when the call link users are updated
   Stream<dynamic> get onUsersUpdated =>
       throw UnimplementedError('onUsersUpdated has not been implemented');
+
+  /// Stream that emits events when the incoming call is arrived
+  Stream<dynamic> get onIncomingCallReceived => throw UnimplementedError(
+      'onIncomingCallReceived has not been implemented');
 }

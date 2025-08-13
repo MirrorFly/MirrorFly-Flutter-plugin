@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mirrorfly_plugin/android_call_config_builder.dart';
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
@@ -1965,6 +1966,9 @@ class MockFlyChatFlutterPlatform
   Stream get onReconnecting => throw UnimplementedError();
 
   @override
+  Stream get onIncomingCallReceived => throw UnimplementedError();
+
+  @override
   Future<bool?> webLoginDetailsCleared() {
     // implement webLoginDetailsCleared
     throw UnimplementedError();
@@ -1981,6 +1985,23 @@ class MockFlyChatFlutterPlatform
       {required String fileNameOrPath,
       String? packageName,
       required Function(FlyResponse response) callback}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> answerCall({required Function(FlyResponse response) callback}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isCallConnected(
+      {required Function(FlyResponse response) callback}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> configureAndroidCallKit(AndroidCallKitSettings builder) {
+    // TODO: implement configureAndroidCallKit
     throw UnimplementedError();
   }
 
