@@ -783,11 +783,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   /// A event channel for incoming call when the dafault and.
   @visibleForTesting
   final onIncomingCallReceivedChannel =
-  const EventChannel('contus.mirrorfly/onIncomingCallReceived');
+      const EventChannel('contus.mirrorfly/onIncomingCallReceived');
 
   /// A stream controller to update the incoming call event as a stream.
   final StreamController<dynamic> onIncomingCallReceivedStreamController =
-  StreamController<dynamic>.broadcast();
+      StreamController<dynamic>.broadcast();
 
   @override
   Stream<dynamic> get onMessageReceived =>
@@ -1955,7 +1955,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       return false;
     }
   }
-
 
   @override
   Future<bool> contactSyncStateValue() async {
@@ -5065,16 +5064,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'reportUserOrMessages',
           {"jid": jid, "chat_type": type, "selectedMessageID": messageId});
       LogMessage.d("report Result ", " $response");
-      if(Platform.isIOS){
-        if(response!){
-          callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      if (Platform.isIOS) {
+        if (response!) {
+          callback
+              ?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+        } else {
+          callback?.call(
+              FlyResponse(false, FlyConstants.empty, FlyConstants.empty));
         }
-        else{
-          callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty));
-        }
-      }else{
-        callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
-      }      // return response;
+      } else {
+        callback
+            ?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      } // return response;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,

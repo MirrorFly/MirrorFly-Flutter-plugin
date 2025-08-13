@@ -19,7 +19,6 @@ class MockFlyChatFlutterPlatform
     //  implement acceptVideoCallSwitchRequest
     throw UnimplementedError();
   }
-  
 
   @override
   Future<bool?> addContact(String number, String name) {
@@ -1995,7 +1994,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<bool?> isCallConnected({required Function(FlyResponse response) callback}) {
+  Future<bool?> isCallConnected(
+      {required Function(FlyResponse response) callback}) {
     throw UnimplementedError();
   }
 

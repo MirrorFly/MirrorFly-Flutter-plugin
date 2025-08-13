@@ -90,11 +90,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// Configures the Android CallKit settings such as ringtone and UI visibility.
-  Future<bool?> configureAndroidCallKit(
-      AndroidCallKitSettings builder){
+  Future<bool?> configureAndroidCallKit(AndroidCallKitSettings builder) {
     throw UnimplementedError('build() has not been implemented.');
   }
-
 
   /// Checks if private storage is enabled in the SDK settings.
   Future<bool> isPrivateStorageEnabledOrNot() {
@@ -1769,7 +1767,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// This method is used to whether the call is connected or not
-  Future<bool?> isCallConnected({required Function(FlyResponse response) callback}) {
+  Future<bool?> isCallConnected(
+      {required Function(FlyResponse response) callback}) {
     throw UnimplementedError('answerCall() has not been implemented.');
   }
 
@@ -1877,7 +1876,6 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
       throw UnimplementedError('onUsersUpdated has not been implemented');
 
   /// Stream that emits events when the incoming call is arrived
-  Stream<dynamic> get onIncomingCallReceived =>
-      throw UnimplementedError('onIncomingCallReceived has not been implemented');
-
+  Stream<dynamic> get onIncomingCallReceived => throw UnimplementedError(
+      'onIncomingCallReceived has not been implemented');
 }

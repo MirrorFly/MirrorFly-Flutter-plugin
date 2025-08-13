@@ -124,7 +124,7 @@ class Mirrorfly {
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false,
       bool enablePrivateStorage = false,
-        @Deprecated("Instead of use Mirrorfly.configureAndroidCallKit()")
+      @Deprecated("Instead of use Mirrorfly.configureAndroidCallKit()")
       bool? enableAndroidCallKitUI = true,
       required Function(FlyResponse response) flyCallback}) {
     var builder = InitializeSDKBuilder(
@@ -4808,6 +4808,7 @@ class Mirrorfly {
         limit: limit,
         callback: flyCallback);
   }
+
   /// Configures Android CallKit behavior, including ringtone and UI display settings.
   ///
   /// This method allows you to enable or disable the incoming call ringtone and
@@ -4829,7 +4830,6 @@ class Mirrorfly {
     );
     return FlyChatFlutterPlatform.instance.configureAndroidCallKit(settings);
   }
-
 
   /// Initiates a video call with the specified user.
   ///
@@ -5836,7 +5836,9 @@ class Mirrorfly {
   ///     }
   ///   },
   ///
-  static Future<bool?> isCallConnected({required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance.isCallConnected(callback: flyCallback);
+  static Future<bool?> isCallConnected(
+      {required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance
+        .isCallConnected(callback: flyCallback);
   }
 }

@@ -174,16 +174,15 @@ extension GroupConfigParsing on GroupConfig? {
 class InitializeSDKBuilder {
   /// This constructor allows for the configuration of the SDK initialization process,
   /// including specifying storage options, authentication details, and various feature toggles.
-  InitializeSDKBuilder({
-    this.storageFolderName,
-    required this.iOSContainerID,
-    required this.licenseKey,
-    this.enableMobileNumberLogin = false,
-    this.chatHistoryEnable,
-    this.enableDebugLog = false,
-    this.enablePrivateStorage = false,
-    this.enableAndroidCallKitUI = true
-  });
+  InitializeSDKBuilder(
+      {this.storageFolderName,
+      required this.iOSContainerID,
+      required this.licenseKey,
+      this.enableMobileNumberLogin = false,
+      this.chatHistoryEnable,
+      this.enableDebugLog = false,
+      this.enablePrivateStorage = false,
+      this.enableAndroidCallKitUI = true});
 
   /// The name of the local storage folder. Optional for Android platforms.
   String? storageFolderName;
