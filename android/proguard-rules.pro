@@ -89,3 +89,5 @@
 
 -dontwarn a.**
 -keep class a.** { *; }
+
+-keep class com.mirrorfly.mirrorfly_plugin.FlyChatPlugin { *; }
