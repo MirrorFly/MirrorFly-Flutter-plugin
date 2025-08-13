@@ -268,6 +268,9 @@ abstract class CallEventListeners {
 
   /// This listener is triggered whenever the User stopped speaking in the call.
   void onUserStoppedSpeaking(String userJid);
+
+  /// This listener is triggered whenever the incoming call is arriving
+  void onIncomingCallReceived(String callAction);
 }
 
 /// A class that provides a set of callback methods that can be used to listen for Call Link Events in the MirrorFly Flutter Plugin.
