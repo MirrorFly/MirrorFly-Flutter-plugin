@@ -903,10 +903,10 @@ class Mirrorfly {
   ///
   ///
   static Future<void> updateFcmToken(
-      {required String firebaseToken,
+      {required String firebaseToken, bool isForceUpdate =false,
       required Function(FlyResponse response) flyCallBack}) {
     return FlyChatFlutterPlatform.instance
-        .updateFcmToken(firebaseToken, flyCallBack);
+        .updateFcmToken(firebaseToken,isForceUpdate,flyCallBack);
   }
 
   /// Checks if a chat is muted for the given JID.

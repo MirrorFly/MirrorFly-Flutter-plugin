@@ -8,11 +8,14 @@
 import Foundation
 import MirrorFlySDK
 import Photos
+import Flutter
 
 class AppUtils {
     
     //Singleton class
     static let shared: AppUtils = AppUtils()
+    
+    var voipTokenObserver: NSObjectProtocol?
     
     private init() {}
         
@@ -103,4 +106,55 @@ class AppUtils {
             return MediaQuality.uncompressed
         }
     }
+
+    
+    func checkAndUpdateVOIPToken(isForceUpdate: Bool = false ,result: FlutterResult? = nil) {
+            
+            let voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
+            
+            if voipToken.isEmpty {
+                
+                voipTokenObserver = NotificationCenter.default.addObserver(forName: .updateVoipToken, object: nil, queue: nil) { notification in
+                    if notification.userInfo?["voip"] is String {
+                        self.removeObserver()
+                        self.performDeviceTokenUpdate(isForceUpdate: isForceUpdate, result: result)
+                }
+                }
+                // No token → Register for VOIP notifications
+                FlyCall.shared?.registerVoipFirstTime = false
+                FlyCall.shared?.registerForVOIPNotifications()
+                
+            } else {
+                // Update device token
+                performDeviceTokenUpdate(isForceUpdate: isForceUpdate, result: result)
+            }
+        }
+    
+    private func performDeviceTokenUpdate(isForceUpdate: Bool = false, result: FlutterResult?) {
+        VOIPManager.sharedInstance.updateDeviceToken(isForceUpdate: isForceUpdate) { isSuccess, updatedVOIPToken, updatedDeviceToken, tokenError in
+            
+            if isSuccess {
+                
+                let response: [String: String] = [
+                    "updatedVOIPToken": updatedVOIPToken,
+                    "updatedDeviceToken": updatedDeviceToken
+                ]
+                
+                result?("\(response)")
+            } else {                
+                let response: [String: String] = [
+                    "error" : "Error updating tokens"
+                ]
+                result?("\(response)")
+            }
+        }
+    }
+    
+    private func removeObserver() {
+        if let observerToken = voipTokenObserver {
+            NotificationCenter.default.removeObserver(observerToken)
+            self.voipTokenObserver = nil
+        }
+    }
+    
 }

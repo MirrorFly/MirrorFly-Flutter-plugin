@@ -2714,13 +2714,13 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
 
   @override
   Future<void> updateFcmToken(
-      String firebasetoken, Function(FlyResponse response)? callback) async {
+      String firebasetoken,bool isForceUpdate, Function(FlyResponse response)? callback) async {
     // bool? res;
     try {
-      await mirrorFlyMethodChannel
-          .invokeMethod<bool>('updateFcmToken', {"token": firebasetoken});
+    final String? res = await mirrorFlyMethodChannel
+          .invokeMethod<String>('updateFcmToken', {"token": firebasetoken,"isForceUpdate":isForceUpdate});
       callback?.call(FlyResponse(
-          true, FlyConstants.empty, "fcm token updated successfully"));
+          true, res ?? FlyConstants.empty, "fcm token updated successfully"));
       // return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
