@@ -22,6 +22,7 @@ import 'internal_models/export_chat_model.dart';
 import 'internal_models/get_user_profile_model.dart';
 import 'internal_models/internal_status_model.dart';
 import 'internal_models/message_delivered_status_model.dart';
+import 'internal_models/notification_callback_model.dart';
 import 'internal_models/profile_detail_model.dart';
 import 'internal_models/recent_chat_model.dart';
 import 'internal_models/register_user_model.dart';
@@ -2719,8 +2720,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
     final String? res = await mirrorFlyMethodChannel
           .invokeMethod<String>('updateFcmToken', {"token": firebasetoken,"isForceUpdate":isForceUpdate});
+    LogMessage.d("updateFcmToken", " $res");
       callback?.call(FlyResponse(
-          true, res ?? FlyConstants.empty, "fcm token updated successfully"));
+          true, convertTokenResponseToJson(res), "fcm token updated successfully"));
       // return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");

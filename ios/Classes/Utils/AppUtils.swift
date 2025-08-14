@@ -133,20 +133,32 @@ class AppUtils {
     private func performDeviceTokenUpdate(isForceUpdate: Bool = false, result: FlutterResult?) {
         VOIPManager.sharedInstance.updateDeviceToken(isForceUpdate: isForceUpdate) { isSuccess, updatedVOIPToken, updatedDeviceToken, tokenError in
             
+            var response: [String: String]
+            
             if isSuccess {
                 
-                let response: [String: String] = [
+                 response = [
                     "updatedVOIPToken": updatedVOIPToken,
                     "updatedDeviceToken": updatedDeviceToken
                 ]
                 
-                result?("\(response)")
+                
             } else {                
-                let response: [String: String] = [
+                 response = [
                     "error" : "Error updating tokens"
                 ]
-                result?("\(response)")
+                
             }
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: response, options: [])
+                if let jsonString = String(data: jsonData, encoding: .utf8) {
+                        result?(jsonString) // send JSON string to Flutter
+                } else {
+                        result?("{\"error\":\"Failed to encode JSON\"}")
+                    }
+                } catch {
+                        result?("{\"error\":\"\(error.localizedDescription)\"}")
+                }
         }
     }
     
