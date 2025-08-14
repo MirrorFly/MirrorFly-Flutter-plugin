@@ -126,7 +126,37 @@ let ISEXPORT = true
         NSLog("[MirrorFly] updateVoipToken with token: \(token)")
         MirrorFlyLogger.shared.log("[MirrorFly] updateVoipToken with token: \(token)")
         VOIPManager.sharedInstance.saveVOIPToken(token: token)
-        VOIPManager.sharedInstance.updateDeviceToken()
+        VOIPManager.sharedInstance.updateDeviceToken(isForceUpdate: true) { isSuccess, updatedVOIPToken, updatedDeviceToken, tokenError in
+            
+            var response: [String: String]
+
+            if isSuccess {
+                MirrorFlyLogger.shared.log("[MirrorFly] updateVoipToken isSuccess with token: \(token)")
+
+                 response = [
+                    "updatedVOIPToken": updatedVOIPToken,
+                    "updatedDeviceToken": updatedDeviceToken
+                ]
+
+
+            } else {
+                MirrorFlyLogger.shared.log("[MirrorFly] updateVoipToken isError with token: \(token)")
+                 response = [
+                    "error" : "Error updating tokens"
+                ]
+
+            }
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: response, options: [])
+                if let jsonString = String(data: jsonData, encoding: .utf8) {
+                    result(jsonString) // send JSON string to Flutter
+                } else {
+                    result("{\"error\":\"Failed to encode JSON\"}")
+                    }
+                } catch {
+                    result("{\"error\":\"\(error.localizedDescription)\"}")
+                }
+        }
         result(true)
     }
     
@@ -1031,7 +1061,7 @@ let ISEXPORT = true
                 mediaData.fileSize = fileSize
                 mediaData.mediaType = .document
                 
-                FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId,topicID: topicId) { isSuccess, error, message in
+                FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId,topicID: topicId,mediaCaption: "") { isSuccess, error, message in
                     if isSuccess {
                         if message != nil {
                             let documentMessageResponse = message?.toJson()

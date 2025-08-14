@@ -17,6 +17,7 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
+  path_provider: ^2.1.4
   mirrorfly_flutter_call_kit:
     path: ../p078-mirrorfly-flutter-livekit-calls
 
