@@ -770,9 +770,23 @@ class FlyChatMethods {
         PushNotificationManager.updateFcmToken(token, object : ChatActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
                 if (isSuccess) {
-                    result.success(isSuccess)
+                    // Build success JSON
+                    val responseJson = """
+                {
+                    
+                    "updatedDeviceToken": "$token",
+                    "updatedVOIPToken": ""
+                }
+            """.trimIndent()
+                    result.success(responseJson)
                 } else {
-                    result.error("500", message, "")
+                    // Build error JSON
+                    val errorJson = """
+                {
+                    "error": "$message"
+                }
+            """.trimIndent()
+                    result.success(errorJson)
                 }
             }
         })
