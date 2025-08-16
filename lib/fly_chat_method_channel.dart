@@ -22,7 +22,7 @@ import 'internal_models/export_chat_model.dart';
 import 'internal_models/get_user_profile_model.dart';
 import 'internal_models/internal_status_model.dart';
 import 'internal_models/message_delivered_status_model.dart';
-import 'internal_models/notification_callback_model.dart';
+import 'internal_models/notification_token_update_model.dart';
 import 'internal_models/profile_detail_model.dart';
 import 'internal_models/recent_chat_model.dart';
 import 'internal_models/register_user_model.dart';

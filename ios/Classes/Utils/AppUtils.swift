@@ -141,24 +141,13 @@ class AppUtils {
                     "updatedVOIPToken": updatedVOIPToken,
                     "updatedDeviceToken": updatedDeviceToken
                 ]
-                
+                if let jsonString = response.dictToJson() {
+                               result?(jsonString) // send JSON string to Flutter
+                           }
                 
             } else {                
-                 response = [
-                    "error" : "Error updating tokens"
-                ]
-                
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: tokenError, details: nil))
             }
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: response, options: [])
-                if let jsonString = String(data: jsonData, encoding: .utf8) {
-                        result?(jsonString) // send JSON string to Flutter
-                } else {
-                        result?("{\"error\":\"Failed to encode JSON\"}")
-                    }
-                } catch {
-                        result?("{\"error\":\"\(error.localizedDescription)\"}")
-                }
         }
     }
     
