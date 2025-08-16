@@ -774,12 +774,12 @@ class FlyChatMethods {
                         "updatedDeviceToken" to token,
                         "updatedVOIPToken" to ""
                     )
-                    result.success(response.toJson()) // ✅ send JSON string
+                    result.success(response.toJson())
                 } else {
                     val errorResponse = mapOf(
                         "error" to message
                     )
-                    result.error("500", errorResponse.toJson(), "")// ✅ send JSON string
+                    result.error("500", errorResponse.toJson(), "")
                 }
             }
         })

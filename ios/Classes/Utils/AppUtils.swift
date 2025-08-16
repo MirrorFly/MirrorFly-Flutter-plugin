@@ -18,7 +18,7 @@ class AppUtils {
     var voipTokenObserver: NSObjectProtocol?
     
     private init() {}
-        
+    
     func getMyJid() -> String {
         guard let myJid = try? FlyUtils.getMyJid() else {
             AppUtils.shared.forceLogout()
@@ -33,7 +33,7 @@ class AppUtils {
             ChatManager.shared.resetFlyDefaults()
         }
         let flyChatPlugin = FlyChatPlugin()
-
+        
         flyChatPlugin.invalidJidLogout()
         
     }
@@ -41,27 +41,27 @@ class AppUtils {
     
     func getPHAsset(from imageUrl: String) -> PHAsset? {
         let assetURL = URL(fileURLWithPath: imageUrl)
-
+        
         let fetchOptions = PHFetchOptions()
         fetchOptions.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
-
+        
         let fetchResult = PHAsset.fetchAssets(with: fetchOptions)
-
+        
         for index in 0..<fetchResult.count {
             let phAsset = fetchResult[index]
-
+            
             if let phAssetURL = phAsset.value(forKey: "filename") as? String,
-                URL(fileURLWithPath: phAssetURL) == assetURL {
+               URL(fileURLWithPath: phAssetURL) == assetURL {
                 return phAsset
             }
         }
-
+        
         return nil
     }
     
     func getValueForKey<T, U>(dictionary: [T: U]?, key: T) -> U? {
         guard let dict = dictionary, let value = dict[key] else {
-                return nil
+            return nil
         }
         return value
     }
@@ -106,29 +106,29 @@ class AppUtils {
             return MediaQuality.uncompressed
         }
     }
-
+    
     
     func checkAndUpdateVOIPToken(isForceUpdate: Bool = false ,result: FlutterResult? = nil) {
+        
+        let voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
+        
+        if voipToken.isEmpty {
             
-            let voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
-            
-            if voipToken.isEmpty {
-                
-                voipTokenObserver = NotificationCenter.default.addObserver(forName: .updateVoipToken, object: nil, queue: nil) { notification in
-                    if notification.userInfo?["voip"] is String {
-                        self.removeObserver()
-                        self.performDeviceTokenUpdate(isForceUpdate: isForceUpdate, result: result)
+            voipTokenObserver = NotificationCenter.default.addObserver(forName: .updateVoipToken, object: nil, queue: nil) { notification in
+                if notification.userInfo?["voip"] is String {
+                    self.removeObserver()
+                    self.performDeviceTokenUpdate(isForceUpdate: isForceUpdate, result: result)
                 }
-                }
-                // No token → Register for VOIP notifications
-                FlyCall.shared?.registerVoipFirstTime = false
-                FlyCall.shared?.registerForVOIPNotifications()
-                
-            } else {
-                // Update device token
-                performDeviceTokenUpdate(isForceUpdate: isForceUpdate, result: result)
             }
+            // No token → Register for VOIP notifications
+            FlyCall.shared?.registerVoipFirstTime = false
+            FlyCall.shared?.registerForVOIPNotifications()
+            
+        } else {
+            // Update device token
+            performDeviceTokenUpdate(isForceUpdate: isForceUpdate, result: result)
         }
+    }
     
     private func performDeviceTokenUpdate(isForceUpdate: Bool = false, result: FlutterResult?) {
         VOIPManager.sharedInstance.updateDeviceToken(isForceUpdate: isForceUpdate) { isSuccess, updatedVOIPToken, updatedDeviceToken, tokenError in
@@ -137,16 +137,16 @@ class AppUtils {
             
             if isSuccess {
                 
-                 response = [
+                response = [
                     "updatedVOIPToken": updatedVOIPToken,
                     "updatedDeviceToken": updatedDeviceToken
                 ]
-                if let jsonString = response.dictToJson() {
-                               result?(jsonString) // send JSON string to Flutter
-                           }
+                if let jsonString = response.toJson(){
+                    result?(jsonString) // send JSON string to Flutter
+                }
                 
-            } else {                
-                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: tokenError, details: nil))
+            } else {
+                result?(FlutterError(code: FLErrorCode.INVALID_DATA, message: tokenError, details: nil))
             }
         }
     }
