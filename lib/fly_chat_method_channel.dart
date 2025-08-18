@@ -2726,7 +2726,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       // return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+      callback?.call(FlyResponse(false, convertTokenResponseToJson(e.message), FlyConstants.empty,
           FlyException(e.code, e.message, e.details)));
       // rethrow;
     } on Exception catch (e) {

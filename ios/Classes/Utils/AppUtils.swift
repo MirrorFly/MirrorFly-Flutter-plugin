@@ -146,7 +146,12 @@ class AppUtils {
                 }
                 
             } else {
-                result?(FlutterError(code: FLErrorCode.INVALID_DATA, message: tokenError, details: nil))
+                response = [
+                    "error": tokenError ?? "Internal Error",
+                ]
+                if let jsonString = response.toJson(){
+                    result?(FlutterError(code: FLErrorCode.INVALID_DATA, message: jsonString, details: nil))
+                }
             }
         }
     }

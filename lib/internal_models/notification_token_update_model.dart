@@ -33,9 +33,13 @@ class UpdateTokenResponse {
   /// Updated VOIP push token.
   String? updatedVoipToken;
 
+  /// Error message (if the request failed).
+  String? error;
+
   UpdateTokenResponse({
     this.updatedDeviceToken,
     this.updatedVoipToken,
+    this.error
   });
 
   /// Creates an [UpdateTokenResponse] from a JSON map.
@@ -43,11 +47,13 @@ class UpdateTokenResponse {
       UpdateTokenResponse(
         updatedDeviceToken: json["updatedDeviceToken"],
         updatedVoipToken: json["updatedVOIPToken"],
+        error: json["error"],
       );
 
   /// Converts the [UpdateTokenResponse] instance to a JSON map.
   Map<String, dynamic> toJson() => {
     "updatedDeviceToken": updatedDeviceToken,
     "updatedVOIPToken": updatedVoipToken,
+    "error": error,
   };
 }
