@@ -5767,4 +5767,9 @@ class Mirrorfly {
   static Future<void> initializeCallKit({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.initializeCallKit(flyCallback);
   }
+
+  ///
+  static Future<void> makeLiveKitAudioCall({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.makeLiveKitAudioCall(flyCallback);
+  }
 }

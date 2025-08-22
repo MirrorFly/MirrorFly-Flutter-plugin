@@ -1867,4 +1867,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   void getAuthToken({required Function(FlyResponse response) callback}) {
     throw UnimplementedError('getAuthToken has not been implemented.');
   }
+
+  ///
+  Future<void> makeLiveKitAudioCall(Function(FlyResponse response) flyCallback) {
+    throw UnimplementedError('getAuthToken has not been implemented.');
+  }
 }

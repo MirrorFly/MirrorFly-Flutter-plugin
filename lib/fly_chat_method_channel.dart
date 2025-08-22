@@ -6306,7 +6306,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
-    } on Exception catch (error) {
+    } on Exception catch `(error) {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
@@ -6630,13 +6630,26 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       LogMessage.d("initializeCallKit", 'started...');
       MirrorflyCallKit.initialize(
-          centrifugeUrl: 'wss://mf-core.contus.us/connection/websocket',
-          centrifugeToken: await Mirrorfly.getCurrentAuthToken(),
-          userChannel: '',
-          tenantId: 'https://api-uikit-qa.contus.us',
-          userId: '9190000000009');
+        enableLogs: true,
+        centrifugeUrl: 'wss://mf-core.contus.us/connection/websocket',
+        authToken : await Mirrorfly.getCurrentAuthToken(),
+        userId: "919000000009",
+        liveKitUrl:"wss://livekit-product.contus.us/",
+        //wss://livekit-product.contus.us // wss://livekit-uikit-dev.contus.us //wss://livekit-uikit-qa.contus.us
+      );
     } catch (e) {
       LogMessage.d("initializeCallKit", 'error... $e');
+    }
+  }
+
+  @override
+  Future<void> makeLiveKitAudioCall(
+      Function(FlyResponse response) flyCallback) async {
+    try {
+      LogMessage.d("makeLiveKitAudioCall", 'started...');
+      MirrorflyCallKit.makeAudioCall();
+    } catch (e) {
+      LogMessage.d("makeLiveKitAudioCall", 'error... $e');
     }
   }
 }

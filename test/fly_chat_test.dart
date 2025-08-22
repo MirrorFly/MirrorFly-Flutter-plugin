@@ -1995,6 +1995,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future<void> makeLiveKitAudioCall(Function(FlyResponse response) flyCallback) {
+    // TODO: implement makeLiveKitAudioCall
+    throw UnimplementedError();
+  }
+
 
   /* @override
   Future<bool?> webLoginDetailsCleared() {
