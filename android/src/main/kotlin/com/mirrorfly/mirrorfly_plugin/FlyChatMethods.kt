@@ -4157,4 +4157,8 @@ class FlyChatMethods {
             result.error(MirrorFlyErrorCodes.TRANSLATION_STRING_SET_NOT_FOUND, "setTranslations stringSet is null", null)
         }
     }
+    fun getCurrentUserJid(call: MethodCall, result: MethodChannel.Result) {
+        val jid = SharedPreferenceManager.instance.currentUserJid
+        result.success(jid)
+    }
 }

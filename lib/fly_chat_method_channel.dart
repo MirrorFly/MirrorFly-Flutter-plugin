@@ -6634,7 +6634,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         enableLogs: true,
         centrifugeUrl: 'wss://mf-core.contus.us/connection/websocket',
         authToken : await Mirrorfly.getCurrentAuthToken(),
-        userId: "917530066369",
+        // userId: "917530066369",
         liveKitUrl:"wss://livekit-product.contus.us/",
         //wss://livekit-product.contus.us // wss://livekit-uikit-dev.contus.us //wss://livekit-uikit-qa.contus.us
       );

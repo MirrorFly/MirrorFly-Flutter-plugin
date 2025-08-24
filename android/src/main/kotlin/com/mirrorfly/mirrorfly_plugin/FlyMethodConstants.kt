@@ -285,6 +285,7 @@ object FlyMethodConstants {
         "cancelBackup" to flyChatMethods::cancelBackup,
         "cancelRestore" to flyChatMethods::cancelRestore,
         "setTranslations" to flyChatMethods::setTranslations,
+        "getMyJid" to flyChatMethods::getCurrentUserJid,
         )
 
     private val callEventListeners: Map<String, EventChannel.StreamHandler> = mapOf(
