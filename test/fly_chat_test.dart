@@ -2013,6 +2013,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future<void> liveKitLocalHangup(Function(FlyResponse response) flyCallback) {
+    // TODO: implement liveKitLocalHangup
+    throw UnimplementedError();
+  }
+
   /* @override
   Future<bool?> webLoginDetailsCleared() {
     throw UnimplementedError();

@@ -5788,4 +5788,9 @@ class Mirrorfly {
   static Future<void> disconnectLiveKitCall({required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.disconnectLiveKitCall(flyCallback);
   }
+
+  ///
+  static Future<void> liveKitLocalHangup({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.liveKitLocalHangup(flyCallback);
+  }
 }

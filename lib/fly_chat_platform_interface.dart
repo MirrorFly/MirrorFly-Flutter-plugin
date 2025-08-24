@@ -1883,4 +1883,9 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) {
     throw UnimplementedError('disconnectLiveKitCall has not been implemented.');
   }
+
+  ///
+  Future<void> liveKitLocalHangup(Function(FlyResponse response) flyCallback) {
+    throw UnimplementedError('disconnectLiveKitCall has not been implemented.');
+  }
 }

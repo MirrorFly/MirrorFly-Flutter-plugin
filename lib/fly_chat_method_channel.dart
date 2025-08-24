@@ -6671,4 +6671,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');
     }
   }
+
+  ///
+  @override
+  Future<void> liveKitLocalHangup(Function(FlyResponse response) flyCallback) async {
+    try {
+      LogMessage.d("liveKitLocalHangup", 'started...');
+      MirrorflyCallKit.localHangup();
+    } catch (e) {
+      LogMessage.d("liveKitLocalHangup", 'error... $e');
+    }
+  }
 }
