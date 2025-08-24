@@ -366,7 +366,7 @@ class CircleImageView : AppCompatImageView {
         if (isEmojiOnly(profileLetters) == true) {
             profileLetters = if (isEmojiOnly(username.substring(0, 4)) == true) username.substring(0, 4) else username.substring(0, 3)
         }
-        return profileLetters.toUpperCase()
+        return profileLetters.uppercase()
     }
 
     private fun initializeBitmap() {
