@@ -6647,16 +6647,27 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<void> makeAudioCall(
       {required List<String> callersId,
       required String chatId,
-      required FlyCallType callType,
-      required FlyCallMode callMode,
       required Function(FlyResponse response) flyCallback}) async {
     try {
       LogMessage.d("makeLiveKitAudioCall", 'started...');
       MirrorflyCallKit.makeAudioCall(
           callersId: callersId,
-          chatId: chatId,
-          callType: callType,
-          callMode: callMode);
+          chatId: chatId);
+    } catch (e) {
+      LogMessage.d("makeLiveKitAudioCall", 'error... $e');
+    }
+  }
+
+  @override
+  Future<void> makeLKVideoCall(
+      {required List<String> callersId,
+      required String chatId,
+      required Function(FlyResponse response) flyCallback}) async {
+    try {
+      LogMessage.d("makeLiveKitAudioCall", 'started...');
+      MirrorflyCallKit.makeVideoCall(
+          callersId: callersId,
+          chatId: chatId);
     } catch (e) {
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');
     }

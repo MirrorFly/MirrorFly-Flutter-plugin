@@ -5773,14 +5773,20 @@ class Mirrorfly {
   static Future<void> makeLiveKitAudioCall(
       {required List<String> callersId,
       required String chatId,
-      required FlyCallType callType,
-      required FlyCallMode callMode,
       required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.makeAudioCall(
         callersId: callersId,
         chatId: chatId,
-        callType: callType,
-        callMode: callMode,
+        flyCallback: flyCallback);
+  }
+  ///
+  static Future<void> makeLiveKitVideoCall(
+      {required List<String> callersId,
+      required String chatId,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.makeLKVideoCall(
+        callersId: callersId,
+        chatId: chatId,
         flyCallback: flyCallback);
   }
 

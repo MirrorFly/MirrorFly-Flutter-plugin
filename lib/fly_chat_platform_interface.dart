@@ -1873,8 +1873,14 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   Future<void> makeAudioCall(
       {required List<String> callersId,
       required String chatId,
-      required FlyCallType callType,
-      required FlyCallMode callMode,
+      required Function(FlyResponse response) flyCallback}) {
+    throw UnimplementedError('makeAudioCall has not been implemented.');
+  }
+
+  ///
+  Future<void> makeLKVideoCall(
+      {required List<String> callersId,
+      required String chatId,
       required Function(FlyResponse response) flyCallback}) {
     throw UnimplementedError('makeAudioCall has not been implemented.');
   }
