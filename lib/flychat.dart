@@ -4,6 +4,7 @@ import 'package:mirrorfly_plugin/helpers/text_safety.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'fly_chat_platform_interface.dart';
+import 'package:mirrorfly_flutter_call_kit/src/utils/call/fly_call_enums.dart';
 
 /// The main class for the MirrorFly Flutter plugin.
 /// This class provides static methods to interact with the MirrorFly platform.
@@ -5769,7 +5770,22 @@ class Mirrorfly {
   }
 
   ///
-  static Future<void> makeLiveKitAudioCall({required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance.makeLiveKitAudioCall(flyCallback);
+  static Future<void> makeLiveKitAudioCall(
+      {required List<String> callersId,
+      required String chatId,
+      required FlyCallType callType,
+      required FlyCallMode callMode,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.makeAudioCall(
+        callersId: callersId,
+        chatId: chatId,
+        callType: callType,
+        callMode: callMode,
+        flyCallback: flyCallback);
+  }
+
+  ///
+  static Future<void> disconnectLiveKitCall({required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.disconnectLiveKitCall(flyCallback);
   }
 }

@@ -9,6 +9,7 @@ import 'package:mirrorfly_plugin/model/callback.dart';
 import 'package:mirrorfly_plugin/model/notification_applaunch_details.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:mirrorfly_flutter_call_kit/src/utils/call/fly_call_enums.dart';
 
 class MockFlyChatFlutterPlatform
     with MockPlatformInterfaceMixin
@@ -1996,11 +1997,21 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> makeLiveKitAudioCall(Function(FlyResponse response) flyCallback) {
+  Future<void> makeAudioCall(
+      {required List<String> callersId,
+      required String chatId,
+      required FlyCallType callType,
+      required FlyCallMode callMode,
+      required Function(FlyResponse response) flyCallback}) {
     // TODO: implement makeLiveKitAudioCall
     throw UnimplementedError();
   }
 
+  @override
+  Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) {
+    // TODO: implement disconnectLiveKitCall
+    throw UnimplementedError();
+  }
 
   /* @override
   Future<bool?> webLoginDetailsCleared() {

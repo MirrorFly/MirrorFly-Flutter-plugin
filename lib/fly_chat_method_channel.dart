@@ -36,6 +36,7 @@ import 'model/chat_message_model.dart' as client;
 import 'model/notification_applaunch_details.dart';
 import 'model/profile_model.dart' as client;
 import 'model/topic_metadata.dart';
+import 'package:mirrorfly_flutter_call_kit/src/utils/call/fly_call_enums.dart';
 
 /// A Error code class to categorize the error codes.
 class FlyErrorCode {
@@ -6633,7 +6634,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         enableLogs: true,
         centrifugeUrl: 'wss://mf-core.contus.us/connection/websocket',
         authToken : await Mirrorfly.getCurrentAuthToken(),
-        userId: "919000000009",
+        userId: "919944564022",
         liveKitUrl:"wss://livekit-product.contus.us/",
         //wss://livekit-product.contus.us // wss://livekit-uikit-dev.contus.us //wss://livekit-uikit-qa.contus.us
       );
@@ -6643,11 +6644,29 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> makeLiveKitAudioCall(
-      Function(FlyResponse response) flyCallback) async {
+  Future<void> makeAudioCall(
+      {required List<String> callersId,
+      required String chatId,
+      required FlyCallType callType,
+      required FlyCallMode callMode,
+      required Function(FlyResponse response) flyCallback}) async {
     try {
       LogMessage.d("makeLiveKitAudioCall", 'started...');
-      MirrorflyCallKit.makeAudioCall();
+      MirrorflyCallKit.makeAudioCall(
+          callersId: callersId,
+          chatId: chatId,
+          callType: callType,
+          callMode: callMode);
+    } catch (e) {
+      LogMessage.d("makeLiveKitAudioCall", 'error... $e');
+    }
+  }
+
+  @override
+  Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) async {
+    try {
+      LogMessage.d("makeLiveKitAudioCall", 'started...');
+      MirrorflyCallKit.disconnectCall();
     } catch (e) {
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');
     }

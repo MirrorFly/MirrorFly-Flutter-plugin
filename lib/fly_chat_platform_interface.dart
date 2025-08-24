@@ -8,6 +8,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'model/callback.dart';
 import 'model/notification_applaunch_details.dart';
 import 'model/topic_metadata.dart';
+import 'package:mirrorfly_flutter_call_kit/src/utils/call/fly_call_enums.dart';
 
 /// An abstract base class for the FlyChat platform interface.
 ///
@@ -1869,7 +1870,17 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   ///
-  Future<void> makeLiveKitAudioCall(Function(FlyResponse response) flyCallback) {
-    throw UnimplementedError('getAuthToken has not been implemented.');
+  Future<void> makeAudioCall(
+      {required List<String> callersId,
+      required String chatId,
+      required FlyCallType callType,
+      required FlyCallMode callMode,
+      required Function(FlyResponse response) flyCallback}) {
+    throw UnimplementedError('makeAudioCall has not been implemented.');
+  }
+
+  ///
+  Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) {
+    throw UnimplementedError('disconnectLiveKitCall has not been implemented.');
   }
 }
