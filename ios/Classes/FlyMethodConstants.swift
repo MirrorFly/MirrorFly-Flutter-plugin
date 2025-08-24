@@ -234,6 +234,7 @@ class FlyMethodConstants {
                 "cancelBackup": flyChatMethods.cancelBackup,
                 "cancelRestore": flyChatMethods.cancelRestore,
                 "setTranslations": flyChatMethods.setTranslations,
-                "getAuthToken": flyChatMethods.getAuthToken
+                "getAuthToken": flyChatMethods.getAuthToken,
+                "getMyJid": flyCallMethods.getCurrentUserJid
             ] }()
 }

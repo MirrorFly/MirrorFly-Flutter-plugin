@@ -6307,7 +6307,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
-    } on Exception catch `(error) {
+    } on Exception catch (error) {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
@@ -6634,7 +6634,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
         enableLogs: true,
         centrifugeUrl: 'wss://mf-core.contus.us/connection/websocket',
         authToken : await Mirrorfly.getCurrentAuthToken(),
-        userId: "919944564022",
         liveKitUrl:"wss://livekit-product.contus.us/",
         //wss://livekit-product.contus.us // wss://livekit-uikit-dev.contus.us //wss://livekit-uikit-qa.contus.us
       );
