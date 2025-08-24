@@ -4591,4 +4591,8 @@ let ISEXPORT = true
 //        let token = UserDefaultsManager.shared.getAuthToken()
 //        result(token) // sends token back to Flutter
     }
+    
+    func getCurrentUserJid(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        result(AppUtils.shared.getMyJid())
+    }
 }

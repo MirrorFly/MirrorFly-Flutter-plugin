@@ -6307,7 +6307,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       rethrow;
-    } on Exception catch `(error) {
+    } on Exception catch (error) {
       LogMessage.d("Exception ", " $error");
       rethrow;
     }
