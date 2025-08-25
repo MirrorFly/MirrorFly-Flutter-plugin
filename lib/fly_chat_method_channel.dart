@@ -6657,6 +6657,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     } catch (e) {
       return false;
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');
+      return false;
     }
   }
 
