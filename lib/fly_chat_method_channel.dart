@@ -6644,7 +6644,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> makeAudioCall(
+  Future<bool> makeAudioCall(
       {required List<String> callersId,
       required String chatId,
       required Function(FlyResponse response) flyCallback}) async {
@@ -6653,7 +6653,9 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       MirrorflyCallKit.makeAudioCall(
           callersId: callersId,
           chatId: chatId);
+      return true;
     } catch (e) {
+      return false;
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');
     }
   }

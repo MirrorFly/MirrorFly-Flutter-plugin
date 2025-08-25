@@ -5770,7 +5770,7 @@ class Mirrorfly {
   }
 
   ///
-  static Future<void> makeLiveKitAudioCall(
+  static Future<bool> makeLiveKitAudioCall(
       {required List<String> callersId,
       required String chatId,
       required Function(FlyResponse response) flyCallback}) {
