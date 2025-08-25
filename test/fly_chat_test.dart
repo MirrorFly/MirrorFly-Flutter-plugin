@@ -1997,7 +1997,7 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> makeAudioCall(
+  Future<bool> makeAudioCall(
       {required List<String> callersId,
       required String chatId,
       required Function(FlyResponse response) flyCallback}) {

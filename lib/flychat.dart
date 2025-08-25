@@ -5709,7 +5709,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.cancelRestore();
   }
 
-  /// To get the current [CameraPosition] for the ongoing Call
+  // To get the current [CameraPosition] for the ongoing Call
   static Future<String> getCurrentCameraPosition() {
     return FlyChatFlutterPlatform.instance.getCurrentCameraPosition();
   }
@@ -5770,7 +5770,7 @@ class Mirrorfly {
   }
 
   ///
-  static Future<void> makeLiveKitAudioCall(
+  static Future<bool> makeLiveKitAudioCall(
       {required List<String> callersId,
       required String chatId,
       required Function(FlyResponse response) flyCallback}) {
