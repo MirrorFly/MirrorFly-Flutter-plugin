@@ -36,7 +36,6 @@ import 'model/chat_message_model.dart' as client;
 import 'model/notification_applaunch_details.dart';
 import 'model/profile_model.dart' as client;
 import 'model/topic_metadata.dart';
-import 'package:mirrorfly_flutter_call_kit/src/utils/call/fly_call_enums.dart';
 
 /// A Error code class to categorize the error codes.
 class FlyErrorCode {
@@ -6655,7 +6654,6 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           chatId: chatId);
       return true;
     } catch (e) {
-      return false;
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');
       return false;
     }
@@ -6673,8 +6671,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           chatId: chatId);
       return true;
     } catch (e) {
-      return false;
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');
+      return false;
     }
   }
 
