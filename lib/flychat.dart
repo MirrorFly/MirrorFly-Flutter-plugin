@@ -5780,7 +5780,7 @@ class Mirrorfly {
         flyCallback: flyCallback);
   }
   ///
-  static Future<void> makeLiveKitVideoCall(
+  static Future<bool> makeLiveKitVideoCall(
       {required List<String> callersId,
       required String chatId,
       required Function(FlyResponse response) flyCallback}) {
