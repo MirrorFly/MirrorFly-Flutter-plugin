@@ -6646,12 +6646,14 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<bool> makeAudioCall(
       {required List<String> callersId,
       required String chatId,
-      required Function(FlyResponse response) flyCallback}) async {
+      required Function(FlyCallCfResponse response) flyCallback}) async {
     try {
       LogMessage.d("makeLiveKitAudioCall", 'started...');
       MirrorflyCallKit.makeAudioCall(
           callersId: callersId,
-          chatId: chatId);
+          chatId: chatId,
+          flyCallBack: flyCallback
+      );
       return true;
     } catch (e) {
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');

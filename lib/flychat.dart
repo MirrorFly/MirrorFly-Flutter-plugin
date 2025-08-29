@@ -5772,7 +5772,7 @@ class Mirrorfly {
   static Future<bool> makeLiveKitAudioCall(
       {required List<String> callersId,
       required String chatId,
-      required Function(FlyResponse response) flyCallback}) {
+      required Function(FlyCallCfResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance.makeAudioCall(
         callersId: callersId,
         chatId: chatId,

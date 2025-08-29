@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mirrorfly_flutter_call_kit/mirrorfly_flutter_call_kit.dart';
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
@@ -1999,7 +2000,7 @@ class MockFlyChatFlutterPlatform
   Future<bool> makeAudioCall(
       {required List<String> callersId,
       required String chatId,
-      required Function(FlyResponse response) flyCallback}) {
+      required Function(FlyCallCfResponse response) flyCallback}) {
     // TODO: implement makeLiveKitAudioCall
     throw UnimplementedError();
   }
