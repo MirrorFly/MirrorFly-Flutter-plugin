@@ -6629,7 +6629,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       Function(FlyResponse response)? callback) async {
     try {
       LogMessage.d("initializeCallKit", 'started...');
-      MirrorflyCallKit.initialize(
+      MirrorFlyCallKit.initialize(
         enableLogs: true,
         centrifugeUrl: 'wss://mf-core.contus.us/connection/websocket',
         authToken : await Mirrorfly.getCurrentAuthToken(),
@@ -6649,7 +6649,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       required Function(FlyCallCfResponse response) flyCallback}) async {
     try {
       LogMessage.d("makeLiveKitAudioCall", 'started...');
-      MirrorflyCallKit.makeAudioCall(
+      MirrorFlyCallKit.makeAudioCall(
           callersId: callersId,
           chatId: chatId,
           flyCallBack: flyCallback
@@ -6668,7 +6668,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       required Function(FlyResponse response) flyCallback}) async {
     try {
       LogMessage.d("makeLiveKitAudioCall", 'started...');
-      MirrorflyCallKit.makeVideoCall(
+      MirrorFlyCallKit.makeVideoCall(
           callersId: callersId,
           chatId: chatId);
       return true;
@@ -6682,7 +6682,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) async {
     try {
       LogMessage.d("makeLiveKitAudioCall", 'started...');
-      MirrorflyCallKit.disconnectCall();
+      MirrorFlyCallKit.disconnectCall();
     } catch (e) {
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');
     }
@@ -6693,7 +6693,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   Future<void> liveKitLocalHangup(Function(FlyResponse response) flyCallback) async {
     try {
       LogMessage.d("liveKitLocalHangup", 'started...');
-      MirrorflyCallKit.localHangup();
+      MirrorFlyCallKit.localHangup();
     } catch (e) {
       LogMessage.d("liveKitLocalHangup", 'error... $e');
     }
