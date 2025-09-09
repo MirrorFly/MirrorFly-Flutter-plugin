@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
   s.dependency 'GoogleWebRTC','1.1.31999'
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16.1'
-  s.dependency 'MirrorFlySDK', '5.18.19'
+  s.dependency 'MirrorFlySDK', '5.18.20'
 
 
   # Flutter.framework does not contain a i386 slice.
