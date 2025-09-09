@@ -349,8 +349,8 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   }
 
   /// This method is used to update the FCM Token to the MirrorFly server.
-  Future<void> updateFcmToken(
-      String firebasetoken,bool isForceUpdate, Function(FlyResponse response)? callback) {
+  Future<void> updateFcmToken(String firebasetoken, bool isForceUpdate,
+      Function(FlyResponse response)? callback) {
     throw UnimplementedError('has not been implemented.');
   }
 
