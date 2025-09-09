@@ -293,7 +293,8 @@ let ISEXPORT = true
                                     VOIPManager.sharedInstance.savePushToken(token: deviceToken)
 //                                }
                                 
-                                VOIPManager.sharedInstance.updateDeviceToken()
+//                                VOIPManager.sharedInstance.updateDeviceToken()
+                               AppUtils.shared.checkAndUpdateVOIPToken()
                                 
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
@@ -3666,16 +3667,16 @@ let ISEXPORT = true
         
     }
     
-    func updateFcmToken(call: FlutterMethodCall, result: @escaping FlutterResult){
+    func updateFcmToken(call: FlutterMethodCall,result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let token = args["token"] as? String ?? ""
+        let isForceUpdate = args["isForceUpdate"] as? Bool ?? false
         
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
             VOIPManager.sharedInstance.savePushToken(token: token)
             Utility.saveInPreference(key: Constants.googleToken, value: token)
-            VOIPManager.sharedInstance.updateDeviceToken()
-
-            result(true)
+//            VOIPManager.sharedInstance.updateDeviceToken()
+            AppUtils.shared.checkAndUpdateVOIPToken(isForceUpdate: isForceUpdate,result: result)
         }else {
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.NOT_LOGGED_IN_MESSAGE, details: nil))
         }

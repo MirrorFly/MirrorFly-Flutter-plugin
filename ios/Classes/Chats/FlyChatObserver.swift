@@ -27,5 +27,6 @@ extension Notification.Name {
     static let connectionStatusChanged = Notification.Name("connectionStatusChanged")
     static let fetchGroupMembersCompleted = Notification.Name("fetchGroupMembersCompleted")
     static let signalConnected = Notification.Name("SIGNAL-CONNECTED")
+    static let updateVoipToken = Notification.Name("updateVoipNotification")
 
 }
