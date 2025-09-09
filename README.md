@@ -65,7 +65,7 @@ If you’d like to learn the full integration steps as a video, [Watch here](htt
 - Android Lollipop 5.0 (API Level 21) or above
 - Java 7 or higher
 - Gradle 4.1.0 or higher
-- targetSdkVersion,compileSdk 34 or above.
+- targetSdkVersion,compileSdk 35 or above.
 
 #### The minimum requirements for iOS
 
