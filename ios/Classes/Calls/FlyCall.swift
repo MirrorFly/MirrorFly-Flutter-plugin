@@ -54,6 +54,8 @@ import PushKit
     private var methodChannel: FlutterMethodChannel?
     private var registrar: FlutterPluginRegistrar?
     private var eventChannel : FlutterEventChannel?
+    static var shared: FlyCall?
+    var registerVoipFirstTime = false;
     //    private var eventChannelInitializer: FlyEventChannelInitializer = FlyEventChannelInitializer()
     private let eventChannelInitializer = FlyEventChannelInitializer.shared
     private var factory : MirrorflyViewFactory?
@@ -62,7 +64,7 @@ import PushKit
     
     init(registrar: FlutterPluginRegistrar) {
         super.init()
-        
+        FlyCall.shared = self 
         self.registrar = registrar
         
         
@@ -70,7 +72,7 @@ import PushKit
         registrar.register(factory!, withId: "mirrorfly_view")
         
         eventChannelInitializer.initializeEventChannels(registrar: registrar)
-        
+        registerVoipFirstTime = true
         registerForVOIPNotifications()
         
         methodChannel = FlutterMethodChannel(name: Constants.callMethodChannel, binaryMessenger: registrar.messenger())
@@ -665,7 +667,13 @@ import PushKit
         Utility.saveInPreference(key: Constants.voipToken, value: deviceTokenString)
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
             VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
-            VOIPManager.sharedInstance.updateDeviceToken()
+//            VOIPManager.sharedInstance.updateDeviceToken()
+            if registerVoipFirstTime{
+                AppUtils.shared.checkAndUpdateVOIPToken()
+            }else{
+                NotificationCenter.default.post(name:.updateVoipToken, object: nil, userInfo: ["voip": deviceTokenString])
+            }
+            
         }else{
             NSLog("\(Constants.callTag) Update VOIP Token is skipped due to user is not logged in")
         }

@@ -22,6 +22,7 @@ import 'internal_models/export_chat_model.dart';
 import 'internal_models/get_user_profile_model.dart';
 import 'internal_models/internal_status_model.dart';
 import 'internal_models/message_delivered_status_model.dart';
+import 'internal_models/notification_token_update_model.dart';
 import 'internal_models/profile_detail_model.dart';
 import 'internal_models/recent_chat_model.dart';
 import 'internal_models/register_user_model.dart';
@@ -2713,19 +2714,21 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> updateFcmToken(
-      String firebasetoken, Function(FlyResponse response)? callback) async {
+  Future<void> updateFcmToken(String firebasetoken, bool isForceUpdate,
+      Function(FlyResponse response)? callback) async {
     // bool? res;
     try {
-      await mirrorFlyMethodChannel
-          .invokeMethod<bool>('updateFcmToken', {"token": firebasetoken});
-      callback?.call(FlyResponse(
-          true, FlyConstants.empty, "fcm token updated successfully"));
+      final String? res = await mirrorFlyMethodChannel.invokeMethod<String>(
+          'updateFcmToken',
+          {"token": firebasetoken, "isForceUpdate": isForceUpdate});
+      LogMessage.d("updateFcmToken", " $res");
+      callback?.call(FlyResponse(true, convertTokenResponseToJson(res),
+          "fcm token updated successfully"));
       // return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
-          FlyException(e.code, e.message, e.details)));
+      callback?.call(FlyResponse(false, convertTokenResponseToJson(e.message),
+          FlyConstants.empty, FlyException(e.code, e.message, e.details)));
       // rethrow;
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");

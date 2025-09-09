@@ -63,9 +63,10 @@ If you’d like to learn the full integration steps as a video, [Watch here](htt
 #### The requirements for Android
 
 - Android Lollipop 5.0 (API Level 21) or above
-- Java 7 or higher
-- Gradle 4.1.0 or higher
-- targetSdkVersion,compileSdk 34 or above.
+- Java 17 or higher
+- Gradle 8.6.0 or higher
+- Kotlin 2.0.20 or higher
+- targetSdkVersion,compileSdk 35
 
 #### The minimum requirements for iOS
 
@@ -156,7 +157,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^1.7.0
+  mirrorfly_plugin: ^1.8.0
 ```
 
 - Run `flutter pub get` command in your project directory. You can access all classes and methods with the following import statement:

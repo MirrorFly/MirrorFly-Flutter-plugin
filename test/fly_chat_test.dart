@@ -1627,8 +1627,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> updateFcmToken(
-      String firebasetoken, Function(FlyResponse response)? callback) {
+  Future<void> updateFcmToken(String firebasetoken, bool isForceUpdate,
+      Function(FlyResponse response)? callback) {
     //  implement updateFcmToken
     throw UnimplementedError();
   }
@@ -2001,7 +2001,6 @@ class MockFlyChatFlutterPlatform
 
   @override
   Future<bool?> configureAndroidCallKit(AndroidCallKitSettings builder) {
-    // TODO: implement configureAndroidCallKit
     throw UnimplementedError();
   }
 
