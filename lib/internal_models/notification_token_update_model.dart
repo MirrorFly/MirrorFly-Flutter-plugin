@@ -20,10 +20,9 @@ String updateTokenResponseToJson(UpdateTokenResponse data) =>
 /// [str]: The nullable JSON string to convert.
 /// Returns a JSON string representation of the [UpdateTokenResponse] if [str] is valid;
 /// otherwise, an empty string.
-String convertTokenResponseToJson(String? str) =>
-    (str == null || str.isEmpty)
-        ? ""
-        : updateTokenResponseToJson(updateTokenResponseFromJson(str));
+String convertTokenResponseToJson(String? str) => (str == null || str.isEmpty)
+    ? ""
+    : updateTokenResponseToJson(updateTokenResponseFromJson(str));
 
 /// Model class representing the updated tokens from the server.
 class UpdateTokenResponse {
@@ -36,11 +35,9 @@ class UpdateTokenResponse {
   /// Error message (if the request failed).
   String? error;
 
-  UpdateTokenResponse({
-    this.updatedDeviceToken,
-    this.updatedVoipToken,
-    this.error
-  });
+  /// Model constructor
+  UpdateTokenResponse(
+      {this.updatedDeviceToken, this.updatedVoipToken, this.error});
 
   /// Creates an [UpdateTokenResponse] from a JSON map.
   factory UpdateTokenResponse.fromJson(Map<String, dynamic> json) =>
@@ -52,8 +49,8 @@ class UpdateTokenResponse {
 
   /// Converts the [UpdateTokenResponse] instance to a JSON map.
   Map<String, dynamic> toJson() => {
-    "updatedDeviceToken": updatedDeviceToken,
-    "updatedVOIPToken": updatedVoipToken,
-    "error": error,
-  };
+        "updatedDeviceToken": updatedDeviceToken,
+        "updatedVOIPToken": updatedVoipToken,
+        "error": error,
+      };
 }
