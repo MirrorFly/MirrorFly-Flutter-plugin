@@ -1,3 +1,8 @@
+## [1.8.0] Feature Updates
+* Bug Fixes
+* Android SDK updated to 7.13.30
+* iOS SDK updated to 5.18.20
+
 ## [1.7.0] Feature Updates
 * Updated Android Compile SDK to 35
 * Bug Fixes
