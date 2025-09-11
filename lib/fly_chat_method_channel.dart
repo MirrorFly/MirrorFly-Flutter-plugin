@@ -6643,7 +6643,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<bool> makeAudioCall(
+  Future<void> makeAudioCall(
       {required List<String> callersId,
       required String chatId,
       required Function(FlyCallCfResponse response) flyCallback}) async {
@@ -6654,27 +6654,25 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           chatId: chatId,
           flyCallBack: flyCallback
       );
-      return true;
     } catch (e) {
+      flyCallback(FlyCallCfResponse(isSuccess: false, data: "error... $e"));
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');
-      return false;
     }
   }
 
   @override
-  Future<bool> makeLKVideoCall(
+  Future<void> makeLKVideoCall(
       {required List<String> callersId,
       required String chatId,
-      required Function(FlyResponse response) flyCallback}) async {
+      required Function(FlyCallCfResponse response) flyCallback}) async {
     try {
       LogMessage.d("makeLiveKitAudioCall", 'started...');
       MirrorFlyCallKit.makeVideoCall(
           callersId: callersId,
           chatId: chatId);
-      return true;
     } catch (e) {
+      flyCallback(FlyCallCfResponse(isSuccess: false, data: "error... $e"));
       LogMessage.d("makeLiveKitAudioCall", 'error... $e');
-      return false;
     }
   }
 

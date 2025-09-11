@@ -2005,10 +2005,10 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
   @override
-  Future<bool> makeLKVideoCall(
+  Future<void> makeLKVideoCall(
       {required List<String> callersId,
       required String chatId,
-      required Function(FlyResponse response) flyCallback}) {
+      required Function(FlyCallCfResponse response) flyCallback}) {
     // TODO: implement makeLiveKitAudioCall
     throw UnimplementedError();
   }
