@@ -6668,6 +6668,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     try {
       LogMessage.d("makeLiveKitAudioCall", 'started...');
       MirrorFlyCallKit.makeVideoCall(
+          flyCallback: flyCallback,
           callersId: callersId,
           chatId: chatId);
     } catch (e) {
