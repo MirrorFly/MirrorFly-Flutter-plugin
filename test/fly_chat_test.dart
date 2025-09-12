@@ -2000,7 +2000,7 @@ class MockFlyChatFlutterPlatform
   Future<bool> makeAudioCall(
       {required List<String> callersId,
       required String chatId,
-      required Function(FlyCallCfResponse response) flyCallback}) {
+      required Function(FlyResult response) flyResult}) {
     // TODO: implement makeLiveKitAudioCall
     throw UnimplementedError();
   }
@@ -2008,7 +2008,7 @@ class MockFlyChatFlutterPlatform
   Future<void> makeLKVideoCall(
       {required List<String> callersId,
       required String chatId,
-      required Function(FlyCallCfResponse response) flyCallback}) {
+      required Function(FlyResult response) flyResult}) {
     // TODO: implement makeLiveKitAudioCall
     throw UnimplementedError();
   }
