@@ -123,6 +123,7 @@ struct Constants {
     static let containerID = "\(domain)/containerID"
     
     static let googleToken = "\(domain)/googleToken"
+    static let enableVoipActivity = "\(domain)/enableVoipActivity"
 }
 
 enum CallStatus : String {

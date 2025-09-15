@@ -128,6 +128,7 @@ let ISEXPORT = true
         let containerID = args["iOSContainerID"] as? String ?? ""
         let enableSDKLog = args["enableDebugLog"] as? Bool ?? false
         let enablePrivateStorage = args["enablePrivateStorage"] as? Bool ?? false
+        let enableVoipActivity = args["enableVoipActivity"] as? Bool ?? false
 
         ///
         /// Moved this setAppGroupContainerId at FlyChatPlugin before initializeEventListeners for logout delegate issue.
@@ -136,6 +137,8 @@ let ISEXPORT = true
 
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
+        Utility.saveInPreference(key: Constants.enableVoipActivity, value: enableVoipActivity)
+        
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)

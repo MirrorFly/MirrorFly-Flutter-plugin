@@ -114,6 +114,7 @@ class Mirrorfly {
       bool enableMobileNumberLogin = true,
       bool enableDebugLog = false,
       bool enablePrivateStorage = false,
+      bool enableVoipActivity = true,
       required Function(FlyResponse response) flyCallback}) {
     var builder = InitializeSDKBuilder(
         iOSContainerID: iOSContainerID,
@@ -122,7 +123,9 @@ class Mirrorfly {
         chatHistoryEnable: chatHistoryEnable,
         enableMobileNumberLogin: enableMobileNumberLogin,
         enableDebugLog: enableDebugLog,
-        enablePrivateStorage: enablePrivateStorage);
+        enablePrivateStorage: enablePrivateStorage,
+        enableVoipActivity: enableVoipActivity
+    );
     isChatHistoryEnabled = chatHistoryEnable;
     isPrivateStorageEnabled = enablePrivateStorage;
     return FlyChatFlutterPlatform.instance.initializeSDK(builder, flyCallback);

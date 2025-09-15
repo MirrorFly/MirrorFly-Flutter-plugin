@@ -655,10 +655,15 @@ import PushKit
     
     
     func registerForVOIPNotifications() {
-        NSLog("\(Constants.callTag) Registering Voip Notification")
-        let pushRegistry = PKPushRegistry(queue: .main)
-        pushRegistry.delegate = self
-        pushRegistry.desiredPushTypes = [.voIP]
+        let enableVoipActivity: Bool = Utility.getBoolFromPreference(key: Constants.enableVoipActivity)
+        if (enableVoipActivity) {
+            NSLog("\(Constants.callTag) Registering Voip Notification")
+            let pushRegistry = PKPushRegistry(queue: .main)
+            pushRegistry.delegate = self
+            pushRegistry.desiredPushTypes = [.voIP]
+        } else {
+            NSLog("\(Constants.callTag) enableVoipActivity: \(enableVoipActivity) Registering Voip Notification Skipped")
+        }
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
@@ -695,11 +700,11 @@ import PushKit
         //        }
         
         
+        NSLog("\(Constants.callTag) VoIP Push Received with Payload: \n \(payload.dictionaryPayload)")
         NSLog("\(Constants.callTag) Push VOIP Received with Payload - %@",payload.dictionaryPayload)
         NSLog("\(Constants.callTag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
         
-        VOIPManager.sharedInstance.processPayload(payload.dictionaryPayload)
-        
+        VOIPManager.sharedInstance.processPayload( [:] )
     }
     
     func onMissedCall(isOneToOneCall: Bool, userJid: String, groupId: String?, callType: String, userList: [String], metaData: [MirrorFlySDK.CallMetadata], permissionDenied: Bool) {

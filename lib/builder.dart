@@ -27,7 +27,9 @@ class ChatBuilder {
       // this.groupConfig,
       // bool useProfileName = false,
       // this.ivKey,
-      this.enableDebugLog = false});
+        this.enableDebugLog = false,
+        this.enableVoipActivity = true,
+      });
 
   /// The base URL for making API calls.
   String domainBaseUrl;
@@ -57,6 +59,9 @@ class ChatBuilder {
 
   /// Determines if debug logging is enabled. Defaults to false.
   bool enableDebugLog;
+
+  /// Determines if the voip activity can be enabled. Defaults to true.
+  bool enableVoipActivity;
 }
 
 /// `GroupConfig` is a class used to configure group chat functionality.
@@ -174,6 +179,7 @@ class InitializeSDKBuilder {
     this.chatHistoryEnable,
     this.enableDebugLog = false,
     this.enablePrivateStorage = false,
+    this.enableVoipActivity = true,
   });
 
   /// The name of the local storage folder. Optional for Android platforms.
@@ -196,6 +202,9 @@ class InitializeSDKBuilder {
 
   /// Determines if private storage is enabled. Defaults to false.
   bool enablePrivateStorage;
+
+  /// Determines if the voip activity can be enabled.
+  bool enableVoipActivity;
 }
 
 /// `InitializeSDKBuilderParsing` is an extension on `InitializeSDKBuilder` that provides a method to build a map
