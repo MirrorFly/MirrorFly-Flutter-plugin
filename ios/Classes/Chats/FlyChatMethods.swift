@@ -281,6 +281,14 @@ let ISEXPORT = true
                                     
                                 }
                                 
+//                                if let dataDict = data["data"] as? [String: Any],
+                                if  let config = data["config"] as? [String: Any],
+                                    let profileIv = config["ivProfile"] as? String {
+                                    NSLog("\(Constants.tag) profileIv = \(profileIv)")
+                                    Utility.saveStaticString(key: Constants.profileIvKey, value: profileIv)
+                                }
+                                
+                                
                                 ChatManager.updateAppLoggedIn(isLoggedin: true)
 
                                 let voipToken = Utility.getStringFromPreference(key: Constants.voipToken);

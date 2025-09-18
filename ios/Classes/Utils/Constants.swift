@@ -124,6 +124,7 @@ struct Constants {
     
     static let googleToken = "\(domain)/googleToken"
     static let enableVoipActivity = "\(domain)/enableVoipActivity"
+    static let profileIvKey = "\(domain)/profileIvKey"
 }
 
 enum CallStatus : String {

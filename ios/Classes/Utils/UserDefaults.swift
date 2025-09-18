@@ -11,6 +11,17 @@ import MirrorFlySDK
 
 public class Utility: NSObject{
     
+    /// To save the temp profile IV
+    public class func saveStaticString(key : String , value : String) {
+        UserDefaults.standard.setValue(value, forKey: key)
+        UserDefaults.standard.synchronize()
+    }
+    
+    /// To get the temp profile IV
+    public class func getStaticString(key : String) -> String? {
+        return UserDefaults.standard.string(forKey: key)
+    }
+    
     public class func saveInPreference (key : String , value : Any) {
         var stringaValue = ""
         if let boolString = value as? Bool{
