@@ -285,7 +285,7 @@ let ISEXPORT = true
                                 if  let config = data["config"] as? [String: Any],
                                     let profileIv = config["ivProfile"] as? String {
                                     NSLog("\(Constants.tag) profileIv = \(profileIv)")
-                                    Utility.saveStaticString(key: Constants.profileIvKey, value: profileIv)
+                                    Utility.setStringPreference(key: Constants.profileIvKey, value: profileIv)
                                 }
                                 
                                 
