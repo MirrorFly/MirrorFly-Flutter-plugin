@@ -5766,39 +5766,4 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getAuthToken(callback: flyCallback);
   }
 
-  ///
-  static Future<void> initializeCallKit({required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance.initializeCallKit(flyCallback);
-  }
-
-  ///
-  static Future<void> makeLiveKitAudioCall(
-      {required List<String> callersId,
-      required String chatId,
-      required Function(FlyResult response) flyResult}) async {
-     FlyChatFlutterPlatform.instance.makeAudioCall(
-        callersId: callersId,
-        chatId: chatId,
-        flyResult: flyResult);
-  }
-  ///
-  static Future<void> makeLiveKitVideoCall(
-      {required List<String> callersId,
-      required String chatId,
-      required Function(FlyResult response) flyResult}) async {
-     FlyChatFlutterPlatform.instance.makeLKVideoCall(
-        callersId: callersId,
-        chatId: chatId,
-         flyResult: flyResult);
-  }
-
-  ///
-  static Future<void> disconnectLiveKitCall({required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance.disconnectLiveKitCall(flyCallback);
-  }
-
-  ///
-  static Future<void> liveKitLocalHangup({required Function(FlyResponse response) flyCallback}) {
-    return FlyChatFlutterPlatform.instance.liveKitLocalHangup(flyCallback);
-  }
 }

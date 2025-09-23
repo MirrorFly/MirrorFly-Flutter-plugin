@@ -1,4 +1,4 @@
-import 'package:mirrorfly_flutter_call_kit/mirrorfly_flutter_call_kit.dart';
+
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
@@ -1869,29 +1869,4 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getAuthToken has not been implemented.');
   }
 
-  ///
-  Future<void> makeAudioCall(
-      {required List<String> callersId,
-      required String chatId,
-      required Function(FlyResult response) flyResult}) {
-    throw UnimplementedError('makeAudioCall has not been implemented.');
-  }
-
-  ///
-  Future<void> makeLKVideoCall(
-      {required List<String> callersId,
-      required String chatId,
-      required Function(FlyResult response) flyResult}) {
-    throw UnimplementedError('makeAudioCall has not been implemented.');
-  }
-
-  ///
-  Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) {
-    throw UnimplementedError('disconnectLiveKitCall has not been implemented.');
-  }
-
-  ///
-  Future<void> liveKitLocalHangup(Function(FlyResponse response) flyCallback) {
-    throw UnimplementedError('disconnectLiveKitCall has not been implemented.');
-  }
 }
