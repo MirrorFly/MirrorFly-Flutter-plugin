@@ -12,13 +12,13 @@ import MirrorFlySDK
 public class Utility: NSObject{
     
     /// To save the temp profile IV
-    public class func saveStaticString(key : String , value : String) {
+    public class func setStringPreference(key : String , value : String) {
         UserDefaults.standard.setValue(value, forKey: key)
         UserDefaults.standard.synchronize()
     }
     
     /// To get the temp profile IV
-    public class func getStaticString(key : String) -> String? {
+    public class func getStringPreference(key : String) -> String? {
         return UserDefaults.standard.string(forKey: key)
     }
     

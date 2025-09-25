@@ -120,6 +120,14 @@ let ISEXPORT = true
 
         }
     
+    func updateVoipToken() {
+        /// For temperory we get the voip token from livekit and update them to api here
+        let token = Utility.getStringPreference(key: "contus.mirrorfly/voipTokenKey") ?? ""
+        NSLog("[MirrorFly] updateVoipToken with token: \(token)")
+        VOIPManager.sharedInstance.saveVOIPToken(token: token)
+        VOIPManager.sharedInstance.updateDeviceToken()
+    }
+    
     func initializeSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -138,9 +146,10 @@ let ISEXPORT = true
         Utility.saveInPreference(key: Constants.licenseKey, value: licenseKey)
         Utility.saveInPreference(key: Constants.containerID, value: containerID)
         Utility.saveInPreference(key: Constants.enableVoipActivity, value: enableVoipActivity)
-        
+                
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
+                self.updateVoipToken()
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
                 ChatManager.enablePrivateStorage(enable: enablePrivateStorage)
                 CallManager.enableDebugLogs(enable : enableSDKLog)
@@ -285,14 +294,22 @@ let ISEXPORT = true
                                 if  let config = data["config"] as? [String: Any],
                                     let profileIv = config["ivProfile"] as? String {
                                     NSLog("\(Constants.tag) profileIv = \(profileIv)")
-                                    Utility.setStringPreference(key: Constants.profileIvKey, value: profileIv)
+                                    Utility.setStringPreference(key: Constants.profileIvKey, value: String(profileIv.prefix(16)))
                                 }
                                 
                                 
                                 ChatManager.updateAppLoggedIn(isLoggedin: true)
 
-                                let voipToken = Utility.getStringFromPreference(key: Constants.voipToken);
-                                
+                                var voipToken = Utility.getStringFromPreference(key: Constants.voipToken);
+                                let enableVoipActivity: Bool = Utility.getBoolFromPreference(key: Constants.enableVoipActivity)
+
+                                if (enableVoipActivity) {
+                                    voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
+                                } else {
+                                    let token = Utility.getStringPreference(key: "contus.mirrorfly/voipTokenKey") ?? ""
+                                    voipToken = token
+                                }
+
 //                                if !voipToken.isEmpty {
                                     
                                     VOIPManager.sharedInstance.saveVOIPToken(token: voipToken)
