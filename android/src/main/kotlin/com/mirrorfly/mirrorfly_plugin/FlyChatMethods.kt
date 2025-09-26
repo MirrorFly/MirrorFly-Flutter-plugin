@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
@@ -21,6 +22,7 @@ import android.util.Base64
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import com.google.gson.Gson
+import com.mirrorfly.mirrorfly_flutter_call_kit.flyHelper.FlyCallKitDefaults
 import com.mirrorfly.mirrorfly_plugin.MirrorFlyManager.getActivity
 import com.mirrorfly.mirrorfly_plugin.call.FlyCallMethods
 import com.mirrorfly.mirrorfly_plugin.call.getDisplayName
@@ -409,6 +411,24 @@ class FlyChatMethods {
                         ChatManager.setAvailableFeaturesCallback(instance)
                         CallManager.setMissedCallListener(instance)*/
                         SharedPreferenceManager.instance.storeBoolean("isRegistered", true)
+
+
+                        val respData = JSONObject(data as Map<*, *>)
+
+                        val ivProfile = respData
+                            .optJSONObject("data")
+                            ?.optJSONObject("config")
+                            ?.optString("ivProfile", "")
+
+                        Log.d("RegisterUser ivProfile", "ivProfile : $ivProfile")
+
+
+                        MirrorFlyManager.getContext()
+                            .getSharedPreferences("mirrorfly_callkit_defaults", Context.MODE_PRIVATE)
+                            .edit()
+                            .putString(FlyCallKitDefaults.KEY_PROFILE_IV, ivProfile ?: "").apply()
+
+
                         if(FlyXMPP.isConnected()) {
                             LogMessage.d("RegisterUser", "Chat Manager connected and authenticated")
 //                            GroupManager.getAllGroups(true) { isSuccess, throwable, data -> }
