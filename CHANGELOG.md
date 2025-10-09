@@ -1,3 +1,8 @@
+## [1.9.0] Feature Updates
+* Caption argument added for audio and document messages.
+* Android SDK updated to 7.13.31
+* iOS SDK updated to 5.18.22
+
 ## [1.8.0] Feature Updates
 * Bug Fixes
 * Android SDK updated to 7.13.30
