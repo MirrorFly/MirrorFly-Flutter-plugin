@@ -252,7 +252,7 @@ class FlyChatMethods {
         LogMessage.d("enable chat history", chatHistoryEnable.toString())
         ChatManager.enableChatHistory(chatHistoryEnable)
         if (storageFolderName != null) {
-            ChatManager.setMediaFolderName(storageFolderName)
+            buildSDK.setMediaFolderName(storageFolderName)
         }
         if (maximumRecentChatPin != null) {
             buildSDK.setMaximumPinningForRecentChat(maximumRecentChatPin)
