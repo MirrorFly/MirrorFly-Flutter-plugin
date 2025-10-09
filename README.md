@@ -157,7 +157,7 @@ Goto Project -> Target -> Signing & Capabilities -> Click `+ Capability` at the 
 
 ```yaml
 dependencies:
-  mirrorfly_plugin: ^1.8.0
+  mirrorfly_plugin: ^1.9.0
 ```
 
 - Run `flutter pub get` command in your project directory. You can access all classes and methods with the following import statement:
