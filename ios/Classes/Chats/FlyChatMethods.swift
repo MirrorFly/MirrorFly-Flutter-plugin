@@ -980,6 +980,8 @@ let ISEXPORT = true
         let userJid = args["jid"] as? String ?? ""
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
+           // Caption is optional since this method is deprecated.It's available on iOS but not on Android, so we handle it as optional.
+        let caption = args["caption"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
         
         let documentFilePath = args["file"] as? String ?? ""
@@ -1001,7 +1003,7 @@ let ISEXPORT = true
                 mediaData.fileSize = fileSize
                 mediaData.mediaType = .document
                 
-                FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId,topicID: topicId) { isSuccess, error, message in
+                FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId,topicID: topicId,mediaCaption: caption) { isSuccess, error, message in
                     if isSuccess {
                         if message != nil {
                             let documentMessageResponse = message?.toJson()
@@ -3996,14 +3998,14 @@ let ISEXPORT = true
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileSize") as? Int ?? 0
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "thumbImage") as? String ?? ""
                 _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "fileName") as? String ?? ""
-                _ = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
+                let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
 
 
                 let audiofileUrl = URL(fileURLWithPath: filePathArg)
                 
                 MediaUtils.processAudioFile(url: audiofileUrl) { isSuccess, fileName ,localPath, fileSize, duration, fileKey, errorMessage  in
                     if let localPathURL = localPath, isSuccess{
-                        let audioParams = FileMessageParams (fileUrl: localPathURL, fileName: fileName,fileSize: fileSize, duration: duration, fileKey: fileKey)
+                        let audioParams = FileMessageParams (fileUrl: localPathURL, fileName: fileName, caption: fileCaptionArg,fileSize: fileSize, duration: duration, fileKey: fileKey)
                         let audioFileMessage = FileMessage(toId: receiverJID ?? emptyString(), messageType: sendingMessageType == .AUDIO_RECORDED ? .audioRecorded : .audio, fileMessage : audioParams, replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray, topicID: topicId)
                         self.sendAudio(audioMessageParams: audioFileMessage, call: call, result: result)
                         
@@ -4028,6 +4030,7 @@ let ISEXPORT = true
             case .DOCUMENT:
                 let fileDictArg = args["fileMessage"] as? Dictionary<String, Any>
                 let filePathArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "file") as? String ?? ""
+                let fileCaptionArg = AppUtils.shared.getValueForKey(dictionary: fileDictArg, key: "caption") as? String ?? ""
 
                 let documentFileUrl = URL(fileURLWithPath: filePathArg)
                 
@@ -4035,7 +4038,7 @@ let ISEXPORT = true
                 MediaUtils.processDocumentFile(url: documentFileUrl, maxSizeInMB: 2048.0) { isSuccess,localPath,fileSize,fileName,errorMessage in
                     if let localPathURL = localPath, isSuccess {
                         
-                        let documentParams = FileMessageParams(fileUrl: localPathURL, fileName: fileName)
+                        let documentParams = FileMessageParams(fileUrl: localPathURL, fileName: fileName, caption: fileCaptionArg)
                         let documentMsg = FileMessage(toId: receiverJID!, messageType: .document, fileMessage: documentParams, replyMessageId: replyMessageID ?? emptyString(), metaData: metaDataArray, topicID: topicId)
                         
                         self.sendDocument(documentMessageParams: documentMsg, call: call, result: result)
