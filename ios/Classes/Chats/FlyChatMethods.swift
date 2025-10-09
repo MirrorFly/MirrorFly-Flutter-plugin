@@ -980,6 +980,8 @@ let ISEXPORT = true
         let userJid = args["jid"] as? String ?? ""
         
         let replyMessageId = args["replyMessageId"] as? String ?? ""
+           // Caption is optional since this method is deprecated.It's available on iOS but not on Android, so we handle it as optional.
+        let caption = args["caption"] as? String ?? ""
         let topicId = args["topicId"] as? String ?? ""
         
         let documentFilePath = args["file"] as? String ?? ""
@@ -1001,7 +1003,7 @@ let ISEXPORT = true
                 mediaData.fileSize = fileSize
                 mediaData.mediaType = .document
                 
-                FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId,topicID: topicId) { isSuccess, error, message in
+                FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId,topicID: topicId,mediaCaption: caption) { isSuccess, error, message in
                     if isSuccess {
                         if message != nil {
                             let documentMessageResponse = message?.toJson()
