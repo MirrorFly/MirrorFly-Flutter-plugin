@@ -6642,40 +6642,41 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
-  Future<void> makeAudioCall(
-      {required List<String> callersId,
-      required String chatId,
-      required Function(FlyResult response) flyResult}) async {
-    try {
-      LogMessage.d("makeLiveKitAudioCall", 'started...');
-      MirrorFlyCallKit.makeAudioCall(
-          callersId: callersId,
-          chatId: chatId,
-          flyResult: flyResult
-      );
-    } catch (e) {
-      flyResult(FlyResult(isSuccess: false, data: "error... $e"));
-      LogMessage.d("makeLiveKitAudioCall", 'error... $e');
-    }
-  }
-
-  @override
-  Future<void> makeLKVideoCall(
-      {required List<String> callersId,
-      required String chatId,
-      required Function(FlyResult response) flyResult}) async {
-    try {
-      LogMessage.d("makeLiveKitAudioCall", 'started...');
-      MirrorFlyCallKit.makeVideoCall(
-          flyResult: flyResult,
-          callersId: callersId,
-          chatId: chatId);
-    } catch (e) {
-      flyResult(FlyResult(isSuccess: false, data: "error... $e"));
-      LogMessage.d("makeLiveKitAudioCall", 'error... $e');
-    }
-  }
+  // @override
+  // Future<void> makeAudioCall(
+  //     {required List<String> callersId,
+  //     required String chatId,
+  //
+  //     required Function(FlyResult response) flyResult}) async {
+  //   try {
+  //     LogMessage.d("makeLiveKitAudioCall", 'started...');
+  //     MirrorFlyCallKit.makeAudioCall(
+  //         callersId: callersId,
+  //         chatId: chatId,
+  //         flyResult: flyResult
+  //     );
+  //   } catch (e) {
+  //     flyResult(FlyResult(isSuccess: false, data: "error... $e"));
+  //     LogMessage.d("makeLiveKitAudioCall", 'error... $e');
+  //   }
+  // }
+  //
+  // @override
+  // Future<void> makeLKVideoCall(
+  //     {required List<String> callersId,
+  //     required String chatId,
+  //     required Function(FlyResult response) flyResult}) async {
+  //   try {
+  //     LogMessage.d("makeLiveKitAudioCall", 'started...');
+  //     MirrorFlyCallKit.makeVideoCall(
+  //         flyResult: flyResult,
+  //         callersId: callersId,
+  //         chatId: chatId);
+  //   } catch (e) {
+  //     flyResult(FlyResult(isSuccess: false, data: "error... $e"));
+  //     LogMessage.d("makeLiveKitAudioCall", 'error... $e');
+  //   }
+  // }
 
   @override
   Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) async {
