@@ -2045,6 +2045,11 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future<void> updateVoipTokenForLiveKitCalls() {
+    throw UnimplementedError();
+  }
+
   /* @override
   Future<bool?> webLoginDetailsCleared() {
     throw UnimplementedError();

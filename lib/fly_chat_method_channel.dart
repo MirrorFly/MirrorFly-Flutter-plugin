@@ -6818,4 +6818,20 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
     return getIsCallConnected;
   }
+
+  @override
+  Future<void> updateVoipTokenForLiveKitCalls() async {
+    if (Platform.isIOS) {
+      try {
+        LogMessage.d("#MirrorFly Livekit", "updateVoipTokenForLiveKitCalls");
+        await mirrorFlyMethodChannel.invokeMethod<bool>('updateVoipTokenForLiveKitCalls');
+      } on PlatformException catch (e) {
+        LogMessage.d("#MirrorFly Livekit Platform Exception =", " $e");
+      } on Exception catch (e) {
+        LogMessage.d("#MirrorFly Livekit Exception ", " $e");
+      }
+    } else {
+      LogMessage.d("#MirrorFly Livekit", "updateVoipTokenForLiveKitCalls");
+    }
+  }
 }
