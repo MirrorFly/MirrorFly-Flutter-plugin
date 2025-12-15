@@ -23,13 +23,12 @@ Pod::Spec.new do |s|
   s.dependency 'Socket.IO-Client-Swift', '16.1.1'
   s.dependency 'Starscream', '4.0.8'
   s.dependency 'XMPPFramework/Swift'
-  s.dependency 'RealmSwift', '~> 10.49.2'
-#  s.dependency 'GoogleWebRTC','1.1.31999'
-  s.dependency 'WebRTC-SDK', '137.7151.04'
+  s.dependency 'RealmSwift', '~> 10.54.2'
+  s.dependency 'GoogleWebRTC','1.1.31999'
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16.1'
-#   s.dependency 'MirrorFlySDK', '5.18.17'
-  s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
+  s.dependency 'MirrorFlySDK', '5.18.22'
+
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }

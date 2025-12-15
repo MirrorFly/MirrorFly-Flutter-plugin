@@ -222,6 +222,7 @@ class FlyChatMethods {
         val ivKey: String? = call.argument("ivKey")
         val enableSDKLog: Boolean = call.argument("enableDebugLog") ?: false
         val chatHistoryEnable: Boolean = call.argument("chatHistoryEnable") ?: false
+        val enableAndroidCallKitUI: Boolean = call.argument("enableAndroidCallKitUI") ?: true
         LogMessage.enableDebugLogging(enableSDKLog)
         LogMessage.d("buildChatSDK", call.arguments.toString())
         /*GroupManager.setNameHelper(object  : NameHelper {
@@ -230,6 +231,10 @@ class FlyChatMethods {
             }
         })*/
         val buildSDK = ChatSDK.Builder()
+        SharedPreferenceManager.instance.storeBoolean(
+            MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI,
+            enableAndroidCallKitUI
+        )
 //    if(enableGroup){
         val groupConfiguration = GroupConfig.Builder()
             .enableGroupCreation(true)
@@ -249,7 +254,7 @@ class FlyChatMethods {
         LogMessage.d("enable chat history", chatHistoryEnable.toString())
         ChatManager.enableChatHistory(chatHistoryEnable)
         if (storageFolderName != null) {
-            ChatManager.setMediaFolderName(storageFolderName)
+            buildSDK.setMediaFolderName(storageFolderName)
         }
         if (maximumRecentChatPin != null) {
             buildSDK.setMaximumPinningForRecentChat(maximumRecentChatPin)
@@ -297,6 +302,7 @@ class FlyChatMethods {
         val enableMobileNumberLogin: Boolean? = call.argument("enableMobileNumberLogin")
         val enableSDKLog: Boolean = call.argument("enableDebugLog") ?: false
         val enablePrivateStorage: Boolean = call.argument("enablePrivateStorage") ?: false
+        val enableAndroidCallKitUI: Boolean = call.argument("enableAndroidCallKitUI") ?: true
 
         if (storageFolderName != null) {
             ChatManager.setMediaFolderName(storageFolderName)
@@ -312,6 +318,11 @@ class FlyChatMethods {
         ChatManager.enablePrivateStorage(enablePrivateStorage)
         CallManager.enableCallLogExport(enableSDKLog)
         ChatManager.enableDebugLogging(enableSDKLog)
+
+        SharedPreferenceManager.instance.storeBoolean(
+            MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI,
+            enableAndroidCallKitUI
+        )
 
         FlyCallMethods().initCall()
 
@@ -372,7 +383,7 @@ class FlyChatMethods {
             LogMessage.d("registerUser", call.arguments.toString())
             val metaDataList = extractMetaData(metaData)
             if (userIdentifier != null) {
-                if (FlyXMPP.isConnected()) {
+                if (FlyXMPP.isConnectedAndAuthenticated()) {
                     ChatManager.disconnect()
                 }
                 FlyCore.registerUser(
@@ -779,9 +790,16 @@ class FlyChatMethods {
         PushNotificationManager.updateFcmToken(token, object : ChatActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
                 if (isSuccess) {
-                    result.success(isSuccess)
+                    val response = mapOf(
+                        "updatedDeviceToken" to token,
+                        "updatedVOIPToken" to ""
+                    )
+                    result.success(response.toJson())
                 } else {
-                    result.error("500", message, "")
+                    val errorResponse = mapOf(
+                        "error" to message
+                    )
+                    result.error("500", errorResponse.toJson(), "")
                 }
             }
         })

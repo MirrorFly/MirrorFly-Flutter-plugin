@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirrorfly_flutter_call_kit/mirrorfly_flutter_call_kit.dart';
+import 'package:mirrorfly_plugin/android_call_config_builder.dart';
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
@@ -1627,8 +1628,8 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
-  Future<void> updateFcmToken(
-      String firebasetoken, Function(FlyResponse response)? callback) {
+  Future<void> updateFcmToken(String firebasetoken, bool isForceUpdate,
+      Function(FlyResponse response)? callback) {
     //  implement updateFcmToken
     throw UnimplementedError();
   }
@@ -1966,6 +1967,9 @@ class MockFlyChatFlutterPlatform
   Stream get onReconnecting => throw UnimplementedError();
 
   @override
+  Stream get onIncomingCallReceived => throw UnimplementedError();
+
+  @override
   Future<bool?> webLoginDetailsCleared() {
     // implement webLoginDetailsCleared
     throw UnimplementedError();
@@ -2022,6 +2026,22 @@ class MockFlyChatFlutterPlatform
   @override
   Future<void> liveKitLocalHangup(Function(FlyResponse response) flyCallback) {
     // TODO: implement liveKitLocalHangup
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> answerCall({required Function(FlyResponse response) callback}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> isCallConnected(
+      {required Function(FlyResponse response) callback}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> configureAndroidCallKit(AndroidCallKitSettings builder) {
     throw UnimplementedError();
   }
 
