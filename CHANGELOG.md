@@ -1,3 +1,19 @@
+## [1.9.0] Feature Updates
+* Caption argument added for audio and document messages.
+* Android SDK updated to 7.13.31
+* iOS SDK updated to 5.18.22
+
+## [1.8.0] Feature Updates
+* Bug Fixes
+* Android SDK updated to 7.13.30
+* iOS SDK updated to 5.18.20
+
+## [1.7.0] Feature Updates
+* Updated Android Compile SDK to 35
+* Bug Fixes
+* Android SDK updated to 7.13.28
+* iOS SDK updated to 5.18.18
+
 ## [1.6.0+1] Hot Fix
 * Added Mirrorfly View support for non-arm64 devices and simulators.
 

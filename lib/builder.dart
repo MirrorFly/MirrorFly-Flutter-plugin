@@ -27,7 +27,8 @@ class ChatBuilder {
       // this.groupConfig,
       // bool useProfileName = false,
       // this.ivKey,
-        this.enableDebugLog = false,
+      this.enableDebugLog = false,
+      this.enableAndroidCallKitUI = true,
         this.enableVoipActivity = true,
       });
 
@@ -59,6 +60,12 @@ class ChatBuilder {
 
   /// Determines if debug logging is enabled. Defaults to false.
   bool enableDebugLog;
+
+  /// Determines whether the Android CallKit UI is enabled. Defaults to true.
+  /// If set to false, incoming calls will not trigger the call UI.
+  /// Instead, you will receive an event through the `onIncomingCallReceived` stream.
+  @Deprecated("Instead of use Mirrorfly.configureAndroidCallKit()")
+  bool? enableAndroidCallKitUI;
 
   /// Determines if the voip activity can be enabled. Defaults to true.
   bool enableVoipActivity;
@@ -129,6 +136,7 @@ extension BuilderParsing on ChatBuilder {
       // "useProfileName":useProfileName,
       // "ivKey":ivKey,
       "enableDebugLog": enableDebugLog,
+      "enableAndroidCallKitUI": enableAndroidCallKitUI,
     };
   }
 }
@@ -179,6 +187,7 @@ class InitializeSDKBuilder {
     this.chatHistoryEnable,
     this.enableDebugLog = false,
     this.enablePrivateStorage = false,
+    this.enableAndroidCallKitUI = true,
     this.enableVoipActivity = true,
   });
 
@@ -202,6 +211,10 @@ class InitializeSDKBuilder {
 
   /// Determines if private storage is enabled. Defaults to false.
   bool enablePrivateStorage;
+
+  /// Determines if default android incoming call ui is enabled. Defaults to true
+  @Deprecated("Instead of use Mirrorfly.configureAndroidCallKit()")
+  bool? enableAndroidCallKitUI;
 
   /// Determines if the voip activity can be enabled.
   bool enableVoipActivity;
@@ -227,6 +240,7 @@ extension InitializeSDKBuilderParsing on InitializeSDKBuilder {
       "chatHistoryEnable": chatHistoryEnable,
       "enableDebugLog": enableDebugLog,
       "enablePrivateStorage": enablePrivateStorage,
+      "enableAndroidCallKitUI": enableAndroidCallKitUI,
     };
   }
 }

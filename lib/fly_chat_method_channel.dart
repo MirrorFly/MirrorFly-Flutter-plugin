@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mirrorfly_flutter_call_kit/mirrorfly_flutter_call_kit.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
+import 'package:mirrorfly_plugin/android_call_config_builder.dart';
 import 'package:mirrorfly_plugin/helpers/file_helper.dart';
 import 'package:mirrorfly_plugin/helpers/file_helper_model.dart';
 
@@ -23,6 +24,7 @@ import 'internal_models/export_chat_model.dart';
 import 'internal_models/get_user_profile_model.dart';
 import 'internal_models/internal_status_model.dart';
 import 'internal_models/message_delivered_status_model.dart';
+import 'internal_models/notification_token_update_model.dart';
 import 'internal_models/profile_detail_model.dart';
 import 'internal_models/recent_chat_model.dart';
 import 'internal_models/register_user_model.dart';
@@ -781,6 +783,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   final StreamController<dynamic> onUsersUpdatedStreamController =
       StreamController<dynamic>.broadcast();
 
+  /// A event channel for incoming call when the dafault and.
+  @visibleForTesting
+  final onIncomingCallReceivedChannel =
+      const EventChannel('contus.mirrorfly/onIncomingCallReceived');
+
+  /// A stream controller to update the incoming call event as a stream.
+  final StreamController<dynamic> onIncomingCallReceivedStreamController =
+      StreamController<dynamic>.broadcast();
+
   @override
   Stream<dynamic> get onMessageReceived =>
       _messageOnReceivedStreamController.stream;
@@ -1061,6 +1072,10 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Stream<dynamic> get onClearAllCallLog =>
       onClearAllCallLogStreamController.stream;
+
+  @override
+  Stream<dynamic> get onIncomingCallReceived =>
+      onIncomingCallReceivedStreamController.stream;
 
   ///Using [addStreamsAllToStreamController] to add all streams to stream controller
   ///benefit to use stream controller we can call multiple listeners to listen.
@@ -1822,6 +1837,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       debugPrint("onUsersUpdatedChannel error = $error");
       onUsersUpdatedStreamController.addError(error);
     });
+
+    onIncomingCallReceivedChannel.receiveBroadcastStream().listen((event) {
+      debugPrint("onIncomingCallReceivedChannel event = $event");
+      onIncomingCallReceivedStreamController.add(event);
+      callEventsListener?.onIncomingCallReceived(event);
+    });
   }
 
   /*@override
@@ -1913,6 +1934,28 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Exception ", " $e");
       callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
           FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  @override
+  Future<bool?> configureAndroidCallKit(AndroidCallKitSettings builder) async {
+    bool? response = false;
+    if (Platform.isAndroid) {
+      try {
+        response = await mirrorFlyCallMethodChannel.invokeMethod<bool>(
+          "configureAndroidCallKit",
+          builder.toMap(),
+        );
+        return response;
+      } on PlatformException catch (e) {
+        LogMessage.d("#Platform Exception =", " $e");
+        rethrow;
+      } on Exception catch (e) {
+        LogMessage.d("Exception ", " $e");
+        rethrow;
+      }
+    } else {
+      return false;
     }
   }
 
@@ -2673,19 +2716,21 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
-  Future<void> updateFcmToken(
-      String firebasetoken, Function(FlyResponse response)? callback) async {
+  Future<void> updateFcmToken(String firebasetoken, bool isForceUpdate,
+      Function(FlyResponse response)? callback) async {
     // bool? res;
     try {
-      await mirrorFlyMethodChannel
-          .invokeMethod<bool>('updateFcmToken', {"token": firebasetoken});
-      callback?.call(FlyResponse(
-          true, FlyConstants.empty, "fcm token updated successfully"));
+      final String? res = await mirrorFlyMethodChannel.invokeMethod<String>(
+          'updateFcmToken',
+          {"token": firebasetoken, "isForceUpdate": isForceUpdate});
+      LogMessage.d("updateFcmToken", " $res");
+      callback?.call(FlyResponse(true, convertTokenResponseToJson(res),
+          "fcm token updated successfully"));
       // return res;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
-      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
-          FlyException(e.code, e.message, e.details)));
+      callback?.call(FlyResponse(false, convertTokenResponseToJson(e.message),
+          FlyConstants.empty, FlyException(e.code, e.message, e.details)));
       // rethrow;
     } on Exception catch (e) {
       LogMessage.d("Exception ", " $e");
@@ -5024,8 +5069,18 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
           'reportUserOrMessages',
           {"jid": jid, "chat_type": type, "selectedMessageID": messageId});
       LogMessage.d("report Result ", " $response");
-      callback?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
-      // return response;
+      if (Platform.isIOS) {
+        if (response!) {
+          callback
+              ?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+        } else {
+          callback?.call(
+              FlyResponse(false, FlyConstants.empty, FlyConstants.empty));
+        }
+      } else {
+        callback
+            ?.call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      } // return response;
     } on PlatformException catch (e) {
       LogMessage.d("Platform Exception =", " $e");
       callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
@@ -6678,15 +6733,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   //   }
   // }
 
-  @override
-  Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) async {
-    try {
-      LogMessage.d("makeLiveKitAudioCall", 'started...');
-      MirrorFlyCallKit.disconnectCall();
-    } catch (e) {
-      LogMessage.d("makeLiveKitAudioCall", 'error... $e');
-    }
-  }
+  // @override
+  // Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) async {
+  //   try {
+  //     LogMessage.d("makeLiveKitAudioCall", 'started...');
+  //     MirrorFlyCallKit.disconnectCall();
+  //   } catch (e) {
+  //     LogMessage.d("makeLiveKitAudioCall", 'error... $e');
+  //   }
+  // }
 
   ///
   @override
@@ -6697,5 +6752,71 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     } catch (e) {
       LogMessage.d("liveKitLocalHangup", 'error... $e');
     }
+  }
+
+  @override
+  Future<void> answerCall(
+      {required Function(FlyResponse response) callback}) async {
+    if (Platform.isAndroid) {
+      try {
+        LogMessage.d("answerCall", "answerCall");
+        await mirrorFlyCallMethodChannel.invokeMethod<bool>('answerCall');
+        callback
+            .call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+      } on PlatformException catch (e) {
+        LogMessage.d("Platform Exception =", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(e.code, e.message, e.details)));
+      } on Exception catch (e) {
+        LogMessage.d("Exception ", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+      }
+    } else {
+      const String errorMessage = "This method call is not supported for iOS";
+      LogMessage.d("Exception ", " $errorMessage");
+      callback.call(FlyResponse(
+          false,
+          FlyConstants.empty,
+          FlyConstants.empty,
+          FlyException(
+              FlyErrorCode.unHandle, FlyErrorMessage.unHandle, errorMessage)));
+    }
+  }
+
+  @override
+  Future<bool?> isCallConnected(
+      {required Function(FlyResponse response) callback}) async {
+    bool? getIsCallConnected = false;
+    if (Platform.isAndroid) {
+      try {
+        LogMessage.d("answerCall", "answerCall");
+        getIsCallConnected = await mirrorFlyCallMethodChannel
+            .invokeMethod<bool>('isCallConnected');
+        callback
+            .call(FlyResponse(true, FlyConstants.empty, FlyConstants.empty));
+        return getIsCallConnected;
+      } on PlatformException catch (e) {
+        LogMessage.d("Platform Exception =", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+        return getIsCallConnected;
+      } on Exception catch (e) {
+        LogMessage.d("Exception ", " $e");
+        callback.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+            FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+        return getIsCallConnected;
+      }
+    } else {
+      const String errorMessage = "This method call is not supported for iOS";
+      LogMessage.d("Exception ", " $errorMessage");
+      callback.call(FlyResponse(
+          false,
+          FlyConstants.empty,
+          FlyConstants.empty,
+          FlyException(
+              FlyErrorCode.unHandle, FlyErrorMessage.unHandle, errorMessage)));
+    }
+    return getIsCallConnected;
   }
 }
