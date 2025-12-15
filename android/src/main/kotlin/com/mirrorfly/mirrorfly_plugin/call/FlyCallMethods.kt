@@ -163,7 +163,7 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
     fun configureAndroidCallKit(call: MethodCall, result: MethodChannel.Result) {
         val enableRingtone = call.argument<Boolean>("enableRingtone") ?: true
         val enableIncomingCallUI = call.argument<Boolean>("enableIncomingCallUI") ?: true
-        CallManager.disableIncomingCallRingtone(!enableRingtone)
+//        CallManager.disableIncomingCallRingtone(!enableRingtone)
         SharedPreferenceManager.instance.storeBoolean(
             MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI,
             enableIncomingCallUI

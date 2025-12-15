@@ -6,6 +6,7 @@ Future<void> main() async {
   Mirrorfly.initializeSDK(
       licenseKey: 'your license key',
       iOSContainerID: 'your app group id',
+      enableVoipActivity: false,
       flyCallback: (FlyResponse response) {
         if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);

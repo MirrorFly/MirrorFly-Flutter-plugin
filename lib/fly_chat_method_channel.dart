@@ -6732,15 +6732,15 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
-  @override
-  Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) async {
-    try {
-      LogMessage.d("makeLiveKitAudioCall", 'started...');
-      MirrorFlyCallKit.disconnectCall();
-    } catch (e) {
-      LogMessage.d("makeLiveKitAudioCall", 'error... $e');
-    }
-  }
+  // @override
+  // Future<void> disconnectLiveKitCall(Function(FlyResponse response) flyCallback) async {
+  //   try {
+  //     LogMessage.d("makeLiveKitAudioCall", 'started...');
+  //     MirrorFlyCallKit.disconnectCall();
+  //   } catch (e) {
+  //     LogMessage.d("makeLiveKitAudioCall", 'error... $e');
+  //   }
+  // }
 
   ///
   @override

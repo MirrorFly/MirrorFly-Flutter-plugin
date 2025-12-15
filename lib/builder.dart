@@ -29,7 +29,6 @@ class ChatBuilder {
       // this.ivKey,
       this.enableDebugLog = false,
       this.enableAndroidCallKitUI = true,
-        this.enableDebugLog = false,
         this.enableVoipActivity = true,
       });
 

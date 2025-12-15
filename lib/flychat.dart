@@ -126,7 +126,7 @@ class Mirrorfly {
       bool enablePrivateStorage = false,
       @Deprecated("Instead of use Mirrorfly.configureAndroidCallKit()")
       bool? enableAndroidCallKitUI = true,
-      bool enableVoipActivity = true,
+      bool enableVoipActivity = false,
       required Function(FlyResponse response) flyCallback}) {
     var builder = InitializeSDKBuilder(
         iOSContainerID: iOSContainerID,
@@ -136,9 +136,7 @@ class Mirrorfly {
         enableMobileNumberLogin: enableMobileNumberLogin,
         enableDebugLog: enableDebugLog,
         enablePrivateStorage: enablePrivateStorage,
-        enableAndroidCallKitUI: enableAndroidCallKitUI);
-        enablePrivateStorage: enablePrivateStorage,
-        enableVoipActivity: enableVoipActivity
+        enableAndroidCallKitUI: enableAndroidCallKitUI
     );
     isChatHistoryEnabled = chatHistoryEnable;
     isPrivateStorageEnabled = enablePrivateStorage;

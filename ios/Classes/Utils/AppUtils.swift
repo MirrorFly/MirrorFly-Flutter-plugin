@@ -131,29 +131,7 @@ class AppUtils {
     }
     
     private func performDeviceTokenUpdate(isForceUpdate: Bool = false, result: FlutterResult?) {
-        VOIPManager.sharedInstance.updateDeviceToken(isForceUpdate: isForceUpdate) { isSuccess, updatedVOIPToken, updatedDeviceToken, tokenError in
-            
-            var response: [String: String]
-            
-            if isSuccess {
-                
-                response = [
-                    "updatedVOIPToken": updatedVOIPToken,
-                    "updatedDeviceToken": updatedDeviceToken
-                ]
-                if let jsonString = response.toJson(){
-                    result?(jsonString) // send JSON string to Flutter
-                }
-                
-            } else {
-                response = [
-                    "error": tokenError ?? "Internal Error",
-                ]
-                if let jsonString = response.toJson(){
-                    result?(FlutterError(code: FLErrorCode.INVALID_DATA, message: jsonString, details: nil))
-                }
-            }
-        }
+        VOIPManager.sharedInstance.updateDeviceToken()
     }
     
     private func removeObserver() {
