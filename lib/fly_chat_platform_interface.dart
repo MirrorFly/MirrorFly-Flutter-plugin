@@ -1773,6 +1773,11 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('answerCall() has not been implemented.');
   }
 
+  /// This method is used to whether the call is connected or not
+  Future<void> updateVoipTokenForLiveKitCalls() {
+    throw UnimplementedError('updateVoipTokenForLiveKitCalls() has not been implemented.');
+  }
+
   /// This listener is set to listen the message events.
   setMessageEventListener(MessageEventListeners? messageEventsListener) {
     throw UnimplementedError(

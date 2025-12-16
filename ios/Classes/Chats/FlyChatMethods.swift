@@ -120,12 +120,13 @@ let ISEXPORT = true
 
         }
     
-    func updateVoipToken() {
+    func updateVoipTokenForLiveKitCalls(call: FlutterMethodCall, result: @escaping FlutterResult) {
         /// For temperory we get the voip token from livekit and update them to api here
         let token = Utility.getStringPreference(key: "contus.mirrorfly/voipTokenKey") ?? ""
         NSLog("[MirrorFly] updateVoipToken with token: \(token)")
         VOIPManager.sharedInstance.saveVOIPToken(token: token)
         VOIPManager.sharedInstance.updateDeviceToken()
+        result(true)
     }
     
     func initializeSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -149,7 +150,6 @@ let ISEXPORT = true
                 
         ChatManager.initializeSDK(licenseKey: licenseKey) { isSuccess, flyError, flyData in
             if isSuccess {
-                self.updateVoipToken()
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
                 ChatManager.enablePrivateStorage(enable: enablePrivateStorage)
                 CallManager.enableDebugLogs(enable : enableSDKLog)

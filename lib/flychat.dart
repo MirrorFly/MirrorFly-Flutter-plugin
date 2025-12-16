@@ -5855,4 +5855,9 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance
         .isCallConnected(callback: flyCallback);
   }
+
+  /// For Live-kit calls
+  static Future<void> updateVoipTokenForLiveKitCalls() {
+    return FlyChatFlutterPlatform.instance.updateVoipTokenForLiveKitCalls();
+  }
 }
