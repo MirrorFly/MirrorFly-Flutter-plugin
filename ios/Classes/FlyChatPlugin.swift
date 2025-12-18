@@ -23,7 +23,7 @@ public class FlyChatPlugin: NSObject, FlutterPlugin, CNContactViewControllerDele
         let instance = FlyChatPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
         instance.setupEventChannel(registrar: registrar)
-        
+        _ = MirrorFlyLogger.shared
         FlyCall.register(with: registrar)
         
     }

@@ -30,6 +30,7 @@ import 'internal_models/recent_chat_model.dart';
 import 'internal_models/register_user_model.dart';
 import 'internal_models/user_profile_update.dart';
 import 'internal_models/users_list_model.dart';
+import 'logger.dart';
 import 'logmessage.dart';
 import 'message_params.dart';
 import 'model/available_features.dart' as client;
@@ -1868,6 +1869,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   @override
   Future<void> initializeSDK(InitializeSDKBuilder builder,
       Function(FlyResponse response) callback) async {
+    initializeLogger(enabled: true, tag: 'flutterPlugin');
     bool? res;
     enableDebugLog = builder.enableDebugLog;
     if (!_messageOnReceivedStreamController.hasListener) {
@@ -6826,9 +6828,12 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       try {
         LogMessage.d("#MirrorFly Livekit", "updateVoipTokenForLiveKitCalls");
         await mirrorFlyMethodChannel.invokeMethod<bool>('updateVoipTokenForLiveKitCalls');
+        callkitPluginLogger.info("updateVoipTokenForLiveKitCalls User updated fcm token succesfully");
       } on PlatformException catch (e) {
+        callkitPluginLogger.info("notUpdateVoipTokenForLiveKitCalls User not updated fcm token ");
         LogMessage.d("#MirrorFly Livekit Platform Exception =", " $e");
       } on Exception catch (e) {
+        callkitPluginLogger.info("notUpdateVoipTokenForLiveKitCalls Exception User not updated fcm token ");
         LogMessage.d("#MirrorFly Livekit Exception ", " $e");
       }
     } else {

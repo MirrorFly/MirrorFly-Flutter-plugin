@@ -124,6 +124,7 @@ let ISEXPORT = true
         /// For temperory we get the voip token from livekit and update them to api here
         let token = Utility.getStringPreference(key: "contus.mirrorfly/voipTokenKey") ?? ""
         NSLog("[MirrorFly] updateVoipToken with token: \(token)")
+        MirrorFlyLogger.shared.log("[MirrorFly] updateVoipToken with token: \(token)")
         VOIPManager.sharedInstance.saveVOIPToken(token: token)
         VOIPManager.sharedInstance.updateDeviceToken()
         result(true)
@@ -305,9 +306,11 @@ let ISEXPORT = true
 
                                 if (enableVoipActivity) {
                                     voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
+                                    MirrorFlyLogger.shared.log("[MirrorFly] updateVoipToken old  with token: \(voipToken)")
                                 } else {
                                     let token = Utility.getStringPreference(key: "contus.mirrorfly/voipTokenKey") ?? ""
                                     voipToken = token
+                                    MirrorFlyLogger.shared.log("[MirrorFly] updateVoipToken new with token: \(voipToken)")
                                 }
 
 //                                if !voipToken.isEmpty {
@@ -321,7 +324,8 @@ let ISEXPORT = true
 //                                }
                                 
                                 VOIPManager.sharedInstance.updateDeviceToken()
-                                
+                                MirrorFlyLogger.shared.log("[MirrorFly] updateVoipToken register with token: \(voipToken)")
+
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
                                     NSLog("\(Constants.tag) ChatManager.registerApiService \(String(describing: resp))")
