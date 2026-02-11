@@ -353,6 +353,8 @@ let ISEXPORT = true
                                     VOIPManager.sharedInstance.savePushToken(token: deviceToken)
 //                                }
                                 
+//                                AppUtils.shared.checkAndUpdateVOIPToken()
+
                                 VOIPManager.sharedInstance.updateDeviceToken()
                                 MirrorFlyLogger.shared.log("[MirrorFly] updateVoipToken register with token: \(voipToken)")
 
@@ -3736,7 +3738,9 @@ let ISEXPORT = true
             Utility.saveInPreference(key: Constants.googleToken, value: token)
             VOIPManager.sharedInstance.updateDeviceToken()
 
-            result(true)
+//           AppUtils.shared.checkAndUpdateVOIPToken(isForceUpdate: isForceUpdate,result: result)
+
+            result("")
         }else {
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.NOT_LOGGED_IN_MESSAGE, details: nil))
         }
