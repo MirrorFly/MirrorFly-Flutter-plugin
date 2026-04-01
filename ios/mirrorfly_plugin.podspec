@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   s.dependency 'XMPPFramework/Swift'
   s.dependency 'RealmSwift', '~> 10.54.2'
 #  s.dependency 'GoogleWebRTC','1.1.31999'
-  s.dependency 'WebRTC-SDK', '137.7151.04'
+  s.dependency 'WebRTC-SDK', '144.7559.01'
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16.1'
 #   s.dependency 'MirrorFlySDK', '5.18.17'
