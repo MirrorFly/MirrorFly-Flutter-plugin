@@ -235,7 +235,7 @@ let ISEXPORT = true
             Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
         }
 
-        NSLog("\(Constants.tag) #PRUOO device token \(deviceToken)")
+        NSLog("\(Constants.tag) registerUser - device token \(deviceToken)")
 
         try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: userType, metaData: metaDataArray, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData

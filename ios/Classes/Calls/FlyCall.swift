@@ -661,9 +661,7 @@ import PushKit
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
         
         NSLog("\(Constants.callTag) VoIP Token: \(pushCredentials)")
-        let deviceTokenString = pushCredentials.token.reduce("") {
-            $0 + String(format: "%02X", $1)
-        }
+        let deviceTokenString = pushCredentials.token.reduce("") { $0 + String(format: "%02X", $1) }
         
         NSLog("\(Constants.callTag) #token pushRegistry VT => \(deviceTokenString)")
         NSLog("\(Constants.callTag) device Token \(deviceTokenString)")
