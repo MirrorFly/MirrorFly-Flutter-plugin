@@ -2739,6 +2739,35 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   @override
+  Future<void> updateFcmAndVoipToken(String firebasetoken, bool isForceUpdate,
+      Function(FlyResponse response)? callback) async {
+
+    if (!Platform.isIOS) {
+      LogMessage.d("updateFcmAndVoipToken", " Voip token update is not required for platform other than iOS");
+      return;
+    }
+
+    try {
+      final String? res = await mirrorFlyMethodChannel.invokeMethod<String>(
+          'updateFcmAndVoipToken', {"token": firebasetoken, "isForceUpdate": isForceUpdate});
+      LogMessage.d("updateFcmAndVoipToken", " $res");
+      callback?.call(FlyResponse(true, convertTokenResponseToJson(res),
+          "fcm token updated successfully"));
+      // return res;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback?.call(FlyResponse(false, convertTokenResponseToJson(e.message),
+          FlyConstants.empty, FlyException(e.code, e.message, e.details)));
+      // rethrow;
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+      // rethrow;
+    }
+  }
+
+  @override
   Future<bool?> isMuted(String jid) async {
     bool? res;
     try {

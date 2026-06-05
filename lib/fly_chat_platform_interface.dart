@@ -354,6 +354,12 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  /// This method is used to update the FCM Token and Voip to the MirrorFly server.
+  Future<void> updateFcmAndVoipToken(String firebasetoken, bool isForceUpdate,
+      Function(FlyResponse response)? callback) {
+    throw UnimplementedError('has not been implemented.');
+  }
+
   /// This method is used to get the user is muted or not.
   Future<bool?> isMuted(String jid) {
     throw UnimplementedError('has not been implemented.');
