@@ -915,7 +915,8 @@ class Mirrorfly {
   /// This method sends the provided [firebaseToken] to the Mirrorfly platform
   /// to update the FCM token used for push notifications.
   ///
-  /// Also for iOS Voip configuration to update the Voip token in Mirrorfly SDK
+  /// Also for iOS if Voip is enabled the token will be registered and updated to server
+  /// internally
   ///
   /// The [firebaseToken] parameter is the FCM token obtained from Firebase Cloud Messaging.
   ///

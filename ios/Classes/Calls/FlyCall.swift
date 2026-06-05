@@ -671,7 +671,7 @@ import PushKit
             VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
 //            VOIPManager.sharedInstance.updateDeviceToken()
             if registerVoipFirstTime{
-                AppUtils.shared.performDeviceAndVoipToken()
+                AppUtils.shared.updateFcmAndVoipToken()
             }else{
                 NotificationCenter.default.post(name:.updateVoipToken, object: nil, userInfo: ["voip": deviceTokenString])
             }

@@ -296,7 +296,7 @@ let ISEXPORT = true
 //                                }
                                 
 //                                VOIPManager.sharedInstance.updateDeviceToken()
-                               AppUtils.shared.performDeviceAndVoipToken()
+                               AppUtils.shared.updateFcmAndVoipToken()
                                 
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
@@ -3681,7 +3681,7 @@ let ISEXPORT = true
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
             VOIPManager.sharedInstance.savePushToken(token: token)
             Utility.saveInPreference(key: Constants.googleToken, value: token)
-            AppUtils.shared.performDeviceTokenUpdate(isForceUpdate: isForceUpdate, result: result)
+            AppUtils.shared.updateFcmToken(isForceUpdate: isForceUpdate, result: result)
         } else {
             NSLog("#Mirrorfly updateFcmToken user not logged-in")
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.NOT_LOGGED_IN_MESSAGE, details: nil))
@@ -3699,7 +3699,7 @@ let ISEXPORT = true
             VOIPManager.sharedInstance.savePushToken(token: token)
             Utility.saveInPreference(key: Constants.googleToken, value: token)
 //            VOIPManager.sharedInstance.updateDeviceToken()
-            AppUtils.shared.performDeviceAndVoipToken(isForceUpdate: isForceUpdate,result: result)
+            AppUtils.shared.updateFcmAndVoipToken(isForceUpdate: isForceUpdate,result: result)
         }else {
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.NOT_LOGGED_IN_MESSAGE, details: nil))
         }
