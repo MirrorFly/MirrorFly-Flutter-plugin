@@ -1634,6 +1634,13 @@ class MockFlyChatFlutterPlatform
   }
 
   @override
+  Future<void> updateFcmAndVoipToken(String firebasetoken, bool isForceUpdate,
+      Function(FlyResponse response)? callback) async {
+    // TODO: implement updateFcmAndVoipToken
+    // throw UnimplementedError();
+  }
+
+  @override
   Future<void> updateGroupName(
       String jid, String name, Function(FlyResponse response)? callback) {
     //  implement updateGroupName

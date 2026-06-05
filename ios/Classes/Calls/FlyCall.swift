@@ -662,14 +662,16 @@ import PushKit
         
         NSLog("\(Constants.callTag) VoIP Token: \(pushCredentials)")
         let deviceTokenString = pushCredentials.token.reduce("") { $0 + String(format: "%02X", $1) }
+        
         NSLog("\(Constants.callTag) #token pushRegistry VT => \(deviceTokenString)")
         NSLog("\(Constants.callTag) device Token \(deviceTokenString)")
+        
         Utility.saveInPreference(key: Constants.voipToken, value: deviceTokenString)
         if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
             VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
 //            VOIPManager.sharedInstance.updateDeviceToken()
             if registerVoipFirstTime{
-                AppUtils.shared.checkAndUpdateVOIPToken()
+                AppUtils.shared.updateFcmAndVoipToken()
             }else{
                 NotificationCenter.default.post(name:.updateVoipToken, object: nil, userInfo: ["voip": deviceTokenString])
             }

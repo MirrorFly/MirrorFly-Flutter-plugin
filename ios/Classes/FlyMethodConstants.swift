@@ -206,6 +206,7 @@ class FlyMethodConstants {
                 "loadNextMessages": flyChatMethods.loadNextMessages,
                 "handleReceivedMessage": flyChatMethods.handleReceivedMessage,
                 "updateFcmToken": flyChatMethods.updateFcmToken,
+                "updateFcmAndVoipToken": flyChatMethods.updateFcmAndVoipToken,
                 "getUnreadMessageCountExceptMutedChat": flyChatMethods.getUnreadMessageCountExceptMutedChat,
                 "createTopic": flyChatMethods.createTopic,
                 "getTopics": flyChatMethods.getTopics,

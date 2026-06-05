@@ -235,6 +235,8 @@ let ISEXPORT = true
             Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
         }
 
+        NSLog("\(Constants.tag) registerUser - device token \(deviceToken)")
+
         try! ChatManager.registerApiService(for: userIdentifier, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: ISEXPORT,isForceRegister: isForceRegister,userType: userType, metaData: metaDataArray, pushServerType: .firebase) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
@@ -294,7 +296,7 @@ let ISEXPORT = true
 //                                }
                                 
 //                                VOIPManager.sharedInstance.updateDeviceToken()
-                               AppUtils.shared.checkAndUpdateVOIPToken()
+                               AppUtils.shared.updateFcmAndVoipToken()
                                 
                                 let resp = registerResponse.dictToJson()
                                 if(resp != nil){
@@ -3669,7 +3671,26 @@ let ISEXPORT = true
         
     }
     
-    func updateFcmToken(call: FlutterMethodCall,result: @escaping FlutterResult){
+    func updateFcmToken(call: FlutterMethodCall,result: @escaping FlutterResult) {
+        let args = call.arguments as! Dictionary<String, Any>
+        let token = args["token"] as? String ?? ""
+        let isForceUpdate = args["isForceUpdate"] as? Bool ?? false
+        
+        NSLog("#Mirrorfly updateFcmToken called with token: \(token), isForceUpdate: \(isForceUpdate)")
+        
+        if Utility.getBoolFromPreference(key: Constants.isLoggedIn) {
+            VOIPManager.sharedInstance.savePushToken(token: token)
+            Utility.saveInPreference(key: Constants.googleToken, value: token)
+            AppUtils.shared.updateFcmToken(isForceUpdate: isForceUpdate, result: result)
+        } else {
+            NSLog("#Mirrorfly updateFcmToken user not logged-in")
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.NOT_LOGGED_IN_MESSAGE, details: nil))
+        }
+    }
+    
+    func updateFcmAndVoipToken(call: FlutterMethodCall,result: @escaping FlutterResult) {
+        NSLog("#Mirrorfly updateFcmAndVoipToken called")
+        
         let args = call.arguments as! Dictionary<String, Any>
         let token = args["token"] as? String ?? ""
         let isForceUpdate = args["isForceUpdate"] as? Bool ?? false
@@ -3678,7 +3699,7 @@ let ISEXPORT = true
             VOIPManager.sharedInstance.savePushToken(token: token)
             Utility.saveInPreference(key: Constants.googleToken, value: token)
 //            VOIPManager.sharedInstance.updateDeviceToken()
-            AppUtils.shared.checkAndUpdateVOIPToken(isForceUpdate: isForceUpdate,result: result)
+            AppUtils.shared.updateFcmAndVoipToken(isForceUpdate: isForceUpdate,result: result)
         }else {
             result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.NOT_LOGGED_IN_MESSAGE, details: nil))
         }

@@ -910,6 +910,28 @@ class Mirrorfly {
         .updateFcmToken(firebaseToken, isForceUpdate, flyCallBack);
   }
 
+  /// Updates the Firebase Cloud Messaging (FCM) token for the Mirrorfly SDK.
+  ///
+  /// This method sends the provided [firebaseToken] to the Mirrorfly platform
+  /// to update the FCM token used for push notifications.
+  ///
+  /// Also for iOS if Voip is enabled the token will be registered and updated to server
+  /// internally
+  ///
+  /// The [firebaseToken] parameter is the FCM token obtained from Firebase Cloud Messaging.
+  ///
+  /// The [flyCallBack] parameter is a function that will be called upon completion of the operation.
+  /// It receives a [FlyResponse] object as a parameter, which contains information about the success or failure of the operation.
+  ///
+  ///
+  static Future<void> updateFcmAndVoipToken(
+      {required String firebaseToken,
+        bool isForceUpdate = false,
+        required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance
+        .updateFcmToken(firebaseToken, isForceUpdate, flyCallBack);
+  }
+
   /// Checks if a chat is muted for the given JID.
   @Deprecated('Instead of use Mirrorfly.isChatMuted()')
   static Future<bool?> isMuted(String jid) {

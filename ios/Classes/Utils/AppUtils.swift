@@ -108,43 +108,47 @@ class AppUtils {
     }
     
     
-    func checkAndUpdateVOIPToken(isForceUpdate: Bool = false ,result: FlutterResult? = nil) {
-        
+    func updateFcmAndVoipToken(isForceUpdate: Bool = false ,result: FlutterResult? = nil) {
         let voipToken = Utility.getStringFromPreference(key: Constants.voipToken)
-        
+        NSLog("\(Constants.tag) updateFcmAndVoipToken called voipToken: \(voipToken)")
+
         if voipToken.isEmpty {
             
             voipTokenObserver = NotificationCenter.default.addObserver(forName: .updateVoipToken, object: nil, queue: nil) { notification in
+                NSLog("\(Constants.tag) updateFcmAndVoipToken updateVoipToken observer called notification: \(notification)")
                 if notification.userInfo?["voip"] is String {
                     self.removeObserver()
-                    self.performDeviceTokenUpdate(isForceUpdate: isForceUpdate, result: result)
+                    self.updateFcmToken(isForceUpdate: isForceUpdate, result: result)
                 }
             }
+            
             // No token → Register for VOIP notifications
             FlyCall.shared?.registerVoipFirstTime = false
             FlyCall.shared?.registerForVOIPNotifications()
             
         } else {
             // Update device token
-            performDeviceTokenUpdate(isForceUpdate: isForceUpdate, result: result)
+            NSLog("\(Constants.tag) updateFcmAndVoipToken called voipToken: \(voipToken)")
+            updateFcmToken(isForceUpdate: isForceUpdate, result: result)
         }
     }
     
-    private func performDeviceTokenUpdate(isForceUpdate: Bool = false, result: FlutterResult?) {
+    func updateFcmToken(isForceUpdate: Bool = false, result: FlutterResult?) {
+        NSLog("\(Constants.tag) updateFcmToken called isForceUpdate: \(isForceUpdate)")
+
         VOIPManager.sharedInstance.updateDeviceToken(isForceUpdate: isForceUpdate) { isSuccess, updatedVOIPToken, updatedDeviceToken, tokenError in
             
             var response: [String: String]
             
             if isSuccess {
-                
                 response = [
                     "updatedVOIPToken": updatedVOIPToken,
                     "updatedDeviceToken": updatedDeviceToken
                 ]
+                NSLog("\(Constants.tag) updateFcmToken Success result: \(response)")
                 if let jsonString = response.toJson(){
                     result?(jsonString) // send JSON string to Flutter
                 }
-                
             } else {
                 response = [
                     "error": tokenError ?? "Internal Error",
@@ -152,6 +156,7 @@ class AppUtils {
                 if let jsonString = response.toJson(){
                     result?(FlutterError(code: FLErrorCode.INVALID_DATA, message: jsonString, details: nil))
                 }
+                NSLog("\(Constants.tag) updateFcmToken error response: \(response)")
             }
         }
     }
