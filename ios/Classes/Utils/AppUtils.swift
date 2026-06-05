@@ -156,6 +156,7 @@ class AppUtils {
                 if let jsonString = response.toJson(){
                     result?(FlutterError(code: FLErrorCode.INVALID_DATA, message: jsonString, details: nil))
                 }
+                NSLog("\(Constants.tag) performDeviceTokenUpdate error response: \(response)")
             }
         }
     }

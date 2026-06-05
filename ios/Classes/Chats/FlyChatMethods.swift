@@ -3684,6 +3684,7 @@ let ISEXPORT = true
             AppUtils.shared.performDeviceTokenUpdate(isForceUpdate: isForceUpdate, result: result)
         } else {
             NSLog("#Mirrorfly updateFcmToken user not logged-in")
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.NOT_LOGGED_IN_MESSAGE, details: nil))
         }
     }
     
