@@ -1,3 +1,4 @@
+/*
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.app.Activity
@@ -36,9 +37,11 @@ class TransparentActivity : Activity() {
         LogMessage.d("Transparent action", intent.action.toString())
 //        val data = intent.getBundleExtra("data")
 
-        /*val broadcastIntent = CallkitIncomingBroadcastReceiver.getIntent(this, intent.action!!, data)
+        */
+/*val broadcastIntent = CallkitIncomingBroadcastReceiver.getIntent(this, intent.action!!, data)
         broadcastIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
-        sendBroadcast(broadcastIntent)*/
+        sendBroadcast(broadcastIntent)*//*
+
         if (intent.action == Constants.ACTION_CALL_INCOMING) {
             //action call incoming
         } else {
@@ -63,4 +66,4 @@ class TransparentActivity : Activity() {
             overridePendingTransition(0, 0)
         }
     }
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.app.NotificationChannel
@@ -23,13 +24,15 @@ import java.security.SecureRandom
 object CallNotificationUtils {
 
     var unReadCallCount = 0
-    /**
+    */
+/**
      * Creates the missed call notification
      *
      * @param context        Instance of Context
      * @param message        message
      * @param messageContent notification message content
-     */
+     *//*
+
     fun createNotification(context: Context, message: String?, messageContent: String?) {
         val randomNumberGenerator = SecureRandom()
         val bound = 1000
@@ -64,7 +67,8 @@ object CallNotificationUtils {
             mChannel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),audioAttributes)
             notificationManager.createNotificationChannel(mChannel)
             notBuilder.setChannelId(channelId)
-            /*when {
+            */
+/*when {
                 isRing -> {
                     val mChannel = NotificationChannel(channelId, channelId, channelImportance)
                     val audioAttributes = AudioAttributes.Builder()
@@ -105,7 +109,8 @@ object CallNotificationUtils {
             // Set the Notification Channel for the Notification Manager.
 
             notificationManager.createNotificationChannel(createdChannel)
-            notBuilder.setChannelId(channelId)*/
+            notBuilder.setChannelId(channelId)*//*
+
 
         } else {
             //NotifyRefererUtils.setNotificationSound(notBuilder)
@@ -153,4 +158,4 @@ object CallNotificationUtils {
         return context.resources.getIdentifier(name, "drawable", context.packageName)
     }
 
-}
+}*/

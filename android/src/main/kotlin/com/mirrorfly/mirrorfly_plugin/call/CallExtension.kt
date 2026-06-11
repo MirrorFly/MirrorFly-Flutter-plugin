@@ -12,11 +12,11 @@ import com.mirrorfly.mirrorfly_plugin.call.widgets.CustomDrawable
 import com.mirrorfly.mirrorfly_plugin.call.widgets.SetDrawable
 import com.mirrorflysdk.api.ChatManager
 import com.mirrorflysdk.api.contacts.ProfileDetails
-import com.mirrorflysdk.flycall.call.utils.GroupCallUtils.getEndCallerJid
-import com.mirrorflysdk.flycall.webrtc.CallDirection
+//import com.mirrorflysdk.flycall.call.utils.GroupCallUtils.getEndCallerJid
+//import com.mirrorflysdk.flycall.webrtc.CallDirection
 import com.mirrorflysdk.flycall.webrtc.CallStatus
-import com.mirrorflysdk.flycall.webrtc.CallType
-import com.mirrorflysdk.flycall.webrtc.api.CallManager
+//import com.mirrorflysdk.flycall.webrtc.CallType
+//import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.ChatType
 import com.mirrorflysdk.flycommons.ContactType
 import com.mirrorflysdk.flycommons.LogMessage
@@ -25,7 +25,7 @@ import com.mirrorflysdk.utils.MediaUtils
 import com.mirrorflysdk.utils.Utils
 import kotlin.math.abs
 
-fun CallManager.getEndCallerJid() : String {
+/*fun CallManager.getEndCallerJid() : String {
     return try {
         if (getCallUsersList()
                 .isNotEmpty()) getCallUsersList().first() else ""
@@ -77,7 +77,7 @@ fun CallManager.getCallConnectedStatus(context: Context): String {
         }
     } else
         CallStatus.CONNECTED
-}
+}*/
 
 fun isCallTryingToConnect(callStatus: String) = callStatus.isEmpty()
         || callStatus == CallStatus.DISCONNECTED
@@ -87,7 +87,7 @@ fun isCallTimeOut(callStatus: String) =
 
 fun isCallConnecting(callStatus: String) = callStatus == CallStatus.CONNECTING || callStatus == CallStatus.CONNECTED
 
-
+/*
 fun CallManager.getOutGoingCallStatus(context: Context): String {
     val localCallStatus = getCallStatus(getCurrentUserId())
     return when {
@@ -96,7 +96,7 @@ fun CallManager.getOutGoingCallStatus(context: Context): String {
         isCallConnecting(localCallStatus) -> CallStatus.RINGING
         else -> localCallStatus
     }
-}
+}*/
 
 fun ImageView.loadUserProfileImage(context: Context, userProfileDetails: ProfileDetails) {
     val drawable: Drawable?

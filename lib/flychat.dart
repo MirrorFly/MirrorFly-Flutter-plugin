@@ -1630,7 +1630,7 @@ class Mirrorfly {
         perPageResultSize: perPageResultSize);
   }
 
-  /// Provides access to call logs list from the platform.
+  /*/// Provides access to call logs list from the platform.
   ///
   /// Retrieves a list of call logs from the platform asynchronously.
   ///
@@ -1687,7 +1687,7 @@ class Mirrorfly {
       required Function(FlyResponse response) flyCallBack}) {
     return FlyChatFlutterPlatform.instance
         .deleteCallLog(jidList, isClearAll, flyCallBack);
-  }
+  }*/
 
   /// A stream that emits events when a message is received.
   ///
@@ -2634,7 +2634,7 @@ class Mirrorfly {
   // static Stream<dynamic> get onCallReceiving =>
   //     FlyChatFlutterPlatform.instance.onCallReceiving;
 
-  /// A stream that emits events when a local video track is added.
+  /*/// A stream that emits events when a local video track is added.
   ///
   /// This stream listens for events indicating that a local video track has been added to the Mirrorfly View
   /// Each event contains information about the added video track. Use this stream
@@ -2776,7 +2776,7 @@ class Mirrorfly {
   /// });
   /// ```
   static Stream<dynamic> get onMissedCall =>
-      FlyChatFlutterPlatform.instance.onMissedCall;
+      FlyChatFlutterPlatform.instance.onMissedCall;*/
 
   /// A stream that emits events when available features are updated.
   ///
@@ -2794,7 +2794,7 @@ class Mirrorfly {
   static Stream<dynamic> get onAvailableFeaturesUpdated =>
       FlyChatFlutterPlatform.instance.onAvailableFeaturesUpdated;
 
-  /// A stream that emits events when call logs are updated.
+  /*/// A stream that emits events when call logs are updated.
   ///
   /// This stream listens for events indicating that the call logs have been updated.
   /// Each event contains information about the updated call logs. Use this stream
@@ -2840,7 +2840,7 @@ class Mirrorfly {
   /// });
   /// ```
   static Stream<dynamic> get onCallLogsCleared =>
-      FlyChatFlutterPlatform.instance.onClearAllCallLog;
+      FlyChatFlutterPlatform.instance.onClearAllCallLog;*/
 
   /*static Future<String?> imagePath({required String imgUrl}) {
     return FlyChatFlutterPlatform.instance.imagePath(imgUrl);
@@ -4812,7 +4812,7 @@ class Mirrorfly {
         callback: flyCallback);
   }
 
-  /// Configures Android CallKit behavior, including ringtone and UI display settings.
+  /*/// Configures Android CallKit behavior, including ringtone and UI display settings.
   ///
   /// This method allows you to enable or disable the incoming call ringtone and
   /// the visibility of the incoming call UI independently.
@@ -5133,7 +5133,7 @@ class Mirrorfly {
   ///
   static Future<bool?> appLaunchedFromMissedCall() async {
     return FlyChatFlutterPlatform.instance.appLaunchedFromMissedCall();
-  }
+  }*/
 
   /// Checks if the app was launched from a Mirrorfly notification.
   ///
@@ -5168,7 +5168,7 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.getAvailableFeatures();
   }
 
-  ///Used to [requestVideoCallSwitch] from Audio to Video Call
+  /*///Used to [requestVideoCallSwitch] from Audio to Video Call
   /// You can switch the Audio Call to Video Call on requesting the Remote User
   /// If the remote User Accepts, Audio Call will be changed to Video Call.
   static Future<bool> requestVideoCallSwitch() async {
@@ -5290,7 +5290,7 @@ class Mirrorfly {
   ///
   static Future<bool?> syncCallLogs() async {
     return FlyChatFlutterPlatform.instance.syncCallLogs();
-  }
+  }*/
 
   /// Sets the message event listener.
   ///
@@ -5342,7 +5342,7 @@ class Mirrorfly {
         .setGroupEventsListener(groupEventListeners);
   }
 
-  /// Sets the call event listener.
+  /*/// Sets the call event listener.
   ///
   /// Registers a listener for call events. This listener will be notified of call-related events.
   ///
@@ -5351,7 +5351,7 @@ class Mirrorfly {
   static setCallEventListener(CallEventListeners? callEventListeners) {
     return FlyChatFlutterPlatform.instance
         .setCallEventListener(callEventListeners);
-  }
+  }*/
 
 /* /// [changeCallType] Used to Change the Call Type
   /// audio for Switching to Audio Call
@@ -5385,7 +5385,7 @@ class Mirrorfly {
         .updateMetaData(identifierMetaDataList, flyCallback);
   }
 
-  /// This listener is set to listen the call link events.
+  /*/// This listener is set to listen the call link events.
   static void setCallLinkEventListener(
       CallLinkEventListeners callLinkEventsListener) {
     return FlyChatFlutterPlatform.instance
@@ -5497,7 +5497,7 @@ class Mirrorfly {
   static Future<String> getMeetUsername({required String userJid}) {
     return FlyChatFlutterPlatform.instance.getMeetUsername(userJid);
   }
-
+*/
   /// Stream that emits events when the call link subscribed success.
   static Stream<dynamic> get onSubscribeSuccess =>
       FlyChatFlutterPlatform.instance.onSubscribeSuccess;
@@ -5509,14 +5509,14 @@ class Mirrorfly {
   static Stream<dynamic> get onUsersUpdated =>
       FlyChatFlutterPlatform.instance.onUsersUpdated;
 
-  /// Stream that emits events when an incoming call is received.
+  /*/// Stream that emits events when an incoming call is received.
   /// This will only be triggered if [enableAndroidCallKitUI] is set to **false**.
   /// **Note:** The `enableAndroidCallKitUI` parameter in `Mirrorfly.initializeSDK()` has been **deprecated**.
   /// To control the native ringtone and incoming call UI behavior, use:Mirrorfly.configureAndroidCallKit(enableRingtone: true,enableIncomingCallUI: true)
   /// When enabled, the Android CallKit UI will handle incoming calls instead of this event.
   static Stream<dynamic> get onIncomingCallReceived =>
       FlyChatFlutterPlatform.instance.onIncomingCallReceived;
-
+*/
   /// Validates a group JID (Jabber ID) for a group.
   ///
   /// This method checks if the provided [groupJid] is a valid group JID. A valid group JID must:
@@ -5754,10 +5754,10 @@ class Mirrorfly {
     return FlyChatFlutterPlatform.instance.cancelRestore();
   }
 
-  // To get the current [CameraPosition] for the ongoing Call
+ /* // To get the current [CameraPosition] for the ongoing Call
   static Future<String> getCurrentCameraPosition() {
     return FlyChatFlutterPlatform.instance.getCurrentCameraPosition();
-  }
+  }*/
 
   /// Initializes customized translations for the MirrorFly platform.
   ///
@@ -5815,7 +5815,7 @@ class Mirrorfly {
 
 
 
-  ///
+  /*///
   /// This method allows the current user to answer an incoming call.
   /// ### Parameters:
   /// - [flyCallback]: A callback function that receives a [FlyResponse] as a return callback
@@ -5854,7 +5854,7 @@ class Mirrorfly {
       {required Function(FlyResponse response) flyCallback}) {
     return FlyChatFlutterPlatform.instance
         .isCallConnected(callback: flyCallback);
-  }
+  }*/
 
   /// For Live-kit calls
   static Future<void> updateVoipTokenForLiveKitCalls() {

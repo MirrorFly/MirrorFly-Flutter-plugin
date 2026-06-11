@@ -1,3 +1,4 @@
+/*
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.Manifest
@@ -37,7 +38,7 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_call_kit_ui)
-        CallManager.configureCallActivity(this)
+//        CallManager.configureCallActivity(this)
 //        CallManager.setCallUiListener(this)
         FlutterCall.setListener(this)
         LogMessage.d("CallKitUiActivity", "onCreate")
@@ -53,7 +54,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         val decline = findViewById<ImageView>(R.id.ivDeclineCall)
         decline.setOnClickListener { declineCall() }
 
-        /*if (CallManager.isOneToOneCall()) {
+        */
+/*if (CallManager.isOneToOneCall()) {
             if(CallManager.getCallUsersList().isNotEmpty()) {
                 if(CallManager.getCallUsersList().size == 1) {
                     val user = CallManager.getCallUsersList()[0]
@@ -76,7 +78,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 imageCallMember4
             )
             userName.text = membersName
-        }*/
+        }*//*
+
         updateUsersProfile()
 
         setUpCallDataAndUI(intent)
@@ -211,7 +214,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         FlutterCall.setListener(null)
     }
 
-    /*private fun checkPermission() {
+    */
+/*private fun checkPermission() {
         if (CallManager.getCallDirection() == CallDirection.INCOMING_CALL) {
             if (CallManager.getCallType() == CallType.AUDIO_CALL && (!CallManager.isAudioCallPermissionsGranted(false) || !CallManager.isNotificationPermissionsGranted())) {
                 //ask Audio call Permission
@@ -268,7 +272,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 }
             }
         }
-    }*/
+    }*//*
+
 
     private fun attendCall(fromIntent: Boolean = false) {
         if (CallManager.getCallType() == CallType.AUDIO_CALL && (!CallManager.isAudioCallPermissionsGranted() || !CallManager.isNotificationPermissionsGranted())) {
@@ -373,7 +378,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 }
 
 
-                /*val permissionsToRequest = mutableListOf<String>()
+                */
+/*val permissionsToRequest = mutableListOf<String>()
                 val recordPermissionGranted = AppUtils.isPermissionAllowed(this,Manifest.permission.RECORD_AUDIO)
                 val bluetoothPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     AppUtils.isPermissionAllowed(this,Manifest.permission.BLUETOOTH_CONNECT)
@@ -402,7 +408,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 }
                 if(permissionsToRequest.isNotEmpty()) {
                     AppUtils.askPermission(this,permissionsToRequest.toTypedArray())
-                }*/
+                }*//*
+
             }
 
             AppUtils.VIDEO_PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty()) {
@@ -432,7 +439,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                     CallManager.startVideoCapture()
                 }
 
-                /*val hasCameraPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.CAMERA)
+                */
+/*val hasCameraPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.CAMERA)
                 val hasMicPermission = AppUtils.isPermissionAllowed(this,Manifest.permission.RECORD_AUDIO)
                 val hasPhoneStatePermission = AppUtils.isPermissionAllowed(this,Manifest.permission.READ_PHONE_STATE)
                 val hasBluetoothPermission = CallManager.isBluetoothPermissionsGranted()
@@ -457,7 +465,8 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
                 }
                 if(!postNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
-                }*/
+                }*//*
+
 //                if (!hasCameraPermission || !hasMicPermission || !postNotificationPermissionGranted)
 //                    CallManager.sendCallPermissionDenied()
 //                else
@@ -680,7 +689,9 @@ class CallKitUiActivity : Activity(), CallUiFlutterListener, ProfileEventsListen
         TODO("Not yet implemented")
     }
 
-    /*override fun onShowCallUiFlutter(callAction: String?) {
+    */
+/*override fun onShowCallUiFlutter(callAction: String?) {
         TODO("Not yet implemented")
-    }*/
-}
+    }*//*
+
+}*/

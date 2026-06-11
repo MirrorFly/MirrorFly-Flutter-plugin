@@ -88,7 +88,7 @@ dependencies {
 //        exclude group: "org.webrtc",          module: "google-webrtc"
 //        exclude group: "io.github.webrtc-sdk", module: "android"  // unprefixed from webrtc-sdk
 //    }
-    implementation 'com.mirrorfly.sdk:mirrorflysdk:7.13.32_pre_19'
+    api 'com.mirrorfly.sdk:mirrorflysdk:7.13.32_pre_20'
 
     // Your plugin’s native usage (prefixed/shaded API)
 //    implementation "io.github.webrtc-sdk:android-prefixed:137.7151.01"

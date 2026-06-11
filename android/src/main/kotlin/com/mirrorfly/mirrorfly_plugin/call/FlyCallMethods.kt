@@ -1,3 +1,4 @@
+/*
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.Manifest
@@ -36,23 +37,27 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
 //        ChatManager.setMediaNotificationHelper(this)
         CallManager.setCallHelper(object : CallHelper {
             override fun getNotificationContent(callDirection: String,callMetaDataArray: Array<CallMetaData>?): String {
-                /*return if (BuildConfig.HIPAA_COMPLIANCE_ENABLED) {
+                */
+/*return if (BuildConfig.HIPAA_COMPLIANCE_ENABLED) {
                     when (callDirection) {
                         CallDirection.INCOMING_CALL -> resources.getString(R.string.new_incoming_call)
                         CallDirection.OUTGOING_CALL -> resources.getString(R.string.new_outgoing_call)
                         else -> resources.getString(R.string.new_ongoing_call)
                     }
-                } else*/
+                } else*//*
+
                 return CallNotificationHelper.getNotificationMessage()
             }
 
-            /*override fun sendCallMessage(
+            */
+/*override fun sendCallMessage(
                 details: GroupCallDetails,
                 users: List<String>,
                 invitedUsers: List<String>
             ) {
                 CallMessenger.sendCallMessage(details, users, invitedUsers)
-            }*/
+            }*//*
+
         })
         ChatManager.setNameHelper(object : NameHelper {
             override fun getDisplayName(jid: String): String {
@@ -267,9 +272,11 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
 
         })
 
-        /* }else{
+        */
+/* }else{
              result.success(true)
-         }*/
+         }*//*
+
         LogMessage.d("disconnectCall", "called")
     }
 
@@ -589,22 +596,27 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         val notificationContent =
             getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList)
         LogMessage.d("onMissedCall", notificationContent.toString())
-        /*CallNotificationUtils.createNotification(
+        */
+/*CallNotificationUtils.createNotification(
             getContext(),
             notificationContent.first, //Title Missed call Notification
             notificationContent.second //Message Content Missed call from whom
-        )*/
+        )*//*
+
         val json = JSONObject()
-        /*json.put("title",notificationContent.first)
+        */
+/*json.put("title",notificationContent.first)
         json.put("content",notificationContent.second)
         LogMessage.d("MissedCallNotification",json.toString())
-        onMissedCallNotificationStreamHandler.onMissedCall?.success(json)*/
+        onMissedCallNotificationStreamHandler.onMissedCall?.success(json)*//*
+
         json.put("isOneToOneCall", isOneToOneCall)
         json.put("userJid", userJid)
         json.put("groupId", groupId)
         json.put("callType", callType)
         json.put("userList", userList.joinToString(","))
-        /*
+        */
+/*
 
         Instead of doing the string concatenation above, we can try this below
 
@@ -613,7 +625,8 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         // Convert the array to a JSON array and add it to the JSON object
         val jsonArray = JSONArray(userList)
         json.put("userList", jsonArray)
-         */
+         *//*
+
 //        onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
         FlyMethodConstants.updateCallSinkValue(
             com.mirrorfly.mirrorfly_plugin.Constants.onMissedCall,
@@ -719,7 +732,8 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
         result.success(CallManager.getInvitedUsersList().toJsonString())
     }
 
-    /*fun changeCallType(call: MethodCall, result: MethodChannel.Result) {
+    */
+/*fun changeCallType(call: MethodCall, result: MethodChannel.Result) {
         val callType = call.argument<String>("callType") ?: ""
         if (callType == "video"){
 
@@ -744,12 +758,15 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
 
 //        AudioManager.shared().autoReRoute()
 
-    }*/
+    }*//*
+
 
     fun getCallLogsList(call: MethodCall, result: MethodChannel.Result) {
 
-        /*if (AppUtils.isNetConnected(mContext)) {
-*/
+        */
+/*if (AppUtils.isNetConnected(mContext)) {
+*//*
+
         val currentPage = call.argument("currentPage") ?: 1
 
         CallManager.getCallLogs(currentPage) { isSuccess, throwable, data ->
@@ -762,9 +779,11 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
             }
         }
 
-        /*} else {
+        */
+/*} else {
             Toast.makeText(mContext, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
-        }*/
+        }*//*
+
     }
 
     fun getLocalCallLogs(call: MethodCall, result: MethodChannel.Result) {
@@ -925,3 +944,4 @@ class FlyCallMethods : MissedCallListener,JoinCallListener {
     //#Meet Link Ends Here
 
 }
+*/

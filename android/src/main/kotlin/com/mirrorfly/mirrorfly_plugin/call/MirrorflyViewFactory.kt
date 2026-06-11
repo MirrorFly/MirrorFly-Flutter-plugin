@@ -1,3 +1,4 @@
+/*
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.content.Context
@@ -20,4 +21,4 @@ class MirrorflyViewFactory(private var binaryMessenger: BinaryMessenger) : Platf
         MirrorflyViewHashMap.saveMirrorflyView(id,userJid.toString(),view)
         return view
     }
-}
+}*/

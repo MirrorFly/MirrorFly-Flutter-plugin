@@ -9,7 +9,7 @@ import io.flutter.plugin.common.MethodChannel
 
 object FlyMethodConstants {
     private val flyChatMethods: FlyChatMethods by lazy { FlyChatMethods() }
-    private val flyCallMethods: FlyCallMethods by lazy { FlyCallMethods() }
+//    private val flyCallMethods: FlyCallMethods by lazy { FlyCallMethods() }
 
 //    val channels = arrayListOf(Constants.MirrorflyMethodChannel,Constants.callMethodChannel)
 
@@ -308,7 +308,7 @@ object FlyMethodConstants {
         Constants.onUsersUpdated to EventStreamHandler(),
         Constants.onIncomingCallReceivedChannel to EventStreamHandler(),
     )
-    val callMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
+    /*val callMethodHandlers: Map<String, (MethodCall, MethodChannel.Result) -> Unit> = mapOf(
         "getCallUsersList" to flyCallMethods::getCallUsersList,
 //        "getAudioDevices" to flyCallMethods::getAudioDevices,
 //        "selectAudioDevice" to flyCallMethods::selectAudioDevice,
@@ -365,7 +365,7 @@ object FlyMethodConstants {
         "getCurrentCameraPosition" to flyCallMethods::getCurrentCameraPosition,
         "configureAndroidCallKit" to flyCallMethods::configureAndroidCallKit,
         )
-
+*/
 
     fun initializeChatListeners(binaryMessenger: BinaryMessenger) {
         chatEventListeners.forEach { (channelName, streamHandler) ->

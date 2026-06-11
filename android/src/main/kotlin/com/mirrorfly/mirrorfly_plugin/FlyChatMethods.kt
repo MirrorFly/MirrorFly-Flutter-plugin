@@ -24,7 +24,7 @@ import androidx.core.content.FileProvider
 import com.google.gson.Gson
 import com.mirrorfly.mirrorfly_flutter_call_kit.flyHelper.FlyCallKitDefaults
 import com.mirrorfly.mirrorfly_plugin.MirrorFlyManager.getActivity
-import com.mirrorfly.mirrorfly_plugin.call.FlyCallMethods
+//import com.mirrorfly.mirrorfly_plugin.call.FlyCallMethods
 import com.mirrorfly.mirrorfly_plugin.call.getDisplayName
 import com.mirrorflysdk.ChatSDK
 import com.mirrorflysdk.GroupConfig
@@ -68,8 +68,8 @@ import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
 import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.Logger
-import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
-import com.mirrorflysdk.flycall.webrtc.api.CallManager
+//import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
+//import com.mirrorflysdk.flycall.webrtc.api.CallManager
 import com.mirrorflysdk.flycommons.ChatType
 import com.mirrorflysdk.flycommons.ChatTypeEnum
 import com.mirrorflysdk.flycommons.FlyCallback
@@ -292,7 +292,7 @@ class FlyChatMethods {
             }
         })
         Logger.enableDebugLogging(enableSDKLog)
-        FlyCallMethods().initCall()
+//        FlyCallMethods().initCall()
     }
 
     fun buildInitializeSDK(call: MethodCall, result: MethodChannel.Result) {
@@ -314,10 +314,10 @@ class FlyChatMethods {
 
         LogMessage.enableDebugLogging(enableSDKLog)
         Logger.enableDebugLogging(enableSDKLog)
-        CallManager.enableDebugLogs(enableSDKLog)
+//        CallManager.enableDebugLogs(enableSDKLog)
         ChatManager.enableChatHistory(chatHistoryEnable)
         ChatManager.enablePrivateStorage(enablePrivateStorage)
-        CallManager.enableCallLogExport(enableSDKLog)
+//        CallManager.enableCallLogExport(enableSDKLog)
         ChatManager.enableDebugLogging(enableSDKLog)
 
         SharedPreferenceManager.instance.storeBoolean(
@@ -325,7 +325,7 @@ class FlyChatMethods {
             enableAndroidCallKitUI
         )
 
-        FlyCallMethods().initCall()
+//        FlyCallMethods().initCall()
 
         ChatManager.initializeSDK(licenseKey) { isSuccess, throwable, data ->
             if (isSuccess) {
@@ -413,7 +413,7 @@ class FlyChatMethods {
                                     }
                                 })
                         }
-                        CallLogManager.setCallLogsListener(MirrorFlyManager.getFlyChatInstance())
+//                        CallLogManager.setCallLogsListener(MirrorFlyManager.getFlyChatInstance())
                         /*ChatEventsManager.setupMessageEventListener(instance)
                         ChatEventsManager.attachProfileEventsListener(instance)
                         ChatEventsManager.attachGroupEventsListener(instance)
