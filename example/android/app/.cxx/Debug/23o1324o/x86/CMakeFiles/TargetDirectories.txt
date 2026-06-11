@@ -1,0 +1,2 @@
+/Users/naveenkumar/Documents/BB-Repo/p078-mirrorfly-flutter-plugin/example/android/app/.cxx/Debug/23o1324o/x86/CMakeFiles/edit_cache.dir
+/Users/naveenkumar/Documents/BB-Repo/p078-mirrorfly-flutter-plugin/example/android/app/.cxx/Debug/23o1324o/x86/CMakeFiles/rebuild_cache.dir

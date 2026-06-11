@@ -1,0 +1,28 @@
+{
+  "buildFiles": [
+    "/Users/naveenkumar/Documents/Flutter/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/naveenkumar/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/naveenkumar/Documents/BB-Repo/p078-mirrorfly-flutter-plugin/example/android/app/.cxx/Debug/23o1324o/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/naveenkumar/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/naveenkumar/Documents/BB-Repo/p078-mirrorfly-flutter-plugin/example/android/app/.cxx/Debug/23o1324o/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {},
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/naveenkumar/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/naveenkumar/Library/Android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": []
+}

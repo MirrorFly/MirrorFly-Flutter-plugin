@@ -10,7 +10,7 @@ import MirrorFlySDK
 import Flutter
 import PushKit
 
-@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate, CallLogDelegate, JoinCallDelegate {
+@objc class FlyCall : NSObject, CallManagerDelegate, FlutterPlugin, PKPushRegistryDelegate, AudioManagerDelegate, MissedCallNotificationDelegate, FlyChatUserDelegate, CallLogDelegate, JoinCallDelegate, CallRecordingDelegate {
 
 
     var usersInCall: [String: MirrorFlySDK.CALLSTATUS] = [:]
@@ -19,6 +19,9 @@ import PushKit
         print("--- chatManagerStatus delegate \(status)")
     }
     
+    func onCallRecordingStatus(callRecordingStatus: MirrorFlySDK.CallRecordingStatus, callRecordInfo: MirrorFlySDK.CallRecordInfo) {
+         NSLog("#MirrorflyCall Events: onCallRecordingStatus -> callRecordingStatus: \(callRecordingStatus). callRecordInfo: \(callRecordInfo)")
+     }
     
     var selectedAudioRouteDevice : String = "receiver"
     var isAudioRouteMethodCall : Bool = false
@@ -78,7 +81,7 @@ import PushKit
         methodChannel = FlutterMethodChannel(name: Constants.callMethodChannel, binaryMessenger: registrar.messenger())
         registrar.addMethodCallDelegate(self, channel: methodChannel!)
         
-        CallManager.setCallEventsDelegate(delegate: self)
+        CallManager.setCallEventsDelegate(delegate: self, recordingDelegate: self)
         AudioManager.shared().audioManagerDelegate = self
         CallManager.missedCallNotificationDelegate = self
         CallManager.callLogDelegate = self

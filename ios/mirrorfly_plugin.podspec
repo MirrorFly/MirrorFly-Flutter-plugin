@@ -28,6 +28,7 @@ Pod::Spec.new do |s|
   s.dependency 'WebRTC-SDK', '144.7559.01'
   s.dependency 'SDWebImage'
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.16.1'
+  s.dependency 'SwiftCentrifuge'
 #   s.dependency 'MirrorFlySDK', '5.18.17'
   s.ios.vendored_frameworks = 'SDK/MirrorFlySDK.xcframework'
 
