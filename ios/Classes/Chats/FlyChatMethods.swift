@@ -825,15 +825,13 @@ let ISEXPORT = true
         let perPageResultSize = args["perPageResultSize"] as? Int ?? 20
 
         let metaData = args["metaDataUserList"] as? Dictionary<String, Any> ?? [:]
-        print("#fergus  metaData \(String(describing: metaData))")
+        print("metaData \(String(describing: metaData))")
 
         ContactManager.shared.getUsersList(pageNo: pageNumber, pageSize: perPageResultSize, search: searchTerm, metaData: MetaDataUserList(key: metaData["key"] as? String ?? "", value: metaData["value"] as? [String] ?? [])){ isSuccess,flyError,flyData in
-            print("#fergus isSuccess\(isSuccess), flyError \(flyError), flyData \(flyData)")
+            print("isSuccess\(isSuccess), flyError \(flyError), flyData \(flyData)")
 
             if isSuccess {
                 var userList = flyData
-                
-                print("#fergus  getUsersList\(userList)")
                 if let userData = userList.getData() as? [ProfileDetails] {
                     let userDataJson = userData.toJson()
                     print("userDataJson\(String(describing: userDataJson))")
@@ -849,11 +847,9 @@ let ISEXPORT = true
                     print("ContactManager.shared.getUsersList==**==\(String(describing: userlistJson))")
                     result(userlistJson)
                 } else {
-                    print("#fergus  user list get data not available")
+                    print("user list get data not available")
                 }
             }else{
-                print("#fergus  user failure")
-
                 if case let .unexpected(message, _) = flyError {
                     
                     result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
