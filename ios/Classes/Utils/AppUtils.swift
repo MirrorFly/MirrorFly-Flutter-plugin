@@ -121,8 +121,8 @@ class AppUtils {
                 }
                 }
                 // No token → Register for VOIP notifications
-                FlyCall.shared?.registerVoipFirstTime = false
-                FlyCall.shared?.registerForVOIPNotifications()
+               // FlyCall.shared?.registerVoipFirstTime = false
+               // FlyCall.shared?.registerForVOIPNotifications()
                 
             } else {
                 // Update device token
@@ -131,8 +131,9 @@ class AppUtils {
         }
     
     private func performDeviceTokenUpdate(isForceUpdate: Bool = false, result: FlutterResult?) {
+        VOIPManager.sharedInstance.updateDeviceToken()
         VOIPManager.sharedInstance.updateDeviceToken(isForceUpdate: isForceUpdate) { isSuccess, updatedVOIPToken, updatedDeviceToken, tokenError in
-            
+
             var response: [String: String]
 
             if isSuccess {

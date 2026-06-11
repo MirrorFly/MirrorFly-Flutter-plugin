@@ -183,7 +183,7 @@ let ISEXPORT = true
             if isSuccess {
                 ChatManager.enableChatHistory(isEnable: self.chatHistoryEnable)
                 ChatManager.enablePrivateStorage(enable: enablePrivateStorage)
-                CallManager.enableDebugLogs(enable : enableSDKLog)
+               // CallManager.enableDebugLogs(enable : enableSDKLog)
                 NSLog("SDK INITIALISE Success")
                 if Utility.getBoolFromPreference(key: Constants.isLoggedIn) && !ChatManager.isChatServerConnected() {
                     ChatManager.connect()
@@ -309,7 +309,7 @@ let ISEXPORT = true
                                 
                                 if  data["newLogin"] as? Bool ?? false{
                                     NSLog("\(Constants.tag) New User Login so Clearing the Call log in DB")
-                                    CallLogManager().deleteCallLogs()
+                                  //  CallLogManager().deleteCallLogs()
                                     
 //                                    GroupManager.shared.getGroups(fetchFromServer: true) { isSuccess, flyError, flyData in
 //                                        if isSuccess {
@@ -3453,10 +3453,10 @@ let ISEXPORT = true
             if isSuccess {
                 //        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
                 ChatManager.disconnect()
-                if (CallManager.isCallConnected() || CallManager.isOngoingCall()){
-                    CallManager.disconnectCall()
-                    CallManager.disconnectCallServers()
-                }
+//                if (CallManager.isCallConnected() || CallManager.isOngoingCall()){
+//                    CallManager.disconnectCall()
+//                    CallManager.disconnectCallServers()
+//                }
                 ChatManager.shared.resetFlyDefaults()
                 self.recentChatListBuilder = nil
 //                self.recentChatListParams = nil

@@ -2,11 +2,9 @@
 // swift-compiler-version: Apple Swift version 6.2.4 effective-5.10 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)
 // swift-module-flags: -target x86_64-apple-ios12.1-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name MirrorFlySDK
 // swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.4
-import AVFAudio
 import AVFoundation
 import Alamofire
 import AudioToolbox
-import CallKit
 import CommonCrypto
 import Contacts
 import CoreAudioTypes
@@ -16,7 +14,6 @@ import IDZSwiftCommonCrypto
 import MobileCoreServices
 import Network
 import Photos
-import WebRTC.RTCLogging
 @_exported import RealmSwift
 import SocketIO
 import Swift
@@ -25,7 +22,6 @@ import SwiftUI
 import UIKit
 import UniformTypeIdentifiers
 import UserNotifications
-import WebRTC
 @_exported import XMPPFramework
 import _Concurrency
 import _StringProcessing
@@ -1540,56 +1536,6 @@ public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
   public static func resizeImage(image: UIKit.UIImage) -> UIKit.UIImage
   @objc deinit
 }
-public enum CallAction : Swift.String {
-  case ACTION_INVITE_USERS
-  case ACTION_SHOW_CALL_UI
-  case ACTION_ANSWER_CALL
-  case ACTION_DENY_CALL
-  case ACTION_LOCAL_HANGUP
-  case ACTION_REMOTE_HANGUP
-  case ACTION_REMOTE_CHANGE_STATUS
-  case ACTION_REMOTE_OTHER_BUSY
-  case ACTION_REMOTE_BUSY
-  case ACTION_REMOTE_ENGAGED
-  case ACTION_CALL_AGAIN
-  case ACTION_CANCEL_CALL_AGAIN
-  case ACTION_SWITCH_CAMERA
-  case ACTION_REMOTE_VIDEO_STATUS
-  case ACTION_VIDEO_CALL_CONVERSION
-  case CHANGE_TO_AUDIO_CALL
-  case ACTION_VIDEO_CALL_CANCEL_CONVERSION
-  case ACTION_VIDEO_CALL_CONVERSION_ACCEPTED
-  case ACTION_VIDEO_CALL_CONVERSION_REJECTED
-  case ACTION_REMOTE_VIDEO_ADDED
-  case ACTION_AUDIO_DEVICE_CHANGED
-  case ACTION_CAMERA_SWITCH_DONE
-  case ACTION_PERMISSION_DENIED
-  case CALL_REQUEST_RESPONSE
-  case INCOMING_ACTION_PERMISSION_DENIED
-  case ACTION_LOCAL_VIDEO_MUTE
-  case ACTION_LOCAL_VIDEO_UNMUTE
-  case ACTION_LOCAL_AUDIO_MUTE
-  case ACTION_LOCAL_AUDIO_UNMUTE
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
-public enum CallState : Swift.String, Swift.Codable {
-  case IncomingCall
-  case OutgoingCall
-  case MissedCall
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class ChatManager : ObjectiveC.NSObject {
   public var connectionDelegate: (any MirrorFlySDK.ConnectionEventDelegate)?
   public var logoutDelegate: (any MirrorFlySDK.LogoutDelegate)?
@@ -1699,6 +1645,9 @@ extension MirrorFlySDK.ChatManager : MirrorFlySDK.XMPPConnectionDelegate {
   public func xmppDidDisconnected()
 }
 extension MirrorFlySDK.ChatManager : MirrorFlySDK.XMPPMessageDelegate {
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func onCalllogCleared(toJid: Swift.String?, deleteAll: Swift.Bool, lastcalllogId: Swift.String, calllogIds: [Swift.String])
+  #endif
   public func clearAllCallLogs()
   #if compiler(>=5.3) && $NonescapableTypes
   public func processAndSaveDataFromPush(messageId: Swift.String, fromJid: Swift.String, toJid: Swift.String, body: Swift.String, time: Swift.String, groupJid: Swift.String = "", isCarbon: Swift.Bool = false, pd: MirrorFlySDK.ProfileDetails? = nil, metaData: Swift.String? = "", topicID: Swift.String? = "", editMessageId: Swift.String? = "", completion: @escaping (Swift.String, MirrorFlySDK.ChatMessage?, Swift.Bool) -> Swift.Void)
@@ -1726,9 +1675,6 @@ extension MirrorFlySDK.ChatManager : MirrorFlySDK.XMPPMessageDelegate {
   #endif
   public func onMessagesClearedOrDeleted(messageIds: Swift.Array<Swift.String>)
   public func onMessagesDeletedforEveryone(messageIds: Swift.Array<Swift.String>, fromUser: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func onCalllogCleared(toJid: Swift.String?, deleteAll: Swift.Bool, lastcalllogId: Swift.String, calllogIds: [Swift.String])
-  #endif
 }
 extension MirrorFlySDK.ChatManager {
   public static func requestOTPApiService(for mobilenumber: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
@@ -1869,9 +1815,6 @@ public enum Features {
   public var hashValue: Swift.Int {
     get
   }
-}
-extension MirrorFlySDK.ChatManager : MirrorFlySDK.FeaturesDelegate {
-  public func validateAvailableFeature() -> MirrorFlySDK.AvailableFeaturesModel
 }
 extension MirrorFlySDK.ChatManager {
   public func getRecentUnreadMessageCount(chatUserJid: Swift.String) -> Swift.Int
@@ -2096,26 +2039,6 @@ public protocol XMPPMessageAcknowledgementDelegate : ObjectiveC.NSObjectProtocol
   public func nextSetOfTopicBasedChatList(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   @objc deinit
 }
-@objc @_inheritsConvenienceInitializers public class CallLogManager : ObjectiveC.NSObject {
-  public class func getAllCallLogs() -> [MirrorFlySDK.CallLog]
-  public func deleteCallLogs()
-  public func updatecallLog(callLogs: [Any], completion: @escaping () -> Swift.Void)
-  public class func getMissedCallCount() -> Swift.Int
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func clearCalllog(toJid: Swift.String?, deleteAll: Swift.Bool, lastcalllogId: Swift.String, calllogIds: [Swift.String])
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func deleteCallLog(callLogId: Swift.String? = nil, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  #endif
-  public func getCallLogs(pageNumber: Swift.Int, isForegroundSync: Swift.Bool = false, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  public func syncCallLogs(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  @objc override dynamic public init()
-  @objc deinit
-}
-extension MirrorFlySDK.CallLogManager {
-  public static func getUnreadMissedCallCount() -> Swift.Int
-  public static func resetUnreadMissedCallCount()
-}
 public struct ChatThemeRequest : Swift.Codable {
   public var username: Swift.String?
   public var chatUser: Swift.String?
@@ -2142,22 +2065,6 @@ public struct ChatBackgroundModel : Swift.Codable {
 }
 public protocol XMPPWebLogoutDelegate : ObjectiveC.NSObjectProtocol {
   func didLogoutWeb(socketIds: [Swift.String])
-}
-@objc @_inheritsConvenienceInitializers public class VOIPManager : ObjectiveC.NSObject {
-  @objc public static var sharedInstance: MirrorFlySDK.VOIPManager
-  public func savePushToken(token: Swift.String)
-  public func saveVOIPToken(token: Swift.String)
-  public func newUpdateDeviceToken(apnsToken: Swift.String = "", voipToken: Swift.String = "")
-  public func updateDeviceToken()
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func updateDeviceToken(isForceUpdate: Swift.Bool = false, onCompletion: @escaping (_ isSuccess: Swift.Bool, _ updatedVOIPToken: Swift.String, _ updatedDeviceToken: Swift.String, _ tokenError: Swift.String?) -> Swift.Void)
-  #endif
-  public func refreshToken(onCompletion: @escaping (_ isSuccess: Swift.Bool) -> Swift.Void)
-  #if compiler(>=5.3) && $NonescapableTypes
-  @objc public func processPayload(_ userInfo: [Swift.AnyHashable : Any], displayName: Swift.String = "", completion: (() -> Swift.Void)? = nil)
-  #endif
-  @objc override dynamic public init()
-  @objc deinit
 }
 public protocol AdminBlockCurrentUserDelegate : ObjectiveC.NSObjectProtocol {
   func didBlockOrUnblockCurrentUser(userJid: Swift.String, isBlocked: Swift.Bool)
@@ -2308,30 +2215,6 @@ public struct EditMessage : Swift.Codable {
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
-@_hasMissingDesignatedInitializers public class AudioManager {
-  public class func shared() -> MirrorFlySDK.AudioManager
-  public var uiSelection: MirrorFlySDK.OutputType
-  public var uiSelectionBeforeVideoSwitch: MirrorFlySDK.OutputType
-  public func didUserSelectSpeakerBeforeVideoSwitch() -> Swift.Bool
-  public func autoReRoute()
-  public var audioManagerDelegate: (any MirrorFlySDK.AudioManagerDelegate)?
-  public func initialize()
-  public func setCategoryAndMode()
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func routeToAvailableDevice(preferredDevice: MirrorFlySDK.OutputType? = nil)
-  #endif
-  public func getCurrentAudioInput()
-  public func getAllAvailableAudioInput() -> [MirrorFlySDK.AudioDevice]
-  public func routeAudioTo(device: MirrorFlySDK.OutputType, force: Swift.Bool = false)
-  public func routeToSpeaker()
-  public func currentAudioOutput() -> (MirrorFlySDK.OutputType, Swift.String)
-  public func playReconnectingTone()
-  public func stopPlayingTone()
-  @objc deinit
-}
-public protocol AudioManagerDelegate {
-  func audioRoutedTo(deviceName: Swift.String, audioDeviceType: MirrorFlySDK.OutputType)
-}
 public struct DeliveryReceipt : Swift.Codable {
   public init()
   public var receiptId: Swift.String
@@ -2344,14 +2227,6 @@ public struct DeliveryReceipt : Swift.Codable {
   public var seenTime: Swift.Double
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
-}
-public protocol JoinCallDelegate {
-  func onSubscribeSuccess()
-  func onUsersUpdated(usersList: [Swift.String])
-  #if compiler(>=5.3) && $NonescapableTypes
-  func onLocalTrack(videoTrack: WebRTC.RTCVideoTrack?)
-  #endif
-  func onError(reason: Swift.String)
 }
 public struct RecentChatListParams {
   public init()
@@ -2366,10 +2241,6 @@ public struct TopicChatListParams {
   public var limit: Swift.Int
   public var topicID: Swift.String
   public init(limit: Swift.Int = 40, topicID: Swift.String = "")
-}
-@objc @_inheritsConvenienceInitializers public class CallParticipantsStatus : ObjectiveC.NSObject {
-  @objc override dynamic public init()
-  @objc deinit
 }
 public class FileStreamReader {
   #if compiler(>=5.3) && $NonescapableTypes
@@ -2395,301 +2266,6 @@ public struct ContactInfo : Swift.Codable {
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
   public init(_ name: Swift.String, _ mobileNumber: Swift.String, _ jid: Swift.String)
-}
-public enum MuteEvent {
-  case ACTION_REMOTE_VIDEO_MUTE
-  case ACTION_REMOTE_VIDEO_UN_MUTE
-  case ACTION_REMOTE_AUDIO_MUTE
-  case ACTION_REMOTE_AUDIO_UN_MUTE
-  case ACTION_LOCAL_AUDIO_MUTE
-  case ACTION_LOCAL_AUDIO_UN_MUTE
-  case ACTION_LOCAL_VIDEO_MUTE
-  case ACTION_LOCAL_VIDEO_UN_MUTE
-  public static func == (a: MirrorFlySDK.MuteEvent, b: MirrorFlySDK.MuteEvent) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-public enum CALLSTATUS : Swift.String {
-  case CONNECTING
-  case RINGING
-  case ATTENDED
-  case CONNECTED
-  case DISCONNECTED
-  case ON_HOLD
-  case ON_RESUME
-  case USER_JOINED
-  case USER_LEFT
-  case INVITE_CALL_TIME_OUT
-  case CALL_TIME_OUT
-  case RECONNECTING
-  case RECONNECTED
-  case CALLING
-  case CALLING_10S
-  case CALLING_AFTER_10S
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
-public enum CameraPosition : Swift.String {
-  case frontCamera
-  case backCamera
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
-public protocol MobileCallActionDelegate {
-  func whileIncoming()
-  func didCallAnswered()
-  func whileDialing()
-  func didCallDisconnected()
-}
-public protocol CallStatusContactDelegate {
-  func onCallAction(callAction: MirrorFlySDK.CallAction, userId: Swift.String)
-  func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: Swift.String)
-}
-public protocol CallManagerDelegate {
-  func getDisplayName(IncomingUser: [Swift.String], incomingUserName: Swift.String, metaData: [MirrorFlySDK.CallMetadata]) -> [Swift.String]
-  func getGroupName(_ groupId: Swift.String)
-  func socketConnectionEstablished()
-  func onCallStatusUpdated(callStatus: MirrorFlySDK.CALLSTATUS, userId: Swift.String)
-  func onCallAction(callAction: MirrorFlySDK.CallAction, userId: Swift.String)
-  func onLocalVideoTrackAdded(userId: Swift.String, videoTrack: WebRTC.RTCVideoTrack)
-  func onRemoteVideoTrackAdded(userId: Swift.String, track: WebRTC.RTCVideoTrack)
-  func onMuteStatusUpdated(muteEvent: MirrorFlySDK.MuteEvent, userId: Swift.String)
-  func onUserSpeaking(userId: Swift.String, audioLevel: Swift.Int)
-  func onUserStoppedSpeaking(userId: Swift.String)
-}
-public protocol FeaturesDelegate {
-  func validateAvailableFeature() -> MirrorFlySDK.AvailableFeaturesModel
-}
-public protocol MissedCallNotificationDelegate {
-  #if compiler(>=5.3) && $NonescapableTypes
-  func onMissedCall(isOneToOneCall: Swift.Bool, userJid: Swift.String, groupId: Swift.String?, callType: Swift.String, userList: [Swift.String], metaData: [MirrorFlySDK.CallMetadata], permissionDenied: Swift.Bool)
-  #endif
-}
-@objc @_inheritsConvenienceInitializers public class CallManager : ObjectiveC.NSObject {
-  public static var delegate: (any MirrorFlySDK.CallManagerDelegate)?
-  public static var featuresDelegate: (any MirrorFlySDK.FeaturesDelegate)?
-  public static var callLogDelegate: (any MirrorFlySDK.CallLogDelegate)?
-  public static var callUiDelegate: (any MirrorFlySDK.CallUIDelegate)?
-  public static var missedCallNotificationDelegate: (any MirrorFlySDK.MissedCallNotificationDelegate)?
-  public static var onCallStatusDelegate: (any MirrorFlySDK.CallStatusContactDelegate)?
-  public static var connectionQuality: (any MirrorFlySDK.ConnectionQualityDelegate)?
-  public static var isCallStarted: Swift.Bool
-  public static var incomingUserJidArr: [Swift.String]
-  @objc override dynamic public init()
-  public class func setVideoWidthHeightAdjuster(videoWidthHeightAdjuster: any MirrorFlySDK.VideoWidthHeightAdjuster)
-  public class func getRoomLink() -> Swift.String
-  public class func setMyInfo(name: Swift.String, imageUrl: Swift.String)
-  public class func setCurrentUserId(_ myID: Swift.String)
-  public class func setSignalServerUrl(_ signalSeverUrl: Swift.String)
-  public class func setJanusWebSocketServerUrl(_ websocketSeverUrl: Swift.String)
-  public class func setIceServers(_ iceServersList: [WebRTC.RTCIceServer])
-  public class func setCallViewController(_ callUIController: UIKit.UIViewController)
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func setCallEventsDelegate(delegate: (any MirrorFlySDK.CallManagerDelegate)?, recordingDelegate: any MirrorFlySDK.CallRecordingDelegate)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func setMobileCallActionDelegate(delegate: (any MirrorFlySDK.MobileCallActionDelegate)?)
-  #endif
-  public class func disconnectCall()
-  public class func setViewToPresentController(rootViewController: UIKit.UIViewController)
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getViewControllerThatPresented() -> UIKit.UIViewController?
-  #endif
-  public class func isRemoteAudioMuted(_ userId: Swift.String) -> Swift.Bool
-  public class func isRemoteVideoMuted(_ userId: Swift.String) -> Swift.Bool
-  public class func switchCamera(completion: @escaping () -> Swift.Void)
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getCurrentCameraPosition() -> MirrorFlySDK.CameraPosition?
-  #endif
-  public class func requestVideoCallSwitch(onCompletion: @escaping (Swift.Bool) -> Swift.Void)
-  public class func checkIsUserCanceled() -> Swift.Bool
-  public class func cancelVideoCallSwitch() -> Swift.Bool
-  public class func isCallConversionRequestAvailable() -> Swift.Bool
-  public class func disableVideo()
-  public class func acceptVideoCallSwitchRequest()
-  public class func declineVideoCallSwitchRequest()
-  public class func enableVideo()
-  public class func processCallStatus(userId: Swift.String, callStatus: MirrorFlySDK.CALLSTATUS)
-  public class func getCallType() -> MirrorFlySDK.CallType
-  public class func setCallType(callType: MirrorFlySDK.CallType)
-  public class func getCallMode() -> MirrorFlySDK.CallMode
-  public class func getCallDirection() -> MirrorFlySDK.CallDirection
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getAvailableCallUsersList() -> [Swift.String]?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getCallUsersList() -> [Swift.String]?
-  #endif
-  public class func getAllCallUsersList() -> [Swift.String]
-  public class func getCallUsersWithStatus() -> [Swift.String : MirrorFlySDK.CALLSTATUS]
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getCallConnectedUsersList() -> [Swift.String]?
-  #endif
-  public class func getCallAttendedUsersList() -> [Swift.String]
-  public class func getRingingStatusUserList() -> [Swift.String]
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getGroupID() -> Swift.String?
-  #endif
-  public class func getNameString() -> Swift.String
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getTempRoomID() -> Swift.String?
-  #endif
-  public class func getTempIsGroupCall() -> Swift.Bool
-  public class func isOneToOneCall() -> Swift.Bool
-  public class func isOneToOneCallUINeedToShow() -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getTimeOutUsersList() -> [Swift.String]?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getReconnectingUsersList() -> [Swift.String]?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getCallStatus(userId: Swift.String) -> MirrorFlySDK.CALLSTATUS?
-  #endif
-  public class func getUserName(userId: Swift.String) -> Swift.String
-  public class func getUserNameAndImage(userId: Swift.String) -> (Swift.String, Swift.String)
-  public class func isAlreadyOnAnotherCall() -> Swift.Bool
-  public class func connectCallServers()
-  public class func disconnectCallServers()
-  public class func getOngoingCallSocketId() -> Swift.String
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getLocalUserId() -> Swift.String?
-  #endif
-  public class func isCallOnHold() -> Swift.Bool
-  public class func setIsCallOnHold(isCallOnHold: Swift.Bool)
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getCallerId() -> Swift.String?
-  #endif
-  public class func setCallerId(callerJid: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getEndCallerId() -> Swift.String?
-  #endif
-  public class func isCallConnected() -> Swift.Bool
-  public class func isAudioCallPermissionsGranted() -> Swift.Bool
-  public class func isVideoCallPermissionsGranted() -> Swift.Bool
-  public class func getInvitedUsersList() -> [Swift.String]
-  public class func initiateRingingTimer(userID: Swift.String)
-  public func initiateReconnectingTimer()
-  @objc public class func receiverSeemsToBeOffline(_ timer: Foundation.Timer)
-  @objc public class func callRingingStatusWaiting(_ timer: Foundation.Timer)
-  public class func getCallMetadata() -> [MirrorFlySDK.CallMetadata]
-  @objc deinit
-}
-extension MirrorFlySDK.CallManager {
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func makeVoiceCall(_ userId: Swift.String, metaData: [MirrorFlySDK.CallMetadata] = [], onCompletion: @escaping (_ isSuccess: Swift.Bool, _ flyError: MirrorFlySDK.FlyError?) -> Swift.Void) throws
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func makeVideoCall(_ userId: Swift.String, metaData: [MirrorFlySDK.CallMetadata] = [], onCompletion: @escaping (_ isSuccess: Swift.Bool, _ flyError: MirrorFlySDK.FlyError?) -> Swift.Void) throws
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func makeGroupVoiceCall(_ userIDsList: [Swift.String], groupID: Swift.String, metaData: [MirrorFlySDK.CallMetadata] = [], onCompletion: @escaping (_ isSuccess: Swift.Bool, _ flyError: MirrorFlySDK.FlyError?) -> Swift.Void) throws
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func makeGroupVideoCall(_ userIDsList: [Swift.String], groupID: Swift.String, metaData: [MirrorFlySDK.CallMetadata] = [], onCompletion: @escaping (_ isSuccess: Swift.Bool, _ flyError: MirrorFlySDK.FlyError?) -> Swift.Void) throws
-  #endif
-  @available(*, deprecated, message: "Use the CallManager.inviteUsersToOngoingCall(_ userIDsList : [String], onCompletion: @escaping (_ isSuccess: Bool, _ message: String) -> Void) instead")
-  public class func inviteUsersToOngoingCall(_ userIDsList: [Swift.String])
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func inviteUsersToOngoingCall(_ userIDsList: [Swift.String], onCompletion: @escaping (_ isSuccess: Swift.Bool, _ flyError: MirrorFlySDK.FlyError?) -> Swift.Void)
-  #endif
-  public class func muteAudio(_ isMute: Swift.Bool)
-  public class func getContactNames(IncomingUserName: [Swift.String])
-  public class func muteVideo(_ isMute: Swift.Bool)
-  public class func isVideoMuted() -> Swift.Bool
-  public class func getMuteStatus(jid: Swift.String, isAudioStatus: Swift.Bool) -> Swift.Bool
-  public class func isAudioMuted() -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getRemoteVideoTrack(jid: Swift.String) -> WebRTC.RTCVideoTrack?
-  #endif
-  @objc dynamic public class func isOngoingCall() -> Swift.Bool
-  @objc dynamic public class func checkForActiveCall() -> Swift.Bool
-  public class func enableDebugLogs(enable: Swift.Bool)
-}
-extension MirrorFlySDK.CallManager {
-  public class func checkAudioPermission()
-  public class func checkVideoPermission()
-}
-extension MirrorFlySDK.CallManager {
-  public class func getCallConnectionQuality() -> MirrorFlySDK.ConnectionQuality
-  public class func getCallReconnectionTimeOut() -> Swift.Int
-}
-extension MirrorFlySDK.CallManager {
-  public class func setupJoinCallViaLink()
-  public class func startVideoCapture()
-  public class func endVideoCapture()
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func setJoinCallDelegate(delegate: (any MirrorFlySDK.JoinCallDelegate)?)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func subscribeToCallEvents(link: Swift.String, name: Swift.String, completion: @escaping (Swift.Bool, MirrorFlySDK.FlyError?) -> Swift.Void)
-  #endif
-  public class func cleanUpJoinCallViaLink()
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func joinCall(completion: @escaping (Swift.Bool, MirrorFlySDK.FlyError?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public class func getCallLink() -> Swift.String?
-  #endif
-  public class func isCurrentCallJoinedViaLink() -> Swift.Bool
-  public class func isUserJoinedViaLink(userId: Swift.String) -> Swift.Bool
-  public class func createMeetLink(completion: @escaping MirrorFlySDK.FlyCompletionHandler)
-  public class func isConnectedToLinkServer() -> Swift.Bool
-  public class func userCallLinkViaJoined() -> Swift.Bool
-}
-public protocol CallLogDelegate : ObjectiveC.NSObjectProtocol {
-  func clearAllCallLog()
-  func deleteCallLogs(callLogId: Swift.String)
-  func onCallLogsUpdated()
-}
-public protocol CallUIDelegate : ObjectiveC.NSObjectProtocol {
-  func uiPresented()
-  func callReceived(id: Swift.String)
-  func callAttended(id: Swift.String)
-  func callDisconnected(id: Swift.String)
-}
-public enum ConnectionQuality : Swift.String {
-  case good
-  case average
-  case poor
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
-public protocol ConnectionQualityDelegate : ObjectiveC.NSObjectProtocol {
-  func didQualityUpdated(quality: MirrorFlySDK.ConnectionQuality)
-}
-public struct CallMetadata : Swift.Codable {
-  public var key: Swift.String
-  public var value: Swift.String
-  public init(key: Swift.String, value: Swift.String)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
-}
-public struct CallDataMessageList : Swift.Codable {
-  public init(key: Swift.String, value: [Swift.String])
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
-}
-extension MirrorFlySDK.CallManager {
-  public func startAttendedTimer(for JID: Swift.String)
-  public func stopAttendedTimer(for JID: Swift.String)
 }
 public struct LanguagesSupported : Swift.Codable {
   public func encode(to encoder: any Swift.Encoder) throws
@@ -3000,64 +2576,12 @@ public protocol MediaStreamDelegate : ObjectiveC.NSObjectProtocol {
   #endif
   func streamingFailed(message: MirrorFlySDK.ChatMessage)
 }
-@objc @_hasMissingDesignatedInitializers public class PeerConnectionClient : ObjectiveC.NSObject {
-  @objc deinit
-}
-extension MirrorFlySDK.PeerConnectionClient : WebRTC.RTCPeerConnectionDelegate {
-  @objc dynamic public func peerConnectionShouldNegotiate(_ peerConnection: WebRTC.RTCPeerConnection)
-  @objc dynamic public func peerConnection(_ peerConnection: WebRTC.RTCPeerConnection, didStartReceivingOn transceiver: WebRTC.RTCRtpTransceiver)
-  @objc dynamic public func peerConnection(_ peerConnection: WebRTC.RTCPeerConnection, didAdd rtpReceiver: WebRTC.RTCRtpReceiver, streams mediaStreams: [WebRTC.RTCMediaStream])
-  @objc dynamic public func peerConnection(_ peerConnection: WebRTC.RTCPeerConnection, didChange stateChanged: WebRTC.RTCSignalingState)
-  @objc dynamic public func peerConnection(_ peerConnection: WebRTC.RTCPeerConnection, didAdd stream: WebRTC.RTCMediaStream)
-  @objc dynamic public func peerConnection(_ peerConnection: WebRTC.RTCPeerConnection, didRemove stream: WebRTC.RTCMediaStream)
-  @objc dynamic public func peerConnection(_ peerConnection: WebRTC.RTCPeerConnection, didChange newState: WebRTC.RTCIceConnectionState)
-  @objc dynamic public func peerConnection(_ peerConnection: WebRTC.RTCPeerConnection, didChange newState: WebRTC.RTCIceGatheringState)
-  @objc dynamic public func peerConnection(_ peerConnection: WebRTC.RTCPeerConnection, didGenerate candidate: WebRTC.RTCIceCandidate)
-  @objc dynamic public func peerConnection(_ peerConnection: WebRTC.RTCPeerConnection, didRemove candidates: [WebRTC.RTCIceCandidate])
-  @objc dynamic public func peerConnection(_ peerConnection: WebRTC.RTCPeerConnection, didOpen dataChannel: WebRTC.RTCDataChannel)
-}
 @objc @_inheritsConvenienceInitializers public class FlyForwardManager : ObjectiveC.NSObject {
   public static let shared: MirrorFlySDK.FlyForwardManager
   public func postForwardMessage(message: [MirrorFlySDK.ChatMessage], jid: [Swift.String], mediaGroupId: Swift.String = "", completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public func postForwardRequest(parameter: Foundation.NSMutableArray, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   @objc override dynamic public init()
   @objc deinit
-}
-public enum CallRecordingStatus : Swift.String {
-  case START_PREPARING
-  case STOP_PROCESSING
-  case RECORDING
-  case STOPPED
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
-public protocol CallRecordingDelegate {
-  func onCallRecordingStatus(callRecordingStatus: MirrorFlySDK.CallRecordingStatus, callRecordInfo: MirrorFlySDK.CallRecordInfo)
-}
-public struct CallRecordInfo : Swift.Codable {
-  public var jid: Swift.String
-  public var startedTime: Swift.Int
-  public init(jid: Swift.String = "", startedTime: Swift.Int = 0)
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
-}
-@objc @_inheritsConvenienceInitializers public class CallRecordingManager : ObjectiveC.NSObject {
-  public static var callRecordingDelegate: (any MirrorFlySDK.CallRecordingDelegate)?
-  public class func setCallRecordingStatus(callRecordingStatus: MirrorFlySDK.CallRecordingStatus)
-  public class func getCallRecordingStatus() -> MirrorFlySDK.CallRecordingStatus
-  public class func setCallRecordingTimer(callRecordingTimer: Swift.Int)
-  public class func getCallRecordingTimer() -> Swift.Int
-  @objc override dynamic public init()
-  @objc deinit
-}
-extension MirrorFlySDK.CallRecordingManager {
-  public class func startCallRecording(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  public class func stopCallRecording(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
 }
 public struct HttpMethods {
 }
@@ -3437,10 +2961,6 @@ public protocol TypingStatusDelegate : ObjectiveC.NSObjectProtocol {
   func onChatTypingStatus(userJid: Swift.String, status: MirrorFlySDK.TypingStatus)
   func onGroupTypingStatus(groupJid: Swift.String, groupUserJid: Swift.String, status: MirrorFlySDK.TypingStatus)
 }
-@objc @_inheritsConvenienceInitializers public class CallPayload : ObjectiveC.NSObject {
-  @objc override dynamic public init()
-  @objc deinit
-}
 public func emptyString() -> Swift.String
 public func newLine() -> Swift.String
 public func executeOnMainThread(codeBlock: @escaping () -> Swift.Void)
@@ -3695,6 +3215,35 @@ public struct MessageReceipt : Swift.Codable {
   public func encode(to encoder: any Swift.Encoder) throws
   required public init(from decoder: any Swift.Decoder) throws
 }
+@objc @_inheritsConvenienceInitializers public class FlyCallUtils : ObjectiveC.NSObject {
+  public static let klExistingTokenAPNS: Swift.String
+  public static let klExistingTokenVOIP: Swift.String
+  public static let klUpdatedTokenAPNS: Swift.String
+  public static let klUpdatedTokenVOIP: Swift.String
+  public static var sharedInstance: MirrorFlySDK.FlyCallUtils
+  public static func generateTimestamp() -> Swift.String
+  public static func stringToDictionary(metaDataString: Swift.String) -> [Swift.String : Swift.String]
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension MirrorFlySDK.FlyCallUtils {
+  public func setConfigUserDefaults(_ value: Swift.String, withKey key: Swift.String)
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getConfigUserDefault(forKey key: Swift.String) -> Swift.String?
+  #endif
+}
+@objc @_inheritsConvenienceInitializers public class VOIPManager : ObjectiveC.NSObject {
+  @objc public static var sharedInstance: MirrorFlySDK.VOIPManager
+  public func savePushToken(token: Swift.String)
+  public func saveVOIPToken(token: Swift.String)
+  public func updateDeviceToken()
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func updateDeviceToken(isForceUpdate: Swift.Bool = false, onCompletion: @escaping (_ isSuccess: Swift.Bool, _ updatedVOIPToken: Swift.String, _ updatedDeviceToken: Swift.String, _ tokenError: Swift.String?) -> Swift.Void)
+  #endif
+  public func refreshToken(onCompletion: @escaping (_ isSuccess: Swift.Bool) -> Swift.Void)
+  @objc override dynamic public init()
+  @objc deinit
+}
 @objc public protocol ProfileEventsDelegate : ObjectiveC.NSObjectProtocol {
   @objc func userCameOnline(for jid: Swift.String)
   @objc func userWentOffline(for jid: Swift.String)
@@ -3713,8 +3262,6 @@ public struct MessageReceipt : Swift.Codable {
   @objc func hideUserLastSeen()
   @objc func getUserLastSeen()
   @objc func userDeletedTheirProfile(for jid: Swift.String, profileDetails: MirrorFlySDK.ProfileDetails)
-}
-public protocol FlyCallControllerDelegate : ObjectiveC.NSObjectProtocol {
 }
 @_hasMissingDesignatedInitializers @objcMembers public class GroupConfig {
   public static var Builder: MirrorFlySDK.GroupConfig
@@ -3992,10 +3539,6 @@ public struct BackupEditMessage : Swift.Codable {
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
-public protocol VideoWidthHeightAdjuster {
-  func getVideoHeightConstraint(usersCount: Swift.Int) -> Swift.Int
-  func getVideoWidthConstraint(usersCount: Swift.Int) -> Swift.Int
-}
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class WebLoginsManager : ObjectiveC.NSObject {
   public static let shared: MirrorFlySDK.WebLoginsManager
   public var webLogoutDelegate: (any MirrorFlySDK.WebLogoutDelegate)?
@@ -4199,23 +3742,6 @@ public struct FlyProfile : Swift.Codable {
 }
 public protocol XMPPUserBusyStatusDelegate : ObjectiveC.NSObjectProtocol {
   func didStatusChanged(status: Swift.Bool, message: Swift.String)
-}
-public struct AudioDevice {
-  public var name: Swift.String
-  public var id: Swift.String
-  public var type: MirrorFlySDK.OutputType
-}
-public enum OutputType {
-  case receiver
-  case speaker
-  case headset
-  case bluetooth
-  case none
-  public static func == (a: MirrorFlySDK.OutputType, b: MirrorFlySDK.OutputType) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
 }
 public protocol BackupEventDelegate {
   func backupProgressDidReceive(completedCount: Swift.String, completedSize: Swift.String)
@@ -4976,24 +4502,6 @@ public struct UserData {
   public var isAdminBlocked: Swift.Bool
   public init(email: Swift.String, image: Swift.String, mobileNumber: Swift.String, nickName: Swift.String, status: Swift.String, userId: Swift.String, isAdminBlocked: Swift.Bool, thumbImage: Swift.String)
 }
-@objc @_inheritsConvenienceInitializers public class FlyCallUtils : ObjectiveC.NSObject {
-  public static let klExistingTokenAPNS: Swift.String
-  public static let klExistingTokenVOIP: Swift.String
-  public static let klUpdatedTokenAPNS: Swift.String
-  public static let klUpdatedTokenVOIP: Swift.String
-  public static var sharedInstance: MirrorFlySDK.FlyCallUtils
-  public static func generateTimestamp() -> Swift.String
-  public static func convertStringToMetaDataArray(metaDataString: Swift.String) -> [MirrorFlySDK.CallMetadata]
-  public static func stringToDictionary(metaDataString: Swift.String) -> [Swift.String : Swift.String]
-  @objc override dynamic public init()
-  @objc deinit
-}
-extension MirrorFlySDK.FlyCallUtils {
-  public func setConfigUserDefaults(_ value: Swift.String, withKey key: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func getConfigUserDefault(forKey key: Swift.String) -> Swift.String?
-  #endif
-}
 public struct AvailableFeaturesModel : Swift.Codable {
   public var isGroupChatEnabled: Swift.Bool
   public var isGroupCallEnabled: Swift.Bool
@@ -5386,84 +4894,6 @@ public func hardDeleteAllTable(except types: [RealmSwift.Object.Type]? = nil)
 extension RealmSwift.Realm {
   public func safeWrite(_ block: () throws -> Swift.Void) throws
 }
-public enum CallDirection {
-  case Incoming
-  case Outgoing
-  public static func == (a: MirrorFlySDK.CallDirection, b: MirrorFlySDK.CallDirection) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
-}
-public enum CallType : Swift.String, Swift.Codable {
-  case Audio
-  case Video
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
-public enum CallMode : Swift.String, Swift.Codable {
-  case ONE_TO_ONE
-  case ONE_TO_MANY
-  case MANY_TO_MANY
-  case MEET
-  case none
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.String)
-  #endif
-  public typealias RawValue = Swift.String
-  public var rawValue: Swift.String {
-    get
-  }
-}
-@_hasMissingDesignatedInitializers public class CallDefaults {
-  @MirrorFlySDK.SDKDefaults public static var pingTime: Swift.String {
-    get
-    set
-    _modify
-  }
-  @MirrorFlySDK.SDKDefaults public static var timeDifference: Swift.String {
-    get
-    set
-    _modify
-  }
-  @MirrorFlySDK.SDKDefaults public static var myId: Swift.String {
-    get
-    set
-    _modify
-  }
-  @MirrorFlySDK.SDKDefaults public static var roomId: Swift.String {
-    get
-    set
-    _modify
-  }
-  @MirrorFlySDK.SDKDefaults public static var signalUrl: Swift.String {
-    get
-    set
-    _modify
-  }
-  @MirrorFlySDK.SDKDefaults public static var janusUrl: Swift.String {
-    get
-    set
-    _modify
-  }
-  @MirrorFlySDK.SDKDefaults public static var baseUrl: Swift.String {
-    get
-    set
-    _modify
-  }
-  @MirrorFlySDK.SDKDefaults public static var isDBMigrationDone: Swift.Bool {
-    get
-    set
-    _modify
-  }
-  public static func clearAlCallDefaults()
-  @objc deinit
-}
 public struct FlyUtils {
   public static let bufferSize: Swift.Int
   public static let backUpBufferSize: Swift.Int
@@ -5688,8 +5118,6 @@ public protocol XMPPArchiveDelegate : ObjectiveC.NSObjectProtocol {
   func updateArchiveUnArchiveChats(toUser: Swift.String, archiveStatus: Swift.Bool)
   func updateArchivedSettings(archivedSettingsStatus: Swift.Bool)
 }
-@objc public protocol ikDelegate {
-}
 public protocol WebLogoutDelegate {
   func didLogoutWeb(socketIds: [Swift.String])
 }
@@ -5750,36 +5178,6 @@ public struct ProfileStatus : Swift.Codable {
 }
 public protocol UserBusyStatusDelegate : AnyObject {
   func didUpdateBusyStatus(status: Swift.Bool, message: Swift.String)
-}
-public struct CallLog : Swift.Codable {
-  public let callLogId: Swift.String
-  public let fromUserId: Swift.String
-  public let toUserId: Swift.String
-  public var callType: MirrorFlySDK.CallType
-  public var callReceivedTime: Swift.Double
-  public var callAttendedTime: Swift.Double
-  public var callEndedTime: Swift.Double
-  public var callState: MirrorFlySDK.CallState
-  public var callMode: MirrorFlySDK.CallMode
-  public var userList: [Swift.String]
-  public var userProfileList: [MirrorFlySDK.ProfileDetails?]
-  public var groupId: Swift.String?
-  public var customData: Swift.String?
-  public var isLogSynced: Swift.Bool
-  public var isSelected: Swift.Bool
-  public var displayName: Swift.String
-  public var metaData: [MirrorFlySDK.CallMetadata]
-  public func encode(to encoder: any Swift.Encoder) throws
-  public init(from decoder: any Swift.Decoder) throws
-}
-@_inheritsConvenienceInitializers @objc public class NotificationExtensionSupport : ObjectiveC.NSObject {
-  public typealias pushReturnBlock = (UserNotifications.UNMutableNotificationContent?) -> Swift.Void
-  public static let shared: MirrorFlySDK.NotificationExtensionSupport
-  #if compiler(>=5.3) && $NonescapableTypes
-  @objc public func didReceiveNotificationRequest(_ bestContent: UserNotifications.UNMutableNotificationContent?, appName: Swift.String, onCompletion: @escaping MirrorFlySDK.NotificationExtensionSupport.pushReturnBlock)
-  #endif
-  @objc override dynamic public init()
-  @objc deinit
 }
 public enum MessageType : Swift.String, Swift.CustomStringConvertible, Swift.CaseIterable, Swift.Codable {
   case text
@@ -5875,22 +5273,6 @@ extension MirrorFlySDK.ContactManager {
   #if compiler(>=5.3) && $NonescapableTypes
   public func getEnterpriseUsers(page: Swift.Int, size: Swift.Int, searchTerm: Swift.String, completion: @escaping (_ profiles: [MirrorFlySDK.ProfileDetails], _ totalPages: Swift.Int, _ totalRecords: Swift.Int, _ error: MirrorFlySDK.FlyError?) -> Swift.Void)
   #endif
-}
-public enum ARDSignalingChannelState : Swift.Int {
-  case kARDSignalingChannelStateClosed
-  case kARDSignalingChannelStateOpen
-  case kARDSignalingChannelStateCreate
-  case kARDSignalingChannelStateAttach
-  case kARDSignalingChannelStateJoin
-  case kARDSignalingChannelStateOffer
-  case kARDSignalingChannelStateError
-  #if compiler(>=5.3) && $NonescapableTypes
-  public init?(rawValue: Swift.Int)
-  #endif
-  public typealias RawValue = Swift.Int
-  public var rawValue: Swift.Int {
-    get
-  }
 }
 public struct MetaData : Swift.Codable {
   public init(key: Swift.String, value: Swift.String)
@@ -6033,36 +5415,6 @@ public enum ChannelMessageMode : Swift.String, Swift.Codable {
   #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
-    get
-  }
-}
-@_hasMissingDesignatedInitializers @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-@objcMembers public class CallSDK {
-  public static let Builder: MirrorFlySDK.CallSDK
-  public func setUserId(id: Swift.String) -> MirrorFlySDK.CallSDK
-  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func setDomainBaseUrl(baseUrl: Swift.String) -> MirrorFlySDK.CallSDK
-  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func setSignalSeverUrl(url: Swift.String) -> MirrorFlySDK.CallSDK
-  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func setJanusSeverUrl(url: Swift.String) -> MirrorFlySDK.CallSDK
-  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func setAppGroupContainerID(containerID: Swift.String) -> MirrorFlySDK.CallSDK
-  @available(*, deprecated, message: "Call CallManager.setCallViewController() to setViewController")
-  public func setCallViewController(viewController: UIKit.UIViewController) -> MirrorFlySDK.CallSDK
-  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func setICEServersList(iceServers: [WebRTC.RTCIceServer]) -> MirrorFlySDK.CallSDK
-  @available(*, deprecated, message: "Call CallManager.setCallEventsDelegate() to observe Call Events")
-  public func setCallDelegate(delegate: any MirrorFlySDK.CallManagerDelegate) -> MirrorFlySDK.CallSDK
-  @objc @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func buildAndInitialize() throws
-  @objc deinit
-}
-public enum FlyCallError : Swift.Error {
-  case invalid_input
-  public static func == (a: MirrorFlySDK.FlyCallError, b: MirrorFlySDK.FlyCallError) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
     get
   }
 }
@@ -6329,12 +5681,6 @@ extension MirrorFlySDK.MediaQuality : Swift.Hashable {}
 extension MirrorFlySDK.MediaStatus : Swift.Equatable {}
 extension MirrorFlySDK.MediaStatus : Swift.Hashable {}
 extension MirrorFlySDK.MediaStatus : Swift.RawRepresentable {}
-extension MirrorFlySDK.CallAction : Swift.Equatable {}
-extension MirrorFlySDK.CallAction : Swift.Hashable {}
-extension MirrorFlySDK.CallAction : Swift.RawRepresentable {}
-extension MirrorFlySDK.CallState : Swift.Equatable {}
-extension MirrorFlySDK.CallState : Swift.Hashable {}
-extension MirrorFlySDK.CallState : Swift.RawRepresentable {}
 extension MirrorFlySDK.Features : Swift.Equatable {}
 extension MirrorFlySDK.Features : Swift.Hashable {}
 extension MirrorFlySDK.AutoDownloadType : Swift.Equatable {}
@@ -6349,17 +5695,6 @@ extension MirrorFlySDK.ContactType : Swift.RawRepresentable {}
 extension MirrorFlySDK.DeliveryStatus : Swift.Equatable {}
 extension MirrorFlySDK.DeliveryStatus : Swift.Hashable {}
 extension MirrorFlySDK.DeliveryStatus : Swift.RawRepresentable {}
-extension MirrorFlySDK.MuteEvent : Swift.Equatable {}
-extension MirrorFlySDK.MuteEvent : Swift.Hashable {}
-extension MirrorFlySDK.CALLSTATUS : Swift.Equatable {}
-extension MirrorFlySDK.CALLSTATUS : Swift.Hashable {}
-extension MirrorFlySDK.CALLSTATUS : Swift.RawRepresentable {}
-extension MirrorFlySDK.CameraPosition : Swift.Equatable {}
-extension MirrorFlySDK.CameraPosition : Swift.Hashable {}
-extension MirrorFlySDK.CameraPosition : Swift.RawRepresentable {}
-extension MirrorFlySDK.ConnectionQuality : Swift.Equatable {}
-extension MirrorFlySDK.ConnectionQuality : Swift.Hashable {}
-extension MirrorFlySDK.ConnectionQuality : Swift.RawRepresentable {}
 extension MirrorFlySDK.AudioStatus : Swift.Equatable {}
 extension MirrorFlySDK.AudioStatus : Swift.Hashable {}
 extension MirrorFlySDK.AudioStatus : Swift.RawRepresentable {}
@@ -6378,9 +5713,6 @@ extension MirrorFlySDK.ChatType : Swift.RawRepresentable {}
 extension MirrorFlySDK.OfflineActionType : Swift.Equatable {}
 extension MirrorFlySDK.OfflineActionType : Swift.Hashable {}
 extension MirrorFlySDK.OfflineActionType : Swift.RawRepresentable {}
-extension MirrorFlySDK.CallRecordingStatus : Swift.Equatable {}
-extension MirrorFlySDK.CallRecordingStatus : Swift.Hashable {}
-extension MirrorFlySDK.CallRecordingStatus : Swift.RawRepresentable {}
 extension MirrorFlySDK.AudioType : Swift.Equatable {}
 extension MirrorFlySDK.AudioType : Swift.Hashable {}
 extension MirrorFlySDK.AudioType : Swift.RawRepresentable {}
@@ -6404,8 +5736,6 @@ extension MirrorFlySDK.Utils.validationError : Swift.Hashable {}
 extension MirrorFlySDK.PushServerType : Swift.Equatable {}
 extension MirrorFlySDK.PushServerType : Swift.Hashable {}
 extension MirrorFlySDK.PushServerType : Swift.RawRepresentable {}
-extension MirrorFlySDK.OutputType : Swift.Equatable {}
-extension MirrorFlySDK.OutputType : Swift.Hashable {}
 extension MirrorFlySDK.TypingStatus : Swift.Equatable {}
 extension MirrorFlySDK.TypingStatus : Swift.Hashable {}
 extension MirrorFlySDK.TypingStatus : Swift.RawRepresentable {}
@@ -6415,25 +5745,12 @@ extension MirrorFlySDK.FlyProgress : Swift.RawRepresentable {}
 extension MirrorFlySDK.NotificationSoundKeys : Swift.Equatable {}
 extension MirrorFlySDK.NotificationSoundKeys : Swift.Hashable {}
 extension MirrorFlySDK.NotificationSoundKeys : Swift.RawRepresentable {}
-extension MirrorFlySDK.CallDirection : Swift.Equatable {}
-extension MirrorFlySDK.CallDirection : Swift.Hashable {}
-extension MirrorFlySDK.CallType : Swift.Equatable {}
-extension MirrorFlySDK.CallType : Swift.Hashable {}
-extension MirrorFlySDK.CallType : Swift.RawRepresentable {}
-extension MirrorFlySDK.CallMode : Swift.Equatable {}
-extension MirrorFlySDK.CallMode : Swift.Hashable {}
-extension MirrorFlySDK.CallMode : Swift.RawRepresentable {}
-extension MirrorFlySDK.ARDSignalingChannelState : Swift.Equatable {}
-extension MirrorFlySDK.ARDSignalingChannelState : Swift.Hashable {}
-extension MirrorFlySDK.ARDSignalingChannelState : Swift.RawRepresentable {}
 extension MirrorFlySDK.ChannelAccessMode : Swift.Equatable {}
 extension MirrorFlySDK.ChannelAccessMode : Swift.Hashable {}
 extension MirrorFlySDK.ChannelAccessMode : Swift.RawRepresentable {}
 extension MirrorFlySDK.ChannelMessageMode : Swift.Equatable {}
 extension MirrorFlySDK.ChannelMessageMode : Swift.Hashable {}
 extension MirrorFlySDK.ChannelMessageMode : Swift.RawRepresentable {}
-extension MirrorFlySDK.FlyCallError : Swift.Equatable {}
-extension MirrorFlySDK.FlyCallError : Swift.Hashable {}
 extension MirrorFlySDK.MessageStatus : Swift.Equatable {}
 extension MirrorFlySDK.MessageStatus : Swift.Hashable {}
 extension MirrorFlySDK.MessageStatus : Swift.RawRepresentable {}

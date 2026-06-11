@@ -284,7 +284,6 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 @import AVFoundation;
 @import Foundation;
 @import ObjectiveC;
-@import WebRTC;
 #endif
 
 #endif
@@ -321,39 +320,6 @@ SWIFT_CLASS("_TtC12MirrorFlySDK13BackupManager")
 @interface BackupManager : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
-@end
-
-SWIFT_CLASS("_TtC12MirrorFlySDK14CallLogManager")
-@interface CallLogManager : NSObject
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-@end
-
-@class NSTimer;
-SWIFT_CLASS("_TtC12MirrorFlySDK11CallManager")
-@interface CallManager : NSObject
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-+ (void)receiverSeemsToBeOffline:(NSTimer * _Nonnull)timer;
-+ (void)callRingingStatusWaiting:(NSTimer * _Nonnull)timer;
-@end
-
-@interface CallManager (SWIFT_EXTENSION(MirrorFlySDK))
-+ (BOOL)isOngoingCall SWIFT_WARN_UNUSED_RESULT;
-+ (BOOL)checkForActiveCall SWIFT_WARN_UNUSED_RESULT;
-@end
-
-SWIFT_CLASS("_TtC12MirrorFlySDK22CallParticipantsStatus")
-@interface CallParticipantsStatus : NSObject
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-@end
-
-SWIFT_CLASS("_TtC12MirrorFlySDK11CallPayload")
-@interface CallPayload : NSObject
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-@end
-
-SWIFT_CLASS("_TtC12MirrorFlySDK20CallRecordingManager")
-@interface CallRecordingManager : NSObject
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 SWIFT_CLASS("_TtC12MirrorFlySDK14CallUsersModel")
@@ -686,15 +652,6 @@ typedef SWIFT_ENUM(NSInteger, MessageStatus, open) {
 };
 
 @class UNMutableNotificationContent;
-SWIFT_CLASS("_TtC12MirrorFlySDK28NotificationExtensionSupport")
-@interface NotificationExtensionSupport : NSObject
-/// It is the method where notification will be received to handle
-/// @param bestContent UNMutableNotificationContent which should be returned as notification display
-/// @param onCompletion It is the completion method called when payload processing is completed
-- (void)didReceiveNotificationRequest:(UNMutableNotificationContent * _Nullable)bestContent appName:(NSString * _Nonnull)appName onCompletion:(void (^ _Nonnull)(UNMutableNotificationContent * _Nullable))onCompletion;
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-@end
-
 SWIFT_CLASS("_TtC12MirrorFlySDK26NotificationMessageSupport")
 @interface NotificationMessageSupport : NSObject
 - (void)didReceiveNotificationRequest:(UNMutableNotificationContent * _Nullable)bestContent appName:(NSString * _Nonnull)appName onCompletion:(void (^ _Nonnull)(UNMutableNotificationContent * _Nullable, ChatMessage * _Nullable))onCompletion;
@@ -740,32 +697,6 @@ SWIFT_CLASS("_TtC12MirrorFlySDK18ParticipantDetails")
 - (nonnull instancetype)initWithJid:(NSString * _Nonnull)jid OBJC_DESIGNATED_INITIALIZER;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
-@end
-
-SWIFT_CLASS("_TtC12MirrorFlySDK20PeerConnectionClient")
-@interface PeerConnectionClient : NSObject
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
-@end
-
-@class RTCPeerConnection;
-@class RTCRtpTransceiver;
-@class RTCRtpReceiver;
-@class RTCMediaStream;
-@class RTCIceCandidate;
-@class RTCDataChannel;
-@interface PeerConnectionClient (SWIFT_EXTENSION(MirrorFlySDK)) <RTCPeerConnectionDelegate>
-- (void)peerConnectionShouldNegotiate:(RTCPeerConnection * _Nonnull)peerConnection;
-- (void)peerConnection:(RTCPeerConnection * _Nonnull)peerConnection didStartReceivingOnTransceiver:(RTCRtpTransceiver * _Nonnull)transceiver;
-- (void)peerConnection:(RTCPeerConnection * _Nonnull)peerConnection didAddReceiver:(RTCRtpReceiver * _Nonnull)rtpReceiver streams:(NSArray<RTCMediaStream *> * _Nonnull)mediaStreams;
-- (void)peerConnection:(RTCPeerConnection * _Nonnull)peerConnection didChangeSignalingState:(RTCSignalingState)stateChanged;
-- (void)peerConnection:(RTCPeerConnection * _Nonnull)peerConnection didAddStream:(RTCMediaStream * _Nonnull)stream;
-- (void)peerConnection:(RTCPeerConnection * _Nonnull)peerConnection didRemoveStream:(RTCMediaStream * _Nonnull)stream;
-- (void)peerConnection:(RTCPeerConnection * _Nonnull)peerConnection didChangeIceConnectionState:(RTCIceConnectionState)newState;
-- (void)peerConnection:(RTCPeerConnection * _Nonnull)peerConnection didChangeIceGatheringState:(RTCIceGatheringState)newState;
-- (void)peerConnection:(RTCPeerConnection * _Nonnull)peerConnection didGenerateIceCandidate:(RTCIceCandidate * _Nonnull)candidate;
-- (void)peerConnection:(RTCPeerConnection * _Nonnull)peerConnection didRemoveIceCandidates:(NSArray<RTCIceCandidate *> * _Nonnull)candidates;
-- (void)peerConnection:(RTCPeerConnection * _Nonnull)peerConnection didOpenDataChannel:(RTCDataChannel * _Nonnull)dataChannel;
 @end
 
 SWIFT_CLASS("_TtC12MirrorFlySDK14ProfileDetails")
@@ -958,9 +889,6 @@ SWIFT_CLASS("_TtC12MirrorFlySDK11VOIPManager")
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) VOIPManager * _Nonnull sharedInstance;)
 + (VOIPManager * _Nonnull)sharedInstance SWIFT_WARN_UNUSED_RESULT;
 + (void)setSharedInstance:(VOIPManager * _Nonnull)value;
-/// It is used to process VOIP call
-/// @param userInfo call of that VOIP notification
-- (void)processPayload:(NSDictionary * _Nonnull)userInfo displayName:(NSString * _Nonnull)displayName completion:(void (^ _Nullable)(void))completion;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -968,10 +896,6 @@ SWIFT_CLASS("_TtC12MirrorFlySDK16WebLoginsManager")
 @interface WebLoginsManager : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
-@end
-
-SWIFT_PROTOCOL("_TtP12MirrorFlySDK10ikDelegate_")
-@protocol ikDelegate
 @end
 
 #endif
