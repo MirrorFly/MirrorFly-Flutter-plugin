@@ -1122,7 +1122,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }*/
 //        }
         binding.addOnNewIntentListener(instance)
-        val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
+//        val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
         ChatManager.setAvailableFeaturesCallback(instance)
 //        CallManager.setMissedCallListener(instance)
         /*if (isRegistered) {

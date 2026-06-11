@@ -320,10 +320,10 @@ class FlyChatMethods {
 //        CallManager.enableCallLogExport(enableSDKLog)
         ChatManager.enableDebugLogging(enableSDKLog)
 
-        SharedPreferenceManager.instance.storeBoolean(
-            MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI,
-            enableAndroidCallKitUI
-        )
+//        SharedPreferenceManager.instance.storeBoolean(
+//            MirrorFlyPreferenceUtils.ENABLE_ANDROID_CALL_KIT_UI,
+//            enableAndroidCallKitUI
+//        )
 
 //        FlyCallMethods().initCall()
 

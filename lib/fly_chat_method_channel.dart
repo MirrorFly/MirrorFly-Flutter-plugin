@@ -1671,7 +1671,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     // onCallReceivingChannel.receiveBroadcastStream().listen((event) {
     //   onCallReceivingStreamController.add(event);});
 
-    onLocalVideoTrackAddedChannel.receiveBroadcastStream().listen((event) {
+    /*onLocalVideoTrackAddedChannel.receiveBroadcastStream().listen((event) {
       var data = json.decode(event.toString());
       var userJid = data["userJid"] ?? "";
       onLocalVideoTrackAddedStreamController.add(event);
@@ -1772,7 +1772,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }, onError: (error) {
       LogMessage.d("MirrorFly", "Error on missed call: $error");
       onMissedCallStreamController.addError(error);
-    });
+    });*/
 
     onAvailableFeaturesUpdatedChannel.receiveBroadcastStream().listen((event) {
       client.AvailableFeatures availableFeatures =
@@ -1784,7 +1784,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onAvailableFeaturesUpdatedStreamController.addError(error);
     });
 
-    onCallLogsUpdatedChannel.receiveBroadcastStream().listen((event) {
+    /*onCallLogsUpdatedChannel.receiveBroadcastStream().listen((event) {
       onCallLogsUpdatedStreamController.add(event);
       callEventsListener?.onCallLogsUpdated();
     }, onError: (error) {
@@ -1806,7 +1806,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }, onError: (error) {
       LogMessage.d("MirrorFly", "Error on clear all call log: $error");
       onClearAllCallLogStreamController.addError(error);
-    });
+    });*/
 
     onSubscribeSuccessChannel.receiveBroadcastStream().listen((event) {
       debugPrint("onSubscribeSuccessChannel event = $event");
@@ -1839,11 +1839,11 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onUsersUpdatedStreamController.addError(error);
     });
 
-    onIncomingCallReceivedChannel.receiveBroadcastStream().listen((event) {
+    /*onIncomingCallReceivedChannel.receiveBroadcastStream().listen((event) {
       debugPrint("onIncomingCallReceivedChannel event = $event");
       onIncomingCallReceivedStreamController.add(event);
       callEventsListener?.onIncomingCallReceived(event);
-    });
+    });*/
   }
 
   /*@override
