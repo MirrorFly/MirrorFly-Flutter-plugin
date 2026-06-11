@@ -1,3 +1,4 @@
+/*
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.app.PendingIntent
@@ -565,7 +566,8 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                         }
                     }
                 }
-                /*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
+                */
+/*CallConstants.ACTION_INVITE_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_MEDIA_CALL_MESSAGE_RECEIVED->{}
             CallConstants.ACTION_START_VIDEO_CAPTURE->{}
             CallAction.ACTION_INVITE_USERS->{}
@@ -592,7 +594,8 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             CallAction.USER_SPEAKING->{}
             CallAction.USER_STOPPED_SPEAKING->{}
             CallAction.ACTION_MAKE_SERVER_CONNECTION->{}
-            CallAction.ACTION_CLOSE_SERVER_CONNECTION->{}*/
+            CallAction.ACTION_CLOSE_SERVER_CONNECTION->{}*//*
+
             }
         } else {
             LogMessage.d(
@@ -669,7 +672,8 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
             }
         }
 
-        /*CallManager.answerCall(object : CallActionListener {
+        */
+/*CallManager.answerCall(object : CallActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
                 LogMessage.d(tag,"isSuccess $isSuccess message $message")
                 if (isSuccess) {
@@ -681,24 +685,29 @@ class FlyCallPlugin : MethodChannel.MethodCallHandler,
                 }
             }
 
-        })*/
+        })*//*
+
     }
 }
 
 
-/** Provides a static method for extracting lifecycle objects from Flutter plugin bindings.  */
+*/
+/** Provides a static method for extracting lifecycle objects from Flutter plugin bindings.  *//*
+
 object FlutterLifecycleAdapter {
-    /**
+    */
+/**
      * Returns the lifecycle object for the activity a plugin is bound to.
      *
      *
      * Returns null if the Flutter engine version does not include the lifecycle extraction code.
      * (this probably means the Flutter engine version is too old).
-     */
+     *//*
+
     fun getActivityLifecycle(
         activityPluginBinding: ActivityPluginBinding
     ): Lifecycle {
         val reference = activityPluginBinding.lifecycle as HiddenLifecycleReference
         return reference.lifecycle
     }
-}
+}*/

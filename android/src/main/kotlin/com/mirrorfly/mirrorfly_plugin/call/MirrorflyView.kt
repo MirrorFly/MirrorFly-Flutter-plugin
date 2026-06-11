@@ -1,3 +1,4 @@
+/*
 package com.mirrorfly.mirrorfly_plugin.call
 
 import android.content.Context
@@ -335,13 +336,15 @@ class MirrorflyView(
 
     }
 
-    /**
+    */
+/**
      * This method converts device specific pixels to density independent pixels.
      *
      * @param px A value in px (pixels) unit. Which we need to convert into db
      * @param context Context to get resources and device specific display metrics
      * @return A float value to represent dp equivalent to px value
-     */
+     *//*
+
     fun convertPixelsToDp(px: Float, context: Context): Float {
         return px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
     }
@@ -489,4 +492,4 @@ class MirrorflyView(
 
     override fun usersWhoBlockedMeListFetched(jidList: List<String>) {
     }
-}
+}*/

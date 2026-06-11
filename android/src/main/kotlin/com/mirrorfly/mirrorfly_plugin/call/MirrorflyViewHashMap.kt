@@ -1,3 +1,4 @@
+/*
 package com.mirrorfly.mirrorfly_plugin.call
 
 import com.mirrorflysdk.flycommons.LogMessage
@@ -35,4 +36,4 @@ object MirrorflyViewHashMap {
         LogMessage.d("#MirrorflyView #Hash","clearAll $mirrorflyViews $viewidsforJid")
     }
 
-}
+}*/

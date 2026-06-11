@@ -22,10 +22,10 @@ import com.mirrorflysdk.backup.BackupListener
 import com.mirrorflysdk.backup.BackupManager
 import com.mirrorflysdk.backup.RestoreListener
 import com.mirrorflysdk.backup.RestoreManager
-import com.mirrorflysdk.flycall.webrtc.CallType
+/*import com.mirrorflysdk.flycall.webrtc.CallType
 import com.mirrorflysdk.flycall.webrtc.api.CallLogManager
 import com.mirrorflysdk.flycall.webrtc.api.CallManager
-import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener
+import com.mirrorflysdk.flycall.webrtc.api.MissedCallListener*/
 import com.mirrorflysdk.flycommons.*
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.CallMetaData
@@ -35,6 +35,7 @@ import io.flutter.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import org.json.JSONArray
@@ -48,7 +49,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
     ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
     TypingEventListener, TypingStatusListener, ActivityAware, DefaultLifecycleObserver,
     PluginRegistry.NewIntentListener, PluginRegistry.ActivityResultListener,
-    AvailableFeaturesCallback, MissedCallListener, CallLogManager.CallLogsListener,
+    AvailableFeaturesCallback,/* MissedCallListener, CallLogManager.CallLogsListener,*/
     MediaNotificationHelper, MuteEventsListener {
 
     //    var instance: FlyChatPlugin = FlyChatPlugin()
@@ -71,11 +72,11 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
         fun sharePluginWithRegister(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
             Log.d("#FlyChatEvents", "sharePluginWithRegister")
-            val factory = MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
-            flutterPluginBinding.platformViewRegistry.registerViewFactory(
-                Constants.mirrorflyView,
-                factory
-            )
+//            val factory = MirrorflyViewFactory(flutterPluginBinding.binaryMessenger)
+//            flutterPluginBinding.platformViewRegistry.registerViewFactory(
+//                Constants.mirrorflyView,
+//                factory
+//            )
             MirrorFlyManager.init(flutterPluginBinding.applicationContext)
             MirrorFlyManager.setPluginBinding(flutterPluginBinding)
 //            CallManager.init(flutterPluginBinding.applicationContext)
@@ -97,7 +98,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             }
             instance.mContext = context
             initChannels(binaryMessenger)
-            FlyCallPlugin().init()
+//            FlyCallPlugin().init()
 
             /**
              * Attach Event Listeners should add at the SDK Initialisation and
@@ -105,7 +106,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
              **/
 
             ChatConnectionManager.addChatConnectionListener(instance)
-            CallManager.setMissedCallListener(instance)
+//            CallManager.setMissedCallListener(instance)
             ChatEventsManager.setupMessageEventListener(instance)
             ChatManager.setMediaNotificationHelper(instance)
             ChatManager.setAvailableFeaturesCallback(instance)
@@ -118,7 +119,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             methodChannels[binaryMessenger] = channel
             channel.setMethodCallHandler(instance)
             initMethodAndEvent(binaryMessenger)
-            FlyCallPlugin().initChannels()
+//            FlyCallPlugin().initChannels()
         }
 
         //        private val eventHandlers = mutableListOf<WeakReference<EventCallbackHandler>>()
@@ -1123,16 +1124,16 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         binding.addOnNewIntentListener(instance)
         val isRegistered = SharedPreferenceManager.instance.getBoolean("isRegistered")
         ChatManager.setAvailableFeaturesCallback(instance)
-        CallManager.setMissedCallListener(instance)
-        if (isRegistered) {
+//        CallManager.setMissedCallListener(instance)
+        /*if (isRegistered) {
             CallLogManager.setCallLogsListener(instance)
-            /*ChatEventsManager.setupMessageEventListener(this)
+            *//*ChatEventsManager.setupMessageEventListener(this)
             ChatEventsManager.attachProfileEventsListener(this)
             ChatEventsManager.attachGroupEventsListener(this)
             ChatEventsManager.attachLoginEventsListener(this)
-            ChatEventsManager.attachTypingEventListener(this)*/
-        }
-        instance.lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
+            ChatEventsManager.attachTypingEventListener(this)*//*
+        }*/
+        instance.lifecycle = (binding.lifecycle as HiddenLifecycleReference).lifecycle
         instance.lifecycle.addObserver(instance)
     }
 
@@ -1164,7 +1165,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         // Bind to the service. If the service is in foreground mode, this signals to the service
         // that since this activity is in the foreground, the service can exit foreground mode.
         // for showing call notification
-        CallManager.bindCallService()
+//        CallManager.bindCallService()
         Log.d("#lifecycle", "onStart")
     }
 
@@ -1173,7 +1174,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         // in the foreground, and the service can respond by promoting itself to a foreground
         // service.
         // for showing call notification
-        CallManager.unbindCallService()
+//        CallManager.unbindCallService()
         Log.d("#lifecycle", "onStop")
         super.onStop(owner)
     }
@@ -1287,7 +1288,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         )
     }
 
-    override fun onMissedCall(
+    /*override fun onMissedCall(
         isOneToOneCall: Boolean,
         userJid: String,
         groupId: String?,
@@ -1304,7 +1305,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         json.put("groupId", groupId ?: "")
         json.put("callType", callType)
         json.put("userList", userList.joinToString(","))
-        /*
+        *//*
 
         Instead of doing the string concatenation above, we can try this below
 
@@ -1318,7 +1319,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
         we can pass the array list directly as done in usersIBlockedListFetched
 
-         */
+         *//*
         if (MirrorFlyManager.getActivity() != null) {
             MirrorFlyManager.getActivity()?.runOnUiThread {
 //                onMissedCallNotificationStreamHandler.onMissedCall?.success(json.toString())
@@ -1340,9 +1341,9 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 notificationContent.second
             )
         }
-    }
+    }*/
 
-    private fun getMissedCallNotificationContent(
+    /*private fun getMissedCallNotificationContent(
         isOneToOneCall: Boolean, userJid: String, groupId: String?, callType: String,
         userList: ArrayList<String>
     ): Pair<String, String> {
@@ -1368,7 +1369,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 //        if (BuildConfig.HIPAA_COMPLIANCE_ENABLED)
 //            messageContent = resources.getString(R.string.new_missed_call)
         return Pair(missedCallMessage.toString(), messageContent)
-    }
+    }*/
 
     private fun getCallUsersName(callUsers: java.util.ArrayList<String>): StringBuilder {
         var name = StringBuilder("")
@@ -1390,7 +1391,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
             ?: ContactManager.getProfileDetails(jid)?.nickName ?: ""
     }
 
-    override fun onCallLogsDeleted(isClearAll: Boolean, callIdList: ArrayList<String>) {
+    /*override fun onCallLogsDeleted(isClearAll: Boolean, callIdList: ArrayList<String>) {
         LogMessage.d("deleteCallLog ", "onCallLogsDeleted Called")
         if (!isClearAll) {
             callIdList.forEach { item ->
@@ -1412,7 +1413,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d("onCallLogs Updated ", "Updated Called")
 //        onCallLogsUpdatedStreamHandler.onCallLogsUpdated?.success(true)
         FlyMethodConstants.updateCallSinkValue(Constants.onCallLogsUpdatedChannel, true)
-    }
+    }*/
 
     override fun setMediaNotificationIntentAction(
         notificationCompatBuilder: NotificationCompat.Builder,
