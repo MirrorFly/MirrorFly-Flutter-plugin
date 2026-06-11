@@ -43,12 +43,16 @@ class ChatMessageStatusDetail {
   /// The time when the message was sent.
   String? sentTime;
 
+  /// The time when the message was viewed.
+  String? viewTime;
+
   /// Initializes a new instance of the [ChatMessageStatusDetail] class.
   ChatMessageStatusDetail({
     this.deliveredTime,
     this.messageId,
     this.seenTime,
     this.sentTime,
+    this.viewTime,
   });
 
   /// Converts a JSON object into a [ChatMessageStatusDetail] instance.
@@ -58,6 +62,7 @@ class ChatMessageStatusDetail {
         messageId: json["messageId"],
         seenTime: json["seenTime"],
         sentTime: json["sentTime"],
+        viewTime: json["viewTime"],
       );
 
   /// Converts a [ChatMessageStatusDetail] instance into a JSON object.
@@ -66,5 +71,6 @@ class ChatMessageStatusDetail {
         "messageId": messageId,
         "seenTime": seenTime,
         "sentTime": sentTime,
+        "viewTime": viewTime,
       };
 }

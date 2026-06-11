@@ -57,6 +57,7 @@ import com.mirrorflysdk.api.models.ChatMessageStatusDetail
 import com.mirrorflysdk.api.models.MessageStatusDetail
 import com.mirrorflysdk.api.models.ProfileStatus
 import com.mirrorflysdk.api.models.RecentChat
+import com.mirrorflysdk.api.models.PollVoteEvent
 import com.mirrorflysdk.api.network.FlyNetwork
 import com.mirrorflysdk.api.notification.NotificationEventListener
 import com.mirrorflysdk.api.notification.PushNotificationManager
@@ -858,6 +859,10 @@ class FlyChatMethods {
                 result.success(jsonObject.toString())*/
             }
 
+            override fun onPollVoteNotification(voteEvent: PollVoteEvent) {
+                LogMessage.d("push onPollVoteNotification", "voteEvent: $voteEvent")
+            }
+
         })
     }
 
@@ -1469,7 +1474,8 @@ class FlyChatMethods {
                 messageStatus.messageId,
                 messageStatus.sentTime.checkNullOrEmpty(),
                 messageStatus.deliveredTime.checkNullOrEmpty(),
-                messageStatus.seenTime.checkNullOrEmpty()
+                messageStatus.seenTime.checkNullOrEmpty(),
+                messageStatus.viewTime.checkNullOrEmpty()
             )
             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
             LogMessage.d(

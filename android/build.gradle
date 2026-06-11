@@ -8,7 +8,7 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/release"
+            url "https://repo.mirrorfly.com/internal"
         }
     }
 
@@ -24,7 +24,7 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
-            url "https://repo.mirrorfly.com/release"
+            url "https://repo.mirrorfly.com/internal"
         }
     }
 }
@@ -75,7 +75,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -83,11 +83,12 @@ android {
 dependencies {
 //    api 'com.mirrorfly.sdk:mirrorflysdk:7.13.27'
 
-    api("com.mirrorfly.sdk:mirrorflysdk:7.13.27") {
-        exclude group: "com.mirrorfly.sdk", module: "webrtc"      // their wrapper AAR
-        exclude group: "org.webrtc",          module: "google-webrtc"
-        exclude group: "io.github.webrtc-sdk", module: "android"  // unprefixed from webrtc-sdk
-    }
+//    api("com.mirrorfly.sdk:mirrorflysdk:7.13.27") {
+//        exclude group: "com.mirrorfly.sdk", module: "webrtc"      // their wrapper AAR
+//        exclude group: "org.webrtc",          module: "google-webrtc"
+//        exclude group: "io.github.webrtc-sdk", module: "android"  // unprefixed from webrtc-sdk
+//    }
+    implementation 'com.mirrorfly.sdk:mirrorflysdk:7.13.32_pre_19'
 
     // Your plugin’s native usage (prefixed/shaded API)
 //    implementation "io.github.webrtc-sdk:android-prefixed:137.7151.01"

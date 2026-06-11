@@ -939,8 +939,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     }
 
-    override fun onMessageStatusUpdated(messageId: String) {
-        LogMessage.d(TAG, "onMessageStatusUpdated $messageId")
+    override fun onMessageStatusUpdated(messageId: String, jid: String?) {
+        LogMessage.d(TAG, "onMessageStatusUpdated $messageId jid $jid")
         //called when the message status is updated
         //LogMessage.d("Message Ack", "Received")
 
@@ -957,6 +957,22 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         }catch (e: Exception){
             LogMessage.d(TAG, "onMessageStatusUpdated Exception $e")
         }
+    }
+
+    override fun showOfflineMessagesNotification(offlineMessagesCount: Int) {
+        LogMessage.d(TAG, "showOfflineMessagesNotification: $offlineMessagesCount")
+    }
+
+    override fun updateRecentChats(recentChatUserJid: String) {
+        LogMessage.d(TAG, "updateRecentChats: $recentChatUserJid")
+    }
+
+    override fun updateNewMessagesReceived() {
+        LogMessage.d(TAG, "updateNewMessagesReceived")
+    }
+
+    override fun onPollVoteNotification(jid: String, voteEvent: PollVoteEvent?) {
+        LogMessage.d(TAG, "onPollVoteNotification jid: $jid, voteEvent: $voteEvent")
     }
 
     override fun onUploadDownloadProgressChanged(
