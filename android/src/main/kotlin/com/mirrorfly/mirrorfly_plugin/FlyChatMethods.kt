@@ -3535,6 +3535,12 @@ class FlyChatMethods {
 
     fun getUserLastSeenTime(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
+        LogMessage.d("getUserLastSeenTime jid", jid)
+
+        if (jid.isEmpty()) {
+            result.error("500", "User Jid is Empty", "")
+            return
+        }
         ContactManager.getRegisteredUserLastSeenTime(jid, object : ContactManager.LastSeenListener {
             override fun onFailure(message: String) {
                 /* No Implementation Needed */

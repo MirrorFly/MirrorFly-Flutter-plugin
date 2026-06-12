@@ -1808,7 +1808,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onClearAllCallLogStreamController.addError(error);
     });*/
 
-    onSubscribeSuccessChannel.receiveBroadcastStream().listen((event) {
+    /*onSubscribeSuccessChannel.receiveBroadcastStream().listen((event) {
       debugPrint("onSubscribeSuccessChannel event = $event");
       onSubscribeSuccessStreamController.add(event);
       callLinkEventsListener?.onSubscribeSuccess();
@@ -1839,7 +1839,7 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       onUsersUpdatedStreamController.addError(error);
     });
 
-    /*onIncomingCallReceivedChannel.receiveBroadcastStream().listen((event) {
+    onIncomingCallReceivedChannel.receiveBroadcastStream().listen((event) {
       debugPrint("onIncomingCallReceivedChannel event = $event");
       onIncomingCallReceivedStreamController.add(event);
       callEventsListener?.onIncomingCallReceived(event);
