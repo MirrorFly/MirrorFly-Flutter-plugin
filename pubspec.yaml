@@ -18,8 +18,12 @@ dependencies:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
   path_provider: ^2.1.4
+#  mirrorfly_flutter_call_kit:
+#    path: ../mirrorfly_flutter_call_kit
   mirrorfly_flutter_call_kit:
-    path: ../p078-mirrorfly-flutter-livekit-calls
+    git:
+      url: git@github.com:manivendhan-contus/Mirrorfly-Flutter-Call-Kit.git
+      ref: client/fergus_client_config
 
 dev_dependencies:
   flutter_test:

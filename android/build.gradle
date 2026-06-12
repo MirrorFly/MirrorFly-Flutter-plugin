@@ -8,8 +8,12 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
+            url "https://repo.mirrorfly.com/snapshot"
+        }
+        maven {
             url "https://repo.mirrorfly.com/internal"
         }
+//        mavenLocal()
     }
 
     dependencies {
@@ -24,8 +28,12 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
+            url "https://repo.mirrorfly.com/snapshot"
+        }
+        maven {
             url "https://repo.mirrorfly.com/internal"
         }
+//        mavenLocal()
     }
 }
 
@@ -88,7 +96,7 @@ dependencies {
 //        exclude group: "org.webrtc",          module: "google-webrtc"
 //        exclude group: "io.github.webrtc-sdk", module: "android"  // unprefixed from webrtc-sdk
 //    }
-    api 'com.mirrorfly.sdk:mirrorflysdk:7.13.32_pre_20'
+    api 'com.mirrorfly.sdk:mirrorflysdk:7.13.32_pre_22'
 
     // Your plugin’s native usage (prefixed/shaded API)
 //    implementation "io.github.webrtc-sdk:android-prefixed:137.7151.01"
