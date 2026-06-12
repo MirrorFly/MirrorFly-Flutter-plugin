@@ -22,7 +22,7 @@ dependencies:
 #    path: ../mirrorfly_flutter_call_kit
   mirrorfly_flutter_call_kit:
     git:
-      url: git@github.com:manivendhan-contus/Mirrorfly-Flutter-Call-Kit.git
+      url: https://github.com/manivendhan-contus/Mirrorfly-Flutter-Call-Kit.git
       ref: client/fergus_client_config
 
 dev_dependencies:
