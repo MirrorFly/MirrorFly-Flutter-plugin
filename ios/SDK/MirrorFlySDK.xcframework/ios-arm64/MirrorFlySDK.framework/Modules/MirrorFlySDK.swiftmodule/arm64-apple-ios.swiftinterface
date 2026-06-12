@@ -1,7 +1,7 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 6.2.4 effective-5.10 (swiftlang-6.2.4.1.4 clang-1700.6.4.2)
-// swift-module-flags: -target arm64-apple-ios12.1 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name MirrorFlySDK
-// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.4
+// swift-compiler-version: Apple Swift version 6.3 effective-5.10 (swiftlang-6.3.0.123.5 clang-2100.0.123.102)
+// swift-module-flags: -target arm64-apple-ios12.1 -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name MirrorFlySDK
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3
 import AVFoundation
 import Alamofire
 import AudioToolbox
@@ -29,9 +29,7 @@ import _SwiftConcurrencyShims
 @propertyWrapper public struct NilOnFail<T> : Swift.Codable where T : Swift.Decodable, T : Swift.Encodable {
   public let wrappedValue: T?
   public init(from decoder: any Swift.Decoder) throws
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(_ wrappedValue: T?)
-  #endif
   public func encode(to encoder: any Swift.Encoder) throws
 }
 @objc @_inheritsConvenienceInitializers @objcMembers public class RecentChat : ObjectiveC.NSObject, Swift.Codable {
@@ -214,9 +212,7 @@ public enum MFInvitationStatus : Swift.String, Swift.Decodable {
   case accepted
   case declined
   case unknown
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -387,9 +383,7 @@ public enum ChannelMediaStatus : Swift.String, Swift.CustomStringConvertible {
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -397,76 +391,36 @@ public enum ChannelMediaStatus : Swift.String, Swift.CustomStringConvertible {
 }
 @_hasMissingDesignatedInitializers public class MFMediaUtils {
   public static let supportedImageFormats: Swift.Set<Swift.String>
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getPHAssetFileName(asset: Photos.PHAsset) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func processVideo(phAsset: Photos.PHAsset, completion: @escaping (_ phasset: Photos.PHAsset, _ status: MirrorFlySDK.ChannelMediaStatus, _ url: Foundation.URL?, Swift.Bool) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getAssetsImageInfo(asset: Photos.PHAsset) -> (Swift.String, Foundation.Data, Swift.Double, UIKit.UIImage, UIKit.UIImage, Swift.Bool)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getAssetsImageInfo(url: Foundation.URL) -> (Swift.String, Foundation.Data, Swift.Double, UIKit.UIImage, UIKit.UIImage, Swift.Bool)?
-  #endif
   public static func checkMediaFileFormat(format: Swift.String) -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func compressVideoFile(videoURL: Foundation.URL, mediaQuality: MirrorFlySDK.ChannelMediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.String, Swift.String, Swift.Double, Swift.Double, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use ChannelMediaUtils.compressVideoFile() method instead to process and compress Video files")
   public static func compressVideo(videoURL: Foundation.URL, mediaQuality: MirrorFlySDK.ChannelMediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.String, Swift.String, Swift.Double, Swift.Double) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func convertVideoToData(phAsset: Photos.PHAsset, completion: @escaping (Foundation.Data?) -> ())
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func convertFileToDataFor(url: Foundation.URL?, completion: @escaping (Foundation.Data?) -> ())
-  #endif
   public static func isVideoAsset(asset: Photos.PHAsset) -> Swift.Bool
   public static func isImageAsset(asset: Photos.PHAsset) -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func base64ToImage(_ base64String: Swift.String) -> UIKit.UIImage?
-  #endif
   public static func convertImageToBase64(img: UIKit.UIImage) -> Swift.String
   public static func convertImageToBase64String(img: UIKit.UIImage) -> Swift.String
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func compressCapturedImage(_ image: UIKit.UIImage?, andWidth width: CoreFoundation.CGFloat, andHeight height: CoreFoundation.CGFloat) -> UIKit.UIImage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func encryptFileV2(localParentPath: Foundation.URL, fileName: Swift.String, messageType: MirrorFlySDK.ChannelMessageType, streamingCompletion: @escaping (Swift.Bool, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func encryptFile(localParentPath: Foundation.URL, fileName: Swift.String, messageType: MirrorFlySDK.ChannelMessageType) -> (Foundation.URL, Swift.String)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getMediaPathFor(fileName: Swift.String, messageType: MirrorFlySDK.ChannelMessageType) -> Foundation.URL?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func attachmentsDocumentDirectory(messageType: MirrorFlySDK.ChannelMessageType) -> Foundation.URL?
-  #endif
   public static func transferDocumentDirectoryFiles()
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func compressImageFile(imageData: Foundation.Data, mediaQuality: MirrorFlySDK.ChannelMediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.Data?, Swift.String, Foundation.URL?, Swift.String, Swift.Double, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use ChannelMediaUtils.compressImageFile() instead to process and compress image files")
   public static func compressImage(imageData: Foundation.Data, mediaQuality: MirrorFlySDK.ChannelMediaQuality = .medium) -> (Foundation.Data, Swift.String, Foundation.URL, Swift.String, Swift.Double)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func processAudioFile(url: Foundation.URL, maxSizeInMB: Swift.Double = 2048.0, onComplete: @escaping (Swift.Bool, Swift.String, Foundation.URL?, Swift.Double, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use ChannelMediaUtils.processAudioFile() method instead to process and compress Audio files")
   public static func processAudio(url: Foundation.URL, maxSizeInMB: Swift.Double = 30.0, onComplete: @escaping (Swift.Bool, Swift.String, Foundation.URL?, Swift.Double, Swift.Double, Swift.String) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func processDocumentFile(url: Foundation.URL, maxSizeInMB: Swift.Double = 2048.0, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use ChannelMediaUtils.processDocumentFile() method instead to process and compress Document files")
   public static func processDocument(url: Foundation.URL, maxSizeInMB: Swift.Double = 20.0, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
-  #endif
   public static func getMediaDuration(url: Foundation.URL) -> Swift.Double
   public static func isVideoLimit(asset: Photos.PHAsset, videoLimit: Swift.Int64) -> Swift.Bool
   public static func resizeImage(image: UIKit.UIImage) -> UIKit.UIImage
@@ -478,16 +432,12 @@ public struct MessageRequest {
   public let pageSize: Swift.Int
   public let direction: MirrorFlySDK.Direction
   public let include: Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(channelId: Swift.String, messageID: Swift.String? = nil, pageSize: Swift.Int = 20, direction: MirrorFlySDK.Direction = .backward, include: Swift.Bool = false)
-  #endif
 }
 public enum Direction : Swift.String, Swift.Codable {
   case forward
   case backward
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -534,9 +484,7 @@ public struct ChannelContactModel : Swift.Codable {
   public var name: Swift.String?
   public var phone_number: [Swift.String]
   public var active_status: [Swift.String]
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(mid: Swift.String, name: Swift.String?, phone_number: [Swift.String], active_status: [Swift.String])
-  #endif
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
 }
@@ -586,9 +534,7 @@ public struct ChannelMeeting : Swift.Codable {
   public static let shared: MirrorFlySDK.MFFileService
   final public func download(for messageId: Swift.String, completion: @escaping MirrorFlySDK.MessageCompletionHandler)
   final public func resumeUpload(for messageId: Swift.String, completion: @escaping MirrorFlySDK.MessageCompletionHandler)
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func cancelFileTransfer(for messageId: Swift.String, completion: ((_ isSuccess: Swift.Bool) -> Swift.Void)? = nil)
-  #endif
   @objc deinit
 }
 public protocol MessageContent : Swift.Decodable, Swift.Encodable {
@@ -604,9 +550,7 @@ public struct SendMessageRequest : Swift.Codable {
   public var messageType: MirrorFlySDK.ChannelMessageType
   public var content: (any MirrorFlySDK.MessageContent)?
   public init()
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(channelId: Swift.String, messageType: MirrorFlySDK.ChannelMessageType, content: (any MirrorFlySDK.MessageContent)? = nil)
-  #endif
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
 }
@@ -650,9 +594,7 @@ public typealias OperationResultHandler = (_ isSuccess: Swift.Bool, _ errorCode:
     set
   }
   final public func sendMessage(_ sendMessageRequest: MirrorFlySDK.SendMessageRequest, completion: @escaping MirrorFlySDK.MessageCompletionHandler)
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func markAsRead(channelId: Swift.String, messageId: Swift.String, isUnRead: Swift.Bool, completion: @escaping (Swift.Bool, MirrorFlySDK.RecentChannelData?, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
   @objc deinit
 }
 extension MirrorFlySDK.MFMessageService {
@@ -668,12 +610,8 @@ extension MirrorFlySDK.MFMessageService {
 public class MFContactService {
   public static let shared: MirrorFlySDK.MFContactService
   public init()
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getContact(for jid: Swift.String, completion: @escaping (MirrorFlySDK.UIContact?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getLocalProfileIfAvailable(jid: Swift.String) -> MirrorFlySDK.UIContact?
-  #endif
   @objc deinit
 }
 public struct UIContact {
@@ -748,9 +686,7 @@ public struct ChannelCreationData {
   public var configuration: MirrorFlySDK.ChannelConfiguration?
   public var members: [MirrorFlySDK.ChannelMember]?
   public var categoryId: Swift.Int?
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(name: Swift.String, description: Swift.String, imageUri: Swift.String? = nil, configuration: MirrorFlySDK.ChannelConfiguration? = nil, members: [MirrorFlySDK.ChannelMember]? = nil, categoryId: Swift.Int? = nil)
-  #endif
 }
 public struct ChannelConfiguration {
   public var accessMode: MirrorFlySDK.AccessMode
@@ -758,9 +694,7 @@ public struct ChannelConfiguration {
   public var messageMode: MirrorFlySDK.MessageMode
   public var history: MirrorFlySDK.HistoryMode
   public var advancedSettings: MirrorFlySDK.AdvancedChannelSettings?
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(accessMode: MirrorFlySDK.AccessMode = .publicAccess, visibility: MirrorFlySDK.Visibility = .visible, messageMode: MirrorFlySDK.MessageMode = .allMembers, history: MirrorFlySDK.HistoryMode = .enabled, advancedSettings: MirrorFlySDK.AdvancedChannelSettings? = nil)
-  #endif
 }
 public struct AdvancedChannelSettings {
   public var emojiEnabled: Swift.Bool
@@ -780,9 +714,7 @@ public enum AccessMode : Swift.Int {
   case publicAccess
   case privateAccess
   case restricted
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -791,9 +723,7 @@ public enum AccessMode : Swift.Int {
 public enum Visibility : Swift.Int {
   case visible
   case hidden
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -804,9 +734,7 @@ public enum MessageMode : Swift.Int {
   case announcementAdminsOnly
   case customRoles
   case adminsOnly
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -815,9 +743,7 @@ public enum MessageMode : Swift.Int {
 public enum HistoryMode : Swift.Int {
   case enabled
   case disabled
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -826,9 +752,7 @@ public enum HistoryMode : Swift.Int {
 public enum ChannelInvitationAction : Swift.String, Swift.Codable {
   case approved
   case declined
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -837,9 +761,7 @@ public enum ChannelInvitationAction : Swift.String, Swift.Codable {
 public enum InvitationResponse : Swift.String, Swift.Codable {
   case approved
   case declined
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -848,9 +770,7 @@ public enum InvitationResponse : Swift.String, Swift.Codable {
 public enum MemberRole : Swift.Int {
   case member
   case admin
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -867,9 +787,7 @@ public struct UIMember {
   public var email: Swift.String
   public var status: Swift.Int
   public var isDeletedUser: Swift.Int
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(userId: Swift.String = "", channelId: Swift.String = "", contact: MirrorFlySDK.UIContact? = nil, isAdmin: Swift.Bool = false, isOwner: Swift.Bool = false, userName: Swift.String = "", userProfileImage: Swift.String = "", email: Swift.String = "", status: Swift.Int = 0, isDeletedUser: Swift.Int = 0)
-  #endif
 }
 public struct UserProfile {
   public let userId: Swift.String
@@ -882,19 +800,13 @@ public struct UserProfile {
 }
 @_hasMissingDesignatedInitializers final public class MFChannelService {
   public static let shared: MirrorFlySDK.MFChannelService
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func getRecentChannel(for channelId: Swift.String) -> MirrorFlySDK.RecentChannelData?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func getChannelDetails(for channelId: Swift.String) -> MirrorFlySDK.ChannelDetails?
-  #endif
   final public func isMemberInChannel(channelId: Swift.String, memberId: Swift.String) -> Swift.Bool
   final public func isAdmin(memberId: Swift.String, channelId: Swift.String) -> Swift.Bool
   final public func isOwner(memberId: Swift.String, channelId: Swift.String) -> Swift.Bool
   final public func getMembersForChannel(channelId: Swift.String) -> [MirrorFlySDK.UIMember]
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func getMemberForChannel(channelId: Swift.String, userId: Swift.String) -> MirrorFlySDK.UIMember?
-  #endif
   final public func getMemberCount(channelId: Swift.String) -> Swift.Int
   final public func getRecentChannelPinnedCount() -> Swift.Int
   final public func getChannelUnReadCount() -> Swift.Int
@@ -944,9 +856,7 @@ public struct ChannelContactBody : Swift.Codable {
   public var name: Swift.String
   public var phone_number: [Swift.String]
   public var active_status: [Swift.String]
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(name: Swift.String?, phone_number: [Swift.String], active_status: [Swift.String])
-  #endif
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
 }
@@ -981,30 +891,14 @@ public typealias ChannelCompletionHandler = (_ isSuccess: Swift.Bool, _ channelD
   final public func createChannel(channelCreationData: MirrorFlySDK.ChannelCreationData, completion: @escaping MirrorFlySDK.ChannelCompletionHandler)
   final public func addMembers(toChannelId channelId: Swift.String, participants: [Swift.String], completion: @escaping MirrorFlySDK.ChannelCompletionHandler)
   final public func joinChannel(channelId: Swift.String, completion: @escaping MirrorFlySDK.ChannelCompletionHandler)
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func muteChannel(channelIds: [Swift.String], muteAction: Swift.Int, completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func pinChannel(channelIds: [Swift.String], pinAction: Swift.Int, completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func leaveChannel(channelId: Swift.String, completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func deleteChannel(channelId: Swift.String, completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func deleteRecentChannel(channelIds: [Swift.String], completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func reportChannel(channelId: Swift.String, completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func updateChannelStatus(channelId: Swift.String, activeStatus: Swift.Bool, completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func updateChannelSettings(channelId: Swift.String, channelSetting: MirrorFlySDK.ChannelSettings, completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
   @objc deinit
 }
 extension MirrorFlySDK.MFChannelEventService {
@@ -1015,9 +909,7 @@ extension MirrorFlySDK.MFChannelEventService {
   final public func fetchChannel(accessUri: Swift.String, completion: @escaping MirrorFlySDK.ChannelCompletionHandler)
 }
 extension MirrorFlySDK.MFChannelEventService {
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func acceptOrDecline(activityId: Swift.String, status: MirrorFlySDK.ChannelInvitationAction, completion: @escaping (_ isSuccess: Swift.Bool, _ invitationsResponse: MirrorFlySDK.MFChannelInvitation?, _ errorCode: Swift.Int?, _ errorMessage: Swift.String?) -> Swift.Void)
-  #endif
 }
 extension MirrorFlySDK.MFChannelEventService {
   final public func changeMemberRole(channelId: Swift.String, userId: Swift.String, role: MirrorFlySDK.MemberRole, completion: @escaping MirrorFlySDK.OperationResultHandler)
@@ -1026,15 +918,9 @@ extension MirrorFlySDK.MFChannelEventService {
   final public func removeMembers(channelId: Swift.String, userIds: [Swift.String], completion: @escaping MirrorFlySDK.OperationResultHandler)
 }
 extension MirrorFlySDK.MFChannelEventService {
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func updateChannel(channelId: Swift.String, name: Swift.String, description: Swift.String, categoryId: Swift.Int = 0, completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func updateChannelImage(channelId: Swift.String, imageUri: Swift.String, completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func removeChannelImage(channelId: Swift.String, completion: @escaping (Swift.Bool, Swift.Int?, Swift.String?) -> Swift.Void)
-  #endif
 }
 extension MirrorFlySDK.MFChannelEventService {
   final public func inviteUsersToChannel(_ channelID: Swift.String, userIDList: [Swift.String], completion: @escaping MirrorFlySDK.OperationResultHandler)
@@ -1061,16 +947,12 @@ extension MirrorFlySDK.MFChannelConfiguration : MirrorFlySDK.MFServerConnectionD
 @_hasMissingDesignatedInitializers final public class MFMessageEventService {
   public static let shared: MirrorFlySDK.MFMessageEventService
   final public func getMessages(by channelId: Swift.String) -> [MirrorFlySDK.MFMessage]
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func getMessagesfromId(by messageId: Swift.String) -> MirrorFlySDK.MFMessage?
-  #endif
   @objc deinit
 }
 @_hasMissingDesignatedInitializers final public class MFMessageListService {
   public static let shared: MirrorFlySDK.MFMessageListService
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func fetchMessages(with request: MirrorFlySDK.MessageRequest, completion: @escaping (_ isSuccess: Swift.Bool, _ messages: [MirrorFlySDK.MFMessage]?, _ errorCode: Swift.Int?, _ errorMessage: Swift.String?) -> Swift.Void)
-  #endif
   @objc deinit
 }
 public struct MFMessage {
@@ -1106,9 +988,7 @@ public struct MFMessage {
   public var audioStatus: MirrorFlySDK.AudioStatus
   public var reaction: MirrorFlySDK.MFReaction?
   public init()
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(messageId: Swift.String, sequnceId: Swift.Int64, channelId: Swift.String, senderId: Swift.String, senderName: Swift.String, editMessageID: Swift.String, messageText: Swift.String, messageType: MirrorFlySDK.ChannelMessageType, chatType: MirrorFlySDK.ChannelChatType, isSender: Swift.Bool, isFavourite: Swift.Bool, isDeleted: Swift.Bool, isRecalled: Swift.Bool, isCarbon: Swift.Bool, isEdited: Swift.Bool, messageTime: Swift.Int64, status: MirrorFlySDK.ChannelMessageStatus, replyTo: Swift.String, isSentByMe: Swift.Bool, isTranslated: Swift.Bool, isReplied: Swift.Bool, isForwarded: Swift.Bool, mediaContent: MirrorFlySDK.MFMediaMessage? = nil, contactContent: MirrorFlySDK.MFContactMessage? = nil, locationContent: MirrorFlySDK.MFLocationMessage? = nil, meetContent: MirrorFlySDK.MFMeetMessage? = nil, metaData: [MirrorFlySDK.ChannelMessageMetaData] = [], mentiondUsersIds: [Swift.String] = [], audioStatus: MirrorFlySDK.AudioStatus, reaction: MirrorFlySDK.MFReaction? = nil)
-  #endif
 }
 @objcMembers public class MFMediaMessage : Swift.Codable {
   @objc public var messageId: Swift.String
@@ -1174,9 +1054,7 @@ public struct MFReaction {
 public enum DeletionPolicy : Swift.String {
   case oldestFirst
   case leastAccessed
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -1213,51 +1091,33 @@ public typealias SearchRecentChannelCompletionHandler = (_ isSuccess: Swift.Bool
 public typealias RecentChannelListCompletionHandler = (_ isSuccess: Swift.Bool, _ message: [MirrorFlySDK.RecentChannelData]?, _ errorCode: Swift.Int?, _ errorMessage: Swift.String?) -> Swift.Void
 @_hasMissingDesignatedInitializers final public class MFChannelListService {
   public static let shared: MirrorFlySDK.MFChannelListService
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func fetchRecentChannelList(size: Swift.Int, lastMessageTime: Swift.Int64 = 0, completion: @escaping (_ isSuccess: Swift.Bool, _ recentChannelList: [MirrorFlySDK.RecentChannelData]?, _ errorCode: Swift.Int?, _ errorMessage: Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func fetchExploreChannelList(createdAtTime: Swift.Int64, size: Swift.Int, search: Swift.String, isJoined: Swift.Bool, completion: @escaping (_ isSuccess: Swift.Bool, _ channelDetailsList: [MirrorFlySDK.ChannelDetails]?, _ errorCode: Swift.Int?, _ errorMessage: Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func fetchRecentChannelListFromLocal(size: Swift.Int, completion: @escaping (_ recentChannelList: [MirrorFlySDK.RecentChannelData]?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func fetchExploreChannelList(createdAtTime: Swift.Int64, size: Swift.Int, search: Swift.String, isJoined: Swift.String, categorySize: Swift.Int, channelSize: Swift.Int, page: Swift.Int, completion: @escaping (_ isSuccess: Swift.Bool, _ channelDetailsList: [MirrorFlySDK.ChannelCategoryGroup]?, _ errorCode: Swift.Int?, _ errorMessage: Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func fetchExploreChannelByCategory(searchText: Swift.String, size: Swift.Int, categoryId: Swift.Int, page: Swift.Int, completion: @escaping (_ isSuccess: Swift.Bool, _ channelDetailsList: MirrorFlySDK.ExploreChannelsDataByCategory?, _ errorCode: Swift.Int?, _ errorMessage: Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func fetchChannelMembers(page: Swift.Int, size: Swift.Int, channelID: Swift.String, search: Swift.String, completion: @escaping (_ isSuccess: Swift.Bool, _ memberList: [MirrorFlySDK.UIMember]?, _ errorCode: Swift.Int?, _ errorMessage: Swift.String?) -> Swift.Void)
-  #endif
   @objc deinit
 }
 extension MirrorFlySDK.MFChannelListService {
   final public func fetchChannelInvitationList(search: Swift.String, createdAt: Swift.Int64, size: Swift.Int, completion: @escaping MirrorFlySDK.ChannelActivityCompletionHandler)
 }
 extension MirrorFlySDK.MFChannelListService {
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func fetchChannelNonMembers(page: Swift.Int, size: Swift.Int, channelID: Swift.String, search: Swift.String, completion: @escaping (_ isSuccess: Swift.Bool, _ userList: [MirrorFlySDK.UserProfile]?, _ errorCode: Swift.Int?, _ errorMessage: Swift.String?, _ totalRecords: Swift.Int?, _ totalPages: Swift.Int?, _ currentPage: Swift.Int?) -> Swift.Void)
-  #endif
 }
 extension MirrorFlySDK.MFChannelListService {
   final public func searchRecentChannel(_ channelSearchRequest: MirrorFlySDK.RecentChannelSearchRequest, completion: @escaping MirrorFlySDK.SearchRecentChannelCompletionHandler)
   final public func loadNextRecentChannelSearch(_ lastMessageTime: Swift.Int64, completion: @escaping MirrorFlySDK.SearchRecentChannelCompletionHandler)
 }
 extension MirrorFlySDK.MFChannelListService {
-  #if compiler(>=5.3) && $NonescapableTypes
   final public func fetchCategoriesList(completion: @escaping (_ isSuccess: Swift.Bool, _ categoryList: [MirrorFlySDK.ChannelCategoryResponseDetail]?, _ errorCode: Swift.Int?, _ errorMessage: Swift.String?) -> Swift.Void)
-  #endif
 }
 public enum ChannelChatType : Swift.String, Swift.CustomStringConvertible, Swift.CaseIterable, Swift.Codable {
   case channel
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias AllCases = [MirrorFlySDK.ChannelChatType]
   public typealias RawValue = Swift.String
   nonisolated public static var allCases: [MirrorFlySDK.ChannelChatType] {
@@ -1275,9 +1135,7 @@ public enum ChannelMessageStatus : Swift.String, Swift.CustomStringConvertible, 
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -1299,9 +1157,7 @@ public enum ChannelMessageType : Swift.String, Swift.CustomStringConvertible, Sw
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias AllCases = [MirrorFlySDK.ChannelMessageType]
   public typealias RawValue = Swift.String
   nonisolated public static var allCases: [MirrorFlySDK.ChannelMessageType] {
@@ -1317,9 +1173,7 @@ public enum MessageAudioType : Swift.String, Swift.Codable, Swift.CustomStringCo
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -1334,9 +1188,7 @@ public enum UploadStatus : Swift.Int, Swift.Codable, Swift.CustomStringConvertib
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -1351,9 +1203,7 @@ public enum DownloadStatus : Swift.Int, Swift.Codable, Swift.CustomStringConvert
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -1451,86 +1301,44 @@ public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
   }
 }
 @_hasMissingDesignatedInitializers public class MediaUtils {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getPHAssetFileName(asset: Photos.PHAsset) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func processVideo(phAsset: Photos.PHAsset, completion: @escaping (_ phasset: Photos.PHAsset, _ status: MirrorFlySDK.MediaStatus, _ url: Foundation.URL?, Swift.Bool) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getAssetsImageInfo(asset: Photos.PHAsset) -> (Swift.String, Foundation.Data, Swift.Double, UIKit.UIImage, UIKit.UIImage, Swift.Bool)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getAssetsImageInfo(url: Foundation.URL) -> (Swift.String, Foundation.Data, Swift.Double, UIKit.UIImage, UIKit.UIImage, Swift.Bool)?
-  #endif
   public static func checkMediaFileFormat(format: Swift.String) -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func compressVideoFile(videoURL: Foundation.URL, mediaQuality: MirrorFlySDK.MediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.String, Swift.String, Swift.Double, Swift.Double, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use MediaUtils.compressVideoFile() method instead to process and compress Video files")
   public static func compressVideo(videoURL: Foundation.URL, mediaQuality: MirrorFlySDK.MediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.String, Swift.String, Swift.Double, Swift.Double) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func convertVideoToData(phAsset: Photos.PHAsset, completion: @escaping (Foundation.Data?) -> ())
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func convertFileToDataFor(url: Foundation.URL?, completion: @escaping (Foundation.Data?) -> ())
-  #endif
   public static func isVideoAsset(asset: Photos.PHAsset) -> Swift.Bool
   public static func isImageAsset(asset: Photos.PHAsset) -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func base64ToImage(_ base64String: Swift.String) -> UIKit.UIImage?
-  #endif
   public static func convertImageToBase64(img: UIKit.UIImage) -> Swift.String
   public static func convertImageToBase64String(img: UIKit.UIImage) -> Swift.String
   public static func convertThumbnailImageToBase64String(image: UIKit.UIImage) -> Swift.String
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func compressCapturedImage(_ image: UIKit.UIImage?, andWidth width: CoreFoundation.CGFloat, andHeight height: CoreFoundation.CGFloat) -> UIKit.UIImage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func encryptFileV2(localParentPath: Foundation.URL, fileName: Swift.String, messageType: MirrorFlySDK.MessageType, streamingCompletion: @escaping (Swift.Bool, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func encryptFile(localParentPath: Foundation.URL, fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> (Foundation.URL, Swift.String)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getMediaPathFor(fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> Foundation.URL?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func attachmentsDocumentDirectory(messageType: MirrorFlySDK.MessageType) -> Foundation.URL?
-  #endif
   public static func transferDocumentDirectoryFiles()
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func compressImageFile(imageData: Foundation.Data, mediaQuality: MirrorFlySDK.MediaQuality = .medium, onComplete: @escaping (Swift.Bool, Foundation.Data?, Swift.String, Foundation.URL?, Swift.String, Swift.Double, Swift.String?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use MediaUtils.compressImageFile() instead to process and compress image files")
   public static func compressImage(imageData: Foundation.Data, mediaQuality: MirrorFlySDK.MediaQuality = .medium) -> (Foundation.Data, Swift.String, Foundation.URL, Swift.String, Swift.Double)?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func processAudioFile(url: Foundation.URL, maxSizeInMB: Swift.Double = 2048.0, onComplete: @escaping (Swift.Bool, Swift.String, Foundation.URL?, Swift.Double, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use MediaUtils.processAudioFile() method instead to process and compress Audio files")
   public static func processAudio(url: Foundation.URL, maxSizeInMB: Swift.Double = 30.0, onComplete: @escaping (Swift.Bool, Swift.String, Foundation.URL?, Swift.Double, Swift.Double, Swift.String) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func processDocumentFile(url: Foundation.URL, maxSizeInMB: Swift.Double = 2048.0, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use MediaUtils.processDocumentFile() method instead to process and compress Document files")
   public static func processDocument(url: Foundation.URL, maxSizeInMB: Swift.Double = 20.0, onComplete: @escaping (Swift.Bool, Foundation.URL?, Swift.Double, Swift.String, Swift.String) -> Swift.Void)
-  #endif
   public static func getMediaDuration(url: Foundation.URL) -> Swift.Double
   public static func isVideoLimit(asset: Photos.PHAsset, videoLimit: Swift.Int64) -> Swift.Bool
   public static func resizeImage(image: UIKit.UIImage) -> UIKit.UIImage
@@ -1573,9 +1381,7 @@ public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
   public static func disconnectXMPPConnection()
   public static func disconnect()
   public static func resetXmppResource()
-  #if compiler(>=5.3) && $NonescapableTypes
   public func clearAllTablesInDB(except types: [RealmSwift.Object.Type]? = nil)
-  #endif
   public static func sendPendingReceiptMessages()
   public static func setMediaEncryption(isEnable: Swift.Bool)
   public func resetFlyDefaults()
@@ -1599,18 +1405,12 @@ extension MirrorFlySDK.ChatManager : MirrorFlySDK.XMPPTypingStatusDelegate {
 }
 extension MirrorFlySDK.ChatManager {
   public static func getRecentChatList() -> [MirrorFlySDK.RecentChat]
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getRechtChat(jid: Swift.String) -> MirrorFlySDK.RecentChat?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getContact(jid: Swift.String) -> MirrorFlySDK.ProfileDetails?
-  #endif
   public static func getRecentChatList(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public static func getRecentChatListIncludingArchive(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public static func getRecentChatListIncludingArchived() -> [MirrorFlySDK.RecentChat]
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getRecentChatOf(jid: Swift.String) -> MirrorFlySDK.RecentChat?
-  #endif
   public static func archiveChatConversation(jidsToArchive: [Swift.String])
   public static func unarchiveChatConversation(jidsToUnarchive: [Swift.String])
   public static func getArchivedChatList(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
@@ -1645,13 +1445,9 @@ extension MirrorFlySDK.ChatManager : MirrorFlySDK.XMPPConnectionDelegate {
   public func xmppDidDisconnected()
 }
 extension MirrorFlySDK.ChatManager : MirrorFlySDK.XMPPMessageDelegate {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func onCalllogCleared(toJid: Swift.String?, deleteAll: Swift.Bool, lastcalllogId: Swift.String, calllogIds: [Swift.String])
-  #endif
   public func clearAllCallLogs()
-  #if compiler(>=5.3) && $NonescapableTypes
   public func processAndSaveDataFromPush(messageId: Swift.String, fromJid: Swift.String, toJid: Swift.String, body: Swift.String, time: Swift.String, groupJid: Swift.String = "", isCarbon: Swift.Bool = false, pd: MirrorFlySDK.ProfileDetails? = nil, metaData: Swift.String? = "", topicID: Swift.String? = "", editMessageId: Swift.String? = "", completion: @escaping (Swift.String, MirrorFlySDK.ChatMessage?, Swift.Bool) -> Swift.Void)
-  #endif
   public func didReciveSingleChatCorbonMessage(messageId: Swift.String, editedMessageId: Swift.String, from: Swift.String, to: Swift.String, body: Swift.String, time: Swift.String, metaData: Swift.String, topicID: Swift.String, messageType: Swift.String) -> Swift.String
   public func setOrUpdateFavourite(messageId: Swift.String, favourite: Swift.Bool, removeAllFavourite: Swift.Bool)
   public func onReceivedMessageStatusUpdated(toJid: Swift.String, messageId: Swift.String, updateType: MirrorFlySDK.MessageStatus, fromJid: Swift.String)
@@ -1665,26 +1461,18 @@ extension MirrorFlySDK.ChatManager : MirrorFlySDK.XMPPMessageDelegate {
   public func deleteBusyStatus(statusId: Swift.String)
   public func didReceivedSingleChatMessage(messageId: Swift.String, editedMessageId: Swift.String, from: Swift.String, body: Swift.String, time: Swift.String, groupJid: Swift.String = "", metaData: Swift.String, topicID: Swift.String, messageType: Swift.String) -> Swift.String
   public func didReceiveGroupChatMessage(messageId: Swift.String, editedMessageId: Swift.String, from: Swift.String, groupJid: Swift.String, body: Swift.String, time: Swift.String, metaData: Swift.String, groupName: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func onSentMessageStatusUpdated(from: Swift.String, messageId: Swift.String, updateType: MirrorFlySDK.MessageStatus, time: Swift.String?, to: Swift.String)
-  #endif
   public func getAcknowlegementTime(messageId: Swift.String, userJid: Swift.String) -> Swift.Double
   public func getAcknowlegementTimeForGroup(messageId: Swift.String) -> Swift.Double
-  #if compiler(>=5.3) && $NonescapableTypes
   public func onMessagesCleared(toJid: Swift.String?, favourite: Swift.String?, deleteType: Swift.String?, lastmessageId: Swift.String)
-  #endif
   public func onMessagesClearedOrDeleted(messageIds: Swift.Array<Swift.String>)
   public func onMessagesDeletedforEveryone(messageIds: Swift.Array<Swift.String>, fromUser: Swift.String)
 }
 extension MirrorFlySDK.ChatManager {
   public static func requestOTPApiService(for mobilenumber: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func registerApiService(for uniqueIdentifier: Swift.String, deviceToken: Swift.String = emptyString(), voipDeviceToken: Swift.String = emptyString(), isExport: Swift.Bool = false, isForceRegister: Swift.Bool = true, userType: Swift.String? = nil, metaData: [MirrorFlySDK.MetaData]? = nil, pushServerType: MirrorFlySDK.PushServerType? = .applePushService, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
-  #endif
   public static func getMetaData(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func updateMetaData(metaData: [MirrorFlySDK.MetaData]? = nil, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  #endif
   public static func enableDisableHideLastSeen(EnableLastSeen: Swift.Bool, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public static func getUserLastSeen(for Jid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public static func markConversationAsRead(for jids: [Swift.String], fullMarkAsRead: Swift.Bool = false)
@@ -1696,37 +1484,23 @@ extension MirrorFlySDK.ChatManager {
   public static func getMediaMessagesFor(messageId: Swift.String, jid: Swift.String) -> [MirrorFlySDK.ChatMessage]
   public static func sendTypingStatus(to jid: Swift.String, chatType: MirrorFlySDK.ChatType)
   public static func sendTypingGoneStatus(to jid: Swift.String, chatType: MirrorFlySDK.ChatType)
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getMessageOfId(messageId: Swift.String) -> MirrorFlySDK.ChatMessage?
-  #endif
   public static func getLastMessageId(jid: Swift.String) -> Swift.String
   public static func checkMessageAvailable(messageId: Swift.String) -> Swift.Bool
   public static func updateUnReadCountUI(messageId: Swift.String, notificationText: Swift.String)
   public static func saveProfileStatus(statusText: Swift.String, currentStatus: Swift.Bool, completion: @escaping MirrorFlySDK.FlyCompletionHandler)
   public static func deleteStatus(statusId: Swift.String) -> (status: Swift.Bool, statusMessge: Swift.String)
   public static func getAllStatus() -> [MirrorFlySDK.ProfileStatus]
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func updateStatus(statusId: Swift.String, statusText: Swift.String, currentStatus: Swift.Bool? = false, completion: @escaping MirrorFlySDK.FlyCompletionHandler)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getStatusById(statusId: Swift.String) -> MirrorFlySDK.ProfileStatus?
-  #endif
   public static func sendNotAcknowledgeMessages()
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getSingleChatMessageSeenReceipt(messageId: Swift.String) -> MirrorFlySDK.MessageReceipt?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getSingleChatMessageDeliveredReceipt(messageId: Swift.String) -> MirrorFlySDK.MessageReceipt?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getSingleChatMessageAcknowledgeReceipt(messageId: Swift.String) -> MirrorFlySDK.MessageReceipt?
-  #endif
   public static func getUNreadMessageAndChatCount() -> (Swift.Int, Swift.Int)
 }
 extension MirrorFlySDK.ChatManager {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func profileDetaisFor(jid: Swift.String) -> MirrorFlySDK.ProfileDetails?
-  #endif
   public static func isUserOrGroupBlockedByAdmin(jid: Swift.String) -> Swift.Bool
   public static func sendRegisterUpdate(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public static func deleteCallLog(isClearAll: Swift.Bool, callLogIds: [Swift.String] = [], actionId: Swift.String = emptyString(), completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
@@ -1744,17 +1518,11 @@ extension MirrorFlySDK.ChatManager : MirrorFlySDK.FlyTranslationManagerDelegate 
   public func updateTranslateMessage(jid: Swift.String, messageId: Swift.String, translatedText: Swift.String)
 }
 extension MirrorFlySDK.ChatManager : MirrorFlySDK.XMPPAdminBlockDelegate {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func didBlock(adminBlock: MirrorFlySDK.AdminBlock?)
-  #endif
 }
 extension MirrorFlySDK.ChatManager {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getMessagesForReporting(message: MirrorFlySDK.ChatMessage, messagesCount: Swift.Int) -> MirrorFlySDK.ReportMessage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getMessagesForReporting(chatUserJid: Swift.String, messagesCount: Swift.Int) -> MirrorFlySDK.ReportMessage?
-  #endif
   public static func reportMessage(reportMessage: MirrorFlySDK.ReportMessage, completionHanlder: @escaping MirrorFlySDK.FlyCompletionHandler)
   public static func isMessagesAvailableFor(jid: Swift.String) -> Swift.Bool
 }
@@ -1818,9 +1586,7 @@ public enum Features {
 }
 extension MirrorFlySDK.ChatManager {
   public func getRecentUnreadMessageCount(chatUserJid: Swift.String) -> Swift.Int
-  #if compiler(>=5.3) && $NonescapableTypes
   public func createUnreadNotificationMessage(fromJid: Swift.String, messageTime: Swift.String, unreadCount: Swift.Int? = nil)
-  #endif
   public func updateUnreadMessageCount(fromJid: Swift.String, lastMessageID: Swift.String = "")
   public func updateUnreadMessageCountFromServer(fromJid: Swift.String, messageTime: Swift.Double, newUnReadCount: Swift.Int)
   public func updateUnreadMessageCountFromHistory(fromJid: Swift.String, time: Swift.Double)
@@ -1883,9 +1649,7 @@ public enum AutoDownloadType : Swift.String {
   case videos
   case audio
   case documents
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -1935,9 +1699,7 @@ extension MirrorFlySDK.ChatManager {
 }
 extension MirrorFlySDK.ChatManager {
   public static func getChatSummaryIntervalTime() -> Swift.Int64
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getDefaultTheme() -> MirrorFlySDK.ChatBackgroundModel?
-  #endif
   public static func clearTheme()
 }
 extension MirrorFlySDK.ChatManager : MirrorFlySDK.XMPPMessageAcknowledgementDelegate {
@@ -1962,9 +1724,7 @@ public enum MessageExtension : Swift.String, Swift.CustomStringConvertible {
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -1987,9 +1747,7 @@ public struct OfflineActionModel : Swift.Codable {
     get
     set
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(actionId: Swift.String, jid: Swift.String?, actionType: MirrorFlySDK.ChatType, isClearAll: Swift.Bool, isFavourite: Swift.Bool, offlineType: MirrorFlySDK.OfflineActionType, offlineContent: Swift.String)
-  #endif
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
 }
@@ -2001,9 +1759,7 @@ public enum ContactType : Swift.String, Swift.CustomStringConvertible, Swift.Cod
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -2014,18 +1770,12 @@ public protocol XMPPMessageDelegate : ObjectiveC.NSObjectProtocol {
   func didReceivedSingleChatMessage(messageId: Swift.String, editedMessageId: Swift.String, from: Swift.String, body: Swift.String, time: Swift.String, groupJid: Swift.String, metaData: Swift.String, topicID: Swift.String, messageType: Swift.String) -> Swift.String
   func didReceivedEditedMessage(messageId: Swift.String, editedMessageId: Swift.String, body: Swift.String, from: Swift.String, time: Swift.String, groupJid: Swift.String, isCarbon: Swift.Bool, isFormPush: Swift.Bool)
   func didReceiveGroupChatMessage(messageId: Swift.String, editedMessageId: Swift.String, from: Swift.String, groupJid: Swift.String, body: Swift.String, time: Swift.String, metaData: Swift.String, groupName: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   func onSentMessageStatusUpdated(from: Swift.String, messageId: Swift.String, updateType: MirrorFlySDK.MessageStatus, time: Swift.String?, to: Swift.String)
-  #endif
   func onReceivedMessageStatusUpdated(toJid: Swift.String, messageId: Swift.String, updateType: MirrorFlySDK.MessageStatus, fromJid: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   func onMessagesCleared(toJid: Swift.String?, favourite: Swift.String?, deleteType: Swift.String?, lastmessageId: Swift.String)
-  #endif
   func onMessagesClearedOrDeleted(messageIds: Swift.Array<Swift.String>)
   func onMessagesDeletedforEveryone(messageIds: Swift.Array<Swift.String>, fromUser: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   func onCalllogCleared(toJid: Swift.String?, deleteAll: Swift.Bool, lastcalllogId: Swift.String, calllogIds: [Swift.String])
-  #endif
   func setOrUpdateFavourite(messageId: Swift.String, favourite: Swift.Bool, removeAllFavourite: Swift.Bool)
   func clearAllConversationForSyncedDevice()
   func clearAllCallLogs()
@@ -2076,9 +1826,7 @@ public protocol XMPPGroupDelegate : ObjectiveC.NSObjectProtocol {
   func didAddParticipantSuccessMessage(addParticipantmessage: Swift.String)
   func didAdminRemoveParticipant(message: Swift.String)
   func didAdminRemoveParticipantReceiveMessage(removedParticipant: MirrorFlySDK.ParticipantDetails)
-  #if compiler(>=5.3) && $NonescapableTypes
   func didGroupUserProfileFetch(for jid: Swift.String, groupInfoDetails: MirrorFlySDK.GroupModel?)
-  #endif
   func didGroupProfileFetch(groupJid: Swift.String)
   func didGroupInfoProfileUpdated(message: Swift.String)
   func didMakeAdmin(message: Swift.String)
@@ -2113,14 +1861,10 @@ public protocol XMPPGroupDelegate : ObjectiveC.NSObjectProtocol {
   case delivered = 1
   case seen = 2
   case deleted = 4
-  #if compiler(>=5.3) && $NonescapableTypes
   public var inMessageStatus: MirrorFlySDK.MessageStatus? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -2165,9 +1909,7 @@ public struct TextMessage : Swift.Codable {
   public var metaData: [MirrorFlySDK.MessageMetaData]?
   public var topicID: Swift.String?
   public init()
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(toId: Swift.String, messageText: Swift.String, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String]? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "")
-  #endif
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -2181,9 +1923,7 @@ public struct MeetMessage : Swift.Codable {
   public var metaData: [MirrorFlySDK.MessageMetaData]?
   public var topicID: Swift.String?
   public init()
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(toId: Swift.String, title: Swift.String, link: Swift.String, scheduledDateTime: Swift.Int, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String]? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "")
-  #endif
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -2198,9 +1938,7 @@ public struct FileMessage : Swift.Codable {
   public var contactMessage: MirrorFlySDK.ContactMessageParams?
   public var fileMessage: MirrorFlySDK.FileMessageParams?
   public init()
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(toId: Swift.String, messageType: MirrorFlySDK.MessageType, locationMessage: MirrorFlySDK.LocationMessageParams? = nil, contactMessage: MirrorFlySDK.ContactMessageParams? = nil, fileMessage: MirrorFlySDK.FileMessageParams? = nil, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String]? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "")
-  #endif
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -2209,9 +1947,7 @@ public struct EditMessage : Swift.Codable {
   public var editedTextContent: Swift.String!
   public var mentionedUsersIds: [Swift.String]?
   public init()
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(messageId: Swift.String, editedTextContent: Swift.String, mentionedUsersIds: [Swift.String]? = nil)
-  #endif
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -2243,13 +1979,9 @@ public struct TopicChatListParams {
   public init(limit: Swift.Int = 40, topicID: Swift.String = "")
 }
 public class FileStreamReader {
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(path: Swift.String, delimiter: Swift.String = "\n", encoding: Swift.String.Encoding = .utf8, chunkSize: Swift.Int = 4096)
-  #endif
   @objc deinit
-  #if compiler(>=5.3) && $NonescapableTypes
   public func nextLine() -> Swift.String?
-  #endif
   public func rewind()
   public func close()
 }
@@ -2312,18 +2044,14 @@ public protocol DownloadDelegate : ObjectiveC.NSObjectProtocol {
   func fileDecrypted(message: MirrorFlySDK.ChatMessage, fileURL: Foundation.URL)
 }
 @_hasMissingDesignatedInitializers public class FlyLog {
-  #if compiler(>=5.3) && $NonescapableTypes
   public class func DLog(param1: Swift.String?, param2: Any?)
-  #endif
   @objc deinit
 }
 public enum AudioStatus : Swift.String, Swift.Codable {
   case playing
   case stopped
   case paused
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -2368,9 +2096,7 @@ public enum MediaUploadStatus : Swift.Int, Swift.CustomStringConvertible, Swift.
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -2385,9 +2111,7 @@ public enum MediaDownloadStatus : Swift.Int, Swift.CustomStringConvertible, Swif
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -2412,9 +2136,7 @@ public enum FileType : Swift.String {
   case rar
   case pptx
   case csv
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -2427,9 +2149,7 @@ public enum ChatType : Swift.String, Swift.CustomStringConvertible, Swift.Codabl
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -2445,9 +2165,7 @@ public enum ChatType : Swift.String, Swift.CustomStringConvertible, Swift.Codabl
   public func hasPreviousMessages() -> Swift.Bool
   public func hasNextMessages() -> Swift.Bool
   public func isFetchingInProgress() -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getMessagesFromAPI(chatType: MirrorFlySDK.ChatType, participantJID: Swift.String?, size: Swift.Int, messageID: Swift.String, metaData: MirrorFlySDK.MetaDataMessageList? = nil, topicID: Swift.String = "", direction: Swift.String = "", completion: @escaping MirrorFlySDK.FlyCompletionHandler)
-  #endif
   @objc deinit
 }
 @_hasMissingDesignatedInitializers final public class BackgroundMessagePreloader {
@@ -2463,9 +2181,7 @@ public struct WebLoginInfo {
   public var platform: Swift.String
   public var token: Swift.String
   public var loginTime: Swift.Double?
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(browser: Swift.String, platform: Swift.String, token: Swift.String, loginTime: Swift.Double? = nil)
-  #endif
 }
 public enum OfflineActionType : Swift.String, Swift.CustomStringConvertible {
   case clearMessage
@@ -2486,9 +2202,7 @@ public enum OfflineActionType : Swift.String, Swift.CustomStringConvertible {
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -2523,9 +2237,7 @@ public protocol XMPPLogoutDelegate : ObjectiveC.NSObjectProtocol {
   @objc override dynamic public init()
   public func uploadFile(message: MirrorFlySDK.ChatMessage)
   public func cancelUploadTask(message: MirrorFlySDK.ChatMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool) -> Swift.Void)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func downloadFile(message: MirrorFlySDK.ChatMessage, completionHandler: ((Swift.Bool) -> ())? = nil, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
   public func refreshToken(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public func cancelDownloadTask(message: MirrorFlySDK.ChatMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool) -> Swift.Void)
   public func cancelAllTask()
@@ -2560,9 +2272,7 @@ public protocol XMPPLogoutDelegate : ObjectiveC.NSObjectProtocol {
   public func resumeMedia()
   public func isSpaceAvailableToProcess(fileSize: Swift.Int64) -> Swift.Bool
   public func streamingCancelled(message: MirrorFlySDK.ChatMessage)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func streamingSuccess(message: MirrorFlySDK.ChatMessage, key: Swift.String?)
-  #endif
   public func streamingFailed(message: MirrorFlySDK.ChatMessage)
   public func updateDownloadURL(messageId: Swift.String, url: Swift.String)
   public func isMessageInUploadQueue(messageId: Swift.String) -> Swift.Bool
@@ -2571,9 +2281,7 @@ public protocol XMPPLogoutDelegate : ObjectiveC.NSObjectProtocol {
 }
 public protocol MediaStreamDelegate : ObjectiveC.NSObjectProtocol {
   func streamingCancelled(message: MirrorFlySDK.ChatMessage)
-  #if compiler(>=5.3) && $NonescapableTypes
   func streamingSuccess(message: MirrorFlySDK.ChatMessage, key: Swift.String?)
-  #endif
   func streamingFailed(message: MirrorFlySDK.ChatMessage)
 }
 @objc @_inheritsConvenienceInitializers public class FlyForwardManager : ObjectiveC.NSObject {
@@ -2610,9 +2318,7 @@ extension MirrorFlySDK.GroupManager {
   public func removeParticipantFromGroup(groupId: Swift.String, removeGroupMemberJid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func removeGroupProfileImage(groupJid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func updateGroupProfileImage(groupJid: Swift.String, groupProfileImageUrl: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
-  #if compiler(>=5.3) && $NonescapableTypes
   public func updateGroupName(groupJid: Swift.String, groupName: Swift.String, groupDescription: Swift.String? = nil, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
-  #endif
   public func makeAdmin(groupJid: Swift.String, userJid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func revokeAdmin(groupJid: Swift.String, revokeAdminJid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func deleteGroup(groupJid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
@@ -2626,12 +2332,8 @@ extension MirrorFlySDK.GroupManager {
   public func isAdmin(participantJid: Swift.String, groupJid: Swift.String) -> (isAdmin: Swift.Bool, message: Swift.String)
   public func isParticiapntExistingIn(groupJid: Swift.String, participantJid: Swift.String) -> (doesExist: Swift.Bool, message: Swift.String)
   public func getGroupMemebersFromLocal(groupJid: Swift.String) -> (participantDetailArray: [MirrorFlySDK.GroupParticipantDetail], message: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getAGroupFromLocal(groupJid: Swift.String) -> MirrorFlySDK.ProfileDetails?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getAMemberFromGroup(groupJid: Swift.String, participantJid: Swift.String) -> MirrorFlySDK.GroupParticipantDetail?
-  #endif
   public func isSyncNeeded(groupJid: Swift.String) -> Swift.Bool
 }
 extension MirrorFlySDK.GroupManager : MirrorFlySDK.XMPPGroupDelegate {
@@ -2645,9 +2347,7 @@ extension MirrorFlySDK.GroupManager : MirrorFlySDK.XMPPGroupDelegate {
   public func didGroupProfileFetch(groupJid: Swift.String)
   public func didAddParticipantSuccessMessage(addParticipantmessage: Swift.String)
   public func didAdminRemoveParticipant(message: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func didGroupUserProfileFetch(for jid: Swift.String, groupInfoDetails groupProfileDetails: MirrorFlySDK.GroupModel?)
-  #endif
   public func didGroupInfoProfileUpdated(message: Swift.String)
   public func didMakeAdmin(message: Swift.String)
   public func didExitFromGroup(message: Swift.String)
@@ -2702,9 +2402,7 @@ public struct LinkMessage {
 public enum AudioType : Swift.String, Swift.Codable {
   case recording
   case file
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -2737,9 +2435,7 @@ public enum ChatListType : Swift.String {
   case single
   case group
   case archived
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -2790,11 +2486,9 @@ extension MirrorFlySDK.FlyError : Swift.CustomStringConvertible {
   }
 }
 extension MirrorFlySDK.FlyError : Foundation.LocalizedError {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var errorDescription: Swift.String? {
     get
   }
-  #endif
 }
 public struct ErrorCode {
   public static let UNEXPECTED: Swift.Int
@@ -2896,9 +2590,7 @@ public struct ErrorCode {
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -2910,9 +2602,7 @@ public struct ErrorCode {
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -2925,15 +2615,9 @@ public protocol ConnectionEventDelegate : ObjectiveC.NSObjectProtocol {
   func onReconnecting()
 }
 public protocol FlyXmppControllerDelegate : ObjectiveC.NSObjectProtocol {
-  #if compiler(>=5.3) && $NonescapableTypes
   func processChannelPushMessage(completionHandler: @escaping (Swift.String, Swift.String, Swift.String, Swift.String, MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   func processPushMessage(_ userInfo: [Swift.AnyHashable : Any]?, completionHandler: @escaping (Swift.String, Swift.String, Swift.String, Swift.String, MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   func processGroupPushMessage(_ userInfo: [Swift.AnyHashable : Any]?) -> Swift.String
-  #endif
   func processAdminBlockPushMessage(userJid: Swift.String, blockStatus: Swift.String) -> Swift.String
   func processDeleteMessagePushMessage(messageIds: [Swift.String]) -> (Swift.String, Swift.String, Swift.String, MirrorFlySDK.ChatMessage)
 }
@@ -2981,34 +2665,22 @@ extension Swift.String {
   }
 }
 extension Swift.String {
-  #if compiler(>=5.3) && $NonescapableTypes
   public var base64Decoded: Swift.String? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public var base64Encoded: Swift.String? {
     get
   }
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func parseToInt() -> Swift.Int?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func rangeFromNSRange(_ nsRange: Foundation.NSRange) -> Swift.Range<Swift.String.Index>?
-  #endif
   public func substringFromNSRange(_ nsRange: Foundation.NSRange) -> Swift.String
   public func replacing(_ withString: Swift.String, range: Foundation.NSRange) -> Swift.String
 }
 extension Swift.Int {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func parse(from string: Swift.String) -> Swift.Int?
-  #endif
 }
 extension Foundation.FileManager {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func removeItem(at url: Foundation.URL, completion: @escaping (Swift.Bool, (any Swift.Error)?) -> ())
-  #endif
 }
 extension Swift.Double {
   public func roundTo0f() -> Swift.String
@@ -3026,82 +2698,44 @@ public typealias FlySendMessageListener = (_ isSuccess: Swift.Bool, _ error: Mir
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objcMembers public class FlyMessenger : ObjectiveC.NSObject, MirrorFlySDK.FlyMediaDelegate {
   @objc public var messageEventsDelegate: (any MirrorFlySDK.MessageEventsDelegate)?
   @objc public static let shared: MirrorFlySDK.FlyMessenger
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func sendTextMessage(messageParams: MirrorFlySDK.TextMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func sendAutoTextMessage(messageParams: MirrorFlySDK.TextMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use FlyMessenger.sendMediaFileMessage(messageParams: FileMessage, sendMessageListener: @escaping (_ isSuccess: Bool,_ error: FlyError?,_ chatMessage : ChatMessage?)-> Void instead to send Media files")
   public static func sendFileMessage(messageParams: MirrorFlySDK.FileMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func sendMeetMessage(messageParams: MirrorFlySDK.MeetMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use the ChatManager.sendTextMessage(messageParams: TextMessageParams) instead.")
   public static func sendTextMessage(toJid: Swift.String, message: Swift.String, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String], metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", messageType: MirrorFlySDK.MessageType = .text, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use ChatManager.sendFileMessage(messageParams: FileMessage) method instead.")
   public static func sendLocationMessage(toJid: Swift.String, latitude: Swift.Double, longitude: Swift.Double, address: Swift.String, message: Swift.String? = nil, replyMessageId: Swift.String? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use ChatManager.sendFileMessage(messageParams: FileMessage) method instead.")
   public static func sendContactMessage(toJid: Swift.String, contactName: Swift.String, contactNumbers: [Swift.String], replyMessageId: Swift.String? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @objc public static func encryptDecryptMessageContent(message: Swift.String, messageId: Swift.String, isEncrypt: Swift.Bool) -> Swift.String?
-  #endif
   @objc public static func getMessagesOf(jid: Swift.String) -> [MirrorFlySDK.ChatMessage]
   @objc public static func checkMessagesAvailableTo(jid: Swift.String) -> Swift.Bool
   @objc public static func getAllMediaMessagesOf(jid: Swift.String) -> [MirrorFlySDK.ChatMessage]
   @objc public static func getMediaMessagesOf(jid: Swift.String) -> [MirrorFlySDK.ChatMessage]
   @objc public static func getMessagesUsingIds(messageIds: [Swift.String]) -> [MirrorFlySDK.ChatMessage]
-  #if compiler(>=5.3) && $NonescapableTypes
   @objc public static func getMessageOfId(messageId: Swift.String) -> MirrorFlySDK.ChatMessage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use ChatManager.sendFileMessage(messageParams: FileMessage) method instead.")
   public static func sendImageMessage(toJid: Swift.String, mediaData: MirrorFlySDK.MediaData, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String], metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
   @objc public static func uploadFile(chatMessage: MirrorFlySDK.ChatMessage)
   @available(*, deprecated, message: "Use the ChatManager.refreshToken(completionHandler : @escaping FlyCompletionHandler) instead.")
   public static func refreshToken(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use the FlyMessenger.downloadMedia(messageId: String, sendMessageListener : @escaping (_ isSuccess: Bool,_ error: FlyError?,_ chatMessage: ChatMessage?)-> Void) instead")
   public static func downloadMediaRetry(message: MirrorFlySDK.ChatMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func downloadMedia(messageId: Swift.String, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use the FlyMessenger.uploadMedia(messageId: String, sendMessageListener : @escaping (_ isSuccess: Bool,_ error: FlyError?,_ chatMessage: ChatMessage?)-> Void) instead")
   public static func uploadMediaRetry(message: MirrorFlySDK.ChatMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func uploadMedia(messageId: Swift.String, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use ChatManager.sendFileMessage(messageParams: FileMessage) method instead.")
   public static func sendVideoMessage(toJid: Swift.String, mediaData: MirrorFlySDK.MediaData, replyMessageId: Swift.String? = nil, mentionedUsersIds: [Swift.String], metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use ChatManager.sendFileMessage(messageParams: FileMessage) method instead.")
   public static func sendDocumentMessage(toJid: Swift.String, mediaData: MirrorFlySDK.MediaData, replyMessageId: Swift.String? = nil, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", mediaCaption: Swift.String, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @available(*, deprecated, message: "Use ChatManager.sendFileMessage(messageParams: FileMessage) method instead.")
   public static func sendAudioMessage(toJid: Swift.String, mediaData: MirrorFlySDK.MediaData, replyMessageId: Swift.String? = nil, isRecorded: Swift.Bool, metaData: [MirrorFlySDK.MessageMetaData]? = [], topicID: Swift.String? = "", sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @objc public static func saveUnsentMessage(id: Swift.String, message: Swift.String, mentionedUsers: [Swift.String]? = [], mentionSearch: [Swift.String]? = [])
-  #endif
   public static func getUnsentMessageOf(id: Swift.String) -> MirrorFlySDK.UnsentMessage
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func sendMediaFileMessage(messageParams: MirrorFlySDK.FileMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
   @objc deinit
 }
 extension MirrorFlySDK.FlyMessenger {
@@ -3127,15 +2761,9 @@ extension MirrorFlySDK.FlyMessenger {
   @objc public static func resetFailedMediaMessages(chatUserJid: Swift.String)
 }
 extension MirrorFlySDK.FlyMessenger : AVFoundation.AVCaptureFileOutputRecordingDelegate {
-  #if compiler(>=5.3) && $NonescapableTypes
   @objc dynamic public func fileOutput(_ output: AVFoundation.AVCaptureFileOutput, didFinishRecordingTo outputFileURL: Foundation.URL, from connections: [AVFoundation.AVCaptureConnection], error: (any Swift.Error)?)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   @objc public static func compressVideo(inputURL: Foundation.URL, outputURL: Foundation.URL, handler: @escaping (_ exportSession: AVFoundation.AVAssetExportSession?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func sendNotAcknowledgeMessage(chatMessages: [MirrorFlySDK.ChatMessage?])
-  #endif
 }
 extension MirrorFlySDK.FlyMessenger {
   public static func sendWebLogoutRequest(socketId: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
@@ -3144,12 +2772,8 @@ extension MirrorFlySDK.FlyMessenger {
   @objc dynamic public func deleteUnreadMessageSeparatorOfAConversation(jid: Swift.String)
 }
 extension MirrorFlySDK.FlyMessenger {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func editTextMessage(editMessageParams: MirrorFlySDK.EditMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func editMediaCaption(editMessageParams: MirrorFlySDK.EditMessage, sendMessageListener: @escaping (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ chatMessage: MirrorFlySDK.ChatMessage?) -> Swift.Void)
-  #endif
   public func getUnreadMessagesCount(for chatType: MirrorFlySDK.ChatType) -> Swift.Int
 }
 public struct BusyStatus : Swift.Codable {
@@ -3228,18 +2852,14 @@ public struct MessageReceipt : Swift.Codable {
 }
 extension MirrorFlySDK.FlyCallUtils {
   public func setConfigUserDefaults(_ value: Swift.String, withKey key: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getConfigUserDefault(forKey key: Swift.String) -> Swift.String?
-  #endif
 }
 @objc @_inheritsConvenienceInitializers public class VOIPManager : ObjectiveC.NSObject {
   @objc public static var sharedInstance: MirrorFlySDK.VOIPManager
   public func savePushToken(token: Swift.String)
   public func saveVOIPToken(token: Swift.String)
   public func updateDeviceToken()
-  #if compiler(>=5.3) && $NonescapableTypes
   public func updateDeviceToken(isForceUpdate: Swift.Bool = false, onCompletion: @escaping (_ isSuccess: Swift.Bool, _ updatedVOIPToken: Swift.String, _ updatedDeviceToken: Swift.String, _ tokenError: Swift.String?) -> Swift.Void)
-  #endif
   public func refreshToken(onCompletion: @escaping (_ isSuccess: Swift.Bool) -> Swift.Void)
   @objc override dynamic public init()
   @objc deinit
@@ -3247,9 +2867,7 @@ extension MirrorFlySDK.FlyCallUtils {
 @objc public protocol ProfileEventsDelegate : ObjectiveC.NSObjectProtocol {
   @objc func userCameOnline(for jid: Swift.String)
   @objc func userWentOffline(for jid: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   @objc func userProfileFetched(for jid: Swift.String, profileDetails: MirrorFlySDK.ProfileDetails?)
-  #endif
   @objc func myProfileUpdated()
   @objc func usersProfilesFetched()
   @objc func blockedThisUser(jid: Swift.String)
@@ -3336,9 +2954,7 @@ public enum ContactSyncState : Swift.String {
   public var rawValue: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class BackupManager : ObjectiveC.NSObject {
@@ -3351,9 +2967,7 @@ public enum ContactSyncState : Swift.String {
   public func cancelRestore()
   public func cancelBackup()
   public func calculateProgress(value: Swift.Int, percentageVal: Swift.Int) -> Swift.Double
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getBackupFilePath() -> Foundation.URL?
-  #endif
   public func checkIfMessageAvailable() -> Swift.Bool
   public static func isBackupInProgress() -> Swift.Bool
   @objc deinit
@@ -3363,9 +2977,7 @@ public protocol XMPPTypingStatusDelegate : ObjectiveC.NSObjectProtocol {
   func onGroupChatTypingStatusChanged(groupJid: Swift.String, userJid: Swift.String, status: MirrorFlySDK.TypingStatus)
 }
 public protocol XMPPAdminBlockDelegate : ObjectiveC.NSObjectProtocol {
-  #if compiler(>=5.3) && $NonescapableTypes
   func didBlock(adminBlock: MirrorFlySDK.AdminBlock?)
-  #endif
 }
 public struct MediaData {
   public init()
@@ -3485,9 +3097,7 @@ public struct ChannelLinkChat : Swift.Codable {
   public var visibility: Swift.Int
   public var messageMode: Swift.Int
   public var inviteLink: Swift.String?
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(messageID: Swift.String, channelId: Swift.String, name: Swift.String, imageUri: Swift.String? = nil, accessMode: Swift.Int, visibility: Swift.Int, messageMode: Swift.Int, inviteLink: Swift.String? = nil)
-  #endif
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -3565,42 +3175,22 @@ extension MirrorFlySDK.WebLoginsManager : MirrorFlySDK.XMPPWebLogoutDelegate {
 }
 extension MirrorFlySDK.WebLoginsManager {
   public func saveWebLogin(qrData: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getWebLogins() -> [MirrorFlySDK.WebLoginInfo?]
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getRecentWebLogin() -> [MirrorFlySDK.WebLoginInfo?]
-  #endif
 }
 public protocol AvailableFeaturesDelegate : ObjectiveC.NSObjectProtocol {
   func didUpdateAvailableFeatures(features: MirrorFlySDK.AvailableFeaturesModel)
 }
 public struct FlyEncryption {
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(encryptionKey: Swift.String, initializationVector: Swift.String)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func sha256(_ key: Swift.String, length: Swift.Int) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func encrypt(string: Swift.String) -> Foundation.Data?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func decrypt(data: Foundation.Data?) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func crypt(data: Foundation.Data?, option: CommonCrypto.CCOperation) -> Foundation.Data?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func encryptFile(at path: Foundation.URL, fileName: Swift.String) -> (Foundation.URL?, Swift.String?)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func decryptFile(at path: Foundation.URL, fileName: Swift.String, key: Swift.String) -> (Foundation.URL?, Swift.String?)
-  #endif
   public func encryptDecryptData(key: Swift.String, data: Swift.String, encrypt: Swift.Bool) -> Swift.String
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func htmlEncoding(content: Swift.String, isEncode: Swift.Bool) -> Swift.String?
-  #endif
 }
 extension Foundation.Data {
   public func write(withName name: Swift.String, path: Foundation.URL) -> Foundation.URL
@@ -3608,12 +3198,8 @@ extension Foundation.Data {
 @_inheritsConvenienceInitializers @objc public class NotificationMessageSupport : ObjectiveC.NSObject {
   public typealias pushReturnBlock = (UserNotifications.UNMutableNotificationContent?, MirrorFlySDK.ChatMessage?) -> Swift.Void
   public static let shared: MirrorFlySDK.NotificationMessageSupport
-  #if compiler(>=5.3) && $NonescapableTypes
   @objc public func didReceiveNotificationRequest(_ bestContent: UserNotifications.UNMutableNotificationContent?, appName: Swift.String, onCompletion: @escaping MirrorFlySDK.NotificationMessageSupport.pushReturnBlock)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public func handleAdminBlockNotification(_ bestContent: UserNotifications.UNMutableNotificationContent?, onCompletion: @escaping MirrorFlySDK.NotificationMessageSupport.pushReturnBlock)
-  #endif
   @objc override dynamic public init()
   @objc deinit
 }
@@ -3624,25 +3210,13 @@ extension Foundation.Data {
   }
   public class func getGroupContainerID() -> Swift.String
   public class func randomString(of length: Swift.Int) -> Swift.String
-  #if compiler(>=5.3) && $NonescapableTypes
   public class func validateNumberForSync(number: Swift.String?, getCountryCode countryCode: Swift.String?) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public class func checkCountries(countryCode: Swift.String) -> MirrorFlySDK.CountryInfo?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public class func readLocalFile() -> Foundation.Data?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public class func parse(jsonData: Foundation.Data) -> [MirrorFlySDK.CountryInfo]?
-  #endif
   public struct validationMobileandCountryCode {
-    #if compiler(>=5.3) && $NonescapableTypes
     public static func validateMobileNumber(_ mobileNumber: Swift.String?) throws -> Swift.String
-    #endif
-    #if compiler(>=5.3) && $NonescapableTypes
     public static func validateCountryCode(_ countryCode: Swift.String?) throws -> Swift.String
-    #endif
   }
   public enum validationError : Foundation.LocalizedError {
     case invalidMobileNumber
@@ -3651,11 +3225,9 @@ extension Foundation.Data {
     case countryCodeTooLong
     case mobileNumberTooShort
     case countryCodeTooShort
-    #if compiler(>=5.3) && $NonescapableTypes
     public var errorDescription: Swift.String? {
       get
     }
-    #endif
     public static func == (a: MirrorFlySDK.Utils.validationError, b: MirrorFlySDK.Utils.validationError) -> Swift.Bool
     public func hash(into hasher: inout Swift.Hasher)
     public var hashValue: Swift.Int {
@@ -3667,9 +3239,7 @@ extension Foundation.Data {
 public enum PushServerType : Swift.String {
   case firebase
   case applePushService
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -3759,9 +3329,7 @@ public enum TypingStatus : Swift.Int, Swift.CustomStringConvertible {
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -3785,9 +3353,7 @@ public enum FlyProgress : Swift.String {
   public var rawValue: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
 }
 public struct UploadInfo : Swift.Codable {
@@ -3800,517 +3366,517 @@ public protocol MuteEventDelegate {
 }
 public class FlyDefaults {
   public init()
-  @MirrorFlySDK.SDKDefaults public static var isLoggedIn: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isLoggedIn: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isGroupsFetched: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isGroupsFetched: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isArchivedChatsFetched: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isArchivedChatsFetched: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var authtoken: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var authtoken: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var localPath: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var localPath: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var xmppMyJID: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var xmppMyJID: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var initializationVector: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var initializationVector: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myName: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myName: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myImageUrl: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myImageUrl: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myImageToken: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myImageToken: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myProfileImageUrl: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myProfileImageUrl: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myMobileNumber: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myMobileNumber: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myEmail: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myEmail: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myStatus: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myStatus: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isBusyStatusEnabled: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isBusyStatusEnabled: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myNickName: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myNickName: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var IV: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var IV: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var licenseKey: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var licenseKey: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var SDKVersion: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var SDKVersion: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myPassword: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myPassword: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myXmppUsername: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myXmppUsername: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myXmppPassword: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myXmppPassword: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myXmppResource: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myXmppResource: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var myJid: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var myJid: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var xmppDomain: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var xmppDomain: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var xmppPort: Swift.Int {
+  @MirrorFlySDK.SDKDefaults<Swift.Int> public static var xmppPort: Swift.Int {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isBlockedByAdmin: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isBlockedByAdmin: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var enableGroupCreation: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var enableGroupCreation: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var adminOnlyChange: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var adminOnlyChange: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var maxInGroup: Swift.Int {
+  @MirrorFlySDK.SDKDefaults<Swift.Int> public static var maxInGroup: Swift.Int {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var baseURL: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var baseURL: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var enableContactSync: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var enableContactSync: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var enableChatHistory: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var enableChatHistory: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var maximumRecentChatPin: Swift.Int {
+  @MirrorFlySDK.SDKDefaults<Swift.Int> public static var maximumRecentChatPin: Swift.Int {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var useProfileName: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var useProfileName: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var countryCode: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var countryCode: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var deleteMediaFromDevice: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var deleteMediaFromDevice: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var appGroupContainerID: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var appGroupContainerID: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isLoginContactSyncDone: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isLoginContactSyncDone: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isContactSyncNeeded: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isContactSyncNeeded: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isTrialLicense: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isTrialLicense: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isContactPermissionDenied: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isContactPermissionDenied: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isContactPermissionChanged: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isContactPermissionChanged: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isContactPermissionSkipped: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isContactPermissionSkipped: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isFriendsListSyncPending: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isFriendsListSyncPending: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var signalServerUrl: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var signalServerUrl: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var offlineParam: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var offlineParam: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var lastMessageTime: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var lastMessageTime: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isArchivedChatEnabled: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isArchivedChatEnabled: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadEnable: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var autoDownloadEnable: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadMobile: [Swift.String : Swift.Bool] {
+  @MirrorFlySDK.SDKDefaults<[Swift.String : Swift.Bool]> public static var autoDownloadMobile: [Swift.String : Swift.Bool] {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadWifi: [Swift.String : Swift.Bool] {
+  @MirrorFlySDK.SDKDefaults<[Swift.String : Swift.Bool]> public static var autoDownloadWifi: [Swift.String : Swift.Bool] {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadLastEnabledTime: Swift.Double {
+  @MirrorFlySDK.SDKDefaults<Swift.Double> public static var autoDownloadLastEnabledTime: Swift.Double {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadTimeMobileDataImage: Swift.Double {
+  @MirrorFlySDK.SDKDefaults<Swift.Double> public static var autoDownloadTimeMobileDataImage: Swift.Double {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadTimeMobileDataVideo: Swift.Double {
+  @MirrorFlySDK.SDKDefaults<Swift.Double> public static var autoDownloadTimeMobileDataVideo: Swift.Double {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadTimeMobileDataAudio: Swift.Double {
+  @MirrorFlySDK.SDKDefaults<Swift.Double> public static var autoDownloadTimeMobileDataAudio: Swift.Double {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadTimeMobileDataDocument: Swift.Double {
+  @MirrorFlySDK.SDKDefaults<Swift.Double> public static var autoDownloadTimeMobileDataDocument: Swift.Double {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadTimeWifiImage: Swift.Double {
+  @MirrorFlySDK.SDKDefaults<Swift.Double> public static var autoDownloadTimeWifiImage: Swift.Double {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadTimeWifiVideo: Swift.Double {
+  @MirrorFlySDK.SDKDefaults<Swift.Double> public static var autoDownloadTimeWifiVideo: Swift.Double {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadTimeWifiAudio: Swift.Double {
+  @MirrorFlySDK.SDKDefaults<Swift.Double> public static var autoDownloadTimeWifiAudio: Swift.Double {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var autoDownloadTimeWifiDocument: Swift.Double {
+  @MirrorFlySDK.SDKDefaults<Swift.Double> public static var autoDownloadTimeWifiDocument: Swift.Double {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var remotePush: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var remotePush: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var localPush: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var localPush: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var profileIV: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var profileIV: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isMobileNumberLogin: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isMobileNumberLogin: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var webLoginUrl: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var webLoginUrl: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var lastLoginJid: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var lastLoginJid: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var setLastSeenJids: [Swift.String : Swift.String] {
+  @MirrorFlySDK.SDKDefaults<[Swift.String : Swift.String]> public static var setLastSeenJids: [Swift.String : Swift.String] {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var ChatSummary: [Swift.String : Swift.String] {
+  @MirrorFlySDK.SDKDefaults<[Swift.String : Swift.String]> public static var ChatSummary: [Swift.String : Swift.String] {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var ChatTheme: [MirrorFlySDK.ChatBackgroundModel] {
+  @MirrorFlySDK.SDKDefaults<[MirrorFlySDK.ChatBackgroundModel]> public static var ChatTheme: [MirrorFlySDK.ChatBackgroundModel] {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var roomId: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var roomId: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var pingTime: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var pingTime: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var timeDifference: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var timeDifference: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isLive: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isLive: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var enableFileEncryption: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var enableFileEncryption: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var hideNotificationContent: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var hideNotificationContent: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var lastNotificationId: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var lastNotificationId: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var hideLastSeen: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var hideLastSeen: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var seenReceipt: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var seenReceipt: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var hideProfile: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var hideProfile: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isUserBusyStatusEnabled: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isUserBusyStatusEnabled: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var userBusyStatus: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var userBusyStatus: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var appName: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var appName: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isLogWriterEnabled: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isLogWriterEnabled: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var callMediaServer: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var callMediaServer: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var centrifugoWsUrl: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var centrifugoWsUrl: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var livekitWsUrl: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var livekitWsUrl: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var callIceServers: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var callIceServers: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var unreadMissedCallCount: Swift.Int {
+  @MirrorFlySDK.SDKDefaults<Swift.Int> public static var unreadMissedCallCount: Swift.Int {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isBackupInProgress: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isBackupInProgress: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var deviceType: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var deviceType: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var pushServerType: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var pushServerType: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isNewLoggedIn: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isNewLoggedIn: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isNeedCodeSync: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isNeedCodeSync: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var mediaFolderName: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var mediaFolderName: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isFirstchatHistory: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isFirstchatHistory: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var hasNextPageDataIntAPI: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var hasNextPageDataIntAPI: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var fetchedPageNumber: Swift.Int {
+  @MirrorFlySDK.SDKDefaults<Swift.Int> public static var fetchedPageNumber: Swift.Int {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var totalPageNumber: Swift.Int {
+  @MirrorFlySDK.SDKDefaults<Swift.Int> public static var totalPageNumber: Swift.Int {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var enableLogs: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var enableLogs: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var callReconnectionTimeOut: Swift.Int {
+  @MirrorFlySDK.SDKDefaults<Swift.Int> public static var callReconnectionTimeOut: Swift.Int {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var chatSummaryInterval: Swift.Int {
+  @MirrorFlySDK.SDKDefaults<Swift.Int> public static var chatSummaryInterval: Swift.Int {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var deviceId: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var deviceId: Swift.String {
     get
     set
     _modify
@@ -4320,152 +3886,152 @@ public class FlyDefaults {
 }
 public class CommonDefaults {
   public init()
-  @MirrorFlySDK.SDKDefaults public static var appLockPassword: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var appLockPassword: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var appLockPasswordDate: Foundation.Date {
+  @MirrorFlySDK.SDKDefaults<Foundation.Date> public static var appLockPasswordDate: Foundation.Date {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var pinChangeAlertShownDate: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var pinChangeAlertShownDate: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var faceOrFingerAuthenticationFails: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var faceOrFingerAuthenticationFails: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var passwordAuthenticationAttemps: Swift.Int {
+  @MirrorFlySDK.SDKDefaults<Swift.Int> public static var passwordAuthenticationAttemps: Swift.Int {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var appBackgroundTime: Foundation.Date {
+  @MirrorFlySDK.SDKDefaults<Foundation.Date> public static var appBackgroundTime: Foundation.Date {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var appLockenable: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var appLockenable: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var showAppLock: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var showAppLock: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var appFingerprintenable: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var appFingerprintenable: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var appLockOnPrivateChat: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var appLockOnPrivateChat: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var privateChatOnChatScreen: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var privateChatOnChatScreen: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isInPrivateChat: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isInPrivateChat: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var showPrivateLockChat: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var showPrivateLockChat: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var showPrivateLockRecent: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var showPrivateLockRecent: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var permissionAlertShown: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var permissionAlertShown: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var notificationSoundID: Swift.Int {
+  @MirrorFlySDK.SDKDefaults<Swift.Int> public static var notificationSoundID: Swift.Int {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var notificationSoundUrl: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var notificationSoundUrl: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var selectedNotificationSoundName: [Swift.String : Swift.String] {
+  @MirrorFlySDK.SDKDefaults<[Swift.String : Swift.String]> public static var selectedNotificationSoundName: [Swift.String : Swift.String] {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var vibrationEnable: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var vibrationEnable: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var muteNotificationEnable: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var muteNotificationEnable: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var notificationSoundEnable: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var notificationSoundEnable: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var notificationPopUPEnable: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var notificationPopUPEnable: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isTranlationEnabled: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isTranlationEnabled: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var selectedLanguage: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var selectedLanguage: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isBackupCompleted: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isBackupCompleted: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isProfileUpdated: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isProfileUpdated: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var targetLanguageCode: Swift.String {
+  @MirrorFlySDK.SDKDefaults<Swift.String> public static var targetLanguageCode: Swift.String {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var chatHistoryEnabled: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var chatHistoryEnabled: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var emailLoginEnabled: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var emailLoginEnabled: Swift.Bool {
     get
     set
     _modify
   }
-  @MirrorFlySDK.SDKDefaults public static var isProfileFetcehdFromServer: Swift.Bool {
+  @MirrorFlySDK.SDKDefaults<Swift.Bool> public static var isProfileFetcehdFromServer: Swift.Bool {
     get
     set
     _modify
@@ -4531,9 +4097,7 @@ public enum NotificationSoundKeys : Swift.String {
   case name
   case file
   case extensions
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -4888,9 +4452,7 @@ public var isRunningInNotificationExtension: Swift.Bool {
 public var isBackgroundDatabaseAccess: Swift.Bool {
   get
 }
-#if compiler(>=5.3) && $NonescapableTypes
 public func hardDeleteAllTable(except types: [RealmSwift.Object.Type]? = nil)
-#endif
 extension RealmSwift.Realm {
   public func safeWrite(_ block: () throws -> Swift.Void) throws
 }
@@ -4906,44 +4468,22 @@ public struct FlyUtils {
   public static func getIdFromJid(jid: Swift.String) throws -> Swift.String
   public static func getMyJid() throws -> Swift.String
   public static func getTimeInMillis() -> Swift.Double
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func dataToArray<T>(data: Foundation.Data) -> [T]?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getContactDetail(data: Foundation.Data) -> [Swift.String]?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func arrayToData<T>(array: [T]) -> Foundation.Data?
-  #endif
   public static func arrayToString(array: [MirrorFlySDK.MessageMetaData]) -> Swift.String
   public static func makeMataDataString(metaDataString: Swift.String) -> Swift.String
   public static func dictionaryToString(dictionary: [Swift.String : Swift.String]) -> Swift.String
   public static func convertDictionaryToMetaDataArray(dictionary: [Swift.String : Swift.String]) -> [MirrorFlySDK.MessageMetaData]
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func convertStringToDictionary(text: Swift.String) -> [Swift.String : Swift.String]?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func convertDictionaryToJSON(_ dictionary: [Swift.String : Any]) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getOfflineActionModelData(offlineActionModel: MirrorFlySDK.OfflineActionModel) -> Foundation.Data?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getDecodedData(data: Foundation.Data) -> MirrorFlySDK.OfflineActionModel?
-  #endif
   public static func isNetworkAvailable() -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func inValidNetworkPreCondition(resultDict: inout [Swift.String : Any], completionHandler: (_ isSuccess: Swift.Bool, _ error: MirrorFlySDK.FlyError?, _ data: [Swift.String : Any]) -> Swift.Void) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func isValidJid(jid: Swift.String?) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func isMyJid(jid: Swift.String?) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func isItGroupJid(groupJid: Swift.String?) -> Swift.Bool
-  #endif
   public static func convertToJsonString<T>(data: T) throws -> Swift.String where T : Swift.Decodable, T : Swift.Encodable
   public static func getType<T>(from jsonString: Swift.String) throws -> T where T : Swift.Decodable, T : Swift.Encodable
   public static func setBaseUrl(_ baseUrl: Swift.String)
@@ -4957,31 +4497,17 @@ public struct FlyUtils {
   public static func randomString(of length: Swift.Int) throws -> Swift.String
   public static func groupToJidString() throws -> Swift.String
   public static func getGroupJid(groupId: Swift.String) throws -> Swift.String
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func validateNumberForSync(number: Swift.String?, getCountryCode countryCode: Swift.String?) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getCountryCodeForRegion(region: Swift.String) -> Foundation.NSNumber?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func checkCountries(countryCode: Swift.String) -> MirrorFlySDK.CountryInfo?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func readLocalFile(resource: Swift.String, type: Swift.String) -> Foundation.Data?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func parse(jsonData: Foundation.Data) -> [MirrorFlySDK.CountryInfo]?
-  #endif
   public static func separateString(str: Swift.String, chars: Swift.String, aryIndx: Swift.Int) -> Swift.String
   public static func getJidWithoutResource(jid: Swift.String) throws -> Swift.String
   public static func generateUniqueId() -> Swift.String
   public static func openURL(_ urlString: Swift.String) -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getFileName(forJID: Swift.String?, uniqueString: Swift.String?, uploadExtension: Swift.String?) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func saveInDirectory(with mediaURL: Foundation.URL, fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> (Swift.String?, Swift.String?)?
-  #endif
   public static func attachmentsDocumentDirectory(messageType: MirrorFlySDK.MessageType) -> Foundation.URL
   public static func getFilePathInDocuments(forFile fileName: Swift.String, messageType: MirrorFlySDK.MessageType) -> Swift.String
   public static func saveImagesInGallery(localPath: Swift.String)
@@ -4989,35 +4515,19 @@ public struct FlyUtils {
   public static func convertToBase64(fileData: Foundation.Data) -> Swift.String
   public static func getWebImageSize(imageSize: CoreFoundation.CGSize) -> CoreFoundation.CGSize
   public static func getMobileImageSize(imageSize: CoreFoundation.CGSize) -> CoreFoundation.CGSize
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func generateThumbImage(url: Foundation.URL) -> Swift.String?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func generateThumbnail(url: Foundation.URL) -> UIKit.UIImage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func generateVideoThumbnail(for url: Foundation.URL) -> UIKit.UIImage?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getMediaDuration(url: Foundation.URL) -> Swift.Double?
-  #endif
   public static func deleteInDirectory(filePath: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func isValidGroupJid(groupJid: Swift.String?) -> Swift.Bool
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func compressImage(image: UIKit.UIImage) -> UIKit.UIImage?
-  #endif
   public static func profileDocumentDirectory() -> Foundation.URL
   public static func convertStringToDate(dateString: Swift.String, dateFormat: Swift.String) -> Swift.Double
   public static func saveVideo(customFolder: Swift.String, videoFileUrl: Foundation.URL, completion: @escaping (Swift.Bool) -> Swift.Void)
   public static func saveImage(customFolder: Swift.String, image: UIKit.UIImage, imageName: Swift.String, completion: @escaping (Swift.Bool) -> Swift.Void)
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func fetchAssetCollectionForAlbum(currentFolderName: Swift.String?) -> Photos.PHAssetCollection!
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func generateThumbnail(path: Foundation.URL) -> UIKit.UIImage?
-  #endif
   public static func convertImageToBase64(img: UIKit.UIImage) -> Swift.String
   public static func deleteDownloadedImageFromAlbum(customFolder: Swift.String, imageNames: [Swift.String], completion: @escaping (Swift.Bool) -> Swift.Void)
   public static func deleteDownloadedVideoFromAlbum(customFolder: Swift.String, videoNames: [Swift.String], completion: @escaping (Swift.Bool) -> Swift.Void)
@@ -5027,32 +4537,22 @@ public struct FlyUtils {
   @objc deinit
 }
 extension MirrorFlySDK.FlyUtils {
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getGroupContainerIDPath() -> Foundation.URL?
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getDBFilePath() -> Foundation.URL?
-  #endif
   public static func printTime() -> Swift.String
   public static func getUserName(jid: Swift.String, name: Swift.String, nickName: Swift.String, contactType: MirrorFlySDK.ContactType) -> Swift.String
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func convertUserName(jid: Swift.String, name: Swift.String? = nil, nickName: Swift.String? = nil, contactType: MirrorFlySDK.ContactType) -> Swift.String
-  #endif
   public static func getUserName(name: Swift.String, nickName: Swift.String) -> Swift.String
   public static func getGroupUserName(profile: MirrorFlySDK.ProfileDetails) -> Swift.String
   public static func getUnknownUserName(jid: Swift.String, name: Swift.String, nickName: Swift.String, contactType: MirrorFlySDK.ContactType) -> Swift.String
   public static func mobileNumberParse(phoneNo: Swift.String) -> Swift.String
   public static func convertUserName(name: Swift.String, nickName: Swift.String, phone: Swift.String) -> Swift.String
   public static func getFormattedMobileNumber(mobileNumber: Swift.String) -> Swift.String
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getEncryptedFileName(path: Swift.String?) -> Swift.String?
-  #endif
   public static func setAppName(appName: Swift.String)
   public static func getUTCTimeInMillis() -> Swift.Double
   public static func convertMilliSecondsToDate(milliSec: Swift.Double) -> Swift.String
-  #if compiler(>=5.3) && $NonescapableTypes
   public static func getImageFromMessage(chatMessage: MirrorFlySDK.ChatMessage) -> UIKit.UIImage?
-  #endif
 }
 extension Foundation.Date {
   public var millisecondsSince1970: Swift.Double {
@@ -5196,9 +4696,7 @@ public enum MessageType : Swift.String, Swift.CustomStringConvertible, Swift.Cas
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias AllCases = [MirrorFlySDK.MessageType]
   public typealias RawValue = Swift.String
   nonisolated public static var allCases: [MirrorFlySDK.MessageType] {
@@ -5215,9 +4713,7 @@ public enum MessageType : Swift.String, Swift.CustomStringConvertible, Swift.Cas
 }
 extension MirrorFlySDK.ContactManager {
   public func isContactsSaved() -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getUserProfileDetails(for id: Swift.String) -> MirrorFlySDK.ProfileDetails?
-  #endif
   public func getUserProfile(for jid: Swift.String, fetchFromServer: Swift.Bool, saveAsFriend: Swift.Bool = false, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func blockUser(for jid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
   public func unblockUser(for jid: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler) throws
@@ -5235,14 +4731,10 @@ extension MirrorFlySDK.ContactManager {
   public func getRegisteredUsers(fromServer: Swift.Bool, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public func getNonChatUsers() -> [MirrorFlySDK.ProfileDetails]
   public func removeProfileImage(completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func saveTempContact(userId: Swift.String, name: Swift.String = "") -> MirrorFlySDK.ProfileDetails?
-  #endif
   public func sendContactUsInfo(title: Swift.String, description: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
   public func deleteMyAccountRequest(reason: Swift.String, feedback: Swift.String, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getUsersList(pageNo: Swift.Int = 1, pageSize: Swift.Int = 50, search: Swift.String = emptyString(), metaData: MirrorFlySDK.MetaDataUserList? = nil, completionHandler: @escaping MirrorFlySDK.FlyCompletionHandler)
-  #endif
   public func saveUser(profileDetails: MirrorFlySDK.ProfileDetails, saveAs: MirrorFlySDK.ContactType = .unknown)
   public func getAllUsers() -> [MirrorFlySDK.ProfileDetails]
 }
@@ -5259,9 +4751,7 @@ extension MirrorFlySDK.ContactManager : MirrorFlySDK.XMPPProfileDelegate {
   public func unblockedThisUser(jid: Swift.String)
   public func userCameOnline(for jid: Swift.String)
   public func userWentOffline(for jid: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   public func userProfileFetched(for jid: Swift.String, profileDetails: MirrorFlySDK.ProfileDetails?)
-  #endif
   public func usersIBlockedListFetched(jidList: [Swift.String])
   public func usersBlockedMeListFetched(jidList: [Swift.String])
 }
@@ -5270,9 +4760,7 @@ extension MirrorFlySDK.ContactManager {
   public static func getMyProfile() -> MirrorFlySDK.FlyProfile
 }
 extension MirrorFlySDK.ContactManager {
-  #if compiler(>=5.3) && $NonescapableTypes
   public func getEnterpriseUsers(page: Swift.Int, size: Swift.Int, searchTerm: Swift.String, completion: @escaping (_ profiles: [MirrorFlySDK.ProfileDetails], _ totalPages: Swift.Int, _ totalRecords: Swift.Int, _ error: MirrorFlySDK.FlyError?) -> Swift.Void)
-  #endif
 }
 public struct MetaData : Swift.Codable {
   public init(key: Swift.String, value: Swift.String)
@@ -5364,10 +4852,8 @@ public protocol AdminBlockDelegate : ObjectiveC.NSObjectProtocol {
   @objc @available(*, deprecated, message: "Use onMessageDeleted(toJid: String, messageIds: [String], messageDeleteType: MessageDeleteType) instead. This method will be removed in a future")
   func onMessagesDeletedforEveryone(messageIds: Swift.Array<Swift.String>)
   @objc func showOrUpdateOrCancelNotification()
-  #if compiler(>=5.3) && $NonescapableTypes
   @objc @available(*, deprecated, message: "Use onChatCleared(toJid: String, chatClearType: ChatClearType) instead. This method will be removed in a future")
   func onMessagesCleared(toJid: Swift.String, deleteType: Swift.String?)
-  #endif
   @objc func setOrUpdateFavourite(messageId: Swift.String, favourite: Swift.Bool, removeAllFavourite: Swift.Bool)
   @objc func onMessageTranslated(message: MirrorFlySDK.ChatMessage, jid: Swift.String)
   @objc @available(*, deprecated, message: "Use onAllChatsCleared() instead. This method will be removed in a future")
@@ -5399,9 +4885,7 @@ public struct ChatDataModel {
 public enum ChannelAccessMode : Swift.String, Swift.Codable {
   case `public`
   case `private`
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -5410,9 +4894,7 @@ public enum ChannelAccessMode : Swift.String, Swift.Codable {
 public enum ChannelMessageMode : Swift.String, Swift.Codable {
   case allMembers
   case announcement
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -5421,9 +4903,7 @@ public enum ChannelMessageMode : Swift.String, Swift.Codable {
 public protocol XMPPProfileDelegate : ObjectiveC.NSObjectProtocol {
   func userCameOnline(for jid: Swift.String)
   func userWentOffline(for jid: Swift.String)
-  #if compiler(>=5.3) && $NonescapableTypes
   func userProfileFetched(for jid: Swift.String, profileDetails: MirrorFlySDK.ProfileDetails?)
-  #endif
   func usersProfilesFetched()
   func blockedThisUser(jid: Swift.String)
   func unblockedThisUser(jid: Swift.String)
@@ -5486,9 +4966,7 @@ public struct ContactModel : Swift.Codable {
   public var name: Swift.String?
   public var phone_number: [Swift.String]
   public var active_status: [Swift.String]
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(mid: Swift.String, name: Swift.String?, phone_number: [Swift.String], active_status: [Swift.String])
-  #endif
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
 }
@@ -5545,9 +5023,7 @@ public struct ChannelInvitation : Swift.Codable {
   public var messageMode: Swift.Int?
   public var inviteLink: Swift.String?
   public init()
-  #if compiler(>=5.3) && $NonescapableTypes
   public init(mid: Swift.String? = nil, channelId: Swift.String? = nil, name: Swift.String? = nil, imageUri: Swift.String? = nil, accessMode: Swift.Int? = nil, messageMode: Swift.Int? = nil, inviteLink: Swift.String? = nil)
-  #endif
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
 }
@@ -5561,9 +5037,7 @@ public struct ChannelInvitation : Swift.Codable {
   public var description: Swift.String {
     get
   }
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get
@@ -5575,9 +5049,7 @@ public enum NotificationStatus : Swift.String, Swift.Codable {
   case personRemoved
   case profileUpdated
   case makeAdmin
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.String)
-  #endif
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
     get
@@ -5590,9 +5062,7 @@ public enum MessageNotificationStatus : Swift.Int, Swift.Codable {
   case personRemoved
   case profileUpdated
   case makeAdmin
-  #if compiler(>=5.3) && $NonescapableTypes
   public init?(rawValue: Swift.Int)
-  #endif
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
     get

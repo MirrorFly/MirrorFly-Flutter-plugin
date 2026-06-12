@@ -7,5 +7,4 @@ framework module MirrorFlySDK {
 
 module MirrorFlySDK.Swift {
   header "MirrorFlySDK-Swift.h"
-  requires objc
 }

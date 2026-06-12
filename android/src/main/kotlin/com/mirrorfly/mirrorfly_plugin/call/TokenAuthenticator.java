@@ -67,8 +67,8 @@ public class TokenAuthenticator implements Authenticator {
     }
 
     private boolean refreshToken() throws IOException {
-        String userName = SharedPreferenceManager.instance.getString("username");
-        String password = SharedPreferenceManager.instance.getString("password");
+        String userName = SharedPreferenceManager.getInstance().getString("username");
+        String password = SharedPreferenceManager.getInstance().getString("password");
         JSONObject params = new JSONObject();
 
         try {
@@ -118,7 +118,7 @@ public class TokenAuthenticator implements Authenticator {
     }
 
     private void updateToken(String response) {
-        String userName = SharedPreferenceManager.instance.getString("username");
+        String userName = SharedPreferenceManager.getInstance().getString("username");
         String sha = FlyUtils.keyText(userName, 3);
 
         try {
@@ -129,7 +129,7 @@ public class TokenAuthenticator implements Authenticator {
                 JSONObject responseObject = new JSONObject(FlyExtensions.returnEmptyIfNull(data));
                 LogMessage.d(TAG, "Response: " + responseObject.toString());
                 String newToken = FlyUtils.encryptString(responseObject.getString("token"), sha);
-                SharedPreferenceManager.instance.storeString("authToken", newToken);
+                SharedPreferenceManager.getInstance().storeString("authToken", newToken);
                 LogMessage.i(TAG, "Token Refresh status : success");
                 LogMessage.d(TAG, "new token : " + FlyUtils.decodedToken());
             } else {
