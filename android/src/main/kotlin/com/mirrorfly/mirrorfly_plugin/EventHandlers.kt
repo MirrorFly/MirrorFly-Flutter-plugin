@@ -1,5 +1,8 @@
 package com.mirrorfly.mirrorfly_plugin
 
+import android.os.Handler
+import android.os.Looper
+import com.mirrorflysdk.flycommons.LogMessage
 import io.flutter.plugin.common.EventChannel
 
 
@@ -8,7 +11,11 @@ interface FlyEventSinkProvider {
 }
 
 open class EventStreamHandler : EventChannel.StreamHandler, FlyEventSinkProvider {
-    private var eventSink: EventChannel.EventSink? = null
+
+    // Written on the platform thread, read from SDK background threads.
+    @Volatile private var eventSink: EventChannel.EventSink? = null
+
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
         eventSink = events
@@ -19,7 +26,19 @@ open class EventStreamHandler : EventChannel.StreamHandler, FlyEventSinkProvider
     }
 
     override fun setEventSinkValue(value: Any?) {
-        eventSink?.success(value)
+        // Always post — never "call directly if already on main". Mixing the two
+        // lets a background event queued earlier be delivered AFTER a main-thread
+        // event raised later, silently reordering the stream. Unconditional
+        // posting keeps delivery FIFO for every channel.
+        mainHandler.post {
+            try {
+                eventSink?.success(value)
+            } catch (e: Exception) {
+                // Engine detaching or stream already closed. A dead sink must not
+                // take down the app on the main thread.
+                LogMessage.d("EventStreamHandler", "sink send failed: ${e.message}")
+            }
+        }
     }
 }
 
