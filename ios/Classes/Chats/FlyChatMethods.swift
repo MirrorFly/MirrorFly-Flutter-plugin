@@ -3722,7 +3722,7 @@ let ISEXPORT = true
     
     func getUnreadMessagesCount(call: FlutterMethodCall, result: @escaping FlutterResult){
         let (messageCount, chatCount) = ChatManager.getUNreadMessageAndChatCount()
-        result(messageCount)
+        result(chatCount)
     }
     
     func createTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
