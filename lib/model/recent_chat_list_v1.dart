@@ -43,7 +43,8 @@ class RecentChatListV1Response {
   /// (or with the next page, for search).
   final bool hasNext;
 
-  /// True when the rows came from the local table without a server call. Always false for search.
+  /// True when the rows came from the local table without a server call. For search this means
+  /// the device was offline and only locally saved chats were searched.
   final bool fromDB;
 
   /// Total chats the server reported for this mode or search. -1 when unknown.

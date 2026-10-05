@@ -3003,6 +3003,9 @@ class Mirrorfly {
   /// At least two characters are required. [page] and [size] page the search results; nothing is
   /// stored between calls. The result carries `searchText`, so a late reply for an older text can
   /// be ignored by the UI.
+  ///
+  /// Offline, the SDK searches the local recent table instead, with the same mode filter and
+  /// paging, and the result has `fromDB` true. Only chats already saved locally are found then.
   static Future<void> searchRecentChatsFromServer(
       {required RecentChatMode mode,
       required String searchText,
