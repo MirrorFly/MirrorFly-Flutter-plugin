@@ -23,9 +23,15 @@ buildscript {
 
 allprojects {
     repositories {
+        // Local SDK build (./gradlew :MirrorFlySDK:publishToMavenLocal in the SDK repo) comes first.
+        mavenLocal()
         google()
         jcenter()
         mavenCentral()
+        maven {
+            // Call SDK dependency (audioswitch) of the local SDK build
+            url "https://jitpack.io"
+        }
         maven {
             url "https://repo.mirrorfly.com/internal"
         }
@@ -87,7 +93,7 @@ android {
     }
 }
 dependencies {
-    api 'com.mirrorfly.sdk:mirrorflysdk:7.13.35_pre_4'
+    api 'com.mirrorfly.sdk:mirrorflysdk:7.13.39_pre_1' // local build from the SDK repo (publishToMavenLocal); published version was 7.13.35_pre_4
     api 'com.github.bumptech.glide:glide:4.15.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     api 'com.github.bumptech.glide:okhttp3-integration:4.11.0'

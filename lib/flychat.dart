@@ -2930,6 +2930,93 @@ class Mirrorfly {
         firstSet: firstSet, limit: limit, callback: flyCallback);
   }
 
+  /// Loads the first set of rows of one recent chat list backed by the paged server API.
+  ///
+  /// [mode] picks the list: all, groups, unread or archive. Each mode pages on its own, so a
+  /// screen with four tabs calls this once per tab.
+  /// [size] is the page size for this mode. Changing it restarts the mode from page 1.
+  ///
+  /// Online: page 1 is fetched from the server, saved to the local table, and the rows the table
+  /// holds for that range are returned (pinned chats first). Offline: the same rows come from the
+  /// table with `fromDB` true and no error.
+  ///
+  /// Parse `response.data` with [recentChatListV1ResponseFromJson] to get the rows and the paging
+  /// values (`hasNext`, `fromDB`, `totalRecords`, `totalPages`, `page`, `mode`).
+  ///
+  /// ```dart
+  /// await Mirrorfly.loadRecentChatListV1(
+  ///   mode: RecentChatMode.unread,
+  ///   size: 40,
+  ///   flyCallback: (response) {
+  ///     if (response.isSuccess && response.hasData) {
+  ///       var page = recentChatListV1ResponseFromJson(response.data);
+  ///       // page.data, page.hasNext, page.fromDB
+  ///     }
+  ///   },
+  /// );
+  /// ```
+  static Future<void> loadRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance
+        .loadRecentChatListV1(mode: mode, size: size, callback: flyCallback);
+  }
+
+  /// Loads the next set of rows of one recent chat list.
+  ///
+  /// Rows already fetched are read from the local table first. When the table has nothing more
+  /// for this mode and the device is online, the next server page is fetched, saved and returned.
+  /// Offline, the list stops where the fetched pages end, with `hasNext` false.
+  /// Call [loadRecentChatListV1] for the mode before this.
+  static Future<void> nextRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance
+        .nextRecentChatListV1(mode: mode, size: size, callback: flyCallback);
+  }
+
+  /// Fetches page 1 of one recent chat list again and returns the first set of rows.
+  /// Pages fetched earlier are kept.
+  static Future<void> reloadRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance
+        .reloadRecentChatListV1(mode: mode, size: size, callback: flyCallback);
+  }
+
+  /// True when [nextRecentChatListV1] can return more rows for [mode].
+  /// Returns true for a mode that was never loaded, so the first load happens.
+  static Future<bool> hasNextRecentChatListV1({required RecentChatMode mode}) {
+    return FlyChatFlutterPlatform.instance.hasNextRecentChatListV1(mode: mode);
+  }
+
+  /// Searches the server's recent chats by display name.
+  ///
+  /// Nothing is saved locally. Results come back as recent chat rows in server order; when a chat
+  /// already exists locally, its local row is returned so it looks like a list row. Open a result
+  /// with its jid as usual; the recent row is created when the chat's message history loads.
+  ///
+  /// The server matches [searchText] anywhere in the name, case-insensitive, on profile names only.
+  /// At least two characters are required. [page] and [size] page the search results; nothing is
+  /// stored between calls. The result carries `searchText`, so a late reply for an older text can
+  /// be ignored by the UI.
+  static Future<void> searchRecentChatsFromServer(
+      {required RecentChatMode mode,
+      required String searchText,
+      int page = 1,
+      int size = 20,
+      required Function(FlyResponse response) flyCallback}) {
+    return FlyChatFlutterPlatform.instance.searchRecentChatsFromServer(
+        mode: mode,
+        searchText: searchText,
+        page: page,
+        size: size,
+        callback: flyCallback);
+  }
+
   /// This method is used to initialize the Single/Group Chat User History to set the message filters.
   /// * @param [userJid] - Chat user JID (Single/Group)
   /// * @param [messageId] - Message id of the starting point (Optional)

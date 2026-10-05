@@ -911,6 +911,24 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         LogMessage.d(TAG, "onUpdateBusyStatus : status $status message $message")
     }
 
+    // The four members below were added to MessageEventsListener in SDK 7.13.39.
+    // The plugin has no stream for them yet, so they only log.
+    override fun showOfflineMessagesNotification(offlineMessagesCount: Int) {
+        LogMessage.d(TAG, "showOfflineMessagesNotification count $offlineMessagesCount")
+    }
+
+    override fun updateRecentChats(recentChatUserJid: String) {
+        LogMessage.d(TAG, "updateRecentChats $recentChatUserJid")
+    }
+
+    override fun updateNewMessagesReceived() {
+        LogMessage.d(TAG, "updateNewMessagesReceived")
+    }
+
+    override fun onPollVoteNotification(jid: String, voteEvent: PollVoteEvent?) {
+        LogMessage.d(TAG, "onPollVoteNotification $jid ${voteEvent?.toJsonString()}")
+    }
+
     override fun onMediaStatusUpdated(message: ChatMessage) {
         LogMessage.d(TAG, "onMediaStatusUpdated ${message.toJsonString()}")
 //        MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.toJsonString())
@@ -939,7 +957,7 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
 
     }
 
-    override fun onMessageStatusUpdated(messageId: String) {
+    override fun onMessageStatusUpdated(messageId: String, jid: String?) {
         LogMessage.d(TAG, "onMessageStatusUpdated $messageId")
         //called when the message status is updated
         //LogMessage.d("Message Ack", "Received")

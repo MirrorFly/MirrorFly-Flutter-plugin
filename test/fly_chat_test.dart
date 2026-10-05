@@ -8,6 +8,7 @@ import 'package:mirrorfly_plugin/fly_chat_platform_interface.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 import 'package:mirrorfly_plugin/model/callback.dart';
 import 'package:mirrorfly_plugin/model/notification_applaunch_details.dart';
+import 'package:mirrorfly_plugin/model/recent_chat_list_v1.dart';
 import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -603,6 +604,50 @@ class MockFlyChatFlutterPlatform
       int limit = 15,
       required Function(FlyResponse response) callback}) {
     //  implement getRecentChatListHistory
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> loadRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) callback}) {
+    //  implement loadRecentChatListV1
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> nextRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) callback}) {
+    //  implement nextRecentChatListV1
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> reloadRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) callback}) {
+    //  implement reloadRecentChatListV1
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> hasNextRecentChatListV1({required RecentChatMode mode}) {
+    //  implement hasNextRecentChatListV1
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> searchRecentChatsFromServer(
+      {required RecentChatMode mode,
+      required String searchText,
+      int page = 1,
+      int size = 20,
+      required Function(FlyResponse response) callback}) {
+    //  implement searchRecentChatsFromServer
     throw UnimplementedError();
   }
 

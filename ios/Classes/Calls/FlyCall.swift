@@ -78,7 +78,8 @@ import PushKit
         methodChannel = FlutterMethodChannel(name: Constants.callMethodChannel, binaryMessenger: registrar.messenger())
         registrar.addMethodCallDelegate(self, channel: methodChannel!)
         
-        CallManager.setCallEventsDelegate(delegate: self)
+        // SDK 5.18.23 (local build) also wants a recording delegate; the plugin has no recording stream yet, so it only logs.
+        CallManager.setCallEventsDelegate(delegate: self, recordingDelegate: self)
         AudioManager.shared().audioManagerDelegate = self
         CallManager.missedCallNotificationDelegate = self
         CallManager.callLogDelegate = self
@@ -797,3 +798,9 @@ import PushKit
     
 }
 
+// Added for SDK 5.18.23 (local build): call recording events are not forwarded to Dart yet.
+extension FlyCall: CallRecordingDelegate {
+    func onCallRecordingStatus(callRecordingStatus: CallRecordingStatus, callRecordInfo: CallRecordInfo) {
+        NSLog("\(Constants.callTag) onCallRecordingStatus \(callRecordingStatus.rawValue) jid \(callRecordInfo.jid)")
+    }
+}

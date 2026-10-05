@@ -518,7 +518,15 @@ import MirrorFlySDK
         let pageNumber = args["currentPage"] as? Int ?? 1
         
         NSLog("\(Constants.callTag) getCallLogsList fetchCallLogList pageNumber \(pageNumber)");
-        callLogManager.getCallLogs(pageNumber: pageNumber) { isSuccess, error, data in
+        // SDK 5.18.23 (local build) has no paged getCallLogs any more; call logs moved out of the chat SDK.
+        // Serve the locally stored logs on page 1 so the screen keeps working while recent-chats-v1 is tested.
+        let fetchCallLogs: (Int, @escaping FlyCompletionHandler) -> Void = { page, completion in
+            var dict: [String: Any] = [:]
+            let logs: [CallLog] = page == 1 ? CallLogManager.getAllCallLogs() : []
+            dict["data"] = ["callList": logs, "totalPages": 1] as [String: Any]
+            completion(true, nil, dict)
+        }
+        fetchCallLogs(pageNumber) { isSuccess, error, data in
             
             var flyData = data
             print("\(Constants.callTag) getCallLogsList plugin \(String(describing: flyData))")

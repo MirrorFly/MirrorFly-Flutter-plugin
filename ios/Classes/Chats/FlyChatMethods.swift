@@ -30,6 +30,9 @@ let ISEXPORT = true
     var recentChatListParams = RecentChatListParams(limit: 15)
     
     var recentChatListBuilder: RecentChatListBuilder?
+
+    /// One list builder per mode (all, groups, unread, archive), so every tab pages on its own.
+    var recentChatListBuildersV1: [String: RecentChatListBuilderV1] = [:]
     
     
     var bestAttemptContent: UNMutableNotificationContent?
@@ -2567,6 +2570,118 @@ let ISEXPORT = true
         }
     }
     
+    // MARK: - recent chats v1 (paged server lists + server search)
+
+    /// Reads the "mode" argument. Answers the call with an error and returns nil when it is not a known mode.
+    private func recentChatModeV1(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> RecentChatMode? {
+        let args = call.arguments as? [String: Any] ?? [:]
+        let value = (args["mode"] as? String ?? "all").lowercased()
+        guard let mode = RecentChatMode(rawValue: value) else {
+            result(FlutterError(code: String(ErrorCode.INVALID_DATA), message: "Unknown recent chat mode: \(value)", details: nil))
+            return nil
+        }
+        return mode
+    }
+
+    /// Returns the builder for the mode. `size` is only used when a builder is created.
+    private func recentChatBuilderV1(mode: RecentChatMode, size: Int, recreate: Bool) -> RecentChatListBuilderV1 {
+        if let existing = recentChatListBuildersV1[mode.rawValue], !recreate { return existing }
+        let builder = RecentChatListBuilderV1(recentChatListParams: RecentChatListParamsV1(mode: mode, size: size))
+        recentChatListBuildersV1[mode.rawValue] = builder
+        return builder
+    }
+
+    /// Same JSON shape as Android: {"data":[...recent chats...],"hasNext":..,"fromDB":..,"totalRecords":..,"totalPages":..,"page":..,"mode":..,"message":..}
+    private func recentChatV1ResultJson(_ data: [String: Any]) -> String? {
+        var dict = data
+        let list = dict.removeValue(forKey: FlyConstants.data) as? [RecentChat] ?? []
+        guard let listJson = list.toJson() else { return nil }
+        // Keep only values JSONSerialization can write (numbers, strings, bools).
+        let rest = dict.filter { JSONSerialization.isValidJSONObject([$0.key: $0.value]) }
+        guard let restData = try? JSONSerialization.data(withJSONObject: rest, options: []),
+              let restJson = String(data: restData, encoding: .utf8) else { return nil }
+        if restJson == "{}" { return "{\"data\":" + listJson + "}" }
+        return "{\"data\":" + listJson + "," + String(restJson.dropFirst())
+    }
+
+    /// Sends the SDK result to Flutter: the data map as JSON on success, the SDK error code and message on failure.
+    private func sendRecentChatV1Result(_ result: @escaping FlutterResult, _ isSuccess: Bool, _ error: FlyError?, _ data: [String: Any]) {
+        if isSuccess {
+            if let json = recentChatV1ResultJson(data) {
+                result(json)
+            } else {
+                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
+            }
+        } else {
+            var copy = data
+            var message = error?.message ?? ""
+            if message.isEmpty { message = copy.getMessage() as? String ?? "" }
+            if message.isEmpty { message = "Recent chats could not be loaded" }
+            // The SDK's own numeric error code goes to Flutter (799 bad input, 403 feature missing, 800 no network, ...).
+            result(FlutterError(code: String(flyErrorCode(error)), message: message, details: nil))
+        }
+    }
+
+    /// Numeric code carried by a `FlyError`. Every case is `(message, code)`, read here by reflection so new
+    /// cases need no change. Falls back to `ErrorCode.NOT_SUCCESS`.
+    private func flyErrorCode(_ error: FlyError?) -> Int {
+        guard let error = error, let caseValues = Mirror(reflecting: error).children.first?.value else {
+            return ErrorCode.NOT_SUCCESS
+        }
+        for child in Mirror(reflecting: caseValues).children where child.label == "code" {
+            if let code = child.value as? Int { return code }
+        }
+        return ErrorCode.NOT_SUCCESS
+    }
+
+    /// First page of one mode. Args: mode (all|groups|unread|archive), size.
+    func loadRecentChatListV1(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let mode = recentChatModeV1(call, result) else { return }
+        let args = call.arguments as? [String: Any] ?? [:]
+        let size = args["size"] as? Int ?? 40
+        recentChatBuilderV1(mode: mode, size: size, recreate: true).loadRecentChatList { isSuccess, error, data in
+            self.sendRecentChatV1Result(result, isSuccess, error, data)
+        }
+    }
+
+    /// Next page of one mode. Args: mode, size (used only if the mode was never loaded).
+    func nextRecentChatListV1(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let mode = recentChatModeV1(call, result) else { return }
+        let args = call.arguments as? [String: Any] ?? [:]
+        let size = args["size"] as? Int ?? 40
+        recentChatBuilderV1(mode: mode, size: size, recreate: false).nextSetOfData { isSuccess, error, data in
+            self.sendRecentChatV1Result(result, isSuccess, error, data)
+        }
+    }
+
+    /// Refreshes page 1 of one mode. Args: mode, size.
+    func reloadRecentChatListV1(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let mode = recentChatModeV1(call, result) else { return }
+        let args = call.arguments as? [String: Any] ?? [:]
+        let size = args["size"] as? Int ?? 40
+        recentChatBuilderV1(mode: mode, size: size, recreate: false).reloadRecentChats { isSuccess, error, data in
+            self.sendRecentChatV1Result(result, isSuccess, error, data)
+        }
+    }
+
+    /// True when the mode can load more rows. Args: mode.
+    func hasNextRecentChatListV1(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let mode = recentChatModeV1(call, result) else { return }
+        result(recentChatListBuildersV1[mode.rawValue]?.hasNextRecentChatData() ?? true)
+    }
+
+    /// Server search by display name. Args: mode, searchText, page, size.
+    func searchRecentChatsFromServer(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let mode = recentChatModeV1(call, result) else { return }
+        let args = call.arguments as? [String: Any] ?? [:]
+        let searchText = args["searchText"] as? String ?? ""
+        let page = args["page"] as? Int ?? 1
+        let size = args["size"] as? Int ?? 20
+        ChatManager.searchRecentChatsFromServer(mode: mode, searchText: searchText, page: page, size: size) { isSuccess, error, data in
+            self.sendRecentChatV1Result(result, isSuccess, error, data)
+        }
+    }
+
     func getRecentChatListHistoryByTopic(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let args = call.arguments as! Dictionary<String, Any>

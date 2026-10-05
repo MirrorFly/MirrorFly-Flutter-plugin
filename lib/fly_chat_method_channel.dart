@@ -25,6 +25,7 @@ import 'internal_models/message_delivered_status_model.dart';
 import 'internal_models/notification_token_update_model.dart';
 import 'internal_models/profile_detail_model.dart';
 import 'internal_models/recent_chat_model.dart';
+import 'model/recent_chat_list_v1.dart';
 import 'internal_models/register_user_model.dart';
 import 'internal_models/user_profile_update.dart';
 import 'internal_models/users_list_model.dart';
@@ -3770,6 +3771,97 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
           FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
     }
+  }
+
+  /// Shared sender for the recent chat v1 methods. The native side returns one JSON string
+  /// ({"data":[...],"hasNext":..,"fromDB":..,...}); it is passed through in [FlyResponse.data]
+  /// and the optional "message" key becomes [FlyResponse.message].
+  Future<void> _recentChatV1Call(String method, Map<String, dynamic> args,
+      Function(FlyResponse response) callback) async {
+    try {
+      final response =
+          await mirrorFlyMethodChannel.invokeMethod<String>(method, args);
+      final jsonString = response ?? FlyConstants.empty;
+      String message = FlyConstants.empty;
+      if (jsonString.isNotEmpty) {
+        try {
+          final decoded = json.decode(jsonString);
+          if (decoded is Map && decoded["message"] != null) {
+            message = decoded["message"].toString();
+          }
+        } catch (_) {
+          // Not a JSON object; hand the text through unchanged.
+        }
+      }
+      callback(FlyResponse(true, jsonString, message));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+
+  // Asks the native side for the first set of rows of one mode.
+  @override
+  Future<void> loadRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) callback}) {
+    return _recentChatV1Call(
+        'loadRecentChatListV1', {"mode": mode.value, "size": size}, callback);
+  }
+
+  // Asks the native side for the next set of rows of one mode.
+  @override
+  Future<void> nextRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) callback}) {
+    return _recentChatV1Call(
+        'nextRecentChatListV1', {"mode": mode.value, "size": size}, callback);
+  }
+
+  // Asks the native side to fetch page 1 of one mode again.
+  @override
+  Future<void> reloadRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) callback}) {
+    return _recentChatV1Call(
+        'reloadRecentChatListV1', {"mode": mode.value, "size": size}, callback);
+  }
+
+  // Asks the native side whether one mode can load more rows. A platform error counts as "no".
+  @override
+  Future<bool> hasNextRecentChatListV1({required RecentChatMode mode}) async {
+    try {
+      final hasNext = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('hasNextRecentChatListV1', {"mode": mode.value});
+      return hasNext ?? false;
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      return false;
+    }
+  }
+
+  // Asks the native side to search the server's recent chats by display name.
+  @override
+  Future<void> searchRecentChatsFromServer(
+      {required RecentChatMode mode,
+      required String searchText,
+      int page = 1,
+      int size = 20,
+      required Function(FlyResponse response) callback}) {
+    return _recentChatV1Call('searchRecentChatsFromServer', {
+      "mode": mode.value,
+      "searchText": searchText,
+      "page": page,
+      "size": size
+    }, callback);
   }
 
   @override

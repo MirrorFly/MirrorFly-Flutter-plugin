@@ -34,6 +34,9 @@ import com.mirrorflysdk.api.FlyCore
 import com.mirrorflysdk.api.FlyMessenger
 import com.mirrorflysdk.api.GroupManager
 import com.mirrorflysdk.api.RecentChatListBuilder
+import com.mirrorflysdk.api.RecentChatListBuilderV1
+import com.mirrorflysdk.api.models.RecentChatMode
+import com.mirrorflysdk.models.RecentChatListParamsV1
 import com.mirrorflysdk.api.SendMessageCallback
 import com.mirrorflysdk.api.TopicChatListBuilder
 import com.mirrorflysdk.api.WebLoginDataManager
@@ -76,6 +79,7 @@ import com.mirrorflysdk.flycommons.MediaCompressQuality
 import com.mirrorflysdk.flycommons.Result
 import com.mirrorflysdk.flycommons.SharedPreferenceManager
 import com.mirrorflysdk.flycommons.TypingStatus
+import com.mirrorflysdk.flycommons.exception.ErrorCode
 import com.mirrorflysdk.flycommons.exception.FlyException
 import com.mirrorflysdk.flycommons.models.MessageMetaData
 import com.mirrorflysdk.flycommons.models.MessageType
@@ -827,6 +831,11 @@ class FlyChatMethods {
                 result.success(chatMessage.toJsonString())
             }
 
+            // Added in SDK 7.13.39: poll vote push. Nothing to show from the plugin side yet.
+            override fun onPollVoteNotification(voteEvent: com.mirrorflysdk.api.models.PollVoteEvent) {
+                LogMessage.d("push onPollVoteNotification", voteEvent.toJsonString())
+            }
+
             override fun onCancelNotification() {
                 // here you have to cancel notification
                 //LogMessage.d("notificationdata","cancel")
@@ -1449,7 +1458,9 @@ class FlyChatMethods {
                 messageStatus.messageId,
                 messageStatus.sentTime.checkNullOrEmpty(),
                 messageStatus.deliveredTime.checkNullOrEmpty(),
-                messageStatus.seenTime.checkNullOrEmpty()
+                messageStatus.seenTime.checkNullOrEmpty(),
+                // viewTime was added to ChatMessageStatusDetail in SDK 7.13.39.
+                messageStatus.viewTime.checkNullOrEmpty()
             )
             //LogMessage.d("RESPONSE_CAPTURE", "===========================")
             LogMessage.d(
@@ -3051,6 +3062,86 @@ class FlyChatMethods {
                     }
                 }
             }
+        }
+    }
+
+    // ---------------- recent chats v1 (paged server lists + server search) -----------------
+
+    /** One list builder per mode (all, groups, unread, archive), so every tab pages on its own. */
+    private val recentChatListBuildersV1 = HashMap<String, RecentChatListBuilderV1>()
+
+    /** Reads the "mode" argument. Answers the call with an error and returns null when it is not a known mode. */
+    private fun recentChatModeV1(call: MethodCall, result: MethodChannel.Result): RecentChatMode? {
+        val value = call.argument<String>("mode") ?: "all"
+        val mode = RecentChatMode.values().firstOrNull { it.value.equals(value, ignoreCase = true) }
+        if (mode == null) result.error(ErrorCode.INVALID_DATA.toString(), "Unknown recent chat mode: $value", null)
+        return mode
+    }
+
+    /** Returns the builder for the mode. `size` is only used when a builder is created. */
+    private fun recentChatBuilderV1(mode: RecentChatMode, size: Int, recreate: Boolean): RecentChatListBuilderV1 {
+        val existing = recentChatListBuildersV1[mode.value]
+        if (existing != null && !recreate) return existing
+        val builder = RecentChatListBuilderV1(RecentChatListParamsV1(mode, size))
+        recentChatListBuildersV1[mode.value] = builder
+        return builder
+    }
+
+    /** Sends the SDK result to Flutter: the data map as JSON on success, the SDK error code and message on failure. */
+    private fun sendRecentChatV1Result(result: MethodChannel.Result, isSuccess: Boolean, throwable: Throwable?, data: HashMap<String, Any>) {
+        if (isSuccess) {
+            result.success(data.toJsonString())
+        } else {
+            // The SDK's own numeric error code goes to Flutter (799 bad input, 403 feature missing, 800 no network, ...).
+            val code = (throwable as? FlyException)?.errorCode?.toString() ?: ErrorCode.NOT_SUCCESS.toString()
+            val message = throwable?.message?.takeIf { it.isNotEmpty() }
+                ?: data["message"]?.toString()?.takeIf { it.isNotEmpty() }
+                ?: "Recent chats could not be loaded"
+            result.error(code, message, null)
+        }
+    }
+
+    /** First page of one mode. Args: mode (all|groups|unread|archive), size. */
+    fun loadRecentChatListV1(call: MethodCall, result: MethodChannel.Result) {
+        val mode = recentChatModeV1(call, result) ?: return
+        val size = call.argument<Int>("size") ?: 40
+        recentChatBuilderV1(mode, size, recreate = true).loadRecentChatList { isSuccess, throwable, data ->
+            sendRecentChatV1Result(result, isSuccess, throwable, data)
+        }
+    }
+
+    /** Next page of one mode. Args: mode, size (used only if the mode was never loaded). */
+    fun nextRecentChatListV1(call: MethodCall, result: MethodChannel.Result) {
+        val mode = recentChatModeV1(call, result) ?: return
+        val size = call.argument<Int>("size") ?: 40
+        recentChatBuilderV1(mode, size, recreate = false).nextSetOfData { isSuccess, throwable, data ->
+            sendRecentChatV1Result(result, isSuccess, throwable, data)
+        }
+    }
+
+    /** Refreshes page 1 of one mode. Args: mode, size. */
+    fun reloadRecentChatListV1(call: MethodCall, result: MethodChannel.Result) {
+        val mode = recentChatModeV1(call, result) ?: return
+        val size = call.argument<Int>("size") ?: 40
+        recentChatBuilderV1(mode, size, recreate = false).reloadRecentChats { isSuccess, throwable, data ->
+            sendRecentChatV1Result(result, isSuccess, throwable, data)
+        }
+    }
+
+    /** True when the mode can load more rows. Args: mode. */
+    fun hasNextRecentChatListV1(call: MethodCall, result: MethodChannel.Result) {
+        val mode = recentChatModeV1(call, result) ?: return
+        result.success(recentChatListBuildersV1[mode.value]?.hasNextRecentChat() ?: true)
+    }
+
+    /** Server search by display name. Args: mode, searchText, page, size. */
+    fun searchRecentChatsFromServer(call: MethodCall, result: MethodChannel.Result) {
+        val mode = recentChatModeV1(call, result) ?: return
+        val searchText = call.argument<String>("searchText") ?: ""
+        val page = call.argument<Int>("page") ?: 1
+        val size = call.argument<Int>("size") ?: 20
+        FlyCore.searchRecentChatsFromServer(mode, searchText, page, size) { isSuccess, throwable, data ->
+            sendRecentChatV1Result(result, isSuccess, throwable, data)
         }
     }
 

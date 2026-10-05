@@ -1,4 +1,5 @@
 import 'package:mirrorfly_plugin/android_call_config_builder.dart';
+import 'package:mirrorfly_plugin/model/recent_chat_list_v1.dart';
 import 'package:mirrorfly_plugin/builder.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/event_handlers.dart';
@@ -888,6 +889,46 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
   /// This method is used to get the recent chat list.
   Future<void> getRecentChatList(Function(FlyResponse response)? callback) {
     throw UnimplementedError('has not been implemented.');
+  }
+
+  /// Loads the first page of one recent chat list (all, groups, unread or archive)
+  /// from the server and the local table. See [Mirrorfly.loadRecentChatListV1].
+  Future<void> loadRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('loadRecentChatListV1 has not been implemented.');
+  }
+
+  /// Loads the next set of rows of one recent chat list. See [Mirrorfly.nextRecentChatListV1].
+  Future<void> nextRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('nextRecentChatListV1 has not been implemented.');
+  }
+
+  /// Fetches page 1 of one recent chat list again. See [Mirrorfly.reloadRecentChatListV1].
+  Future<void> reloadRecentChatListV1(
+      {required RecentChatMode mode,
+      int size = 40,
+      required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('reloadRecentChatListV1 has not been implemented.');
+  }
+
+  /// True when one recent chat list can load more rows. See [Mirrorfly.hasNextRecentChatListV1].
+  Future<bool> hasNextRecentChatListV1({required RecentChatMode mode}) {
+    throw UnimplementedError('hasNextRecentChatListV1 has not been implemented.');
+  }
+
+  /// Searches the server's recent chats by display name. See [Mirrorfly.searchRecentChatsFromServer].
+  Future<void> searchRecentChatsFromServer(
+      {required RecentChatMode mode,
+      required String searchText,
+      int page = 1,
+      int size = 20,
+      required Function(FlyResponse response) callback}) {
+    throw UnimplementedError('searchRecentChatsFromServer has not been implemented.');
   }
 
   /// This method is used to get the recent chat history.

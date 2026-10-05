@@ -22,6 +22,7 @@ export 'model/notification_applaunch_details.dart';
 export 'model/profile_model.dart';
 export 'model/profile_update.dart';
 export 'model/recent_chat.dart';
+export 'model/recent_chat_list_v1.dart';
 export 'model/recent_search_model.dart';
 export 'model/register_model.dart';
 export 'model/status_model.dart';
