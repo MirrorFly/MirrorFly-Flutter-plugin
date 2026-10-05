@@ -3774,23 +3774,22 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
   }
 
   /// Shared sender for the recent chat v1 methods. The native side returns one JSON string
-  /// ({"data":[...],"hasNext":..,"fromDB":..,...}); it is passed through in [FlyResponse.data]
-  /// and the optional "message" key becomes [FlyResponse.message].
+  /// ({"data":[...],"hasNext":..,"fromDB":..,...}). The rows are converted the same way as the
+  /// legacy list, so iOS and Android look the same to the app, then the string goes to
+  /// [FlyResponse.data] and the optional "message" key becomes [FlyResponse.message].
   Future<void> _recentChatV1Call(String method, Map<String, dynamic> args,
       Function(FlyResponse response) callback) async {
     try {
       final response =
           await mirrorFlyMethodChannel.invokeMethod<String>(method, args);
-      final jsonString = response ?? FlyConstants.empty;
+      final raw = response ?? FlyConstants.empty;
+      String jsonString = raw;
       String message = FlyConstants.empty;
-      if (jsonString.isNotEmpty) {
-        try {
-          final decoded = json.decode(jsonString);
-          if (decoded is Map && decoded["message"] != null) {
-            message = decoded["message"].toString();
-          }
-        } catch (_) {
-          // Not a JSON object; hand the text through unchanged.
+      if (raw.isNotEmpty) {
+        jsonString = convertRecentChatV1JsonFromString(raw);
+        final decoded = json.decode(jsonString);
+        if (decoded is Map && decoded["message"] != null) {
+          message = decoded["message"].toString();
         }
       }
       callback(FlyResponse(true, jsonString, message));
@@ -3798,7 +3797,8 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
       LogMessage.d("Platform Exception =", " $e");
       callback(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
           FlyException(e.code, e.message, e.details)));
-    } on Exception catch (e) {
+    } catch (e) {
+      // Also catches a row conversion error, which is a type error and not an Exception.
       LogMessage.d("Exception ", " $e");
       callback(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
           FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));

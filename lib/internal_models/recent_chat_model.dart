@@ -130,6 +130,18 @@ String convertRecentChatDataJsonFromString(String? str) =>
         ? ""
         : recentChatDataToJson(recentChatDataFromJson(str));
 
+/// Same conversion for a recent chat v1 result, which is `{"data":[rows], "hasNext":.., ...}`.
+/// The rows are converted exactly like the legacy list above (iOS sends some fields in a
+/// different form, for example the message status as a number) and the other keys are kept.
+String convertRecentChatV1JsonFromString(String? str) {
+  if (str == null || str.isEmpty) return "";
+  final decoded = json.decode(str);
+  if (decoded is! Map<String, dynamic>) return str;
+  final rows = RecentChatData.fromJson(decoded).data ?? <RecentChat>[];
+  decoded["data"] = rows.map((x) => x.toJson()).toList();
+  return json.encode(decoded);
+}
+
 /// A class that represents the recent chat data.
 class RecentChatData {
   /// Constructs a RecentChatData object with the provided parameters.
