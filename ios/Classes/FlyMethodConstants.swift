@@ -201,6 +201,9 @@ class FlyMethodConstants {
                 "delete_account": flyChatMethods.deleteAccount,
                 "getGroupMessageDeliveredToList": flyChatMethods.getGroupMessageDeliveredToList,
                 "getGroupMessageReadByList": flyChatMethods.getGroupMessageReadByList,
+                // Contus Changes Start
+                "getGroupMessageStatus": flyChatMethods.getGroupMessageStatus,
+                // Contus Changes End
                 "setDefaultNotificationSound": flyChatMethods.setDefaultNotificationSound,
                 "deleteGroup": flyChatMethods.deleteGroup,
                 "getMessageStatusOfASingleChatMessage": flyChatMethods.getMessageStatusOfASingleChatMessage,

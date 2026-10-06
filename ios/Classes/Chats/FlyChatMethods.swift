@@ -3719,8 +3719,55 @@ let ISEXPORT = true
                 
                 print("getGroupMessageReadByList==**==\(String(describing: readListJson))")
                 result(readListJson)
-        
+
     }
+
+    // Contus Changes Start
+    // Message info from the server: groupMessageStatus fetches the receipts and
+    // saves them locally, then both lists are read back in the same shape as
+    // getGroupMessageDeliveredToList / getGroupMessageReadByList.
+    // totalParticipantCount is the group's members minus the current user, not
+    // the local receipt count, so it matches Android's "of N".
+    func getGroupMessageStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let messageId = args["messageId"] as? String ?? ""
+        let jid = args["jid"] as? String ?? ""
+        print("#GroupMessageStatus request messageId=\(messageId) groupJid=\(jid)")
+        do {
+            try GroupManager.shared.groupMessageStatus(messageId: messageId, groupJid: jid, completionHandler: { isSuccess, flyError, flyData in
+                print("#GroupMessageStatus server groupMessageStatus isSuccess=\(isSuccess) error=\(String(describing: flyError)) data=\(flyData)")
+                if isSuccess {
+                    let myJid = AppUtils.shared.getMyJid()
+                    let members = GroupManager.shared.getGroupMemebersFromLocal(groupJid: jid).participantDetailArray
+                    let totalParticipantCount = members.filter { $0.memberJid != myJid }.count
+                    print("#GroupMessageStatus members=\(members.count) total(excluding me)=\(totalParticipantCount)")
+                    let deliveredList = GroupManager.shared.getMessageDeliveredListBy(messageId: messageId, groupId: jid)
+                    let readList = GroupManager.shared.getMessageSeenListBy(messageId: messageId, groupId: jid)
+                    let deliveredJson = "{\"count\": \"\(deliveredList.deliveredCount)\",\"totalParticipantCount\" : \(totalParticipantCount),\"participantList\" : " + (deliveredList.deliveredParticipantList.toJson() ?? "[]") + "}"
+                    let readJson = "{\"count\": \"\(readList.seenCount)\",\"totalParticipantCount\" : \(totalParticipantCount),\"participantList\" : " + (readList.seenParticipantList.toJson() ?? "[]") + "}"
+                    let response = "{\"delivered\": " + deliveredJson + ",\"read\": " + readJson + "}"
+                    print("#GroupMessageStatus result delivered=\(deliveredList.deliveredCount) read=\(readList.seenCount) total=\(totalParticipantCount) response=\(response)")
+                    result(response)
+                } else {
+                    if case let .xmpp_connection_not_available(message, code) = flyError {
+                        if code == ErrorCode.NO_NETWORK {
+                            result(FlutterError(code: FLErrorCode.INTERNET_UNAVAILABLE, message: FLErrorMessage.INTERNET_UNAVAILABLE, details: message))
+                        } else {
+                            result(FlutterError(code: FLErrorCode.NOT_CONNECTED_TO_XMPP, message: FLErrorMessage.NOT_CONNECTED_TO_XMPP_MESSAGE, details: message))
+                        }
+                    } else if case let .invalid_jid(message, _) = flyError {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.INVALID_JID, details: message))
+                    } else {
+                        result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
+                }
+            })
+        } catch let error {
+            print("#GroupMessageStatus groupMessageStatus threw: \(error.localizedDescription)")
+            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: error.localizedDescription))
+        }
+    }
+    // Contus Changes End
     func addContact(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let number = args["number"] as? String ?? ""

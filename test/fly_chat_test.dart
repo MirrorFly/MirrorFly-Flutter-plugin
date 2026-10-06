@@ -2056,6 +2056,12 @@ class MockFlyChatFlutterPlatform
     throw UnimplementedError();
   }
 
+  @override
+  Future<void> getGroupMessageStatus(String messageId, String jid, Function(FlyResponse response)? callback) {
+    // TODO: implement getGroupMessageStatus
+    throw UnimplementedError();
+  }
+
   /* @override
   Future<bool?> webLoginDetailsCleared() {
     throw UnimplementedError();

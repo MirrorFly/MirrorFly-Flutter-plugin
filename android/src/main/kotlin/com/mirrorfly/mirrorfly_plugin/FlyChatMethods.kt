@@ -1130,6 +1130,71 @@ class FlyChatMethods {
         }
     }
 
+    // Contus Changes Start
+    // Message info from the server: groupMessageStatus refreshes the delivered/
+    // seen times in the local table, then both lists are read back in the same
+    // shape as getGroupMessageDeliveredToList / getGroupMessageReadByList.
+    // totalParticipantCount is the group's members minus the current user, not
+    // getGroupMessageStatusCount — that also counts a status row the SDK adds
+    // for the group JID itself on the server ack, so it read "2 of 3".
+    fun getGroupMessageStatus(call: MethodCall, result: MethodChannel.Result) {
+        val messageId = call.argument<String>("messageId") ?: ""
+        val groupJid = call.argument<String>("jid") ?: ""
+        LogMessage.d("#GroupMessageStatus", "request messageId=$messageId groupJid=$groupJid")
+        GroupManager.groupMessageStatus(messageId, groupJid) { isSuccess, throwable, _ ->
+            LogMessage.d("#GroupMessageStatus", "server groupMessageStatus isSuccess=$isSuccess error=${throwable?.message}")
+            if (isSuccess) {
+                val totalParticipantCount = try {
+                    val members = GroupManager.getMembersCountOfGroup(groupJid)
+                    val isMember =
+                        GroupManager.isMemberOfGroup(groupJid, ChatManager.getCurrentUserJid())
+                    LogMessage.d("#GroupMessageStatus", "members=$members currentUserIsMember=$isMember")
+                    (if (isMember) members - 1 else members).coerceAtLeast(0)
+                } catch (e: Exception) {
+                    LogMessage.d("#GroupMessageStatus", "member count failed, using status row count: ${e.message}")
+                    FlyMessenger.getGroupMessageStatusCount(messageId)
+                }
+                GroupManager.getGroupMessageDeliveredToList(messageId) { deliveredSuccess, deliveredError, deliveredData ->
+                    LogMessage.d("#GroupMessageStatus", "deliveredList isSuccess=$deliveredSuccess error=${deliveredError?.message}")
+                    if (deliveredSuccess) {
+                        GroupManager.getGroupMessageReadByList(messageId) { readSuccess, readError, readData ->
+                            LogMessage.d("#GroupMessageStatus", "readList isSuccess=$readSuccess error=${readError?.message}")
+                            if (readSuccess) {
+                                val deliveredList =
+                                    deliveredData["data"] as List<MessageStatusDetail>
+                                val readList = readData["data"] as List<MessageStatusDetail>
+                                val response = JSONObject()
+                                response.put("delivered", JSONObject().apply {
+                                    put("count", deliveredList.size.toString())
+                                    put("totalParticipantCount", totalParticipantCount)
+                                    put("participantList", JSONArray(deliveredList.toJson()))
+                                })
+                                response.put("read", JSONObject().apply {
+                                    put("count", readList.size.toString())
+                                    put("totalParticipantCount", totalParticipantCount)
+                                    put("participantList", JSONArray(readList.toJson()))
+                                })
+                                LogMessage.d(
+                                    "#GroupMessageStatus",
+                                    "result delivered=${deliveredList.size} read=${readList.size} " +
+                                            "total=$totalParticipantCount response=$response"
+                                )
+                                result.success(response.toString())
+                            } else {
+                                result.error("500", readError?.message, readError)
+                            }
+                        }
+                    } else {
+                        result.error("500", deliveredError?.message, deliveredError)
+                    }
+                }
+            } else {
+                result.error("500", throwable?.message, throwable)
+            }
+        }
+    }
+    // Contus Changes End
+
     private fun contactSyncState(call: MethodCall, result: MethodChannel.Result) {
         /*FlyCore.contactSyncState.observe(mContext) {
       when (it) {

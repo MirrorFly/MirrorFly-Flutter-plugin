@@ -4754,6 +4754,40 @@ class MethodChannelFlyChatFlutter extends FlyChatFlutterPlatform {
     }
   }
 
+  // Contus Changes Start
+  /// Native returns {"delivered": {...}, "read": {...}}, each in the same shape
+  /// as getGroupMessageDeliveredToList; both halves go through the same
+  /// converter so Android and iOS participant lists come out identical.
+  @override
+  Future<void> getGroupMessageStatus(String messageId, String jid,
+      Function(FlyResponse response)? callback) async {
+    String? response;
+    try {
+      LogMessage.d("#GroupMessageStatus",
+          "invoke messageId=$messageId groupJid=$jid");
+      response = await mirrorFlyMethodChannel.invokeMethod(
+          'getGroupMessageStatus', {"messageId": messageId, "jid": jid});
+      LogMessage.d("#GroupMessageStatus", "native response=$response");
+      final decoded = jsonDecode(response ?? "{}") as Map<String, dynamic>;
+      final data = jsonEncode({
+        "delivered": jsonDecode(convertMessageDeliveredStatusToJson(
+            jsonEncode(decoded["delivered"]))),
+        "read": jsonDecode(
+            convertMessageDeliveredStatusToJson(jsonEncode(decoded["read"]))),
+      });
+      callback?.call(FlyResponse(true, data, FlyConstants.empty));
+    } on PlatformException catch (e) {
+      LogMessage.d("Platform Exception =", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(e.code, e.message, e.details)));
+    } on Exception catch (e) {
+      LogMessage.d("Exception ", " $e");
+      callback?.call(FlyResponse(false, FlyConstants.empty, FlyConstants.empty,
+          FlyException(FlyErrorCode.unHandle, FlyErrorMessage.unHandle, e)));
+    }
+  }
+  // Contus Changes End
+
   @override
   Future<String> getMessageStatusOfASingleChatMessage(String messageID) async {
     //getMessageInfo

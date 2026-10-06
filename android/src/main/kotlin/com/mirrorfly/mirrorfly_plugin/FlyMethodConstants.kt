@@ -214,6 +214,9 @@ object FlyMethodConstants {
         "delete_account" to flyChatMethods::deleteAccount,
         "getGroupMessageDeliveredToList" to flyChatMethods::getGroupMessageDeliveredToList,
         "getGroupMessageReadByList" to flyChatMethods::getGroupMessageReadByList,
+        // Contus Changes Start
+        "getGroupMessageStatus" to flyChatMethods::getGroupMessageStatus,
+        // Contus Changes End
         "setDefaultNotificationSound" to flyChatMethods::setDefaultNotificationSound,
         "deleteGroup" to flyChatMethods::deleteGroup,
         "getMessageStatusOfASingleChatMessage" to flyChatMethods::getMessageStatusOfASingleChatMessage,

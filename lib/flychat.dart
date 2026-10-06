@@ -3792,6 +3792,24 @@ class Mirrorfly {
         .getGroupMessageReadByList(messageId, jid);
   }
 
+  // Contus Changes Start
+  /// Fetches a group message's delivered/seen receipts from the server (the
+  /// SDK's `groupMessageStatus`), saves them locally, and returns both lists.
+  ///
+  /// [FlyResponse.data] is a JSON string `{"delivered": ..., "read": ...}`;
+  /// each half is a [MessageStatusDetail]. `totalParticipantCount` is the
+  /// group's members excluding the current user. Needs network and an XMPP
+  /// connection; fall back to [getGroupMessageDeliveredRecipients] /
+  /// [getGroupMessageSeenRecipients] when it fails.
+  static Future<void> getGroupMessageStatus(
+      {required String messageId,
+      required String groupJid,
+      required Function(FlyResponse response) flyCallBack}) {
+    return FlyChatFlutterPlatform.instance
+        .getGroupMessageStatus(messageId, groupJid, flyCallBack);
+  }
+  // Contus Changes End
+
   /// Get Seen Recipients of a Group message to the Mirrorfly chat platform.
   ///
   /// The [messageId] parameter specifies the unique identifier of the message

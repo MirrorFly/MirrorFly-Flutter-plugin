@@ -1191,6 +1191,15 @@ abstract class FlyChatFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('has not been implemented.');
   }
 
+  // Contus Changes Start
+  /// Refreshes a group message's delivered/seen receipts from the server and
+  /// returns both lists.
+  Future<void> getGroupMessageStatus(
+      String messageId, String jid, Function(FlyResponse response)? callback) {
+    throw UnimplementedError('has not been implemented.');
+  }
+  // Contus Changes End
+
   /// This method is used to get the message status of a single chat message.
   Future<String> getMessageStatusOfASingleChatMessage(String messageID) {
     throw UnimplementedError('has not been implemented.');
