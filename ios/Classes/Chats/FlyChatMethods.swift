@@ -1237,7 +1237,20 @@ let ISEXPORT = true
             let fetchFromServer = args["server"] as? Bool ?? false
 
             if(fetchFromServer){
-                NotificationCenter.default.addObserver(forName: .fetchGroupMembersCompleted, object: nil, queue: .main) { notification in
+                // Contus Changes Start - a block-based observer can only be removed
+                // with the token addObserver returns; removeObserver(self, ...)
+                // removed nothing, so every server call left a listener behind and
+                // every later fetch re-ran all of them on the main thread (and
+                // called result() again on already-answered calls). Keep the token
+                // and remove this observer once its group's result arrives.
+                // Old code:
+                // NotificationCenter.default.addObserver(forName: .fetchGroupMembersCompleted, object: nil, queue: .main) { notification in
+                //     guard ... completedGroupJid == groupJid else { print(...); return }
+                //     self.fetchGroupMembers(groupJid: groupJid, result: result)
+                //     NotificationCenter.default.removeObserver(self, name: .fetchGroupMembersCompleted, object: nil)
+                // }
+                var observerToken: NSObjectProtocol?
+                observerToken = NotificationCenter.default.addObserver(forName: .fetchGroupMembersCompleted, object: nil, queue: .main) { notification in
 
                     guard let userInfo = notification.userInfo as? [String: Any],
                           let completedGroupJid = userInfo["groupJid"] as? String,
@@ -1246,9 +1259,13 @@ let ISEXPORT = true
                         return
                     }
 
+                    if let token = observerToken {
+                        NotificationCenter.default.removeObserver(token)
+                        observerToken = nil
+                    }
                     self.fetchGroupMembers(groupJid: groupJid, result: result)
-                    NotificationCenter.default.removeObserver(self, name: .fetchGroupMembersCompleted, object: nil)
                 }
+                // Contus Changes End
                 GroupManager.shared.getParticipants(groupJID: groupJid)
 
             }else{
@@ -2460,7 +2477,7 @@ let ISEXPORT = true
         return timestamp
     }
     func getRecentChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+
         ChatManager.getRecentChatList { (isSuccess, flyError, resultDict) in
             if (isSuccess) {
                 var recentlist = resultDict
