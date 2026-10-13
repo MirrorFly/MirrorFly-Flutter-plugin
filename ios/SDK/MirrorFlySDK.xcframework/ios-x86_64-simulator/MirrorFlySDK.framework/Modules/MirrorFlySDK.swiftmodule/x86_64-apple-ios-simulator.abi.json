@@ -262533,70 +262533,70 @@
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 34086,
+      "offset": 34106,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 37750,
+      "offset": 37770,
       "length": 23,
       "value": "\"RecentChatListService\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 38063,
+      "offset": 38083,
       "length": 36,
       "value": "\"com.app.chatlist.builder.api.queue\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "BooleanLiteral",
-      "offset": 38246,
+      "offset": 38266,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 61980,
+      "offset": 62000,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "FloatLiteral",
-      "offset": 64874,
+      "offset": 64894,
       "length": 3,
       "value": "0.0"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "IntegerLiteral",
-      "offset": 64906,
+      "offset": 64926,
       "length": 2,
       "value": "20"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 65205,
+      "offset": 65225,
       "length": 12,
       "value": "\"singleChat\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 65235,
+      "offset": 65255,
       "length": 11,
       "value": "\"groupChat\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 65267,
+      "offset": 65287,
       "length": 10,
       "value": "\"archived\""
     },
