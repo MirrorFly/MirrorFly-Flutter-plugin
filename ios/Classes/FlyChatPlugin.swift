@@ -632,19 +632,32 @@ extension FlyChatPlugin : MessageEventsDelegate   {
 
     }
 
+    // Contus Changes Start - fires once per receipt (per member in groups). The Realm read + conversion +
+    // toJson ran on main for every one; now on a serial queue (keeps the order of status events), and
+    // the event is sent on main, where Flutter requires event-channel messages.
+    private static let messageStatusQueue = DispatchQueue(label: "com.mirrorfly.plugin.messageStatus", qos: .userInitiated)
+
     public func onMessageStatusUpdated(messageId: String, chatJid: String, status: MirrorFlySDK.MessageStatus) {
 
-        let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
+        FlyChatPlugin.messageStatusQueue.async {
+            guard let chatMessage = ChatManager.getMessageOfId(messageId: messageId) else {
+                return
+            }
 
-        if(chatMessage == nil){
-            return
+            let chatMessageJson = chatMessage.toJson()
+
+            DispatchQueue.main.async {
+                self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageStatusUpdatedChannel, value: chatMessageJson)
+            }
         }
 
-        let chatMessageJson = chatMessage?.toJson()
-
-        self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageStatusUpdatedChannel, value: chatMessageJson)
-
     }
+    // Old code:
+    // let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
+    // if(chatMessage == nil){ return }
+    // let chatMessageJson = chatMessage?.toJson()
+    // self.chatEventInitializer.updateSinkValue(forChannel: Constants.onMessageStatusUpdatedChannel, value: chatMessageJson)
+    // Contus Changes End
 
     public func onMessageEdited(message: MirrorFlySDK.ChatMessage) {
 

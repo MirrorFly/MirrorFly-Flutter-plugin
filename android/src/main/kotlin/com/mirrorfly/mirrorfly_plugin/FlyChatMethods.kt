@@ -986,7 +986,20 @@ class FlyChatMethods {
 
     fun markConversationAsRead(call: MethodCall, result: MethodChannel.Result) {
         val jidlist = call.argument<List<String>>("jidlist") ?: arrayListOf()
-        FlyCore.markConversationAsRead(jidlist)
+        // Contus Changes Start - same thread as markAsReadDeleteUnreadSeparator and the message list, so
+        // it runs after a mark-as-read Dart sent earlier (as it did on main) instead of overlapping it:
+        // overlapping sent duplicate seen receipts and could restore the unread count.
+        // (No reply, as before.)
+        messageExecutor.execute {
+            try {
+                FlyCore.markConversationAsRead(jidlist)
+            } catch (e: Exception) {
+                LogMessage.e(tag, "markConversationAsRead failed: $e")
+            }
+        }
+        // Old code:
+        // FlyCore.markConversationAsRead(jidlist)
+        // Contus Changes End
     }
 
     fun deleteUnreadMessageSeparatorOfAConversation(
@@ -994,8 +1007,15 @@ class FlyChatMethods {
         result: MethodChannel.Result
     ) {
         val JID: String = call.argument("jid") ?: ""
-        FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(JID)
-        result.success(true)
+        // Contus Changes Start - same thread as the other unread-state updates
+        runOnMessageExecutor(result, "deleteUnreadMessageSeparatorOfAConversation") {
+            FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(JID)
+            replySuccess(result, true)
+        }
+        // Old code:
+        // FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(JID)
+        // result.success(true)
+        // Contus Changes End
     }
 
     fun getRecalledMessagesOfAConversation(call: MethodCall, result: MethodChannel.Result) {
@@ -1013,7 +1033,17 @@ class FlyChatMethods {
 
     fun markConversationAsUnread(call: MethodCall, result: MethodChannel.Result) {
         val jidlist = call.argument<List<String>>("jidlist") ?: arrayListOf()
-        FlyCore.markConversationAsUnread(jidlist)
+        // Contus Changes Start - same thread as the other unread-state updates (no reply, as before)
+        messageExecutor.execute {
+            try {
+                FlyCore.markConversationAsUnread(jidlist)
+            } catch (e: Exception) {
+                LogMessage.e(tag, "markConversationAsUnread failed: $e")
+            }
+        }
+        // Old code:
+        // FlyCore.markConversationAsUnread(jidlist)
+        // Contus Changes End
     }
 
     fun clearAllConversation(call: MethodCall, result: MethodChannel.Result) {
@@ -1385,8 +1415,15 @@ class FlyChatMethods {
 
     fun markAsRead(call: MethodCall, result: MethodChannel.Result) {
         val JID: String = call.argument("jid") ?: ""
-        ChatManager.markAsRead(JID)
-        result.success(true)
+        // Contus Changes Start - same thread as the other unread-state updates
+        runOnMessageExecutor(result, "markAsRead") {
+            ChatManager.markAsRead(JID)
+            replySuccess(result, true)
+        }
+        // Old code:
+        // ChatManager.markAsRead(JID)
+        // result.success(true)
+        // Contus Changes End
     }
 
     fun getAllGroups(call: MethodCall, result: MethodChannel.Result) {
@@ -2281,7 +2318,38 @@ class FlyChatMethods {
 //
 //    }
 
+    // Contus Changes Start - message list off the main thread.
+    // messageExecutor (one thread) runs initializeMessageList, loadMessages, loadPreviousMessages,
+    // loadNextMessages, hasPreviousMessages, hasNextMessages and markAsReadDeleteUnreadSeparator, and is
+    // the only thread that reads or writes messageListQuery. The SDK runs DB queries on the calling
+    // thread (local page, initial-message checks) and calls back on main; the callback hops back to
+    // messageExecutor for the JSON, and every MethodChannel.Result is answered on main via mainHandler.
+    // One thread keeps the calls in the order Dart sent them. Exceptions are caught and returned as
+    // errors, because an uncaught exception on a worker thread would crash the app.
+    private val messageExecutor = java.util.concurrent.Executors.newSingleThreadExecutor()
+    private val mainHandler = android.os.Handler(android.os.Looper.getMainLooper())
     private var messageListQuery: FetchMessageListQuery? = null
+
+    private fun replySuccess(result: MethodChannel.Result, value: Any?) {
+        mainHandler.post { result.success(value) }
+    }
+
+    private fun replyError(result: MethodChannel.Result, code: String, message: String?, details: Any?) {
+        mainHandler.post { result.error(code, message, details) }
+    }
+
+    /** Runs [block] on messageExecutor; an exception becomes a MethodChannel error instead of a crash. */
+    private fun runOnMessageExecutor(result: MethodChannel.Result, label: String, block: () -> Unit) {
+        messageExecutor.execute {
+            try {
+                block()
+            } catch (e: Exception) {
+                LogMessage.e(tag, "$label failed: $e")
+                replyError(result, "500", "$label failed", e.message)
+            }
+        }
+    }
+
     fun initializeMessageListParams(call: MethodCall, result: MethodChannel.Result) {
         val chatJid: String = call.argument("userJid") ?: ""
         val messageId: String = call.argument("messageId") ?: ""
@@ -2299,125 +2367,168 @@ class FlyChatMethods {
             )
         }
         LogMessage.d("initializeMessageList", "${call.arguments}")
-        if (ContactManager.isValidJid(chatJid)) {
-            val messageListParams = FetchMessageListParams()
-            messageListParams.chatJid = chatJid
-            if (messageId.isNotEmpty()) messageListParams.messageId = messageId
-            if (messageTime.isNotEmpty()) messageListParams.messageTime = messageTime
-            messageListParams.inclusive =
-                !inclusive// for iOS using exclude , so we using NOT to match the Android and iOS
-            messageListParams.ascendingOrder = ascendingOrder
-            messageListParams.topicId = topicId
-            messageListParams.limit = limit
-//            messageListParams.metaData = extractedData
-//            messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
-//            messageListParams.direction = "backward" // forward or backward
-            messageListQuery = FetchMessageListQuery(messageListParams)
-            result.success(true)
-        } else {
-            result.error("500", "jid is not Valid", "")
+        runOnMessageExecutor(result, "initializeMessageList") {
+            if (ContactManager.isValidJid(chatJid)) {
+                val messageListParams = FetchMessageListParams()
+                messageListParams.chatJid = chatJid
+                if (messageId.isNotEmpty()) messageListParams.messageId = messageId
+                if (messageTime.isNotEmpty()) messageListParams.messageTime = messageTime
+                messageListParams.inclusive =
+                    !inclusive// for iOS using exclude , so we using NOT to match the Android and iOS
+                messageListParams.ascendingOrder = ascendingOrder
+                messageListParams.topicId = topicId
+                messageListParams.limit = limit
+//                messageListParams.metaData = extractedData
+//                messageListParams.chatType = if(ContactManager.getProfileDetails(chatJid)!!.isGroupProfile)  "groupchat" else "singlechat" // groupchat or singlechat
+//                messageListParams.direction = "backward" // forward or backward
+                messageListQuery = FetchMessageListQuery(messageListParams)
+                replySuccess(result, true)
+            } else {
+                replyError(result, "500", "jid is not Valid", "")
+            }
         }
     }
 
     fun loadMessages(call: MethodCall, result: MethodChannel.Result) {
-        if (messageListQuery == null) {
-            result.error("500", "Message List not Initialized", "")
-            return
-        }
-        if (messageListQuery!!.isFetchingInProgress()) {
-            result.error("500", "Already Message Fetching is In Progress", "")
-            return
-        }
-        messageListQuery!!.loadMessages { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val messageList = data["data"] as ArrayList<ChatMessage>
-                result.success(messageList.toJsonString())
-                LogMessage.d("loadMessages", "$isSuccess : ${messageList.toJsonString()}")
-            } else {
-                LogMessage.d("loadMessages", "$isSuccess : $throwable")
-                // Fetch messages failed print throwable to find the exception details.
-                result.error("500", "Failed to Load Initial Messages ", "$throwable")
+        runOnMessageExecutor(result, "loadMessages") { loadMessagesOnExecutor(result) }
+    }
+
+    private fun loadMessagesOnExecutor(result: MethodChannel.Result) {
+        run {
+            val query = messageListQuery
+            if (query == null) {
+                replyError(result, "500", "Message List not Initialized", "")
+                return
+            }
+            if (query.isFetchingInProgress()) {
+                replyError(result, "500", "Already Message Fetching is In Progress", "")
+                return
+            }
+            query.loadMessages { isSuccess, throwable, data ->
+                runOnMessageExecutor(result, "loadMessages") {
+                    if (isSuccess) {
+                        val messageList = data["data"] as ArrayList<ChatMessage>
+                        // serialise once; the log used to build the same JSON again.
+                        val messageListJson = messageList.toJsonString()
+                        replySuccess(result, messageListJson)
+                        LogMessage.d("loadMessages", "$isSuccess : $messageListJson")
+                    } else {
+                        LogMessage.d("loadMessages", "$isSuccess : $throwable")
+                        // Fetch messages failed print throwable to find the exception details.
+                        replyError(result, "500", "Failed to Load Initial Messages ", "$throwable")
+                    }
+                }
             }
         }
     }
 
     fun hasPreviousMessages(call: MethodCall, result: MethodChannel.Result) {
-        if (messageListQuery != null) {
-            result.success(messageListQuery?.hasPreviousMessages())
-        } else {
-            result.error(
-                "500",
-                "Message List not Initialized. Initialize using  initializeMessageList() method",
-                null
-            )
+        runOnMessageExecutor(result, "hasPreviousMessages") {
+            val query = messageListQuery
+            if (query != null) {
+                replySuccess(result, query.hasPreviousMessages())
+            } else {
+                replyError(
+                    result,
+                    "500",
+                    "Message List not Initialized. Initialize using  initializeMessageList() method",
+                    null
+                )
+            }
         }
     }
 
     fun hasNextMessages(call: MethodCall, result: MethodChannel.Result) {
-        if (messageListQuery != null) {
-            result.success(messageListQuery?.hasNextMessages())
-        } else {
-            result.error(
-                "500",
-                "Message List not Initialized. Initialize using  initializeMessageList() method",
-                null
-            )
+        runOnMessageExecutor(result, "hasNextMessages") {
+            val query = messageListQuery
+            if (query != null) {
+                replySuccess(result, query.hasNextMessages())
+            } else {
+                replyError(
+                    result,
+                    "500",
+                    "Message List not Initialized. Initialize using  initializeMessageList() method",
+                    null
+                )
+            }
         }
     }
 
     fun loadPreviousMessages(call: MethodCall, result: MethodChannel.Result) {
-        if (messageListQuery == null) {
-            result.error("500", "Message List not Initialized", "")
-            return
-        }
-        /*if (!messageListQuery!!.hasPreviousMessages()) {
-            result.success(arrayListOf<ChatMessage>().toJsonString())
-//            result.error("500", "There is no Previous Messages", "")
-            return
-        }*/
-        if (messageListQuery!!.isFetchingInProgress()) {
-            result.error("500", "Already Message Fetching is In Progress", "")
-            return
-        }
-        messageListQuery!!.loadPreviousMessages { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val messages = data["data"] as ArrayList<ChatMessage>
-                result.success(messages.toJsonString())
-                LogMessage.d("loadPreviousMessages", "$isSuccess : ${data["data"]}")
-            } else {
-                LogMessage.d("loadPreviousMessages", "$isSuccess : $throwable")
-                // Fetch messages failed print throwable to find the exception details.
-                result.error("500", "Failed to Load Previous Messages ", "$throwable")
+        runOnMessageExecutor(result, "loadPreviousMessages") { loadPreviousMessagesOnExecutor(result) }
+    }
+
+    private fun loadPreviousMessagesOnExecutor(result: MethodChannel.Result) {
+        run {
+            val query = messageListQuery
+            if (query == null) {
+                replyError(result, "500", "Message List not Initialized", "")
+                return
+            }
+            /*if (!query.hasPreviousMessages()) {
+                result.success(arrayListOf<ChatMessage>().toJsonString())
+//                result.error("500", "There is no Previous Messages", "")
+                return
+            }*/
+            if (query.isFetchingInProgress()) {
+                replyError(result, "500", "Already Message Fetching is In Progress", "")
+                return
+            }
+            query.loadPreviousMessages { isSuccess, throwable, data ->
+                runOnMessageExecutor(result, "loadPreviousMessages") {
+                    if (isSuccess) {
+                        val messages = data["data"] as ArrayList<ChatMessage>
+                        replySuccess(result, messages.toJsonString())
+                        LogMessage.d("loadPreviousMessages", "$isSuccess : ${data["data"]}")
+                    } else {
+                        LogMessage.d("loadPreviousMessages", "$isSuccess : $throwable")
+                        // Fetch messages failed print throwable to find the exception details.
+                        replyError(result, "500", "Failed to Load Previous Messages ", "$throwable")
+                    }
+                }
             }
         }
     }
 
     fun loadNextMessages(call: MethodCall, result: MethodChannel.Result) {
-        if (messageListQuery == null) {
-            result.error("500", "Message List not Initialized", "")
-            return
-        }
-        /*if (!messageListQuery!!.hasNextMessages()) {
-            result.success(arrayListOf<ChatMessage>().toJsonString())
-//            result.error("500", "There is no Next Messages", "")
-            return
-        }*/
-        if (messageListQuery!!.isFetchingInProgress()) {
-            result.error("500", "Already Message Fetching is In Progress", "")
-            return
-        }
-        messageListQuery!!.loadNextMessages { isSuccess, throwable, data ->
-            if (isSuccess) {
-                val messages = data["data"] as ArrayList<ChatMessage>
-                result.success(messages.toJsonString())
-                LogMessage.d("loadNextMessages", "$isSuccess : ${data["data"]}")
-            } else {
-                LogMessage.d("loadNextMessages", "$isSuccess : $throwable")
-                // Fetch messages failed print throwable to find the exception details.
-                result.error("500", "Failed to Load Next Messages ", "$throwable")
+        runOnMessageExecutor(result, "loadNextMessages") { loadNextMessagesOnExecutor(result) }
+    }
+
+    private fun loadNextMessagesOnExecutor(result: MethodChannel.Result) {
+        run {
+            val query = messageListQuery
+            if (query == null) {
+                replyError(result, "500", "Message List not Initialized", "")
+                return
+            }
+            /*if (!query.hasNextMessages()) {
+                result.success(arrayListOf<ChatMessage>().toJsonString())
+//                result.error("500", "There is no Next Messages", "")
+                return
+            }*/
+            if (query.isFetchingInProgress()) {
+                replyError(result, "500", "Already Message Fetching is In Progress", "")
+                return
+            }
+            query.loadNextMessages { isSuccess, throwable, data ->
+                runOnMessageExecutor(result, "loadNextMessages") {
+                    if (isSuccess) {
+                        val messages = data["data"] as ArrayList<ChatMessage>
+                        replySuccess(result, messages.toJsonString())
+                        LogMessage.d("loadNextMessages", "$isSuccess : ${data["data"]}")
+                    } else {
+                        LogMessage.d("loadNextMessages", "$isSuccess : $throwable")
+                        // Fetch messages failed print throwable to find the exception details.
+                        replyError(result, "500", "Failed to Load Next Messages ", "$throwable")
+                    }
+                }
             }
         }
     }
+    // Contus Changes End
+    // Old code: the same seven methods ran directly on the main (platform) thread, with
+    // `if (messageListQuery == null) { result.error(...); return }`, `messageListQuery!!.loadMessages { ... result.success(json) }`
+    // and the JSON built on main inside the SDK callback.
 
     fun getMessagesOfJid(call: MethodCall, result: MethodChannel.Result) {
         //if (AppUtils.isNetConnected(mContext)) {
@@ -2782,11 +2893,27 @@ class FlyChatMethods {
             val receiverJID: String? = call.argument("jid")
             if (receiverJID != null) {
                 LogMessage.d(tag, "Read Receipt of JID $receiverJID")
-                //Notify the message is read by user
-                ChatManager.markAsRead(receiverJID)
-                //To Remove the Unread Notification Separator in Chat List
-                FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(receiverJID)
-                result.success(true)
+                // Contus Changes Start - run off the main thread (DB reads/writes + seen receipts per
+                // message, called on every message-list load). Single thread, so calls stay in order.
+                // Errors used to reach Flutter through the channel; on a worker thread they would crash
+                // the app, so they are caught and returned as an error instead.
+                messageExecutor.execute {  // shared with the message list: same thread, same order
+                    try {
+                        //Notify the message is read by user
+                        ChatManager.markAsRead(receiverJID)
+                        //To Remove the Unread Notification Separator in Chat List
+                        FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(receiverJID)
+                        mainHandler.post { result.success(true) }
+                    } catch (e: Exception) {
+                        LogMessage.e(tag, "markAsReadDeleteUnreadSeparator failed for $receiverJID: $e")
+                        mainHandler.post { result.error("500", "markAsReadDeleteUnreadSeparator failed", e.message) }
+                    }
+                }
+                // Old code:
+                // ChatManager.markAsRead(receiverJID)
+                // FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(receiverJID)
+                // result.success(true)
+                // Contus Changes End
             } else {
                 result.error("500", "JID is Empty", null)
             }

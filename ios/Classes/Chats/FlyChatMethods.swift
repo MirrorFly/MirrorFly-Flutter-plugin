@@ -49,8 +49,15 @@ let ISEXPORT = true
     
     var firstMessageID : String = emptyString()
     var lastMessageID : String = emptyString()
-    
-    
+
+    // Contus Changes Start - one serial queue for the message list (initialize/load/hasNext/hasPrevious)
+    // and mark-as-read, so this Realm work stays off the main thread. It also owns messageListQuery,
+    // messageListParams, firstMessageID and lastMessageID: they are only read or written on this
+    // queue, and mark-as-read reads the unread range the list loads set. FlutterResult is always
+    // called back on main.
+    private let messageQueue = DispatchQueue(label: "com.mirrorfly.plugin.messageQueue", qos: .userInitiated)
+    // Contus Changes End
+
     // Singleton instance
     static let shared = FlyChatMethods()
     
@@ -1812,8 +1819,15 @@ let ISEXPORT = true
         let jid = args["jid"] as? String ?? ""
         
         
-        ChatManager.markConversationAsRead(for: [jid])
-        result(true)
+        // Contus Changes Start - same serial queue as the other unread-state updates
+        messageQueue.async { [self] in
+            ChatManager.markConversationAsRead(for: [jid])
+            replyOnMain(result, true)
+        }
+        // Old code:
+        // ChatManager.markConversationAsRead(for: [jid])
+        // result(true)
+        // Contus Changes End
     }
     func markConversationAsUnread(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -1822,8 +1836,15 @@ let ISEXPORT = true
         
         print("markConversationAsUnread jid list --> \(jidList)")
         
-        ChatManager.markConversationAsUnread(for: jidList)
-        result(true)
+        // Contus Changes Start - same serial queue as the other unread-state updates
+        messageQueue.async { [self] in
+            ChatManager.markConversationAsUnread(for: jidList)
+            replyOnMain(result, true)
+        }
+        // Old code:
+        // ChatManager.markConversationAsUnread(for: jidList)
+        // result(true)
+        // Contus Changes End
     }
     func markConversationAsRead(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -1832,8 +1853,16 @@ let ISEXPORT = true
         
         print("markConversationAsRead jid list --> \(jidList)")
         
-        ChatManager.markConversationAsRead(for: jidList)
-        result(true)
+        // Contus Changes Start - same serial queue as the message list and markAsReadDeleteUnreadSeparator,
+        // so mark-as-read / unread-state updates for a chat never run on two threads at once.
+        messageQueue.async { [self] in
+            ChatManager.markConversationAsRead(for: jidList)
+            replyOnMain(result, true)
+        }
+        // Old code:
+        // ChatManager.markConversationAsRead(for: jidList)
+        // result(true)
+        // Contus Changes End
     }
     func getMessagesOfJid(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -1855,20 +1884,35 @@ let ISEXPORT = true
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? ""
-        
-        ChatManager.markConversationAsRead(for: [jid])
-        FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
-        
-        result(true)
+
+        // Contus Changes Start
+        messageQueue.async {
+            ChatManager.markConversationAsRead(for: [jid])
+            FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
+            DispatchQueue.main.async {
+                result(true)
+            }
+        }
+        // Old code:
+        // ChatManager.markConversationAsRead(for: [jid])
+        // FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
+        // result(true)
+        // Contus Changes End
     }
     
     func deleteUnreadMessageSeparatorOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? ""
-        FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
-        
-        result(true)
+        // Contus Changes Start - same serial queue as the other unread-state updates
+        messageQueue.async { [self] in
+            FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
+            replyOnMain(result, true)
+        }
+        // Old code:
+        // FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
+        // result(true)
+        // Contus Changes End
         
     }
     func getRecalledMessagesOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -2794,10 +2838,13 @@ let ISEXPORT = true
     }
     
     func initializeMessageList(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
+
         let args = call.arguments as! Dictionary<String, Any>
-        
-        
+
+        // Contus Changes Start - state below is owned by messageQueue
+        messageQueue.async { [self] in
+        // Contus Changes End
+
         if let messageId = args["messageId"] as? String {
             messageListParams.messageId = messageId
             
@@ -2839,146 +2886,181 @@ let ISEXPORT = true
 
         messageListQuery = FetchMessageListQuery(fetchMessageListParams: messageListParams)
 
-        result(true)
-        
+        // Contus Changes Start
+        replyOnMain(result, true)
+        }
+        // Old code:
+        // result(true)
+        // Contus Changes End
+
     }
-    
+
+    // Contus Changes Start - FlutterResult must be called on the main thread.
+    private func replyOnMain(_ result: @escaping FlutterResult, _ value: Any?) {
+        DispatchQueue.main.async {
+            result(value)
+        }
+    }
+    // Contus Changes End
+
+    // Contus Changes Start - loadMessages / loadPreviousMessages / loadNextMessages / hasPrevious /
+    // hasNext now run on messageQueue: the SDK reads Realm on the calling thread for the local page,
+    // and setFirstMessage / setLastMessage + toJson ran on main in the completion. The SDK still calls
+    // the completion on main, so the completion hops back to messageQueue for that work and then
+    // replies on main. Added the missing `return` after the error replies (they replied twice before).
+    // Old code is kept below, commented out.
     func loadMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        messageQueue.async { [self] in
+            guard let query = messageListQuery else {
+                NSLog("\(Constants.tag) Message List Not Initialized")
+                replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
+                return
+            }
+            if query.isFetchingInProgress() {
+                replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_PROCESSING))
+                return
+            }
+            query.loadMessages { isSuccess, flyError, flyData in
+                var data  = flyData
+                let messageList = isSuccess ? data.getData() as? [ChatMessage] : nil
+                self.messageQueue.async {
+                    if (isSuccess) {
+                        self.lastMessageID = messageList?.last?.messageId ?? emptyString()
+                        self.setLastMessage()
+                        self.firstMessageID = messageList?.first?.messageId ?? emptyString()
+                        self.setFirstMessage()
 
-        if(messageListQuery == nil){
-            NSLog("\(Constants.tag) Message List Not Initialized")
-            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
-        }
-        if(messageListQuery?.isFetchingInProgress() ?? false){
-            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_PROCESSING))
-        }
-        messageListQuery?.loadMessages { isSuccess, flyError, flyData in
-            var data  = flyData
-            if (isSuccess) {
-                let messageList  = data.getData() as? [ChatMessage]
-
-                self.lastMessageID = messageList?.last?.messageId ?? emptyString()
-                self.setLastMessage()
-                self.firstMessageID = messageList?.first?.messageId ?? emptyString()
-                self.setFirstMessage()
-                
-                if let chatJson = messageList.toJson() {
-                    NSLog("\(Constants.tag) Initial Message List ios \(chatJson)")
-                    print("\(Constants.tag) Initial Message List ios print \(chatJson)")
-                    result(chatJson)
-                } else {
-                    NSLog("\(Constants.tag) Initial Message List Load Failed")
-                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
+                        if let chatJson = messageList.toJson() {
+                            NSLog("\(Constants.tag) Initial Message List ios \(chatJson)")
+                            print("\(Constants.tag) Initial Message List ios print \(chatJson)")
+                            self.replyOnMain(result, chatJson)
+                        } else {
+                            NSLog("\(Constants.tag) Initial Message List Load Failed")
+                            self.replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
+                        }
+                    } else {
+                        NSLog("\(Constants.tag) Initial Message List Load Failed")
+                        self.replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
                 }
-            } else {
-                NSLog("\(Constants.tag) Initial Message List Load Failed")
-                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
             }
         }
     }
-    
+
     func loadPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
         print("calling previous message")
-        if(messageListQuery == nil){
-            NSLog("\(Constants.tag) Message List Not Initialized")
-            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
-            
-        }
-        
-        if(messageListQuery?.isFetchingInProgress() ?? false){
-            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_PROCESSING))
-            
-        }
-        
-        if (!(messageListQuery?.hasPreviousMessages() ?? false)){
-            result("[]")
-            return
-        }
+        messageQueue.async { [self] in
+            guard let query = messageListQuery else {
+                NSLog("\(Constants.tag) Message List Not Initialized")
+                replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
+                return
+            }
+            if query.isFetchingInProgress() {
+                replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_PROCESSING))
+                return
+            }
+            if !query.hasPreviousMessages() {
+                replyOnMain(result, "[]")
+                return
+            }
 
-        messageListQuery?.setFirstMessage(messageId: firstMessageID)
-        messageListQuery?.loadPreviousMessages { isSuccess, flyError, flyData in
-            var data  = flyData
-            if (isSuccess) {
-                let messageList  = data.getData() as? [ChatMessage]
+            query.setFirstMessage(messageId: firstMessageID)
+            query.loadPreviousMessages { isSuccess, flyError, flyData in
+                var data  = flyData
+                let messageList = isSuccess ? data.getData() as? [ChatMessage] : nil
+                self.messageQueue.async {
+                    if (isSuccess) {
+                        /// Message Duplicate in load Previous workaround
+                        if (messageList?.count == 1 && messageList?.first?.messageId == self.firstMessageID){
+                            self.replyOnMain(result, "[]")
+                            return
+                        }
 
+                        if (!(messageList?.isEmpty ?? true)) {
+                            /// Changing the first message ID here, bcz the new set will be inserted at top of the chat array list,
+                            /// so we need to update the first message ID to fetch the previous set of messages again from this message ID
+                            self.firstMessageID = messageList?.first?.messageId ?? emptyString()
+                            self.setFirstMessage()
+                        }else{
+                            print("\(Constants.tag) prev message -> Next Message List previous message id is not setting as the list is empty")
+                        }
 
-                /// Message Duplicate in load Previous workaround
-                if (messageList?.count == 1 && messageList?.first?.messageId == self.firstMessageID){
-
-                    result("[]");
-                    return;
-
+                        if let chatJson = messageList.toJson() {
+                            print("\(Constants.tag) Previous Message List \(chatJson)")
+                            self.replyOnMain(result, chatJson)
+                        } else {
+                            NSLog("\(Constants.tag) Previous Message List Load Failed")
+                            self.replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
+                        }
+                    } else {
+                        NSLog("\(Constants.tag) Initial Message List Load Failed")
+                        self.replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
                 }
-
-                if (!(messageList?.isEmpty ?? true)) {
-                    /// Changing the first message ID here, bcz the new set will be inserted at top of the chat array list,
-                    /// so we need to update the first message ID to fetch the previous set of messages again from this message ID
-                    self.firstMessageID = messageList?.first?.messageId ?? emptyString()
-                    self.setFirstMessage()
-                }else{
-                    print("\(Constants.tag) prev message -> Next Message List previous message id is not setting as the list is empty")
-                }
-
-                if let chatJson = messageList.toJson() {
-                    print("\(Constants.tag) Previous Message List \(chatJson)")
-                    
-                    result(chatJson)
-                    
-                } else {
-                    NSLog("\(Constants.tag) Previous Message List Load Failed")
-                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
-                }
-            } else {
-                NSLog("\(Constants.tag) Initial Message List Load Failed")
-                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
             }
         }
     }
 
     func loadNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
-        if(messageListQuery == nil){
-            NSLog("\(Constants.tag) Message List Not Initialized")
-            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
-            return
-        }
-        
-        if (!(messageListQuery?.hasNextMessages() ?? false)){
-            result("[]")
-            return
-        }
-        
-        messageListQuery?.loadNextMessages { isSuccess, flyError, flyData in
-            var data  = flyData
-            if (isSuccess) {
-                let messageList  = data.getData() as? [ChatMessage]
-                
-                if (!(messageList?.isEmpty ?? true)){
-                    /// Changing the last message ID here, bcz the new set will be appended to the chat array list,
-                    /// so we need to update the last message ID to fetch the next set of messages again from this message ID
-                    self.lastMessageID = messageList?.last?.messageId ?? emptyString()
-                    self.setLastMessage()
-                }else{
-                    print("\(Constants.tag) Next Message List last message id is not setting as the list is empty")
-                }
-                if(self.firstMessageID.isEmpty){
-                    self.firstMessageID = messageList?.first?.messageId ?? emptyString()
-                    self.setFirstMessage()
-                }
+        messageQueue.async { [self] in
+            guard let query = messageListQuery else {
+                NSLog("\(Constants.tag) Message List Not Initialized")
+                replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: FLErrorMessage.MESSAGE_QUERY_EMPTY))
+                return
+            }
+            if !query.hasNextMessages() {
+                replyOnMain(result, "[]")
+                return
+            }
 
-                if let chatJson = messageList.toJson() {
-                    print("\(Constants.tag) Next Message List \(chatJson)")
-                    result(chatJson)
-                } else {
-                    NSLog("\(Constants.tag) Next Message List Load Failed")
-                    result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
+            query.loadNextMessages { isSuccess, flyError, flyData in
+                var data  = flyData
+                let messageList = isSuccess ? data.getData() as? [ChatMessage] : nil
+                self.messageQueue.async {
+                    if (isSuccess) {
+                        if (!(messageList?.isEmpty ?? true)){
+                            /// Changing the last message ID here, bcz the new set will be appended to the chat array list,
+                            /// so we need to update the last message ID to fetch the next set of messages again from this message ID
+                            self.lastMessageID = messageList?.last?.messageId ?? emptyString()
+                            self.setLastMessage()
+                        }else{
+                            print("\(Constants.tag) Next Message List last message id is not setting as the list is empty")
+                        }
+                        if(self.firstMessageID.isEmpty){
+                            self.firstMessageID = messageList?.first?.messageId ?? emptyString()
+                            self.setFirstMessage()
+                        }
+
+                        if let chatJson = messageList.toJson() {
+                            print("\(Constants.tag) Next Message List \(chatJson)")
+                            self.replyOnMain(result, chatJson)
+                        } else {
+                            NSLog("\(Constants.tag) Next Message List Load Failed")
+                            self.replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.JSON_PARSING_ERROR, details: nil))
+                        }
+                    } else {
+                        NSLog("\(Constants.tag) Initial Message List Load Failed")
+                        self.replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
+                    }
                 }
-            } else {
-                NSLog("\(Constants.tag) Initial Message List Load Failed")
-                result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: flyError?.localizedDescription))
             }
         }
     }
+    /* Old code:
+    func loadMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        if(messageListQuery == nil){
+            result(FlutterError(...MESSAGE_QUERY_EMPTY))
+        }
+        if(messageListQuery?.isFetchingInProgress() ?? false){
+            result(FlutterError(...MESSAGE_QUERY_PROCESSING))
+        }
+        messageListQuery?.loadMessages { isSuccess, flyError, flyData in
+            // on main: setLastMessage / setFirstMessage, messageList.toJson(), result(chatJson)
+        }
+    }
+    func loadPreviousMessages(...) / loadNextMessages(...): same shape, all on main, completion work on main.
+    */
+    // Contus Changes End
     
     func setLastMessage(messageID: String? = nil){
         messageListQuery?.setLastMessage(messageId: messageID ?? lastMessageID)
@@ -3204,11 +3286,15 @@ let ISEXPORT = true
         ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred) { (isSuccess, flyError, resultDict) in
             
             if(isSuccess){
-                self.lastMessageID = emptyString()
-                self.setLastMessage()
-                self.firstMessageID = emptyString()
-                self.setFirstMessage()
-                result(true)
+                // Contus Changes Start - message-list state is owned by messageQueue
+                self.messageQueue.async {
+                    self.lastMessageID = emptyString()
+                    self.setLastMessage()
+                    self.firstMessageID = emptyString()
+                    self.setFirstMessage()
+                    self.replyOnMain(result, true)
+                }
+                // Contus Changes End
             }else{
                 if case let .invalid_data(message, _) = flyError {
                     result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.METHOD_FETCH_FAILED, details: message))
@@ -3532,8 +3618,12 @@ let ISEXPORT = true
                 ChatManager.shared.resetFlyDefaults()
                 self.recentChatListBuilder = nil
 //                self.recentChatListParams = nil
-                self.messageListParams = FetchMessageListParams()
-                self.messageListQuery = nil
+                // Contus Changes Start - message-list state is owned by messageQueue
+                self.messageQueue.async {
+                    self.messageListParams = FetchMessageListParams()
+                    self.messageListQuery = nil
+                }
+                // Contus Changes End
                 //Utility.clearUserDefaults()
                 Utility.saveInPreference(key: Constants.isProfileSaved, value: false)
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: false)
@@ -3996,21 +4086,27 @@ let ISEXPORT = true
         }
     }
     
+    // Contus Changes Start - run on messageQueue (owns messageListQuery; may read Realm), reply on main
     func hasPreviousMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
-        if messageListQuery != nil {
-            result(messageListQuery?.hasPreviousMessages())
-        }else{
-            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_QUERY_EMPTY, details: nil))
+        messageQueue.async { [self] in
+            if let query = messageListQuery {
+                replyOnMain(result, query.hasPreviousMessages())
+            }else{
+                replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_QUERY_EMPTY, details: nil))
+            }
         }
     }
-    
+
     func hasNextMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
-        if messageListQuery != nil {
-            result(messageListQuery?.hasNextMessages())
-        }else{
-            result(FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_QUERY_EMPTY, details: nil))
+        messageQueue.async { [self] in
+            if let query = messageListQuery {
+                replyOnMain(result, query.hasNextMessages())
+            }else{
+                replyOnMain(result, FlutterError(code: FLErrorCode.INVALID_DATA, message: FLErrorMessage.MESSAGE_QUERY_EMPTY, details: nil))
+            }
         }
     }
+    // Contus Changes End
     func appLaunchedFromMissedCall(call: FlutterMethodCall, result: @escaping FlutterResult){
         result(false)
     }

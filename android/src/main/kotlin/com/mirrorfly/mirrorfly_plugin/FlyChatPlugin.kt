@@ -61,6 +61,10 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         @SuppressLint("StaticFieldLeak")
         private lateinit var instance: FlyChatPlugin
 
+        // Contus Changes Start - worker thread for onMessageStatusUpdated (DB read + JSON per receipt)
+        private val messageStatusExecutor = java.util.concurrent.Executors.newSingleThreadExecutor()
+        // Contus Changes End
+
         /*public fun getInstance(): FlyChatPlugin {
             return instance
         }
@@ -963,18 +967,25 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
         //LogMessage.d("Message Ack", "Received")
 
         //LogMessage.d(TAG, "Message Status Updated ==> $messageId")
-        try {
-            val message = FlyMessenger.getMessageOfId(messageId)
-            if (message != null) {
-//            MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.toJsonString())
-                FlyMethodConstants.updateChatSinkValue(
-                    Constants.onMessageStatusUpdatedChannel,
-                    message.toJsonString()
-                )
+        // Contus Changes Start - fires once per receipt (per member in groups); the DB read + conversion
+        // + JSON ran on the main thread for every one. Now on a single worker thread (keeps the order of
+        // status events); updateChatSinkValue already posts the event to the main thread.
+        messageStatusExecutor.execute {
+            try {
+                val message = FlyMessenger.getMessageOfId(messageId)
+                if (message != null) {
+//                MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.toJsonString())
+                    FlyMethodConstants.updateChatSinkValue(
+                        Constants.onMessageStatusUpdatedChannel,
+                        message.toJsonString()
+                    )
+                }
+            }catch (e: Exception){
+                LogMessage.d(TAG, "onMessageStatusUpdated Exception $e")
             }
-        }catch (e: Exception){
-            LogMessage.d(TAG, "onMessageStatusUpdated Exception $e")
         }
+        // Old code: the same try block ran directly on the calling (main) thread.
+        // Contus Changes End
     }
 
     override fun onUploadDownloadProgressChanged(
