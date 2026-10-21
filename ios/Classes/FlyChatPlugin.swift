@@ -217,7 +217,9 @@ func mapToLocalModel(_ sdkModel: MirrorFlySDK.AvailableFeaturesModel) -> Availab
 extension FlyChatPlugin : LocalNotificationDelegate {
     
     public func showOrUpdateOrCancelNotification(jid: String, chatMessage: MirrorFlySDK.ChatMessage, groupId: String) {
-        
+        // #MFNotifName debug: SDK hands the notification to Flutter (app builds the title).
+        NSLog("#MFNotifName PLUGIN -> FLUTTER msgId=\(chatMessage.messageId) jid=\(jid) groupId=\(groupId) senderJid=\(chatMessage.senderUserJid) senderUserName='\(chatMessage.senderUserName)' senderNickName='\(chatMessage.senderNickName)' syncedContactName='\(chatMessage.syncedContactName)'")
+
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(jid, forKey: "jid")
         jsonObject.setValue(chatMessage.toJson(), forKey: "chatMessage")

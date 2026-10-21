@@ -1013,6 +1013,8 @@ class FlyChatPlugin : FlutterPlugin, MethodCallHandler, ChatEvents, GroupEventsL
                 TAG,
                 "showOrUpdateOrCancelNotification : jid $jid chatMessage ${chat}"
             )
+            // #MFNotifName debug: live (app alive) notification handed to Flutter.
+            android.util.Log.d("#MFNotifName", "PLUGIN live showOrUpdateOrCancelNotification -> FLUTTER jid=$jid msgId=${chatMessage.messageId} senderJid=${chatMessage.senderUserJid} senderUserName='${chatMessage.senderUserName}' senderNickName='${chatMessage.senderNickName}'")
             val json = JSONObject()
             json.put("jid", jid)
             json.put("chatMessage", chat)

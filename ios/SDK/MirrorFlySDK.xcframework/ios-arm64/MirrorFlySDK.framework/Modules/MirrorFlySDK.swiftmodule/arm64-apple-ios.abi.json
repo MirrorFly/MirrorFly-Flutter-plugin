@@ -3413,6 +3413,100 @@
           },
           {
             "kind": "Var",
+            "name": "isFromSearch",
+            "printedName": "isFromSearch",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "c:@M@MirrorFlySDK@objc(cs)RecentChat(py)isFromSearch",
+            "mangledName": "$s12MirrorFlySDK10RecentChatC12isFromSearchSbvp",
+            "moduleName": "MirrorFlySDK",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment",
+              "ObjC"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@MirrorFlySDK@objc(cs)RecentChat(im)isFromSearch",
+                "mangledName": "$s12MirrorFlySDK10RecentChatC12isFromSearchSbvg",
+                "moduleName": "MirrorFlySDK",
+                "implicit": true,
+                "declAttributes": [
+                  "ObjC"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "c:@M@MirrorFlySDK@objc(cs)RecentChat(im)setIsFromSearch:",
+                "mangledName": "$s12MirrorFlySDK10RecentChatC12isFromSearchSbvs",
+                "moduleName": "MirrorFlySDK",
+                "implicit": true,
+                "declAttributes": [
+                  "ObjC"
+                ],
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:12MirrorFlySDK10RecentChatC12isFromSearchSbvM",
+                "mangledName": "$s12MirrorFlySDK10RecentChatC12isFromSearchSbvM",
+                "moduleName": "MirrorFlySDK",
+                "implicit": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "metaData",
             "printedName": "metaData",
             "children": [
@@ -252578,29 +252672,36 @@
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Common\/RecentChat.swift",
+      "kind": "BooleanLiteral",
+      "offset": 4352,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Common\/RecentChat.swift",
       "kind": "Array",
-      "offset": 4163,
+      "offset": 4404,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Common\/RecentChat.swift",
       "kind": "StringLiteral",
-      "offset": 4205,
+      "offset": 4446,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Common\/RecentChat.swift",
       "kind": "StringLiteral",
-      "offset": 4255,
+      "offset": 4496,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Common\/RecentChat.swift",
       "kind": "IntegerLiteral",
-      "offset": 4311,
+      "offset": 4552,
       "length": 1,
       "value": "0"
     },
@@ -261917,14 +262018,14 @@
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "StringLiteral",
-      "offset": 81345,
+      "offset": 81855,
       "length": 29,
       "value": "\"com.chat.background.preload\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "BooleanLiteral",
-      "offset": 81440,
+      "offset": 81950,
       "length": 5,
       "value": "false"
     },
@@ -262680,7 +262781,7 @@
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilderV1.swift",
       "kind": "BooleanLiteral",
-      "offset": 25993,
+      "offset": 26279,
       "length": 4,
       "value": "true"
     },

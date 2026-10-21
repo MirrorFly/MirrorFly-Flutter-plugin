@@ -200,6 +200,8 @@ class RecentChat {
       this.lastMessageStatus,
       this.lastMessageTime,
       this.lastMessageType,
+      this.mentionedUsersIds,
+      this.isFromSearch,
       this.nickName,
       this.profileImage,
       this.profileName,
@@ -273,6 +275,12 @@ class RecentChat {
   /// The type of the last message.
   String? lastMessageType;
 
+  /// Mention ids of the last message (server search rows only).
+  List<String>? mentionedUsersIds;
+
+  /// True only for rows from the server search (searchRecentChatsFromServer).
+  bool? isFromSearch;
+
   /// The nickname of the contact.
   String? nickName;
 
@@ -320,6 +328,11 @@ class RecentChat {
             ? json["lastMessageTime"] * 1000
             : json["lastMessageTime"],
         lastMessageType: getMessageType(json["lastMessageType"]),
+        mentionedUsersIds: json["mentionedUsersIds"] == null
+            ? null
+            : List<String>.from((json["mentionedUsersIds"] as List).map((x) =>
+                x is Map ? x["jid"].toString().split("@").first : x.toString())),
+        isFromSearch: json["isFromSearch"],
         nickName: json["nickName"],
         profileImage: json["profileImage"],
         profileName: json["profileName"],
@@ -355,6 +368,8 @@ class RecentChat {
         "lastMessageStatus": lastMessageStatus,
         "lastMessageTime": lastMessageTime,
         "lastMessageType": lastMessageType,
+        "mentionedUsersIds": mentionedUsersIds,
+        "isFromSearch": isFromSearch,
         "nickName": nickName,
         "profileImage": profileImage,
         "profileName": profileName,

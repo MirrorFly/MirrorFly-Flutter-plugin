@@ -1038,6 +1038,9 @@ SWIFT_CLASS("_TtC12MirrorFlySDK10RecentChat")
 @property (nonatomic) BOOL isMentionedUser;
 /// To check whether the user mentioned
 @property (nonatomic, copy) NSArray<NSString *> * _Nonnull mentionedUsersIds;
+/// True only for rows from the server search (searchRecentChatsFromServer).
+/// Those rows are not saved locally, so mentionedUsersIds is filled from the decrypted last message.
+@property (nonatomic) BOOL isFromSearch;
 @property (nonatomic, copy) NSString * _Nonnull topicID;
 @property (nonatomic, copy) NSString * _Nonnull unReadMessageID;
 @property (nonatomic) NSInteger serverUnreadMessageCount;

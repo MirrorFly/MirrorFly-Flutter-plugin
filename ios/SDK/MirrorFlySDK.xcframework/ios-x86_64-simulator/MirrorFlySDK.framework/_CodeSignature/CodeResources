@@ -26,7 +26,7 @@
 		</data>
 		<key>Headers/MirrorFlySDK-Swift.h</key>
 		<data>
-		HXvQ21bPiCurgnB6JATFoZDlr9A=
+		HJ2qOyyiml/eHTqpLxZP1GEoQGs=
 		</data>
 		<key>Headers/MirrorFlySDK.h</key>
 		<data>
@@ -50,23 +50,23 @@
 		</data>
 		<key>Modules/MirrorFlySDK.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
-		YdxRSJ9Iu+Slip/9tw7JCD9L2og=
+		Ot0kCXm1fu9wohr2dDr3zkk9veI=
 		</data>
 		<key>Modules/MirrorFlySDK.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
-		3wTZndMDpoHSnWNHf3KQHjB+iIw=
+		luFOJcXc/u3rR4mcrFMt8bXfQuA=
 		</data>
 		<key>Modules/MirrorFlySDK.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		AU9zaCdUDCDW632mKVzUAQ54xo0=
+		Fd9Q4hE+4IQt7NCo8H4ufdEkmyw=
 		</data>
 		<key>Modules/MirrorFlySDK.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<data>
-		3wTZndMDpoHSnWNHf3KQHjB+iIw=
+		luFOJcXc/u3rR4mcrFMt8bXfQuA=
 		</data>
 		<key>Modules/MirrorFlySDK.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		ZSBa17c7CNCnFSG6GDk+NfSnA8U=
+		T2k1rQN9yHHuRf+dKvav8ZOcplo=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -118,7 +118,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			MJGZ5lejMKu4UbVRjYlwdawAFQzOZKtHy/EqM+6yYf0=
+			dwoGAKMrA/tR9gFAFOULLEfarAFZCeCryv6KVhYUxko=
 			</data>
 		</dict>
 		<key>Headers/MirrorFlySDK.h</key>
@@ -153,35 +153,35 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			7y+Tl29qGkApKSdziXtKquQYsF/TVveElZ21r9dAHXo=
+			0D3aiTiZLysQ7Mi2kDMQzeLW2MRvajr4TnbGIvDOZhY=
 			</data>
 		</dict>
 		<key>Modules/MirrorFlySDK.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			QCedoOBk2UW+oaG6JqNxvP5SgQW23fOxxrShR7SXtfk=
+			mfJprtSks0SvapRoBTTeNCozj+E64czkwSbmNydZFSw=
 			</data>
 		</dict>
 		<key>Modules/MirrorFlySDK.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			XVgqo9Yi79HLYcWX4zC87wKEIphyKpU/y1PeCji/LcE=
+			HvXjpSDn4wRRhsZ9xjZ4foCIHL609DW/wqs6aF+95fs=
 			</data>
 		</dict>
 		<key>Modules/MirrorFlySDK.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			QCedoOBk2UW+oaG6JqNxvP5SgQW23fOxxrShR7SXtfk=
+			mfJprtSks0SvapRoBTTeNCozj+E64czkwSbmNydZFSw=
 			</data>
 		</dict>
 		<key>Modules/MirrorFlySDK.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			/UoA2C1UACcDAMfI4VfYycp36Ezsz0le9eCx3UEfZt8=
+			1I48yGCyTajMB5mgmd2gfm/QAtbrYcSDi7aktMHambE=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

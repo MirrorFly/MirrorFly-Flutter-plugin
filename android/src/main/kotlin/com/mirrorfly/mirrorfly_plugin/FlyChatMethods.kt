@@ -795,11 +795,14 @@ class FlyChatMethods {
 
     fun handleReceivedMessage(call: MethodCall, result: MethodChannel.Result) {
         val notificationdata = call.argument<Map<String, String>>("notificationdata") ?: mapOf()
+        // #MFNotifName debug: push payload received from Flutter (background / killed path).
+        android.util.Log.d("#MFNotifName", "PLUGIN handleReceivedMessage data=$notificationdata")
         //LogMessage.d("===notificationdata===",notificationdata.toString())
         PushNotificationManager.handleReceivedMessage(notificationdata, object :
             NotificationEventListener {
             override fun onMessageReceived(chatMessage: ChatMessage) {
                 LogMessage.d("push onMessageReceived", chatMessage.toJsonString())
+                android.util.Log.d("#MFNotifName", "PLUGIN push onMessageReceived -> FLUTTER msgId=${chatMessage.messageId} chatJid=${chatMessage.chatUserJid} senderJid=${chatMessage.senderUserJid} senderUserName='${chatMessage.senderUserName}' senderNickName='${chatMessage.senderNickName}'")
                 //Here you need to fetch recent unread messages to build up notification content
                 //LogMessage.d("notificationdata",chatMessage.tojsonString())
                 /*val jsonObject = JSONObject()
@@ -820,6 +823,7 @@ class FlyChatMethods {
                     "push onGroupNotification",
                     "groupJid $groupJid titleContent $titleContent chatMessage ${chatMessage.toJsonString()}"
                 )
+                android.util.Log.d("#MFNotifName", "PLUGIN push onGroupNotification -> FLUTTER groupJid=$groupJid titleContent='$titleContent' msgId=${chatMessage.messageId} senderJid=${chatMessage.senderUserJid} senderUserName='${chatMessage.senderUserName}'")
                 /* Create the notification for group creation with paramter values */
                 //LogMessage.d("notificationdata group",chatMessage.tojsonString())
                 /*val jsonObject = JSONObject()
@@ -837,6 +841,7 @@ class FlyChatMethods {
             }
 
             override fun onCancelNotification() {
+                android.util.Log.d("#MFNotifName", "PLUGIN push onCancelNotification (no reply to Flutter)")
                 // here you have to cancel notification
                 //LogMessage.d("notificationdata","cancel")
                 /*val jsonObject = JSONObject()

@@ -149,6 +149,13 @@ class RecentChatData {
   /// The time when the last message was sent.
   int? lastMessageTime;
 
+  /// Mention ids of the last message, in the same order as the "@[?]" in [lastMessageContent].
+  /// Filled only for server search rows ([isFromSearch]), which are not saved locally.
+  List<String>? mentionedUsersIds;
+
+  /// True only for rows from the server search (searchRecentChatsFromServer).
+  bool? isFromSearch;
+
   /// The type of the last message.
   String? lastMessageType;
 
@@ -194,6 +201,8 @@ class RecentChatData {
       this.lastMessageStatus,
       this.lastMessageTime,
       this.lastMessageType,
+      this.mentionedUsersIds,
+      this.isFromSearch,
       this.nickName,
       this.profileImage,
       this.profileName,
@@ -225,6 +234,12 @@ class RecentChatData {
         lastMessageStatus: json["lastMessageStatus"],
         lastMessageTime: json["lastMessageTime"],
         lastMessageType: json["lastMessageType"],
+        mentionedUsersIds: json["mentionedUsersIds"] == null
+            ? null
+            : List<String>.from((json["mentionedUsersIds"] as List).map((x) =>
+                // Plain id; or a profile object (take the id part of its jid).
+                x is Map ? x["jid"].toString().split("@").first : x.toString())),
+        isFromSearch: json["isFromSearch"],
         nickName: json["nickName"],
         profileImage: json["profileImage"],
         profileName: json["profileName"],
@@ -260,6 +275,8 @@ class RecentChatData {
         "lastMessageStatus": lastMessageStatus,
         "lastMessageTime": lastMessageTime,
         "lastMessageType": lastMessageType,
+        "mentionedUsersIds": mentionedUsersIds,
+        "isFromSearch": isFromSearch,
         "nickName": nickName,
         "profileImage": profileImage,
         "profileName": profileName,

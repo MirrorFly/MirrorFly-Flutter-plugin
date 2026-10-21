@@ -69,6 +69,7 @@ import _SwiftConcurrencyShims
   @objc public var isDeletedUser: Swift.Bool
   @objc public var isMentionedUser: Swift.Bool
   @objc public var mentionedUsersIds: [Swift.String]
+  @objc public var isFromSearch: Swift.Bool
   public var metaData: [MirrorFlySDK.MessageMetaData]
   @objc public var topicID: Swift.String
   @objc public var unReadMessageID: Swift.String
