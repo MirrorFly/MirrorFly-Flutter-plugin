@@ -259785,294 +259785,294 @@
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 197585,
+      "offset": 199858,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 197634,
+      "offset": 199907,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 197661,
+      "offset": 199934,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "Array",
-      "offset": 202899,
+      "offset": 205172,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 230909,
+      "offset": 233182,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "Array",
-      "offset": 258120,
+      "offset": 260393,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 259808,
+      "offset": 262081,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 266568,
+      "offset": 268841,
       "length": 4,
       "value": "1000"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 266786,
+      "offset": 269059,
       "length": 4,
       "value": "1000"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 266852,
+      "offset": 269125,
       "length": 2,
       "value": "60"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 266857,
+      "offset": 269130,
       "length": 2,
       "value": "60"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 266862,
+      "offset": 269135,
       "length": 2,
       "value": "24"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 266867,
+      "offset": 269140,
       "length": 4,
       "value": "1000"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 266874,
+      "offset": 269147,
       "length": 1,
       "value": "7"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 267056,
+      "offset": 269329,
       "length": 2,
       "value": "10"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 267076,
+      "offset": 269349,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 267111,
+      "offset": 269384,
       "length": 4,
       "value": "1000"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 267175,
+      "offset": 269448,
       "length": 4,
       "value": "1000"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 267751,
+      "offset": 270024,
       "length": 4,
       "value": "1000"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 267964,
+      "offset": 270237,
       "length": 4,
       "value": "1000"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 268027,
+      "offset": 270300,
       "length": 2,
       "value": "60"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 268032,
+      "offset": 270305,
       "length": 2,
       "value": "60"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 268037,
+      "offset": 270310,
       "length": 2,
       "value": "24"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 268042,
+      "offset": 270315,
       "length": 4,
       "value": "1000"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 268049,
+      "offset": 270322,
       "length": 1,
       "value": "7"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 268178,
+      "offset": 270451,
       "length": 2,
       "value": "10"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 268198,
+      "offset": 270471,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 268233,
+      "offset": 270506,
       "length": 4,
       "value": "1000"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 268297,
+      "offset": 270570,
       "length": 4,
       "value": "1000"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "Dictionary",
-      "offset": 268797,
+      "offset": 271070,
       "length": 3,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 268987,
+      "offset": 271260,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 269042,
+      "offset": 271315,
       "length": 2,
       "value": "10"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 269473,
+      "offset": 271746,
       "length": 34,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 269499,
+      "offset": 271772,
       "length": 1,
       "value": "\":\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 269506,
+      "offset": 271779,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 269689,
+      "offset": 271962,
       "length": 57,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 269715,
+      "offset": 271988,
       "length": 1,
       "value": "\":\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 269745,
+      "offset": 272018,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 272628,
+      "offset": 274901,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 276825,
+      "offset": 279098,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 282303,
+      "offset": 284576,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/ChatManager.swift",
       "kind": "StringLiteral",
-      "offset": 310885,
+      "offset": 313158,
       "length": 26,
       "value": "\"com.app.invite.api.queue\""
     },
@@ -262018,14 +262018,14 @@
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "StringLiteral",
-      "offset": 81855,
+      "offset": 82286,
       "length": 29,
       "value": "\"com.chat.background.preload\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/FetchMessageListQuery.swift",
       "kind": "BooleanLiteral",
-      "offset": 81950,
+      "offset": 82381,
       "length": 5,
       "value": "false"
     },
@@ -262634,70 +262634,70 @@
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 34106,
+      "offset": 35108,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 37770,
+      "offset": 38772,
       "length": 23,
       "value": "\"RecentChatListService\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 38083,
+      "offset": 39085,
       "length": 36,
       "value": "\"com.app.chatlist.builder.api.queue\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "BooleanLiteral",
-      "offset": 38266,
+      "offset": 39268,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 62000,
+      "offset": 64003,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "FloatLiteral",
-      "offset": 64894,
+      "offset": 66897,
       "length": 3,
       "value": "0.0"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "IntegerLiteral",
-      "offset": 64926,
+      "offset": 66929,
       "length": 2,
       "value": "20"
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 65225,
+      "offset": 67228,
       "length": 12,
       "value": "\"singleChat\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 65255,
+      "offset": 67258,
       "length": 11,
       "value": "\"groupChat\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Core\/RecentChatListBuilder.swift",
       "kind": "StringLiteral",
-      "offset": 65287,
+      "offset": 67290,
       "length": 10,
       "value": "\"archived\""
     },
@@ -267261,175 +267261,217 @@
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10512,
+      "offset": 11382,
       "length": 24,
       "value": "\"messageId \""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10535,
+      "offset": 11405,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10679,
+      "offset": 11549,
       "length": 5,
       "value": "\"aps\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10781,
+      "offset": 11651,
       "length": 7,
       "value": "\"alert\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10805,
+      "offset": 11675,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10843,
+      "offset": 11713,
       "length": 12,
       "value": "\"message_id\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10871,
+      "offset": 11741,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10899,
+      "offset": 11769,
       "length": 3,
       "value": "\",\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10959,
+      "offset": 11829,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10962,
+      "offset": 11832,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 10965,
+      "offset": 11835,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11129,
+      "offset": 11999,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11132,
+      "offset": 12002,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11135,
+      "offset": 12005,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11279,
+      "offset": 12149,
       "length": 56,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11306,
+      "offset": 12176,
       "length": 5,
       "value": "\"You\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11319,
+      "offset": 12189,
       "length": 1,
       "value": "\" @ \""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11334,
+      "offset": 12204,
       "length": 1,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11507,
+      "offset": 12230,
+      "length": 142,
+      "value": "\"#MFNotifName SDK NSE delete-push userId=\""
+    },
+    {
+      "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
+      "kind": "StringLiteral",
+      "offset": 12280,
+      "length": 4,
+      "value": "\" name='\""
+    },
+    {
+      "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
+      "kind": "StringLiteral",
+      "offset": 12294,
+      "length": 13,
+      "value": "\"' groupName='\""
+    },
+    {
+      "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
+      "kind": "StringLiteral",
+      "offset": 12319,
+      "length": 12,
+      "value": "\"' -> title='\""
+    },
+    {
+      "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
+      "kind": "StringLiteral",
+      "offset": 12367,
+      "length": 2,
+      "value": "\"\""
+    },
+    {
+      "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
+      "kind": "StringLiteral",
+      "offset": 12370,
+      "length": 3,
+      "value": "\"'\""
+    },
+    {
+      "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
+      "kind": "StringLiteral",
+      "offset": 12535,
       "length": 5,
       "value": "\"You\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11628,
+      "offset": 12656,
       "length": 26,
       "value": "\"This message was deleted\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11812,
+      "offset": 12840,
       "length": 12,
       "value": "\"message_id\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11840,
+      "offset": 12868,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11906,
+      "offset": 12934,
       "length": 10,
       "value": "\"group_id\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "StringLiteral",
-      "offset": 11932,
+      "offset": 12960,
       "length": 2,
       "value": "\"\""
     },
     {
       "filePath": "\/Users\/kingsly\/Documents\/mirrorfly_repo\/p078-mirrorfly-ios-core-sdk\/MirrorFlySDK\/Xmpp\/NotificationMessageSupport.swift",
       "kind": "FloatLiteral",
-      "offset": 12421,
+      "offset": 13449,
       "length": 3,
       "value": "1.0"
     },

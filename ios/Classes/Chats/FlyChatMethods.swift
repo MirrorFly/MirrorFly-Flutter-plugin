@@ -259,6 +259,10 @@ let ISEXPORT = true
                 
                 print("Register user new login data \(data)")
                 Utility.saveInPreference(key: Constants.isLoggedIn, value: true)
+                // Contus Changes Start - contact sync is not used by the app; the SDK
+                // default (true) made it show phone numbers / nickName instead of names.
+                ChatManager.enableContactSync(isEnable: false)
+                // Contus Changes End
                 ChatManager.connect()
                 
                 self.observerToken = NotificationCenter.default.addObserver(forName: .connectionStatusChanged, object: nil, queue: nil) { notification in
